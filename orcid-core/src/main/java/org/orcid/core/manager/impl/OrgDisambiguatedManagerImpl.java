@@ -50,7 +50,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
@@ -85,32 +85,38 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         } while (!entities.isEmpty());
 
     }
-    
+
     @Override
-    public void markOrgsForIndexingAsGroup () {
+    synchronized public void markOrgsForIndexingAsGroup() {
         LOGGER.info("About to process disambiguated orgs for group indexing");
         List<OrgDisambiguatedEntity> entities = null;
-        int startIndex= 0;
+        int startIndex = 0;
         do {
             entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 OrgGroup orgGroup = new OrgGrouping(entity, this).getOrganizationGroup();
-                OrgDisambiguatedEntity orgEntity;
-                for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
-                    orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType( org.getSourceId(), org.getSourceType());
-                    if(orgEntity != null) {
-                        if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
-                            orgEntity.setIndexingStatus(IndexingStatus.PENDING);
-                            if(!orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                                orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                // if the group has a ROR mark the other not ROR organization as
+                // part of group
+                if (orgGroup.getRorOrg() != null) {
+                    OrgDisambiguatedEntity orgEntity;
+                    for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
+                        orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
+                        if (orgEntity != null) {
+                            if (!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus())
+                                    || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())) {
+                                orgEntity.setIndexingStatus(IndexingStatus.PENDING);
+                                if (!orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                                    orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                                }
+                                updateOrgDisambiguated(orgEntity);
                             }
-                            updateOrgDisambiguated(orgEntity);
-                        }  
+                        }
                     }
                 }
             }
             startIndex = startIndex + entities.size();
+
         } while (!entities.isEmpty());
 
     }
@@ -253,15 +259,15 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     public void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         normalizeExternalIdentifier(identifier);
-        orgDisambiguatedExternalIdentifierDao.persist(identifier); 
+        orgDisambiguatedExternalIdentifierDao.persist(identifier);
     }
-    
+
     @Override
     public void updateOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         normalizeExternalIdentifier(identifier);
-        orgDisambiguatedExternalIdentifierDao.merge(identifier); 
+        orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
-    
+
     private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
@@ -307,7 +313,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         return org;
     }
-    
+
     private void normalizeExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         for (OrgDisambiguatedExternalIdNormalizer normalizer : orgDisambiguatedExternalIdNormalizers) {
             if (normalizer.getType().equals(identifier.getIdentifierType())) {

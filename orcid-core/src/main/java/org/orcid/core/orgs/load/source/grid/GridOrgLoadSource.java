@@ -257,28 +257,28 @@ public class GridOrgLoadSource implements OrgLoadSource {
         // Create a new disambiguated org
         OrgDisambiguatedEntity newEntity = createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
         try {
-            //get Organization Group for ROR
+            // get Organization Group for ROR
             OrgGroup orgGroup = new OrgGrouping(newEntity, orgDisambiguatedManager).getOrganizationGroup();
-            if(orgGroup.getRorOrg() != null) {
-                //is  part of a ROR group set indexing status to IGNORE
+            if (orgGroup.getRorOrg() != null) {
+                // is part of a ROR group set indexing status to IGNORE
                 newEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
                 newEntity.setIndexingStatus(IndexingStatus.PENDING);
                 orgDisambiguatedManager.updateOrgDisambiguated(newEntity);
             }
             OrgDisambiguatedEntity orgEntity;
-            for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
+            for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
                 orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceType(), org.getSourceId());
-                if(orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                    //set the indexing status to PART OF THE GROUP as is part of a ROR group will be removed from SOLR
-                    if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
+                if (orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                    // set the indexing status to PART OF THE GROUP as is part
+                    // of a ROR group will be removed from SOLR
+                    if (!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())) {
                         orgEntity.setIndexingStatus(IndexingStatus.PENDING);
                         orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
                         orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
-                    }  
+                    }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
         }
         return newEntity;

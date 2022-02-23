@@ -12,8 +12,6 @@ public class ProcessDisambiguatedOrgsAsPartOfRorGroupToReindex {
         OrgDisambiguatedManager manager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager"); 
         //mark the orgs as part of ror group to reindex
         manager.markOrgsForIndexingAsGroup();
-        //process for indexing
-        //manager.processOrgsForIndexing();
     }
 
 }

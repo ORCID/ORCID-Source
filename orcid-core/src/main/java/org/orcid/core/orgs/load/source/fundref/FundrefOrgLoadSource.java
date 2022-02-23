@@ -52,9 +52,9 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Component
 public class FundrefOrgLoadSource implements OrgLoadSource {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FundrefOrgLoadSource.class);
-    
+
     private static final String CONCEPTS_EXPRESSION = "/RDF/ConceptScheme/hasTopConcept";
     private static final String ITEM_EXPRESSION = "/RDF/Concept[@about='%s']";
     private static final String ORG_NAME_EXPRESSION = "prefLabel/Label/literalForm";
@@ -70,10 +70,10 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
     @Resource(name = "fundrefOrgDataClient")
     private OrgDataClient orgDataClient;
-    
+
     @Value("${org.orcid.core.orgs.fundref.latestReleaseUrl:url}")
     private String fundrefDataUrl;
-    
+
     @Value("${org.orcid.core.orgs.fundref.localFilePath:/tmp/ringgold/fundref.rdf}")
     private String localFilePath;
 
@@ -85,23 +85,23 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.fundref.enabled:true}")
     private boolean enabled;
-    
+
     @Resource(name = "geonamesApiUrl")
     private String geonamesApiUrl;
-    
+
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
-    
+
     @Resource(name = "geonamesUser")
     private String apiUser;
 
     private XPath xPath = XPathFactory.newInstance().newXPath();
-    
+
     private Client geoNamesApiClient = Client.create();
-    
+
     @Override
     public String getSourceName() {
         return "FUNDREF";
@@ -115,7 +115,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
         return importData();
     }
-    
+
     private boolean importData() {
         Map<String, String> cache = new HashMap<String, String>();
         InputStream stream = null;
@@ -162,29 +162,31 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                         }
                     }
                 } else {
-                    OrgDisambiguatedEntity newEntity= createDisambiguatedOrg(rdfOrganization);
+                    OrgDisambiguatedEntity newEntity = createDisambiguatedOrg(rdfOrganization);
                     try {
-                        //get Organization Group for ROR
+                        // get Organization Group for ROR
                         OrgGroup orgGroup = new OrgGrouping(newEntity, orgDisambiguatedManager).getOrganizationGroup();
-                        if(orgGroup.getRorOrg() != null) {
+                        if (orgGroup.getRorOrg() != null) {
                             newEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
                             newEntity.setIndexingStatus(IndexingStatus.PENDING);
                             orgDisambiguatedManager.updateOrgDisambiguated(newEntity);
                         }
                         OrgDisambiguatedEntity orgEntity;
-                        for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
+                        for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
                             orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
-                            if(orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                                //set the indexing status to PART OF THE GROUP as is part of a ROR group will be removed from SOLR
-                                if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
+                            if (orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                                // set the indexing status to PART OF THE GROUP
+                                // as is part of a ROR group will be removed
+                                // from SOLR
+                                if (!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus())
+                                        || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())) {
                                     orgEntity.setIndexingStatus(IndexingStatus.PENDING);
                                     orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
                                     orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
-                                }  
+                                }
                             }
                         }
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
                     }
                 }
@@ -515,7 +517,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
             orgDisambiguatedEntity.setSourceParentId(organization.isReplacedBy);
             orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
         }
-        
+
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
         orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;

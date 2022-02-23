@@ -47,10 +47,9 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     public OrgDisambiguatedEntity findByNameCityRegionCountryAndSourceType(String name, String city, String region, String country, String sourceType) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager
-                .createQuery(
-                        "from OrgDisambiguatedEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and sourceType = :sourceType",
-                        OrgDisambiguatedEntity.class);
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
+                "from OrgDisambiguatedEntity where name = :name and city = :city and (region = :region or (region is null and :region is null)) and country = :country and sourceType = :sourceType",
+                OrgDisambiguatedEntity.class);
         query.setParameter("name", name);
         query.setParameter("city", city);
         query.setParameter("region", region);
@@ -62,8 +61,8 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     public List<OrgDisambiguatedEntity> findByName(String name) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager
-                .createQuery("from OrgDisambiguatedEntity where lower(name) = lower(:name)", OrgDisambiguatedEntity.class);
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where lower(name) = lower(:name)",
+                OrgDisambiguatedEntity.class);
         query.setParameter("name", name);
         List<OrgDisambiguatedEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
@@ -87,17 +86,18 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     public List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where source_type=:ROR or source_type=:FUNDREF or source_type=:RINGGOLD",
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
+                "from OrgDisambiguatedEntity where (source_type=:ROR or source_type=:FUNDREF or source_type=:RINGGOLD) and status !=:status",
                 OrgDisambiguatedEntity.class);
-        //group by ROR
         query.setParameter("ROR", "ROR");
         query.setParameter("RINGGOLD", "RINGGOLD");
         query.setParameter("FUNDREF", "FUNDREF");
+        query.setParameter("status", "PART_OF_GROUP");
         query.setFirstResult(0);
         query.setMaxResults(maxResult);
         return query.getResultList();
     }
-    
+
     @Override
     public List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where indexingStatus != :indexingStatus",
@@ -125,10 +125,9 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     public List<Pair<Long, Integer>> findDisambuguatedOrgsWithIncorrectPopularity(int maxResults) {
-        Query query = entityManager
-                .createNativeQuery("SELECT od1.id, actual.popularity FROM org_disambiguated od1 JOIN"
-                        + " (SELECT od2.id id, COUNT(*) popularity FROM org_disambiguated od2 JOIN org o ON o.org_disambiguated_id = od2.id JOIN org_affiliation_relation oar ON oar.org_id = o.id GROUP BY od2.id)"
-                        + " actual ON actual.id = od1.id WHERE od1.popularity <> actual.popularity");
+        Query query = entityManager.createNativeQuery("SELECT od1.id, actual.popularity FROM org_disambiguated od1 JOIN"
+                + " (SELECT od2.id id, COUNT(*) popularity FROM org_disambiguated od2 JOIN org o ON o.org_disambiguated_id = od2.id JOIN org_affiliation_relation oar ON oar.org_id = o.id GROUP BY od2.id)"
+                + " actual ON actual.id = od1.id WHERE od1.popularity <> actual.popularity");
         query.setMaxResults(maxResults);
         @SuppressWarnings("unchecked")
         List<Object[]> results = query.getResultList();
@@ -171,5 +170,5 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createNamedQuery(OrgDisambiguatedEntity.FIND_DUPLICATES, OrgDisambiguatedEntity.class);
         return query.getResultList();
     }
-    
+
 }
