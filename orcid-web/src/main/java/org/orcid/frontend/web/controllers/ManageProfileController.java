@@ -447,9 +447,13 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         } else {
             if (OrcidStringUtils.getOrcidNumber(orcidIdOrEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail))) {
-                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
-                if (profileEntity != null) {
-                    return profileEntity;
+                try {
+                    ProfileEntity profileEntity = profileEntityCacheManager.retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
+                    if (profileEntity != null) {
+                        return profileEntity;
+                    }
+                } catch (IllegalArgumentException e) {
+                    return null;
                 }
             }
         }
