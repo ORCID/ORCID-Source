@@ -25,7 +25,7 @@ import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
@@ -63,7 +63,8 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @author Will Simpson
  *
  */
-public class SalesForceManagerImpl extends ManagerReadOnlyBaseImpl implements SalesForceManager {
+@Deprecated
+public class SalesForceManagerImplLegacy extends ManagerReadOnlyBaseImpl implements SalesForceManagerLegacy {
 
     private static final String OPPORTUNITY_CLOSED_LOST = "Closed Lost";
 

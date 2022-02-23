@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.ehcache.Cache;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Member;
@@ -30,8 +30,8 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class MembersListController extends BaseController {
 
-    @Resource
-    private SalesForceManager salesForceManager;
+    @Resource(name = "salesForceManagerLegacy")
+    private SalesForceManagerLegacy salesForceManagerLegacy;
     
     @Resource(name = "salesForceConsortiumLeadIdsCache")
     private Cache<String, List<String>> salesForceConsortiumLeadIdsCache;
@@ -57,7 +57,7 @@ public class MembersListController extends BaseController {
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
     public @ResponseBody List<Member> retrieveMembers() {
         List<String> consortiumLeadIds = salesForceConsortiumLeadIdsCache.get("");
-        List<Member> members = salesForceManager.retrieveMembers();
+        List<Member> members = salesForceManagerLegacy.retrieveMembers();
         
         List<Member> onlyConsortiaMembers = members
                 .stream()
@@ -71,7 +71,7 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
-        return salesForceManager.retrieveDetailsBySlug(memberSlug, true);
+        return salesForceManagerLegacy.retrieveDetailsBySlug(memberSlug, true);
     }
 
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)
@@ -81,7 +81,7 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/members/badges.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Badge> retrieveBadges() {
-        return salesForceManager.retrieveBadgesMap();
+        return salesForceManagerLegacy.retrieveBadgesMap();
     }
 
     @RequestMapping("/consortia")
@@ -95,7 +95,7 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/consortia/consortia.json", method = RequestMethod.GET)
     public @ResponseBody List<Member> retrieveConsortia() {
-        return salesForceManager.retrieveConsortia();
+        return salesForceManagerLegacy.retrieveConsortia();
     }
 
     protected Map<String, String> generateCommunityTypeMap() {

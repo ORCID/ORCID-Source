@@ -17,6 +17,7 @@ import org.orcid.core.salesforce.model.OrgId;
  * @author Will Simpson
  *
  */
+@Deprecated
 public interface SalesForceDao {
 
     static final String MAIN_CONTACT_ROLE = "Main Contact";

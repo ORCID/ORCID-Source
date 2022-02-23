@@ -41,9 +41,10 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
 
-public class SalesForceDaoImpl implements SalesForceDao, InitializingBean {
+@Deprecated
+public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceDaoImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceDaoImplLegacy.class);
 
     @Value("${org.orcid.core.salesForce.clientId}")
     private String clientId;

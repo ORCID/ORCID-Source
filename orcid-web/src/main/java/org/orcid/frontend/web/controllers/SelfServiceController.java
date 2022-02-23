@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.OrgDisambiguatedManager;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.salesforce.model.CommunityType;
@@ -57,7 +57,7 @@ public class SelfServiceController extends BaseController {
     private static final String NOT_PUBLIC = "not public";
 
     @Resource
-    private SalesForceManager salesForceManager;
+    private SalesForceManagerLegacy salesForceManager;
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;    
