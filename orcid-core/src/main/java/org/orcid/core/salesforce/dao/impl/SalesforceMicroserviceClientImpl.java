@@ -9,32 +9,44 @@ import java.time.Duration;
 
 import org.orcid.core.salesforce.dao.SalesforceMicroserviceClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SalesforceMicroserviceClientImpl implements SalesforceMicroserviceClient {
 
-	@Value("${org.orcid.microservice.gateway.url}")
-	private String gatewayUrl;
-	
 	@Value("${org.orcid.microservice.salesforce.token}")
 	private String salesforceReadToken;
 	
 	private final HttpClient httpClient;
 	
-	private final String retrieveMembersEndpoint;
+	private final String membersListEndpoint;
+	private final String memberDetailsEndpoint;
 	
-	public SalesforceMicroserviceClientImpl(@Value("${org.orcid.salesforce.api.timeout:5000}") Integer timeout) {
-		retrieveMembersEndpoint = gatewayUrl + "/members/list";
+	public SalesforceMicroserviceClientImpl(@Value("${org.orcid.microservice.gateway.url}") String gatewayUrl, @Value("${org.orcid.salesforce.api.timeout:5000}") Integer timeout) {
+		membersListEndpoint = gatewayUrl + "/members/list";
+		memberDetailsEndpoint = gatewayUrl + "/member/%s/details";
 		httpClient = HttpClient.newBuilder()
-	            .version(HttpClient.Version.HTTP_1_1)
+	            .version(HttpClient.Version.HTTP_2)
 	            .connectTimeout(Duration.ofSeconds(timeout))
 	            .build();
 	}
 	
 	@Override
 	public String retrieveMembers() throws IOException, InterruptedException {
+		//TODO: Handle exceptions
+		return doGetRequest(membersListEndpoint);
+	}
+
+	@Override
+	public String retrieveMemberDetails(String memberId) throws IOException, InterruptedException {
+		//TODO: Handle exceptions
+		return doGetRequest(String.format(memberDetailsEndpoint, memberId));
+	}
+	
+	private String doGetRequest(String url) throws IOException, InterruptedException {
 		HttpRequest request = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(retrieveMembersEndpoint))
+                .uri(URI.create(url))
                 .setHeader("Authorization", "Bearer " + salesforceReadToken)
                 .build();
 		

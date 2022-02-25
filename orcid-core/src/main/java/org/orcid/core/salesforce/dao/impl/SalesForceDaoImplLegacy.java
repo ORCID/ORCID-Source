@@ -471,13 +471,8 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
 
     private JSONObject retrieveMembersObject(String accessToken, String accountId) {
         StringBuffer query = new StringBuffer();
-        if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            query.append(
-                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, Account.Consortia_Member__c, RecordTypeId, ");
-        } else {
-            query.append(
-                "SELECT Account.Id, Account.ParentId, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, ");            
-        }
+        query.append(
+                "SELECT Account.Id, Account.Consortium_Lead__c, Account.OwnerId, Account.Name, Account.Public_Display_Name__c, Account.Website, Account.BillingCountry, Account.Research_Community__c, Account.Consortia_Member__c, RecordTypeId, ");        
         query.append(
                 "(SELECT Consortia_Lead__c from Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), ");
         query.append(
@@ -534,18 +529,11 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         LOGGER.info("About get list of consortia from SalesForce");
         WebResource resource = null;
         
-        if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            resource = createQueryResource(
+        resource = createQueryResource(
                     "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, "
                             + "(SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) "
                             + "FROM Account WHERE RecordTypeId IN (Select Id From RecordType Where Name = 'Consortium Lead') AND Active_Member__c=TRUE");
-        } else {
-            resource = createQueryResource(
-                    "SELECT Id, Name, Public_Display_Name__c, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, "
-                            + "(SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) "
-                            + "FROM Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c<=TODAY AND Membership_End_Date__c>TODAY) AND Active_Member__c=TRUE");
-        }
-        
+                
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting consortia list from SalesForce");

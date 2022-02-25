@@ -120,9 +120,6 @@ public enum Features implements Feature {
     @Label("Disable the 3.0 release candidates")
     V3_DISABLE_RELEASE_CANDIDATES,
 
-    @Label("Salesforce: Enable opportunities and org record types")
-    SF_ENABLE_OPP_ORG_RECORD_TYPES,
-
     @Label("ID token 24 hours lifespan")
     ID_TOKEN_24_HOURS_LIFESPAN,
     
@@ -136,7 +133,10 @@ public enum Features implements Feature {
     ALLOW_DELETE_WITH_REVOKED_TOKENS,
     
     @Label("Stop caching works when doing bulk reads")
-    READ_BULK_WORKS_DIRECTLY_FROM_DB;
+    READ_BULK_WORKS_DIRECTLY_FROM_DB, 
+    
+    @Label("Enable new salesforce microservice")
+    SALESFORCE_MICROSERVICE;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

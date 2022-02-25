@@ -783,13 +783,9 @@
     
     <bean id="salesForceAdapter" class="org.orcid.core.salesforce.adapter.SalesForceAdapter" />
     
-    <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImpl" />
+    <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImplLegacy" />
     
     <bean id="salesForceManagerLegacy" class="org.orcid.core.manager.impl.SalesForceManagerImplLegacy">
-        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
-    </bean>
-    
-    <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesforceManagerImpl">
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
@@ -1311,10 +1307,6 @@
 	<bean id="jpaJaxbClientAdapter" class="org.orcid.core.adapter.impl.JpaJaxbClientAdapterImpl">
         <property name="mapperFacade" ref="clientMapperFacade" />
     </bean>
-
-
-    <bean id="salesForceMapperFacadeFactoryLegacy" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactoryLegacy" />
-    <bean id="salesForceMemberMapperFacadeLegacy" factory-bean="&amp;salesForceMapperFacadeFactoryLegacy" factory-method="getMemberMapperFacade"/>
 
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
     <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>

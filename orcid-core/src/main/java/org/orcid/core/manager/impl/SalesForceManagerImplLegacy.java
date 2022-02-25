@@ -364,9 +364,7 @@ public class SalesForceManagerImplLegacy extends ManagerReadOnlyBaseImpl impleme
         } else {            
             member.setOwnerId(consortiumOwnerId);
             member.setCountry(consortium.getCountry());
-            if(Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                member.setRecordTypeId(getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember());
-            }
+            member.setRecordTypeId(getConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember());
             accountId = salesForceDao.createMember(member);
         }
         opportunity.setOwnerId(consortiumOwnerId);
