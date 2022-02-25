@@ -82,7 +82,7 @@ public class MembersListController extends BaseController {
     public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
     	MemberDetails details;
     	if (Features.SALESFORCE_MICROSERVICE.isActive()) {
-			details = null;
+			details = salesforceManager.retrieveMemberDetails(memberSlug);
 		} else {
 			details = salesForceManagerLegacy.retrieveDetailsBySlug(memberSlug, true);
 		}

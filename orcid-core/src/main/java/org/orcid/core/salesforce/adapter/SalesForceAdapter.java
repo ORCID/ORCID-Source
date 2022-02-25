@@ -301,4 +301,16 @@ public class SalesForceAdapter {
         }
         return integrationList;
     }
+    
+    public List<Opportunity> createOpportunitiesList(JSONArray opportunities) {
+    	List<Opportunity> opportunityList = new ArrayList<Opportunity>();
+    	try {
+        	for (int i = 0; i < opportunities.length(); i++) {
+        		opportunityList.add(mapperFacade.map(opportunities.getJSONObject(i), Opportunity.class));
+            }                       
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting opportunities from SalesForce JSON", e);
+        }
+        return opportunityList;
+    }
 }
