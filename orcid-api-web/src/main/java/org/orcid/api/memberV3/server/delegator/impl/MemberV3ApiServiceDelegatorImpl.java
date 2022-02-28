@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
@@ -695,7 +696,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(groupIdRecord.getGroupId()));
             throw new DuplicatedGroupIdRecordException();
         }
-        
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
         return apiUtils.buildApiResponse(null, "group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
     }
@@ -706,6 +708,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         if (!putCode.equals(groupIdRecord.getPutCode())) {
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, groupIdRecord.getPutCode()));                            
         }
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
         return Response.ok(updatedRecord).build();
     }
