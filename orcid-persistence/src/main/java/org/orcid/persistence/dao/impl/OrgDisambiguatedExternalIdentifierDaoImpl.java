@@ -64,5 +64,14 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
         }
         return false;
     }
+    
+    @Override
+    public List<OrgDisambiguatedExternalIdentifierEntity> findByIdentifierIdAndType(String identifier, String identifierType) {
+        TypedQuery<OrgDisambiguatedExternalIdentifierEntity> query = entityManager.createQuery("FROM OrgDisambiguatedExternalIdentifierEntity WHERE orgDisambiguated.id = :orgDisambiguatedId AND identifier = :identifier AND identifierType = :identifierType",
+                OrgDisambiguatedExternalIdentifierEntity.class);
+        query.setParameter("identifier", identifier);
+        query.setParameter("identifierType", identifierType);
+        return query.getResultList();
+    }
 
 }
