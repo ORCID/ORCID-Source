@@ -26,7 +26,7 @@
     "intl": "1.2.5",
     "jquery": "^3.5.0",
     "mdn-polyfills": "5.8.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "npm": "^6.13.4",
     "primeicons": "^1.0.0",
     "primeng": "7.0.0-beta.1",
