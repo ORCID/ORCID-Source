@@ -166,7 +166,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
         // Filter the contributors list
         for (WorkSummaryExtended wse : wseList) {
-            if (wse.getContributors() != null) {
+            if (wse.getContributors() != null && wse.getContributors().getContributor() != null) {
                 contributorUtils.filterContributorPrivateData(wse);
                 List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
                 if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
