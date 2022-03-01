@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
@@ -182,13 +183,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors) {
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
         contributors.forEach(contributor -> {
-            if (contributor.getContributorOrcid() != null) {
+        	if (contributor.getContributorOrcid() != null) {
                 String orcid = contributor.getContributorOrcid().getPath();
-                if (!"".equals(orcid)) {
+                if (!StringUtils.isBlank(orcid)) {
                     if (contributorsRolesAndSequencesList.size() > 0) {
                         List<ContributorsRolesAndSequences> c = contributorsRolesAndSequencesList
                             .stream()
-                            .filter(contr -> contr.getContributorOrcid() != null && orcid.equals(contr.getContributorOrcid().getPath()))                                                                        
+                            .filter(contr -> contr.getContributorOrcid() != null && contr.getContributorOrcid().getPath() != null && orcid.equals(contr.getContributorOrcid().getPath()))                                                                        
                             .collect(Collectors.toList());
                         if (c.size() > 0) {
                             ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
@@ -206,6 +207,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     } else {
                         contributorsRolesAndSequencesList.add(addContributor(contributor));
                     }
+                } else {
+                	contributorsRolesAndSequencesList.add(addContributor(contributor));
                 }
             } else {
                 contributorsRolesAndSequencesList.add(addContributor(contributor));
