@@ -194,10 +194,14 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                         if (c.size() > 0) {
                             ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
                             ContributorAttributes ca = new ContributorAttributes();
-                            if (contributor.getContributorAttributes().getContributorRole() != null) {
-                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
-                            }
-                            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+                            if(contributor.getContributorAttributes() != null) {
+	                            if (contributor.getContributorAttributes().getContributorRole() != null) {
+	                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+	                            }
+	                            if(contributor.getContributorAttributes().getContributorSequence() != null) {
+	                            	ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+	                            }
+                            }                            
                             List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
                             rolesAndSequencesList.add(ca);
                             contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
@@ -219,6 +223,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private ContributorsRolesAndSequences addContributor(Contributor contributor) {
         ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
+        if(contributor == null) {
+        	return crs;
+        }
         if (contributor.getContributorOrcid() != null) {
             crs.setContributorOrcid(contributor.getContributorOrcid());
         }
