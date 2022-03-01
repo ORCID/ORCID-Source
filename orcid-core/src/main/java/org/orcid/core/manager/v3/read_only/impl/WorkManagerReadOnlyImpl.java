@@ -237,7 +237,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             if (contributor.getContributorAttributes().getContributorRole() != null) {
                 ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
             }
-            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            if (contributor.getContributorAttributes().getContributorSequence() != null) {
+                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            }
             List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
             rolesAndSequences.add(ca);
             crs.setRolesAndSequences(rolesAndSequences);
