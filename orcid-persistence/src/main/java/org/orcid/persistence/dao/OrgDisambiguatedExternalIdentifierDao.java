@@ -10,5 +10,7 @@ public interface OrgDisambiguatedExternalIdentifierDao extends GenericDao<OrgDis
     
     boolean exists(Long orgDisambiguatedId, String identifier, String identifierType);
 
-    List<OrgDisambiguatedExternalIdentifierEntity> findISNIsOfIncorrectLength(int batchSize);    
+    List<OrgDisambiguatedExternalIdentifierEntity> findISNIsOfIncorrectLength(int batchSize);
+
+    List<OrgDisambiguatedExternalIdentifierEntity> findByIdentifierIdAndType(String identifier, String identifierType);    
 }

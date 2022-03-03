@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
@@ -165,7 +166,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
         // Filter the contributors list
         for (WorkSummaryExtended wse : wseList) {
-            if (wse.getContributors() != null) {
+            if (wse.getContributors() != null && wse.getContributors().getContributor() != null) {
                 contributorUtils.filterContributorPrivateData(wse);
                 List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
                 if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
@@ -182,21 +183,25 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors) {
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
         contributors.forEach(contributor -> {
-            if (contributor.getContributorOrcid() != null) {
+        	if (contributor.getContributorOrcid() != null) {
                 String orcid = contributor.getContributorOrcid().getPath();
-                if (!"".equals(orcid)) {
+                if (!StringUtils.isBlank(orcid)) {
                     if (contributorsRolesAndSequencesList.size() > 0) {
                         List<ContributorsRolesAndSequences> c = contributorsRolesAndSequencesList
                             .stream()
-                            .filter(contr -> contr.getContributorOrcid() != null && orcid.equals(contr.getContributorOrcid().getPath()))                                                                        
+                            .filter(contr -> contr.getContributorOrcid() != null && contr.getContributorOrcid().getPath() != null && orcid.equals(contr.getContributorOrcid().getPath()))                                                                        
                             .collect(Collectors.toList());
                         if (c.size() > 0) {
                             ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
                             ContributorAttributes ca = new ContributorAttributes();
-                            if (contributor.getContributorAttributes().getContributorRole() != null) {
-                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
-                            }
-                            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+                            if(contributor.getContributorAttributes() != null) {
+	                            if (contributor.getContributorAttributes().getContributorRole() != null) {
+	                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+	                            }
+	                            if(contributor.getContributorAttributes().getContributorSequence() != null) {
+	                            	ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+	                            }
+                            }                            
                             List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
                             rolesAndSequencesList.add(ca);
                             contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
@@ -206,6 +211,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     } else {
                         contributorsRolesAndSequencesList.add(addContributor(contributor));
                     }
+                } else {
+                	contributorsRolesAndSequencesList.add(addContributor(contributor));
                 }
             } else {
                 contributorsRolesAndSequencesList.add(addContributor(contributor));
@@ -216,6 +223,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private ContributorsRolesAndSequences addContributor(Contributor contributor) {
         ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
+        if(contributor == null) {
+        	return crs;
+        }
         if (contributor.getContributorOrcid() != null) {
             crs.setContributorOrcid(contributor.getContributorOrcid());
         }
@@ -227,7 +237,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             if (contributor.getContributorAttributes().getContributorRole() != null) {
                 ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
             }
-            ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            if (contributor.getContributorAttributes().getContributorSequence() != null) {
+                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            }
             List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
             rolesAndSequences.add(ca);
             crs.setRolesAndSequences(rolesAndSequences);

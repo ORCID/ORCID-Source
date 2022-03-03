@@ -47,32 +47,32 @@
 
                     <!-- ABOUT -->
                     <li role="presentation" class="expanded"  >
-                        <a href="{{aboutUriTemporal}}/what-is-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }}</a>
+                        <a href="{{aboutUri}}/what-is-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }}</a>
                     </li>
     
                      <!-- FOR RESEARCHERS -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}/help-getting-started-with-your-orcid/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.forResearchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUri}}/help-getting-started-with-your-orcid/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.forResearchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- Membership -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}/about-membership" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.membership")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUri}}/about-membership" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.membership")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- DOCUMENTATION -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}/documentation/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.documentation")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUri}}/documentation/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.documentation")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- RESOURCES -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}/resources/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.resources")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUri}}/resources/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.resources")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <!-- NEWS & EVENTS -->
                     <li role="presentation" class="expanded">
-                        <a href="{{aboutUriTemporal}}" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.newsAndEvents")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
+                        <a href="{{aboutUri}}" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.newsAndEvents")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
 
                     <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU'>

@@ -144,10 +144,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
-        RedirectView rv = new RedirectView();
-        rv.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
-        rv.setUrl(getBasePath() + orcid.toUpperCase());
-        return new ModelAndView(rv);
+        return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/" + orcid.toUpperCase()));
     }
 
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
