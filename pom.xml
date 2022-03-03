@@ -1021,7 +1021,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.7</version>
+               <version>3.0.8</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
