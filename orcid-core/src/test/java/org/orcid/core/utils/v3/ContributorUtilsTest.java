@@ -68,7 +68,6 @@ public class ContributorUtilsTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         contributorUtils.setCacheManager(cacheManager);
-        contributorUtils.setProfileEntityCacheManager(profileEntityCacheManager);
         contributorUtils.setProfileEntityManager(profileEntityManager);
         contributorUtils.setRecordNameDao(recordNameDao);
         contributorUtils.setProfileLastModifiedAspect(profileLastModifiedAspect);
