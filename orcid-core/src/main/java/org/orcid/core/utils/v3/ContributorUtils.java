@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ehcache.Cache;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
@@ -35,8 +35,6 @@ public class ContributorUtils {
     private final Integer BATCH_SIZE;
     
     private static final String RECORD_NAME_KEY_POSTFIX = "_record_name";      
-
-    private ProfileEntityCacheManager profileEntityCacheManager;
 
     private ActivityManager cacheManager;
 
@@ -137,8 +135,12 @@ public class ContributorUtils {
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {
                     String orcid = entity.getOrcid();
-                    String publicCreditName = cacheManager.getPublicCreditName(orcid);
-                    contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
+                    String publicCreditName = RecordNameUtils.getPublicName(entity);
+                    publicCreditName = (publicCreditName == null ? "" : publicCreditName);
+                    contributorNames.put(orcid, publicCreditName);
+                    // Looks like we never filled the cache LOL! 
+                    // Fill the cache                    
+                    contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
                     // Store in the request, to use as a cache
                     ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                     if (sra != null) {
@@ -163,11 +165,7 @@ public class ContributorUtils {
     private String getCacheKey(String orcid) {
         Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
-    }
-    
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-    }
+    }    
 
     public void setCacheManager(ActivityManager cacheManager) {
         this.cacheManager = cacheManager;
