@@ -386,7 +386,6 @@
 	
 	<!-- Utilities -->
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
-		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
