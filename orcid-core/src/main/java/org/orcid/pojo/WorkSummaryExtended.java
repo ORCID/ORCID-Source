@@ -9,7 +9,8 @@ import java.util.List;
 public class WorkSummaryExtended extends WorkSummary {
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;
-    
+
+    protected int numberOfContributors;
     protected List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
 
     public WorkContributors getContributors() {
@@ -26,6 +27,14 @@ public class WorkSummaryExtended extends WorkSummary {
 
     public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
+    }
+
+    public int getNumberOfContributors() {
+        return numberOfContributors;
+    }
+
+    public void setNumberOfContributors(int numberOfContributors) {
+        this.numberOfContributors = numberOfContributors;
     }
 }
 
