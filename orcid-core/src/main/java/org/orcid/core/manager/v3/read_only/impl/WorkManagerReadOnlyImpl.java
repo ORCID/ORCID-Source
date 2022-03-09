@@ -167,24 +167,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         // Filter the contributors list
         for (WorkSummaryExtended wse : wseList) {
             if (wse.getContributors() != null && wse.getContributors().getContributor() != null) {
-            	/*
-            	 * @Daniel: here, we are processing all the contributors, regardless if we will display just 50 at the end; so, to me here is the main problem, 
-            	 * we are going to the database to fetch the public name for all contributors, which in some cases are hundreds per work, but, at the end, we display only 50 of those. 
-            	 * 
-            	 * To me, it is not clear how to modify this function to filter just the 50 that we are going to display, but, please focus your effort here, lets try to fetch the public name
-            	 * just for the contributors that will be displayed in the UI.
-            	 * 
-            	 * */
                 contributorUtils.filterContributorPrivateData(wse);
-                
-                
-                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
-                if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid.subList(0, maxContributorsForUI));
-                } else {
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                }
-                wse.setNumberOfContributorsGroupedByOrcid(contributorsGroupedByOrcid.size());
+                wse.setContributorsGroupedByOrcid(getContributorsGroupedByOrcid(wse.getContributors().getContributor()));
             }
         }
         return wseList;

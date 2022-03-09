@@ -10,7 +10,6 @@ public class WorkSummaryExtended extends WorkSummary {
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected WorkContributors contributors;
     
-    protected int numberOfContributorsGroupedByOrcid;
     protected List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
 
     public WorkContributors getContributors() {
@@ -27,14 +26,6 @@ public class WorkSummaryExtended extends WorkSummary {
 
     public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
-    }
-
-    public int getNumberOfContributorsGroupedByOrcid() {
-        return numberOfContributorsGroupedByOrcid;
-    }
-
-    public void setNumberOfContributorsGroupedByOrcid(int numberOfContributorsGroupedByOrcid) {
-        this.numberOfContributorsGroupedByOrcid = numberOfContributorsGroupedByOrcid;
     }
 }
 

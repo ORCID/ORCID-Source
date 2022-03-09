@@ -218,7 +218,6 @@ public class WorkGroup extends ActivityGroup {
         workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
-            workForm.setNumberOfContributorsGroupedByOrcid(workSummary.getNumberOfContributorsGroupedByOrcid());
         }
         return workForm;
     }
