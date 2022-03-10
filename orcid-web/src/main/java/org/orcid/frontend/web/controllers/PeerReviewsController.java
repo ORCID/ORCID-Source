@@ -81,10 +81,10 @@ public class PeerReviewsController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/peer-reviews-minimized.json", method = RequestMethod.GET)
-    public ResponseEntity<List<PeerReviewMinimizedSummary>> getPeerReviewsMinimizedJson(@RequestParam("sortAsc") boolean sortAsc){
+    public @ResponseBody ResponseEntity<List<PeerReviewMinimizedSummary>> getPeerReviewsMinimizedJson(@RequestParam("sortAsc") boolean sortAsc){
         List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManager.getPeerReviewMinimizedSummaryList(getEffectiveUserOrcid(), false);
         if (peerReviewMinimizedSummaryList.size() == 0) {
-            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
         }
         peerReviewMinimizedSummaryList.sort(new PeerReviewMinimizedSummaryComparator((!sortAsc)));
         return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);

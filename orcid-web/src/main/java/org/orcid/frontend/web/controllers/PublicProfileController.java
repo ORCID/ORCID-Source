@@ -549,7 +549,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
         if (peerReviewMinimizedSummaryList.size() == 0) {
-            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
         }
         peerReviewMinimizedSummaryList.sort(new PeerReviewMinimizedSummaryComparator((!sortAsc)));
         return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
