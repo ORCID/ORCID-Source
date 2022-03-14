@@ -76,12 +76,14 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
         List<OrgDisambiguatedEntity> entities = null;
+        int startIndex = 0;
         do {
-            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(0, INDEXING_CHUNK_SIZE);
+            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("Found chunk of {} disambiguated orgs for indexing", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 processDisambiguatedOrgInTransaction(entity);
             }
+            startIndex=startIndex+INDEXING_CHUNK_SIZE;
         } while (!entities.isEmpty());
 
     }

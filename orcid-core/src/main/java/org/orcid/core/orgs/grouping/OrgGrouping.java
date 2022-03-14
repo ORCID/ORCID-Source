@@ -90,6 +90,10 @@ public class OrgGrouping implements Serializable {
     private void setExtentedOrgGroup(OrgDisambiguated sourceOrg) {
         // set source Organization
         orgGroup.setSourceOrg(sourceOrg);
+        String orgKey = buildOrgDisambiguatedKey(sourceOrg);
+        if (!orgGroup.getOrgs().containsKey(orgKey)) {
+            orgGroup.getOrgs().put(orgKey, sourceOrg);
+        }
         // get initial group setup
         getGroupForOrg(sourceOrg);
         // second iteration to get any connected orgs through external
@@ -100,7 +104,7 @@ public class OrgGrouping implements Serializable {
                 getGroupForOrg(org);
             }
         }
-        LOGGER.debug("Group created for: " + sourceOrg.sourceId + " total orgs in the group: " + orgGroup.getOrgs().size() + " . It has ROR? "
+        LOGGER.debug("Group created for source type: [" +  sourceOrg.sourceType + "] and id: ["+ sourceOrg.sourceId + "] total orgs in the group: " + orgGroup.getOrgs().size() + " . It has ROR? "
                 + (orgGroup.getRorOrg() != null));
         return;
     }
