@@ -3,14 +3,14 @@ Many have contributed to ORCID's Open Source effort, from direct contributions o
 ## Active Contributors
 * [Rob Blackburn](https://github.com/dreamofaredbird)<a href="https://orcid.org/0000-0003-0187-9064" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
 * [Tom Demeranville](https://github.com/TomDemeranville)<a href="https://orcid.org/0000-0003-0902-4386" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
-* [Liz Krznarich](https://github.com/lizkrznarich)<a href="https://orcid.org/0000-0001-6622-4910" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
 * [Leonardo Mendoza](https://github.com/leomendoza123)<a href="https://orcid.org/0000-0002-6914-8682" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, Avantica
 * [Angel Montenegro](https://github.com/amontenegro)<a href="https://orcid.org/0000-0002-7869-831X" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
-* [Jeffrey Perez](https://github.com/jpeerz)<a href="https://orcid.org/0000-0002-1615-2928" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, Avantica
 * [Will Simpson](https://github.com/wjrsimpson)<a href="https://orcid.org/0000-0003-4654-1403" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
-* [Catalina Wilmers](https://github.com/caoyler)<a href="https://orcid.org/0000-0002-1982-1816" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
 
 ## Additional contributors
+* [Liz Krznarich](https://github.com/lizkrznarich)<a href="https://orcid.org/0000-0001-6622-4910" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
+* [Catalina Wilmers](https://github.com/caoyler)<a href="https://orcid.org/0000-0002-1982-1816" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
+* [Jeffrey Perez](https://github.com/jpeerz)<a href="https://orcid.org/0000-0002-1615-2928" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, Avantica
 * [Manuel Calvo](https://github.com/mjcalvo21)<a href="https://orcid.org/0000-0002-9982-7811" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, Avantica
 * [Laura Paglione](https://github.com/Laura-ORCID)<a href="https://orcid.org/0000-0003-3188-6273" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
 * [Rob Peters](https://github.com/rcpeters)<a href="https://orcid.org/0000-0002-0036-9460" width="16" height="16" target="_blank"><img src="https://orcid.org/sites/default/files/images/orcid_16x16(1).gif" border="0"></a>, ORCID
