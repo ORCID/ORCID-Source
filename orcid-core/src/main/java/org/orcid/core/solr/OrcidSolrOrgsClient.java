@@ -13,6 +13,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.orcid.core.togglz.Features;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
 import org.springframework.dao.NonTransientDataAccessResourceException;
@@ -21,8 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrcidSolrOrgsClient {
 
-    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^100.0 (org-disambiguated-name-string:%s)^50.0 (org-disambiguated-country:%s)^5.0 (org-disambiguated-city:%s)^5.0 (org-names:%s)^1.0 ";
-    private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0 (org-names:%s)^1.0";
+    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^100.0 (org-disambiguated-name-string:%s)^50.0";
+    private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
 
     @Resource(name = "solrReadOnlyOrgsClient")
     private SolrClient solrReadOnlyOrgsClient;
@@ -56,13 +57,12 @@ public class OrcidSolrOrgsClient {
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
         query.addOrUpdateSort("score", ORDER.desc);
-        if (promoteChosenOrgs) {
-            query.addOrUpdateSort("org-chosen-by-member", ORDER.desc);
+        if (Features.ORG_SEARCH_SORT_BY_POPULARITY.isActive()) {
+            query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
         }
-        query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
 
-        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s AND %s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF",
-                SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI", SolrConstants.ORG_CHOSEN_BY_MEMBER, true));
+        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF",
+                SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI"));
 
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
