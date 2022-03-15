@@ -371,7 +371,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
             		" w.journal_title, w.language_code, w.translated_title, w.translated_title_language_code," +
             		" w.external_ids_json, w.publication_year, w.publication_month," +
             		" w.publication_day, w.visibility, w.display_index," +
-                    " (SELECT to_json(array_agg(t)) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 1) t) as top_contributors" +
+                    " (SELECT to_json(array_agg(t)) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 100) t) as top_contributors" +
                     " FROM work w" +
                     " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid) AND w.visibility='PUBLIC'";
         } else {
@@ -380,7 +380,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
             		" w.journal_title, w.language_code, w.translated_title, w.translated_title_language_code," +
             		" w.external_ids_json, w.publication_year, w.publication_month," +
             		" w.publication_day, w.visibility, w.display_index," +
-                    " (SELECT to_json(array_agg(t)) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 1) t) as top_contributors" +
+                    " (SELECT to_json(array_agg(t)) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 100) t) as top_contributors" +
                     " FROM work w" +
                     " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid)";
         }
