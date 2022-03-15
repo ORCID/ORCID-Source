@@ -512,11 +512,11 @@
 			multiValued="false" />
 		<field name="org-disambiguated-name" type="orcid_text_name" indexed="true" stored="true"
 			multiValued="false" />
-		<field name="org-disambiguated-city" type="orcid_text_name" indexed="false" stored="true"
+		<field name="org-disambiguated-city" type="orcid_text_name" indexed="true" stored="true"
 			multiValued="false" />
-		<field name="org-disambiguated-region" type="orcid_text_name" indexed="false" stored="true"
+		<field name="org-disambiguated-region" type="orcid_text_name" indexed="true" stored="true"
 			multiValued="false" />
-		<field name="org-disambiguated-country" type="string" indexed="false" stored="true"
+		<field name="org-disambiguated-country" type="string" indexed="true" stored="true"
 			multiValued="false" />
 		<field name="org-disambiguated-type" type="string" indexed="true" stored="true"
 			multiValued="false" />
