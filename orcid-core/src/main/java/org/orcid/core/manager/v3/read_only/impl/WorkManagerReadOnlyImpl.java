@@ -2,7 +2,9 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.contributors.roles.credit.CreditRole;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
@@ -23,7 +25,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
@@ -36,6 +37,7 @@ import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,6 +65,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
+
+    @Resource
+    private WorkContributorRoleConverter workContributorsRoleConverter;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -162,24 +167,54 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
-        List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedExtendedWorks(orcid, getLastModified(orcid));
-        List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
+        List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid, false);
         // Filter the contributors lis
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             for (WorkSummaryExtended wse : wseList) {
                 if (wse.getContributors() != null && wse.getContributors().getContributor() != null) {
-                    contributorUtils.filterContributorPrivateData(wse);
+                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
                     List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
                     if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
                         wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid.subList(0, maxContributorsForUI));
                     } else {
                         wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
                     }
-                    wse.setNumberOfContributorsGroupedByOrcid(contributorsGroupedByOrcid.size());
+                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
                 }
             }
         }
         return wseList;
+    }
+
+    private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean justPublic) {
+        List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
+        List<Object[]> list = workDao.getWorksByOrcid(orcid, justPublic);
+        for(Object[] q1 : list){
+            BigInteger putCode = (BigInteger) q1[0];
+            String workType = q1[2].toString();
+            String title = q1[3].toString();
+            String subtitle = q1[4].toString();
+            String description = q1[5].toString();
+            String work_url = q1[6].toString();
+            String journal_title = q1[7].toString();
+            String language_code = q1[8].toString();
+            String translated_title = q1[9].toString();
+            String translated_title_language_code = q1[10].toString();
+            String external_ids_json = q1[11].toString();
+            String publication_year = q1[12].toString();
+            String publication_month = q1[13].toString();
+            String publication_day = q1[14].toString();
+            String visibility = q1[15].toString();
+            String display_index = q1[16].toString();
+            String contributors = q1[17].toString();
+            WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
+            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title)
+                    .subtitle(subtitle)
+                    .translatedTitle(translated_title)
+                    .build();
+            workSummaryExtendedList.add(wse);
+        }
+        return workSummaryExtendedList;
     }
 
     private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors) {

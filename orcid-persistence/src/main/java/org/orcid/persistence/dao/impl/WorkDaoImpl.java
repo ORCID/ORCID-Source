@@ -358,5 +358,33 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public WorkEntity merge(WorkEntity entity) {
         return super.merge(entity);
     }
+
+    @Override
+    public List<Object[]> getWorksByOrcid(String orcid, boolean justPublic) {
+        String sqlString = null;
+        if (justPublic) {
+            sqlString = "SELECT\n" +
+                    "    w.work_id, w.orcid, w.work_type, w.title, w.subtitle, w.description, w.work_url,\n" +
+                    "    w.journal_title, w.language_code, w.translated_title, w.translated_title_language_code,\n" +
+                    "    w.external_ids_json, w.publication_year, w.publication_month,\n" +
+                    "    w.publication_day, w.visibility, w.display_index,\n" +
+                    "    (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 250) t) top_500_contributors\n" +
+                    "FROM work w\n" +
+                    "WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid) AND w.visibility='PUBLIC'";
+        } else {
+            sqlString = "SELECT" +
+                    " w.work_id, w.orcid, w.work_type, w.title, w.subtitle, w.description, w.work_url," +
+                    " w.journal_title, w.language_code, w.translated_title, w.translated_title_language_code," +
+                    " w.external_ids_json, w.publication_year, w.publication_month," +
+                    " w.publication_day, w.visibility, w.display_index," +
+                    " (SELECT to_json(array_agg(row_to_json(t)))::text FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 250) t) top_500_contributors" +
+                    " FROM work w" +
+                    " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid)";
+        }
+        Query query = entityManager.createNativeQuery(sqlString);
+        query.setParameter("orcid", orcid);
+
+        return query.getResultList();
+    }
 }
 
