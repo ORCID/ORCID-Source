@@ -138,8 +138,6 @@ public enum Features implements Feature {
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB,
     
-    @Label("Organization search add sort by popularity")
-    ORG_SEARCH_SORT_BY_POPULARITY;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

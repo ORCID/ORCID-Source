@@ -57,7 +57,7 @@ public class OrcidSolrOrgsClient {
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
         query.addOrUpdateSort("score", ORDER.desc);
-        if (Features.ORG_SEARCH_SORT_BY_POPULARITY.isActive()) {
+        if (promoteChosenOrgs) {
             query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
         }
 
