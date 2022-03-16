@@ -89,6 +89,9 @@ public class OrgGrouping implements Serializable {
                                     String key = buildOrgDisambiguatedKey(o);
                                     if (!orgGroup.getOrgs().containsKey(key)) {
                                         orgGroup.getOrgs().put(key, o);
+                                        if (o.getSourceType().equals(OrgDisambiguatedSourceType.ROR.name())) {
+                                            orgGroup.setRorOrg(o);
+                                        }
                                     }
                                 }));
                             }
