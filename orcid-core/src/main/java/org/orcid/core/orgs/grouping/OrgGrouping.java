@@ -136,7 +136,7 @@ public class OrgGrouping implements Serializable {
                 getGroupForOrg(org);
             }
         }
-        LOGGER.debug("Group created for source type: [" + sourceOrg.sourceType + "] and id: [" + sourceOrg.sourceId + "] total orgs in the group: "
+        LOGGER.info("Group created for source type: [" + sourceOrg.sourceType + "] and id: [" + sourceOrg.sourceId + "] total orgs in the group: "
                 + orgGroup.getOrgs().size() + " . It has ROR? " + (orgGroup.getRorOrg() != null));
         return;
     }
