@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
@@ -16,12 +13,20 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
 public class WorkContributorsConverter extends BidirectionalConverter<WorkContributors, String> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkContributorsConverter.class);
+	
     private ContributorRoleConverter roleConverter;
 
     public WorkContributorsConverter(ContributorRoleConverter roleConverter) {
@@ -77,9 +82,13 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
         final ObjectMapper objectMapper = new ObjectMapper();
         List<WorkContributorsList> langList = new ArrayList<>();
         try {
-            langList = objectMapper.readValue(source, new TypeReference<List<WorkContributorsList>>(){});
+        	//TODO: Dani, looks like this is not doing anything? It is just an empty list
+            langList = objectMapper.readValue(source, new TypeReference<List<WorkContributorsList>>(){});			
         } catch (JsonProcessingException e) {
             return langList;
+        } catch (Exception ioe) {
+        	LOGGER.error("Unable to process contributors", ioe);
+        	throw ioe;
         }
         return langList;
     }

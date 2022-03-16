@@ -1557,5 +1557,15 @@
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
     
     <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+
+    <bean id="workContributorsConverter" class="org.orcid.core.adapter.v3.converter.WorkContributorsConverter">
+        <constructor-arg ref="workContributorRoleConverter" />
+    </bean>
+    
+    <bean id="jsonWorkExternalIdentifiersConverterV3" class="org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3">
+        <constructor-arg ref="PIDNormalizationService" />
+        <constructor-arg ref="PIDResolverService" />
+        <constructor-arg ref="localeManager" />
+    </bean>
     
 </beans>

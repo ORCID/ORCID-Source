@@ -1,5 +1,15 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
@@ -9,7 +19,7 @@ import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
-import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
@@ -20,12 +30,15 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
-import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
-import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
-import org.orcid.jaxb.model.v3.release.record.*;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
@@ -42,15 +55,6 @@ import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -77,17 +81,17 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private WorkContributorRoleConverter workContributorsRoleConverter;
 
-    @Resource(name = "PIDNormalizationService")
-    private PIDNormalizationService norm;
-
-    @Resource(name = "PIDResolverService")
-    private PIDResolverService resolverService;
-
+    @Resource(name = "workContributorsConverter")
+    private WorkContributorsConverter workContributorsConverter;
+        
     @Resource
-    private LocaleManager localeManager;
+    private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
 
     @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+    
+    @Resource
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -211,6 +215,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<Object[]> list = workDao.getWorksByOrcid(orcid);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
+            // TODO: If we don't need the ORCID, then don't include it in the query, lets save some bandwidth
             String o = q1[1].toString();
             String workType = isEmpty(q1[2]);
             String title = isEmpty(q1[3]);
@@ -232,18 +237,18 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Timestamp createdDate = (Timestamp) q1[19];
             Timestamp lastModifiedDate = (Timestamp) q1[20];
             String contributors = isEmpty(q1[21]);
-            WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
-            JSONWorkExternalIdentifiersConverterV3 workExternalIdentifiersConverter = new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager);
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
-                externalIDs = workExternalIdentifiersConverter.convertFrom(externalIdsJson,null);
+                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
             }
             String clientName = null;
             if (clientSourceId != null) {
                 ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(clientSourceId);
                 clientName = clientDetails.getClientName();
+                
+                
             }
-            List<WorkContributorsList> contributorList = wcc.getContributorsList(contributors);
+            List<WorkContributorsList> contributorList = workContributorsConverter.getContributorsList(contributors);
             WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
                     .subtitle(subtitle)
                     .translatedTitle(translatedTitle)
