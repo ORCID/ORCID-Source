@@ -190,7 +190,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         ProfileEntity profile = null;
         if (!StringUtils.isEmpty(username)) {
             if (OrcidStringUtils.isValidOrcid(username)) {
-                profile = profileDao.find(username);
+                profile = profileDao.find(username.toUpperCase());
             } else {
                 try {
                     String orcid = emailManagerReadOnly.findOrcidIdByEmail(username);
