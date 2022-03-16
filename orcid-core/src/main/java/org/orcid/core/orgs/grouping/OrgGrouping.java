@@ -69,6 +69,10 @@ public class OrgGrouping implements Serializable {
             if (orgToGroup.getSourceType().equals(OrgDisambiguatedSourceType.ROR.name())) {
                 orgGroup.setRorOrg(orgToGroup);
             }
+            if (orgToGroup.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
+                orgGroup.setFunding(true);
+            }
+            
             for (OrgDisambiguatedExternalIdentifiers externalIdentifiers : orgToGroup.getOrgDisambiguatedExternalIdentifiers()) {
                 for (String externalIdentifier : externalIdentifiers.getAll()) {
                     if (ObjectUtils.containsConstant(OrgDisambiguatedSourceType.values(), externalIdentifiers.getIdentifierType(), true)) {
@@ -78,6 +82,7 @@ public class OrgGrouping implements Serializable {
                         if (externalIdentifiers.getIdentifierType().equals(OrgDisambiguatedSourceType.FUNDREF.name())
                                 && !OrcidStringUtils.isValidURL(externalIdentifier)) {
                             externalIdentifier = FUNDREF_BASE_URL + externalIdentifier;
+                            orgGroup.setFunding(true);
                         }
                         org = orgDisambiguatedManager.findInDB(externalIdentifier, externalIdentifiers.getIdentifierType());
 

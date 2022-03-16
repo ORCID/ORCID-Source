@@ -83,7 +83,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             for (OrgDisambiguatedEntity entity : entities) {
                 processDisambiguatedOrgInTransaction(entity);
             }
-            startIndex=startIndex+INDEXING_CHUNK_SIZE;
+            startIndex = startIndex + INDEXING_CHUNK_SIZE;
         } while (!entities.isEmpty());
 
     }
@@ -169,7 +169,18 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         if (OrgDisambiguatedSourceType.FUNDREF.name().equals(entity.getSourceType())) {
             document.setFundingOrg(true);
         } else {
-            document.setFundingOrg(false);
+            // check if it is a ROR
+            if (OrgDisambiguatedSourceType.ROR.name().equals(entity.getSourceType())) {
+                // do the grouping and see if it has fundref
+                OrgGroup orgGroup = new OrgGrouping(entity, this).getOrganizationGroup();
+                if (orgGroup.isFunding()) {
+                    document.setFundingOrg(true);
+                } else {
+                    document.setFundingOrg(false);
+                }
+            } else {
+                document.setFundingOrg(false);
+            }
         }
 
         document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
@@ -269,11 +280,11 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         normalizeExternalIdentifier(identifier);
         orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
-    
+
     public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String type, String identifier) {
         List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
-        List<OrgDisambiguatedExternalIdentifierEntity> extIds= orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(type, identifier);
-        extIds.stream().forEach((e)-> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
+        List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(type, identifier);
+        extIds.stream().forEach((e) -> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
         return orgDisambiguatedIds;
     }
 

@@ -13,6 +13,7 @@ public class OrgGroup {
     private OrgDisambiguated sourceOrg;
     private HashMap<String, OrgDisambiguated> orgs = new HashMap<String, OrgDisambiguated>();
     private HashMap<String, OrgDisambiguated> externalIds = new HashMap<String, OrgDisambiguated>();
+    private boolean isFunding = false;
     
     private OrgDisambiguated rorOrg = null;
     
@@ -38,5 +39,13 @@ public class OrgGroup {
 
     public void setRorOrg(OrgDisambiguated rorOrg) {
         this.rorOrg = rorOrg;
+    }
+
+    public boolean isFunding() {
+        return isFunding;
+    }
+
+    public void setFunding(boolean isFunding) {
+        this.isFunding = isFunding;
     }
 }
