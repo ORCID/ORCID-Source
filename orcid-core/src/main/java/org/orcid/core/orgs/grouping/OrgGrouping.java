@@ -39,12 +39,22 @@ public class OrgGrouping implements Serializable {
 
     public OrgGrouping(OrgDisambiguated sourceOrg, OrgDisambiguatedManager orgDisambiguatedManager) {
         this.orgDisambiguatedManager = orgDisambiguatedManager;
+        
         setExtentedOrgGroup(sourceOrg);
+        LOGGER.info("Group for: " + sourceOrg.getSourceId() + ":" + sourceOrg.getSourceType() + " hasROR? " + (orgGroup.getRorOrg() != null));
+        orgGroup.getOrgs().values().stream().forEach(o ->{
+            LOGGER.info("PART OF GROUP: " + o.getSourceId() + ":" + o.getSourceType());
+        });
+        
     }
 
     public OrgGrouping(OrgDisambiguatedEntity sourceOrg, OrgDisambiguatedManager orgDisambiguatedManager) {
         this.orgDisambiguatedManager = orgDisambiguatedManager;
         setExtentedOrgGroup(convertEntity(sourceOrg));
+        LOGGER.info("Group for: " + sourceOrg.getSourceId() + ":" + sourceOrg.getSourceType() + " hasROR? " + (orgGroup.getRorOrg() != null));
+        orgGroup.getOrgs().values().stream().forEach(o ->{
+            LOGGER.info("PART OF GROUP: " + o.getSourceId() + ":" + o.getSourceType());
+        });
     }
 
     private void getGroupForOrg(OrgDisambiguated orgToGroup) {
