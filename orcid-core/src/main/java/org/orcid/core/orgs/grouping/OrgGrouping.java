@@ -39,12 +39,22 @@ public class OrgGrouping implements Serializable {
 
     public OrgGrouping(OrgDisambiguated sourceOrg, OrgDisambiguatedManager orgDisambiguatedManager) {
         this.orgDisambiguatedManager = orgDisambiguatedManager;
+        
         setExtentedOrgGroup(sourceOrg);
+        LOGGER.info("Group for: " + sourceOrg.getSourceId() + ":" + sourceOrg.getSourceType() + " hasROR? " + (orgGroup.getRorOrg() != null));
+        orgGroup.getOrgs().values().stream().forEach(o ->{
+            LOGGER.info("PART OF GROUP: " + o.getSourceId() + ":" + o.getSourceType());
+        });
+        
     }
 
     public OrgGrouping(OrgDisambiguatedEntity sourceOrg, OrgDisambiguatedManager orgDisambiguatedManager) {
         this.orgDisambiguatedManager = orgDisambiguatedManager;
         setExtentedOrgGroup(convertEntity(sourceOrg));
+        LOGGER.info("Group for: " + sourceOrg.getSourceId() + ":" + sourceOrg.getSourceType() + " hasROR? " + (orgGroup.getRorOrg() != null));
+        orgGroup.getOrgs().values().stream().forEach(o ->{
+            LOGGER.info("PART OF GROUP: " + o.getSourceId() + ":" + o.getSourceType());
+        });
     }
 
     private void getGroupForOrg(OrgDisambiguated orgToGroup) {
@@ -59,6 +69,10 @@ public class OrgGrouping implements Serializable {
             if (orgToGroup.getSourceType().equals(OrgDisambiguatedSourceType.ROR.name())) {
                 orgGroup.setRorOrg(orgToGroup);
             }
+            if (orgToGroup.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
+                orgGroup.setFunding(true);
+            }
+            
             for (OrgDisambiguatedExternalIdentifiers externalIdentifiers : orgToGroup.getOrgDisambiguatedExternalIdentifiers()) {
                 for (String externalIdentifier : externalIdentifiers.getAll()) {
                     if (ObjectUtils.containsConstant(OrgDisambiguatedSourceType.values(), externalIdentifiers.getIdentifierType(), true)) {
@@ -68,6 +82,7 @@ public class OrgGrouping implements Serializable {
                         if (externalIdentifiers.getIdentifierType().equals(OrgDisambiguatedSourceType.FUNDREF.name())
                                 && !OrcidStringUtils.isValidURL(externalIdentifier)) {
                             externalIdentifier = FUNDREF_BASE_URL + externalIdentifier;
+                            orgGroup.setFunding(true);
                         }
                         org = orgDisambiguatedManager.findInDB(externalIdentifier, externalIdentifiers.getIdentifierType());
 
@@ -79,7 +94,24 @@ public class OrgGrouping implements Serializable {
                             if (!orgGroup.getOrgs().containsKey(orgKey)) {
                                 orgGroup.getOrgs().put(orgKey, org);
                             }
+                        } else {
+                            // check other possible orgs that have the same
+                            // identifier
+                            List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
+                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifiers.getIdentifierType(), externalIdentifier);
+                            if (orgsFromExternalIdentifier != null) {
+                                orgsFromExternalIdentifier.stream().forEach((o -> {
+                                    String key = buildOrgDisambiguatedKey(o);
+                                    if (!orgGroup.getOrgs().containsKey(key)) {
+                                        orgGroup.getOrgs().put(key, o);
+                                        if (o.getSourceType().equals(OrgDisambiguatedSourceType.ROR.name())) {
+                                            orgGroup.setRorOrg(o);
+                                        }
+                                    }
+                                }));
+                            }
                         }
+
                     }
                 }
             }
@@ -104,8 +136,8 @@ public class OrgGrouping implements Serializable {
                 getGroupForOrg(org);
             }
         }
-        LOGGER.debug("Group created for source type: [" +  sourceOrg.sourceType + "] and id: ["+ sourceOrg.sourceId + "] total orgs in the group: " + orgGroup.getOrgs().size() + " . It has ROR? "
-                + (orgGroup.getRorOrg() != null));
+        LOGGER.info("Group created for source type: [" + sourceOrg.sourceType + "] and id: [" + sourceOrg.sourceId + "] total orgs in the group: "
+                + orgGroup.getOrgs().size() + " . It has ROR? " + (orgGroup.getRorOrg() != null));
         return;
     }
 
