@@ -269,6 +269,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         normalizeExternalIdentifier(identifier);
         orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
+    
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String type, String identifier) {
+        List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
+        List<OrgDisambiguatedExternalIdentifierEntity> extIds= orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(type, identifier);
+        extIds.stream().forEach((e)-> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
+        return orgDisambiguatedIds;
+    }
 
     private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();

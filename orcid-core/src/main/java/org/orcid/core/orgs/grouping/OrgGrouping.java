@@ -79,7 +79,21 @@ public class OrgGrouping implements Serializable {
                             if (!orgGroup.getOrgs().containsKey(orgKey)) {
                                 orgGroup.getOrgs().put(orgKey, org);
                             }
+                        } else {
+                            // check other possible orgs that have the same
+                            // identifier
+                            List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
+                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifiers.getIdentifierType(), externalIdentifier);
+                            if (orgsFromExternalIdentifier != null) {
+                                orgsFromExternalIdentifier.stream().forEach((o -> {
+                                    String key = buildOrgDisambiguatedKey(o);
+                                    if (!orgGroup.getOrgs().containsKey(key)) {
+                                        orgGroup.getOrgs().put(key, o);
+                                    }
+                                }));
+                            }
                         }
+
                     }
                 }
             }
@@ -104,8 +118,8 @@ public class OrgGrouping implements Serializable {
                 getGroupForOrg(org);
             }
         }
-        LOGGER.debug("Group created for source type: [" +  sourceOrg.sourceType + "] and id: ["+ sourceOrg.sourceId + "] total orgs in the group: " + orgGroup.getOrgs().size() + " . It has ROR? "
-                + (orgGroup.getRorOrg() != null));
+        LOGGER.debug("Group created for source type: [" + sourceOrg.sourceType + "] and id: [" + sourceOrg.sourceId + "] total orgs in the group: "
+                + orgGroup.getOrgs().size() + " . It has ROR? " + (orgGroup.getRorOrg() != null));
         return;
     }
 
