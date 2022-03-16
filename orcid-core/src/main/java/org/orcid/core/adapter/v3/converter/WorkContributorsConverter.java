@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
 import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.contributors.roles.works.LegacyWorkContributorRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
+import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -67,5 +71,16 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
             }
         });
         return workContributors;
+    }
+
+    public List<WorkContributorsList> getContributorsList(String source) {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        List<WorkContributorsList> langList = new ArrayList<>();
+        try {
+            langList = objectMapper.readValue(source, new TypeReference<List<WorkContributorsList>>(){});
+        } catch (JsonProcessingException e) {
+            return langList;
+        }
+        return langList;
     }
 }

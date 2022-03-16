@@ -7,10 +7,15 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.hibernate.type.BigIntegerType;
+import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
+import org.hibernate.type.TimestampType;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.WorkDao;
@@ -363,48 +368,42 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    public List<Object[]> getWorksByOrcid(String orcid, boolean justPublic) {
-        String sqlString = null;
-        if (justPublic) {
-            sqlString = "SELECT " +
+    public List<Object[]> getWorksByOrcid(String orcid) {
+        String sqlString =
+                    "SELECT " +
             		" w.work_id, w.orcid, w.work_type, w.title, w.subtitle, w.description, w.work_url," +
             		" w.journal_title, w.language_code, w.translated_title, w.translated_title_language_code," +
-            		" w.external_ids_json, w.publication_year, w.publication_month," +
-            		" w.publication_day, w.visibility, w.display_index," +
-                    " (SELECT to_json(array_agg(t)) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 100) t) as top_contributors" +
-                    " FROM work w" +
-                    " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid) AND w.visibility='PUBLIC'";
-        } else {
-            sqlString = "SELECT " +
-            		" w.work_id, w.orcid, w.work_type, w.title, w.subtitle, w.description, w.work_url," +
-            		" w.journal_title, w.language_code, w.translated_title, w.translated_title_language_code," +
-            		" w.external_ids_json, w.publication_year, w.publication_month," +
-            		" w.publication_day, w.visibility, w.display_index," +
-                    " (SELECT to_json(array_agg(t)) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributors FROM work WHERE work_id=w.work_id limit 100) t) as top_contributors" +
+            		" w.external_ids_json, w.publication_year, w.publication_month, w.publication_day, " +
+            		" w.date_created, w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," +
+                    " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as top_contributors" +
                     " FROM work w" +
                     " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid)";
-        }
+
         Query query = entityManager.createNativeQuery(sqlString);
         query.setParameter("orcid", orcid)
-        .unwrap(org.hibernate.query.NativeQuery.class)
-        .addScalar("top_contributors", StringType.INSTANCE)
-        .addScalar("work_id", BigIntegerType.INSTANCE)
-        .addScalar("orcid", StringType.INSTANCE)
-        .addScalar("work_type", StringType.INSTANCE)
-        .addScalar("title", StringType.INSTANCE)
-        .addScalar("subtitle", StringType.INSTANCE)
-        .addScalar("work_url", StringType.INSTANCE)
-        .addScalar("journal_title", StringType.INSTANCE)
-        .addScalar("language_code", StringType.INSTANCE)
-        .addScalar("translated_title", StringType.INSTANCE)
-        .addScalar("translated_title_language_code", StringType.INSTANCE)
-        .addScalar("external_ids_json", StringType.INSTANCE)
-        .addScalar("publication_year", IntegerType.INSTANCE)
-        .addScalar("publication_month", IntegerType.INSTANCE)
-        .addScalar("publication_day", IntegerType.INSTANCE)
-        .addScalar("visibility", StringType.INSTANCE)
-        .addScalar("display_index", BigIntegerType.INSTANCE);
-                
+                .unwrap(org.hibernate.query.NativeQuery.class)
+                .addScalar("work_id", BigIntegerType.INSTANCE)
+                .addScalar("orcid", StringType.INSTANCE)
+                .addScalar("work_type", StringType.INSTANCE)
+                .addScalar("title", StringType.INSTANCE)
+                .addScalar("subtitle", StringType.INSTANCE)
+                .addScalar("description", StringType.INSTANCE)
+                .addScalar("work_url", StringType.INSTANCE)
+                .addScalar("journal_title", StringType.INSTANCE)
+                .addScalar("language_code", StringType.INSTANCE)
+                .addScalar("translated_title", StringType.INSTANCE)
+                .addScalar("translated_title_language_code", StringType.INSTANCE)
+                .addScalar("external_ids_json", StringType.INSTANCE)
+                .addScalar("publication_year", IntegerType.INSTANCE)
+                .addScalar("publication_month", IntegerType.INSTANCE)
+                .addScalar("publication_day", IntegerType.INSTANCE)
+                .addScalar("visibility", StringType.INSTANCE)
+                .addScalar("display_index", BigIntegerType.INSTANCE)
+                .addScalar("source_id", StringType.INSTANCE)
+                .addScalar("client_source_id", StringType.INSTANCE)
+                .addScalar("date_created", TimestampType.INSTANCE)
+                .addScalar("last_modified", TimestampType.INSTANCE)
+                .addScalar("top_contributors", StringType.INSTANCE);
         return query.getResultList();
     }
 }

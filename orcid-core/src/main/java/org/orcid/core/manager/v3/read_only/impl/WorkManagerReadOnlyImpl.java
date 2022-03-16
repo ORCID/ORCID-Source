@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.contributors.roles.credit.CreditRole;
@@ -8,8 +9,10 @@ import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -17,6 +20,8 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
+import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
+import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
@@ -25,10 +30,12 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
+import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
@@ -38,6 +45,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,6 +76,18 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private WorkContributorRoleConverter workContributorsRoleConverter;
+
+    @Resource(name = "PIDNormalizationService")
+    private PIDNormalizationService norm;
+
+    @Resource(name = "PIDResolverService")
+    private PIDResolverService resolverService;
+
+    @Resource
+    private LocaleManager localeManager;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -188,29 +208,58 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean justPublic) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
-        List<Object[]> list = workDao.getWorksByOrcid(orcid, justPublic);
+        List<Object[]> list = workDao.getWorksByOrcid(orcid);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
-            String workType = q1[2].toString();
-            String title = q1[3].toString();
-            String subtitle = q1[4].toString();
-            String description = q1[5].toString();
-            String work_url = q1[6].toString();
-            String journal_title = q1[7].toString();
-            String language_code = q1[8].toString();
-            String translated_title = q1[9].toString();
-            String translated_title_language_code = q1[10].toString();
-            String external_ids_json = q1[11].toString();
-            String publication_year = q1[12].toString();
-            String publication_month = q1[13].toString();
-            String publication_day = q1[14].toString();
-            String visibility = q1[15].toString();
-            String display_index = q1[16].toString();
-            String contributors = q1[17].toString();
+            String o = q1[1].toString();
+            String workType = isEmpty(q1[2]);
+            String title = isEmpty(q1[3]);
+            String subtitle = isEmpty(q1[4]);
+            String description = isEmpty(q1[5]);
+            String workUrl = isEmpty(q1[6]);
+            String journalTitle = isEmpty(q1[7]);
+            String languageCode = isEmpty(q1[8]);
+            String translatedTitle = isEmpty(q1[9]);
+            String translatedTitleLanguageCode = isEmpty(q1[10]);
+            String externalIdsJson = isEmpty(q1[11]);
+            String publicationYear = isEmpty(q1[12]);
+            String publicationMonth = isEmpty(q1[13]);
+            String publicationDay = isEmpty(q1[14]);
+            String visibility = isEmpty(q1[15]);
+            BigInteger displayIndex = (BigInteger) q1[16];
+            String sourceId = isEmpty(q1[17]);
+            String clientSourceId = isEmpty(q1[18]);
+            Timestamp createdDate = (Timestamp) q1[19];
+            Timestamp lastModifiedDate = (Timestamp) q1[20];
+            String contributors = isEmpty(q1[21]);
             WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
-            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title)
+            JSONWorkExternalIdentifiersConverterV3 workExternalIdentifiersConverter = new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager);
+            ExternalIDs externalIDs = null;
+            if (externalIdsJson != null) {
+                externalIDs = workExternalIdentifiersConverter.convertFrom(externalIdsJson,null);
+            }
+            String clientName = null;
+            if (clientSourceId != null) {
+                ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(clientSourceId);
+                clientName = clientDetails.getClientName();
+            }
+            List<WorkContributorsList> contributorList = wcc.getContributorsList(contributors);
+            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
                     .subtitle(subtitle)
-                    .translatedTitle(translated_title)
+                    .translatedTitle(translatedTitle)
+                    .description(description)
+                    .workUrl(workUrl)
+                    .journalTitle(journalTitle)
+                    .languageCode(languageCode)
+                    .translatedTitleLanguageCode(translatedTitleLanguageCode)
+                    .externalIdsJson(externalIDs)
+                    .publicationYear(publicationYear)
+                    .publicationMonth(publicationMonth)
+                    .publicationDay(publicationDay)
+                    .visibility(visibility)
+                    .clientName(clientName)
+                    .displayIndex(displayIndex)
+                    .contributors(contributorList)
                     .build();
             workSummaryExtendedList.add(wse);
         }
@@ -504,6 +553,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         // Sort the groups!
         result.getWorkGroup().sort(WorkComparators.GROUP_WORK_SUMMARY_EXTENDED);
         return result;
+    }
+
+    private String isEmpty(Object o) {
+        if (o != null) {
+            return o.toString();
+        }
+        return null;
     }
 
 }

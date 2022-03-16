@@ -136,5 +136,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<BigInteger> getIdsOfWorksReferencingClientProfiles(int i, List<String> clientProfileOrcidIds);
 
-    List<Object[]> getWorksByOrcid(String orcid, boolean justPublic);
+    List<Object[]> getWorksByOrcid(String orcid);
 }
