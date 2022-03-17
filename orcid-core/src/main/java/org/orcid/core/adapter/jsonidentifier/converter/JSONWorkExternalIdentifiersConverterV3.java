@@ -91,7 +91,9 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                 } else {
                     try {
                         String normalizedUrl = norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content);
-                        id.setNormalizedUrl(new TransientNonEmptyString(normalizedUrl));
+                        if (!StringUtils.isBlank(normalizedUrl)) {
+                            id.setNormalizedUrl(new TransientNonEmptyString(normalizedUrl));
+                        }
                     } catch (IllegalArgumentException e) {
                         // Do not populate the URL
                     }
