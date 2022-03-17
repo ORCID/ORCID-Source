@@ -194,7 +194,7 @@ public class WorkGroup extends ActivityGroup {
             workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
         }
 
-        if (workForm.getSource() != null) {
+        if (workSummary.getSource() != null) {
             workForm.setSource(workSummary.getSource().retrieveSourcePath());
             if (workSummary.getSource().getSourceName() != null) {
                 workForm.setSourceName(workSummary.getSource().getSourceName().getContent());

@@ -60,16 +60,16 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
-    
+
     @Test
     public void getWorksByOrcidIdTest() {
-        List<Object[]> works = dao.getWorksByOrcid("0000-0000-0000-0003");
+        List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");
         List<Long> existingIds = new ArrayList<Long>(Arrays.asList(11L, 12L, 13L, 14L, 15L, 16L));
         assertEquals(6, works.size());
-//        for(WorkEntity w : works) {
-//            assertTrue(existingIds.contains(w.getId()));
-//            existingIds.remove(w.getId());
-//        }
+        for(WorkEntity w : works) {
+            assertTrue(existingIds.contains(w.getId()));
+            existingIds.remove(w.getId());
+        }
         assertTrue("Elements not found: " + existingIds, existingIds.isEmpty());
     }
     
