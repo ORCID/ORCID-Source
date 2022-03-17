@@ -45,6 +45,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.OrcidAware;
+import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
@@ -191,7 +193,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
-        List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid, false);
+        List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid);
         // Filter the contributors lis
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             for (WorkSummaryExtended wse : wseList) {
@@ -210,53 +212,40 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         return wseList;
     }
 
-    private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean justPublic) {
+    private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
         List<Object[]> list = workDao.getWorksByOrcid(orcid);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
-            // TODO: If we don't need the ORCID, then don't include it in the query, lets save some bandwidth
-            String o = q1[1].toString();
-            String workType = isEmpty(q1[2]);
-            String title = isEmpty(q1[3]);
-            String subtitle = isEmpty(q1[4]);
-            String description = isEmpty(q1[5]);
-            String workUrl = isEmpty(q1[6]);
-            String journalTitle = isEmpty(q1[7]);
-            String languageCode = isEmpty(q1[8]);
-            String translatedTitle = isEmpty(q1[9]);
-            String translatedTitleLanguageCode = isEmpty(q1[10]);
-            String externalIdsJson = isEmpty(q1[11]);
-            String publicationYear = isEmpty(q1[12]);
-            String publicationMonth = isEmpty(q1[13]);
-            String publicationDay = isEmpty(q1[14]);
-            String visibility = isEmpty(q1[15]);
-            BigInteger displayIndex = (BigInteger) q1[16];
-            String sourceId = isEmpty(q1[17]);
-            String clientSourceId = isEmpty(q1[18]);
-            Timestamp createdDate = (Timestamp) q1[19];
-            Timestamp lastModifiedDate = (Timestamp) q1[20];
-            String contributors = isEmpty(q1[21]);
+            String workType = isEmpty(q1[1]);
+            String title = isEmpty(q1[2]);
+            String journalTitle = isEmpty(q1[3]);
+            String externalIdsJson = isEmpty(q1[4]);
+            String publicationYear = isEmpty(q1[5]);
+            String publicationMonth = isEmpty(q1[6]);
+            String publicationDay = isEmpty(q1[7]);
+            String visibility = isEmpty(q1[8]);
+            BigInteger displayIndex = (BigInteger) q1[9];
+            String sourceId = isEmpty(q1[10]);
+            String clientSourceId = isEmpty(q1[11]);
+            String assertionOriginClientSourceId = isEmpty(q1[12]);
+            Timestamp createdDate = (Timestamp) q1[13];
+            Timestamp lastModifiedDate = (Timestamp) q1[14];
+            String contributors = isEmpty(q1[15]);
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
                 externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
             }
             String clientName = null;
+            String assertionOriginSourceId = null;
             if (clientSourceId != null) {
                 ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(clientSourceId);
                 clientName = clientDetails.getClientName();
-                
-                
+                assertionOriginSourceId = getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager);
             }
             List<WorkContributorsList> contributorList = workContributorsConverter.getContributorsList(contributors);
             WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
-                    .subtitle(subtitle)
-                    .translatedTitle(translatedTitle)
-                    .description(description)
-                    .workUrl(workUrl)
                     .journalTitle(journalTitle)
-                    .languageCode(languageCode)
-                    .translatedTitleLanguageCode(translatedTitleLanguageCode)
                     .externalIdsJson(externalIDs)
                     .publicationYear(publicationYear)
                     .publicationMonth(publicationMonth)
@@ -264,6 +253,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     .visibility(visibility)
                     .clientName(clientName)
                     .displayIndex(displayIndex)
+                    .assertionOriginSourceId(assertionOriginSourceId)
+                    .assertionOriginClientSourceId(assertionOriginClientSourceId)
                     .contributors(contributorList)
                     .build();
             workSummaryExtendedList.add(wse);
@@ -352,6 +343,25 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
     }
 
+    private String getAssertionOriginOrcid(String clientSourceId, String orcid, Long putCode, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        String assertionOriginOrcid = null;
+        if (Features.USER_OBO.isActive()) {
+            ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+            if (clientSource.isUserOBOEnabled()) {
+                WorkEntity e = workDao.getWork(orcid, putCode);
+
+                String orcidId = null;
+                if (e instanceof ProfileAware) {
+                    orcidId = ((ProfileAware) e).getProfile().getId();
+                } else {
+                    orcidId = ((OrcidAware) e).getOrcid();
+                }
+                assertionOriginOrcid = orcidId;
+            }
+        }
+
+        return assertionOriginOrcid;
+    }
     /**
      * Get the list of works specified by the list of put codes
      * 

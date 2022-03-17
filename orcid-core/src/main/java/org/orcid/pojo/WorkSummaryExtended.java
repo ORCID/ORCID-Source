@@ -44,10 +44,7 @@ public class WorkSummaryExtended extends WorkSummary {
         super.setType(WorkType.valueOf(builder.workType));
         WorkTitle wt = new WorkTitle();
         wt.setTitle(new Title(builder.title));
-        wt.setSubtitle(new Subtitle(builder.subtitle));;
-        wt.setTranslatedTitle(new TranslatedTitle(builder.translatedTitle));
         super.setTitle(wt);
-        super.setUrl(new Url(builder.workUrl));
         super.setJournalTitle(new Title(builder.journalTitle));
         super.setExternalIdentifiers(builder.externalIdsJson);
         Year year = new Year();
@@ -64,6 +61,8 @@ public class WorkSummaryExtended extends WorkSummary {
         s.setSourceOrcid(new SourceOrcid(builder.sourceId));
         s.setSourceName(new SourceName(builder.clientName));
         s.setSourceClientId(new SourceClientId(builder.clientSourceId));
+        s.setAssertionOriginOrcid(new SourceOrcid(builder.assertionOriginSourceId));
+        s.setAssertionOriginClientId(new SourceClientId(builder.assertionOriginClientSourceId));
         super.setSource(s);
         super.setCreatedDate(new CreatedDate(builder.createdDate));
         super.setLastModifiedDate(new LastModifiedDate(builder.lastModifiedDate));
@@ -76,7 +75,6 @@ public class WorkSummaryExtended extends WorkSummary {
         return contributors;
     }
 
-//    todo remove Builder Pattern
     public void setContributors(WorkContributors contributors) {
         this.contributors = contributors;
     }
@@ -85,7 +83,6 @@ public class WorkSummaryExtended extends WorkSummary {
         return contributorsGroupedByOrcid;
     }
 
-    //    todo remove Builder Pattern
     public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
     }
@@ -102,13 +99,7 @@ public class WorkSummaryExtended extends WorkSummary {
         private final BigInteger putCode;
         private String title;
         private String workType;
-        private String subtitle;
-        private String description;
-        private String workUrl;
         private String journalTitle;
-        private String languageCode;
-        private String translatedTitle;
-        private String translatedTitleLanguageCode;
         private ExternalIDs externalIdsJson;
         private String publicationYear;
         private String publicationMonth;
@@ -117,6 +108,8 @@ public class WorkSummaryExtended extends WorkSummary {
         private String sourceId;
         private String clientSourceId;
         private String clientName;
+        private String assertionOriginSourceId;
+        private String assertionOriginClientSourceId;
         private XMLGregorianCalendar createdDate;
         private XMLGregorianCalendar lastModifiedDate;
         private BigInteger displayIndex;
@@ -135,38 +128,8 @@ public class WorkSummaryExtended extends WorkSummary {
             this.lastModifiedDate = addDate(lastModifiedDate);
         }
 
-        public WorkSummaryExtendedBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public WorkSummaryExtendedBuilder workUrl(String workUrl) {
-            this.workUrl = workUrl;
-            return this;
-        }
-
-        public WorkSummaryExtendedBuilder subtitle(String subtitle) {
-            this.subtitle = subtitle;
-            return this;
-        }
-
         public WorkSummaryExtendedBuilder journalTitle(String journalTitle) {
             this.journalTitle = journalTitle;
-            return this;
-        }
-
-        public WorkSummaryExtendedBuilder languageCode(String languageCode) {
-            this.languageCode = languageCode;
-            return this;
-        }
-
-        public WorkSummaryExtendedBuilder translatedTitle(String translatedTitle) {
-            this.translatedTitle = translatedTitle;
-            return this;
-        }
-
-        public WorkSummaryExtendedBuilder translatedTitleLanguageCode(String translatedTitleLanguageCode) {
-            this.translatedTitleLanguageCode = translatedTitleLanguageCode;
             return this;
         }
 
@@ -202,6 +165,16 @@ public class WorkSummaryExtended extends WorkSummary {
 
         public WorkSummaryExtendedBuilder clientName(String clientName) {
             this.clientName = clientName;
+            return this;
+        }
+
+        public WorkSummaryExtendedBuilder assertionOriginSourceId(String assertionOriginSourceId) {
+            this.assertionOriginSourceId = assertionOriginSourceId;
+            return this;
+        }
+
+        public WorkSummaryExtendedBuilder assertionOriginClientSourceId(String assertionOriginClientSourceId) {
+            this.assertionOriginClientSourceId = assertionOriginClientSourceId;
             return this;
         }
 
