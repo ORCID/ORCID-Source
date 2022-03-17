@@ -172,11 +172,10 @@ public class ContributorUtils {
             if(entities != null) {
                 for(RecordNameEntity entity : entities) {
                     String orcid = entity.getOrcid();
-                    String publicCreditName = RecordNameUtils.getPublicName(entity);
+                    String publicCreditName = cacheManager.getPublicCreditName(orcid);
                     publicCreditName = (publicCreditName == null ? "" : publicCreditName);
                     contributorNames.put(orcid, publicCreditName);
-                    // Looks like we never filled the cache LOL! 
-                    // Fill the cache                    
+                    // Fill the cache
                     contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
                     // Store in the request, to use as a cache
                     ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
