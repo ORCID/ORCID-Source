@@ -3,7 +3,6 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -98,7 +97,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     }
     
     @Test
-    public void testConvertWithIdThatBreaksUrlValidation() {
+    public void testConverFromtWithIdThatBreaksUrlValidation() {
         String extIds = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
         ExternalIDs entityIDs = converter.convertFrom(extIds, null);
         assertNotNull(entityIDs.getExternalIdentifier());
@@ -110,6 +109,25 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
         assertNotNull(eid0.getNormalized());
         assertEquals("10.00000/test.v%vi%i.0000", eid0.getNormalized().getValue());
         assertNull(eid0.getNormalizedUrl());
+        assertNotNull(eid0.getNormalizedUrlError());
+        assertEquals("Cannot normalize identifier value doi:10.00000/test.v%vi%i.0000", eid0.getNormalizedUrlError().getErrorMessage());
+    }
+    
+    @Test
+    public void testConverFromtWithUrlThatBreaksUrlValidation() {
+        String extIds = "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://doi.org/10.00000/test.v%vi%i.0000\"},\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"10.00000/test.v%vi%i.0000\"}}]}";
+        ExternalIDs entityIDs = converter.convertFrom(extIds, null);
+        assertNotNull(entityIDs.getExternalIdentifier());
+        ExternalID eid0 = entityIDs.getExternalIdentifier().get(0);
+        assertNotNull(eid0);
+        assertNotNull(eid0.getUrl());
+        assertEquals("doi", eid0.getType());
+        assertEquals("10.00000/test.v%vi%i.0000", eid0.getValue());
+        assertNotNull(eid0.getNormalized());
+        assertEquals("10.00000/test.v%vi%i.0000", eid0.getNormalized().getValue());
+        assertNull(eid0.getNormalizedUrl());
+        assertNotNull(eid0.getNormalizedUrlError());
+        assertEquals("Cannot normalize identifier value doi:10.00000/test.v%vi%i.0000", eid0.getNormalizedUrlError().getErrorMessage());
     }
     
     @Test

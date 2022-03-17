@@ -1,10 +1,9 @@
 package org.orcid.core.adapter.jsonidentifier.converter;
 
-import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier;
+import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifier.WorkExternalIdentifierId;
 import org.orcid.core.adapter.jsonidentifier.JSONWorkExternalIdentifiers;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.utils.JsonUtils;
@@ -17,7 +16,6 @@ import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -26,12 +24,10 @@ import ma.glasnost.orika.metadata.Type;
 public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
 
     private PIDNormalizationService norm;
-    private PIDResolverService resolverService;
     private LocaleManager localeManager;
     
     public JSONWorkExternalIdentifiersConverterV3(PIDNormalizationService norm, PIDResolverService resolverService, LocaleManager localeManager) {
         this.norm = norm;
-        this.resolverService = resolverService;
         this.localeManager = localeManager;
     }
     
@@ -79,17 +75,31 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                 String normalised = norm.normalise(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content);
                 if (normalised != null && !normalised.trim().isEmpty()) {
                     id.setNormalized(new TransientNonEmptyString(normalised));
-                }
-                if (normalised == null || StringUtils.isEmpty(normalised)){
+                } else {
                     id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
                 }
-                                
+                
                 if (workExternalIdentifier.getUrl() != null) {
-                	id.setNormalizedUrl(new TransientNonEmptyString(workExternalIdentifier.getUrl().getValue()));
-                } 
+                    try {
+                        String normalizedUrl = norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getUrl().getValue());
+                        if (!StringUtils.isBlank(normalizedUrl)) {
+                            id.setNormalizedUrl(new TransientNonEmptyString(normalizedUrl));
+                        }
+                    } catch (IllegalArgumentException e) {
+                        // Do not populate the URL
+                    }
+                } else {
+                    try {
+                        String normalizedUrl = norm.generateNormalisedURL(id.getType(), workExternalIdentifier.getWorkExternalIdentifierId().content);
+                        id.setNormalizedUrl(new TransientNonEmptyString(normalizedUrl));
+                    } catch (IllegalArgumentException e) {
+                        // Do not populate the URL
+                    }
+                }
+                
                 if (id.getNormalizedUrl() == null || StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
                     id.setNormalizedUrlError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
-                }
+                }                
             }
             if (workExternalIdentifier.getUrl() != null) {
                 id.setUrl(new Url(workExternalIdentifier.getUrl().getValue()));
