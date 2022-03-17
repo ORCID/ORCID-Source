@@ -195,7 +195,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
                 try {
                     String orcid = emailManagerReadOnly.findOrcidIdByEmail(username);
                     if (!PojoUtil.isEmpty(orcid)) {
-                        profile = profileDao.find(orcid);
+                        profile = profileDao.find(orcid.toUpperCase());
                     }
                 } catch (javax.persistence.NoResultException nre) {
                     LOGGER.error("User " + username + " was not found");
