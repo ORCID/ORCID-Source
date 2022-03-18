@@ -35,6 +35,8 @@ public class PIDNormalizationService {
 
     Map<String, LinkedList<Normalizer>> map = new HashMap<String, LinkedList<Normalizer>>();
 
+    private UrlValidator urlValidator = new UrlValidator();
+    
     @PostConstruct
     public void init() {
         Collections.sort(normalizers, AnnotationAwareOrderComparator.INSTANCE);
@@ -114,6 +116,9 @@ public class PIDNormalizationService {
                             if (matcher.find()) {
                                 if (prefix.equals(matcher.group(1) + matcher.group(2)) || prefix.contains(matcher.group(2))) {
                                     result = norm;
+                                } else if(urlValidator.isValid(norm)) {
+                                    //if the value is a valid URL, just return that.
+                                    result = norm;
                                 } else {
                                     if (norm.contains("=")) {
                                         norm = norm.replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)([^=]*)","");                               
@@ -123,8 +128,13 @@ public class PIDNormalizationService {
                                     }                                    
                                     result = prefix + norm;
                                 }
-                            } else {
-                                result = prefix + norm;
+                            } else {                                
+                                //if the value is a valid URL, just return that.
+                                if (urlValidator.isValid(norm)){
+                                    result = norm;
+                                } else {
+                                    result = prefix + norm;
+                                }                                                                                                
                             }                                                                                   
                         }
                     } else {
@@ -137,12 +147,6 @@ public class PIDNormalizationService {
                     throw iae;
                 }
             }
-        }
-        
-        //if the value is a valid URL, just return that.
-        UrlValidator urlValidator = new UrlValidator();
-        if (urlValidator.isValid(norm)){
-            return norm;
         }
         
         return "";
