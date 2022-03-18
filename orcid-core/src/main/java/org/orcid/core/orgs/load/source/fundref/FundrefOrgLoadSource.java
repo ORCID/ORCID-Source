@@ -146,10 +146,24 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         existingEntity.setStatus(rdfOrganization.status);
+                        try {
+                            // mark group for indexing
+                            new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                        } catch (Exception ex) {
+                            LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                        }
                         orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     } else if (statusChanged(rdfOrganization, existingEntity)) {
                         existingEntity.setStatus(rdfOrganization.status);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        try {
+                            // mark group for indexing
+                            new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                        } catch (Exception ex) {
+                            LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                        }
                         orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     } else {
                         if (StringUtils.isNotBlank(rdfOrganization.isReplacedBy)) {
@@ -157,6 +171,13 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                                 existingEntity.setSourceParentId(rdfOrganization.isReplacedBy);
                                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                                try {
+                                    // mark group for indexing
+                                    new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                                } catch (Exception ex) {
+                                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                                }
                                 orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                             }
                         }
@@ -164,27 +185,12 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                 } else {
                     OrgDisambiguatedEntity newEntity = createDisambiguatedOrg(rdfOrganization);
                     try {
-                        // get Organization Group for ROR
-                        OrgGroup orgGroup = new OrgGrouping(newEntity, orgDisambiguatedManager).getOrganizationGroup();
-                        if (orgGroup.getRorOrg() != null) {
-                            newEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
-                            newEntity.setIndexingStatus(IndexingStatus.PENDING);
-                            orgDisambiguatedManager.updateOrgDisambiguated(newEntity);
-                        }
-                        OrgDisambiguatedEntity orgEntity;
-                        for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
-                            orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
-                            if (orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                                // set the indexing status to PART OF THE GROUP
-                                // as is part of a ROR group will be removed
-                                // from SOLR
-                                if (!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus())
-                                        || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())) {
-                                    orgEntity.setIndexingStatus(IndexingStatus.PENDING);
-                                    orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
-                                    orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
-                                }
-                            }
+                        try {
+                            // mark group for indexing
+                            new OrgGrouping(newEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                        } catch (Exception ex) {
+                            LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
                         }
                     } catch (Exception ex) {
                         LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);

@@ -233,6 +233,13 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 existingBySourceId.setRegion(region);
                 existingBySourceId.setUrl(url);
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
+                try {
+                    // mark group for indexing
+                    new OrgGrouping(existingBySourceId, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                } catch (Exception ex) {
+                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                }
                 orgDisambiguatedManager.updateOrgDisambiguated(existingBySourceId);
             }
             return existingBySourceId;
@@ -241,20 +248,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
         // Create a new disambiguated org
         OrgDisambiguatedEntity newOrg=createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
         try {
-            //get Organization Group for ROR
-            OrgGroup orgGroup = new OrgGrouping(newOrg, orgDisambiguatedManager).getOrganizationGroup();
-            OrgDisambiguatedEntity orgEntity;
-            for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
-                orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
-                if(orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                    //set the indexing status to PART OF THE GROUP as is part of a ROR group will be removed from SOLR
-                    if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
-                        orgEntity.setIndexingStatus(IndexingStatus.PENDING);
-                        orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
-                        orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
-                    }  
-                }
-            }
+            //mark group for indexing
+            new OrgGrouping(newOrg, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
         }
         catch (Exception ex) {
             LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);

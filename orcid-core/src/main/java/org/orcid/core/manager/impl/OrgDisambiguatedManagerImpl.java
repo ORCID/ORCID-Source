@@ -97,25 +97,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
-                OrgGroup orgGroup = new OrgGrouping(entity, this).getOrganizationGroup();
-                // if the group has a ROR mark the other not ROR organization as
-                // part of group
-                if (orgGroup.getRorOrg() != null) {
-                    OrgDisambiguatedEntity orgEntity;
-                    for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
-                        orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
-                        if (orgEntity != null) {
-                            if (!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus())
-                                    || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())) {
-                                orgEntity.setIndexingStatus(IndexingStatus.PENDING);
-                                if (!orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                                    orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
-                                }
-                                updateOrgDisambiguated(orgEntity);
-                            }
-                        }
-                    }
-                }
+                new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
             }
             startIndex = startIndex + entities.size();
 
