@@ -19,7 +19,7 @@
                 <@emailMacros.msg "email.reset_password.to_reset" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-			    <a href="${passwordResetUrl}">${passwordResetUrl}</a>
+			    <a id="cy-pwd-reset-url" href="${passwordResetUrl}">${passwordResetUrl}</a>
  		    </p> 		    
  		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">		  
 				<@emailMacros.msg "email.reset_password.note" />

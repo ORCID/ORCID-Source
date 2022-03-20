@@ -88,20 +88,25 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         for(Object[] q1 : list){
             BigInteger groupId = (BigInteger) q1[0];
             String groupIdValue = q1[1].toString();
-            String visibility = q1[2].toString();
-            String groupName = q1[3].toString();
+            BigInteger putCode = (BigInteger) q1[2];
+            String visibility = q1[3].toString();
+            String groupName = q1[4].toString();
             if (peerReviewMinimizedSummaryList.size() > 0) {
                 List<PeerReviewMinimizedSummary> peerReviews = peerReviewMinimizedSummaryList
                         .stream()
                         .filter(peerReviewMinimizedSummary -> groupId.equals(peerReviewMinimizedSummary.getGroupId()))
                         .collect(Collectors.toList());
                 if (peerReviews.size() > 0) {
+                    peerReviews.get(0).addPutCode(putCode);
                     peerReviews.get(0).setDuplicated(peerReviews.get(0).getDuplicated() + 1);
+                    if (!Visibility.valueOf(visibility).equals(peerReviews.get(0).getVisibility())) {
+                        peerReviews.get(0).setVisibilityError(true);
+                    }
                 } else {
-                    peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, Visibility.fromValue(visibility), groupName, 1));
+                    peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, putCode, Visibility.fromValue(visibility), groupName, 1));
                 }
             } else {
-                peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, Visibility.fromValue(visibility), groupName, 1));
+                peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, putCode, Visibility.fromValue(visibility), groupName, 1));
             }
         }
         return peerReviewMinimizedSummaryList;

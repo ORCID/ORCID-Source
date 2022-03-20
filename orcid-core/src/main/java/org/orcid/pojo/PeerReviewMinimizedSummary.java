@@ -4,6 +4,8 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class PeerReviewMinimizedSummary implements Serializable {
@@ -11,17 +13,20 @@ public class PeerReviewMinimizedSummary implements Serializable {
     private String orcid;
     private BigInteger groupId;
     private String groupIdValue;
+    private List<BigInteger> putCodes = new ArrayList<>();
     private Visibility visibility;
+    private boolean visibilityError;
     private String name;
     private int duplicated;
 
-    public PeerReviewMinimizedSummary(String orcid, BigInteger groupId, String groupIdValue, Visibility visibility, String name, int duplicated) {
+    public PeerReviewMinimizedSummary(String orcid, BigInteger groupId, String groupIdValue, BigInteger putCode, Visibility visibility, String name, int duplicated) {
         this.orcid = orcid;
         this.groupId = groupId;
         this.groupIdValue = groupIdValue;
         this.visibility = visibility;
         this.name  = name;
         this.duplicated  = duplicated;
+        addPutCode(putCode);
     }
 
     public String getOrcid() {
@@ -48,12 +53,28 @@ public class PeerReviewMinimizedSummary implements Serializable {
         this.groupIdValue = groupIdValue;
     }
 
+    public List<BigInteger> getPutCodes() {
+        return putCodes;
+    }
+
+    public void setPutCodes(List<BigInteger> putCodes) {
+        this.putCodes = putCodes;
+    }
+
     public Visibility getVisibility() {
         return visibility;
     }
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public boolean getVisibilityError() {
+        return visibilityError;
+    }
+
+    public void setVisibilityError(boolean visibilityError) {
+        this.visibilityError = visibilityError;
     }
 
     public String getName() {
@@ -70,6 +91,10 @@ public class PeerReviewMinimizedSummary implements Serializable {
 
     public void setDuplicated(int duplicated) {
         this.duplicated = duplicated;
+    }
+
+    public void addPutCode(BigInteger putCode) {
+        this.putCodes.add(putCode);
     }
 
     @Override

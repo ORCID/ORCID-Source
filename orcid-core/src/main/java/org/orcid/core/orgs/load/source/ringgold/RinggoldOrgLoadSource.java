@@ -300,28 +300,12 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             
             OrgDisambiguatedEntity newEntity= orgDisambiguatedManager.createOrgDisambiguated(entity);
             try {
-                //get Organization Group for ROR
-                OrgGroup orgGroup = new OrgGrouping(newEntity, orgDisambiguatedManager).getOrganizationGroup();
-                if(orgGroup.getRorOrg() != null) {
-                    newEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
-                    newEntity.setIndexingStatus(IndexingStatus.PENDING);
-                    orgDisambiguatedManager.updateOrgDisambiguated(newEntity);
-                }
-                OrgDisambiguatedEntity orgEntity;
-                for(OrgDisambiguated org: orgGroup.getOrgs().values()) {
-                    orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceType(), org.getSourceId());
-                    if(orgEntity != null && !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
-                        //set the indexing status to PART OF THE GROUP as is part of a ROR group will be removed from SOLR
-                        if(!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus()) ){
-                            orgEntity.setIndexingStatus(IndexingStatus.PENDING);
-                            orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
-                            orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
-                        }  
-                    }
-                }
+              //mark group for indexing
+                new OrgGrouping(newEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
             }
             catch (Exception ex) {
-                LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
+                LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
             }
         } else {
             // If the element have changed
@@ -332,7 +316,15 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 entity.setOrgType(type);
                 entity.setRegion(state);
                 entity.setIndexingStatus(IndexingStatus.REINDEX);
+                try {
+                    // mark group for indexing
+                    new OrgGrouping(entity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                } catch (Exception ex) {
+                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                }
                 orgDisambiguatedManager.updateOrgDisambiguated(entity);
+                
             }
         }
 

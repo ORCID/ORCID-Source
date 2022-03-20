@@ -93,7 +93,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         query.setParameter("RINGGOLD", "RINGGOLD");
         query.setParameter("FUNDREF", "FUNDREF");
         query.setParameter("status", "PART_OF_GROUP");
-        query.setFirstResult(0);
+        query.setFirstResult(firstResult);
         query.setMaxResults(maxResult);
         return query.getResultList();
     }

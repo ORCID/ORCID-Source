@@ -12,6 +12,9 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.persistence.constants.OrganizationStatus;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -39,12 +42,22 @@ public class OrgGrouping implements Serializable {
 
     public OrgGrouping(OrgDisambiguated sourceOrg, OrgDisambiguatedManager orgDisambiguatedManager) {
         this.orgDisambiguatedManager = orgDisambiguatedManager;
+
         setExtentedOrgGroup(sourceOrg);
+        LOGGER.info("Group for: " + sourceOrg.getSourceId() + ":" + sourceOrg.getSourceType() + " hasROR? " + (orgGroup.getRorOrg() != null));
+        orgGroup.getOrgs().values().stream().forEach(o -> {
+            LOGGER.info("PART OF GROUP: " + o.getSourceId() + ":" + o.getSourceType());
+        });
+
     }
 
     public OrgGrouping(OrgDisambiguatedEntity sourceOrg, OrgDisambiguatedManager orgDisambiguatedManager) {
         this.orgDisambiguatedManager = orgDisambiguatedManager;
         setExtentedOrgGroup(convertEntity(sourceOrg));
+        LOGGER.info("Group for: " + sourceOrg.getSourceId() + ":" + sourceOrg.getSourceType() + " hasROR? " + (orgGroup.getRorOrg() != null));
+        orgGroup.getOrgs().values().stream().forEach(o -> {
+            LOGGER.info("PART OF GROUP: " + o.getSourceId() + ":" + o.getSourceType());
+        });
     }
 
     private void getGroupForOrg(OrgDisambiguated orgToGroup) {
@@ -59,6 +72,10 @@ public class OrgGrouping implements Serializable {
             if (orgToGroup.getSourceType().equals(OrgDisambiguatedSourceType.ROR.name())) {
                 orgGroup.setRorOrg(orgToGroup);
             }
+            if (orgToGroup.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
+                orgGroup.setFunding(true);
+            }
+
             for (OrgDisambiguatedExternalIdentifiers externalIdentifiers : orgToGroup.getOrgDisambiguatedExternalIdentifiers()) {
                 for (String externalIdentifier : externalIdentifiers.getAll()) {
                     if (ObjectUtils.containsConstant(OrgDisambiguatedSourceType.values(), externalIdentifiers.getIdentifierType(), true)) {
@@ -68,6 +85,7 @@ public class OrgGrouping implements Serializable {
                         if (externalIdentifiers.getIdentifierType().equals(OrgDisambiguatedSourceType.FUNDREF.name())
                                 && !OrcidStringUtils.isValidURL(externalIdentifier)) {
                             externalIdentifier = FUNDREF_BASE_URL + externalIdentifier;
+                            orgGroup.setFunding(true);
                         }
                         org = orgDisambiguatedManager.findInDB(externalIdentifier, externalIdentifiers.getIdentifierType());
 
@@ -79,7 +97,24 @@ public class OrgGrouping implements Serializable {
                             if (!orgGroup.getOrgs().containsKey(orgKey)) {
                                 orgGroup.getOrgs().put(orgKey, org);
                             }
+                        } else {
+                            // check other possible orgs that have the same
+                            // identifier
+                            List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
+                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifiers.getIdentifierType(), externalIdentifier);
+                            if (orgsFromExternalIdentifier != null) {
+                                orgsFromExternalIdentifier.stream().forEach((o -> {
+                                    String key = buildOrgDisambiguatedKey(o);
+                                    if (!orgGroup.getOrgs().containsKey(key)) {
+                                        orgGroup.getOrgs().put(key, o);
+                                        if (o.getSourceType().equals(OrgDisambiguatedSourceType.ROR.name())) {
+                                            orgGroup.setRorOrg(o);
+                                        }
+                                    }
+                                }));
+                            }
                         }
+
                     }
                 }
             }
@@ -90,6 +125,10 @@ public class OrgGrouping implements Serializable {
     private void setExtentedOrgGroup(OrgDisambiguated sourceOrg) {
         // set source Organization
         orgGroup.setSourceOrg(sourceOrg);
+        String orgKey = buildOrgDisambiguatedKey(sourceOrg);
+        if (!orgGroup.getOrgs().containsKey(orgKey)) {
+            orgGroup.getOrgs().put(orgKey, sourceOrg);
+        }
         // get initial group setup
         getGroupForOrg(sourceOrg);
         // second iteration to get any connected orgs through external
@@ -100,8 +139,8 @@ public class OrgGrouping implements Serializable {
                 getGroupForOrg(org);
             }
         }
-        LOGGER.debug("Group created for: " + sourceOrg.sourceId + " total orgs in the group: " + orgGroup.getOrgs().size() + " . It has ROR? "
-                + (orgGroup.getRorOrg() != null));
+        LOGGER.info("Group created for source type: [" + sourceOrg.sourceType + "] and id: [" + sourceOrg.sourceId + "] total orgs in the group: "
+                + orgGroup.getOrgs().size() + " . It has ROR? " + (orgGroup.getRorOrg() != null));
         return;
     }
 
@@ -157,6 +196,44 @@ public class OrgGrouping implements Serializable {
 
     private String buildOrgDisambiguatedKey(OrgDisambiguated org) {
         return org.getSourceId() + KEY_SEPARATOR + org.sourceType.trim().toUpperCase();
+    }
+
+    public void markGroupForIndexing(OrgDisambiguatedDao orgDisambiguatedDao) {
+        int popularityOfGroup = 0;
+        OrgDisambiguatedEntity rorOrgEntity = null;
+        // if the group has a ROR mark the other not ROR organization as part of
+        // group
+        if (orgGroup.getRorOrg() != null) {
+            OrgDisambiguatedEntity orgEntity;
+            for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
+                orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
+                if (orgEntity != null) {
+                    if (!OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || !OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())
+                            || !orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.LEI.name())) {
+                        orgEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        if (!orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                            orgEntity.setStatus(OrganizationStatus.PART_OF_GROUP.name());
+                            if (orgEntity.getPopularity().intValue() > popularityOfGroup) {
+                                popularityOfGroup = orgEntity.getPopularity();
+                            }
+                            orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
+                        } else {
+                            rorOrgEntity = orgEntity;
+                        }
+
+                    }
+                }
+            }
+
+            // update ROR
+            if (rorOrgEntity != null) {
+                // check Popularity
+                if (popularityOfGroup > rorOrgEntity.getPopularity().intValue()) {
+                    rorOrgEntity.setPopularity(popularityOfGroup);
+                }
+                orgDisambiguatedManager.updateOrgDisambiguated(rorOrgEntity);
+            }
+        }
     }
 
 }
