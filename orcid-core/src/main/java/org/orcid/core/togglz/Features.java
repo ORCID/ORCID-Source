@@ -134,8 +134,7 @@ public enum Features implements Feature {
     
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB, 
-    
-    
+        
     @Label("Enable new salesforce microservice")
     SALESFORCE_MICROSERVICE,
     

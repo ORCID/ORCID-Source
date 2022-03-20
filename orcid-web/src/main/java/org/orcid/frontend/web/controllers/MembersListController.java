@@ -60,32 +60,29 @@ public class MembersListController extends BaseController {
         return mav;
     }
 
-	@RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
-	public @ResponseBody List<Member> retrieveMembers() {
-		List<Member> members = new ArrayList<>();
-		if (Features.SALESFORCE_MICROSERVICE.isActive()) {
-			members = salesforceManager.retrieveMembers();
-		} else {
-			List<String> consortiumLeadIds = salesForceConsortiumLeadIdsCache.get("");
-			List<Member> allMembers = salesForceManagerLegacy.retrieveMembers();
+    @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
+    public @ResponseBody List<Member> retrieveMembers() {
+        List<Member> members = new ArrayList<>();
+        if (Features.SALESFORCE_MICROSERVICE.isActive()) {
+            members = salesforceManager.retrieveMembers();
+        } else {
+            List<String> consortiumLeadIds = salesForceConsortiumLeadIdsCache.get("");
+            List<Member> allMembers = salesForceManagerLegacy.retrieveMembers();
 
-			members = allMembers.stream()
-					.filter(e -> ((!consortiumLeadIds.contains(e.getRecordTypeId())
-							|| (consortiumLeadIds.contains(e.getRecordTypeId())
-									&& Boolean.TRUE.equals(e.getIsConsortiaMember())))))
-					.collect(Collectors.toList());
-		}
-		return members;
+            members = allMembers.stream().filter(e -> ((!consortiumLeadIds.contains(e.getRecordTypeId())
+                    || (consortiumLeadIds.contains(e.getRecordTypeId()) && Boolean.TRUE.equals(e.getIsConsortiaMember()))))).collect(Collectors.toList());
+        }
+        return members;
     }
 
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
     public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
-    	MemberDetails details;
-    	if (Features.SALESFORCE_MICROSERVICE.isActive()) {
-			details = salesforceManager.retrieveMemberDetails(memberSlug);
-		} else {
-			details = salesForceManagerLegacy.retrieveDetailsBySlug(memberSlug, true);
-		}
+        MemberDetails details;
+        if (Features.SALESFORCE_MICROSERVICE.isActive()) {
+            details = salesforceManager.retrieveMemberDetails(memberSlug);
+        } else {
+            details = salesForceManagerLegacy.retrieveDetailsBySlug(memberSlug, true);
+        }
         return details;
     }
 
