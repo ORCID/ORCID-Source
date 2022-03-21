@@ -386,7 +386,6 @@
 	
 	<!-- Utilities -->
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
-		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -395,7 +394,6 @@
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
-		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -412,7 +410,6 @@
 	</bean>
 	
 	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
     	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -421,7 +418,6 @@
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
         <property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -1561,5 +1557,15 @@
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
     
     <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+
+    <bean id="workContributorsConverter" class="org.orcid.core.adapter.v3.converter.WorkContributorsConverter">
+        <constructor-arg ref="workContributorRoleConverter" />
+    </bean>
+    
+    <bean id="jsonWorkExternalIdentifiersConverterV3" class="org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3">
+        <constructor-arg ref="PIDNormalizationService" />
+        <constructor-arg ref="PIDResolverService" />
+        <constructor-arg ref="localeManager" />
+    </bean>
     
 </beans>

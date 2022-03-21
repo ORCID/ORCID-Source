@@ -60,7 +60,7 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
-    
+
     @Test
     public void getWorksByOrcidIdTest() {
         List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");

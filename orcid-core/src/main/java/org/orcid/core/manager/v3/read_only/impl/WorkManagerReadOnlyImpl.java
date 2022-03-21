@@ -1,13 +1,28 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.contributors.roles.credit.CreditRole;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -18,29 +33,30 @@ import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerato
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
-import org.orcid.jaxb.model.v3.release.record.*;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.GroupAble;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.OrcidAware;
+import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
+import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -63,6 +79,21 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
+
+    @Resource
+    private WorkContributorRoleConverter workContributorsRoleConverter;
+
+    @Resource(name = "workContributorsConverter")
+    private WorkContributorsConverter workContributorsConverter;
+        
+    @Resource
+    private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+    
+    @Resource
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -162,29 +193,82 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
-        List<MinimizedExtendedWorkEntity> works = workEntityCacheManager.retrieveMinimizedExtendedWorks(orcid, getLastModified(orcid));
-        List<WorkSummaryExtended> wseList = jpaJaxbWorkAdapter.toWorkSummaryExtendedFromMinimized(works);
-        // Filter the contributors list
+        List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid);
+        // Filter the contributors lis
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             for (WorkSummaryExtended wse : wseList) {
                 if (wse.getContributors() != null && wse.getContributors().getContributor() != null) {
-                    contributorUtils.filterContributorPrivateData(wse);
+                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
                     List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcid(wse.getContributors().getContributor());
                     if (contributorsGroupedByOrcid.size() > maxContributorsForUI) {
                         wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid.subList(0, maxContributorsForUI));
                     } else {
                         wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
                     }
-                    wse.setNumberOfContributorsGroupedByOrcid(contributorsGroupedByOrcid.size());
+                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
                 }
             }
         }
         return wseList;
     }
 
+    private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
+        List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
+        List<Object[]> list = workDao.getWorksByOrcid(orcid);
+        for(Object[] q1 : list){
+            BigInteger putCode = (BigInteger) q1[0];
+            String workType = isEmpty(q1[1]);
+            String title = isEmpty(q1[2]);
+            String journalTitle = isEmpty(q1[3]);
+            String externalIdsJson = isEmpty(q1[4]);
+            String publicationYear = isEmpty(q1[5]);
+            String publicationMonth = isEmpty(q1[6]);
+            String publicationDay = isEmpty(q1[7]);
+            String visibility = isEmpty(q1[8]);
+            BigInteger displayIndex = (BigInteger) q1[9];
+            String sourceId = isEmpty(q1[10]);
+            String clientSourceId = isEmpty(q1[11]);
+            String assertionOriginClientSourceId = isEmpty(q1[12]);
+            Timestamp createdDate = (Timestamp) q1[13];
+            Timestamp lastModifiedDate = (Timestamp) q1[14];
+            String contributors = isEmpty(q1[15]);
+            ExternalIDs externalIDs = null;
+            if (externalIdsJson != null) {
+                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
+            }
+            String clientName = null;
+            String assertionOriginSourceId = null;
+            if (clientSourceId != null) {
+                ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(clientSourceId);
+                clientName = clientDetails.getClientName();
+                assertionOriginSourceId = getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager);
+            }
+            List<WorkContributorsList> contributorList = workContributorsConverter.getContributorsList(contributors);
+            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
+                    .journalTitle(journalTitle)
+                    .externalIdsJson(externalIDs)
+                    .publicationYear(publicationYear)
+                    .publicationMonth(publicationMonth)
+                    .publicationDay(publicationDay)
+                    .visibility(visibility)
+                    .clientName(clientName)
+                    .displayIndex(displayIndex)
+                    .assertionOriginSourceId(assertionOriginSourceId)
+                    .assertionOriginClientSourceId(assertionOriginClientSourceId)
+                    .contributors(contributorList)
+                    .build();
+            workSummaryExtendedList.add(wse);
+        }
+        return workSummaryExtendedList;
+    }
+
     private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors) {
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
-        contributors.forEach(contributor -> {
+        for(Contributor contributor : contributors) {
+        	// Process the list of contributors till reaching the max, then break
+        	if(contributorsRolesAndSequencesList.size() > maxContributorsForUI) {
+        		break;
+        	}
         	if (contributor.getContributorOrcid() != null) {
                 String orcid = contributor.getContributorOrcid().getPath();
                 if (!StringUtils.isBlank(orcid)) {
@@ -219,7 +303,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             } else {
                 contributorsRolesAndSequencesList.add(addContributor(contributor));
             }
-        });
+        }        
         return contributorsRolesAndSequencesList;
     }
 
@@ -259,6 +343,25 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
     }
 
+    private String getAssertionOriginOrcid(String clientSourceId, String orcid, Long putCode, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        String assertionOriginOrcid = null;
+        if (Features.USER_OBO.isActive()) {
+            ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+            if (clientSource.isUserOBOEnabled()) {
+                WorkEntity e = workDao.getWork(orcid, putCode);
+
+                String orcidId = null;
+                if (e instanceof ProfileAware) {
+                    orcidId = ((ProfileAware) e).getProfile().getId();
+                } else {
+                    orcidId = ((OrcidAware) e).getOrcid();
+                }
+                assertionOriginOrcid = orcidId;
+            }
+        }
+
+        return assertionOriginOrcid;
+    }
     /**
      * Get the list of works specified by the list of put codes
      * 
@@ -465,6 +568,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         // Sort the groups!
         result.getWorkGroup().sort(WorkComparators.GROUP_WORK_SUMMARY_EXTENDED);
         return result;
+    }
+
+    private String isEmpty(Object o) {
+        if (o != null) {
+            return o.toString();
+        }
+        return null;
     }
 
 }
