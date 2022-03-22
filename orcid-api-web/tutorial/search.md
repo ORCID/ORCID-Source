@@ -181,6 +181,8 @@ The first part of the response to the above query would look something like this
 
 * grid-org-id
 
+* ror-org-id
+
 **Funding data**
 
 * funding-titles
