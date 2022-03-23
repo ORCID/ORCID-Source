@@ -23,7 +23,8 @@ import org.orcid.core.salesforce.model.OrgId;
  * @author Will Simpson
  *
  */
-public interface SalesForceManager extends ManagerReadOnlyBase {
+@Deprecated
+public interface SalesForceManagerLegacy extends ManagerReadOnlyBase {
 
     List<Member> retrieveMembers();
 

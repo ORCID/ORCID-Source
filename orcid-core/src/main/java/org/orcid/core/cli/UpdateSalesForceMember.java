@@ -6,7 +6,7 @@ import java.net.URL;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class UpdateSalesForceMember {
 
     private static Logger LOGGER = LoggerFactory.getLogger(UpdateSalesForceMember.class);
 
-    private SalesForceManager salesForceManager;
+    private SalesForceManagerLegacy salesForceManager;
     @Option(name = "-a", usage = "SalesForce account ID of the member", required = true)
     private String accountId;
     @Option(name = "-n", usage = "The new name of the member")
@@ -68,7 +68,7 @@ public class UpdateSalesForceMember {
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        salesForceManager = (SalesForceManager) context.getBean("salesForceManager");
+        salesForceManager = (SalesForceManagerLegacy) context.getBean("salesForceManager");
     }
 
 }
