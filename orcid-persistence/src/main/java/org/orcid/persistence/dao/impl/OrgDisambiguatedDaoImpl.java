@@ -87,12 +87,9 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     public List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult) {
         TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-                "from OrgDisambiguatedEntity where (source_type=:ROR or source_type=:FUNDREF or source_type=:RINGGOLD) and status !=:status",
+                "from OrgDisambiguatedEntity where source_type=:ROR",
                 OrgDisambiguatedEntity.class);
         query.setParameter("ROR", "ROR");
-        query.setParameter("RINGGOLD", "RINGGOLD");
-        query.setParameter("FUNDREF", "FUNDREF");
-        query.setParameter("status", "PART_OF_GROUP");
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResult);
         return query.getResultList();

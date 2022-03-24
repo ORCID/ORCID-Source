@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.datacite.schema.kernel_4.FunderIdentifierType;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -97,11 +99,14 @@ public class OrgGrouping implements Serializable {
                             if (!orgGroup.getOrgs().containsKey(orgKey)) {
                                 orgGroup.getOrgs().put(orgKey, org);
                             }
-                        } else {
-                            // check other possible orgs that have the same
-                            // identifier
+                        } 
+
+                    }
+                    else {
+                        // check other possible orgs that have the same ISNI identifier
+                        if(StringUtils.equals(externalIdentifiers.getIdentifierType(), FunderIdentifierType.ISNI.value())){
                             List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
-                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifiers.getIdentifierType(), externalIdentifier);
+                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifier, externalIdentifiers.getIdentifierType());
                             if (orgsFromExternalIdentifier != null) {
                                 orgsFromExternalIdentifier.stream().forEach((o -> {
                                     String key = buildOrgDisambiguatedKey(o);
@@ -114,7 +119,6 @@ public class OrgGrouping implements Serializable {
                                 }));
                             }
                         }
-
                     }
                 }
             }

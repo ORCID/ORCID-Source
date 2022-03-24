@@ -97,6 +97,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
+                
                 new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
             }
             startIndex = startIndex + entities.size();
@@ -263,9 +264,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
 
-    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String type, String identifier) {
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier( String identifier, String type ) {
         List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
-        List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(type, identifier);
+        List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(identifier, type);
         extIds.stream().forEach((e) -> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
         return orgDisambiguatedIds;
     }
