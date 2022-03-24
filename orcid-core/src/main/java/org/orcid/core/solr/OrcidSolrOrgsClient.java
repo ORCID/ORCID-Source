@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrcidSolrOrgsClient {
 
-    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name-string:%s)^100.0 (org-disambiguated-name:%s)^50.0";
+    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^50.0 (org-disambiguated-name-string:%s)^50.0";
     private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
 
     @Resource(name = "solrReadOnlyOrgsClient")
