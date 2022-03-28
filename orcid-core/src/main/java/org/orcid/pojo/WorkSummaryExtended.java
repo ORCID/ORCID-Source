@@ -11,10 +11,7 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
-import org.orcid.jaxb.model.v3.release.common.TranslatedTitle;
-import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
@@ -59,10 +56,11 @@ public class WorkSummaryExtended extends WorkSummary {
         super.setDisplayIndex(builder.displayIndex.toString());
         Source s = new Source();
         s.setSourceOrcid(new SourceOrcid(builder.sourceId));
-        s.setSourceName(new SourceName(builder.clientName));
         s.setSourceClientId(new SourceClientId(builder.clientSourceId));
+        s.setSourceName(new SourceName(builder.sourceName));
         s.setAssertionOriginOrcid(new SourceOrcid(builder.assertionOriginSourceId));
         s.setAssertionOriginClientId(new SourceClientId(builder.assertionOriginClientSourceId));
+        s.setAssertionOriginName(new SourceName(builder.assertionOriginName));
         super.setSource(s);
         super.setCreatedDate(new CreatedDate(builder.createdDate));
         super.setLastModifiedDate(new LastModifiedDate(builder.lastModifiedDate));
@@ -107,9 +105,10 @@ public class WorkSummaryExtended extends WorkSummary {
         private String visibility;
         private String sourceId;
         private String clientSourceId;
-        private String clientName;
+        private String sourceName;
         private String assertionOriginSourceId;
         private String assertionOriginClientSourceId;
+        private String assertionOriginName;
         private XMLGregorianCalendar createdDate;
         private XMLGregorianCalendar lastModifiedDate;
         private BigInteger displayIndex;
@@ -163,8 +162,13 @@ public class WorkSummaryExtended extends WorkSummary {
             return this;
         }
 
-        public WorkSummaryExtendedBuilder clientName(String clientName) {
-            this.clientName = clientName;
+        public WorkSummaryExtendedBuilder sourceName(String sourceName) {
+            this.sourceName = sourceName;
+            return this;
+        }
+
+        public WorkSummaryExtendedBuilder assertionOriginName(String assertionOriginName) {
+            this.assertionOriginName = assertionOriginName;
             return this;
         }
 
