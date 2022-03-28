@@ -20,6 +20,7 @@ import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
@@ -94,6 +95,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -228,21 +232,33 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             BigInteger displayIndex = (BigInteger) q1[9];
             String sourceId = isEmpty(q1[10]);
             String clientSourceId = isEmpty(q1[11]);
-            String assertionOriginClientSourceId = isEmpty(q1[12]);
-            Timestamp createdDate = (Timestamp) q1[13];
-            Timestamp lastModifiedDate = (Timestamp) q1[14];
-            String contributors = isEmpty(q1[15]);
+            String assertionOriginSourceId = isEmpty(q1[12]);
+            String assertionOriginClientSourceId = isEmpty(q1[13]);
+            Timestamp createdDate = (Timestamp) q1[14];
+            Timestamp lastModifiedDate = (Timestamp) q1[15];
+            String contributors = isEmpty(q1[16]);
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
                 externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
             }
-            String clientName = null;
-            String assertionOriginSourceId = null;
+            String sourceName = null;
+            String assertionOriginName = null;
             if (clientSourceId != null) {
-                ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(clientSourceId);
-                clientName = clientDetails.getClientName();
                 assertionOriginSourceId = getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager);
             }
+            if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
+                assertionOriginName = getSourceName(assertionOriginSourceId, sourceNameCacheManager);
+            }
+            if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
+                assertionOriginName = getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
+            }
+            if (!PojoUtil.isEmpty(sourceId)){
+                sourceName = getSourceName(sourceId, sourceNameCacheManager);
+            }
+            if (!PojoUtil.isEmpty(clientSourceId)) {
+                sourceName = getSourceName(clientSourceId, sourceNameCacheManager);
+            }
+
             List<WorkContributorsList> contributorList = workContributorsConverter.getContributorsList(contributors);
             WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
                     .journalTitle(journalTitle)
@@ -251,7 +267,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     .publicationMonth(publicationMonth)
                     .publicationDay(publicationDay)
                     .visibility(visibility)
-                    .clientName(clientName)
+                    .sourceName(sourceName)
+                    .assertionOriginName(assertionOriginName)
                     .displayIndex(displayIndex)
                     .assertionOriginSourceId(assertionOriginSourceId)
                     .assertionOriginClientSourceId(assertionOriginClientSourceId)
@@ -361,6 +378,10 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
 
         return assertionOriginOrcid;
+    }
+
+    private String getSourceName(String sourceId, SourceNameCacheManager sourceNameCacheManager) {
+        return sourceNameCacheManager.retrieve(sourceId);
     }
     /**
      * Get the list of works specified by the list of put codes
