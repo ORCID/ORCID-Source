@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrcidSolrOrgsClient {
 
-    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^100.0 (org-disambiguated-name-string:%s)^50.0";
+    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^50.0 (org-disambiguated-name-string:%s)^50.0";
     private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
 
     @Resource(name = "solrReadOnlyOrgsClient")
@@ -61,8 +61,7 @@ public class OrcidSolrOrgsClient {
             query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
         }
 
-        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s)) OR (%s:%s)", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF",
-                SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "LEI"));
+        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF"));
 
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);

@@ -35,6 +35,6 @@ public interface OrgDisambiguatedManager {
 
     void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier);
     
-    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String type, String identifier);
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String identifier, String type);
 
 }
