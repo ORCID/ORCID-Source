@@ -82,9 +82,8 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
         final ObjectMapper objectMapper = new ObjectMapper();
         List<WorkContributorsList> langList = new ArrayList<>();
         try {
-        	//TODO: Dani, looks like this is not doing anything? It is just an empty list
-            langList = objectMapper.readValue(source, new TypeReference<List<WorkContributorsList>>(){});			
-        } catch (JsonProcessingException e) {
+            langList = objectMapper.readValue(source, new TypeReference<List<WorkContributorsList>>(){});
+        } catch (JsonProcessingException | IllegalArgumentException e) {
             return langList;
         } catch (Exception ioe) {
         	LOGGER.error("Unable to process contributors", ioe);
