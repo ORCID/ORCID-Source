@@ -49,14 +49,17 @@ public class WorkSummaryExtended extends WorkSummary {
         Month month = new Month();
         month.setValue(builder.publicationMonth);
         Day day = new Day();
-        day.setValue(builder.publicationYear);
+        day.setValue(builder.publicationDay);
         PublicationDate pd = new PublicationDate(year, month, day);
         super.setPublicationDate(pd);
         super.setVisibility(Visibility.valueOf(builder.visibility));
         super.setDisplayIndex(builder.displayIndex.toString());
-        Source s = new Source();
-        s.setSourceOrcid(new SourceOrcid(builder.sourceId));
-        s.setSourceClientId(new SourceClientId(builder.clientSourceId));
+        Source s;
+        if (builder.clientSourceId != null) {
+            s = new Source(builder.clientSourceId);
+        } else {
+            s = new Source(builder.sourceId);
+        }
         s.setSourceName(new SourceName(builder.sourceName));
         s.setAssertionOriginOrcid(new SourceOrcid(builder.assertionOriginSourceId));
         s.setAssertionOriginClientId(new SourceClientId(builder.assertionOriginClientSourceId));
