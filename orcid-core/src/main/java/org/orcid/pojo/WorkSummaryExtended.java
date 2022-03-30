@@ -49,7 +49,7 @@ public class WorkSummaryExtended extends WorkSummary {
         Month month = new Month();
         month.setValue(builder.publicationMonth);
         Day day = new Day();
-        day.setValue(builder.publicationYear);
+        day.setValue(builder.publicationDay);
         PublicationDate pd = new PublicationDate(year, month, day);
         super.setPublicationDate(pd);
         super.setVisibility(Visibility.valueOf(builder.visibility));
