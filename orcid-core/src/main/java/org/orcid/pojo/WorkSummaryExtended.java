@@ -54,9 +54,12 @@ public class WorkSummaryExtended extends WorkSummary {
         super.setPublicationDate(pd);
         super.setVisibility(Visibility.valueOf(builder.visibility));
         super.setDisplayIndex(builder.displayIndex.toString());
-        Source s = new Source();
-        s.setSourceOrcid(new SourceOrcid(builder.sourceId));
-        s.setSourceClientId(new SourceClientId(builder.clientSourceId));
+        Source s;
+        if (builder.clientSourceId != null) {
+            s = new Source(builder.clientSourceId);
+        } else {
+            s = new Source(builder.sourceId);
+        }
         s.setSourceName(new SourceName(builder.sourceName));
         s.setAssertionOriginOrcid(new SourceOrcid(builder.assertionOriginSourceId));
         s.setAssertionOriginClientId(new SourceClientId(builder.assertionOriginClientSourceId));
