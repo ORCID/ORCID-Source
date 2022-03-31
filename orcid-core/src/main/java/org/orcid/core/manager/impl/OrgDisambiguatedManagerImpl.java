@@ -94,13 +94,14 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         List<OrgDisambiguatedEntity> entities = null;
         int startIndex = 0;
         do {
+            LOGGER.info("GROUP: Start index is: " + startIndex);
             entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 
                 new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
             }
-            startIndex = startIndex + entities.size();
+            startIndex = startIndex + INDEXING_CHUNK_SIZE;
 
         } while (!entities.isEmpty());
 
