@@ -121,4 +121,23 @@ public class SalesforceManagerImpl implements SalesforceManager {
         return details;
     }
 
+    @Override
+    public List<Member> retrieveConsortiaList() {
+        List<Member> members = new ArrayList<Member>();
+
+        try {
+            String membersListString = client.retrieveConsortiaList();
+            JSONObject membersListJsonObject = new JSONObject(membersListString);
+            members = salesForceAdapter.createMembersListFromJson(membersListJsonObject);
+        } catch (IOException | InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return members;
+    }
+
 }

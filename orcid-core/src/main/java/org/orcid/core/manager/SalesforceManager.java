@@ -9,4 +9,6 @@ public interface SalesforceManager {
 	List<Member> retrieveMembers();
 
 	MemberDetails retrieveMemberDetails(String memberSlug);
+	
+	List<Member> retrieveConsortiaList();
 }

@@ -107,7 +107,13 @@ public class MembersListController extends BaseController {
 
     @RequestMapping(value = "/consortia/consortia.json", method = RequestMethod.GET)
     public @ResponseBody List<Member> retrieveConsortia() {
-        return salesForceManagerLegacy.retrieveConsortia();
+        List<Member> consortiaListMembers;
+        if (Features.SALESFORCE_MICROSERVICE.isActive()) {
+            consortiaListMembers = salesforceManager.retrieveConsortiaList();            
+        } else {
+            consortiaListMembers = salesForceManagerLegacy.retrieveConsortia();    
+        }
+        return consortiaListMembers;
     }
 
     protected Map<String, String> generateCommunityTypeMap() {
