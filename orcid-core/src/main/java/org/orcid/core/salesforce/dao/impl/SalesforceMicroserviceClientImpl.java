@@ -21,11 +21,13 @@ public class SalesforceMicroserviceClientImpl implements SalesforceMicroserviceC
 
     private final String membersListEndpoint;
     private final String memberDetailsEndpoint;
+    private final String consortiaListEndpoint;
 
     public SalesforceMicroserviceClientImpl(@Value("${org.orcid.microservice.gateway.url}") String gatewayUrl,
             @Value("${org.orcid.salesforce.api.timeout:5000}") Integer timeout) {
         membersListEndpoint = gatewayUrl + "/members/list";
         memberDetailsEndpoint = gatewayUrl + "/member/%s/details";
+        consortiaListEndpoint = gatewayUrl + "/consortia/list";
         httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).connectTimeout(Duration.ofSeconds(timeout)).build();
     }
 
@@ -41,6 +43,12 @@ public class SalesforceMicroserviceClientImpl implements SalesforceMicroserviceC
         return doGetRequest(String.format(memberDetailsEndpoint, memberId));
     }
 
+    @Override
+    public String retrieveConsortiaList() throws IOException, InterruptedException {
+        // TODO: Handle exceptions
+        return doGetRequest(consortiaListEndpoint);
+    }
+    
     private String doGetRequest(String url) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(url)).setHeader("Authorization", "Bearer " + salesforceReadToken).build();
 
@@ -48,5 +56,5 @@ public class SalesforceMicroserviceClientImpl implements SalesforceMicroserviceC
         // TODO: Handle exceptions
         return response.body();
     }
-
+    
 }

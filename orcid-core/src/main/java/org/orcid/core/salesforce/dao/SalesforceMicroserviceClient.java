@@ -6,4 +6,6 @@ public interface SalesforceMicroserviceClient {
     String retrieveMembers() throws IOException, InterruptedException;
 
     String retrieveMemberDetails(String memberId) throws IOException, InterruptedException;
+
+    String retrieveConsortiaList() throws IOException, InterruptedException;
 }
