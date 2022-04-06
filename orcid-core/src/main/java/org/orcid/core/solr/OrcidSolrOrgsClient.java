@@ -16,17 +16,25 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.orcid.core.togglz.Features;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrcidSolrOrgsClient {
-
-    private static final String SOLR_ORGS_QUERY = "(org-disambiguated-name:%s)^50.0 (org-disambiguated-name-string:%s)^50.0";
-    private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidSolrOrgsClient.class);
+    
     @Resource(name = "solrReadOnlyOrgsClient")
     private SolrClient solrReadOnlyOrgsClient;
+
+    @Value("${org.orcid.core.orgs.query:(org-disambiguated-name:\"%s\")^100.0  (org-disambiguated-name:%s*)^10.0}" )
+    private String SOLR_ORGS_QUERY;
+    
+    private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
+
+    
 
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
@@ -49,7 +57,7 @@ public class OrcidSolrOrgsClient {
     }
 
     public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean promoteChosenOrgs) {
-        StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm + '*'));
+        StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm));
         if (fundersOnly) {
             queryString.append(" AND is-funding-org:true");
         }
@@ -62,6 +70,8 @@ public class OrcidSolrOrgsClient {
         }
 
         query.addFilterQuery(String.format("(%s:(%s OR %s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF"));
+        LOGGER.debug("SOLR Query: " + query.toQueryString());
+        System.out.println("!!!!!! SOLR Query: " + query.toQueryString());
 
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
