@@ -71,7 +71,6 @@ public class OrcidSolrOrgsClient {
 
         query.addFilterQuery(String.format("(%s:(%s OR %s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF"));
         LOGGER.debug("SOLR Query: " + query.toQueryString());
-        System.out.println("!!!!!! SOLR Query: " + query.toQueryString());
 
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
