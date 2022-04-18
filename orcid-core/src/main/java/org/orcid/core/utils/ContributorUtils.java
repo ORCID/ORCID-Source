@@ -31,8 +31,6 @@ public class ContributorUtils {
     
     private final Integer BATCH_SIZE;           
 
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
     private ActivityManager cacheManager;
 
     private ProfileEntityManager profileEntityManager;
@@ -149,10 +147,6 @@ public class ContributorUtils {
         return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
     }
     
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-    }
-
     public void setCacheManager(ActivityManager cacheManager) {
         this.cacheManager = cacheManager;
     }

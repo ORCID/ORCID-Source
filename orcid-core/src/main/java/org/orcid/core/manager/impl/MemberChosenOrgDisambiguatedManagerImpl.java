@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.MemberChosenOrgDisambiguatedManager;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -23,7 +23,7 @@ public class MemberChosenOrgDisambiguatedManagerImpl implements MemberChosenOrgD
     private OrgDisambiguatedDao orgDisambiguatedDao;
     
     @Resource
-    private SalesForceManager salesForceManager; 
+    private SalesForceManagerLegacy salesForceManager; 
 
     @Override
     public synchronized void refreshMemberChosenOrgs() {

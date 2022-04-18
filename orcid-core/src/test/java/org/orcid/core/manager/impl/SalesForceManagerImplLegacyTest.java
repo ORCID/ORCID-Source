@@ -32,7 +32,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManagerImpl;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
@@ -58,11 +58,11 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * @author Will Simpson
  *
  */
-public class SalesForceManagerImplTest {
+public class SalesForceManagerImplLegacyTest {
 
     private static final String TEST_ORCID = "4444-4444-4444-4441";
 
-    private SalesForceManager salesForceManager = new SalesForceManagerImpl();
+    private SalesForceManagerLegacy salesForceManager = new SalesForceManagerImplLegacy();
 
     @Mock
     private SalesForceDao salesForceDao;
@@ -222,7 +222,7 @@ public class SalesForceManagerImplTest {
         ContactRole role = new ContactRole(ContactRoleType.TECHNICAL_CONTACT);
         role.setId("contact2Idrole1Id");
         contact.setRole(role);
-        ((SalesForceManagerImpl) salesForceManager).updateContact(contact, Collections.<Contact> emptyList());
+        ((SalesForceManagerImplLegacy) salesForceManager).updateContact(contact, Collections.<Contact> emptyList());
         verify(salesForceDao, times(1)).updateContactRole(argThat(r -> {
             return "contact2Idrole1Id".equals(r.getId()) && "contact2Id".equals(r.getContactId()) && ContactRoleType.MAIN_CONTACT.equals(r.getRoleType())
                     && !r.isCurrent();

@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -52,7 +52,7 @@ public class OrcidUserDetailsServiceTest {
     private SlackManager slackManager;
 
     @Mock
-    private SalesForceManager salesForceManager;
+    private SalesForceManagerLegacy salesForceManager;
 
     private static final String ORCID = "0000-0000-0000-0000";
     private static final String EMAIL = "email@test.orcid.org";

@@ -53,7 +53,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
 
-    private int numberOfContributorsGroupedByOrcid;
+    private int numberOfContributors;
 
     private List<ActivityExternalIdentifier> workExternalIdentifiers = new ArrayList<>();
 
@@ -646,12 +646,12 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
     }
 
-    public int getNumberOfContributorsGroupedByOrcid() {
-        return numberOfContributorsGroupedByOrcid;
+    public int getNumberOfContributors() {
+        return numberOfContributors;
     }
 
-    public void setNumberOfContributorsGroupedByOrcid(int numberOfContributorsGroupedByOrcid) {
-        this.numberOfContributorsGroupedByOrcid = numberOfContributorsGroupedByOrcid;
+    public void setNumberOfContributors(int numberOfContributors) {
+        this.numberOfContributors = numberOfContributors;
     }
 
     public List<ActivityExternalIdentifier> getWorkExternalIdentifiers() {

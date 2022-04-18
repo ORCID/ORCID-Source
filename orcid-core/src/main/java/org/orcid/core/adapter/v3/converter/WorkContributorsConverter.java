@@ -10,14 +10,25 @@ import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.contributors.roles.works.LegacyWorkContributorRole;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
+import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
 public class WorkContributorsConverter extends BidirectionalConverter<WorkContributors, String> {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(WorkContributorsConverter.class);
+	
     private ContributorRoleConverter roleConverter;
 
     public WorkContributorsConverter(ContributorRoleConverter roleConverter) {
@@ -67,5 +78,28 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
             }
         });
         return workContributors;
+    }
+
+    public List<WorkContributorsList> getContributorsList(String source) {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        List<WorkContributorsList> langList = new ArrayList<>();
+        try {
+            langList = objectMapper.readValue(source, new TypeReference<List<WorkContributorsList>>(){});
+            for (WorkContributorsList workContributorsList : langList) {
+                if (workContributorsList.getContributor() != null && workContributorsList.getContributor().getContributorAttributes() != null) {
+                    ContributorAttributes ca = workContributorsList.getContributor().getContributorAttributes();
+                    String providedRoleValue = ca.getContributorRole();
+                    if (!PojoUtil.isEmpty(providedRoleValue)) {
+                        ca.setContributorRole(roleConverter.toRoleValue(providedRoleValue));
+                    }
+                }
+            }
+        } catch (JsonProcessingException | IllegalArgumentException e) {
+            return langList;
+        } catch (Exception ioe) {
+        	LOGGER.error("Unable to process contributors", ioe);
+        	throw ioe;
+        }
+        return langList;
     }
 }

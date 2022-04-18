@@ -94,12 +94,14 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         List<OrgDisambiguatedEntity> entities = null;
         int startIndex = 0;
         do {
+            LOGGER.info("GROUP: Start index is: " + startIndex);
             entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
+                
                 new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
             }
-            startIndex = startIndex + entities.size();
+            startIndex = startIndex + INDEXING_CHUNK_SIZE;
 
         } while (!entities.isEmpty());
 
@@ -263,9 +265,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
 
-    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String type, String identifier) {
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier( String identifier, String type ) {
         List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
-        List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(type, identifier);
+        List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(identifier, type);
         extIds.stream().forEach((e) -> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
         return orgDisambiguatedIds;
     }

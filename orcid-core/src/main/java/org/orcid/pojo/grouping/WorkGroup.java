@@ -194,21 +194,23 @@ public class WorkGroup extends ActivityGroup {
             workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
         }
 
-        workForm.setSource(workSummary.getSource().retrieveSourcePath());
-        if (workSummary.getSource().getSourceName() != null) {
-            workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginClientId() != null) {
-            workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginOrcid() != null) {
-            workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginName() != null) {
-            workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
+        if (workSummary.getSource() != null) {
+            workForm.setSource(workSummary.getSource().retrieveSourcePath());
+            if (workSummary.getSource().getSourceName() != null) {
+                workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
+            }
+
+            if (workSummary.getSource().getAssertionOriginClientId() != null) {
+                workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
+            }
+
+            if (workSummary.getSource().getAssertionOriginOrcid() != null) {
+                workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
+            }
+
+            if (workSummary.getSource().getAssertionOriginName() != null) {
+                workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
+            }
         }
 
         workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
@@ -218,7 +220,7 @@ public class WorkGroup extends ActivityGroup {
         workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
-            workForm.setNumberOfContributorsGroupedByOrcid(workSummary.getNumberOfContributorsGroupedByOrcid());
+            workForm.setNumberOfContributors(workSummary.getNumberOfContributors());
         }
         return workForm;
     }

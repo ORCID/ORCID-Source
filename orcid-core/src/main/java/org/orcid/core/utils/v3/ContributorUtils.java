@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ehcache.Cache;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
@@ -35,8 +35,6 @@ public class ContributorUtils {
     private final Integer BATCH_SIZE;
     
     private static final String RECORD_NAME_KEY_POSTFIX = "_record_name";      
-
-    private ProfileEntityCacheManager profileEntityCacheManager;
 
     private ActivityManager cacheManager;
 
@@ -80,9 +78,9 @@ public class ContributorUtils {
         }
     }
     
-    public void filterContributorPrivateData(WorkSummaryExtended work) {
-        if (work.getContributors() != null && work.getContributors().getContributor() != null) {
-            filterWorkContributors(work.getContributors().getContributor());
+    public void filterContributorPrivateData(List<Contributor> contributorList, int maxContributorsForUI) {
+        if (contributorList != null) {
+            filterWorkContributors(contributorList, maxContributorsForUI);
         }
     }
 
@@ -119,7 +117,44 @@ public class ContributorUtils {
                 }
             }
     }
-    
+
+    private void filterWorkContributors(List<Contributor> contributorList, int maxContributorsForUI) {
+        List<Contributor> contributorsToPopulateName = new ArrayList<Contributor>();
+        Set<String> idsToPopulateName = new HashSet<String>();
+        // Populate the credit name of cached contributors and populate the list of names to retrieve from the DB
+        for (Contributor contributor : contributorList) {
+            contributor.setContributorEmail(null);
+            if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
+                String orcid = contributor.getContributorOrcid().getPath();
+                String cachedName = getCachedContributorName(orcid);
+                if(cachedName == null) {
+                    if (idsToPopulateName.size() == maxContributorsForUI) {
+                        break;
+                    }
+                    idsToPopulateName.add(orcid);
+                    contributorsToPopulateName.add(contributor);
+                } else {
+                    CreditName creditName = new CreditName(cachedName);
+                    contributor.setCreditName(creditName);
+                }
+            }
+        }
+
+        // Fetch the contributor names
+        Map<String, String> contributorNames = getContributorNamesFromDB(idsToPopulateName);
+
+        // Populate missing names
+        for(Contributor contributor : contributorsToPopulateName) {
+            String orcid = contributor.getContributorOrcid().getPath();
+            // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
+            if(contributorNames.containsKey(orcid)) {
+                String name = contributorNames.get(orcid);
+                CreditName creditName = new CreditName(name);
+                contributor.setCreditName(creditName);
+            }
+        }
+    }
+
     private String getCachedContributorName(String orcid) {
         String cacheKey = getCacheKey(orcid);
         if(contributorsNameCache.containsKey(cacheKey)){
@@ -138,7 +173,10 @@ public class ContributorUtils {
                 for(RecordNameEntity entity : entities) {
                     String orcid = entity.getOrcid();
                     String publicCreditName = cacheManager.getPublicCreditName(orcid);
-                    contributorNames.put(orcid, (publicCreditName == null ? "" : publicCreditName));
+                    publicCreditName = (publicCreditName == null ? "" : publicCreditName);
+                    contributorNames.put(orcid, publicCreditName);
+                    // Fill the cache
+                    contributorsNameCache.put(getCacheKey(orcid), publicCreditName);
                     // Store in the request, to use as a cache
                     ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                     if (sra != null) {
@@ -163,11 +201,7 @@ public class ContributorUtils {
     private String getCacheKey(String orcid) {
         Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
-    }
-    
-    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
-        this.profileEntityCacheManager = profileEntityCacheManager;
-    }
+    }    
 
     public void setCacheManager(ActivityManager cacheManager) {
         this.cacheManager = cacheManager;

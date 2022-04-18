@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.ClientAlreadyActiveException;
 import org.orcid.core.exception.ClientAlreadyDeactivatedException;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.MembersManager;
@@ -64,7 +64,7 @@ public class ManageMembersController extends BaseController {
     private ClientsController groupAdministratorController;
     
     @Resource
-    private SalesForceManager salesForceManager;
+    private SalesForceManagerLegacy salesForceManager;
 
     @RequestMapping
     public ModelAndView getManageMembersPage() {

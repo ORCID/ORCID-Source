@@ -24,7 +24,6 @@ import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.OpportunityContactRole;
 import org.orcid.core.salesforce.model.OrgId;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +39,11 @@ public class SalesForceAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceAdapter.class);
 
-    @Resource(name = "salesForceMemberMapperFacadeLegacy")
-    private MapperFacade mapperFacadeLegacy;
     @Resource(name = "salesForceMemberMapperFacade")
     private MapperFacade mapperFacade;
 
-    public void setMapperFacade(MapperFacade mapperFacade, MapperFacade mapperFacadeLegacy) {
-        this.mapperFacade = mapperFacade;
-        this.mapperFacadeLegacy = mapperFacadeLegacy;
+    public void setMapperFacade(MapperFacade mapperFacade) {
+        this.mapperFacade = mapperFacade;        
     }
 
     public Consortium createConsortiumFromJson(JSONObject results) {
@@ -77,21 +73,13 @@ public class SalesForceAdapter {
     }
 
     Contact createContactFromJson(JSONObject record) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(record, Contact.class);
-        } else {
-            return mapperFacadeLegacy.map(record, Contact.class);
-        }
+        return mapperFacade.map(record, Contact.class);        
     }
 
     public List<Contact> createContactsFromJson(JSONObject object) {
         try {
             List<JSONObject> objectsList = extractObjectListFromRecords(object);
-            if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
-            } else {
-                return objectsList.stream().map(e -> mapperFacadeLegacy.map(e, Contact.class)).collect(Collectors.toList());
-            }
+            return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());            
         } catch (JSONException e) {
             throw new RuntimeException("Error getting all contacts list from SalesForce JSON", e);
         }
@@ -102,11 +90,7 @@ public class SalesForceAdapter {
             JSONObject firstRecord = extractFirstRecord(object);
             JSONObject contactRoles = firstRecord.optJSONObject("Membership_Contact_Roles__r");
             List<JSONObject> objectsList = extractObjectListFromRecords(contactRoles);
-            if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
-            } else {
-                return objectsList.stream().map(e -> mapperFacadeLegacy.map(e, Contact.class)).collect(Collectors.toList());
-            }            
+            return objectsList.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());                       
         } catch (JSONException e) {
             throw new RuntimeException("Error getting contacts with roles list from SalesForce JSON", e);
         }
@@ -125,48 +109,28 @@ public class SalesForceAdapter {
         } catch (JSONException e) {
             throw new RuntimeException("Error getting contacts with roles list from SalesForce JSON", e);
         }
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return allContacts.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());
-        } else {
-            return allContacts.stream().map(e -> mapperFacadeLegacy.map(e, Contact.class)).collect(Collectors.toList());
-        }
+        return allContacts.stream().map(e -> mapperFacade.map(e, Contact.class)).collect(Collectors.toList());        
     }
 
     public JSONObject createSaleForceRecordFromContact(Contact contact) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(contact, JSONObject.class);
-        } else {
-            return mapperFacadeLegacy.map(contact, JSONObject.class);
-        }        
+        return mapperFacade.map(contact, JSONObject.class);               
     }
 
     public List<ContactRole> createContactRolesFromJson(JSONObject object) {
         try {
             List<JSONObject> contactRoles = extractObjectListFromRecords(object);
-            if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                return contactRoles.stream().map(e -> mapperFacade.map(e, ContactRole.class)).collect(Collectors.toList());
-            } else {
-                return contactRoles.stream().map(e -> mapperFacadeLegacy.map(e, ContactRole.class)).collect(Collectors.toList());
-            }            
+            return contactRoles.stream().map(e -> mapperFacade.map(e, ContactRole.class)).collect(Collectors.toList());                       
         } catch (JSONException e) {
             throw new RuntimeException("Error getting contact roles list from SalesForce JSON", e);
         }
     }
 
     public JSONObject createSaleForceRecordFromContactRole(ContactRole contactRole) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(contactRole, JSONObject.class);
-        } else {
-            return mapperFacadeLegacy.map(contactRole, JSONObject.class);
-        }        
+        return mapperFacade.map(contactRole, JSONObject.class);        
     }
 
     public JSONObject createSaleForceRecordFromOpportunityContactRole(OpportunityContactRole contactRole) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(contactRole, JSONObject.class);
-        } else {
-            return mapperFacadeLegacy.map(contactRole, JSONObject.class);
-        }        
+        return mapperFacade.map(contactRole, JSONObject.class);               
     }
 
     public List<Member> createMembersListFromJson(JSONObject results) {
@@ -186,11 +150,7 @@ public class SalesForceAdapter {
         List<JSONObject> objectsList;
         try {
             objectsList = extractObjectListFromRecords(results);
-            if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                return objectsList.stream().map(e -> mapperFacade.map(e, Integration.class)).collect(Collectors.toList());
-            } else {
-                return objectsList.stream().map(e -> mapperFacadeLegacy.map(e, Integration.class)).collect(Collectors.toList());
-            }            
+            return objectsList.stream().map(e -> mapperFacade.map(e, Integration.class)).collect(Collectors.toList());                       
         } catch (JSONException e) {
             throw new RuntimeException("Error getting integrations from SalesForce JSON", e);
         }
@@ -200,11 +160,7 @@ public class SalesForceAdapter {
         List<JSONObject> objectsList;
         try {
             objectsList = extractObjectListFromRecords(results);
-            if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                return objectsList.stream().map(e -> mapperFacade.map(e, Badge.class)).collect(Collectors.toList());
-            } else {
-                return objectsList.stream().map(e -> mapperFacadeLegacy.map(e, Badge.class)).collect(Collectors.toList());
-            }            
+            return objectsList.stream().map(e -> mapperFacade.map(e, Badge.class)).collect(Collectors.toList());                       
         } catch (JSONException e) {
             throw new RuntimeException("Error getting badges from SalesForce JSON", e);
         }
@@ -223,73 +179,41 @@ public class SalesForceAdapter {
         return null;
     }
 
-    Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(record, Member.class);
-        } else {
-            return mapperFacadeLegacy.map(record, Member.class);
-        }        
+    public Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
+        return mapperFacade.map(record, Member.class);        
     }
 
     public JSONObject createSaleForceRecordFromMember(Member member) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(member, JSONObject.class);
-        } else {
-            return mapperFacadeLegacy.map(member, JSONObject.class);
-        }        
+        return mapperFacade.map(member, JSONObject.class);               
     }
 
     private Integration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(integrationRecord, Integration.class);
-        } else {
-            return mapperFacadeLegacy.map(integrationRecord, Integration.class);
-        }        
+        return mapperFacade.map(integrationRecord, Integration.class);               
     }
 
     public Opportunity createOpportunityFromSalesForceRecord(JSONObject jsonObject) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(jsonObject, Opportunity.class);
-        } else {
-            return mapperFacadeLegacy.map(jsonObject, Opportunity.class);
-        }        
+        return mapperFacade.map(jsonObject, Opportunity.class);               
     }
 
     public JSONObject createSaleForceRecordFromOpportunity(Opportunity opportunity) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(opportunity, JSONObject.class);
-        } else {
-            return mapperFacadeLegacy.map(opportunity, JSONObject.class);
-        }
+        return mapperFacade.map(opportunity, JSONObject.class);        
     }
 
     public OrgId createOrgIdFromJson(JSONObject record) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(record, OrgId.class);
-        } else {
-            return mapperFacadeLegacy.map(record, OrgId.class);
-        }        
+        return mapperFacade.map(record, OrgId.class);               
     }
 
     public List<OrgId> createOrgIdsFromJson(JSONObject object) {
         try {
             List<JSONObject> objectsList = extractObjectListFromRecords(object);
-            if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-                return objectsList.stream().map(e -> mapperFacade.map(e, OrgId.class)).collect(Collectors.toList());
-            } else {
-                return objectsList.stream().map(e -> mapperFacadeLegacy.map(e, OrgId.class)).collect(Collectors.toList());
-            }            
+            return objectsList.stream().map(e -> mapperFacade.map(e, OrgId.class)).collect(Collectors.toList());                       
         } catch (JSONException e) {
             throw new RuntimeException("Error getting org id list from SalesForce JSON", e);
         }
     }
 
     public JSONObject createSaleForceRecordFromOrgId(OrgId orgId) {
-        if (Features.SF_ENABLE_OPP_ORG_RECORD_TYPES.isActive()) {
-            return mapperFacade.map(orgId, JSONObject.class);
-        } else {
-            return mapperFacadeLegacy.map(orgId, JSONObject.class);
-        }        
+        return mapperFacade.map(orgId, JSONObject.class);               
     }
 
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
@@ -365,4 +289,28 @@ public class SalesForceAdapter {
         return url.substring(slashIndex + 1);
     }
 
+    
+    public List<Integration> createIntegrationsList(JSONArray integrations) {
+        List<Integration> integrationList = new ArrayList<Integration>();
+        try {
+            for (int i = 0; i < integrations.length(); i++) {
+                integrationList.add(mapperFacade.map(integrations.getJSONObject(i), Integration.class));
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting integrations from SalesForce JSON", e);
+        }
+        return integrationList;
+    }
+
+    public List<Opportunity> createOpportunitiesList(JSONArray opportunities) {
+        List<Opportunity> opportunityList = new ArrayList<Opportunity>();
+        try {
+            for (int i = 0; i < opportunities.length(); i++) {
+                opportunityList.add(mapperFacade.map(opportunities.getJSONObject(i), Opportunity.class));
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting opportunities from SalesForce JSON", e);
+        }
+        return opportunityList;
+    }
 }
