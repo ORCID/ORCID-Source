@@ -12,4 +12,5 @@ public interface InternalApiServiceDelegator {
     Response viewPersonLastModified(String orcid);
     Response viewMemberInfo(String memberIdOrName);
     Response viewTogglz();
+    Response findOrcidByEmail(String email);
 }

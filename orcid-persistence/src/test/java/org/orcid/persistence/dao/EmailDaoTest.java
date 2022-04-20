@@ -128,8 +128,15 @@ public class EmailDaoTest extends DBUnitTest {
         email = emailDao.findPrimaryEmail("0000-0000-0000-0004");
         assertNotNull(email);
         assertEquals("private_0000-0000-0000-0004@test.orcid.org", email.getEmail());
-    }    
-    
+    }
+
+    @Test
+    public void testFindOrcidByVerifiedEmail() {
+        String orcid = emailDao.findOrcidByVerifiedEmail("2965a4115f2639b43e5feb78adddfff52e5324813b6c12b4e25ebdac052f72df");
+        assertNotNull(orcid);
+        assertEquals("4444-4444-4444-4444", orcid);
+    }
+
     @Test
     public void mergeTest() {
         EmailEntity e = emailDao.findByEmail("teddybass2@semantico.com");

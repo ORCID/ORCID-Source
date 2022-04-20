@@ -1,5 +1,6 @@
 package org.orcid.internal.server;
 
+import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_FIND_ORCID_BY_EMAIL;
 import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_PERSON_READ;
 import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_TOGGLZ_READ;
 import static org.orcid.core.api.OrcidApiConstants.MEMBER_INFO;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.net.util.Base64;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,5 +92,17 @@ public abstract class InternalApiServiceImplBase {
     public Response viewTogglz() {
         Response response = serviceDelegator.viewTogglz();
         return response;
+    }
+
+    /**
+     *
+     * @param email must be encoded in Base64 format
+     * @return
+     */
+    @GET
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Path(INTERNAL_API_FIND_ORCID_BY_EMAIL)
+    public Response findOrcidByEmail(@PathParam("email") String email) {
+        return serviceDelegator.findOrcidByEmail(new String(Base64.decodeBase64(email.getBytes())));
     }
 }
