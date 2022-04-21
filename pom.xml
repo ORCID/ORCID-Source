@@ -38,7 +38,8 @@ the software.
         <ajp.port>9438</ajp.port>
         <aws.version>1.11.32</aws.version>
         <solr.version>8.0.0</solr.version>
-        <main.basedir>${project.basedir}</main.basedir>
+        <hibernate.version>5.4.33.Final</hibernate.version>
+        <main.basedir>${project.basedir}</main.basedir>        
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
 
@@ -66,33 +67,7 @@ the software.
     </organization>
 
     <url>http://orcid.org</url>
-
-    <scm>
-        <connection>scm:git:ssh://git@github.com/ORCID/ORCID-Work-in-Progress.git</connection>
-        <developerConnection>scm:git:git://github.com/ORCID/ORCID-Work-in-Progress.git</developerConnection>
-        <url>https://github.com/ORCID/ORCID-Work-in-Progress</url>
-    </scm>
-
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>http://jenkins.semantico.net/</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>false</sendOnSuccess>
-                <sendOnWarning>false</sendOnWarning>
-                <configuration>
-                    <recipients>will.simpson@semantico.com
-                        declan.newman@semantico.com
-                        james.bowen@semantico.com
-                    </recipients>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
-
+    
     <!-- End -->
 
     <build>
@@ -189,11 +164,7 @@ the software.
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
-            </plugin>
-            <!-- plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-            </plugin -->
+            </plugin>            
         </plugins>
 
         <pluginManagement>
@@ -370,30 +341,6 @@ the software.
 		    <version>2.17.1</version>
 		  </dependency>
 		  
-        <!-- dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-	        <groupId>log4j</groupId>
-	        <artifactId>apache-log4j-extras</artifactId>
-	        <scope>compile</scope>
-        </dependency -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
@@ -408,8 +355,6 @@ the software.
             <scope>compile</scope>
         </dependency>
         
-        
-
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -767,17 +712,22 @@ the software.
             <dependency>
 			  <groupId>org.hibernate</groupId>
 			  <artifactId>hibernate-agroal</artifactId>
-			  <version>5.4.27.Final</version>
+			  <version>5.4.33.Final</version>
+			</dependency>
+            <dependency>
+			  <groupId>org.hibernate</groupId>
+			  <artifactId>hibernate-core</artifactId>
+			  <version>5.4.33.Final</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
     			<artifactId>hibernate-c3p0</artifactId>
-    			<version>5.3.6.Final</version>
+    			<version>5.4.33.Final</version>
 			</dependency>
 			<dependency>
 			    <groupId>org.hibernate</groupId>
     			<artifactId>hibernate-validator</artifactId>
-   				 <version>5.4.3.Final</version>
+   				 <version>5.4.33.Final</version>
 			</dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>

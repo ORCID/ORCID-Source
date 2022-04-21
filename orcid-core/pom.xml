@@ -30,7 +30,7 @@
     <dependencies>
         <!-- Internal dependencies -->
         <dependency>
-            <groupId>org.orcid</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>orcid-persistence</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -38,14 +38,7 @@
             <groupId>org.orcid</groupId>
             <artifactId>orcid-model</artifactId>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>orcid-audit</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        -->
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-utils</artifactId>
@@ -302,6 +295,11 @@
             <groupId>javax.jms</groupId>
             <artifactId>javax.jms-api</artifactId>
             <version>2.0.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
         </dependency>
     </dependencies>
 </project>
