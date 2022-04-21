@@ -31,7 +31,7 @@ the software.
         <jersey.version>1.19.1</jersey.version>
         <swagger.version>1.5.16</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
-        <jena.version>3.6.0</jena.version>
+        <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -711,23 +711,18 @@ the software.
             </dependency>
             <dependency>
 			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-agroal</artifactId>
-			  <version>5.4.33.Final</version>
-			</dependency>
-            <dependency>
-			  <groupId>org.hibernate</groupId>
 			  <artifactId>hibernate-core</artifactId>
-			  <version>5.4.33.Final</version>
+			  <version>${hibernate.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hibernate</groupId>
     			<artifactId>hibernate-c3p0</artifactId>
-    			<version>5.4.33.Final</version>
+    			<version>${hibernate.version}</version>
 			</dependency>
 			<dependency>
 			    <groupId>org.hibernate</groupId>
     			<artifactId>hibernate-validator</artifactId>
-   				 <version>5.4.33.Final</version>
+   				 <version>${hibernate.version}</version>
 			</dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
@@ -759,37 +754,6 @@ the software.
                 <artifactId>cache-api</artifactId>
                     <version>1.0.0</version>
             </dependency>
-
-            <!-- Logging -->
-            <!--  dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.6.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.6.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>apache-log4j-extras</artifactId>
-                    <version>1.1</version>
-            </dependency -->
 
             <!-- AOP -->
             <dependency>
@@ -971,7 +935,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.9</version>
+               <version>3.0.8</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

@@ -85,11 +85,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-agroal</artifactId>
-		</dependency>
+        </dependency>        
 		<dependency>
 			<groupId>org.hibernate</groupId>
     		<artifactId>hibernate-c3p0</artifactId>

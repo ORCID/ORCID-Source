@@ -90,11 +90,7 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-agroal</artifactId>
-		</dependency>
+        </dependency>        
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>

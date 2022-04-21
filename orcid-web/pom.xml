@@ -123,10 +123,6 @@
             </exclusions>
         </dependency>
         <dependency>
-			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-agroal</artifactId>
-		</dependency>
-        <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
