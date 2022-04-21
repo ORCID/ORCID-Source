@@ -126,7 +126,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof OrcidNotificationException) {
             logShortError(t, clientId);
         } else {
-                LOGGER.error("An exception has occured processing request from client " + clientId, t);
+            LOGGER.error("An exception has occured processing request from client " + clientId, t);
         }
 
         if (isOAuthTokenRequest()) {

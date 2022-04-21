@@ -132,6 +132,23 @@ public class EmailManagerReadOnlyTest extends BaseTest {
             fail();
         }
     }
+
+    @Test
+    public void testFindOrcidByVerifiedEmail() {
+        assertEquals("0000-0000-0000-0003", emailManagerReadOnly.findOrcidByVerifiedEmail("public_0000-0000-0000-0003@test.orcid.org"));
+        assertEquals("0000-0000-0000-0003", emailManagerReadOnly.findOrcidByVerifiedEmail("PUBLIC_0000-0000-0000-0003@TEST.ORCID.ORG"));
+        assertEquals("0000-0000-0000-0003", emailManagerReadOnly.findOrcidByVerifiedEmail("PuBlIc_0000-0000-0000-0003@test.orcid.org"));
+
+        try {
+            assertNull(emailManagerReadOnly.findOrcidByVerifiedEmail("public_0000-0000-0000-0004@test.orcid.org"));
+            assertNull(emailManagerReadOnly.findOrcidByVerifiedEmail("fail@test.orcid.org"));
+            fail("Should throw an exception if no email is founded");
+        } catch(NoResultException e) {
+
+        } catch(Exception e) {
+            fail();
+        }
+    }
     
     @Test
     public void testIsUsersOnlyEmailMultipleEmails() {
