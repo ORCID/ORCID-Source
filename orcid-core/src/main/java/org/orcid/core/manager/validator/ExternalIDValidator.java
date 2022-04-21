@@ -1,9 +1,9 @@
 package org.orcid.core.manager.validator;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
@@ -32,7 +32,7 @@ public class ExternalIDValidator {
         if (id == null)
             return;
         
-        List<String> errors = Lists.newArrayList();
+        List<String> errors = new ArrayList<String>();
         
         if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
             errors.add("type");
@@ -54,7 +54,7 @@ public class ExternalIDValidator {
     public void validateWorkOrPeerReview(ExternalIDs ids) {
         if (ids == null) // yeuch
             return;
-        List<String> errors = Lists.newArrayList();
+        List<String> errors = new ArrayList<String>();
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
@@ -76,7 +76,7 @@ public class ExternalIDValidator {
     public void validateFunding(ExternalIDs ids) {
         if (ids == null) // urgh
             return;
-        List<String> errors = Lists.newArrayList();
+        List<String> errors = new ArrayList<String>();
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName(null).containsKey(id.getType())) {
                 errors.add(id.getType());
@@ -99,7 +99,7 @@ public class ExternalIDValidator {
     public void validateNotificationItems(Items items) {
         if (items == null)
             return;
-        List<String> errors = Lists.newArrayList();
+        List<String> errors = new ArrayList<String>();
         for (Item i : items.getItems()) {
             if (i.getExternalIdentifier() != null && i.getExternalIdentifier().getType() != null) {
                 ExternalID extId = i.getExternalIdentifier();

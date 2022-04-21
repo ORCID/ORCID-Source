@@ -1,10 +1,10 @@
 package org.orcid.api.common.writer.schemaorg;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.jena.ext.com.google.common.collect.Lists;
-import org.apache.jena.ext.com.google.common.collect.Sets;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,16 +21,16 @@ public class SchemaOrgDocument {
     public String type = "Person";
     @JsonProperty("@id")
     public String id;
-    public List<SchemaOrgExternalID> identifier = Lists.newArrayList();
+    public List<SchemaOrgExternalID> identifier = new ArrayList<SchemaOrgExternalID>();
     public String mainEntityOfPage;// same as ID;
     public String name;
     public String givenName;
     public String familyName;
-    public List<String> alternateName = Lists.newArrayList();
-    public List<SchemaOrgAddress> address = Lists.newArrayList();
-    public Set<SchemaOrgAffiliation> alumniOf = Sets.newLinkedHashSet();
-    public Set<SchemaOrgAffiliation> affiliation = Sets.newLinkedHashSet(); // non-education
-    public List<String> url = Lists.newArrayList(); // webpages
+    public List<String> alternateName =  new ArrayList<String>();
+    public List<SchemaOrgAddress> address =  new ArrayList<SchemaOrgAddress>();
+    public Set<SchemaOrgAffiliation> alumniOf = new HashSet<SchemaOrgAffiliation>();
+    public Set<SchemaOrgAffiliation> affiliation = new LinkedHashSet<SchemaOrgAffiliation>(); // non-education
+    public List<String> url =  new ArrayList<String>(); // webpages
     @JsonProperty("@reverse")
     public SchemaOrgReverse worksAndFunding = new SchemaOrgReverse();
 
@@ -195,8 +195,8 @@ public class SchemaOrgDocument {
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonPropertyOrder({ "funder", "creator" })
     public static class SchemaOrgReverse {
-        public List<SchemaOrgWork> creator = Lists.newArrayList();
-        public List<SchemaOrgAffiliation> funder = Lists.newArrayList();
+        public List<SchemaOrgWork> creator = new ArrayList<SchemaOrgWork>();
+        public List<SchemaOrgAffiliation> funder = new ArrayList<SchemaOrgAffiliation>();
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -249,15 +249,15 @@ public class SchemaOrgDocument {
         public Set<String> sameAs; // for id urls
 
         public SchemaOrgWork() {
-            identifier = Sets.newLinkedHashSet();
-            sameAs = Sets.newLinkedHashSet();
+            identifier = new LinkedHashSet<SchemaOrgExternalID>();
+            sameAs = new LinkedHashSet<String>();
         }
 
         public SchemaOrgWork(String id, String name, Set<String> sameAs, SchemaOrgExternalID... identifier) {
             super();
             this.id = id;
             this.name = name;
-            this.identifier = Sets.newLinkedHashSet(Lists.newArrayList(identifier));
+            this.identifier = new LinkedHashSet<SchemaOrgExternalID>(List.of(identifier));
             this.sameAs = sameAs;
         }
 
@@ -329,9 +329,9 @@ public class SchemaOrgDocument {
         public String id;// the grid/lei/fundref if available
         public String name; // the org
         public String alternateName; // the specific grant/job/degree
-        public Set<SchemaOrgExternalID> identifier = Sets.newLinkedHashSet();
+        public Set<SchemaOrgExternalID> identifier = new LinkedHashSet<SchemaOrgExternalID>();
         public String leiCode;
-        public Set<String> sameAs = Sets.newLinkedHashSet(); // id are urls
+        public Set<String> sameAs = new LinkedHashSet<String>(); // id are urls
 
         public SchemaOrgAffiliation() {
         }

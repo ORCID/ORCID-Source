@@ -223,6 +223,9 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         ClientDetailsEntity clientDetailsOBO = clientDetailsEntityCacheManager.retrieve(OBOClient);
         orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetailsOBO);
 
+        
+        
+        
         // Calculate scopes (include in response additionalInformation)
         // get list of all tokens for original client. We have to base this on
         // previous tokens, as you can't revoke a code.
@@ -231,11 +234,21 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(OBOClient, OBOOrcid);
         Set<ScopePathType> scopesOBO = Sets.newHashSet();
         for (OrcidOauth2TokenDetail d : details) {
+            // TODO: To allow deleting with OBO tokens, we should check if the token is removed, if so, allow only /activities/update  
+            // and /person/update scopes so it can be used to DELETE
             if ((d.getTokenDisabled() == null || !d.getTokenDisabled()) && d.getTokenExpiration().after(new Date())) {
                 // TODO: do we need to check revocation dates?
                 scopesOBO.addAll(ScopePathType.getScopesFromSpaceSeparatedString(d.getScope()));
             }
         }
+        
+        
+        
+        
+        
+        
+        
+        
         if (scopesOBO.isEmpty()) {
             throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
         }

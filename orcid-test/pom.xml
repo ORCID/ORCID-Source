@@ -147,11 +147,6 @@
 					</executions>
 			    </plugin>
 			    <plugin>
-					<groupId>org.apache.jena</groupId>
-					<artifactId>jena-maven-tools</artifactId>
-					<version>${jena.version}</version>
-				</plugin>
-				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.10</version>		

@@ -16,7 +16,6 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -96,7 +95,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         Set<Integer> setI = new HashSet<Integer>();
         setI.add(page.getGroups().get(0).getResearchResources().size());
         setI.add(page.getGroups().get(1).getResearchResources().size());
-        assertEquals(setI, Sets.newHashSet(1, 2));
+        assertEquals(setI, new HashSet(1, 2));
 
         int bg = getBigGroupIndex(page); // has 2 rr
         int sg = getSmallGroupIndex(page); // has 1 rr
@@ -106,7 +105,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         Set<String> titles = new HashSet<String>();
         titles.add(page.getGroups().get(bg).getResearchResources().get(0).getTitle());
         titles.add(page.getGroups().get(bg).getResearchResources().get(1).getTitle());
-        assertEquals(titles, Sets.newHashSet("the title", "the title2"));
+        assertEquals(titles, new HashSet<String>(List.of("the title", "the title2")));
 
         // in the big group, rr 1 has an org, 2 has higher display index (so is
         // the default and should be first in the list).
@@ -207,7 +206,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         controller.removeWork("3");
         try {
-            org.orcid.pojo.ResearchResource rrDeleted = controller.getResearchResource(3);
+            controller.getResearchResource(3);
             fail();
         } catch (NoResultException nre) {
 
