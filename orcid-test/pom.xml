@@ -11,6 +11,7 @@
 	<properties>
 		<spring.version>5.3.19</spring.version>
 		<security.version>5.6.2</security.version>
+		<junit.version>4.13.2</junit.version>
 		<main.basedir>${project.basedir}</main.basedir>
 	</properties>
 
@@ -193,14 +194,13 @@
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
-			<version>2.4.8</version>
+			<version>2.7.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>compile</scope>
+			<artifactId>junit</artifactId>	
+			<version>${junit.version}</version>		
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.web</groupId>

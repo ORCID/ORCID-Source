@@ -38,6 +38,7 @@ the software.
         <ajp.port>9438</ajp.port>
         <aws.version>1.11.32</aws.version>
         <solr.version>8.0.0</solr.version>
+        <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
     </properties>
@@ -382,6 +383,7 @@ the software.
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -403,7 +405,6 @@ the software.
     </dependencies>
 
     <dependencyManagement>
-
         <dependencies>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -776,38 +777,7 @@ the software.
                 <groupId>javax.cache</groupId>
                 <artifactId>cache-api</artifactId>
                     <version>1.0.0</version>
-            </dependency>
-
-            <!-- Logging -->
-            <!--  dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>1.6.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.6.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>log4j</groupId>
-                <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>apache-log4j-extras</artifactId>
-                    <version>1.1</version>
-            </dependency -->
+            </dependency>            
 
             <!-- AOP -->
             <dependency>
@@ -915,10 +885,10 @@ the software.
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
+            </dependency>        
+			<dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>
                 <version>2.2</version>
@@ -953,12 +923,6 @@ the software.
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>2.3.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.dbunit</groupId>
-                <artifactId>dbunit</artifactId>
-                <version>2.4.8</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
