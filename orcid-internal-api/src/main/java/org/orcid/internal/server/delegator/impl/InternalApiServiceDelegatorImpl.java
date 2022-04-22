@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.orcid.core.exception.DeactivatedException;
@@ -91,12 +92,20 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     public Response findOrcidByEmail(String email) {
         if (email != null && !email.isEmpty()) {
             if (emailManagerReadOnly.emailExists(email)) {
-                String orcid = emailManagerReadOnly.findOrcidByVerifiedEmail(email);
+                String orcid = null;
+
+                try {
+                    orcid = emailManagerReadOnly.findOrcidByVerifiedEmail(email);
+                } catch (NoResultException e) {
+                    return Response.ok(new EmailResponse("", email, HttpStatus.NOT_FOUND)).build();
+                }
+
                 try {
                     orcidSecurityManager.checkProfile(orcid);
                 } catch (LockedException | DeactivatedException | OrcidNotClaimedException | OrcidDeprecatedException e) {
                     return Response.ok(new EmailResponse("", email, HttpStatus.NOT_FOUND)).build();
                 }
+
                 return Response.ok(new EmailResponse(orcid, email, HttpStatus.FOUND)).build();
             } else {
                 return Response.ok(new EmailResponse("", email, HttpStatus.NOT_FOUND)).build();
