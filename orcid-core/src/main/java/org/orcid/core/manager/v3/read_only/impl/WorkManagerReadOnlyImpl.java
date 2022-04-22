@@ -325,8 +325,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     private void addContributorWithNameOrOrcid(List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList, Contributor contributor) {
-        if (contributor.getContributorOrcid() != null && !"".equals(contributor.getContributorOrcid().getPath()) ||
-                contributor.getCreditName() != null && !"".equals(contributor.getCreditName().getContent())) {
+        if ((contributor.getContributorOrcid() != null && !"".equals(contributor.getContributorOrcid().getPath())) ||
+                (contributor.getCreditName() != null && !"".equals(contributor.getCreditName().getContent()))) {
             contributorsRolesAndSequencesList.add(addContributor(contributor));
         }
     }
