@@ -1,10 +1,12 @@
 package orcid.pojo.ajaxForm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
-
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.ContributorRole;
@@ -35,7 +37,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
-public class WorkFormTest extends XMLTestCase {
+public class WorkFormTest {
 
     private int maxContributorsForUI = 50;
 
