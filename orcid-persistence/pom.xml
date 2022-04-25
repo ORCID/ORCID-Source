@@ -140,10 +140,9 @@
       	    <artifactId>cache-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>            
         </dependency>
-
         <!-- Solr -->
         <dependency>
             <groupId>org.apache.solr</groupId>
