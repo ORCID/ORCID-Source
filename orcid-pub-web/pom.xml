@@ -1,24 +1,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>orcid-pub-web</artifactId>
-	<packaging>war</packaging>    
-	<name>ORCID - Public API</name>
-	<description>REST Service endpoints for the public API.</description>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>orcid-pub-web</artifactId>
+    <packaging>war</packaging>    
+    <name>ORCID - Public API</name>
+    <description>REST Service endpoints for the public API.</description>
 
-	<parent>
-		<groupId>org.orcid</groupId>
-		<artifactId>orcid-parent</artifactId>        
-		<relativePath>../pom.xml</relativePath>
-		<version>release-2.0.0</version>
-	</parent>
+    <parent>
+        <groupId>org.orcid</groupId>
+        <artifactId>orcid-parent</artifactId>        
+        <relativePath>../pom.xml</relativePath>
+        <version>release-2.0.0</version>
+    </parent>
 
-	<properties>
-		<main.basedir>${project.parent.basedir}</main.basedir>        
-	</properties>
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>        
+    </properties>
 
     <dependencies>
-		<!-- Spring security -->
-		<dependency>
+        <!-- Spring security -->
+        <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
@@ -76,26 +76,26 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         
-		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-jersey-jaxrs</artifactId>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jersey-jaxrs</artifactId>
             <version>${swagger.version}</version>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>20.0</version>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
         </dependency>
 
         <!-- Test dependencies -->
         <!-- Togglz testing support -->
-		<dependency>
-		  <groupId>org.togglz</groupId>
-		  <artifactId>togglz-junit</artifactId>
-		  <version>2.4.1.Final</version>
-		  <scope>test</scope>
-		</dependency>
+        <dependency>
+          <groupId>org.togglz</groupId>
+          <artifactId>togglz-junit</artifactId>
+          <version>2.4.1.Final</version>
+          <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-test</artifactId>
@@ -113,7 +113,7 @@
                    <url>${tomcat.manager.url}</url>
                    <server>${tomcat.server.id}</server>
                    <path>${artifactID}</path>
-		   <update>true</update>
+           <update>true</update>
                 </configuration>
             </plugin>
         </plugins>
