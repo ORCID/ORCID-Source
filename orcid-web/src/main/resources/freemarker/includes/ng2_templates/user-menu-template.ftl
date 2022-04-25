@@ -41,7 +41,7 @@
                                     {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
                                 <#--  TRUSTED INDIVIDUALS  -->
-                                <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') " href="{{getBaseUri()}}/trusted-individuals">
+                                <a class="top-menu-item" href="{{getBaseUri()}}/trusted-individuals">
                                     <img src="{{assetsPath + '/img/svg/vpn_key_FILL1_wght400_GRAD0_opsz20.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.trusted_individuals")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
