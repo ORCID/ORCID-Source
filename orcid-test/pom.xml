@@ -199,8 +199,8 @@
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>	
-			<version>${junit.version}</version>		
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
