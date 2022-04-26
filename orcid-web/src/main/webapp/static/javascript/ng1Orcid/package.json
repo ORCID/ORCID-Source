@@ -26,7 +26,6 @@
     "intl": "1.2.5",
     "jquery": "^3.5.0",
     "mdn-polyfills": "5.8.0",
-    "npm": "^8.7.0",
     "primeicons": "^1.0.0",
     "primeng": "7.0.0-beta.1",
     "promise-polyfill": "8.1.0",
@@ -69,6 +68,12 @@
     "webpack-cli": "^4.9.2"
   },
   "private": true,
+  "scripts": {
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "glob-parent": "^6.0.1"
+  },
   "bit": {
     "env": {},
     "componentsDefaultDirectory": "components/{name}",
