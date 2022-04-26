@@ -1,22 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>orcid-web</artifactId>
-	<packaging>war</packaging>
-	<name>ORCID - Web</name>
-	<description>The web application that serves the HTML and allows the invitation, confirmation and registration of ORCID owners.</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>orcid-web</artifactId>
+    <packaging>war</packaging>
+    <name>ORCID - Web</name>
+    <description>The web application that serves the HTML and allows the invitation, confirmation and registration of ORCID owners.</description>
 
     <parent>
-		<groupId>org.orcid</groupId>
-		<artifactId>orcid-parent</artifactId>        
-		<relativePath>../pom.xml</relativePath>
-		<version>release-2.0.0</version>
-	</parent>
+        <groupId>org.orcid</groupId>
+        <artifactId>orcid-parent</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>release-2.0.0</version>
+    </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<main.basedir>${project.parent.basedir}</main.basedir>
-		<togglz.version>2.6.1.Final</togglz.version>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+        <togglz.version>2.6.1.Final</togglz.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -36,12 +38,12 @@
             <artifactId>commons-lang3</artifactId>
             <scope>compile</scope>
         </dependency>
-		<dependency>
- 			<groupId>commons-validator</groupId>
-			<artifactId>commons-validator</artifactId>
-			<version>1.6</version>
-		</dependency>
-		
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.6</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
@@ -123,9 +125,9 @@
             </exclusions>
         </dependency>
         <dependency>
-			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-agroal</artifactId>
-		</dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-agroal</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -136,9 +138,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-           <groupId>org.ehcache</groupId>
-           <artifactId>ehcache</artifactId>
-        </dependency>        
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -147,7 +149,7 @@
         <dependency>
             <groupId>dnsjava</groupId>
             <artifactId>dnsjava</artifactId>
-        </dependency>		
+        </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
@@ -156,14 +158,14 @@
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
         </dependency>
-		
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
@@ -174,46 +176,46 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.neo4j</groupId>
-        	<artifactId>neo4j-cypher-commons</artifactId>
-        	<version>2.1.2</version>
-        </dependency>          
-		<!-- Togglz -->
-		<dependency>
-			<groupId>org.togglz</groupId>
-			<artifactId>togglz-core</artifactId>
-			<version>${togglz.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.togglz</groupId>
-			<artifactId>togglz-servlet</artifactId>
-			<version>${togglz.version}</version>
-		</dependency>  		
-		<dependency>
-			<groupId>org.togglz</groupId>
-			<artifactId>togglz-spring-web</artifactId>
-			<version>${togglz.version}</version>
-		</dependency>   		
-		<dependency>
-			<groupId>org.togglz</groupId>
-			<artifactId>togglz-spring-security</artifactId>
-			<version>${togglz.version}</version>
-		</dependency>					
-		<dependency>
-			<groupId>org.togglz</groupId>
-			<artifactId>togglz-console</artifactId>
-			<version>${togglz.version}</version>
-		</dependency> 	
-		
-		<!-- Togglz testing support -->
-		<dependency>
-		  <groupId>org.togglz</groupId>
-		  <artifactId>togglz-junit</artifactId>
-		  <version>${togglz.version}</version>
-		  <scope>test</scope>
-		</dependency>
-		
-		<dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-cypher-commons</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <!-- Togglz -->
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-core</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-web</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-security</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-console</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+
+        <!-- Togglz testing support -->
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-junit</artifactId>
+            <version>${togglz.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>net.glxn</groupId>
             <artifactId>qrgen</artifactId>
             <version>1.4</version>
@@ -223,14 +225,14 @@
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
-             <plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>tomcat-maven-plugin</artifactId>
                 <configuration>
-                   <url>${tomcat.manager.url}</url>
-                   <server>${tomcat.server.id}</server>
-                   <path>${artifactID}</path>
-                   <update>true</update>
+                    <url>${tomcat.manager.url}</url>
+                    <server>${tomcat.server.id}</server>
+                    <path>${artifactID}</path>
+                    <update>true</update>
                 </configuration>
             </plugin>
             <plugin>
@@ -241,20 +243,20 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                        <url>http://localhost:8080/manager/text</url>
-                        <server>TomcatServer</server>
-                        <username>maven</username>
-                        <password>admin</password>                        
-                        <path>/orcid-web</path>
+                    <url>http://localhost:8080/manager/text</url>
+                    <server>TomcatServer</server>
+                    <username>maven</username>
+                    <password>admin</password>
+                    <path>/orcid-web</path>
                 </configuration>
-            </plugin>            
-            
+            </plugin>
+
         </plugins>
     </build>
     <profiles>
