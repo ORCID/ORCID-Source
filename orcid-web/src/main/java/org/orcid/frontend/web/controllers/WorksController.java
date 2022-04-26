@@ -385,17 +385,7 @@ public class WorksController extends BaseWorkspaceController {
             }
 
             if (workForm.getContributors() != null) {
-                for (Contributor contributor : workForm.getContributors()) {
-                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
-                        String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntityManager.orcidExists(contributorOrcid)) {
-                            // contributor is an ORCID user - visibility of
-                            // user's name in record must be taken into account                            
-                            String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
-                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                        }
-                    }
-                }
+                workForm.setContributors(filterContributors(workForm.getContributors(), activityManager));
             }
 
             return workForm;

@@ -467,15 +467,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
 
             if (work.getContributors() != null) {
-                for (Contributor contributor : work.getContributors()) {
-                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
-                        String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntityManager.orcidExists(contributorOrcid)) {                            
-                            String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
-                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                        }
-                    }
-                }
+                work.setContributors(filterContributors(work.getContributors(), activityManager));
             }
 
             return new ResponseEntity<>(work, HttpStatus.OK);
