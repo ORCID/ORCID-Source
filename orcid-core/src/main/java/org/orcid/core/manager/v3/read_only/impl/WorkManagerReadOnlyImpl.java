@@ -309,19 +309,26 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                             rolesAndSequencesList.add(ca);
                             contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
                         } else {
-                            contributorsRolesAndSequencesList.add(addContributor(contributor));
+                            addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
                         }
                     } else {
-                        contributorsRolesAndSequencesList.add(addContributor(contributor));
+                        addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
                     }
                 } else {
-                	contributorsRolesAndSequencesList.add(addContributor(contributor));
+                    addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
                 }
             } else {
-                contributorsRolesAndSequencesList.add(addContributor(contributor));
+                addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
             }
         }        
         return contributorsRolesAndSequencesList;
+    }
+
+    private void addContributorWithNameOrOrcid(List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList, Contributor contributor) {
+        if ((contributor.getContributorOrcid() != null && !"".equals(contributor.getContributorOrcid().getPath())) ||
+                (contributor.getCreditName() != null && !"".equals(contributor.getCreditName().getContent()))) {
+            contributorsRolesAndSequencesList.add(addContributor(contributor));
+        }
     }
 
     private ContributorsRolesAndSequences addContributor(Contributor contributor) {
