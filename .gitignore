@@ -41,3 +41,8 @@ orcid-persistence/src/main/resources/staging-persistence.properties
 orcid-pub-web/.factorypath
 orcid-scheduler-web/.factorypath
 orcid-utils/.factorypath
+orcid-activemq/.factorypath
+orcid-api-common/.factorypath
+orcid-api-web/.factorypath
+orcid-core/.factorypath
+orcid-integration-test/.factorypath
