@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Restrict delegator access to account settings")
+    RESTRICTED_DELEGATORS,
+
     @Label("HelpHero")
     ORCID_ANGULAR_HELP_HERO,
 
