@@ -174,17 +174,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
-        // Check password
-        String password = addDelegate.getPassword();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
-            addDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
-            return addDelegate;
-        }
-        
         givenPermissionToManager.create(getCurrentUserOrcid(), addDelegate.getDelegateToManage());
-                                    
         return addDelegate;
     }
 
