@@ -947,7 +947,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
     }
     
-    @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/get-trusted-orgs.json" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
         return profileEntityManager.getApplications(getCurrentUserOrcid());
     }

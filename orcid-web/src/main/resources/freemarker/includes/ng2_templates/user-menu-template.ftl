@@ -47,8 +47,9 @@
                                     {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                  </a>
                                 </#if>
-                                <#--  TRUSTED INDIVIDUALS  -->
-                                <a class="top-menu-item" href="{{getBaseUri()}}/trusted-individuals">
+                    
+                                <#--  TRUSTED PARTIES -->
+                                <a class="top-menu-item" href="{{getBaseUri()}}/trusted-parties">
                                     <img src="{{assetsPath + '/img/svg/vpn_key_FILL1_wght400_GRAD0_opsz20.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.trusted_individuals")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
