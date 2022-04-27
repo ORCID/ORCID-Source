@@ -36,17 +36,18 @@
                                     {{'${springMacroRequestContext.getMessage("workspace.notifications")}' }} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span>
                                 </a>
                                 <#--  ACCOUNT SETTINGS  -->
-                                <#if features["RESTRICTED_DELEGATORS"]?? && features["RESTRICTED_DELEGATORS"]> 
+                                <@orcid.checkFeatureStatus featureName='RESTRICTED_DELEGATORS'>
                                  <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') "  href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
-                                <#else>
+                                </@orcid.checkFeatureStatus>
+                                <@orcid.checkFeatureStatus featureName='RESTRICTED_DELEGATORS' enabled=false>
                                  <a class="top-menu-item"  href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                  </a>
-                                </#if>
+                                </@orcid.checkFeatureStatus>
                     
                                 <#--  TRUSTED PARTIES -->
                                 <a class="top-menu-item" href="{{getBaseUri()}}/trusted-parties">
