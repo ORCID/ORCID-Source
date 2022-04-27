@@ -901,19 +901,6 @@ public class ManageProfileControllerTest {
     }
     
     @Test
-    public void testAddDelegateWithInvalidPassword() {
-        ManageDelegate manageDelegate = new ManageDelegate();
-        manageDelegate.setDelegateToManage(USER_ORCID);
-        manageDelegate.setPassword("invalid password");
-        controller.addDelegate(manageDelegate);
-        
-        assertEquals(1, manageDelegate.getErrors().size());
-        assertEquals("check_password_modal.incorrect_password", manageDelegate.getErrors().get(0));
-        
-        verify(mockGivenPermissionToManager, times(0)).create(Mockito.anyString(), Mockito.anyString());       
-    }
-    
-    @Test
     public void testRevokeDelegate() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         ManageDelegate manageDelegate = new ManageDelegate();
