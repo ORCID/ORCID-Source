@@ -193,6 +193,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
+        // Check password
+        String password = manageDelegate.getPassword();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if (orcidSecurityManager.isPasswordConfirmationRequired()
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
+            manageDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+            return manageDelegate;
+        }               
         givenPermissionToManager.remove(getCurrentUserOrcid(), manageDelegate.getDelegateToManage());
         return manageDelegate;
     }

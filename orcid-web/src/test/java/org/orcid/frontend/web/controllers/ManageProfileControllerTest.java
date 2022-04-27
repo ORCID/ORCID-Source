@@ -913,6 +913,20 @@ public class ManageProfileControllerTest {
         
         verify(mockGivenPermissionToManager, times(1)).remove(Mockito.eq(USER_ORCID), Mockito.eq("0000-0000-0000-0000"));      
     }
+        
+    @Test
+    public void testRevokeDelegateWithInvalidPassword() {
+        ManageDelegate manageDelegate = new ManageDelegate();
+        manageDelegate.setDelegateToManage(USER_ORCID);
+        manageDelegate.setPassword("invalid password");
+                
+        controller.revokeDelegate(manageDelegate);
+        
+        assertEquals(1, manageDelegate.getErrors().size());
+        assertEquals("check_password_modal.incorrect_password", manageDelegate.getErrors().get(0));
+        
+        verify(mockGivenPermissionToManager, times(0)).remove(Mockito.anyString(), Mockito.anyString());      
+    }
     
     @Test
     public void validateEmailAddressTest() {
