@@ -3,9 +3,12 @@ package org.orcid.frontend.oauth2;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +30,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
@@ -338,12 +342,32 @@ public class OauthController {
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, url);
-        // TODO: We dont need the OAUTH_2SCREENS anymore after the angular
-        // migration
-        // Save a flag to indicate this is a request from the new
-        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
-        // Check that the client have the required permissions
-        // Get client name
+
+        //Required to be able to work with org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint to authorize the request
+        Map<String, Object> authorizationRequestMap = new HashMap<String, Object>();
+
+        authorizationRequestMap.put(OAuth2Utils.CLIENT_ID, requestInfoForm.getClientId());
+        authorizationRequestMap.put(OAuth2Utils.REDIRECT_URI, requestInfoForm.getRedirectUrl());
+        authorizationRequestMap.put("approved", false);
+        authorizationRequestMap.put("resourceIds", Set.of("orcid"));
+        //TODO: set of ClientGrantedAuthorityEntity
+        authorizationRequestMap.put("authorities", null);
+        
+        
+        if(requestInfoForm.getStateParam() != null) {
+            authorizationRequestMap.put(OAuth2Utils.STATE, requestInfoForm.getStateParam());
+        }
+        if (requestInfoForm.getResponseType() != null) {
+            authorizationRequestMap.put(OAuth2Utils.RESPONSE_TYPE, Set.of(requestInfoForm.getResponseType()));
+        }
+        if (requestInfoForm.getScopes() != null) {
+            Set<String> scopes = new HashSet<String>();
+            requestInfoForm.getScopes().forEach(s -> {scopes.add(s.getValue());});
+            authorizationRequestMap.put(OAuth2Utils.SCOPE, Set.copyOf(scopes));
+        }
+
+        Map<String, Object> originalAuthorizationRequest = Map.copyOf(authorizationRequestMap);
+        request.getSession().setAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalAuthorizationRequest);
     }
     
     private RequestInfoForm setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
