@@ -27,6 +27,7 @@ import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.core.Authentication;
@@ -348,11 +349,14 @@ public class OauthController {
 
         authorizationRequestMap.put(OAuth2Utils.CLIENT_ID, requestInfoForm.getClientId());
         authorizationRequestMap.put(OAuth2Utils.REDIRECT_URI, requestInfoForm.getRedirectUrl());
-        authorizationRequestMap.put("approved", false);
-        authorizationRequestMap.put("resourceIds", Set.of("orcid"));
-        //TODO: set of ClientGrantedAuthorityEntity
-        authorizationRequestMap.put("authorities", null);
+        authorizationRequestMap.put(OrcidOauth2Constants.APPROVED, false);
+        authorizationRequestMap.put(OrcidOauth2Constants.RESOURCE_IDS, Set.of("orcid"));
         
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
+        ClientGrantedAuthorityEntity cgae = new ClientGrantedAuthorityEntity();
+        cgae.setClientDetailsEntity(clientDetails);
+        cgae.setAuthority(clientDetails.getClientGrantedAuthorities().isEmpty() ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
+        authorizationRequestMap.put(OrcidOauth2Constants.AUTHORITIES, Set.of(cgae));        
         
         if(requestInfoForm.getStateParam() != null) {
             authorizationRequestMap.put(OAuth2Utils.STATE, requestInfoForm.getStateParam());
