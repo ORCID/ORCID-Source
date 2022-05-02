@@ -34,10 +34,8 @@ orcid-web/.tern-project
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/components/**/node_modules/**
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/.bit/**
 orcid-internal-api/.factorypath
-orcid-internal-api/pom.xml
 orcid-message-listener/.factorypath
 orcid-persistence/.factorypath
-orcid-persistence/src/main/resources/staging-persistence.properties
 orcid-pub-web/.factorypath
 orcid-scheduler-web/.factorypath
 orcid-utils/.factorypath
