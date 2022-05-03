@@ -71,6 +71,7 @@ public class WorkSummaryExtended extends WorkSummary {
         }
 
         this.contributors = builder.contributors;
+        this.contributorsGroupedByOrcid = builder.topContributors;
     }
 
     public WorkSummaryExtended() { }
@@ -119,6 +120,7 @@ public class WorkSummaryExtended extends WorkSummary {
         private XMLGregorianCalendar lastModifiedDate;
         private BigInteger displayIndex;
         private WorkContributors contributors;
+        private List<ContributorsRolesAndSequences> topContributors;
 
         public WorkSummaryExtendedBuilder(
                 BigInteger putCode, String workType, String title, String sourceId, String clientSourceId,
@@ -211,6 +213,11 @@ public class WorkSummaryExtended extends WorkSummary {
             });
 
             this.contributors = new WorkContributors(contributorList);
+            return this;
+        }
+
+        public WorkSummaryExtendedBuilder topContributors(List<ContributorsRolesAndSequences> topContributors) {
+            this.topContributors = topContributors;
             return this;
         }
 

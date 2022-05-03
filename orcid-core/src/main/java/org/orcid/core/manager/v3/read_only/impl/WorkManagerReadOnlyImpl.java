@@ -1,20 +1,9 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
-import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
@@ -32,8 +21,6 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
-import org.orcid.jaxb.model.v3.release.common.Contributor;
-import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
@@ -44,10 +31,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
@@ -58,6 +42,15 @@ import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -98,6 +91,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -201,11 +197,15 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         // Filter the contributors list
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             for (WorkSummaryExtended wse : wseList) {
-                if (wse.getContributors() != null && wse.getContributors().getContributor() != null) {
-                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
-                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
+                if (wse.getContributors() != null && wse.getContributors().getContributor() != null && wse.getContributors().getContributor().size() > 0) {
+                    if (Features.STORE_TOP_CONTRIBUTORS.isActive() && wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                        contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                    } else {
+                        contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
+                        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
+                        wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                        wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
+                    }
                 }
             }
         }
@@ -214,7 +214,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
-        List<Object[]> list = workDao.getWorksByOrcidAndTopContributorsTogglz(orcid, Features.STORE_TOP_CONTRIBUTORS.isActive());
+        List<Object[]> list = workDao.getWorksByOrcid(orcid);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
             String workType = isEmpty(q1[1]);
@@ -233,6 +233,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Timestamp createdDate = (Timestamp) q1[14];
             Timestamp lastModifiedDate = (Timestamp) q1[15];
             String contributors = isEmpty(q1[16]);
+            String topContributors = isEmpty(q1[17]);
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
                 externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
@@ -254,8 +255,15 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             if (!PojoUtil.isEmpty(clientSourceId)) {
                 sourceName = contributorUtils.getSourceName(clientSourceId, sourceNameCacheManager);
             }
+            List<WorkContributorsList> contributorList = new ArrayList<>();
+            List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 
-            List<WorkContributorsList> contributorList = workContributorsConverter.getContributorsList(contributors);
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive() && topContributors != null && !"".equals(topContributors)) {
+                contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(topContributors);
+            } else {
+                contributorList = workContributorsConverter.getContributorsList(contributors);
+            }
+
             WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
                     .journalTitle(journalTitle)
                     .externalIdsJson(externalIDs)
@@ -269,6 +277,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     .assertionOriginSourceId(assertionOriginSourceId)
                     .assertionOriginClientSourceId(assertionOriginClientSourceId)
                     .contributors(contributorList)
+                    .topContributors(contributorsRolesAndSequencesList)
                     .build();
             workSummaryExtendedList.add(wse);
         }

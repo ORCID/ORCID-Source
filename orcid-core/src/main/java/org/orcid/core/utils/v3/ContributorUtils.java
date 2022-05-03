@@ -94,6 +94,13 @@ public class ContributorUtils {
         }
     }
 
+    public void filterContributorsGroupedByOrcidPrivateData(List<ContributorsRolesAndSequences> contributorList, int maxContributorsForUI) {
+        if (contributorList != null) {
+            filterContributorsGroupedByOrcid(contributorList, maxContributorsForUI);
+        }
+    }
+
+
     private void filterWorkContributors(List<Contributor> contributorList) {
             List<Contributor> contributorsToPopulateName = new ArrayList<Contributor>();
             Set<String> idsToPopulateName = new HashSet<String>();
@@ -155,6 +162,43 @@ public class ContributorUtils {
 
         // Populate missing names
         for(Contributor contributor : contributorsToPopulateName) {
+            String orcid = contributor.getContributorOrcid().getPath();
+            // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
+            if(contributorNames.containsKey(orcid)) {
+                String name = contributorNames.get(orcid);
+                CreditName creditName = new CreditName(name);
+                contributor.setCreditName(creditName);
+            }
+        }
+    }
+
+    private void filterContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorList, int maxContributorsForUI) {
+        List<ContributorsRolesAndSequences> contributorsToPopulateName = new ArrayList<>();
+        Set<String> idsToPopulateName = new HashSet<String>();
+        // Populate the credit name of cached contributors and populate the list of names to retrieve from the DB
+        for (ContributorsRolesAndSequences contributor : contributorList) {
+            contributor.setContributorEmail(null);
+            if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
+                String orcid = contributor.getContributorOrcid().getPath();
+                String cachedName = getCachedContributorName(orcid);
+                if(cachedName == null) {
+                    if (idsToPopulateName.size() == maxContributorsForUI) {
+                        break;
+                    }
+                    idsToPopulateName.add(orcid);
+                    contributorsToPopulateName.add(contributor);
+                } else {
+                    CreditName creditName = new CreditName(cachedName);
+                    contributor.setCreditName(creditName);
+                }
+            }
+        }
+
+        // Fetch the contributor names
+        Map<String, String> contributorNames = getContributorNamesFromDB(idsToPopulateName);
+
+        // Populate missing names
+        for(ContributorsRolesAndSequences contributor : contributorsToPopulateName) {
             String orcid = contributor.getContributorOrcid().getPath();
             // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
             if(contributorNames.containsKey(orcid)) {
@@ -245,25 +289,6 @@ public class ContributorUtils {
         return contributorsRolesAndSequencesList;
     }
 
-    public List<Contributor> filterTopContributors(List<Contributor> contributors, Integer maxContributorsForUI) {
-        List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
-        List<Contributor> topContributorsList = new ArrayList<>();
-
-        for(Contributor contributor : contributors) {
-            // Process the list of contributors till reaching the max, then break
-            if(contributorsRolesAndSequencesList.size() == maxContributorsForUI) {
-                break;
-            }
-            groupContributorsByOrcid(contributor, contributorsRolesAndSequencesList);
-            if ((contributor.getContributorOrcid() != null && !"".equals(contributor.getContributorOrcid().getPath())) ||
-                    (contributor.getCreditName() != null && !"".equals(contributor.getCreditName().getContent()))) {
-                topContributorsList.add(contributor);
-            }
-        }
-
-        return topContributorsList;
-    }
-
     private void groupContributorsByOrcid(Contributor contributor, List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList) {
         if (contributor.getContributorOrcid() != null) {
             String orcid = contributor.getContributorOrcid().getPath();
@@ -335,7 +360,7 @@ public class ContributorUtils {
         return crs;
     }
 
-    private String getCreditRole(String contributorRole) {
+    public String getCreditRole(String contributorRole) {
         try {
             CreditRole cr = CreditRole.fromValue(contributorRole);
             return cr.getUiValue();
