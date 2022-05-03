@@ -413,5 +413,19 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("top_contributors", StringType.INSTANCE);
         return query.getResultList();
     }
+
+    @Override
+    public List<Object[]> getWorksStartingFromWorkId(Long workId, int numberOfWorks) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT " +
+                        "work_id, " +
+                        "(SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 250) t) as contributors_json FROM work as w WHERE work_id >=:workId ORDER BY work_id ASC LIMIT :numberOfWorks");
+        query.setParameter("workId", workId);
+        query.setParameter("numberOfWorks", numberOfWorks)
+                .unwrap(org.hibernate.query.NativeQuery.class)
+                .addScalar("work_id", BigIntegerType.INSTANCE)
+                .addScalar("contributors_json", StringType.INSTANCE);
+        return query.getResultList();
+    }
 }
 
