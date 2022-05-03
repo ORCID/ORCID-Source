@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 /**
  * <p>
@@ -110,14 +110,14 @@ public class OrcidStringUtils {
     }
 
     public static String stripHtml(String s) {
-        String output = Jsoup.clean(s, "", Whitelist.none(), outputSettings);
+        String output = Jsoup.clean(s, "", Safelist.none(), outputSettings);
         output = output.replace(GT, DECODED_GT);
         output = output.replace(AMP, DECODED_AMP);
         return output;
     }
 
     public static String simpleHtml(String s) {
-        String output = Jsoup.clean(s, "", Whitelist.simpleText(), outputSettings);
+        String output = Jsoup.clean(s, "", Safelist.simpleText(), outputSettings);
         // According to
         // http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
         // jsoup scape lt, gt, amp, apos, and quot for xhtml

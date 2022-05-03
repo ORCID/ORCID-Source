@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 	<changeSet id="CREATE-FUNDING-TABLES" author="Angel Montenegro">
+		<validCheckSum>8:eac733aaa6ac2b77d10ead1e4457d4c0</validCheckSum>
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="funding_external_identifier" />

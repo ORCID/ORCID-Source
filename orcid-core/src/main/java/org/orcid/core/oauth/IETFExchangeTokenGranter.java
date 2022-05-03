@@ -236,6 +236,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                 scopesOBO.addAll(ScopePathType.getScopesFromSpaceSeparatedString(d.getScope()));
             }
         }
+        
         if (scopesOBO.isEmpty()) {
             throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
         }

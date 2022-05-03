@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -38,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.Lists;
 
 //redirect don't resolve directly.
 @Provider
@@ -113,7 +113,7 @@ public class SchemaOrgMBWriterV3 implements MessageBodyWriter<Record> {
         if (r.getActivitiesSummary() != null) {
 
             //education & qualification
-            List<AffiliationGroup<? extends AffiliationSummary>> alumniOf = Lists.newArrayList();
+            List<AffiliationGroup<? extends AffiliationSummary>> alumniOf = new ArrayList<AffiliationGroup<? extends AffiliationSummary>>();
             if (r.getActivitiesSummary().getEducations() != null && r.getActivitiesSummary().getEducations().retrieveGroups() != null)
                 alumniOf.addAll(r.getActivitiesSummary().getEducations().retrieveGroups());
             if (r.getActivitiesSummary().getQualifications() != null && r.getActivitiesSummary().getQualifications().retrieveGroups() != null)
@@ -124,7 +124,7 @@ public class SchemaOrgMBWriterV3 implements MessageBodyWriter<Record> {
             }
 
             //affiliations
-            List<AffiliationGroup<? extends AffiliationSummary>> affiliationGroups = Lists.newArrayList();
+            List<AffiliationGroup<? extends AffiliationSummary>> affiliationGroups = new ArrayList<AffiliationGroup<? extends AffiliationSummary>>();
             if (r.getActivitiesSummary().getEmployments() != null && r.getActivitiesSummary().getEmployments().retrieveGroups() != null)
                 affiliationGroups.addAll(r.getActivitiesSummary().getEmployments().retrieveGroups());
             if (r.getActivitiesSummary().getDistinctions() != null && r.getActivitiesSummary().getDistinctions().retrieveGroups() != null)
