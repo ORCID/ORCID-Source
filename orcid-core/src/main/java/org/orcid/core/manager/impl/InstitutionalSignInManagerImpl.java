@@ -127,7 +127,6 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         if (!result.isSuccess()) {
             String message = String.format("Institutional sign in header check failed: %s, originalHeaders=%s", result, originalHeaders);
             LOGGER.info(message);
-            slackManager.sendSystemAlert(message);
         }
         return result;
     }
