@@ -1,12 +1,13 @@
 package org.orcid.core.cli;
 
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
 import org.orcid.core.utils.v3.ContributorUtils;
-import org.orcid.jaxb.model.v3.release.common.Contributor;
-import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkSummaryExtended;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -22,9 +23,10 @@ public class FilterTopContributors {
 
     private WorkDao workDao;
     private WorkContributorsConverter workContributorsConverter;
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
     private static Logger logger = Logger.getLogger(FilterTopContributors.class.getName());
-    private static final int BATCH_SIZE = 1000;
     private static final int MAX_CONTRIBUTORS_FOR_UI = 50;
+    private static int batchSize = 1000;
     private static long workId = 0;
     private static String logRoute = null;
 
@@ -33,9 +35,10 @@ public class FilterTopContributors {
      *
      * @param {String} workId
      * @param {String} logRoute
+     * @param {String} batchSize
      *
      * Examples:
-     *      $ java -DworkId=0000 -DlogRoute=/route/to/store/logs FilterTopContributors.java
+     *      $ java -DworkId=0000 -DlogRoute=/route/to/store/logs -DbatchSize=100 FilterTopContributors.java
      */
     public static void main(String ...args) {
         FilterTopContributors filterTopContributors = new FilterTopContributors();
@@ -46,8 +49,11 @@ public class FilterTopContributors {
 
     private void filter() {
         init();
-        List<Object[]> workEntityList = workDao.getWorksStartingFromWorkId(workId, BATCH_SIZE);
+        List<Object[]> workEntityList = workDao.getWorksStartingFromWorkId(workId, batchSize);
         workEntityList.forEach(this::filterTopContributors);
+        if (!workEntityList.isEmpty()) {
+            System.out.println("Last workId processed was " + workEntityList.get(workEntityList.size() - 1)[0]);
+        }
     }
 
     private void filterTopContributors(Object[] workObject) {
@@ -56,14 +62,17 @@ public class FilterTopContributors {
         WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(((BigInteger) workObject[0]))
                 .contributors(workContributorsConverter.getContributorsList(isEmpty(workObject[1])))
                 .build();
-        List<Contributor> contributors = contributorUtils.filterTopContributors(wse.getContributors().getContributor(), MAX_CONTRIBUTORS_FOR_UI);
-        try {
-            workEntity.setTopContributorsJson(workContributorsConverter.convertTo(new WorkContributors(contributors), null));
-            workDao.merge(workEntity);
-            logger.info(workEntity.getId() + " was processed");
-            workDao.flush();
-        } catch (Exception e) {
-            logger.info(workEntity.getId() + " could not be processed");
+        List<ContributorsRolesAndSequences> contributors = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), MAX_CONTRIBUTORS_FOR_UI);
+        if (contributors.size() > 0) {
+            try {
+                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(contributors, null));
+                workDao.merge(workEntity);
+                logger.info(workEntity.getId() + " was processed");
+                workDao.flush();
+            } catch (Exception e) {
+                logger.info(workEntity.getId() + " could not be processed");
+                System.exit(0);
+            }
         }
     }
 
@@ -71,20 +80,30 @@ public class FilterTopContributors {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
         workContributorsConverter = (WorkContributorsConverter) context.getBean("workContributorsConverter");
+        contributorsRolesAndSequencesConverter = (ContributorsRolesAndSequencesConverter) context.getBean("contributorsRolesAndSequencesConverter");
     }
 
     private void validateParameters() {
         String workIdParameter = System.getProperty("workId");
         String logRouteParameter = System.getProperty("logRoute");
+        String batchSizeParameter = System.getProperty("batchSize");
 
-        if (workIdParameter == null || "".equals(workIdParameter)) {
+        if (PojoUtil.isEmpty(workIdParameter)) {
             printMessageAndExit("Parameter workId is missing!.");
-        } else if (logRouteParameter == null || "".equals(logRouteParameter)) {
+        } else if (PojoUtil.isEmpty(logRouteParameter)) {
             printMessageAndExit("Parameter logRoute is missing!.");
+        } else if (PojoUtil.isEmpty(batchSizeParameter)) {
+            printMessageAndExit("Parameter batchSize is missing!.");
         }
 
         try {
             workId = Long.parseLong(workIdParameter);
+        } catch (Exception e) {
+            printMessageAndExit("Parameter workId must be a number!");
+        }
+
+        try {
+            batchSize = Integer.parseInt(batchSizeParameter);
         } catch (Exception e) {
             printMessageAndExit("Parameter workId must be a number!");
         }
@@ -102,7 +121,7 @@ public class FilterTopContributors {
             logger.setUseParentHandlers(false);
             fh.setFormatter(new SimpleFormatter());
         } catch (Exception e) {
-            System.out.println("Parameter logRoute is invalid!");
+            printMessageAndExit("Parameter logRoute is invalid!");
         }
     }
 
