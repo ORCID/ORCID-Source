@@ -20,6 +20,7 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
     protected String iso2Country;
     protected String citationType;
     protected String contributorsJson;
+    protected String topContributorsJson;
     protected Date addedToProfileDate;
     
     @Column(name = "orcid", updatable = false, insertable = true)
@@ -56,6 +57,15 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
 
     public void setContributorsJson(String contributorsJson) {
         this.contributorsJson = contributorsJson;
+    }
+
+    @Column(name = "top_contributors_json")
+    public String getTopContributorsJson() {
+        return topContributorsJson;
+    }
+
+    public void setTopContributorsJson(String topContributorsJson) {
+        this.topContributorsJson = topContributorsJson;
     }
 
     @Column(name = "iso2_country", length = 2)

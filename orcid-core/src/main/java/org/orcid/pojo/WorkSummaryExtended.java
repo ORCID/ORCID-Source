@@ -38,35 +38,38 @@ public class WorkSummaryExtended extends WorkSummary {
 
     private WorkSummaryExtended(WorkSummaryExtendedBuilder builder) {
         super.setPutCode(builder.putCode.longValue());
-        super.setType(WorkType.valueOf(builder.workType));
-        WorkTitle wt = new WorkTitle();
-        wt.setTitle(new Title(builder.title));
-        super.setTitle(wt);
-        super.setJournalTitle(new Title(builder.journalTitle));
-        super.setExternalIdentifiers(builder.externalIdsJson);
-        Year year = new Year();
-        year.setValue(builder.publicationYear);
-        Month month = new Month();
-        month.setValue(builder.publicationMonth);
-        Day day = new Day();
-        day.setValue(builder.publicationDay);
-        PublicationDate pd = new PublicationDate(year, month, day);
-        super.setPublicationDate(pd);
-        super.setVisibility(Visibility.valueOf(builder.visibility));
-        super.setDisplayIndex(builder.displayIndex.toString());
-        Source s;
-        if (builder.clientSourceId != null) {
-            s = new Source(builder.clientSourceId);
-        } else {
-            s = new Source(builder.sourceId);
+        if (builder.workType != null) {
+            super.setType(WorkType.valueOf(builder.workType));
+            WorkTitle wt = new WorkTitle();
+            wt.setTitle(new Title(builder.title));
+            super.setTitle(wt);
+            super.setJournalTitle(new Title(builder.journalTitle));
+            super.setExternalIdentifiers(builder.externalIdsJson);
+            Year year = new Year();
+            year.setValue(builder.publicationYear);
+            Month month = new Month();
+            month.setValue(builder.publicationMonth);
+            Day day = new Day();
+            day.setValue(builder.publicationDay);
+            PublicationDate pd = new PublicationDate(year, month, day);
+            super.setPublicationDate(pd);
+            super.setVisibility(Visibility.valueOf(builder.visibility));
+            super.setDisplayIndex(builder.displayIndex.toString());
+            Source s;
+            if (builder.clientSourceId != null) {
+                s = new Source(builder.clientSourceId);
+            } else {
+                s = new Source(builder.sourceId);
+            }
+            s.setSourceName(new SourceName(builder.sourceName));
+            s.setAssertionOriginOrcid(new SourceOrcid(builder.assertionOriginSourceId));
+            s.setAssertionOriginClientId(new SourceClientId(builder.assertionOriginClientSourceId));
+            s.setAssertionOriginName(new SourceName(builder.assertionOriginName));
+            super.setSource(s);
+            super.setCreatedDate(new CreatedDate(builder.createdDate));
+            super.setLastModifiedDate(new LastModifiedDate(builder.lastModifiedDate));
         }
-        s.setSourceName(new SourceName(builder.sourceName));
-        s.setAssertionOriginOrcid(new SourceOrcid(builder.assertionOriginSourceId));
-        s.setAssertionOriginClientId(new SourceClientId(builder.assertionOriginClientSourceId));
-        s.setAssertionOriginName(new SourceName(builder.assertionOriginName));
-        super.setSource(s);
-        super.setCreatedDate(new CreatedDate(builder.createdDate));
-        super.setLastModifiedDate(new LastModifiedDate(builder.lastModifiedDate));
+
         this.contributors = builder.contributors;
     }
 
@@ -128,6 +131,10 @@ public class WorkSummaryExtended extends WorkSummary {
             this.clientSourceId = clientSourceId;
             this.createdDate = addDate(createdDate);
             this.lastModifiedDate = addDate(lastModifiedDate);
+        }
+
+        public WorkSummaryExtendedBuilder(BigInteger putCode) {
+            this.putCode = putCode;
         }
 
         public WorkSummaryExtendedBuilder journalTitle(String journalTitle) {
@@ -208,8 +215,7 @@ public class WorkSummaryExtended extends WorkSummary {
         }
 
         public WorkSummaryExtended build() {
-            WorkSummaryExtended user =  new WorkSummaryExtended(this);
-            return user;
+            return new WorkSummaryExtended(this);
         }
 
         private XMLGregorianCalendar addDate(Timestamp ts) {

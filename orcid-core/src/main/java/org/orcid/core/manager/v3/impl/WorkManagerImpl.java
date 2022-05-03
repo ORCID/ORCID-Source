@@ -27,13 +27,16 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.TransientNonEmptyString;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -45,6 +48,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -96,6 +100,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private PIDResolverService resolver;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
     
     private Integer maxWorksToWrite;
     
@@ -169,6 +179,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 activeSource);
                     }
                 }
+            }
+
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                filterContributors(work);
             }
         } else {
             // validate external ID vocab
@@ -248,7 +262,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 }
                             }
                         }
-                        
+
+                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                            filterContributors(work);
+                        }
+
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
@@ -346,6 +364,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 if (!existing.getPutCode().equals(work.getPutCode())) {
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
+            }
+
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                filterContributors(work);
             }
         }else{
             //validate external ID vocab
@@ -493,6 +515,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setWorkType(preferredFullData.getWorkType());
         workEntity.setWorkUrl(preferredFullData.getWorkUrl());
         return workEntity;
+    }
+
+    private void filterContributors(Work work) {
+        if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
+            contributorUtils.filterContributorPrivateData(work.getWorkContributors().getContributor(), maxContributorsForUI);
+            List<Contributor> topContributors = contributorUtils.filterTopContributors(work.getWorkContributors().getContributor(), maxContributorsForUI);
+            if (topContributors.size() > 0) {
+                work.setWorkContributors(new WorkContributors(topContributors));
+            }
+        }
     }
     
 }
