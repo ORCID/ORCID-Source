@@ -15,17 +15,11 @@ jobs:
     steps:    
     - uses: actions/checkout@v2
     - name: Set up Open JDK 11
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: 'adopt'
         java-version: '11'
-        check-latest: true
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+        cache: 'maven'
     - name: Run tests
       run: mvn test --batch-mode
     - name: Publish Test Report
