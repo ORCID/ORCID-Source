@@ -259,6 +259,7 @@ public class PasswordResetController extends BaseController {
         return oneTimeResetPasswordForm;
     }
 
+    @Deprecated //TODO remove once the card https://trello.com/c/TqSd7ojs/7973-reset-password is stable on prod
     @RequestMapping(value = "/reset-password-email.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm submitPasswordReset(HttpServletRequest request, HttpServletResponse response,
             @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
