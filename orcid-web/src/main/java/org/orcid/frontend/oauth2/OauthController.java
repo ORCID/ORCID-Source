@@ -123,8 +123,6 @@ public class OauthController {
             return requestInfoForm;
         }
 
-        // Populate session data
-        populateSession(request, requestInfoForm);
         // Authorize the request if needed
         return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
     }
@@ -290,6 +288,8 @@ public class OauthController {
             usePersistentTokens = true;
         }
 
+        populateSession(request, requestInfoForm);
+
         if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {                 
@@ -326,7 +326,12 @@ public class OauthController {
                     // Authorization request model
                     Map<String, Object> modelAuth = new HashMap<String, Object>();
                     modelAuth.put("authorizationRequest", authorizationRequest);
-    
+
+                    Map<String, Object> originalRequest = (Map<String, Object>) request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST);
+                    if(originalRequest != null) {
+                        modelAuth.put(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalRequest);
+                    }
+
                     // Approve using the spring authorization endpoint code.
                     //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));                   
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
