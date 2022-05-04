@@ -1087,7 +1087,11 @@ public class BaseController {
         if (StringUtils.isBlank(this.staticContentPath)) {
             String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
             generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
-            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");            
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
+            if (!request.isSecure()) {
+                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
+            }
+       
             this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;
