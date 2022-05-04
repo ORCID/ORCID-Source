@@ -2,12 +2,11 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import java.util.List;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.pojo.PIDResolutionResult;
 
 public interface LinkResolver {
 
-    public static final List<String> CAN_HANDLE_EVERYTHING = Lists.newArrayList();
+    public static final List<String> CAN_HANDLE_EVERYTHING = List.of();
 
     public List<String> canHandle();
 

@@ -17,7 +17,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -720,7 +719,7 @@ public class SetUpClientsAndUsers {
         if ("true".equals(params.get(ADD_AUTHORIZATION_END_POINT))){
             RedirectUri redirectUri2 = new RedirectUri(params.get(REDIRECT_URI));
             redirectUri2.setType(RedirectUriType.FIND_MY_STUFF); 
-            redirectUri2.setScope(Lists.newArrayList(ScopePathType.ACTIVITIES_UPDATE));
+            redirectUri2.setScope(List.of(ScopePathType.ACTIVITIES_UPDATE));
             redirectUrisToAdd.add(redirectUri2);
         }        
         

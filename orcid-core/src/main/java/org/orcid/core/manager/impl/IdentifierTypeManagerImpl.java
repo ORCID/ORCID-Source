@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
-import org.apache.jena.ext.com.google.common.collect.ImmutableList;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.core.adapter.jsonidentifier.converter.ExternalIdentifierTypeConverter;
 import org.orcid.core.locale.LocaleManager;
@@ -160,7 +159,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         SortedMap<String,IdentifierType> sorted = new TreeMap<String,IdentifierType>();
         for (String s: all.keySet())
             sorted.put(all.get(s).getDescription().toLowerCase(), all.get(s));
-        return ImmutableList.copyOf(sorted.values());
+        return List.copyOf(sorted.values());
     }
 
     /**

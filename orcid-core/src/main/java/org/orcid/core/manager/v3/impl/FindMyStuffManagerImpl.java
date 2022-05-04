@@ -5,14 +5,13 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.apache.jena.ext.com.google.common.collect.Lists;
-import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -96,7 +95,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
     public List<FindMyStuffResult> findIfAppropriate(String orcid) {
         // get history and check for optOuts
         List<FindMyStuffHistoryEntity> history = getHistory(orcid);
-        Set<String> skipServices = Sets.newHashSet();
+        Set<String> skipServices = new HashSet<String>();
         Map<String, FindMyStuffHistoryEntity> existingHistories = Maps.newHashMap();
         if (history != null){
             for (FindMyStuffHistoryEntity h : history) {
@@ -117,7 +116,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         }
 
         // find for non-skip services
-        List<FindMyStuffResult> result = Lists.newArrayList();
+        List<FindMyStuffResult> result = new ArrayList<FindMyStuffResult>();
         ExternalIDs existingIDs = workManagerReadOnly.getAllExternalIDs(orcid);
         for (Finder f : finders) {
             if (f.isEnabled() && !skipServices.contains(f.getFinderName())) {

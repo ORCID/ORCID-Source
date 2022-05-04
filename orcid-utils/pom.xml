@@ -1,82 +1,90 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.orcid</groupId>
-        <artifactId>orcid-parent</artifactId>
-        <version>release-2.0.0</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+	<parent>
+		<groupId>org.orcid</groupId>
+		<artifactId>orcid-parent</artifactId>
+		<version>release-2.0.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-    <artifactId>orcid-utils</artifactId>
+	<artifactId>orcid-utils</artifactId>
 
-    <name>ORCID - Utils</name>
-    <description>Utilities used throughout the ORCID project</description>
+	<name>ORCID - Utils</name>
+	<description>Utilities used throughout the ORCID project</description>
 
-    <properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
-    </properties>
+	<properties>
+		<main.basedir>${project.parent.basedir}</main.basedir>
+	</properties>
 
-    <dependencies>
-        <!-- Internal dependencies -->
+	<dependencies>
+		<!-- Internal dependencies -->
 
-        <!-- External dependencies -->
-        <dependency>
-           <groupId>args4j</groupId>
-           <artifactId>args4j</artifactId>
-           <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jbibtex</groupId>
-            <artifactId>jbibtex</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>20.0</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>${solr.version}</version>
-        </dependency>
-        
-        <!-- javax.xml -->
-            <dependency>
-<groupId>javax.xml.bind</groupId>
-<artifactId>jaxb-api</artifactId>
-<version>2.3.0</version>
-</dependency>
-<dependency>
-<groupId>com.sun.xml.bind</groupId>
-<artifactId>jaxb-core</artifactId>
-<version>2.3.0</version>
-</dependency>
-<dependency>
-<groupId>com.sun.xml.bind</groupId>
-<artifactId>jaxb-impl</artifactId>
-<version>2.3.0</version>
-</dependency>
+		<!-- External dependencies -->
+		<dependency>
+			<groupId>args4j</groupId>
+			<artifactId>args4j</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jbibtex</groupId>
+			<artifactId>jbibtex</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>			
+		</dependency>
 
-        <!-- Test dependencies -->
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<version>${solr.version}</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.14.3</version>
+		</dependency>
 
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
+		<!-- javax.xml -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.0</version>
+		</dependency>
 
-    </dependencies>
+		<!-- Test dependencies -->
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+
+	</dependencies>
 </project>
