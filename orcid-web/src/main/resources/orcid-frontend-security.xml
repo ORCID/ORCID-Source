@@ -389,6 +389,8 @@
 		<sec:intercept-url pattern="/reset-password-email/.*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/reset-password-email.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
+		<sec:intercept-url pattern="/reset-password-email-v2.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
