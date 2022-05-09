@@ -3,7 +3,6 @@ package org.orcid.persistence.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -67,7 +66,7 @@ public class WorkDaoTest extends DBUnitTest {
         List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");
         List<Long> existingIds = new ArrayList<Long>(Arrays.asList(11L, 12L, 13L, 14L, 15L, 16L));
         assertEquals(6, works.size());
-        for (WorkEntity w : works) {
+        for(WorkEntity w : works) {
             assertTrue(existingIds.contains(w.getId()));
             existingIds.remove(w.getId());
         }
@@ -111,14 +110,5 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(e.getLastModified(), e2.getLastModified());
         assertEquals(e.getDateCreated(), e2.getDateCreated());
         assertEquals(e2.getDateCreated(), e2.getLastModified());
-    }
-
-    @Test
-    public void testGetWorksStartingFromWorkId() {
-        List<Object[]> workObject = dao.getWorksStartingFromWorkId((long) 1, 3);
-        assertEquals(3, workObject.size());
-        assertNull(workObject.get(0)[1]);
-        assertNull(workObject.get(1)[1]);
-        assertNotNull(workObject.get(2)[1]);
     }
 }
