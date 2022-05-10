@@ -159,7 +159,7 @@ public class NotificationController extends BaseController {
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
-    @RequestMapping(value = "{id}/archive")
+    @RequestMapping(value = "{id}/archive.json")
     public @ResponseBody Notification flagAsArchived(HttpServletResponse response, @PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
         notificationManager.flagAsArchived(currentUserOrcid, Long.valueOf(id), false);
