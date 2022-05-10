@@ -134,8 +134,7 @@ public class ContributorUtils {
                     idsToPopulateName.add(orcid);
                     contributorsToPopulateName.add(contributor);
                 } else {
-                    CreditName creditName = new CreditName(cachedName);
-                    contributor.setCreditName(creditName);
+                    contributor.setCreditName(new CreditName(isPrivateName(cachedName)));
                 }
             }
         }
@@ -149,8 +148,7 @@ public class ContributorUtils {
             // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
             if(contributorNames.containsKey(orcid)) {
                 String name = contributorNames.get(orcid);
-                CreditName creditName = new CreditName(name);
-                contributor.setCreditName(creditName);
+                contributor.setCreditName(new CreditName(isPrivateName(name)));
             }
         }
     }
@@ -201,7 +199,14 @@ public class ContributorUtils {
     private String getCacheKey(String orcid) {
         Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
-    }    
+    }
+
+    private String isPrivateName(String name) {
+        if ("".equals(name)) {
+            return "Name is private";
+        }
+        return name;
+    }
 
     public void setCacheManager(ActivityManager cacheManager) {
         this.cacheManager = cacheManager;
