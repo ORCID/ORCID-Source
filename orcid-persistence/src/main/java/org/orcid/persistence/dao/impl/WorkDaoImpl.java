@@ -369,6 +369,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @Override
     public List<Object[]> getWorksByOrcid(String orcid) {
+        //TODO @DanielPalafox fetch only the top_contributors_json after CLI finishes
         String sqlString =
                 "SELECT " +
                         " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
