@@ -725,8 +725,6 @@
         <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
 	</bean>	
 
-	<bean id="crossRefManager" class="org.orcid.core.manager.impl.CrossRefManagerImpl" />
-
 	<bean id="referenceDataManager" class="org.orcid.core.manager.impl.ReferenceDataManagerImpl" />
 
 	<bean id="subjectManager" class="org.orcid.core.manager.impl.SubjectManagerImpl" />
