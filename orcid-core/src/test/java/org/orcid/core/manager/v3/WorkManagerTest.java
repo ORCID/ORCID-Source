@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -25,12 +26,14 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
@@ -42,10 +45,13 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.Title;
@@ -56,6 +62,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -66,11 +73,13 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.togglz.junit.TogglzRule;
 
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
@@ -118,6 +127,9 @@ public class WorkManagerTest extends BaseTest {
     
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManager;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
     
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
@@ -130,6 +142,12 @@ public class WorkManagerTest extends BaseTest {
 
     @Value("${org.orcid.core.works.bulk.read.max:100}")
     private Long bulkReadSize;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
@@ -1225,7 +1243,7 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "orcidCoreExceptionMapper", orcidCoreExceptionMapper);        
 
         org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();
-        
+
         Mockito.when(orcidCoreExceptionMapper.getV3OrcidError(Mockito.any())).thenReturn(orcidError);
 
         String putCodes = "11,12,13,99999";
@@ -1475,6 +1493,59 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
     }
 
+    @Test
+    public void testCreateWorkFromAPIAndValidateTopContributorsInWorkEntity() {
+        String orcid = "0000-0000-0000-0004";
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+
+        Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
+
+        ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
+        Mockito.verify(mockDao).persist(workEntityCaptor.capture());
+
+        WorkEntity workEntity = workEntityCaptor.getValue();
+
+        assertNotNull(work);
+        assertNotNull(workEntity);
+        assertNotNull(workEntity.getTopContributorsJson());
+
+        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+    }
+
+
+    @Test
+    public void testCreateWorkFromAPIAndValidateTopContributors() {
+        String orcid = "0000-0000-0000-0004";
+        ContributorsRolesAndSequencesConverter mockContributorsRolesAndSequencesConverter = Mockito.mock(ContributorsRolesAndSequencesConverter.class);
+
+        ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", mockContributorsRolesAndSequencesConverter);
+
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+
+        Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
+
+        ArgumentCaptor<List<ContributorsRolesAndSequences>> captor = ArgumentCaptor.forClass((Class) List.class);
+        Mockito.verify(mockContributorsRolesAndSequencesConverter).convertTo(captor.capture(), any());
+
+        List<ContributorsRolesAndSequences> topContributors = captor.getValue();
+
+        assertNotNull(work);
+        assertNotNull(topContributors);
+        assertEquals(topContributors.size(), maxContributorsForUI);
+
+        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+
+        ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", contributorsRolesAndSequencesConverter);
+    }
+
     private WorkEntity getUserPreferredWork() {
         WorkEntity userPreferred = new WorkEntity();
         userPreferred.setId(4l);
@@ -1569,7 +1640,7 @@ public class WorkManagerTest extends BaseTest {
         summary.setExternalIdentifiers(extIds);
         return summary;
     }
-    
+
     private void waitAMillisecond() {
         try {
             Thread.sleep(1);
@@ -1603,6 +1674,21 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIds);
 
         work.setVisibility(Visibility.PUBLIC);
+        return work;
+    }
+
+    private Work getWorkWith100Contributors() {
+        Work work = getWork(null);
+        List<Contributor> contributorList = new ArrayList<>();
+        for (int i = 0; i < 99; i++) {
+            Contributor contributor = new Contributor();
+            contributor.setCreditName(new CreditName("Test " + i));
+            contributor.setContributorOrcid(null);
+            contributor.setContributorEmail(null);
+            contributor.setContributorAttributes(null);
+            contributorList.add(contributor);
+        }
+        work.setWorkContributors(new WorkContributors(contributorList));
         return work;
     }
 }
