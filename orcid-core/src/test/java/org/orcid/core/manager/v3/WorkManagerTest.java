@@ -127,6 +127,9 @@ public class WorkManagerTest extends BaseTest {
     
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManager;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
     
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
@@ -1513,6 +1516,7 @@ public class WorkManagerTest extends BaseTest {
 
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
 
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
     }
 
 
@@ -1538,6 +1542,8 @@ public class WorkManagerTest extends BaseTest {
         assertEquals(topContributors.size(), maxContributorsForUI);
 
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+
+        ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", contributorsRolesAndSequencesConverter);
     }
 
     private WorkEntity getUserPreferredWork() {
