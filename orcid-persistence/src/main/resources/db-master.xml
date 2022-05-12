@@ -359,4 +359,5 @@
   <include file="/db/updates/identifier-types/update-pmid-resolution-prefix.xml" />
   <include file="/db/updates/identifier-types/update-pmc-resolution-prefix.xml" />
   <include file="/db/updates/profile_lock_cols.xml" />
+  <include file="/db/updates/add_top_contributors_json_to_work.xml" />
 </databaseChangeLog>

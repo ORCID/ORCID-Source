@@ -1562,5 +1562,9 @@
         <constructor-arg ref="PIDResolverService" />
         <constructor-arg ref="localeManager" />
     </bean>
-    
+
+	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter">
+		<constructor-arg ref="workContributorRoleConverter" />
+	</bean>
+
 </beans>

@@ -11,7 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CaseSensitiveNormalizer implements Normalizer{
+public class CaseSensitiveNormalizer implements Normalizer {
 
     @Resource
     IdentifierTypeManager idman;

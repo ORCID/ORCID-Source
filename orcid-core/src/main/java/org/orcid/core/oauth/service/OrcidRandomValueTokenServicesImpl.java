@@ -188,6 +188,12 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         if (isClientCredentialsGrantType(authorizationRequest)) {
             boolean allAreClientCredentialsScopes = true;
 
+            if (requestedScopes.size() == 1) {
+                if (requestedScopes.stream().findFirst().get().isInternalScope()) {
+                    return readValiditySeconds;
+                }
+            }
+
             for (ScopePathType scope : requestedScopes) {
                 if (!scope.isClientCreditalScope()) {
                     allAreClientCredentialsScopes = false;

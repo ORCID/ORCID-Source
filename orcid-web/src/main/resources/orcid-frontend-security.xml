@@ -13,11 +13,14 @@
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
 	<sec:global-method-security pre-post-annotations="enabled" />
 	
+	<bean id="orcidOauthRedirectResolver" class="org.orcid.core.oauth.security.OrcidOauthRedirectResolver" />
+	
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
+		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />	
+		<property name="redirectResolver" ref="orcidOauthRedirectResolver" />	
 	</bean>
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
@@ -389,6 +392,8 @@
 		<sec:intercept-url pattern="/reset-password-email/.*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/reset-password-email.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
+		<sec:intercept-url pattern="/reset-password-email-v2.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />

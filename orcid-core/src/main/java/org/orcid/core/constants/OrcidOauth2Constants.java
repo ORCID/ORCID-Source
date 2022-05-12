@@ -1,5 +1,6 @@
 package org.orcid.core.constants;
 
+@Deprecated
 public class OrcidOauth2Constants {
     
     public static final String TOKEN_VERSION = "tokenVersion";
@@ -24,6 +25,11 @@ public class OrcidOauth2Constants {
     public static final String REVOKE_OLD = "revoke_old";
     public static final String EXPIRES_IN = "expires_in";
     public static final String TOKEN_ID = "tokenId";
+    public static final String ORIGINAL_AUTHORIZATION_REQUEST = "org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint.ORIGINAL_AUTHORIZATION_REQUEST";
+    
+    public static final String APPROVED = "approved";
+    public static final String RESOURCE_IDS = "resourceIds";
+    public static final String AUTHORITIES = "authorities";
     
     //openid connect
     public static final String NONCE = "nonce";

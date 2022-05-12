@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
@@ -19,7 +18,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.jena.riot.RIOT;
 import org.junit.Before;
 import org.junit.Test;
-import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
@@ -28,6 +26,7 @@ import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Email;
@@ -43,14 +42,11 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 
-//@RunWith(OrcidJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
 public class RDFWriterTest {
 
-	private static final String EXAMPLE_RDF_URI = "http://pub.orcid.example.com/experimental_rdf_v1/000-1337";
-
-
-	static { 
+	private static final String EXAMPLE_RDF_URI = "http://pub.orcid.example.com/experimental_rdf_v1/000-1337";	
+	
+	static {
 		// Ensure RIOT is initialized so we get consistent RDF writers
 		RIOT.init();
 	}

@@ -6,17 +6,15 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,21 +91,17 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         assertEquals(2, page.getGroups().size());
 
         // check we have one group of one and one group of two.
-        Set<Integer> setI = new HashSet<Integer>();
-        setI.add(page.getGroups().get(0).getResearchResources().size());
-        setI.add(page.getGroups().get(1).getResearchResources().size());
-        assertEquals(setI, Sets.newHashSet(1, 2));
+        assertEquals(2, page.getGroups().get(0).getResearchResources().size());
+        assertEquals(1, page.getGroups().get(1).getResearchResources().size());        
 
         int bg = getBigGroupIndex(page); // has 2 rr
         int sg = getSmallGroupIndex(page); // has 1 rr
 
         // grouped dude
         assertEquals("work:external-identifier-id#1", page.getGroups().get(bg).getExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
-        Set<String> titles = new HashSet<String>();
-        titles.add(page.getGroups().get(bg).getResearchResources().get(0).getTitle());
-        titles.add(page.getGroups().get(bg).getResearchResources().get(1).getTitle());
-        assertEquals(titles, Sets.newHashSet("the title", "the title2"));
-
+        assertEquals("the title2", page.getGroups().get(bg).getResearchResources().get(0).getTitle());
+        assertEquals("the title", page.getGroups().get(bg).getResearchResources().get(1).getTitle());
+        
         // in the big group, rr 1 has an org, 2 has higher display index (so is
         // the default and should be first in the list).
         assertEquals("2", page.getGroups().get(bg).getResearchResources().get(0).getPutCode());
@@ -207,7 +201,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         controller.removeWork("3");
         try {
-            org.orcid.pojo.ResearchResource rrDeleted = controller.getResearchResource(3);
+            controller.getResearchResource(3);
             fail();
         } catch (NoResultException nre) {
 

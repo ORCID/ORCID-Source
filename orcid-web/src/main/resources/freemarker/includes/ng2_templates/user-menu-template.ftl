@@ -36,12 +36,21 @@
                                     {{'${springMacroRequestContext.getMessage("workspace.notifications")}' }} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span>
                                 </a>
                                 <#--  ACCOUNT SETTINGS  -->
-                                <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') "  href="{{getBaseUri()}}/account">
+                                <@orcid.checkFeatureStatus featureName='RESTRICTED_DELEGATORS'>
+                                 <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') "  href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
-                                <#--  TRUSTED INDIVIDUALS  -->
-                                <a class="top-menu-item" href="{{getBaseUri()}}/trusted-individuals">
+                                </@orcid.checkFeatureStatus>
+                                <@orcid.checkFeatureStatus featureName='RESTRICTED_DELEGATORS' enabled=false>
+                                 <a class="top-menu-item"  href="{{getBaseUri()}}/account">
+                                    <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
+                                    {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
+                                 </a>
+                                </@orcid.checkFeatureStatus>
+                    
+                                <#--  TRUSTED PARTIES -->
+                                <a class="top-menu-item" href="{{getBaseUri()}}/trusted-parties">
                                     <img src="{{assetsPath + '/img/svg/vpn_key_FILL1_wght400_GRAD0_opsz20.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.trusted_individuals")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>

@@ -1,18 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
@@ -27,8 +16,10 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.jaxb.model.common.ActionType;
@@ -48,11 +39,23 @@ import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
@@ -96,6 +99,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private PIDResolverService resolver;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
     
     private Integer maxWorksToWrite;
     
@@ -170,6 +182,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     }
                 }
             }
+
         } else {
             // validate external ID vocab
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);
@@ -184,7 +197,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
         
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
-        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
+        if (isApiRequest && Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            filterContributors(work, workEntity);
+        }
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
@@ -248,16 +264,20 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 }
                             }
                         }
-                        
+
+
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
-                        
+
                         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
                         
                         setIncomingWorkPrivacy(workEntity, profile);        
-                        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);        
+                        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
+                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                            filterContributors(work, workEntity);
+                        }
                         workDao.persist(workEntity);                    
                         
                         //Update the element in the bulk
@@ -347,6 +367,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
             }
+
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                filterContributors(work, workEntity);
+            }
         }else{
             //validate external ID vocab
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);            
@@ -361,7 +385,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
-        
+
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
@@ -493,6 +517,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setWorkType(preferredFullData.getWorkType());
         workEntity.setWorkUrl(preferredFullData.getWorkUrl());
         return workEntity;
+    }
+
+    private void filterContributors(Work work, WorkEntity workEntity) {
+        if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null && work.getWorkContributors().getContributor().size() > 0) {
+            contributorUtils.filterContributorPrivateData(work.getWorkContributors().getContributor(), maxContributorsForUI);
+            List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
+            if (topContributors.size() > 0) {
+                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
+            }
+        }
     }
     
 }

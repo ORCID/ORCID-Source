@@ -369,14 +369,17 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
 
     @Override
     public List<Object[]> getWorksByOrcid(String orcid) {
+        //TODO @DanielPalafox fetch only the top_contributors_json after CLI finishes
         String sqlString =
-                    "SELECT " +
-            		" w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
-            		" w.publication_year, w.publication_month, w.publication_day, w.date_created, " +
-            		" w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id, w.assertion_origin_source_id, w.assertion_origin_client_source_id, " +
-                    " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as top_contributors" +
-                    " FROM work w" +
-                    " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid)";
+                "SELECT " +
+                        " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
+                        " w.publication_year, w.publication_month, w.publication_day, w.date_created, " +
+                        " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," +
+                        " w.assertion_origin_source_id, w.assertion_origin_client_source_id, " +
+                        " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as contributors, " +
+                        " w.top_contributors_json " +
+                        " FROM work w" +
+                        " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid)";
 
         Query query = entityManager.createNativeQuery(sqlString);
         query.setParameter("orcid", orcid)
@@ -397,7 +400,24 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
                 .addScalar("date_created", TimestampType.INSTANCE)
                 .addScalar("last_modified", TimestampType.INSTANCE)
-                .addScalar("top_contributors", StringType.INSTANCE);
+                .addScalar("contributors", StringType.INSTANCE)
+                .addScalar("top_contributors_json", StringType.INSTANCE);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Object[]> getWorksStartingFromWorkId(Long workId, int numberOfWorks) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT " +
+                        "work_id, " +
+                        "(SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 250) t) as contributors_json " +
+                        " FROM work as w WHERE work_id >=:workId AND contributors_json is not null " +
+                        " ORDER BY work_id ASC LIMIT :numberOfWorks");
+        query.setParameter("workId", workId);
+        query.setParameter("numberOfWorks", numberOfWorks)
+                .unwrap(org.hibernate.query.NativeQuery.class)
+                .addScalar("work_id", BigIntegerType.INSTANCE)
+                .addScalar("contributors_json", StringType.INSTANCE);
         return query.getResultList();
     }
 }
