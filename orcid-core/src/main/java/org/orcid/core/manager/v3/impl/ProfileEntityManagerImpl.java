@@ -665,6 +665,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public void updateSigninLock(String orcid, Integer count) {
         profileDao.updateSigninLock(orcid, count);
     }
+    
+    public List<Object[]> getSigninLock(String orcid) {
+        return profileDao.getSigninLock(orcid);
+    }
 
     /**
      * Clears all record info but the email addresses, that stay unmodified

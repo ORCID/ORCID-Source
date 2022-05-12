@@ -2,6 +2,7 @@ package org.orcid.frontend.spring;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -58,13 +59,14 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
-        System.out.println("!!!! inside authenticate");
         if (auth.getCredentials() != null && auth.getCredentials().toString().length() > 256) {
             throw new BadCredentialsException("Invalid credentials: password too long");
         }
         Authentication result = null;
 
         ProfileEntity profile = null;
+        Integer signinLockCount = null;
+        Date signinLockStart = null;
         try {
             // 1.retrieve the existing signin lock info
             profile = getProfileEntity(auth.getName());
@@ -72,12 +74,19 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 throw new BadCredentialsException("Invalid username or password");
             }
 
+            // get the locking info
+            List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
+            signinLockCount = (Integer) lockInfoList.get(0)[2];
+            signinLockStart = (Date) lockInfoList.get(0)[0];
+
             result = super.authenticate(auth);
             if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
                 // 2.lock window active
-                if (isLockThreshHoldExceeded(profile)) {
+                if (isLockThreshHoldExceeded(signinLockCount, signinLockStart)) {
+                    LOGGER.info("Correct sign in but threshhold exceeded for: " + profile.getId());
                     throw new BadCredentialsException("Lock Threashold Exceeded for " + profile.getId());
                 } else if (profile.getSigninLockCount() > 0 && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
+                    LOGGER.info("Reset the signin lock after correct login outside of locked window for: " + profile.getId());
                     profileEntityManager.resetSigninLock(profile.getId());
                 }
             }
@@ -86,13 +95,12 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             // update the DB for lock threshhold fields
             if ((result == null || !result.isAuthenticated()) && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
                 LOGGER.info("Invalid password attempt updating signin lock");
-                
+
                 if (profile != null) {
-                    if (profile.getSigninLockStart() == null) {
+                    if (signinLockStart == null) {
                         profileEntityManager.startSigninLock(profile.getId());
                     }
-
-                    profileEntityManager.updateSigninLock(profile.getId(), profile.getSigninLockCount() + 1);
+                    profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
                 }
             }
             throw bce;
@@ -150,10 +158,10 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
-    private boolean isLockThreshHoldExceeded(ProfileEntity profile) {
-        if ((profile.getSigninLockCount() != null) && profile.getSigninLockCount() > 0 && profile.getSigninLockStart() != null) {
-            int multiplyWaitWindow = (profile.getSigninLockCount() - lockoutThreshhold) > 0 ? 1 : ((profile.getSigninLockCount() - lockoutThreshhold) + 1);
-            Instant waitLock = profile.getSigninLockStart().toInstant().plusSeconds(multiplyWaitWindow * lockoutWindow * 60);
+    private boolean isLockThreshHoldExceeded(Integer signinLockCount, Date signinLockStart) {
+        if ((signinLockCount != null) && signinLockCount > 0 && signinLockStart != null) {
+            int multiplyWaitWindow = (signinLockCount - lockoutThreshhold) > 0 ? 1 : ((signinLockCount - lockoutThreshhold) + 1);
+            Instant waitLock = signinLockStart.toInstant().plusSeconds(multiplyWaitWindow * lockoutWindow * 60);
             if (waitLock.isAfter(Instant.now())) {
                 return true;
             }

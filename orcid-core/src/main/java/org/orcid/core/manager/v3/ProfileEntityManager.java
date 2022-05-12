@@ -86,4 +86,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     void resetSigninLock(String orcid);
     
     void updateSigninLock(String orcid, Integer count);
+    
+    List<Object[]> getSigninLock(String orcid);
 }

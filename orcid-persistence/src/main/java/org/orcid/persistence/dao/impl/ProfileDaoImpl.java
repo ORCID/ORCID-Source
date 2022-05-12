@@ -843,7 +843,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter("orcid", orcid);
-
+        query.executeUpdate();
         return;
     }
     
@@ -854,7 +854,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter("orcid", orcid);
-
+        query.executeUpdate();
         return;
     }
 
@@ -867,7 +867,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter("orcid", orcid);
         query.setParameter("count", count);
-
+        query.executeUpdate();
         return;
     }
 
