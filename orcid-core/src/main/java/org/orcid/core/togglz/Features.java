@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Store and read top_contributors_json")
+    STORE_TOP_CONTRIBUTORS,
+
     @Label("Restrict delegator access to account settings")
     RESTRICTED_DELEGATORS,
 
@@ -146,7 +149,7 @@ public enum Features implements Feature {
     
     @Label("Organization search add sort by popularity")
     ORG_SEARCH_SORT_BY_POPULARITY;
-    
+
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

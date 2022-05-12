@@ -212,9 +212,9 @@ public class OauthController {
                 && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID)) {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)) {
-                forceLogin = true;
+                requestInfoForm.setForceLogin(true);
+                return requestInfoForm;
             }
-            requestInfoForm.setForceLogin(forceLogin);
         }
 
         // Check that the client have the required permissions
@@ -269,6 +269,7 @@ public class OauthController {
                         long max = Long.parseLong(maxAge);
                         if (authTime == null || ((authTime.getTime() + (max * 1000)) < (new java.util.Date()).getTime())) {
                             requestInfoForm.setForceLogin(true);
+                            return requestInfoForm;
                         }
                     } catch (NumberFormatException e) {
                         //ignore
@@ -278,6 +279,7 @@ public class OauthController {
                     forceConfirm = true;
                 } else if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)) {
                     requestInfoForm.setForceLogin(true);
+                    return requestInfoForm;
                 }
             }
         }
@@ -349,6 +351,9 @@ public class OauthController {
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, url);
 
+        // Save a flag to indicate this is a Oauth request 
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
+        
         //Required to be able to work with org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint to authorize the request
         Map<String, Object> authorizationRequestMap = new HashMap<String, Object>();
 

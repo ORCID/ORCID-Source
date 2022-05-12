@@ -81,7 +81,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     private static final String IS_SELF = "isSelf";
 
     private static final String FOUND = "found";   
-    
+
+    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";   
+
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -140,13 +142,23 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
+
         Map<String, Boolean> map = new HashMap<>();
+        String effectiveOrcid = getEffectiveUserOrcid();
+        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
+
         EmailEntity emailEntity = emailManager.find(email);
+        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
+
+
         if (emailEntity == null) {
             map.put(FOUND, Boolean.FALSE);
             return map;
         } else {
-            map.put(FOUND, Boolean.TRUE);
+            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
+             e.getReceiverOrcid().getPath().equals(emailEntity.getProfile().getId())
+            ));
+            map.put(FOUND,  Boolean.TRUE);
             map.put(IS_SELF, emailEntity.getProfile().getId().equals(getCurrentUserOrcid()));
             return map;
         }
@@ -155,6 +167,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/search-for-delegate-by-orcid/{orcid}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByOrcid(@PathVariable String orcid) {
         Map<String, Boolean> map = new HashMap<>();
+        String effectiveOrcid = getEffectiveUserOrcid();
+        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
+
+        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
+
+        
         Boolean isValidForDelegate = profileEntityManagerReadOnly.isOrcidValidAsDelegate(orcid);
         if (isValidForDelegate == null || isValidForDelegate.booleanValue() == false) {
             map.put(FOUND, Boolean.FALSE);
@@ -162,6 +180,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         } else {
             map.put(FOUND, Boolean.TRUE);
             map.put(IS_SELF, orcid.equals(getCurrentUserOrcid()));
+            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
+            e.getReceiverOrcid().getPath().equals(orcid)
+           ));
             return map;
         }
     } 

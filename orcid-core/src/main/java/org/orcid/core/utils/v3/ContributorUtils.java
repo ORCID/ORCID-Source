@@ -1,19 +1,17 @@
 package org.orcid.core.utils.v3;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.Iterables;
+import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
+import org.orcid.core.contributors.roles.credit.CreditRole;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.utils.RecordNameUtils;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.FundingContributor;
@@ -21,14 +19,26 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrcidAware;
+import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.WorkSummaryExtended;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.collect.Iterables;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ContributorUtils {
     
@@ -84,6 +94,13 @@ public class ContributorUtils {
         }
     }
 
+    public void filterContributorsGroupedByOrcidPrivateData(List<ContributorsRolesAndSequences> contributorList, int maxContributorsForUI) {
+        if (contributorList != null) {
+            filterContributorsGroupedByOrcid(contributorList, maxContributorsForUI);
+        }
+    }
+
+
     private void filterWorkContributors(List<Contributor> contributorList) {
             List<Contributor> contributorsToPopulateName = new ArrayList<Contributor>();
             Set<String> idsToPopulateName = new HashSet<String>();
@@ -134,6 +151,41 @@ public class ContributorUtils {
                     idsToPopulateName.add(orcid);
                     contributorsToPopulateName.add(contributor);
                 } else {
+                    contributor.setCreditName(new CreditName(isPrivateName(cachedName)));
+                }
+            }
+        }
+
+        // Fetch the contributor names
+        Map<String, String> contributorNames = getContributorNamesFromDB(idsToPopulateName);
+
+        // Populate missing names
+        for(Contributor contributor : contributorsToPopulateName) {
+            String orcid = contributor.getContributorOrcid().getPath();
+            // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
+            if(contributorNames.containsKey(orcid)) {
+                String name = contributorNames.get(orcid);
+                contributor.setCreditName(new CreditName(isPrivateName(name)));
+            }
+        }
+    }
+
+    private void filterContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorList, int maxContributorsForUI) {
+        List<ContributorsRolesAndSequences> contributorsToPopulateName = new ArrayList<>();
+        Set<String> idsToPopulateName = new HashSet<String>();
+        // Populate the credit name of cached contributors and populate the list of names to retrieve from the DB
+        for (ContributorsRolesAndSequences contributor : contributorList) {
+            contributor.setContributorEmail(null);
+            if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
+                String orcid = contributor.getContributorOrcid().getPath();
+                String cachedName = getCachedContributorName(orcid);
+                if(cachedName == null) {
+                    if (idsToPopulateName.size() == maxContributorsForUI) {
+                        break;
+                    }
+                    idsToPopulateName.add(orcid);
+                    contributorsToPopulateName.add(contributor);
+                } else {
                     CreditName creditName = new CreditName(cachedName);
                     contributor.setCreditName(creditName);
                 }
@@ -144,7 +196,7 @@ public class ContributorUtils {
         Map<String, String> contributorNames = getContributorNamesFromDB(idsToPopulateName);
 
         // Populate missing names
-        for(Contributor contributor : contributorsToPopulateName) {
+        for(ContributorsRolesAndSequences contributor : contributorsToPopulateName) {
             String orcid = contributor.getContributorOrcid().getPath();
             // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
             if(contributorNames.containsKey(orcid)) {
@@ -201,7 +253,14 @@ public class ContributorUtils {
     private String getCacheKey(String orcid) {
         Date lastModified = profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
         return orcid + "_" + (lastModified == null ? 0 : lastModified.getTime());
-    }    
+    }
+
+    private String isPrivateName(String name) {
+        if ("".equals(name)) {
+            return "Name is private";
+        }
+        return name;
+    }
 
     public void setCacheManager(ActivityManager cacheManager) {
         this.cacheManager = cacheManager;
@@ -221,5 +280,121 @@ public class ContributorUtils {
 
     public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
         this.profileLastModifiedAspect = profileLastModifiedAspect;
-    } 
+    }
+
+    public List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors, Integer maxContributorsForUI) {
+        List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
+        for(Contributor contributor : contributors) {
+            // Process the list of contributors till reaching the max, then break
+            if(contributorsRolesAndSequencesList.size() == maxContributorsForUI) {
+                break;
+            }
+            groupContributorsByOrcid(contributor, contributorsRolesAndSequencesList);
+        }
+        return contributorsRolesAndSequencesList;
+    }
+
+    private void groupContributorsByOrcid(Contributor contributor, List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList) {
+        if (contributor.getContributorOrcid() != null) {
+            String orcid = contributor.getContributorOrcid().getPath();
+            if (!StringUtils.isBlank(orcid)) {
+                if (contributorsRolesAndSequencesList.size() > 0) {
+                    List<ContributorsRolesAndSequences> c = contributorsRolesAndSequencesList
+                            .stream()
+                            .filter(contr -> contr.getContributorOrcid() != null && contr.getContributorOrcid().getPath() != null && orcid.equals(contr.getContributorOrcid().getPath()))
+                            .collect(Collectors.toList());
+                    if (c.size() > 0) {
+                        ContributorsRolesAndSequences contributorsRolesAndSequences = c.get(0);
+                        ContributorAttributes ca = new ContributorAttributes();
+                        if(contributor.getContributorAttributes() != null) {
+                            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+                            }
+                            if(contributor.getContributorAttributes().getContributorSequence() != null) {
+                                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+                            }
+                        }
+                        List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
+                        rolesAndSequencesList.add(ca);
+                        contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
+                    } else {
+                        addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+                    }
+                } else {
+                    addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+                }
+            } else {
+                addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+            }
+        } else {
+            addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+        }
+    }
+
+    private void addContributorWithNameOrOrcid(List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList, Contributor contributor) {
+        if ((contributor.getContributorOrcid() != null && !"".equals(contributor.getContributorOrcid().getPath())) ||
+                (contributor.getCreditName() != null && !"".equals(contributor.getCreditName().getContent()))) {
+            contributorsRolesAndSequencesList.add(addContributor(contributor));
+        }
+    }
+
+    private ContributorsRolesAndSequences addContributor(Contributor contributor) {
+        ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
+        if(contributor == null) {
+            return crs;
+        }
+        if (contributor.getContributorOrcid() != null) {
+            crs.setContributorOrcid(contributor.getContributorOrcid());
+        }
+        if (contributor.getCreditName() != null) {
+            crs.setCreditName(contributor.getCreditName());
+        }
+        if (contributor.getContributorAttributes() != null) {
+            ContributorAttributes ca = new ContributorAttributes();
+            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                ca.setContributorRole(getCreditRole(contributor.getContributorAttributes().getContributorRole()));
+            }
+            if (contributor.getContributorAttributes().getContributorSequence() != null) {
+                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            }
+            List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
+            rolesAndSequences.add(ca);
+            crs.setRolesAndSequences(rolesAndSequences);
+        }
+
+        return crs;
+    }
+
+    public String getCreditRole(String contributorRole) {
+        try {
+            CreditRole cr = CreditRole.fromValue(contributorRole);
+            return cr.getUiValue();
+        } catch(IllegalArgumentException e) {
+            return contributorRole;
+        }
+    }
+
+    public String getAssertionOriginOrcid(String clientSourceId, String orcid, Long putCode, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager, WorkDao workDao) {
+        String assertionOriginOrcid = null;
+        if (Features.USER_OBO.isActive()) {
+            ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+            if (clientSource.isUserOBOEnabled()) {
+                WorkEntity e = workDao.getWork(orcid, putCode);
+
+                String orcidId = null;
+                if (e instanceof ProfileAware) {
+                    orcidId = ((ProfileAware) e).getProfile().getId();
+                } else {
+                    orcidId = ((OrcidAware) e).getOrcid();
+                }
+                assertionOriginOrcid = orcidId;
+            }
+        }
+
+        return assertionOriginOrcid;
+    }
+
+    public String getSourceName(String sourceId, SourceNameCacheManager sourceNameCacheManager) {
+        return sourceNameCacheManager.retrieve(sourceId);
+    }
 }
