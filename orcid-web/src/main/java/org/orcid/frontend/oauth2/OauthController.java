@@ -351,6 +351,9 @@ public class OauthController {
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, url);
 
+        // Save a flag to indicate this is a Oauth request 
+        request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
+        
         //Required to be able to work with org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint to authorize the request
         Map<String, Object> authorizationRequestMap = new HashMap<String, Object>();
 
