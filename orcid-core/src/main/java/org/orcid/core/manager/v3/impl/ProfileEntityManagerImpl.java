@@ -652,6 +652,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     public void update2FASecret(String orcid, String secret) {
         profileDao.update2FASecret(orcid, secret);
     }
+    
+    
+    public void startSigninLock(String orcid) {
+        profileDao.startSigninLock(orcid);
+    }
+    
+    public void resetSigninLock(String orcid) {
+        profileDao.resetSigninLock(orcid);
+    }
+    
+    public void updateSigninLock(String orcid, Integer count) {
+        profileDao.updateSigninLock(orcid, count);
+    }
 
     /**
      * Clears all record info but the email addresses, that stay unmodified
