@@ -750,19 +750,6 @@ public class FundingsController extends BaseWorkspaceController {
         return orgDisambiguated.toMap();
     }
 
-    /**
-     * Search DB for org defined funding types
-     */
-    @RequestMapping(value = "/orgDefinedSubType/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
-        List<String> subtypes = profileFundingManager.getIndexedFundingSubTypes(query, limit);
-        for(int i = 0; i < subtypes.size(); i++) {
-            subtypes.set(i, HtmlUtils.htmlEscape(subtypes.get(i)));
-        }
-        return subtypes;
-    }
-
     public Locale getUserLocale() {
         return localeManager.getLocale();
     }
