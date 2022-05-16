@@ -68,21 +68,17 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         Integer signinLockCount = null;
         Date signinLockStart = null;
         try {
+
+            result = super.authenticate(auth);
             // 1.retrieve the existing signin lock info
             profile = getProfileEntity(auth.getName());
             if (profile == null) {
                 throw new BadCredentialsException("Invalid username or password");
             }
 
-            // get the locking info
-            List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
-            signinLockCount = (Integer) lockInfoList.get(0)[2];
-            signinLockStart = (Date) lockInfoList.get(0)[0];
-
-            result = super.authenticate(auth);
             if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
                 // 2.lock window active
-                if (isLockThreshHoldExceeded(signinLockCount, signinLockStart)) {
+                if (isLockThreshHoldExceeded(profile.getSigninLockCount(), profile.getSigninLockStart())) {
                     LOGGER.info("Correct sign in but threshhold exceeded for: " + profile.getId());
                     throw new BadCredentialsException("Lock Threashold Exceeded for " + profile.getId());
                 } else if (profile.getSigninLockCount() > 0 && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
@@ -95,12 +91,19 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
             // update the DB for lock threshhold fields
             if ((result == null || !result.isAuthenticated()) && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
                 LOGGER.info("Invalid password attempt updating signin lock");
-
-                if (profile != null) {
+                if (profile == null) {
+                    profile = getProfileEntity(auth.getName());
+                    // get the locking info
+                    List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
+                    signinLockCount = (Integer) lockInfoList.get(0)[2];
+                    signinLockStart = (Date) lockInfoList.get(0)[0];
                     if (signinLockStart == null) {
                         profileEntityManager.startSigninLock(profile.getId());
                     }
                     profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
+                    if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
+                        profileEntityCacheManager.remove(profile.getId());
+                    }
                 }
             }
             throw bce;
