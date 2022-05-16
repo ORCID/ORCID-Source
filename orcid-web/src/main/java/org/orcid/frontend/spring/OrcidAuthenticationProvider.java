@@ -76,6 +76,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 throw new BadCredentialsException("Invalid username or password");
             }
 
+            
             if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
                 // 2.lock window active
                 if (isLockThreshHoldExceeded(profile.getSigninLockCount(), profile.getSigninLockStart())) {
@@ -89,6 +90,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
         } catch (BadCredentialsException bce) {
             // update the DB for lock threshhold fields
+            try {
             if ((result == null || !result.isAuthenticated()) && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
                 LOGGER.info("Invalid password attempt updating signin lock");
                 if (profile == null) {
@@ -102,9 +104,14 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                     }
                     profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
                     if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
-                        profileEntityCacheManager.remove(profile.getId());
+                        profileEntityCacheManager.remove(profile.getId());    
                     }
+                
                 }
+            }
+                
+            }catch(Exception ex) {
+                LOGGER.error("Exception while saving sign in lock.", ex);
             }
             throw bce;
         }
