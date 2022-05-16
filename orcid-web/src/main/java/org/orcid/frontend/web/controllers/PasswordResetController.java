@@ -329,6 +329,32 @@ public class PasswordResetController extends BaseController {
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;
     }
+    
+    @RequestMapping(value = "/reset-password-email-validate-token.json", method = RequestMethod.POST)
+    public @ResponseBody OneTimeResetPasswordForm submitPasswordEmailValidatePassword(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
+        oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
+
+        PasswordResetToken passwordResetToken;
+        
+        try {
+             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+
+        } catch (EncryptionOperationNotPossibleException e) {
+            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
+            return oneTimeResetPasswordForm;
+        }
+        
+        if (isTokenExpired(passwordResetToken)) {
+            String message = "expiredPasswordResetToken";
+            oneTimeResetPasswordForm.getErrors().add(message);
+            return oneTimeResetPasswordForm;
+        } else {
+            return oneTimeResetPasswordForm;
+        }
+        
+    }
+    
 
     private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
         try {
