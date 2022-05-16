@@ -9,13 +9,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
-import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,16 +58,6 @@ public class SolrIndexUpdater {
             throw new NonTransientDataAccessResourceException("IOException when persisting org " + orgDisambiguatedSolrDocument.getOrgDisambiguatedId() + " to SOLR", ioe);
         }
     } 
-    
-    public void persist(OrgDefinedFundingTypeSolrDocument orgDefinedFundingTypeSolrDocument) {
-        try {            
-            solrFundingSubTypeClient.addBean(orgDefinedFundingTypeSolrDocument);            
-        } catch (SolrServerException se) {
-            throw new NonTransientDataAccessResourceException("Error persisting fundingSubType " + orgDefinedFundingTypeSolrDocument.getOrgDefinedFundingType() + " to SOLR Server", se);
-        } catch (IOException ioe) {
-            throw new NonTransientDataAccessResourceException("IOException when persisting fundingSubType " + orgDefinedFundingTypeSolrDocument.getOrgDefinedFundingType() + " to SOLR", ioe);
-        }
-    }
     
     public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {

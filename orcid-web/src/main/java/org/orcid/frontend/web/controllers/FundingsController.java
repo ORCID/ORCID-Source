@@ -311,11 +311,6 @@ public class FundingsController extends BaseWorkspaceController {
         // Add to database
         Funding funding = fundingForm.toFunding();
         funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false);        
-
-        // Send the new funding sub type for indexing
-        if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
-                && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-            profileFundingManager.addFundingSubType(fundingForm.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
 
     private void editFunding(FundingForm fundingForm) throws Exception {
@@ -327,11 +322,6 @@ public class FundingsController extends BaseWorkspaceController {
         // Add to database
         Funding funding = fundingForm.toFunding();
         funding = profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding, false);
-
-        // Send the new funding sub type for indexing
-        if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
-                && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-            profileFundingManager.addFundingSubType(fundingForm.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
 
     private void removeEmptyExternalIds(FundingForm funding) {

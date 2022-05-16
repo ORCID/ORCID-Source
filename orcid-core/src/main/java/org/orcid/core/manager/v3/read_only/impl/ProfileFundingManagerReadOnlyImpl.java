@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -9,8 +8,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbFundingAdapter;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.solr.OrcidSolrFundingSubtypeClient;
-import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.GroupableActivityComparator;
@@ -24,35 +21,16 @@ import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
     
     @Resource(name = "jpaJaxbFundingAdapterV3")
     protected JpaJaxbFundingAdapter jpaJaxbFundingAdapter;
         
-    protected ProfileFundingDao profileFundingDao;     
-    
-    @Resource
-    protected OrcidSolrFundingSubtypeClient orcidSolrFundingSubtypeClient;
+    protected ProfileFundingDao profileFundingDao;         
     
     public void setProfileFundingDao(ProfileFundingDao profileFundingDao) {
         this.profileFundingDao = profileFundingDao;
-    }
-
-    /**
-     * Looks for the org defined funding subtypes that matches a given pattern
-     * @param subtype pattern to look for
-     * @param limit the max number of results to look for
-     * @return a list of all org defined funding subtypes that matches the given pattern
-     * */
-    public List<String> getIndexedFundingSubTypes(String subtype, int limit) {
-        List<OrgDefinedFundingTypeSolrDocument> types = orcidSolrFundingSubtypeClient.getFundingTypes(subtype, 0, 100); 
-        List<String> result = new ArrayList<String>();
-        for (OrgDefinedFundingTypeSolrDocument type : types) {
-            result.add(type.getOrgDefinedFundingType());
-        }
-        return result; 
     }
         
     /**
