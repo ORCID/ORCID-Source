@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.util.Iterator;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -119,11 +120,19 @@ public class LoginController extends OauthControllerBase {
     // We should go back to regular spring sign out with CSRF protection
     @RequestMapping(value = { "/signout" }, method = RequestMethod.GET)
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
-        // in case have come via a link that requires them to be signed out
-        logoutCurrentUser(request, response);
+        String query = request.getQueryString();
+        
         String redirectString = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin";
-        ModelAndView mav = new ModelAndView(redirectString);
-        return mav;
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        
+        if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+            // Just redirect to the authorization screen
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            redirectString += '?' + queryString; 
+        }
+        
+        logoutCurrentUser(request, response);         
+        return new ModelAndView(redirectString);
     }
 
     @RequestMapping("wrong-user")
