@@ -76,7 +76,6 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 throw new BadCredentialsException("Invalid username or password");
             }
 
-            
             if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
                 // 2.lock window active
                 if (isLockThreshHoldExceeded(profile.getSigninLockCount(), profile.getSigninLockStart())) {
@@ -91,26 +90,26 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         } catch (BadCredentialsException bce) {
             // update the DB for lock threshhold fields
             try {
-            if ((result == null || !result.isAuthenticated()) && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
-                LOGGER.info("Invalid password attempt updating signin lock");
-                if (profile == null) {
-                    profile = getProfileEntity(auth.getName());
-                    // get the locking info
-                    List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
-                    signinLockCount = (Integer) lockInfoList.get(0)[2];
-                    signinLockStart = (Date) lockInfoList.get(0)[0];
-                    if (signinLockStart == null) {
-                        profileEntityManager.startSigninLock(profile.getId());
+                if ((result == null || !result.isAuthenticated()) && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
+                    LOGGER.info("Invalid password attempt updating signin lock");
+                    if (profile == null) {
+                        profile = getProfileEntity(auth.getName());
+                        // get the locking info
+                        List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
+                        signinLockCount = (Integer) lockInfoList.get(0)[2];
+                        signinLockStart = (Date) lockInfoList.get(0)[0];
+                        if (signinLockStart == null) {
+                            profileEntityManager.startSigninLock(profile.getId());
+                        }
+                        profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
+                        if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
+                            profileEntityCacheManager.remove(profile.getId());
+                        }
+
                     }
-                    profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
-                    if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
-                        profileEntityCacheManager.remove(profile.getId());    
-                    }
-                
                 }
-            }
-                
-            }catch(Exception ex) {
+
+            } catch (Exception ex) {
                 LOGGER.error("Exception while saving sign in lock.", ex);
             }
             throw bce;
