@@ -59,7 +59,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class GetMyDataController extends BaseController {
 
     private static final String DISTINCTIONS_DIR_NAME = "affiliations/distinctions";
-    private static final String EDUCATIONS_DIR_NAME = "affiliations/educations";
+    private static final String      = "affiliations/educations";
     private static final String EMPLOYMENTS_DIR_NAME = "affiliations/employments";
     private static final String INVITED_POSITIONS_DIR_NAME = "affiliations/invited_positions";
     private static final String MEMBERSHIPS_DIR_NAME = "affiliations/memberships";
