@@ -33,9 +33,6 @@ public class SolrIndexUpdater {
     @Resource(name = "solrOrgsClient")
     private SolrClient solrOrgsClient;
     
-    @Resource(name = "solrFundingSubTypeClient")
-    private SolrClient solrFundingSubTypeClient;
-    
     @Value("${org.orcid.persistence.messaging.solr_indexing.auto_commit:false}")
     boolean autoCommit;
     
