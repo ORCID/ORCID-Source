@@ -27,6 +27,7 @@ public class FilterTopContributors {
     private static Logger logger = Logger.getLogger(FilterTopContributors.class.getName());
     private static final int MAX_CONTRIBUTORS_FOR_UI = 50;
     private static int batchSize = 1000;
+    private static int numberOfBatches = 1;
     private static long workId = 0;
     private static String logRoute = null;
 
@@ -36,6 +37,7 @@ public class FilterTopContributors {
      * @param {String} workId
      * @param {String} logRoute
      * @param {String} batchSize
+     * @param {String} [numberOfBatches="1"] The numberOfBatches is optional.
      *
      * Examples:
      *      $ java -DworkId=0000 -DlogRoute=/route/to/store/logs -DbatchSize=100 FilterTopContributors.java
@@ -49,10 +51,15 @@ public class FilterTopContributors {
 
     private void filter() {
         init();
-        List<Object[]> workEntityList = workDao.getWorksStartingFromWorkId(workId, batchSize);
-        workEntityList.forEach(this::filterTopContributors);
-        if (!workEntityList.isEmpty()) {
-            System.out.println("Last workId processed was " + workEntityList.get(workEntityList.size() - 1)[0]);
+        for (int i = 0; i < numberOfBatches; i++) {
+            List<Object[]> workEntityList = workDao.getWorksStartingFromWorkId(workId, batchSize);
+            workEntityList.forEach(this::filterTopContributors);
+            if (!workEntityList.isEmpty()) {
+                System.out.println("Last workId processed was " + workEntityList.get(workEntityList.size() - 1)[0]);
+                if (i+1 < numberOfBatches) {
+                    workId = ((BigInteger) workEntityList.get(workEntityList.size() - 1)[0]).longValue() + 1;
+                }
+            }
         }
     }
 
@@ -87,6 +94,7 @@ public class FilterTopContributors {
         String workIdParameter = System.getProperty("workId");
         String logRouteParameter = System.getProperty("logRoute");
         String batchSizeParameter = System.getProperty("batchSize");
+        String numberOfBatchesParameter = System.getProperty("numberOfBatches");
 
         if (PojoUtil.isEmpty(workIdParameter)) {
             printMessageAndExit("Parameter workId is missing!.");
@@ -94,6 +102,14 @@ public class FilterTopContributors {
             printMessageAndExit("Parameter logRoute is missing!.");
         } else if (PojoUtil.isEmpty(batchSizeParameter)) {
             printMessageAndExit("Parameter batchSize is missing!.");
+        }
+
+        if (!PojoUtil.isEmpty(numberOfBatchesParameter)) {
+            try {
+                numberOfBatches = Integer.parseInt(numberOfBatchesParameter);
+            } catch (Exception e) {
+                printMessageAndExit("Parameter numberOfBatches must be a number!");
+            }
         }
 
         try {
