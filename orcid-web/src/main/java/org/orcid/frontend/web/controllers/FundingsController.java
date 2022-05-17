@@ -311,11 +311,6 @@ public class FundingsController extends BaseWorkspaceController {
         // Add to database
         Funding funding = fundingForm.toFunding();
         funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false);        
-
-        // Send the new funding sub type for indexing
-        if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
-                && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-            profileFundingManager.addFundingSubType(fundingForm.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
 
     private void editFunding(FundingForm fundingForm) throws Exception {
@@ -327,11 +322,6 @@ public class FundingsController extends BaseWorkspaceController {
         // Add to database
         Funding funding = fundingForm.toFunding();
         funding = profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding, false);
-
-        // Send the new funding sub type for indexing
-        if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
-                && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-            profileFundingManager.addFundingSubType(fundingForm.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
 
     private void removeEmptyExternalIds(FundingForm funding) {
@@ -758,19 +748,6 @@ public class FundingsController extends BaseWorkspaceController {
     Map<String, String> getDisambiguated(@PathVariable("id") Long id) {
         OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(id);        
         return orgDisambiguated.toMap();
-    }
-
-    /**
-     * Search DB for org defined funding types
-     */
-    @RequestMapping(value = "/orgDefinedSubType/{query}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<String> searchOrgDefinedFundingSubTypes(@PathVariable("query") String query, @RequestParam(value = "limit") int limit) {
-        List<String> subtypes = profileFundingManager.getIndexedFundingSubTypes(query, limit);
-        for(int i = 0; i < subtypes.size(); i++) {
-            subtypes.set(i, HtmlUtils.htmlEscape(subtypes.get(i)));
-        }
-        return subtypes;
     }
 
     public Locale getUserLocale() {

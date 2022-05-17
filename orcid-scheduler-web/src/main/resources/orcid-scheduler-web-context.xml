@@ -28,7 +28,6 @@
 		<task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:900}000"/>	
 		<task:scheduled ref="orcidRecordIndexer" method="reindexV3RecordsOnS3" fixed-delay="${org.orcid.scheduler.web.dumpApiV3:900}000"/>		      
 		<task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
-		<task:scheduled ref="profileFundingManager" method="indexFundingSubTypes" cron="${org.orcid.scheduler.web.processFundingSubTypesForIndexing:15 15 * * * *}" />
 		<task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />		
 	</task:scheduled-tasks>
 

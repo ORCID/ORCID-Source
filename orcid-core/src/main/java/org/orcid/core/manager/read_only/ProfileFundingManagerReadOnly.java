@@ -8,14 +8,6 @@ import org.orcid.jaxb.model.record_v2.Funding;
 
 public interface ProfileFundingManagerReadOnly {    
     /**
-     * Looks for the org defined funding subtypes that matches a given pattern
-     * @param subtype pattern to look for
-     * @param limit the max number of results to look for
-     * @return a list of all org defined funding subtypes that matches the given pattern
-     * */
-    List<String> getIndexedFundingSubTypes(String subtype, int limit);       
-    
-    /**
      * Get a funding based on the orcid and funding id
      * @param orcid
      *          The funding owner

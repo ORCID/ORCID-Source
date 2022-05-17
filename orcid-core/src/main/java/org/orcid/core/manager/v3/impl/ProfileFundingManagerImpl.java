@@ -1,14 +1,11 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -18,7 +15,6 @@ import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileFundingManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
-import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.ActionType;
@@ -28,26 +24,16 @@ import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.HtmlUtils;
 
 public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl implements ProfileFundingManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileFundingManagerImpl.class);
-
-    @Resource
-    private FundingSubTypeToIndexDao fundingSubTypeToIndexDao;
-
-    @Resource
-    private FundingSubTypeToIndexDao fundingSubTypeToIndexDaoReadOnly;
 
     @Resource(name = "orgManagerV3")
     private OrgManager orgManager;
@@ -66,12 +52,6 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
 
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
-
-    @Value("${org.orcid.persistence.messaging.updated.fundingSubType.solr:indexFundingSubTypes}")
-    private String solrQueueName;
-
-    @Resource(name = "jmsMessageSender")
-    private JmsMessageSender messaging;
 
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -125,61 +105,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
      */
     public boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, Visibility visibility) {
         return profileFundingDao.updateProfileFundingVisibilities(clientOrcid, profileFundingIds, visibility.name());
-    }
-
-    /**
-     * Add a new funding subtype to the list of pending for indexing subtypes
-     */
-    public void addFundingSubType(String subtype, String orcid) {
-        fundingSubTypeToIndexDao.addSubTypes(HtmlUtils.htmlEscape(subtype), orcid);
-    }
-
-    /**
-     * A process that will process all funding subtypes, filter and index them.
-     */
-    public void indexFundingSubTypes() {
-        LOGGER.info("Indexing funding subtypes");
-        List<String> subtypes = fundingSubTypeToIndexDaoReadOnly.getSubTypes();
-        List<String> wordsToFilter = new ArrayList<String>();
-        try {
-            wordsToFilter = IOUtils.readLines(getClass().getResourceAsStream("words_to_filter.txt"));
-        } catch (IOException e) {
-            throw new RuntimeException("Problem reading words_to_filter.txt from classpath", e);
-        }
-        for (String subtype : subtypes) {
-            try {
-                boolean isInappropriate = false;
-                // All filter words are in lower case, so, lowercase the subtype
-                // before comparing
-                for (String wordToFilter : wordsToFilter) {
-                    if (wordToFilter.matches(".*\\b" + Pattern.quote(subtype) + "\\b.*")) {
-                        isInappropriate = true;
-                        break;
-                    }
-                }
-
-                if (!isInappropriate) {
-                    OrgDefinedFundingTypeSolrDocument document = new OrgDefinedFundingTypeSolrDocument();
-                    document.setOrgDefinedFundingType(subtype);
-
-                    // Send message to the message listener
-                    if (!messaging.send(document, solrQueueName)) {
-                        LOGGER.error("Unable to send fundingSubType: " + document.getOrgDefinedFundingType() + " to the message queue " + solrQueueName);
-                        return;
-                    }
-
-                } else {
-                    LOGGER.warn("A word have been flaged as inappropiate: " + subtype);
-                }
-                fundingSubTypeToIndexDao.removeSubTypes(subtype);
-            } catch (Exception e) {
-                // If any exception happens, log the error and continue with the
-                // next one
-                LOGGER.warn("Unable to process subtype " + subtype, e);
-            }
-        }
-        LOGGER.info("Funding subtypes have been correcly indexed");
-    }
+    }    
 
     public boolean updateToMaxDisplay(String orcid, Long fundingId) {
         return profileFundingDao.updateToMaxDisplay(orcid, fundingId);

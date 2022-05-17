@@ -251,12 +251,6 @@
 
 	<bean id="orcidSocialDao" class="org.orcid.persistence.dao.impl.OrcidSocialDaoImpl" />
 	
-	<bean id="fundingSubTypeToIndexDao" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl" />
-	
-	<bean id="fundingSubTypeToIndexDaoReadOnly" class="org.orcid.persistence.dao.impl.FundingSubTypeToIndexDaoImpl">
-		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>
-	
 	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
 	
 	<bean id="notificationDaoReadOnly" class="org.orcid.persistence.dao.impl.NotificationDaoImpl">
