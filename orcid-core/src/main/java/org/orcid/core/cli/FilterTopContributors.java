@@ -56,9 +56,9 @@ public class FilterTopContributors {
             workEntityList.forEach(this::filterTopContributors);
             if (!workEntityList.isEmpty()) {
                 System.out.println("Last workId processed was " + workEntityList.get(workEntityList.size() - 1)[0]);
-            }
-            if (i+1 < numberOfBatches) {
-                workId = ((BigInteger) workEntityList.get(workEntityList.size() - 1)[0]).longValue() + 1;
+                if (i+1 < numberOfBatches) {
+                    workId = ((BigInteger) workEntityList.get(workEntityList.size() - 1)[0]).longValue() + 1;
+                }
             }
         }
     }
