@@ -1539,7 +1539,7 @@ public class WorkManagerTest extends BaseTest {
 
         assertNotNull(work);
         assertNotNull(topContributors);
-        assertEquals(topContributors.size(), maxContributorsForUI);
+        assertEquals(topContributors.size(), maxContributorsForUI + 1);
 
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
 
