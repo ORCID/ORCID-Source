@@ -200,6 +200,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 if (wse.getContributors() != null && wse.getContributors().getContributor() != null && wse.getContributors().getContributor().size() > 0) {
                     if (Features.STORE_TOP_CONTRIBUTORS.isActive() && wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
                         contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                        wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
                     } else {
                         contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
                         List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);

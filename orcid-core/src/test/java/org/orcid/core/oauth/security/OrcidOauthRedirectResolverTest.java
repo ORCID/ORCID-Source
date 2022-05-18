@@ -17,6 +17,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
+import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 
 public class OrcidOauthRedirectResolverTest {
 
@@ -97,35 +98,35 @@ public class OrcidOauthRedirectResolverTest {
         // Root url should not match if it is not registered
         try {
             resolver.resolveRedirect("https://qa.orcid.org", clientDetails);
-        } catch (InvalidRequestException e) {
+        } catch (RedirectMismatchException e) {
             assertEquals("Unable to find a matching redirect_uri for the client.", e.getMessage());
         }
 
         // Different protocol should not match
         try {
             resolver.resolveRedirect("http://qa.orcid.org/1", clientDetails);
-        } catch (InvalidRequestException e) {
+        } catch (RedirectMismatchException e) {
             assertEquals("Unable to find a matching redirect_uri for the client.", e.getMessage());
         }
 
         // Different domain should not match
         try {
             resolver.resolveRedirect("https://orcid.org/1", clientDetails);
-        } catch (InvalidRequestException e) {
+        } catch (RedirectMismatchException e) {
             assertEquals("Unable to find a matching redirect_uri for the client.", e.getMessage());
         }
 
         // Different domain should not match
         try {
             resolver.resolveRedirect("https://example.com/1", clientDetails);
-        } catch (InvalidRequestException e) {
+        } catch (RedirectMismatchException e) {
             assertEquals("Unable to find a matching redirect_uri for the client.", e.getMessage());
         }
 
         // Same domain but different patch should not match
         try {
             resolver.resolveRedirect("https://qa.orcid.org/4", clientDetails);
-        } catch (InvalidRequestException e) {
+        } catch (RedirectMismatchException e) {
             assertEquals("Unable to find a matching redirect_uri for the client.", e.getMessage());
         }
     }

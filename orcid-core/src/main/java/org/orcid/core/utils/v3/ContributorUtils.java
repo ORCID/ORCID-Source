@@ -286,7 +286,8 @@ public class ContributorUtils {
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
         for(Contributor contributor : contributors) {
             // Process the list of contributors till reaching the max, then break
-            if(contributorsRolesAndSequencesList.size() == maxContributorsForUI) {
+            // We add an extra contributor to display a message in the UI in case than there is more than maxContributorsForUI
+            if(contributorsRolesAndSequencesList.size() == maxContributorsForUI + 1) {
                 break;
             }
             groupContributorsByOrcid(contributor, contributorsRolesAndSequencesList);
