@@ -298,14 +298,13 @@ public class OauthController {
                 setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
                 if (authorizationRequest != null) {
-                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                     Map<String, String> requestParams = new HashMap<String, String>();
                     copyRequestParameters(request, requestParams);
                     Map<String, String> approvalParams = new HashMap<String, String>();
     
                     requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
                     approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-    
+                    
                     requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
     
                     boolean hasPersistent = hasPersistenTokensEnabled(requestInfoForm.getClientId(), requestInfoForm);
@@ -335,9 +334,12 @@ public class OauthController {
                     }
 
                     // Approve using the spring authorization endpoint code.
-                    //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));                   
+                    //note this will also handle generating implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));                   
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
                     requestInfoForm.setRedirectUrl(view.getUrl());
+                    // Oauth has been approved, hence, remove the oauth flag from the session
+                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
+                    request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
                 }
             }
         }

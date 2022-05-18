@@ -247,7 +247,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
+        //Oauth has been finalized, hence, remove the oauth flag from the session
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
+        request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         return requestInfoForm;
     }
    
