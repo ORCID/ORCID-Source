@@ -521,7 +521,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private void filterContributors(Work work, WorkEntity workEntity) {
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null && work.getWorkContributors().getContributor().size() > 0) {
-            contributorUtils.filterContributorPrivateData(work.getWorkContributors().getContributor(), maxContributorsForUI);
             List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
             if (topContributors.size() > 0) {
                 workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
