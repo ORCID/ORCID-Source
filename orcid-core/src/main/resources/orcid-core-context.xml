@@ -1567,4 +1567,6 @@
 		<constructor-arg ref="workContributorRoleConverter" />
 	</bean>
 
+	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>
+
 </beans>
