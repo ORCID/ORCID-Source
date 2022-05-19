@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
@@ -24,8 +25,10 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.ContributorUtils;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -41,6 +44,7 @@ import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ContributorsRolesAndSequencesV2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,6 +84,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
+
+
+    @Resource(name = "contributorUtils")
+    private ContributorUtils contributorUtils;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverterV2 contributorsRolesAndSequencesConverterV2;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     private Integer maxWorksToWrite;
 
@@ -175,6 +189,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         setIncomingWorkPrivacy(workEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
+        if (isApiRequest && Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            filterContributors(work, workEntity);
+        }
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
@@ -252,6 +269,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
                         setIncomingWorkPrivacy(workEntity, profile);
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
+                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                            filterContributors(work, workEntity);
+                        }
                         workDao.persist(workEntity);
 
                         // Update the element in the bulk
@@ -344,6 +364,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), sourceEntity);
                 }
             }
+
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                filterContributors(work, workEntity);
+            }
         } else {
             // validate external ID vocab
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
@@ -409,5 +433,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         }
 
         return item;
+    }
+
+    private void filterContributors(Work work, WorkEntity workEntity) {
+        if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null && work.getWorkContributors().getContributor().size() > 0) {
+            List<ContributorsRolesAndSequencesV2> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
+            if (topContributors.size() > 0) {
+                workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverterV2.convertTo(topContributors, null));
+            }
+        } else {
+            workEntity.setTopContributorsJson(null);
+        }
     }
 }

@@ -1,18 +1,13 @@
 package org.orcid.core.utils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.Iterables;
+import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.ActivityManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.ContributorAttributes;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record_v2.Funding;
@@ -22,10 +17,18 @@ import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.pojo.ContributorsRolesAndSequencesV2;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.google.common.collect.Iterables;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ContributorUtils {
     
@@ -103,7 +106,91 @@ public class ContributorUtils {
             }
         }
     }
-    
+
+    public List<ContributorsRolesAndSequencesV2> getContributorsGroupedByOrcid(List<Contributor> contributors, Integer maxContributorsForUI) {
+        List<ContributorsRolesAndSequencesV2> contributorsRolesAndSequencesList = new ArrayList<>();
+        for(Contributor contributor : contributors) {
+            // Process the list of contributors till reaching the max, then break
+            // We add an extra contributor to display a message in the UI in case than there is more than maxContributorsForUI
+            if(contributorsRolesAndSequencesList.size() == maxContributorsForUI + 1) {
+                break;
+            }
+            groupContributorsByOrcid(contributor, contributorsRolesAndSequencesList);
+        }
+        return contributorsRolesAndSequencesList;
+    }
+
+    private void groupContributorsByOrcid(Contributor contributor, List<ContributorsRolesAndSequencesV2> contributorsRolesAndSequencesList) {
+        if (contributor.getContributorOrcid() != null) {
+            String orcid = contributor.getContributorOrcid().getPath();
+            if (!StringUtils.isBlank(orcid)) {
+                if (contributorsRolesAndSequencesList.size() > 0) {
+                    List<ContributorsRolesAndSequencesV2> c = contributorsRolesAndSequencesList
+                            .stream()
+                            .filter(contr -> contr.getContributorOrcid() != null && contr.getContributorOrcid().getPath() != null && orcid.equals(contr.getContributorOrcid().getPath()))
+                            .collect(Collectors.toList());
+                    if (c.size() > 0) {
+                        ContributorsRolesAndSequencesV2 contributorsRolesAndSequences = c.get(0);
+                        ContributorAttributes ca = new ContributorAttributes();
+                        if(contributor.getContributorAttributes() != null) {
+                            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                                ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
+                            }
+                            if(contributor.getContributorAttributes().getContributorSequence() != null) {
+                                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+                            }
+                        }
+                        List<ContributorAttributes> rolesAndSequencesList = contributorsRolesAndSequences.getRolesAndSequences();
+                        rolesAndSequencesList.add(ca);
+                        contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequencesList);
+                    } else {
+                        addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+                    }
+                } else {
+                    addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+                }
+            } else {
+                addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+            }
+        } else {
+            addContributorWithNameOrOrcid(contributorsRolesAndSequencesList, contributor);
+        }
+    }
+
+    private void addContributorWithNameOrOrcid(List<ContributorsRolesAndSequencesV2> contributorsRolesAndSequencesList, Contributor contributor) {
+        if ((contributor.getContributorOrcid() != null && !"".equals(contributor.getContributorOrcid().getPath())) ||
+                (contributor.getCreditName() != null && !"".equals(contributor.getCreditName().getContent()))) {
+            contributorsRolesAndSequencesList.add(addContributor(contributor));
+        }
+    }
+
+    private ContributorsRolesAndSequencesV2 addContributor(Contributor contributor) {
+        ContributorsRolesAndSequencesV2 crs = new ContributorsRolesAndSequencesV2();
+        if(contributor == null) {
+            return crs;
+        }
+        if (contributor.getContributorOrcid() != null) {
+            crs.setContributorOrcid(contributor.getContributorOrcid());
+        }
+        if (contributor.getCreditName() != null) {
+            crs.setCreditName(contributor.getCreditName());
+        }
+        if (contributor.getContributorAttributes() != null) {
+            ContributorAttributes ca = new ContributorAttributes();
+            if (contributor.getContributorAttributes().getContributorRole() != null) {
+                ca.setContributorRole(contributor.getContributorAttributes().getContributorRole());
+            }
+            if (contributor.getContributorAttributes().getContributorSequence() != null) {
+                ca.setContributorSequence(contributor.getContributorAttributes().getContributorSequence());
+            }
+            List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
+            rolesAndSequences.add(ca);
+            crs.setRolesAndSequences(rolesAndSequences);
+        }
+
+        return crs;
+    }
+
     private String getCachedContributorName(String orcid) {
         String cacheKey = getCacheKey(orcid);
         if(contributorsNameCache.containsKey(cacheKey)){
