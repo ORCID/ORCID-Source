@@ -42,7 +42,7 @@ public class OrcidOauthRedirectResolver extends DefaultRedirectResolver {
         
         // There must be at least one redirect uri that is the root of the requested redirect uri
         for(String registeredRedirectUri : registeredRedirectUris) {
-            if(requestedRedirect != null && requestedRedirect.startsWith(registeredRedirectUri)) {
+            if(requestedRedirect != null && requestedRedirect.startsWith(registeredRedirectUri.trim())) {
                 return requestedRedirect;
             }
         }
