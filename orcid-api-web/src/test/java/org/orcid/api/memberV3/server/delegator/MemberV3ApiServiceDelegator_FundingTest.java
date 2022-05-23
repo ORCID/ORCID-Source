@@ -178,11 +178,7 @@ public class MemberV3ApiServiceDelegator_FundingTest extends DBUnitTest {
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("grant_number");
         Response response = serviceDelegator.createFunding(orcid, funding);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         // Delete it to roll back the test data
         response = serviceDelegator.deleteFunding(orcid, putCode);

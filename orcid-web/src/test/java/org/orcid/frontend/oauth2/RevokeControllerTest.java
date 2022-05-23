@@ -42,7 +42,7 @@ public class RevokeControllerTest {
         token.setTokenValue("token-value");
         token.setRefreshTokenValue("refresh-token-value");
         token.setTokenDisabled(false);
-        when(mockOrcidOauth2TokenDetailService.findNonDisabledByTokenValue("token-value")).thenReturn(token);
+        when(mockOrcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-value")).thenReturn(token);
         when(mockOrcidOauth2TokenDetailService.findByRefreshTokenValue("refresh-token-value")).thenReturn(token);
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("client-id");
     }
@@ -88,7 +88,7 @@ public class RevokeControllerTest {
         
         revokeController.revoke(request);
 
-        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findIgnoringDisabledByTokenValue("token-value");
         verify(mockOrcidOauth2TokenDetailService, times(0)).findByRefreshTokenValue(anyString());
         verify(mockOrcidOauth2TokenDetailService, times(0)).revokeAccessToken(anyString());
     }
@@ -99,7 +99,7 @@ public class RevokeControllerTest {
         
         revokeController.revoke(request);
         
-        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("disabled-or-unexisting");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findIgnoringDisabledByTokenValue("disabled-or-unexisting");
         verify(mockOrcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("disabled-or-unexisting");
         verify(mockOrcidOauth2TokenDetailService, times(0)).revokeAccessToken(anyString());
     }
@@ -110,7 +110,7 @@ public class RevokeControllerTest {
         
         revokeController.revoke(request);
         
-        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findIgnoringDisabledByTokenValue("token-value");
         verify(mockOrcidOauth2TokenDetailService, times(0)).findByRefreshTokenValue(anyString());
         verify(mockOrcidOauth2TokenDetailService, times(1)).revokeAccessToken("token-value");
     }
@@ -121,7 +121,7 @@ public class RevokeControllerTest {
         
         revokeController.revoke(request);
         
-        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("refresh-token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findIgnoringDisabledByTokenValue("refresh-token-value");
         verify(mockOrcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("refresh-token-value");
         verify(mockOrcidOauth2TokenDetailService, times(1)).revokeAccessToken("token-value");
     }
@@ -133,13 +133,13 @@ public class RevokeControllerTest {
         token.setTokenValue("token-value");
         token.setRefreshTokenValue("refresh-token-value");
         token.setTokenDisabled(true);
-        when(mockOrcidOauth2TokenDetailService.findNonDisabledByTokenValue("token-value")).thenReturn(token);
+        when(mockOrcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-value")).thenReturn(token);
         when(mockOrcidOauth2TokenDetailService.findByRefreshTokenValue("refresh-token-value")).thenReturn(token);
         when(request.getParameter("token")).thenReturn("refresh-token-value");
         
         revokeController.revoke(request);
         
-        verify(mockOrcidOauth2TokenDetailService, times(1)).findNonDisabledByTokenValue("refresh-token-value");
+        verify(mockOrcidOauth2TokenDetailService, times(1)).findIgnoringDisabledByTokenValue("refresh-token-value");
         verify(mockOrcidOauth2TokenDetailService, times(1)).findByRefreshTokenValue("refresh-token-value");
         // It should not call the disable function since it is already disabled
         verify(mockOrcidOauth2TokenDetailService, times(0)).revokeAccessToken("refresh-token-value");

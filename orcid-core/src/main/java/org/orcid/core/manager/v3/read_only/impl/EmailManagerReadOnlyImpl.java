@@ -71,7 +71,13 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     public boolean isPrimaryEmail(String orcid, String email) {
         return emailDao.isPrimaryEmail(orcid, email);
     }
-    
+
+    @Override
+    public String findOrcidByVerifiedEmail(String email) {
+        Map<String, String> emailKeys = getEmailKeys(email);
+        return emailDao.findOrcidByVerifiedEmail(emailKeys.get(EmailManager.HASH));
+    }
+
     @Override
     @SuppressWarnings("rawtypes")
     public Map<String, String> findOricdIdsByCommaSeparatedEmails(String csvEmail) {

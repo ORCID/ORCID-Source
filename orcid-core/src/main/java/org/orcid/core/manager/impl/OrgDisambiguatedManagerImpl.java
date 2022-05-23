@@ -16,8 +16,10 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.extId.normalizer.OrgDisambiguatedExternalIdNormalizer;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
+import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -26,6 +28,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +50,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
@@ -73,12 +76,33 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
         List<OrgDisambiguatedEntity> entities = null;
+        int startIndex = 0;
         do {
-            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(0, INDEXING_CHUNK_SIZE);
+            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("Found chunk of {} disambiguated orgs for indexing", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 processDisambiguatedOrgInTransaction(entity);
             }
+            startIndex = startIndex + INDEXING_CHUNK_SIZE;
+        } while (!entities.isEmpty());
+
+    }
+
+    @Override
+    synchronized public void markOrgsForIndexingAsGroup() {
+        LOGGER.info("About to process disambiguated orgs for group indexing");
+        List<OrgDisambiguatedEntity> entities = null;
+        int startIndex = 0;
+        do {
+            LOGGER.info("GROUP: Start index is: " + startIndex);
+            entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
+            LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
+            for (OrgDisambiguatedEntity entity : entities) {
+                
+                new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
+            }
+            startIndex = startIndex + INDEXING_CHUNK_SIZE;
+
         } while (!entities.isEmpty());
 
     }
@@ -129,7 +153,18 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         if (OrgDisambiguatedSourceType.FUNDREF.name().equals(entity.getSourceType())) {
             document.setFundingOrg(true);
         } else {
-            document.setFundingOrg(false);
+            // check if it is a ROR
+            if (OrgDisambiguatedSourceType.ROR.name().equals(entity.getSourceType())) {
+                // do the grouping and see if it has fundref
+                OrgGroup orgGroup = new OrgGrouping(entity, this).getOrganizationGroup();
+                if (orgGroup.isFunding()) {
+                    document.setFundingOrg(true);
+                } else {
+                    document.setFundingOrg(false);
+                }
+            } else {
+                document.setFundingOrg(false);
+            }
         }
 
         document.setOrgChosenByMember(entity.getMemberChosenOrgDisambiguatedEntity() != null);
@@ -221,15 +256,22 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     public void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         normalizeExternalIdentifier(identifier);
-        orgDisambiguatedExternalIdentifierDao.persist(identifier); 
+        orgDisambiguatedExternalIdentifierDao.persist(identifier);
     }
-    
+
     @Override
     public void updateOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         normalizeExternalIdentifier(identifier);
-        orgDisambiguatedExternalIdentifierDao.merge(identifier); 
+        orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
-    
+
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier( String identifier, String type ) {
+        List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
+        List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(identifier, type);
+        extIds.stream().forEach((e) -> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
+        return orgDisambiguatedIds;
+    }
+
     private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();
         org.setValue(orgDisambiguatedEntity.getName());
@@ -275,7 +317,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
         return org;
     }
-    
+
     private void normalizeExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         for (OrgDisambiguatedExternalIdNormalizer normalizer : orgDisambiguatedExternalIdNormalizers) {
             if (normalizer.getType().equals(identifier.getIdentifierType())) {

@@ -11,23 +11,23 @@ public class WebhookEntityPk implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private ProfileEntity profile;
+    private String orcid;
     private String uri;
 
     public WebhookEntityPk() {
     }
 
-    public WebhookEntityPk(ProfileEntity profile, String uri) {
-        this.profile = profile;
+    public WebhookEntityPk(String orcid, String uri) {
+        this.orcid = orcid;
         this.uri = uri;
     }
 
-    public ProfileEntity getProfile() {
-        return profile;
+    public String getProfile() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setProfile(String orcid) {
+        this.orcid = orcid;
     }
 
     public String getUri() {
@@ -42,7 +42,7 @@ public class WebhookEntityPk implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((uri == null) ? 0 : uri.hashCode());
         return result;
     }
@@ -56,10 +56,10 @@ public class WebhookEntityPk implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         WebhookEntityPk other = (WebhookEntityPk) obj;
-        if (profile == null) {
-            if (other.profile != null)
+        if (orcid == null) {
+            if (other.orcid != null)
                 return false;
-        } else if (!profile.equals(other.profile))
+        } else if (!orcid.equals(other.orcid))
             return false;
         if (uri == null) {
             if (other.uri != null)

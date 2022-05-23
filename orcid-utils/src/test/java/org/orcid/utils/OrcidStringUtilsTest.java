@@ -105,4 +105,24 @@ public class OrcidStringUtilsTest {
         }
 
     }
+
+    @Test
+    public void testIsValidURL() {
+        assertTrue(OrcidStringUtils.isValidURL("https://www.example.com"));
+        assertTrue(OrcidStringUtils.isValidURL("http://www.example.com"));
+        assertFalse(OrcidStringUtils.isValidURL("www.example.com"));
+        assertFalse(OrcidStringUtils.isValidURL("example.com"));
+        assertTrue(OrcidStringUtils.isValidURL("http://blog.example.com"));
+        assertTrue(OrcidStringUtils.isValidURL("http://www.example.com/product"));
+        assertTrue(OrcidStringUtils.isValidURL("http://www.example.com/products?id=1&page=2"));
+        assertTrue(OrcidStringUtils.isValidURL("http://www.example.com#up"));
+        assertTrue(OrcidStringUtils.isValidURL("http://255.255.255.255"));
+        assertFalse(OrcidStringUtils.isValidURL("255.255.255.255"));
+        assertTrue(OrcidStringUtils.isValidURL("http://www.site.com:8008"));
+        assertTrue(OrcidStringUtils.isValidURL("http://www.site.com:8008?test/ok/test%20test"));
+        assertTrue(OrcidStringUtils.isValidURL("https://doi.org/10.1175/1520-0426(2000)017<0854:aeosrb>2.0.co;%20a"));
+        assertFalse(OrcidStringUtils.isValidURL("https://notvalid"));
+        assertTrue(OrcidStringUtils.isValidURL("HTTPS://valid.com"));
+        assertTrue(OrcidStringUtils.isValidURL("HTTPS://VALID.COM"));
+    }
 }

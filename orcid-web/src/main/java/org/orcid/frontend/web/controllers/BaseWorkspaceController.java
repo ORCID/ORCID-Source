@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,16 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
+import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
@@ -164,4 +168,20 @@ public class BaseWorkspaceController extends BaseController {
         return false;
     }
 
+    protected List<Contributor> filterContributors(List<Contributor> contributors, ActivityManager activityManager) {
+        List<Contributor> newContributorsList = new ArrayList<>();
+        for (Contributor contributor : contributors) {
+            if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                String contributorOrcid = contributor.getOrcid().getValue();
+                if (profileEntityManager.orcidExists(contributorOrcid)) {
+                    String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
+                    contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                }
+                newContributorsList.add(contributor);
+            } else if (!PojoUtil.isEmpty(contributor.getCreditName())) {
+                newContributorsList.add(contributor);
+            }
+        }
+        return newContributorsList;
+    }
 }

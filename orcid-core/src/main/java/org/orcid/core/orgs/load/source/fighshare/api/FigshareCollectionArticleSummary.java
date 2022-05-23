@@ -6,11 +6,13 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({ "defined_type_name", "handle", "url_private_html", "timeline", "url_private_api", "url_public_api", "id", "doi", "thumb", "title", "url",
         "defined_type", "resource_title", "url_public_html", "resource_doi", "published_date", "group_id" })
 public class FigshareCollectionArticleSummary {

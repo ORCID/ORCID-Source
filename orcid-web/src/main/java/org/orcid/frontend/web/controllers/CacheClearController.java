@@ -3,7 +3,7 @@ package org.orcid.frontend.web.controllers;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ public class CacheClearController extends BaseWorkspaceController {
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private SalesForceManager salesForceManager;    
+    private SalesForceManagerLegacy salesForceManager;    
 
     @RequestMapping(value = "/profileEntityCache.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearProfileEntityCacheManager() {

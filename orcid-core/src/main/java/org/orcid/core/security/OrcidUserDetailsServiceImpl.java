@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -67,7 +67,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private SlackManager slackManager;
 
     @Resource
-    private SalesForceManager salesForceManager;
+    private SalesForceManagerLegacy salesForceManager;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -190,12 +190,12 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         ProfileEntity profile = null;
         if (!StringUtils.isEmpty(username)) {
             if (OrcidStringUtils.isValidOrcid(username)) {
-                profile = profileDao.find(username);
+                profile = profileDao.find(username.toUpperCase());
             } else {
                 try {
                     String orcid = emailManagerReadOnly.findOrcidIdByEmail(username);
                     if (!PojoUtil.isEmpty(orcid)) {
-                        profile = profileDao.find(orcid);
+                        profile = profileDao.find(orcid.toUpperCase());
                     }
                 } catch (javax.persistence.NoResultException nre) {
                     LOGGER.error("User " + username + " was not found");

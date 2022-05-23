@@ -138,7 +138,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.Services;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
-import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

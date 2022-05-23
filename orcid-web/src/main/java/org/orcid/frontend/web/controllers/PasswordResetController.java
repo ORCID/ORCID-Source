@@ -259,6 +259,7 @@ public class PasswordResetController extends BaseController {
         return oneTimeResetPasswordForm;
     }
 
+    @Deprecated //TODO remove once the card https://trello.com/c/TqSd7ojs/7973-reset-password is stable on prod
     @RequestMapping(value = "/reset-password-email.json", method = RequestMethod.POST)
     public @ResponseBody OneTimeResetPasswordForm submitPasswordReset(HttpServletRequest request, HttpServletResponse response,
             @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
@@ -290,6 +291,70 @@ public class PasswordResetController extends BaseController {
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;
     }
+    
+    @RequestMapping(value = "/reset-password-email-v2.json", method = RequestMethod.POST)
+    public @ResponseBody OneTimeResetPasswordForm submitPasswordResetV2(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
+        oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
+
+        PasswordResetToken passwordResetToken;
+        
+        try {
+             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+
+        } catch (EncryptionOperationNotPossibleException e) {
+            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
+            return oneTimeResetPasswordForm;
+        }
+        
+        if (isTokenExpired(passwordResetToken)) {
+            String message = "expiredPasswordResetToken";
+            oneTimeResetPasswordForm.getErrors().add(message);
+            return oneTimeResetPasswordForm;
+        }
+
+        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        
+        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        Emails emails = emailManager.getEmails(orcid);
+        
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
+        if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
+            return oneTimeResetPasswordForm;
+        }
+
+        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+
+        String redirectUrl = calculateRedirectUrl(request, response, false);
+        oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
+        return oneTimeResetPasswordForm;
+    }
+    
+    @RequestMapping(value = "/reset-password-email-validate-token.json", method = RequestMethod.POST)
+    public @ResponseBody OneTimeResetPasswordForm submitPasswordEmailValidatePassword(HttpServletRequest request, HttpServletResponse response,
+            @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
+        oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
+
+        PasswordResetToken passwordResetToken;
+        
+        try {
+             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+
+        } catch (EncryptionOperationNotPossibleException e) {
+            oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
+            return oneTimeResetPasswordForm;
+        }
+        
+        if (isTokenExpired(passwordResetToken)) {
+            String message = "expiredPasswordResetToken";
+            oneTimeResetPasswordForm.getErrors().add(message);
+            return oneTimeResetPasswordForm;
+        } else {
+            return oneTimeResetPasswordForm;
+        }
+        
+    }
+    
 
     private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
         try {

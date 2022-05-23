@@ -4,7 +4,7 @@
 	
 	<changeSet id="DROP-SECURITY-QUESTION-FK" author="George Nash">
 	     <preConditions onFail="MARK_RAN">
-            <foreignKeyConstraintExists foreignKeyName="fked8e89a96b6f57ec" />
+            <foreignKeyConstraintExists foreignKeyTableName="profile" foreignKeyName="fked8e89a96b6f57ec" />
          </preConditions>
 	     <dropForeignKeyConstraint baseTableName="profile" constraintName="fked8e89a96b6f57ec" />
 	</changeSet>

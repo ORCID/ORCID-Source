@@ -33,3 +33,14 @@ orcid-web/src/main/resources/cdn_active_url.txt
 orcid-web/.tern-project
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/components/**/node_modules/**
 orcid-web/src/main/webapp/static/javascript/ng1Orcid/.bit/**
+orcid-internal-api/.factorypath
+orcid-message-listener/.factorypath
+orcid-persistence/.factorypath
+orcid-pub-web/.factorypath
+orcid-scheduler-web/.factorypath
+orcid-utils/.factorypath
+orcid-activemq/.factorypath
+orcid-api-common/.factorypath
+orcid-api-web/.factorypath
+orcid-core/.factorypath
+orcid-integration-test/.factorypath

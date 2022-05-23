@@ -1,30 +1,20 @@
 package org.orcid.core.manager.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections4.ListUtils;
 import org.ehcache.Cache;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.WorkBaseEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -42,6 +32,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
     @Resource(name = "minimizedWorkEntityCache")
     private Cache<WorkCacheKey, WorkBaseEntity> minimizedWorkEntityCache;
+
+    @Resource(name = "minimizedExtendedWorkEntityCache")
+    private Cache<WorkCacheKey, WorkBaseEntity> minimizedExtendedWorkEntityCache;
 
     @Resource(name = "fullWorkEntityCache")
     private Cache<WorkCacheKey, WorkEntity> fullWorkEntityCache;
@@ -171,6 +164,14 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
         List<MinimizedWorkEntity> retrieveWorkList = retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache,
                 idList -> workDao.getMinimizedWorkEntities(idList));
+        return retrieveWorkList;
+    }
+
+    @Override
+    public List<MinimizedExtendedWorkEntity> retrieveMinimizedExtendedWorks(String orcid, long profileLastModified) {
+        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
+        List<MinimizedExtendedWorkEntity> retrieveWorkList = retrieveWorkList(orcid, workIdsWithLastModified, minimizedExtendedWorkEntityCache,
+                idList -> workDao.getMinimizedExtendedWorkEntities(idList));
         return retrieveWorkList;
     }
 

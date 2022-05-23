@@ -38,6 +38,9 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication auth) throws AuthenticationException {
+        if (auth.getCredentials() != null && auth.getCredentials().toString().length() > 256) {
+            throw new BadCredentialsException("Invalid credentials: password too long");
+        }
         Authentication result = super.authenticate(auth);
         if (!result.isAuthenticated()) {
             return result;

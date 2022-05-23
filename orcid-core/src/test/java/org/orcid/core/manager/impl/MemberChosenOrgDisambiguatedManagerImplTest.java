@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -22,7 +22,7 @@ public class MemberChosenOrgDisambiguatedManagerImplTest {
     private MemberChosenOrgDisambiguatedDao mockMemberChosenOrgDisambiguatedDao;
     
     @Mock
-    private SalesForceManager mockSalesForceManager;
+    private SalesForceManagerLegacy mockSalesForceManager;
     
     @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;

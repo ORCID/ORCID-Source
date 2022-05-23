@@ -8,8 +8,10 @@ import ma.glasnost.orika.MapperFacade;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkSummaryExtended;
 
 /**
  * 
@@ -87,5 +89,13 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
             return null;
         }
         return mapperFacade.mapAsList(workEntities, WorkSummary.class);
+    }
+
+    @Override
+    public List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities) {
+        if(workEntities == null) {
+            return null;
+        }
+        return mapperFacade.mapAsList(workEntities, WorkSummaryExtended.class);
     }
 }

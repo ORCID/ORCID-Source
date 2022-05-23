@@ -236,6 +236,10 @@ public class OauthAuthorizeController extends OauthControllerBase {
         // Authorization request model
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("authorizationRequest", authorizationRequest);
+        Map<String, Object> originalRequest = (Map<String, Object>) request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST);
+        if(originalRequest != null) {
+            model.put(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalRequest);
+        }
 
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
@@ -243,7 +247,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
+        //Oauth has been finalized, hence, remove the oauth flag from the session
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
+        request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         return requestInfoForm;
     }
    

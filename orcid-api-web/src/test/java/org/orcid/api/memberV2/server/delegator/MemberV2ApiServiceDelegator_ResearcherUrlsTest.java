@@ -202,11 +202,7 @@ public class MemberV2ApiServiceDelegator_ResearcherUrlsTest extends DBUnitTest {
         Response response = serviceDelegator.createResearcherUrl("4444-4444-4444-4441", Utils.getResearcherUrl());
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4441", putCode);
         assertNotNull(response);

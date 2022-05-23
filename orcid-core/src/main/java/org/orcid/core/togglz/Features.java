@@ -6,8 +6,23 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Store and read top_contributors_json")
+    STORE_TOP_CONTRIBUTORS,
+
+    @Label("Restrict delegator access to account settings")
+    RESTRICTED_DELEGATORS,
+
+    @Label("HelpHero")
+    ORCID_ANGULAR_HELP_HERO,
+
+    @Label("Orcid Angular Lazy Load Peer Reviews")
+    ORCID_ANGULAR_LAZY_LOAD_PEER_REVIEWS,
+
     @Label("Orcid Angular Works Contributors")
     ORCID_ANGULAR_WORKS_CONTRIBUTORS,
+
+    @Label("Orcid Angular Account settings ")
+    ORCID_ANGULAR_ACCOUNT_SETTINGS,
 
     @Label("Orcid Angular Public Page")
     ORCID_ANGULAR_PUBLIC_PAGE,
@@ -114,9 +129,6 @@ public enum Features implements Feature {
     @Label("Disable the 3.0 release candidates")
     V3_DISABLE_RELEASE_CANDIDATES,
 
-    @Label("Salesforce: Enable opportunities and org record types")
-    SF_ENABLE_OPP_ORG_RECORD_TYPES,
-
     @Label("ID token 24 hours lifespan")
     ID_TOKEN_24_HOURS_LIFESPAN,
     
@@ -124,11 +136,20 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT,
+    UPGRADE_PUBLIC_CLIENT, 
+    
+    @Label("Allow members to delete their own elements even with revoked tokens")
+    ALLOW_DELETE_WITH_REVOKED_TOKENS,
     
     @Label("Stop caching works when doing bulk reads")
-    READ_BULK_WORKS_DIRECTLY_FROM_DB;
+    READ_BULK_WORKS_DIRECTLY_FROM_DB, 
+        
+    @Label("Enable new salesforce microservice")
+    SALESFORCE_MICROSERVICE,
     
+    @Label("Organization search add sort by popularity")
+    ORG_SEARCH_SORT_BY_POPULARITY;
+
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

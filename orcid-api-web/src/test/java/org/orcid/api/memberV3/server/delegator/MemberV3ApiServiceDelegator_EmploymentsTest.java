@@ -304,11 +304,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         response = serviceDelegator.createEmployment(ORCID, (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
@@ -374,11 +370,7 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         try {
             Employment duplicate = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
@@ -459,20 +451,12 @@ public class MemberV3ApiServiceDelegator_EmploymentsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode1 = Utils.getPutCode(response);
 
         Employment another = (Employment) Utils.getAffiliation(AffiliationType.EMPLOYMENT);
         response = serviceDelegator.createEmployment(ORCID, another);
         
-        map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode2 = Utils.getPutCode(response);
         
         response = serviceDelegator.viewEmployment(ORCID, putCode2);
         another = (Employment) response.getEntity();

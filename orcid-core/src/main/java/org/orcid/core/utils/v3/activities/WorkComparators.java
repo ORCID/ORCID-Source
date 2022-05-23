@@ -3,11 +3,12 @@ package org.orcid.core.utils.v3.activities;
 import java.util.Comparator;
 
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.pojo.WorkGroupExtended;
+import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 /**
@@ -58,6 +59,12 @@ public class WorkComparators {
     public static Comparator<WorkGroup> GROUP = (g1, g2) -> {
         WorkSummary w1 = (WorkSummary) g1.getActivities().iterator().next();
         WorkSummary w2 = (WorkSummary) g2.getActivities().iterator().next();
+        return WorkComparators.ALL_EXCEPT_DISPLAY_INDEX.compare(w1, w2);
+    };
+
+    public static Comparator<WorkGroupExtended> GROUP_WORK_SUMMARY_EXTENDED = (g1, g2) -> {
+        WorkSummaryExtended w1 = (WorkSummaryExtended) g1.getActivities().iterator().next();
+        WorkSummaryExtended w2 = (WorkSummaryExtended) g2.getActivities().iterator().next();
         return WorkComparators.ALL_EXCEPT_DISPLAY_INDEX.compare(w1, w2);
     };
 

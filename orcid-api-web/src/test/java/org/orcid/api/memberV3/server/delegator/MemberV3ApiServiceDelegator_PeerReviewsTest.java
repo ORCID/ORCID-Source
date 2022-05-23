@@ -527,11 +527,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewActivities("4444-4444-4444-4444");
         assertNotNull(response);
@@ -609,11 +605,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         Response response1 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview1);
         assertNotNull(response1);
         assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
-        Map<?, ?> map = response1.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode1 = Utils.getPutCode(response1);
 
         PeerReview peerReview2 = new PeerReview();
         ExternalIDs weis2 = new ExternalIDs();
@@ -638,11 +630,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         Response response2 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview2);
         assertNotNull(response2);
         assertEquals(Response.Status.CREATED.getStatusCode(), response2.getStatus());
-        map = response2.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode2 = Utils.getPutCode(response2);
 
         // Delete new peer reviews so they don't affect other tests
         serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode1);
@@ -723,11 +711,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         peerReview.getSubjectExternalIdentifier().setType("doi");
         Response response = serviceDelegator.createPeerReview(orcid, peerReview);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         // Delete it to roll back the test data
         response = serviceDelegator.deletePeerReview(orcid, putCode);

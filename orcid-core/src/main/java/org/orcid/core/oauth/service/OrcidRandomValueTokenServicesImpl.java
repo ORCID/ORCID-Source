@@ -12,6 +12,7 @@ import javax.persistence.PersistenceException;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -20,6 +21,7 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -46,8 +48,10 @@ import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.collect.Sets;
 
@@ -66,12 +70,12 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int ietfTokenExchangeValiditySeconds;
     
-    private TokenStore orcidTokenStore;
+    private OrcidTokenStore orcidTokenStore;
 
     private TokenEnhancer customTokenEnhancer;
     
-    @Resource
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;       
+    @Resource(name="orcidOauth2AuthoriziationCodeDetailDaoReadOnly")
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDaoReadOnly;       
 
     @Resource
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
@@ -80,7 +84,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     private boolean customSupportRefreshToken;
     
-    @Resource
+    @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
     @Resource
@@ -184,6 +188,12 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         if (isClientCredentialsGrantType(authorizationRequest)) {
             boolean allAreClientCredentialsScopes = true;
 
+            if (requestedScopes.size() == 1) {
+                if (requestedScopes.stream().findFirst().get().isInternalScope()) {
+                    return readValiditySeconds;
+                }
+            }
+
             for (ScopePathType scope : requestedScopes) {
                 if (!scope.isClientCreditalScope()) {
                     allAreClientCredentialsScopes = false;
@@ -228,8 +238,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                     }
                 } else if (params.containsKey("code")) {
                     String code = params.get("code");
-                    if (orcidOauth2AuthoriziationCodeDetailDao.find(code) != null) {
-                        if (orcidOauth2AuthoriziationCodeDetailDao.isPersistentToken(code)) {
+                    if (orcidOauth2AuthoriziationCodeDetailDaoReadOnly.find(code) != null) {
+                        if (orcidOauth2AuthoriziationCodeDetailDaoReadOnly.isPersistentToken(code)) {
                             return true;
                         }
                     }
@@ -256,19 +266,41 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {        
-        OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
-        if (accessToken == null) {
-            throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        // Feature flag: If the request is to delete an element, allow
+        if (Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
+            OrcidOauth2TokenDetail orcidAccessToken = orcidTokenStore.readOrcidOauth2TokenDetail(accessTokenValue);
+            if (orcidAccessToken == null) {
+                // Access token not found
+                throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+            }
+            String revokeReason = orcidAccessToken.getRevokeReason();
+            if (PojoUtil.isEmpty(revokeReason) || RevokeReason.USER_REVOKED.equals(RevokeReason.valueOf(revokeReason))) {
+                OAuth2AccessToken accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
+                validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+                return orcidTokenStore.readAuthenticationEvenOnDisabledTokens(accessTokenValue);
+            } else {
+                throw new InvalidTokenException("Invalid access token: " + accessTokenValue + ", revoke reason: " + revokeReason);
+            }
         } else {
-            // If it is, respect the token expiration
+            OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
+            validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+            return orcidTokenStore.readAuthentication(accessTokenValue);
+        }
+    }
+    
+    private void validateTokenExpirationAndClientStatus(OAuth2AccessToken accessToken, String tokenValue) {
+        // Throw an exception if access token is not found
+        if (accessToken != null) {
+            // Throw an exception if the token is expired
             if (accessToken.isExpired()) {
                 orcidTokenStore.removeAccessToken(accessToken);
-                throw new InvalidTokenException("Access token expired: " + accessTokenValue);
+                throw new InvalidTokenException("Access token expired: " + tokenValue);
             }
             Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
-            if(additionalInfo != null) {
-                String clientId = (String)additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
+            if (additionalInfo != null) {
+                String clientId = (String) additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
                 ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
                 try {
                     orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
@@ -277,14 +309,14 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 } catch (ClientDeactivatedException e) {
                     throw new InvalidTokenException(e.getMessage());
                 }
-            }                        
+            }
+        } else {
+            // Access token not found
+            throw new InvalidTokenException("Invalid access token: " + tokenValue);
         }
-                
-        OAuth2Authentication result = orcidTokenStore.readAuthentication(accessToken);
-        return result;
-    }    
+    }
     
-    public void setOrcidtokenStore(TokenStore orcidTokenStore) {
+    public void setOrcidtokenStore(OrcidTokenStore orcidTokenStore) {
         super.setTokenStore(orcidTokenStore);
         this.orcidTokenStore = orcidTokenStore;
     }

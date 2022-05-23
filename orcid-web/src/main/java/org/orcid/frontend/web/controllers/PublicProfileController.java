@@ -27,9 +27,11 @@ import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
 import org.orcid.core.utils.v3.activities.PeerReviewGroupComparator;
+import org.orcid.core.utils.v3.activities.PeerReviewMinimizedSummaryComparator;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
@@ -42,6 +44,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.*;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ResearchResourceGroupPojo;
@@ -59,6 +62,7 @@ import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
 import org.orcid.pojo.grouping.WorkGroup;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -124,6 +128,12 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
 
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
+
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
 
@@ -134,10 +144,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[x]}")
     public ModelAndView publicPreviewRedir(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int pageNo,
             @RequestParam(value = "maxResults", defaultValue = "15") int maxResults, @PathVariable("orcid") String orcid) {
-        RedirectView rv = new RedirectView();
-        rv.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
-        rv.setUrl(getBasePath() + orcid.toUpperCase());
-        return new ModelAndView(rv);
+        return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/" + orcid.toUpperCase()));
     }
 
     @RequestMapping(value = { "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}", "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/print" })
@@ -310,6 +317,8 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         Funding funding = profileFundingManagerReadOnly.getFunding(orcid, id);
+        contributorUtils.filterContributorPrivateData(funding);
+
         if (funding != null && validateVisibility(funding.getVisibility())) { ;
             sourceUtils.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
@@ -385,6 +394,17 @@ public class PublicProfileController extends BaseWorkspaceController {
         return worksPaginator.getWorksPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksExtendedPage.json", method = RequestMethod.GET)
+    public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+                                                           @RequestParam("sortAsc") boolean sortAsc) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new Page<WorkGroup>();
+        }
+        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+    }
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
     public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
             @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc, @RequestParam("pageSize") int pageSize) {
@@ -429,7 +449,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         Work workObj = workManagerReadOnly.getWork(orcid, workId);
         if (workObj != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
-            WorkForm work = WorkForm.valueOf(workObj);
+            WorkForm work = WorkForm.valueOf(workObj, maxContributorsForUI);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
                 Text countryName = Text.valueOf(retrieveIsoCountries().get(work.getCountryCode().getValue()));
@@ -447,15 +467,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             }
 
             if (work.getContributors() != null) {
-                for (Contributor contributor : work.getContributors()) {
-                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
-                        String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntityManager.orcidExists(contributorOrcid)) {                            
-                            String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
-                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                        }
-                    }
-                }
+                work.setContributors(filterContributors(work.getContributors(), activityManager));
             }
 
             return new ResponseEntity<>(work, HttpStatus.OK);
@@ -517,6 +529,55 @@ public class PublicProfileController extends BaseWorkspaceController {
         return peerReviewGroups;
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews-minimized.json")
+    public @ResponseBody ResponseEntity<List<PeerReviewMinimizedSummary>> getPeerReviewsMinimizedJson(@PathVariable("orcid") String orcid, @RequestParam("sortAsc") boolean sortAsc) {
+        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = new ArrayList<>();
+
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
+        }
+
+        peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
+        if (peerReviewMinimizedSummaryList.size() == 0) {
+            return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
+        }
+        peerReviewMinimizedSummaryList.sort(new PeerReviewMinimizedSummaryComparator((!sortAsc)));
+        return new ResponseEntity<List<PeerReviewMinimizedSummary>>(peerReviewMinimizedSummaryList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews-by-group-id.json", method = RequestMethod.GET)
+    public @ResponseBody List<PeerReviewGroup> getPeerReviewsJsonByGroupId(@PathVariable("orcid") String orcid, @RequestParam("groupId") String groupId, @RequestParam("sortAsc") boolean sortAsc) {
+        List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
+        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryListByGroupId(orcid, groupId);
+        PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, false);
+        for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+            Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+            if (groupIdRecord.isPresent()) {
+                GroupIdRecord record = groupIdRecord.get();
+                PeerReviewGroup peerReviewGroup = PeerReviewGroup.getInstance(group, record);
+                String g = record.getGroupId();
+                if (IssnGroupIdPatternMatcher.isIssnGroupType(g)) {
+                    String issn = IssnGroupIdPatternMatcher.getIssnFromIssnGroupId(g);
+                    peerReviewGroup.setUrl(issnPortalUrlBuilder.buildIssnPortalUrlForIssn(issn));
+                    peerReviewGroup.setGroupType("ISSN");
+                    peerReviewGroup.setGroupIdValue(issn);
+                }
+
+                for (PeerReviewDuplicateGroup duplicateGroup : peerReviewGroup.getPeerReviewDuplicateGroups()) {
+                    for (PeerReviewForm peerReviewForm : duplicateGroup.getPeerReviews()) {
+                        if (peerReviewForm.getCountry() != null) {
+                            peerReviewForm.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReviewForm.getCountry().getValue())));
+                        }
+                    }
+                }
+                peerReviewGroups.add(peerReviewGroup);
+            }
+        }
+        peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
+        return peerReviewGroups;
+    }
     /**
      * Get group information based on the group id
      * 

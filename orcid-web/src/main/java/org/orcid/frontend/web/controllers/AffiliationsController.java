@@ -454,8 +454,57 @@ public class AffiliationsController extends BaseWorkspaceController {
         }
 
         if (primaryValidation && (!PojoUtil.isEmpty(affiliationForm.getStartDate()) && !PojoUtil.isEmpty(affiliationForm.getEndDate()))) {
-            if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
-                setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
+            if ("".equals(affiliationForm.getStartDate().getDay()) || "".equals(affiliationForm.getStartDate().getMonth())
+                    || "".equals(affiliationForm.getEndDate().getDay()) || "".equals(affiliationForm.getEndDate().getMonth())) {
+                
+                boolean removeStartDateDay = false;
+                boolean removeStartDateMonth = false;
+                boolean removeEndDateDay = false;
+                boolean removeEndDateMonth = false;
+                if ("".equals(affiliationForm.getStartDate().getDay())) {
+                    affiliationForm.getStartDate().setDay("01");
+                    removeStartDateDay = true;
+                }
+                
+                if ("".equals(affiliationForm.getStartDate().getMonth())) {
+                    affiliationForm.getStartDate().setMonth("01");
+                    removeStartDateMonth = true;
+                }
+                
+                if ("".equals(affiliationForm.getEndDate().getDay())) {
+                    affiliationForm.getEndDate().setDay("31");
+                    removeEndDateDay = true;
+                }
+                
+                if ("".equals(affiliationForm.getEndDate().getMonth())) {
+                    affiliationForm.getEndDate().setMonth("12");
+                    removeEndDateMonth = true;
+                }            
+
+                if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
+                    setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
+
+                if (removeStartDateDay) {
+                    affiliationForm.getStartDate().setDay("");
+                }
+                
+                if (removeStartDateMonth) {
+                    affiliationForm.getStartDate().setMonth("");
+                }
+                
+                if (removeEndDateDay) {
+                    affiliationForm.getEndDate().setDay("");
+                }
+                
+                if (removeEndDateMonth) {
+                    affiliationForm.getEndDate().setMonth("");
+                }
+                
+            } else {
+                if (affiliationForm.getStartDate().toJavaDate().after(affiliationForm.getEndDate().toJavaDate()))
+                    setError(affiliationForm.getEndDate(), "manualAffiliation.endDate.after");
+            }          
+
         }
 
         return affiliationForm;

@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.password.constants.OrcidPasswordConstants;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -81,7 +81,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     private static final String IS_SELF = "isSelf";
 
     private static final String FOUND = "found";   
-    
+
+    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";   
+
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -140,13 +142,23 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
+
         Map<String, Boolean> map = new HashMap<>();
+        String effectiveOrcid = getEffectiveUserOrcid();
+        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
+
         EmailEntity emailEntity = emailManager.find(email);
+        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
+
+
         if (emailEntity == null) {
             map.put(FOUND, Boolean.FALSE);
             return map;
         } else {
-            map.put(FOUND, Boolean.TRUE);
+            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
+             e.getReceiverOrcid().getPath().equals(emailEntity.getProfile().getId())
+            ));
+            map.put(FOUND,  Boolean.TRUE);
             map.put(IS_SELF, emailEntity.getProfile().getId().equals(getCurrentUserOrcid()));
             return map;
         }
@@ -155,6 +167,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/search-for-delegate-by-orcid/{orcid}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByOrcid(@PathVariable String orcid) {
         Map<String, Boolean> map = new HashMap<>();
+        String effectiveOrcid = getEffectiveUserOrcid();
+        List<DelegateForm> delegates = new ArrayList<DelegateForm>();
+
+        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
+
+        
         Boolean isValidForDelegate = profileEntityManagerReadOnly.isOrcidValidAsDelegate(orcid);
         if (isValidForDelegate == null || isValidForDelegate.booleanValue() == false) {
             map.put(FOUND, Boolean.FALSE);
@@ -162,6 +180,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         } else {
             map.put(FOUND, Boolean.TRUE);
             map.put(IS_SELF, orcid.equals(getCurrentUserOrcid()));
+            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
+            e.getReceiverOrcid().getPath().equals(orcid)
+           ));
             return map;
         }
     } 
@@ -174,17 +195,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
-        // Check password
-        String password = addDelegate.getPassword();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
-            addDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
-            return addDelegate;
-        }
-        
         givenPermissionToManager.create(getCurrentUserOrcid(), addDelegate.getDelegateToManage());
-                                    
         return addDelegate;
     }
 
@@ -203,14 +214,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
-        // Check password
-        String password = manageDelegate.getPassword();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
-            manageDelegate.getErrors().add(getMessage("check_password_modal.incorrect_password"));
-            return manageDelegate;
-        }               
         givenPermissionToManager.remove(getCurrentUserOrcid(), manageDelegate.getDelegateToManage());
         return manageDelegate;
     }
@@ -238,8 +241,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
-        String userOrcid = getCurrentUserOrcid();
-        profileEntityManager.disableClientAccess(clientId, userOrcid);
+        profileEntityManager.disableClientAccess(clientId, getCurrentUserOrcid());
         return true;
     }
 
@@ -278,8 +280,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<String> errors = new ArrayList<String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         
-        if (cp.getPassword() == null || !cp.getPassword().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            errors.add(getMessage("NotBlank.registrationForm.confirmedPassword"));
+        if (cp.getPassword() == null || !cp.getPassword().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
+            errors.add(getMessage("Pattern.registrationForm.passwordRequirement"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
             errors.add(getMessage("FieldMatch.registrationForm"));
         } 
@@ -448,9 +450,13 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         } else {
             if (OrcidStringUtils.getOrcidNumber(orcidIdOrEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail))) {
-                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
-                if (profileEntity != null) {
-                    return profileEntity;
+                try {
+                    ProfileEntity profileEntity = profileEntityCacheManager.retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
+                    if (profileEntity != null) {
+                        return profileEntity;
+                    }
+                } catch (IllegalArgumentException e) {
+                    return null;
                 }
             }
         }
@@ -954,7 +960,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
     }
     
-    @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/get-trusted-orgs.json" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
         return profileEntityManager.getApplications(getCurrentUserOrcid());
     }

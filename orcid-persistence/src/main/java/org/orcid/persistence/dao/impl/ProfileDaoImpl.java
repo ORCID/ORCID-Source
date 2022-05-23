@@ -389,7 +389,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private void updateWebhookProfileLastUpdate(String orcid) {
         Query query = entityManager
-                .createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) " + "where orcid = :orcid ");
+                .createNativeQuery("update webhook set profile_last_modified = (select last_modified from profile where orcid = :orcid ) where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -572,8 +572,15 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @Override
     @Transactional
-    public boolean lockProfile(String orcid, String reason, String description) {
-        return changeLockedStatus(orcid, true, reason, description);
+    public boolean lockProfile(String orcid, String reason, String description, String adminUser) {
+        Query query = entityManager.createNativeQuery(
+                "update profile set record_locked=true, last_modified=now(), record_locked_date=now(), record_locked_admin_id=:adminUser, indexing_status=:indexingStatus, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("lockReason", reason);
+        query.setParameter("description", description.trim());
+        query.setParameter("adminUser", adminUser);
+        query.setParameter("indexingStatus", IndexingStatus.REINDEX.name());
+        return query.executeUpdate() > 0;
     }
 
     /**
@@ -586,17 +593,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean unlockProfile(String orcid) {
-        return changeLockedStatus(orcid, false, null, null);
-    }
-
-    @Transactional
-    private boolean changeLockedStatus(String orcid, boolean locked, String reason, String description) {
         Query query = entityManager.createNativeQuery(
-                "update profile set last_modified=now(), indexing_status=:indexingStatus, record_locked=:locked, reason_locked=:lockReason, reason_locked_description=:description where orcid=:orcid");
+                "update profile set record_locked=false, last_modified=now(), record_locked_date=null, record_locked_admin_id=null, indexing_status=:indexingStatus, reason_locked=null, reason_locked_description=null where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        query.setParameter("locked", locked);
-        query.setParameter("lockReason", reason);
-        query.setParameter("description", description);
         query.setParameter("indexingStatus", IndexingStatus.REINDEX.name());
         return query.executeUpdate() > 0;
     }
@@ -745,13 +744,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getLockedReason(String orcid) {
-        Query query = entityManager.createNativeQuery("SELECT reason_locked, reason_locked_description from profile where orcid = :orcid");
+    public List<Object[]> getLockedReason(String orcid) {
+        Query query = entityManager.createNativeQuery("SELECT reason_locked, reason_locked_description, record_locked_admin_id, record_locked_date, last_indexed_date from profile where orcid = :orcid");
         query.setParameter("orcid", orcid); 
-        List<Object[]> result = query.getResultList();
-        String reason = (String) result.get(0)[0];
-        String description = (String) result.get(0)[1];
-        return reason != null ? reason + (description != null ? " (" + description + ")" : "") : null;
+        return query.getResultList();
     }
 
     @Override

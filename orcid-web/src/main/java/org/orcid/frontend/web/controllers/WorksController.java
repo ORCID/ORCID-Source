@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
@@ -48,6 +49,7 @@ import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
 import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -98,6 +100,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     PIDResolverService resolverService;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -298,7 +303,7 @@ public class WorksController extends BaseWorkspaceController {
         Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
 
         if (work != null) {
-            WorkForm workForm = WorkForm.valueOf(work);
+            WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
             if (workForm.getPublicationDate() == null) {
                 initializePublicationDate(workForm);
             } else {
@@ -380,17 +385,7 @@ public class WorksController extends BaseWorkspaceController {
             }
 
             if (workForm.getContributors() != null) {
-                for (Contributor contributor : workForm.getContributors()) {
-                    if (!PojoUtil.isEmpty(contributor.getOrcid())) {
-                        String contributorOrcid = contributor.getOrcid().getValue();
-                        if (profileEntityManager.orcidExists(contributorOrcid)) {
-                            // contributor is an ORCID user - visibility of
-                            // user's name in record must be taken into account                            
-                            String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
-                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                        }
-                    }
-                }
+                workForm.setContributors(filterContributors(workForm.getContributors(), activityManager));
             }
 
             return workForm;
@@ -399,6 +394,123 @@ public class WorksController extends BaseWorkspaceController {
         return null;
     }
 
+    @RequestMapping(value = "/worksInfo/{putCodesStr}", method = RequestMethod.GET)
+    public @ResponseBody List<WorkForm> getWorksInfo(@PathVariable("putCodesStr") String putCodesStr) {
+        Map<String, String> countries = retrieveIsoCountries();
+        Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
+        if (putCodesStr == null)
+            return null;
+
+        ArrayList<Long> putCodes = new ArrayList<Long>();
+        for (String workId : putCodesStr.split(","))
+            putCodes.add(new Long(workId));
+        List<WorkSummary> works = workManager.getWorksSummaryList(this.getEffectiveUserOrcid(), putCodes);
+        List<WorkForm> workFormList = new ArrayList<>();
+
+        if (works.size() > 0) {
+            works.forEach(workSummary -> {
+                WorkForm workForm = WorkForm.valueOf(workSummary);
+                if (workForm.getPublicationDate() == null) {
+                    initializePublicationDate(workForm);
+                } else {
+                    if (workForm.getPublicationDate().getDay() == null) {
+                        workForm.getPublicationDate().setDay(new String());
+                    }
+                    if (workForm.getPublicationDate().getMonth() == null) {
+                        workForm.getPublicationDate().setMonth(new String());
+                    }
+                    if (workForm.getPublicationDate().getYear() == null) {
+                        workForm.getPublicationDate().setYear(new String());
+                    }
+                }
+
+                if (workForm.getShortDescription() == null) {
+                    workForm.setShortDescription(new Text());
+                }
+
+                if (workForm.getUrl() == null) {
+                    workForm.setUrl(new Text());
+                }
+
+                if (workForm.getJournalTitle() == null) {
+                    workForm.setJournalTitle(new Text());
+                }
+
+                if (workForm.getLanguageCode() == null) {
+                    workForm.setLanguageCode(new Text());
+                }
+
+                if (workForm.getLanguageCode() == null) {
+                    workForm.setLanguageCode(new Text());
+                }
+
+                if (workForm.getLanguageName() == null) {
+                    workForm.setLanguageName(new Text());
+                }
+
+                if (workForm.getCitation() == null) {
+                    workForm.setCitation(new Citation());
+                    workForm.getCitation().setCitationType(new Text());
+                    workForm.getCitation().setCitation(new Text());
+                }
+
+                if (workForm.getSubtitle() == null) {
+                    workForm.setSubtitle(new Text());
+                }
+
+                if (workForm.getTranslatedTitle() == null) {
+                    workForm.setTranslatedTitle(new TranslatedTitleForm());
+                }
+
+                if (workForm.getCountryCode() == null) {
+                    workForm.setCountryCode(new Text());
+                }
+
+                if (workForm.getCountryName() == null) {
+                    workForm.setCountryName(new Text());
+                }
+
+                if (workForm.getJournalTitle() == null) {
+                    workForm.setJournalTitle(new Text());
+                }
+
+                // Set country name
+                if (!PojoUtil.isEmpty(workForm.getCountryCode())) {
+                    Text countryName = Text.valueOf(countries.get(workForm.getCountryCode().getValue()));
+                    workForm.setCountryName(countryName);
+                }
+                // Set language name
+                if (!PojoUtil.isEmpty(workForm.getLanguageCode())) {
+                    Text languageName = Text.valueOf(languages.get(workForm.getLanguageCode().getValue()));
+                    workForm.setLanguageName(languageName);
+                }
+                // Set translated title language name
+                if (!(workForm.getTranslatedTitle() == null) && !StringUtils.isEmpty(workForm.getTranslatedTitle().getLanguageCode())) {
+                    String languageName = languages.get(workForm.getTranslatedTitle().getLanguageCode());
+                    workForm.getTranslatedTitle().setLanguageName(languageName);
+                }
+
+                if (workForm.getContributors() != null) {
+                    for (Contributor contributor : workForm.getContributors()) {
+                        if (!PojoUtil.isEmpty(contributor.getOrcid())) {
+                            String contributorOrcid = contributor.getOrcid().getValue();
+                            if (profileEntityManager.orcidExists(contributorOrcid)) {
+                                // contributor is an ORCID user - visibility of
+                                // user's name in record must be taken into
+                                // account
+                                String publicContributorCreditName = activityManager.getPublicCreditName(contributorOrcid);
+                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                            }
+                        }
+                    }
+                }
+                workFormList.add(workForm);
+            });
+            return workFormList;
+        }
+
+        return null;
+    }
     /**
      * Creates a new work
      * 
@@ -764,6 +876,13 @@ public class WorksController extends BaseWorkspaceController {
         return worksPaginator.getWorksPage(orcid, offset, pageSize, false, sort, sortAsc);
     }
 
+    @RequestMapping(value = "/worksExtendedPage.json", method = RequestMethod.GET)
+    public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
+                                                                           @RequestParam("sortAsc") boolean sortAsc) {
+        String orcid = getEffectiveUserOrcid();
+        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, false, sort, sortAsc);
+    }
+
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
@@ -899,7 +1018,7 @@ public class WorksController extends BaseWorkspaceController {
         if (w == null) {
             return null;
         }
-        WorkForm workForm = WorkForm.valueOf(w);
+        WorkForm workForm = WorkForm.valueOf(w, maxContributorsForUI);
         initializeFields (workForm);
         validateWork(workForm);
         return workForm;

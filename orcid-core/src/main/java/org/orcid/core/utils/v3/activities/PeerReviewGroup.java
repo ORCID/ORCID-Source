@@ -15,7 +15,9 @@ public class PeerReviewGroup {
 
         PeerReviewSummary peerReviewSummary = (PeerReviewSummary) summary;
         PeerReviewGroupKey prgk = new PeerReviewGroupKey();
-        prgk.setGroupId(peerReviewSummary.getGroupId());
+        if(peerReviewSummary.getGroupId() != null) {
+            prgk.setGroupId(peerReviewSummary.getGroupId().toLowerCase());
+        }
         groupKeys.add(prgk);
 
         activities.add(summary);

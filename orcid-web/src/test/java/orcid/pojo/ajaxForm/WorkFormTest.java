@@ -1,10 +1,12 @@
 package orcid.pojo.ajaxForm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
-
-import org.custommonkey.xmlunit.XMLTestCase;
 import org.junit.Test;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.ContributorRole;
@@ -35,12 +37,14 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.utils.DateUtils;
 
-public class WorkFormTest extends XMLTestCase {
-    
+public class WorkFormTest {
+
+    private int maxContributorsForUI = 50;
+
     @Test
     public void testValueOfAndBack() throws Exception {  
         Work work = getWork();
-        WorkForm workForm = WorkForm.valueOf(work);
+        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
         Work backToWork = workForm.toWork();        
         assertEquals(work, backToWork);        
     }
@@ -48,7 +52,7 @@ public class WorkFormTest extends XMLTestCase {
     @Test
     public void testSerializeWork() throws Exception {
         Work work = getWork();
-        WorkForm workForm =  WorkForm.valueOf(work);
+        WorkForm workForm =  WorkForm.valueOf(work, maxContributorsForUI);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(workForm);

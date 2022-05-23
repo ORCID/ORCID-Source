@@ -45,6 +45,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
@@ -432,7 +433,7 @@ public class BaseController {
             // add protocol if missing
             boolean valid = false;
             try {
-                valid = OrcidStringUtils.isValidURL(urlString.getValue());
+                valid = OrcidStringUtils.isValidURL(urlString.getValue().toLowerCase());
                 if (!valid) {
                     String tempUrl = encodeUrl("http://" + urlString.getValue());
                     // test validity again
@@ -612,7 +613,7 @@ public class BaseController {
     protected void passwordChecklistValidate(Text passwordConfirm, Text password, List<String> userEmails) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
+        if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_CHARACTER_LIMIT)) {
             password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
         }
 
@@ -647,8 +648,8 @@ public class BaseController {
     protected void passwordValidate(Text passwordConfirm, Text password) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(password, "Pattern.registrationForm.password");
+        if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.passwordRequirement");
         }
         
         if (CommonPasswords.passwordIsCommon(password.getValue())) {
@@ -1086,10 +1087,7 @@ public class BaseController {
         if (StringUtils.isBlank(this.staticContentPath)) {
             String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
             generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
-            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
-            if (!request.isSecure()) {
-                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
-            }
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");            
             this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;

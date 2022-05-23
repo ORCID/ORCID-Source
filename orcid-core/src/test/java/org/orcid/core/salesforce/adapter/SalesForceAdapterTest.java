@@ -37,7 +37,7 @@ public class SalesForceAdapterTest {
     private SalesForceMapperFacadeFactory salesForceMapperFacadeFactory = new SalesForceMapperFacadeFactory();
     {
         try {
-            salesForceAdapter.setMapperFacade(salesForceMapperFacadeFactory.getMemberMapperFacade(), salesForceMapperFacadeFactory.getMemberMapperFacade());
+            salesForceAdapter.setMapperFacade(salesForceMapperFacadeFactory.getMemberMapperFacade());
         } catch (Exception e) {
             throw new RuntimeException("Error initializing mapper", e);
         }

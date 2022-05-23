@@ -2,8 +2,6 @@ package org.orcid.api.memberV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,7 +14,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
@@ -229,6 +229,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private MessageSource messageSource;
+    
+    @Resource
+    private ApiUtils apiUtils;
 
     @Override
     public Response viewStatusText() {
@@ -308,11 +311,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(work);
         Work w = workManager.createWork(orcid, work, true);
         sourceUtils.setSourceName(w);
-        try {
-            return Response.created(new URI(String.valueOf(w.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.creatework_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "work", String.valueOf(w.getPutCode()), "apiError.creatework_response.exception");
     }
 
     @Override
@@ -400,11 +399,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(funding);
         Funding f = profileFundingManager.createFunding(orcid, funding, true);
         sourceUtils.setSourceName(f);
-        try {
-            return Response.created(new URI(String.valueOf(f.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createfunding_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "funding", String.valueOf(f.getPutCode()), "apiError.createfunding_response.exception");
     }
 
     @Override
@@ -473,11 +468,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(education);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
         sourceUtils.setSourceName(e);
-        try {
-            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
-        } catch (URISyntaxException ex) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createeducation_response.exception"), ex);
-        }
+        return apiUtils.buildApiResponse(orcid, "education", String.valueOf(e.getPutCode()), "apiError.createeducation_response.exception");
     }
 
     @Override
@@ -539,11 +530,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(employment);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
         sourceUtils.setSourceName(e);
-        try {
-            return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
-        } catch (URISyntaxException ex) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createemployment_response.exception"), ex);
-        }
+        return apiUtils.buildApiResponse(orcid, "employment", String.valueOf(e.getPutCode()), "apiError.createemployment_response.exception");
     }
 
     @Override
@@ -613,11 +600,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(peerReview);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
         sourceUtils.setSourceName(newPeerReview);
-        try {
-            return Response.created(new URI(String.valueOf(newPeerReview.getPutCode()))).build();
-        } catch (URISyntaxException ex) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createpeerreview_response.exception"), ex);
-        }
+        return apiUtils.buildApiResponse(orcid, "peer-review", String.valueOf(newPeerReview.getPutCode()), "apiError.createpeerreview_response.exception");
     }
 
     @Override
@@ -659,13 +642,10 @@ public class MemberV2ApiServiceDelegatorImpl implements
             groupIdRecordManager.createOrcidSourceIssnGroupIdRecord(groupIdRecord.getGroupId(), matcher.group(1));
             throw new DuplicatedGroupIdRecordException();
         }
-        
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord newRecord = groupIdRecordManager.createGroupIdRecord(groupIdRecord);
-        try {
-            return Response.created(new URI(String.valueOf(newRecord.getPutCode()))).build();
-        } catch (URISyntaxException ex) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.creategroupidrecord_response.exception"), ex);
-        }
+        return apiUtils.buildApiResponse(null, "group-id-record", String.valueOf(newRecord.getPutCode()), "apiError.creategroupidrecord_response.exception");
     }
 
     @Override
@@ -677,6 +657,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
             params.put("bodyPutCode", String.valueOf(groupIdRecord.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
+        // filter out invisible control characters such as \u0098
+        groupIdRecord.setName(groupIdRecord.getName().replaceAll("\\p{C}", ""));
         GroupIdRecord updatedRecord = groupIdRecordManager.updateGroupIdRecord(putCode, groupIdRecord);
         return Response.ok(updatedRecord).build();
     }
@@ -770,11 +752,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(researcherUrl);
         researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl, true);
         sourceUtils.setSourceName(researcherUrl);
-        try {
-            return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "researcher-urls", String.valueOf(researcherUrl.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -859,11 +837,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(otherName);
         otherName = otherNameManager.createOtherName(orcid, otherName, true);
         sourceUtils.setSourceName(otherName);
-        try {
-            return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "other-names", String.valueOf(otherName.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -937,11 +911,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
         clearSource(externalIdentifier);
         externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier, true);
-        try {
-            return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "external-identifiers", String.valueOf(externalIdentifier.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -984,11 +954,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(keyword);
         keyword = profileKeywordManager.createKeyword(orcid, keyword, true);
         sourceUtils.setSourceName(keyword);
-        try {
-            return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "keywords", String.valueOf(keyword.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
@@ -1048,11 +1014,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         clearSource(address);
         address = addressManager.createAddress(orcid, address, true);
         sourceUtils.setSourceName(address);
-        try {
-            return Response.created(new URI(String.valueOf(address.getPutCode()))).build();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(localeManager.resolveMessage("apiError.createelement_response.exception"), e);
-        }
+        return apiUtils.buildApiResponse(orcid, "address", String.valueOf(address.getPutCode()), "apiError.createelement_response.exception");
     }
 
     @Override
