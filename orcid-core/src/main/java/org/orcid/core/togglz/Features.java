@@ -148,8 +148,15 @@ public enum Features implements Feature {
     SALESFORCE_MICROSERVICE,
     
     @Label("Organization search add sort by popularity")
-    ORG_SEARCH_SORT_BY_POPULARITY;
 
+    ORG_SEARCH_SORT_BY_POPULARITY,
+    
+    @Label("Store failing login attempts to the database")
+    ENABLE_ACCOUNT_LOCKOUT,
+    
+    @Label("Do not lock the account on the UI when the lockout threshold is exceeded")
+    ACCOUNT_LOCKOUT_SIMULATION;
+    
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

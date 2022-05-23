@@ -79,5 +79,13 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     void enable2FA(String orcid);
 
-    void update2FASecret(String orcid, String secret);       
+    void update2FASecret(String orcid, String secret);  
+    
+    void startSigninLock(String orcid);
+    
+    void resetSigninLock(String orcid);
+    
+    void updateSigninLock(String orcid, Integer count);
+    
+    List<Object[]> getSigninLock(String orcid);
 }
