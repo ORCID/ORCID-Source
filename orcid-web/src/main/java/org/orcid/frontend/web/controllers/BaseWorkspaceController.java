@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.CountryManager;
-import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -42,9 +41,6 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource
     protected CountryManager countryManager;
-
-    @Resource
-    protected CrossRefManager crossRefManager;
 
     @Resource(name = "profileEntityManagerV3")
     protected ProfileEntityManager profileEntityManager;

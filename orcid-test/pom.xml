@@ -70,24 +70,12 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <release>11</release>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Duser.timezone=GMT</argLine>
-                    <runOrder>alphabetical</runOrder>
-                    <excludes>
-                        <exclude>**/*BaseTest.java</exclude>
-                        <exclude>**/integration/**.java</exclude>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                        <exclude>**/*ITest.java</exclude>
-                        <exclude>org/orcid/integration/**/*.java</exclude>
-                    </excludes>
-                </configuration>
+                <artifactId>maven-surefire-plugin</artifactId>                
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -116,9 +104,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M5</version>
-
+                    <artifactId>maven-surefire-plugin</artifactId>                    
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
