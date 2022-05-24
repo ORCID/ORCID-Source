@@ -178,9 +178,13 @@ public class OrcidOauthRedirectResolverTest {
         // Different host should not match
         assertFalse(resolver.redirectMatches("https://orcid.org", "http://example.com"));
 
-        // Subdomain should not match
+        // Temp: Subdomain used match, so, we should allow it until we transition members
+        assertTrue(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
+        assertTrue(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));        
+        
+        // If a subdomain is registered but not the domain, it should fail
         assertFalse(resolver.redirectMatches("https://orcid.org", "https://qa.orcid.org"));
-        assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));
+        // Different subdomains should not match
         assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://sandbox.orcid.org"));
 
         // Root should not match if it is not registered
