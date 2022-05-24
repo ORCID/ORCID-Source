@@ -29,7 +29,7 @@ the software.
         <security.version>5.6.2</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>1.19.1</jersey.version>
-        <swagger.version>1.6.6</swagger.version>
+        <swagger.version>1.5.16</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -139,9 +139,10 @@ the software.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>				
+                <inherited>true</inherited>
                 <configuration>
-                    <release>11</release>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -149,8 +150,22 @@ the software.
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT --illegal-access=permit</argLine>
+                    <argLine>-Duser.timezone=GMT</argLine>
                     <runOrder>alphabetical</runOrder>
+                    <!-- we need to rewrite our unit test
+                    to be runOrder random and take avantage 
+                    of the speedup below
+                    <parallel>classes</parallel>
+                    <threadCount>4</threadCount>
+                    <perCoreThreadCount>true</perCoreThreadCount>
+                    -->
+                    <excludes>
+                        <exclude>**/*BaseTest.java</exclude>
+                        <exclude>**/integration/**.java</exclude>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/*ITest.java</exclude>
+                        <exclude>org/orcid/integration/**/*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -247,11 +262,36 @@ the software.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.0.0-M5</version>
-                    <configuration>
-                        <argLine>
-                        --illegal-access=permit
-                        </argLine>
-                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>perform-it</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                            <configuration>
+                                <systemProperties>
+                                    <property>
+                                        <name>servlet.port</name>
+                                        <value>${servlet.port}</value>
+                                    </property>
+                                </systemProperties>
+                                <includes>
+                                    <include>**/**ITest.java</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>verify-it</id>
+                            <goals>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <includes>
+                                    <include>**/**ITest.java</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -609,17 +649,17 @@ the software.
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.13.2</version>
+                <version>2.10.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.13.2</version>
+                <version>2.9.5</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.2.2</version>
+                <version>2.10.0</version>
             </dependency>            
             <dependency>
                 <groupId>com.sun.jersey</groupId>
