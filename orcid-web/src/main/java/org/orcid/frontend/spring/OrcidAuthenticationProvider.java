@@ -81,7 +81,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 if (isLockThreshHoldExceeded(profile.getSigninLockCount(), profile.getSigninLockStart())) {
                     LOGGER.info("Correct sign in but threshhold exceeded for: " + profile.getId());
                     throw new BadCredentialsException("Lock Threashold Exceeded for " + profile.getId());
-                } else if (profile.getSigninLockCount() > 0 && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
+                } else if ((profile.getSigninLockCount() == null) || (profile.getSigninLockCount() > 0 && Features.ENABLE_ACCOUNT_LOCKOUT.isActive())) {
                     LOGGER.info("Reset the signin lock after correct login outside of locked window for: " + profile.getId());
                     profileEntityManager.resetSigninLock(profile.getId());
                 }
