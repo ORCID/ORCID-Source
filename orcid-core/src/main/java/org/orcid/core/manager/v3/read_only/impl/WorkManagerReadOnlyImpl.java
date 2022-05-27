@@ -197,16 +197,14 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         // Filter the contributors list
         if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
             for (WorkSummaryExtended wse : wseList) {
-                if (wse.getContributors() != null && wse.getContributors().getContributor() != null && wse.getContributors().getContributor().size() > 0) {
-                    if (Features.STORE_TOP_CONTRIBUTORS.isActive() && wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
-                        contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                        wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
-                    } else {
-                        contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
-                        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
-                        wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                        wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
-                    }
+                if (Features.STORE_TOP_CONTRIBUTORS.isActive() && wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                    wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
+                } else {
+                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
+                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
+                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
                 }
             }
         }
