@@ -589,7 +589,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 // dissertation-thesis
                 if (WorkType.DISSERTATION.equals(a.getWorkType())) {
                     b.setWorkType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
-                } else {
+                }
+                else {
                     b.setWorkType(a.getWorkType().name());
                 }
                 b.setWorkUrl(a.getUrl() == null ? null : a.getUrl().getValue());
@@ -610,7 +611,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
              */
             @Override
             public void mapBtoA(WorkEntity b, Work a, MappingContext context) {
-                a.setWorkType(getWorkType(b.getWorkType()));
+                if(WorkType.REVIEW.equals(getWorkType(b.getWorkType()))){
+                    a.setWorkType(WorkType.OTHER);
+                }
+                else {
+                    a.setWorkType(getWorkType(b.getWorkType()));
+                }
             }
 
         });

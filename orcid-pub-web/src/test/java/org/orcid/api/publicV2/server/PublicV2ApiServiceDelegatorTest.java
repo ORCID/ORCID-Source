@@ -1444,7 +1444,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         writerV2.writeTo(record, record.getClass(), null, null, null, null, out);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        SchemaOrgDocument doc = objectMapper.readerFor(SchemaOrgDocument.class).readValue(out.toString());
+        SchemaOrgDocument doc = objectMapper.reader(SchemaOrgDocument.class).readValue(out.toString());
         assertTrue(doc.id.endsWith(ORCID));
         assertEquals("Person",doc.type);
         assertEquals("http://schema.org",doc.context);

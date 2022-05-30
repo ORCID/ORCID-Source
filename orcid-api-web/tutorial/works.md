@@ -37,19 +37,19 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 - **subtitle** _(optional)_ A subtitle to the work
 
-- **translated-title** _(optional)_ The title the work appears under in another language, the langauge of the translated title is recorded as an attribute
+- **translated-title** _(optional)_ The title the work appears under in another language, the language of the translated title is recorded as an attribute
 
-- **journal-title** _(optional)_ The name of a larger collection the work belongs to, such a a journal for journal articles or a book for book chapters
+- **journal-title** _(optional)_ The name of a larger collection the work belongs to, such as a journal for journal articles or a book for book chapters
 
 - **short-description** _(optional)_ A brief description or abstract of the work
 
-- **citation-type** _(optional)_ The format the citation is provided in. This field is selected from a list containing the following values: APA, BIBTEX, CHICAGO, HARVARD, IEEE, MLA, RIS, UNSPECIFIED, VANCOUVER
+- **citation-type** _(optional)_ The format the citation is provided in. This field is selected from the following list: APA, BIBTEX, CHICAGO, HARVARD, IEEE, MLA, RIS, UNSPECIFIED, VANCOUVER
 
 - **citation-value** _(optional)_ The contents of the citation
 
 - **work-type** _(required)_ The type of object the work is.  This field must be selected from the [supported work types](https://members.orcid.org/api/resources/work-types)
 
-- **publication_date** _(optional)_ The date the work was completed
+- **publication-date** _(optional)_ The date the work was completed
 
 - **external-id-type** _(required)_ The type of identifier. This field must be selected from the [supported work identifiers](https://pub.qa.orcid.org/v3.0/identifiers?locale=en)
 
@@ -65,7 +65,7 @@ Editing the work section of a record requires a 3 step OAuth token with the ```/
 
 - **language-code** _(optional)_ The language used to describe the work in the previous fields
 
-- **country** _(optional)_ A country the work was published in or otherwise assocaited with
+- **country** _(optional)_ A country the work was published in or otherwise associated with
 
 ## Read a summary of all works on a record
 
