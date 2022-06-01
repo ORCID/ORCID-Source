@@ -1,18 +1,15 @@
 package org.orcid.cron;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
 import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3MessageProcessorAPIV3;
+import org.orcid.listener.util.SystemAlertsUtil;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,32 +18,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-
 @Configuration
 @EnableScheduling
 public class ResendV3FailedMessages {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResendV3FailedMessages.class);
     private static final int BATCH_SIZE = 1000;
     
-    private Client client = Client.create();
-    
-    static ObjectMapper mapper = new ObjectMapper();
-    
     @Value("${org.orcid.message-listener.retry:5}")
     private Integer maxFailuresBeforeNotify;
-    
-    @Value("${org.orcid.core.slack.webhookUrl:}")
-    private String webhookUrl;
     
     @Resource
     private Api30RecordStatusManager api30RecordStatusManager;
     
     @Resource
     S3MessageProcessorAPIV3 proc;
+    
+    @Resource 
+    private SystemAlertsUtil systemAlertsUtil;
     
     @Scheduled(cron = "${org.orcid.cron.v3.reindex-failed:0 0 7,13 * * *}")
     public void resendFailedElements() {
@@ -150,7 +138,7 @@ public class ResendV3FailedMessages {
         // Send summary
         if (!elementsToNotify.isEmpty()) {
             String message = buildAlertMessage(elementsToNotify);
-            sendSystemAlert(message);
+            systemAlertsUtil.sendSystemAlert(message);
         }
     }
     
@@ -239,23 +227,4 @@ public class ResendV3FailedMessages {
         return sb.toString();
     }
     
-    private void sendSystemAlert(String message) {
-        if (StringUtils.isNotBlank(webhookUrl)) {
-            Map<String, String> bodyMap = new HashMap<>();
-            bodyMap.put("text", message);
-            String bodyJson = null;
-            try {
-                bodyJson = mapper.writeValueAsString(bodyMap);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            WebResource resource = client.resource(webhookUrl);
-            ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
-            int status = response.getStatus();
-            if (status != 200) {
-                LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getEntity(String.class), message });
-            }
-        }
-    }
 }

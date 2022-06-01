@@ -37,7 +37,7 @@ the software.
         <aws.version>1.11.32</aws.version>
         <solr.version>8.0.0</solr.version>
         <junit.version>4.13.2</junit.version>
-        <jersey.version>1.19.1</jersey.version>
+        <jersey.version>1.19.4</jersey.version>
         <swagger.version>1.6.5</swagger.version>
         <jackson.version>2.11.4</jackson.version>
         <main.basedir>${project.basedir}</main.basedir>
@@ -142,8 +142,7 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <release>11</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -151,7 +150,7 @@ the software.
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT</argLine>
+                    <argLine>-Duser.timezone=GMT --illegal-access=permit</argLine>
                     <runOrder>alphabetical</runOrder>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 

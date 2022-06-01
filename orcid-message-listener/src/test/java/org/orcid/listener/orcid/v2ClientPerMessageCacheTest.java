@@ -2,6 +2,8 @@ package org.orcid.listener.orcid;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
@@ -26,16 +28,14 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.util.HttpHelper;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
+import jakarta.ws.rs.core.Response;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-message-listener-test-context.xml" })
@@ -45,29 +45,22 @@ public class v2ClientPerMessageCacheTest {
     private Orcid20Manager orcid20ApiClient;
     
     @Mock
-    private Client mock_jerseyClient;
-    
-    @Mock WebResource mock_resource;
-    
-    @Mock Builder mock_builder;
-    
-    @Mock ClientResponse mock_response;
+    HttpHelper httpHelperMock;
+
+    @Mock
+    Response responseMock;
 
     Record record = new Record();
     
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);        
-        TargetProxyHelper.injectIntoProxy(orcid20ApiClient, "jerseyClient", mock_jerseyClient);
+        TargetProxyHelper.injectIntoProxy(orcid20ApiClient, "httpHelper", httpHelperMock);
 
         //mock methods
-        when(mock_jerseyClient.resource(Matchers.isA(URI.class))).thenReturn(mock_resource);
-        when(mock_resource.path(Matchers.anyString())).thenReturn(mock_resource);
-        when(mock_resource.accept(Matchers.anyString())).thenReturn(mock_builder);
-        when(mock_builder.get(Matchers.isA(Class.class))).thenReturn(mock_response);
-        when(mock_builder.header(Matchers.anyString(),Matchers.anyString())).thenReturn(mock_builder);
-        when(mock_response.getStatus()).thenReturn(200);
-        when(mock_response.getEntity(Record.class)).thenReturn(record);
+        when(httpHelperMock.executeGetRequest(any(URI.class), anyString(), anyString())).thenReturn(responseMock);
+        when(responseMock.getStatus()).thenReturn(200);
+        when(responseMock.readEntity(Record.class)).thenReturn(record);
         
         //build test record
         record.setOrcidIdentifier(new OrcidIdentifier("http://orcid.org/0000-0000-0000-0000"));
@@ -94,7 +87,7 @@ public class v2ClientPerMessageCacheTest {
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
         
         //get it twice, if no error, then it's the cached version
-        when(mock_response.getEntity(Record.class)).thenThrow(new RuntimeException("called twice!"));
+        when(responseMock.readEntity(Record.class)).thenThrow(new RuntimeException("called twice!"));
         r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
         

@@ -28,6 +28,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
+import org.orcid.listener.util.HttpHelper;
 import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,37 +39,33 @@ import org.springframework.stereotype.Component;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.api.client.config.ClientConfig;
+
+import jakarta.ws.rs.core.Response;
 
 @Component
 public class Orcid30ManagerImpl implements Orcid30Manager {
 
     Logger LOG = LoggerFactory.getLogger(Orcid30ManagerImpl.class);
-    @Resource
-    protected Client jerseyClient;
+    
     protected final URI baseUri;
     protected final String accessToken;
 
+    @Resource
+    private HttpHelper httpHelper;
+    
     // loads on read.
     private final LoadingCache<BaseMessage, RecordContainer> v3ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(100)
             .build(new CacheLoader<BaseMessage, RecordContainer>() {
                 public RecordContainer load(BaseMessage message) {
                     RecordContainer container = new RecordContainer();
-                    WebResource webResource = jerseyClient.resource(baseUri).path(message.getOrcid() + "/record");
-                    webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-                    Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-                    ClientResponse response = builder.get(ClientResponse.class);
+                    Response response = httpHelper.executeGetRequest(baseUri, message.getOrcid() + "/record", accessToken);
                     if (response.getStatus() != 200) {
                         container.status = response.getStatus();
-                        container.error = response.getEntity(OrcidError.class);
+                        container.error = response.readEntity(OrcidError.class);
                         return container;
                     }
                     container.status = 200;
-                    container.record = response.getEntity(Record.class);
+                    container.record = response.readEntity(Record.class);
                     return container;
                 }
             });
@@ -105,25 +102,22 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
 
     @Override
     public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri).path(message.getOrcid() + "/activities");
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
+        Response response = httpHelper.executeGetRequest(baseUri, message.getOrcid() + "/activities", accessToken);
         if (response.getStatus() != 200) {
             OrcidError orcidError = null;
             switch (response.getStatus()) {
             case 301:
-                orcidError = response.getEntity(OrcidError.class);
+                orcidError = response.readEntity(OrcidError.class);
                 throw new DeprecatedRecordException(orcidError);
             case 409:
-                orcidError = response.getEntity(OrcidError.class);
+                orcidError = response.readEntity(OrcidError.class);
                 throw new LockedRecordException(orcidError);
             default:
                 LOG.error("Unable to fetch public activities for " + message.getOrcid() + " on API 3.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-        return response.getEntity(ActivitiesSummary.class);
+        return response.readEntity(ActivitiesSummary.class);
     }
 
     @Override
@@ -172,10 +166,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     }
 
     private Activity fetchEntity(String orcid, Long putCode, String endpoint, Class<? extends Activity> c) {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/" + endpoint + "/" + putCode);
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
+        Response response = httpHelper.executeGetRequest(baseUri, orcid + "/" + endpoint + "/" + putCode, accessToken);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
             default:
@@ -183,22 +174,13 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-        return response.getEntity(c);
-    }
-
-    private final class RecordContainer {
-        public Record record;
-        public int status;
-        public OrcidError error;
+        return response.readEntity(c);
     }
 
     // Helper to allow 2.0 indexing endpoint to fetch the research resources
     @Override
     public ResearchResources fetchResearchResources(String orcid) {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/research-resources");
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
+        Response response = httpHelper.executeGetRequest(baseUri, orcid + "/research-resources", accessToken);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
             default:
@@ -206,6 +188,12 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-        return response.getEntity(ResearchResources.class);
+        return response.readEntity(ResearchResources.class);
+    }
+    
+    private final class RecordContainer {
+        public Record record;
+        public int status;
+        public OrcidError error;
     }
 }
