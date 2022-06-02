@@ -54,7 +54,6 @@ the software.
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
-        <module>orcid-integration-test</module>
         <module>orcid-internal-api</module>
         <module>orcid-activemq</module>
         <module>orcid-message-listener</module>
@@ -67,33 +66,7 @@ the software.
         <url>https://github.com/ORCID</url>
     </organization>
 
-    <url>http://orcid.org</url>
-
-    <scm>
-        <connection>scm:git:ssh://git@github.com/ORCID/ORCID-Work-in-Progress.git</connection>
-        <developerConnection>scm:git:git://github.com/ORCID/ORCID-Work-in-Progress.git</developerConnection>
-        <url>https://github.com/ORCID/ORCID-Work-in-Progress</url>
-    </scm>
-
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>http://jenkins.semantico.net/</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>false</sendOnSuccess>
-                <sendOnWarning>false</sendOnWarning>
-                <configuration>
-                    <recipients>will.simpson@semantico.com
-                        declan.newman@semantico.com
-                        james.bowen@semantico.com
-                    </recipients>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
+    <url>http://orcid.org</url>    
 
     <!-- End -->
 
