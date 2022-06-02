@@ -65,6 +65,8 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
                         return container;
                     }
                     container.status = 200;
+                    //String responseString = response.readEntity(String.class);
+                    //System.out.println(responseString);
                     container.record = response.readEntity(Record.class);
                     return container;
                 }

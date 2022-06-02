@@ -13,6 +13,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.orcid.listener.jersey.reader.V2RecordBodyReader;
+import org.orcid.listener.jersey.reader.V3RecordBodyReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +28,22 @@ public class OrcidJerseyClientHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidJerseyClientHandler.class);
 
     public static Client create(boolean isDevelopmentMode, Map<String, Object> properties) {
-        Client c;
+        Client client;
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        builder.register(JacksonJaxbJsonProvider.class)
+        .register(V3RecordBodyReader.class)
+        .register(V2RecordBodyReader.class);
         if (isDevelopmentMode) {
             // DANGER!!! Trust all certs
             LOGGER.info("TRUSTING ALL SSL CERTS IN DEV MODE!!!");
-            c = ClientBuilder.newBuilder().register(JacksonJaxbJsonProvider.class).hostnameVerifier(createHostnameVerifier()).sslContext(createSslContext()).build();
-        } else {
-            c = ClientBuilder.newClient().register(JacksonJaxbJsonProvider.class);
-        }
+            builder.hostnameVerifier(createHostnameVerifier()).sslContext(createSslContext());
+        } 
+        client = builder.build();
         Set<String> keyset = properties.keySet();
         for (String key : keyset) {
-            c.property(key, properties.get(key));
+            client.property(key, properties.get(key));
         }
-        return c;
+        return client;
     }
 
     private static HostnameVerifier createHostnameVerifier() {
