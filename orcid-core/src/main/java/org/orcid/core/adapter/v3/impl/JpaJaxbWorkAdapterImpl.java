@@ -11,6 +11,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 
 /**
@@ -97,5 +98,13 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
             return null;
         }
         return mapperFacade.mapAsList(workEntities, WorkSummaryExtended.class);
+    }
+
+    @Override
+    public WorkExtended toWorkExtended(WorkEntity workEntity) {
+        if (workEntity == null) {
+            return null;
+        }
+        return mapperFacade.map(workEntity, WorkExtended.class);
     }
 }

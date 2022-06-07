@@ -198,7 +198,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
-        if (isApiRequest && Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
             filterContributors(work, workEntity);
         }
         workDao.persist(workEntity);
@@ -367,15 +367,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
             }
-
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                filterContributors(work, workEntity);
-            }
         }else{
             //validate external ID vocab
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);            
         }
-                        
+
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            filterContributors(work, workEntity);
+        }
+
         orcidSecurityManager.checkSourceAndThrow(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
     	if (workEntity.getVisibility() == null) {
