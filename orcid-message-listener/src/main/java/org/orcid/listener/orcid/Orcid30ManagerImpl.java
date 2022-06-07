@@ -28,8 +28,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.util.HttpHelper;
 import org.orcid.utils.listener.BaseMessage;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     protected final String accessToken;
 
     @Resource
-    private HttpHelper httpHelper;
+    private RESTHelper httpHelper;
     
     // loads on read.
     private final LoadingCache<BaseMessage, RecordContainer> v3ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(100)
@@ -65,8 +65,6 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
                         return container;
                     }
                     container.status = 200;
-                    //String responseString = response.readEntity(String.class);
-                    //System.out.println(responseString);
                     container.record = response.readEntity(Record.class);
                     return container;
                 }

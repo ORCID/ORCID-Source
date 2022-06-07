@@ -1,4 +1,4 @@
-package org.orcid.listener.util;
+package org.orcid.utils.rest;
 
 import java.net.URI;
 
@@ -6,7 +6,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.client.ClientProperties;
-import org.springframework.stereotype.Component;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
@@ -14,8 +13,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.core.Response;
 
-@Component
-public class HttpHelper {
+public class RESTHelper {
     
     @Resource
     protected Client jerseyClient;

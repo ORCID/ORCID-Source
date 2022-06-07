@@ -28,11 +28,11 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.listener.util.HttpHelper;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.rest.RESTHelper;
 import org.springframework.test.context.ContextConfiguration;
 
 import jakarta.ws.rs.core.Response;
@@ -45,7 +45,7 @@ public class v2ClientPerMessageCacheTest {
     private Orcid20Manager orcid20ApiClient;
     
     @Mock
-    HttpHelper httpHelperMock;
+    RESTHelper httpHelperMock;
 
     @Mock
     Response responseMock;

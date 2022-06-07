@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,7 @@ public class SystemAlertsUtil {
     private String webhookUrl;
     
     @Resource
-    private HttpHelper httpHelper;
+    private RESTHelper httpHelper;
     
     public void sendSystemAlert(String message) {
         if (StringUtils.isNotBlank(webhookUrl)) {

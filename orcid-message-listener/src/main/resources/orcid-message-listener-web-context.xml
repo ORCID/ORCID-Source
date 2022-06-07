@@ -97,7 +97,7 @@
 	</jms:listener-container>
 	
     <!-- Jersey client -->
-    <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
+    <bean id="jerseyClient" class="org.orcid.utils.jersey.OrcidJerseyClientHandler" factory-method="create">
         <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
         <constructor-arg ref="jerseyProperties" />
     </bean>
@@ -165,5 +165,8 @@
 	<bean id="mongoClient" class="com.mongodb.MongoClient" lazy-init="true">
 		<constructor-arg ref="mongoClientURI" />
 	</bean>
-		       
+	
+	<bean id="RESTHelper" class="org.orcid.utils.rest.RESTHelper" />
+	
+	<bean id="ORCIDMarshaller" class="org.orcid.utils.jersey.marshaller.ORCIDMarshaller" />
 </beans>

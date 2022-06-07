@@ -1,4 +1,4 @@
-package org.orcid.listener.jersey;
+package org.orcid.utils.jersey;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -13,8 +13,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.orcid.listener.jersey.reader.V2RecordBodyReader;
-import org.orcid.listener.jersey.reader.V3RecordBodyReader;
+import org.orcid.utils.jersey.unmarshaller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,8 +30,30 @@ public class OrcidJerseyClientHandler {
         Client client;
         ClientBuilder builder = ClientBuilder.newBuilder();
         builder.register(JacksonJaxbJsonProvider.class)
+        .register(V2ActivitiesSummaryBodyReader.class)
+        .register(V2EducationBodyReader.class)
+        .register(V2EmploymentBodyReader.class)
+        .register(V2FundingBodyReader.class)
+        .register(V2OrcidErrorBodyReader.class)
+        .register(V2PeerReviewBodyReader.class)
+        .register(V2RecordBodyReader.class)
+        .register(V2WorkBodyReader.class)
+        .register(V3ActivitiesSummaryBodyReader.class)
+        .register(V3DistinctionBodyReader.class)
+        .register(V3EducationBodyReader.class)
+        .register(V3EmploymentBodyReader.class)
+        .register(V3FundingBodyReader.class)
+        .register(V3InvitedPositionBodyReader.class)
+        .register(V3MembershipBodyReader.class)
+        .register(V3OrcidErrorBodyReader.class)
+        .register(V3PeerReviewBodyReader.class)
+        .register(V3QualificationBodyReader.class)
         .register(V3RecordBodyReader.class)
-        .register(V2RecordBodyReader.class);
+        .register(V3ResearchResourceBodyReader.class)
+        .register(V3ResearchResourcesBodyReader.class)
+        .register(V3ServiceBodyReader.class)
+        .register(V3WorkBodyReader.class);
+        
         if (isDevelopmentMode) {
             // DANGER!!! Trust all certs
             LOGGER.info("TRUSTING ALL SSL CERTS IN DEV MODE!!!");
