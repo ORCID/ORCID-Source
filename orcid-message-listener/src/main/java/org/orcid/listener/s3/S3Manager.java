@@ -30,7 +30,6 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.jersey.marshaller.ORCIDMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -53,27 +52,14 @@ public class S3Manager {
     private Integer maxElements;
 
     @Resource
-    private ORCIDMarshaller marshaller;
-    
-    public S3Manager() throws JAXBException {
-              
-    }
-
-    /**
-     * Writes a profile to S3
-     * 
-     * @param writeToFileNotS3
-     *            if true, write to local file system temp directory instead of
-     *            S3
-     * @throws JAXBException
-     */
-    @Autowired
-    public S3Manager(@Value("${org.orcid.message-listener.s3.bucket_prefix}") String bucketPrefix) throws JAXBException {
-        
-    }   
+    private ORCIDMarshaller marshaller;        
 
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
         this.s3MessagingService = s3MessagingService;
+    }
+    
+    public void setMarshaller(ORCIDMarshaller m) {
+        this.marshaller = m;
     }
 
     public void uploadV2RecordSummary(String orcid, org.orcid.jaxb.model.record_v2.Record record) throws JAXBException, JsonProcessingException, AmazonClientException, AmazonServiceException {
