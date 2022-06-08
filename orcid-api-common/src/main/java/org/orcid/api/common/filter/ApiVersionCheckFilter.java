@@ -1,5 +1,6 @@
-package org.orcid.core.web.filters;
+package org.orcid.api.common.filter;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,8 +16,9 @@ import org.orcid.utils.OrcidStringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
+
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
@@ -43,9 +45,9 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     }
     
     @Override
-    public ContainerRequest filter(ContainerRequest request) {
-        String path = request.getPath();
-        String method = request.getMethod() == null ? null : request.getMethod().toUpperCase();
+    public void filter(ContainerRequestContext requestContext) throws IOException {        
+        String path = requestContext.getUriInfo().getPath(); 
+        String method = requestContext.getMethod() == null ? null : requestContext.getMethod().toUpperCase();
         Matcher matcher = VERSION_PATTERN.matcher(path);        
         String version = null;
         if (matcher.lookingAt()) {
@@ -66,7 +68,5 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));
             }
         }
-
-        return request;
     }
 }

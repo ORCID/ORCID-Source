@@ -1,10 +1,12 @@
 package org.orcid.api.filters;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
-import org.orcid.core.analytics.AnalyticsProcess;
+import org.orcid.api.common.analytics.AnalyticsProcess;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -14,9 +16,9 @@ import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.ContainerResponseFilter;
 
 @Provider
 public class AnalyticsFilter implements ContainerResponseFilter {
@@ -39,14 +41,14 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     @Context
     private HttpServletRequest httpServletRequest;
     
+
     @Override
-    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
-        AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        AnalyticsProcess analyticsProcess = getAnalyticsProcess(requestContext, responseContext);
         apiAnalyticsTaskExecutor.execute(analyticsProcess);
-        return response;
     }
     
-    private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
+    private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
         AnalyticsProcess process = new AnalyticsProcess();
         process.setRequest(request);
         process.setResponse(response);

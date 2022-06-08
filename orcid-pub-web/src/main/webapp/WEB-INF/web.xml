@@ -179,13 +179,13 @@
     
     <filter>
         <filter-name>jersey</filter-name>
-        <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
+        <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
             <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common</param-value>
         </init-param>
         <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-name>jakarta.ws.rs.container.ContainerRequestFilters</param-name>
             <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter</param-value>
         </init-param>
         <init-param>
@@ -193,11 +193,11 @@
             <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
         </init-param>
 		<init-param>
-			<param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
+			<param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
 			<param-value>/static/.*</param-value>
 		</init-param>
 		<init-param>
-        	<param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
+        	<param-name>jersey.config.server.wadl.disableWadl</param-name>
         	<param-value>true</param-value>
     	</init-param>
     </filter>

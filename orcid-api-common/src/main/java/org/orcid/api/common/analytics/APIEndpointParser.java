@@ -1,10 +1,9 @@
-package org.orcid.core.analytics;
+package org.orcid.api.common.analytics;
 
 import java.util.List;
+import jakarta.ws.rs.core.PathSegment;
 
-import javax.ws.rs.core.PathSegment;
-
-import com.sun.jersey.spi.container.ContainerRequest;
+import org.orcid.core.analytics.AnalyticsEventCategory;
 
 public class APIEndpointParser {
 
@@ -28,36 +27,35 @@ public class APIEndpointParser {
 
     private String category;
 
-    public APIEndpointParser(ContainerRequest request) {
-        parse(request);
+    public APIEndpointParser(List<PathSegment> pathSegments) {
+        parse(pathSegments);
     }
 
-    private void parse(ContainerRequest request) {
-        List<PathSegment> path = request.getPathSegments(true);
+    private void parse(List<PathSegment> pathSegments) {
         int categoryIndex = 2;
-        if (path.get(0).toString().matches(API_VERSION_REGEX)) {
+        if (pathSegments.get(0).toString().matches(API_VERSION_REGEX)) {
             // found api version
-            apiVersion = path.get(0).toString();
-            if (!path.get(1).toString().matches(ORCID_REGEX)) {
+            apiVersion = pathSegments.get(0).toString();
+            if (!pathSegments.get(1).toString().matches(ORCID_REGEX)) {
                 // no ORCID iD
                 categoryIndex--;
             } else {
-                orcidId = path.get(1).toString();
+                orcidId = pathSegments.get(1).toString();
             }
         } else {
             // no api version
             apiVersion = "";
             categoryIndex--;
-            if (!path.get(0).toString().matches(ORCID_REGEX)) {
+            if (!pathSegments.get(0).toString().matches(ORCID_REGEX)) {
                 // no ORCID iD
                 categoryIndex--;
             } else {
-                orcidId = path.get(0).toString();
+                orcidId = pathSegments.get(0).toString();
             }
         }
 
-        if (path.size() > categoryIndex) {
-            category = path.get(categoryIndex).toString();
+        if (pathSegments.size() > categoryIndex) {
+            category = pathSegments.get(categoryIndex).toString();
         } else if (apiVersion != null && apiVersion.matches(API_VERSION_2X_REGEX)) {
             // no category in URL: version 2.x so category is record
             category = RECORD_CATEGORY;

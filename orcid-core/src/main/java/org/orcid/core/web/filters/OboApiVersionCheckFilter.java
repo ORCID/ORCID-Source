@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 
 import javax.ws.rs.ext.Provider;
 
+import org.orcid.api.common.filter.ApiVersionCheckFilter;
 import org.orcid.core.exception.OboNotValidForApiVersionException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;

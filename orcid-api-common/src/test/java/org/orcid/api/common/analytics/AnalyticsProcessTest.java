@@ -1,4 +1,4 @@
-package org.orcid.core.analytics;
+package org.orcid.api.common.analytics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -17,6 +17,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.api.common.analytics.AnalyticsProcess;
+import org.orcid.core.analytics.AnalyticsData;
 import org.orcid.core.analytics.client.AnalyticsClient;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
