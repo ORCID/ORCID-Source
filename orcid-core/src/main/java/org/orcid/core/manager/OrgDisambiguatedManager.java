@@ -14,6 +14,8 @@ import org.orcid.pojo.OrgDisambiguated;
 public interface OrgDisambiguatedManager {
 
     void processOrgsForIndexing();
+    
+    void markOrgsForIndexingAsGroup();
 
     void processOrgsWithIncorrectPopularity();
     
@@ -32,5 +34,7 @@ public interface OrgDisambiguatedManager {
     void updateOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier);
 
     void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier);
+    
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String identifier, String type);
 
 }

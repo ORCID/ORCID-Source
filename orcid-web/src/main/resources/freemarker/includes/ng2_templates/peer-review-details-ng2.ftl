@@ -147,23 +147,6 @@
                                                             </span>
                                                         </div>                            
                                                         </div>  
-                                                        <div class="col-md-12 sources-container-header">
-                                                            <!--Added/last modified dates-->
-                                                            <div class="row bottomBuffer">
-                                                                <div class="col-md-6">
-                                                                    <div class="bottomBuffer">
-                                                                        <strong><@orcid.msg 'groups.common.added'/></strong><br> 
-                                                                        <span>{{peerReviewService.details[peerReview.putCode.value]?.createdDate | ajaxFormDateToISO8601}}</span>
-                                                                    </div>    
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="bottomBuffer">
-                                                                        <strong><@orcid.msg 'groups.common.last_modified'/></strong><br> 
-                                                                        <span>{{peerReviewService.details[peerReview.putCode.value]?.lastModified | ajaxFormDateToISO8601}}</span>
-                                                                    </div>    
-                                                                </div>      
-                                                            </div><!--Added/last modified dates-->               
-                                                        </div>
                                                     </div>
                                                     <!-- Begin of source -->
                                                     <div class="row source-line">

@@ -17,7 +17,7 @@
 		    	your browser), and then sign into your ORCID account.
 		    </p>
 		    <p>
-		    	<a href="${verificationUrl}">${verificationUrl}</a><br>
+		    	<a id="verificationUrl"href="${verificationUrl}">${verificationUrl}</a><br>
 		    	<br>
 		    </p>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">

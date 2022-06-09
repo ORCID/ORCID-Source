@@ -18,6 +18,8 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     boolean emailExists(String email);
 
     String findOrcidIdByEmail(String email);
+
+    String findOrcidByVerifiedEmail(String email);
     
     Map<String, String> findOricdIdsByCommaSeparatedEmails(String email);
     

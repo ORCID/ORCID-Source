@@ -6,6 +6,24 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Store and read top_contributors_json")
+    STORE_TOP_CONTRIBUTORS,
+
+    @Label("Restrict delegator access to account settings")
+    RESTRICTED_DELEGATORS,
+
+    @Label("HelpHero")
+    ORCID_ANGULAR_HELP_HERO,
+
+    @Label("Orcid Angular Lazy Load Peer Reviews")
+    ORCID_ANGULAR_LAZY_LOAD_PEER_REVIEWS,
+
+    @Label("Orcid Angular Works Contributors")
+    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
+
+    @Label("Orcid Angular Account settings ")
+    ORCID_ANGULAR_ACCOUNT_SETTINGS,
+
     @Label("Orcid Angular Public Page")
     ORCID_ANGULAR_PUBLIC_PAGE,
 
@@ -14,15 +32,6 @@ public enum Features implements Feature {
 
     @Label("Orcid Angular My Orcid")
     ORCID_ANGULAR_MY_ORCID,
-
-    @Label("Orcid Angular Inbox")
-    ORCID_ANGULAR_INBOX,
-
-    @Label("New Info Site")
-    NEW_INFO_SITE,
-
-    @Label("Orcid Angular Signin")
-    ORCID_ANGULAR_SIGNIN,
 
     @Label("Spam button")
     SPAM_BUTTON,
@@ -41,9 +50,6 @@ public enum Features implements Feature {
 
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-
-    @Label("Wider grid")
-    WIDE_GRID,
 	
     @Label("Add works based on ArXiv, DOI or PubMed id metadata")
     ADD_WORKS_WITH_EXTERNAL_ID,
@@ -69,23 +75,14 @@ public enum Features implements Feature {
     @Label("Arabic translation")
     LANG_AR,
 
-    @Label("Last modified")
-    LAST_MOD,
-
     @Label("New footer")
     NEW_FOOTER,
-    
-    @Label("Research resource activities section in the UI")
-    RESEARCH_RESOURCE,
     
     @Label("Reset password send email in all cases")
     RESET_PASSWORD_EMAIL,
 
     @Label("Revoke access token if authorization code is reused")
     REVOKE_TOKEN_ON_CODE_REUSE,
-
-    @Label("Affiliations in search results")
-    SEARCH_RESULTS_AFFILIATIONS,
 
     @Label("Survey link")
     SURVEY,
@@ -105,9 +102,6 @@ public enum Features implements Feature {
     @Label("Remove https://orcid.org from OpenID id_tokens")
     OPENID_SIMPLE_SUBJECT,
     
-    @Label("Enable group affiliations")
-    GROUP_AFFILIATIONS,
-    
     @Label("Enable manual work grouping")
     MANUAL_WORK_GROUPING,
 
@@ -125,24 +119,15 @@ public enum Features implements Feature {
     
     @Label("User OBO")
     USER_OBO,
-    
-    @Label("Verbose notifications")
-    VERBOSE_NOTIFICATIONS,
 
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
     
-    @Label("Set the 3.0 API as the default one in the public API")
-    PUB_API_DEFAULT_TO_V3,
-
-    @Label("Set the 3.0 API as the default one in the members API")
-    MEMBER_API_DEFAULT_TO_V3,
-    
     @Label("Disable the 2.0 release candidates")
     V2_DISABLE_RELEASE_CANDIDATES,
 
-    @Label("Salesforce: Enable opportunities and org record types")
-    SF_ENABLE_OPP_ORG_RECORD_TYPES,
+    @Label("Disable the 3.0 release candidates")
+    V3_DISABLE_RELEASE_CANDIDATES,
 
     @Label("ID token 24 hours lifespan")
     ID_TOKEN_24_HOURS_LIFESPAN,
@@ -151,7 +136,26 @@ public enum Features implements Feature {
     TWO_FA_DEACTIVATE_EMAIL, 
     
     @Label("Promote a client from public client to be a member")
-    UPGRADE_PUBLIC_CLIENT;
+    UPGRADE_PUBLIC_CLIENT, 
+    
+    @Label("Allow members to delete their own elements even with revoked tokens")
+    ALLOW_DELETE_WITH_REVOKED_TOKENS,
+    
+    @Label("Stop caching works when doing bulk reads")
+    READ_BULK_WORKS_DIRECTLY_FROM_DB, 
+        
+    @Label("Enable new salesforce microservice")
+    SALESFORCE_MICROSERVICE,
+    
+    @Label("Organization search add sort by popularity")
+
+    ORG_SEARCH_SORT_BY_POPULARITY,
+    
+    @Label("Store failing login attempts to the database")
+    ENABLE_ACCOUNT_LOCKOUT,
+    
+    @Label("Do not lock the account on the UI when the lockout threshold is exceeded")
+    ACCOUNT_LOCKOUT_SIMULATION;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

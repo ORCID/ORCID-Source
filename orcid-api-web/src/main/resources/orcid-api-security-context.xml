@@ -4,8 +4,8 @@
        xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.3.xsd
-       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.6.xsd
+       http://www.springframework.org/schema/security/oauth2 https://raw.githubusercontent.com/spring-attic/spring-security-oauth/main/spring-security-oauth2/src/main/resources/org/springframework/security/oauth2/spring-security-oauth2-2.0.xsd">
 
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
 	
@@ -137,11 +137,12 @@
     </bean>
        
     <bean id="memberDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
-        <property name="feature" value="MEMBER_API_DEFAULT_TO_V3" />
+        <property name="isPublicApi" value="false" />
     </bean>        
     
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
     <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
+    <bean id="disable30RCApiFilter" class="org.orcid.api.common.filter.Disable30RCApiFilter" />
         
 </beans>

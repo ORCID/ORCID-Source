@@ -90,6 +90,7 @@
     
     <bean id="worksPaginator" class="org.orcid.frontend.web.pagination.WorksPaginator" >
         <property name="worksCacheManager" ref="worksCacheManager" />
+        <property name="worksExtendedCacheManager" ref="worksExtendedCacheManager" />
     </bean>
     
     <bean id="researchResourcePaginator" class="org.orcid.frontend.web.pagination.ResearchResourcePaginator" />
@@ -97,5 +98,7 @@
     <bean id="userCookieGenerator" class="org.orcid.frontend.spring.web.social.config.UserCookieGenerator" />
     
     <bean id="socialSignInUtils" class="org.orcid.frontend.spring.web.social.config.SocialSignInUtils" />
+    
+    <bean id="thirdPartyLinkManager" class="org.orcid.frontend.web.util.ThirdPartyLinkManager" />
 
 </beans>

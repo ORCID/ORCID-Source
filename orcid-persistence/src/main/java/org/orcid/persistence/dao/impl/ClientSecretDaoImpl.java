@@ -5,6 +5,9 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
@@ -90,5 +93,32 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
         query.setParameter("clientDetailsId", clientSecret.getClientDetailsEntity().getId());
         query.setParameter("clientSecret", clientSecret.getClientSecret());
         return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    @Transactional
+    @SuppressWarnings("unchecked")
+    public List<ClientSecretEntity> getNonPrimaryKeys(Integer limit) {
+        DateTime dt = DateTime.now().minusDays(1);
+        Query query = entityManager.createNativeQuery("select * From client_secret WHERE is_primary = false and last_modified < :yesterday", ClientSecretEntity.class);
+        query.setParameter("yesterday", dt.toDate());
+        query.setMaxResults(limit);
+        return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public boolean removeWithCustomCondition(String condition) {
+        Query query = entityManager.createNativeQuery("delete from client_secret WHERE " + condition);
+        return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    @Transactional
+    public boolean updateLastModified(String clientId, String clientSecret) {
+        Query updateQuery = entityManager.createQuery("update ClientSecretEntity set lastModified = now() where client_details_id = :clientId AND client_secret = :clientSecret");
+        updateQuery.setParameter("clientId", clientId);
+        updateQuery.setParameter("clientSecret", clientSecret);
+        return updateQuery.executeUpdate() > 0;
     }
 }

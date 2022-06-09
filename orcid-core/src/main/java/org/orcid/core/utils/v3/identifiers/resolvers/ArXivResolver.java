@@ -18,7 +18,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
@@ -55,7 +54,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     
     private static final String ARXIV_PREFIX = "arXiv:";
 
-    List<String> types = Lists.newArrayList("arxiv");
+    List<String> types = List.of("arxiv");
 
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     

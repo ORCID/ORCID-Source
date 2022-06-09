@@ -658,8 +658,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
     
-    processClientConversion(): void {
-        console.log(JSON.stringify(this.convertClient));
+    processClientConversion(): void {        
         this.adminActionsService.validateClientConversion(this.convertClient)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -667,12 +666,19 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.convertClient = data;
-                if (!this.convertClient.clientNotFound && !this.convertClient.groupIdNotFound && !this.convertClient.alreadyMember) {
+                if (!this.convertClient.clientNotFound && !this.convertClient.groupIdNotFound && !this.convertClient.groupIdDeactivated && !this.convertClient.alreadyMember) {
                     this.modalService.notifyOther({convertClient:this.convertClient});
                     this.modalService.notifyOther({
                         action: "open",
                         moduleId: "confirmConvertClient"
                     });
+                } else {
+                	setTimeout (() => {
+                    	this.convertClient.clientNotFound = false;
+                    	this.convertClient.groupIdNotFound = false;
+                    	this.convertClient.alreadyMember = false;
+                    	this.convertClient.groupIdDeactivated = false;
+                	}, 10000);  
                 }
             },
             error => {

@@ -3,9 +3,12 @@ package org.orcid.frontend.oauth2;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +27,11 @@ import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
@@ -118,8 +123,6 @@ public class OauthController {
             return requestInfoForm;
         }
 
-        // Populate session data
-        populateSession(request, requestInfoForm);
         // Authorize the request if needed
         return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
     }
@@ -209,9 +212,9 @@ public class OauthController {
                 && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID)) {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)) {
-                forceLogin = true;
+                requestInfoForm.setForceLogin(true);
+                return requestInfoForm;
             }
-            requestInfoForm.setForceLogin(forceLogin);
         }
 
         // Check that the client have the required permissions
@@ -266,6 +269,7 @@ public class OauthController {
                         long max = Long.parseLong(maxAge);
                         if (authTime == null || ((authTime.getTime() + (max * 1000)) < (new java.util.Date()).getTime())) {
                             requestInfoForm.setForceLogin(true);
+                            return requestInfoForm;
                         }
                     } catch (NumberFormatException e) {
                         //ignore
@@ -275,6 +279,7 @@ public class OauthController {
                     forceConfirm = true;
                 } else if (prompt != null && prompt.equals(OrcidOauth2Constants.PROMPT_LOGIN)) {
                     requestInfoForm.setForceLogin(true);
+                    return requestInfoForm;
                 }
             }
         }
@@ -285,20 +290,21 @@ public class OauthController {
             usePersistentTokens = true;
         }
 
+        populateSession(request, requestInfoForm);
+
         if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {                 
                 setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
                 if (authorizationRequest != null) {
-                    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                     Map<String, String> requestParams = new HashMap<String, String>();
                     copyRequestParameters(request, requestParams);
                     Map<String, String> approvalParams = new HashMap<String, String>();
     
                     requestParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
                     approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
-    
+                    
                     requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
     
                     boolean hasPersistent = hasPersistenTokensEnabled(requestInfoForm.getClientId(), requestInfoForm);
@@ -321,11 +327,19 @@ public class OauthController {
                     // Authorization request model
                     Map<String, Object> modelAuth = new HashMap<String, Object>();
                     modelAuth.put("authorizationRequest", authorizationRequest);
-    
+
+                    Map<String, Object> originalRequest = (Map<String, Object>) request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST);
+                    if(originalRequest != null) {
+                        modelAuth.put(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalRequest);
+                    }
+
                     // Approve using the spring authorization endpoint code.
-                    //note this will also handle generting implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));                   
+                    //note this will also handle generating implicit tokens via getTokenGranter().grant("implicit",new ImplicitTokenRequest(tokenRequest, storedOAuth2Request));                   
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
                     requestInfoForm.setRedirectUrl(view.getUrl());
+                    // Oauth has been approved, hence, remove the oauth flag from the session
+                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
+                    request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
                 }
             }
         }
@@ -338,12 +352,38 @@ public class OauthController {
         request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, url);
-        // TODO: We dont need the OAUTH_2SCREENS anymore after the angular
-        // migration
-        // Save a flag to indicate this is a request from the new
+
+        // Save a flag to indicate this is a Oauth request 
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_2SCREENS, true);
-        // Check that the client have the required permissions
-        // Get client name
+        
+        //Required to be able to work with org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint to authorize the request
+        Map<String, Object> authorizationRequestMap = new HashMap<String, Object>();
+
+        authorizationRequestMap.put(OAuth2Utils.CLIENT_ID, requestInfoForm.getClientId());
+        authorizationRequestMap.put(OAuth2Utils.REDIRECT_URI, requestInfoForm.getRedirectUrl());
+        authorizationRequestMap.put(OrcidOauth2Constants.APPROVED, false);
+        authorizationRequestMap.put(OrcidOauth2Constants.RESOURCE_IDS, Set.of("orcid"));
+        
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
+        ClientGrantedAuthorityEntity cgae = new ClientGrantedAuthorityEntity();
+        cgae.setClientDetailsEntity(clientDetails);
+        cgae.setAuthority(clientDetails.getClientGrantedAuthorities().isEmpty() ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
+        authorizationRequestMap.put(OrcidOauth2Constants.AUTHORITIES, Set.of(cgae));        
+        
+        if(requestInfoForm.getStateParam() != null) {
+            authorizationRequestMap.put(OAuth2Utils.STATE, requestInfoForm.getStateParam());
+        }
+        if (requestInfoForm.getResponseType() != null) {
+            authorizationRequestMap.put(OAuth2Utils.RESPONSE_TYPE, Set.of(requestInfoForm.getResponseType()));
+        }
+        if (requestInfoForm.getScopes() != null) {
+            Set<String> scopes = new HashSet<String>();
+            requestInfoForm.getScopes().forEach(s -> {scopes.add(s.getValue());});
+            authorizationRequestMap.put(OAuth2Utils.SCOPE, Set.copyOf(scopes));
+        }
+
+        Map<String, Object> originalAuthorizationRequest = Map.copyOf(authorizationRequestMap);
+        request.getSession().setAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalAuthorizationRequest);
     }
     
     private RequestInfoForm setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,

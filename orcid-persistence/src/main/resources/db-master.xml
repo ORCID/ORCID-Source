@@ -227,7 +227,7 @@
 	<include file="/db/updates/identifier-types/update-doi-https.xml" />
 	<include file="/db/updates/identifier-types/remove-cv-id.xml" />
 	<include file="/db/updates/add_column_reason_locked.xml" />
-	<include file="/db/updates/add_column_reason_locked_description.xml" />
+	<include file="/db/updates/add_column_reason_locked_description.xml" />	
 	<include file="/db/updates/identifier-types/add-case-to-id-types.xml" />
 	<include file="/db/updates/identifier-types/update-kuid-url2.xml" />
 	<include file="/db/updates/create_invalid_record_data_changes_table.xml" />
@@ -282,6 +282,7 @@
 	<include file="/db/updates/add_email_hash_column_to_email_table.xml" />
 	<include file="/db/updates/init_display_index_on_affiliations.xml" />
 	<include file="/db/updates/use_email_hash_as_email_primary_key.xml" />
+	<include file="/db/updates/add_record_locked_date_admin_id.xml" />
 	
 	<!-- 
          Please leave the following script commented out as it breaks unit tests using hsqldb. it is still here because it has 
@@ -348,5 +349,16 @@
   <include file="/db/updates/identifier-types/update-osti-identifier-prefix.xml" />  
   <include file="/db/updates/identifier-types/identifier-type-45-ppr.xml" />
   <include file="/db/updates/hsql_grant_seq.xml" /> 
-  <include file="/db/updates/identifier-types/update-proposal-id-and-grant-number-primary-use.xml" />
+  <include file="/db/updates/identifier-types/update-proposal-id-and-grant-number-primary-use.xml" />  
+  <include file="/db/updates/identifier-types/identifier-type-46-empiar.xml" />
+  <include file="/db/updates/identifier-types/identifier-type-48-emdb.xml" />  
+  <include file="/db/updates/identifier-types/identifier-type-49-cstr.xml" />      
+  <include file="/db/updates/add_primary_key_to_dw_active_users.xml" />
+  <include file="/db/updates/dw_alter_dw_org_affiliation_relation.xml"/>
+  <include file="/db/updates/dw_work_external_ids.xml"/>
+  <include file="/db/updates/identifier-types/identifier-type-47-ismn.xml" />
+  <include file="/db/updates/identifier-types/update-pmid-resolution-prefix.xml" />
+  <include file="/db/updates/identifier-types/update-pmc-resolution-prefix.xml" />
+  <include file="/db/updates/profile_lock_cols.xml" />
+  <include file="/db/updates/add_top_contributors_json_to_work.xml" />
 </databaseChangeLog>

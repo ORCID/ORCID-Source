@@ -1,5 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.ClientScopeDao;
@@ -36,6 +38,13 @@ public class ClientScopeDaoImpl extends GenericDaoImpl<ClientScopeEntity, Client
         insertQuery.setParameter("clientDetailsId", clientDetailsId);
         insertQuery.setParameter("scope", scope);
         insertQuery.executeUpdate();
+    }
+
+    @Override
+    public List<String> getActiveScopes(String clientDetailsId) {
+        Query getActiveScopes = entityManager.createNativeQuery("SELECT scope_type FROM client_scope WHERE client_details_id = :clientDetailsId");
+        getActiveScopes.setParameter("clientDetailsId", clientDetailsId);
+        return getActiveScopes.getResultList();
     }
 
 }

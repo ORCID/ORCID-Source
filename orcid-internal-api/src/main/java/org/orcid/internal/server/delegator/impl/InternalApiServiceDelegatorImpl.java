@@ -7,18 +7,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
+import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.LockedException;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.v3.MembersManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.togglz.Features;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.orcid.internal.util.EmailResponse;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.Member;
+import org.springframework.http.HttpStatus;
 
 /**
  * 
@@ -32,7 +41,13 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     
     @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
-    
+
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+
+    @Resource(name = "orcidSecurityManagerV3")
+    protected OrcidSecurityManager orcidSecurityManager;
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -70,7 +85,34 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
             featuresMap.put(feature, feature.isActive());
         }
         return Response.ok(featuresMap).build();
-    }        
-    
+    }
+
+    @Override
+    @AccessControl(requiredScope = ScopePathType.INTERNAL, requestComesFromInternalApi = true)
+    public Response findOrcidByEmail(String email) {
+        if (email != null && !email.isEmpty()) {
+            if (emailManagerReadOnly.emailExists(email)) {
+                String orcid = null;
+
+                try {
+                    orcid = emailManagerReadOnly.findOrcidByVerifiedEmail(email);
+                } catch (NoResultException e) {
+                    return Response.ok(new EmailResponse("", email, HttpStatus.NOT_FOUND)).build();
+                }
+
+                try {
+                    orcidSecurityManager.checkProfile(orcid);
+                } catch (LockedException | DeactivatedException | OrcidNotClaimedException | OrcidDeprecatedException e) {
+                    return Response.ok(new EmailResponse("", email, HttpStatus.NOT_FOUND)).build();
+                }
+
+                return Response.ok(new EmailResponse(orcid, email, HttpStatus.FOUND)).build();
+            } else {
+                return Response.ok(new EmailResponse("", email, HttpStatus.NOT_FOUND)).build();
+            }
+        } else {
+            return Response.noContent().build();
+        }
+    }
     
 }

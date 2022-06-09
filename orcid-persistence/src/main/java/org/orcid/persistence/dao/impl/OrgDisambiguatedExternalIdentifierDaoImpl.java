@@ -8,10 +8,14 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<OrgDisambiguatedExternalIdentifierEntity, Long>
         implements OrgDisambiguatedExternalIdentifierDao {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrgDisambiguatedExternalIdentifierDaoImpl.class);
 
     public OrgDisambiguatedExternalIdentifierDaoImpl() {
         super(OrgDisambiguatedExternalIdentifierEntity.class);
@@ -63,6 +67,16 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
             //Ignore no result exception and return null
         }
         return false;
+    }
+    
+    @Override
+    public List<OrgDisambiguatedExternalIdentifierEntity> findByIdentifierIdAndType(String identifier, String identifierType) {
+        TypedQuery<OrgDisambiguatedExternalIdentifierEntity> query = entityManager.createQuery("FROM OrgDisambiguatedExternalIdentifierEntity WHERE identifier = :identifier AND identifierType = :identifierType",
+                OrgDisambiguatedExternalIdentifierEntity.class);
+        query.setParameter("identifier", identifier);
+        query.setParameter("identifierType", identifierType);;
+        LOGGER.info("OrgDisambiguatedExternalIdentifier by id and type: [" + query.toString() + "]");
+        return query.getResultList();
     }
 
 }

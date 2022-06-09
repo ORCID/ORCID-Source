@@ -84,10 +84,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Boolean recordLocked = Boolean.FALSE;
     private String reasonLocked;
     private String reasonLockedDescription;
+    private Date recordLockedDate;
+    private String recordLockingAdmin;
     private Date credentialsExpiry;
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
     private Date lastLogin;
+    private Date signinLockStart;
+    private Date signinLockLastAttempt;
+    private Integer signinLockCount;
 
     // Deprecation fields
     private ProfileEntity primaryRecord;
@@ -229,6 +234,38 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     public void setReasonLockedDescription(String reasonLockedDescription) {
         this.reasonLockedDescription = reasonLockedDescription;
+    }
+    
+    /**
+     * @return the recordLockedDate
+     */
+    @Column(name = "record_locked_date")
+    public Date getRecordLockedDate() {
+        return recordLockedDate;
+    }
+    
+    /**
+     * @param recordLockedDate
+     *            a timestamp of when the record was locked
+     */
+    public void setRecordLockedDate(Date recordLockedDate) {
+        this.recordLockedDate = recordLockedDate;
+    }
+    
+    /**
+     * @return the recordLockingAdmin
+     */
+    @Column(name = "record_locked_admin_id")
+    public String getRecordLockingAdmin() {
+        return recordLockingAdmin;
+    }
+    
+    /**
+     * @param recordLockingAdmin
+     *            the iD of the admin who locked the record
+     */
+    public void setRecordLockingAdmin(String recordLockingAdmin) {
+        this.recordLockingAdmin = recordLockingAdmin;
     }
     
     /**
@@ -884,5 +921,60 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      * */
     public void setResearchResource(SortedSet<ResearchResourceEntity> researchResources) {
         this.researchResources = researchResources;
+    }
+    
+    /*************** SIGNIN LOCK COLUMNS ***************
+     * 
+     *     private Date signinLockDate;
+    private Date signinLockLastAttempt;
+    private Integer signinLockCount;
+     */
+    
+    /**
+     * @return the signinLockDate
+     */
+    @Column(name = "signin_lock_start")
+    public Date getSigninLockStart() {
+        return signinLockStart;
+    }
+    
+    /**
+     * @param signinLockDate
+     *            a timestamp of when signin lock window started
+     */
+    public void setSigninLockStart(Date signinLockStart) {
+        this.signinLockStart = signinLockStart;
+    }
+    
+    /**
+     * @return the signinLockLastAttempt
+     */
+    @Column(name = "signin_lock_last_attempt")
+    public Date getSigninLockLastAttempt() {
+        return signinLockLastAttempt;
+    }
+    
+    /**
+     * @param signinLockLastAttempt
+     *            a timestamp of when signin last failed
+     */
+    public void setSigninLockLastAttempt(Date signinLockLastAttempt) {
+        this.signinLockLastAttempt = signinLockLastAttempt;
+    }
+    
+    /**
+     * @return the signinLockCount
+     */
+    @Column(name = "signin_lock_count")
+    public Integer getSigninLockCount() {
+        return signinLockCount;
+    }
+    
+    /**
+     * @param signinLockCount
+     *            a timestamp of when signin lock window started
+     */
+    public void setSigninLockCount(Integer signinLockCount) {
+        this.signinLockCount = signinLockCount;
     }
 }

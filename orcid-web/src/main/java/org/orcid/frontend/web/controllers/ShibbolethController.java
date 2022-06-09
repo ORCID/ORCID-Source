@@ -20,7 +20,6 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -160,11 +159,7 @@ public class ShibbolethController extends BaseController {
             
             ProfileEntity profile = profileEntityCacheManager.retrieve(userConnectionEntity.getOrcid());
             if (profile.getUsing2FA()) {
-                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                    return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin");
-                } else {
-                    return new ModelAndView("institutional_2FA");   
-                }
+                return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin");
             }
             
             try {
@@ -180,7 +175,7 @@ public class ShibbolethController extends BaseController {
         
         LOGGER.warn("Remote user was not null, however, userConnectionEntity is for {}", shibIdentityProvider);
 
-        if (mav.getViewName().equals("social_link_signin") && Features.ORCID_ANGULAR_SIGNIN.isActive()) {
+        if (mav.getViewName().equals("social_link_signin")) {
             String insitutionalLinking = "/institutional-linking";
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             if (queryString != null) {
@@ -212,11 +207,7 @@ public class ShibbolethController extends BaseController {
             LOGGER.info("Found existing user connection: {}", userConnectionEntity);
             HeaderCheckResult checkHeadersResult = institutionalSignInManager.checkHeaders(parseOriginalHeaders(userConnectionEntity.getHeadersJson()), headers);
             if (!checkHeadersResult.isSuccess()) {
-                if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                    codes.setRedirectUrl(orcidUrlManager.getBaseUrl() +"/2fa-signin");
-                } else {
-                    codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");
-                }
+                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/2fa-signin");
                 return codes;
             }
             
@@ -236,11 +227,7 @@ public class ShibbolethController extends BaseController {
             codes.setRedirectUrl(calculateRedirectUrl(request, response, false, false, "shibboleth"));
             return codes;
         } else {
-            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() +"/2fa-signin");
-            } else {
-                codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/shibboleth/signin");
-            }
+            codes.setRedirectUrl(orcidUrlManager.getBaseUrl() + "/2fa-signin");
             return codes;
         }
     }

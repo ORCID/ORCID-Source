@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -41,7 +40,6 @@ import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.impl.InternalSSOManagerImpl;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -104,9 +102,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Mock
-    private InternalSSOManagerImpl internalSSOManager;
-    
-    @Mock
     private NotificationManager notificationManager;    
     
     @Mock
@@ -149,8 +144,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "orcidUserDetailsService", orcidUserDetailsServiceMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "notificationManager", notificationManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "internalSSOManager", internalSSOManager); 
+        TargetProxyHelper.injectIntoProxy(registrationController, "notificationManager", notificationManager);         
         
         when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
         
@@ -539,7 +533,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertEquals("redirect:/my-orcid?emailVerified=true", mav.getViewName());
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
@@ -586,7 +580,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/my-orcid", mav.getViewName());
+        assertEquals("redirect:/my-orcid?emailVerified=false", mav.getViewName());
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
@@ -603,7 +597,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/signin", mav.getViewName());
+        assertEquals("redirect:https://testserver.orcid.org/signin?invalidVerifyUrl=true", mav.getViewName());
         assertTrue(ra.getFlashAttributes().containsKey("invalidVerifyUrl"));
         assertTrue((Boolean) ra.getFlashAttributes().get("invalidVerifyUrl"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());

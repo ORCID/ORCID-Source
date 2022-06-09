@@ -307,11 +307,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
@@ -379,11 +375,7 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
 
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode = Utils.getPutCode(response);
 
         try {
             Distinction duplicate = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
@@ -513,20 +505,12 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_CREATED, response.getStatus());
         
-        Map<?, ?> map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List<?> resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode1 = Utils.getPutCode(response);
 
         Distinction another = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
         response = serviceDelegator.createDistinction(ORCID, another);
         
-        map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        resultWithPutCode = (List<?>) map.get("Location");
-        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        Long putCode2 = Utils.getPutCode(response);
         
         response = serviceDelegator.viewDistinction(ORCID, putCode2);
         another = (Distinction) response.getEntity();

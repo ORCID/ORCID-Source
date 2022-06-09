@@ -1,16 +1,13 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +18,6 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -32,7 +28,6 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -42,18 +37,9 @@ import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Email;
-import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.constants.SendEmailFrequency;
-import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -75,7 +61,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -117,9 +102,6 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private RecaptchaVerifier recaptchaVerifier;
-
-    @Resource
-    private InternalSSOManager internalSSOManager;
 
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
@@ -312,11 +294,9 @@ public class RegistrationController extends BaseController {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
         String redirectUrl = calculateRedirectUrl(request, response, true);
-        
-        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            if (request.getQueryString() == null || request.getQueryString().isEmpty()){
-                redirectUrl = calculateRedirectUrl(request, response, true, true);
-            }
+
+        if (request.getQueryString() == null || request.getQueryString().isEmpty()) {
+            redirectUrl = calculateRedirectUrl(request, response, true, true);
         } 
         r.setUrl(redirectUrl);
         return r;
@@ -475,62 +455,6 @@ public class RegistrationController extends BaseController {
         return mav;
     }
 
-    @RequestMapping(value = "/dupicateResearcher.json", method = RequestMethod.GET)
-    public @ResponseBody List<DupicateResearcher> getDupicateResearcher(@RequestParam("givenNames") String givenNames, @RequestParam("familyNames") String familyNames) {
-        List<DupicateResearcher> drList = new ArrayList<DupicateResearcher>();
-        Search potentialDuplicates = findPotentialDuplicatesByFirstNameLastName(givenNames, familyNames);
-        if (potentialDuplicates != null) {
-            List<String> orcidIds = potentialDuplicates.getResults().stream().map(Result::getOrcidIdentifier).map(x -> x.getPath()).collect(Collectors.toList());
-            for (String orcid : orcidIds) {
-                DupicateResearcher dr = new DupicateResearcher();
-                Email pm = emailManagerReadOnly.findPrimaryEmail(orcid);
-                if (Visibility.PUBLIC.equals(pm.getVisibility())) {
-                    dr.setEmail(pm.getEmail());
-                }
-                Name n = recordNameManagerReadOnly.getRecordName(orcid);
-                if (Visibility.PUBLIC.equals(n.getVisibility())) {
-                    dr.setFamilyNames(n.getFamilyName() == null ? null : n.getFamilyName().getContent());
-                    dr.setGivenNames(n.getGivenNames() == null ? null : n.getGivenNames().getContent());
-                    
-                }
-                
-                Date createdDate = profileEntityCacheManager.retrieve(orcid).getDateCreated();
-                String pattern = "yyyy-MM-dd zzz";
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-                dr.setCreatedDate(createdDate == null? null: simpleDateFormat.format(createdDate));
-
-                List<String> institutions = new ArrayList<String>();
-
-                Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
-                for (AffiliationType type : AffiliationType.values()) {
-                    if ((type == AffiliationType.EDUCATION || type == AffiliationType.EMPLOYMENT) && affiliationsMap.containsKey(type)) {
-                        List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
-                        IntStream.range(0, elementsList.size()).forEach(idx -> {
-                            AffiliationGroupForm groupForm = AffiliationGroupForm.valueOf(elementsList.get(idx), type.name() + '_' + idx, orcid);
-                            // Fill country on the default affiliation
-                            AffiliationForm defaultAffiliation = groupForm.getDefaultAffiliation();
-                            if (defaultAffiliation != null) {
-                                if (!PojoUtil.isEmpty(groupForm.getDefaultAffiliation().getAffiliationName())) {
-
-                                    if (!institutions.contains(groupForm.getDefaultAffiliation().getAffiliationName().getValue())) {
-                                        institutions.add(groupForm.getDefaultAffiliation().getAffiliationName().getValue());
-                                    }
-                                }
-                            }
-                        });
-
-                    }
-                }
-                if (institutions.size() > 0) {
-                    dr.setInstitution(String.join(", ", institutions));
-                }
-                dr.setOrcid(orcid);
-                drList.add(dr);
-            }
-        }
-        return drList;
-    }
-
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
             RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
@@ -570,22 +494,18 @@ public class RegistrationController extends BaseController {
                 }
 
                 if (currentUser != null && currentUser.equals(orcid)) {
-                    redirect = "redirect:/my-orcid";
+                    redirect = "redirect:/my-orcid?" + sb.toString();
+                } else {
+                    redirect = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin?" + sb.toString();
                 }
             }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             sb.append("invalidVerifyUrl=true");
+            redirect = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin?" + sb.toString();
             SecurityContextHolder.clearContext();
-        }
-
-        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            // TODO add parameters to my-orcid redirect @DanielPalafox
-            if (redirect.indexOf("signin") > 0) {
-                redirect = "redirect:"+ orcidUrlManager.getBaseUrl() +"/signin?" + sb.toString();
-            }
-        }
+        }       
 
         return new ModelAndView(redirect);
     }
@@ -614,11 +534,7 @@ public class RegistrationController extends BaseController {
             token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            if (internalSSOManager.enableCookie()) {
-                // Set user cookie
-                internalSSOManager.writeCookie(orcidId, request, response);
-            }
+            SecurityContextHolder.getContext().setAuthentication(authentication);            
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);

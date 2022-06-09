@@ -69,7 +69,7 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     public AvailableLocales retrieveLocale(String orcid);      
     
-    boolean lockProfile(String orcid, String lockReason, String description);
+    boolean lockProfile(String orcid, String lockReason, String description, String adminUser);
 
     boolean unlockProfile(String orcid);
 
@@ -79,5 +79,13 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     void enable2FA(String orcid);
 
-    void update2FASecret(String orcid, String secret);       
+    void update2FASecret(String orcid, String secret);  
+    
+    void startSigninLock(String orcid);
+    
+    void resetSigninLock(String orcid);
+    
+    void updateSigninLock(String orcid, Integer count);
+    
+    List<Object[]> getSigninLock(String orcid);
 }

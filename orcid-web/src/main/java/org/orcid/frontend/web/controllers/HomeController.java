@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.impl.StatisticsCacheManager;
@@ -35,6 +34,7 @@ import org.orcid.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,8 +45,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import org.springframework.http.HttpHeaders;
-
 @Controller
 public class HomeController extends BaseController {
     
@@ -54,10 +52,7 @@ public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
     
-
-    @Value("${org.orcid.core.aboutUriTemporalWhileTransitioningToTheNewInfoWebSite:https://info.orcid.org}")
-    private String aboutUriTemporal;
-    
+    private static final String JSESSIONID = "JSESSIONID";
 
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
@@ -78,10 +73,7 @@ public class HomeController extends BaseController {
     private URL maintenanceHeaderUrl;
     
     @Resource
-    private LocaleManager localeManager;
-    
-    @Resource
-    private InternalSSOManager internalSSOManager;
+    private LocaleManager localeManager;        
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
@@ -162,26 +154,7 @@ public class HomeController extends BaseController {
             return us;
         } else {
             UserStatus us = new UserStatus();
-            us.setLoggedIn((orcid != null));
-            if(internalSSOManager.enableCookie()) {
-                Cookie [] cookies = request.getCookies();
-                //Update cookie 
-                if(cookies != null) {
-                    for(Cookie cookie : cookies) {
-                        if(InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
-                            //If there are no user, just delete the cookie and token
-                            if(PojoUtil.isEmpty(orcid)) {
-                                cookie.setMaxAge(0);
-                                cookie.setValue(StringUtils.EMPTY);
-                                response.addCookie(cookie);
-                            } else if(internalSSOManager.verifyToken(orcid, cookie.getValue())) {
-                                internalSSOManager.updateCookie(orcid, request, response);
-                            } 
-                            break;
-                        }                    
-                    }
-                }
-            }
+            us.setLoggedIn((orcid != null));            
             return us;
         }                                            
     }
@@ -191,7 +164,7 @@ public class HomeController extends BaseController {
         // Delete cookie and token associated with that cookie
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (InternalSSOManager.JSESSIONID.equals(cookie.getName())) {
+                if (JSESSIONID.equals(cookie.getName())) {
                     cookie.setValue(StringUtils.EMPTY);
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
@@ -270,7 +243,6 @@ public class HomeController extends BaseController {
         configDetails.setMessage("STATIC_PATH", getStaticContentPath(request));
         configDetails.setMessage("SHIBBOLETH_ENABLED", String.valueOf(isShibbolethEnabled()));
         configDetails.setMessage("ABOUT_URI", aboutUri);
-        configDetails.setMessage("ABOUT_URI_TEMPORAL", aboutUriTemporal);
         configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
         configDetails.setMessage("HOTJAR_TRACKING_ID", hotjarTrackingId);
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());

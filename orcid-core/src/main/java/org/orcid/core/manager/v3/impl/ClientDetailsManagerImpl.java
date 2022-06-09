@@ -262,46 +262,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         return result;
     }
 
-    /**
-     * Removes all non primary client secret keys
-     * 
-     * @param clientId
-     * */
-    @Override
-    @Transactional
-    public void cleanOldClientKeys() {
-        LOGGER.info("Starting cron to delete non primary client keys");
-        Date currentDate = new Date();
-        List<ClientDetailsEntity> allClientDetails = this.getAll();
-        if (allClientDetails != null && allClientDetails != null) {
-            for (ClientDetailsEntity clientDetails : allClientDetails) {
-                String clientId = clientDetails.getClientId();
-                LOGGER.info("Deleting non primary keys for client: {}", clientId);
-                Set<ClientSecretEntity> clientSecrets = clientDetails.getClientSecrets();
-                boolean anyRemoved = false;
-                for (ClientSecretEntity clientSecret : clientSecrets) {
-                    if (!clientSecret.isPrimary()) {
-                        Date dateRevoked = clientSecret.getLastModified();
-                        Date timeToDeleteMe = DateUtils.addHours(dateRevoked, 24);
-                        // If the key have been revoked more than 24 hours ago
-                        if (timeToDeleteMe.before(currentDate)) {
-                            LOGGER.info("Deleting key for client {}", clientId);
-                            boolean removed = clientSecretDao.removeClientSecret(clientId, clientSecret.getClientSecret());
-                            if(removed) {
-                                anyRemoved = true;
-                            }
-                        }
-                    }
-                }
-                // Update the last modified on the client record
-                if(anyRemoved) {
-                    this.updateLastModified(clientId);
-                }
-            }
-        }
-        LOGGER.info("Cron done");
-    }
-
     @Override
     public List<ClientDetailsEntity> getAll() {
         return clientDetailsDaoReadOnly.getAll();
@@ -424,10 +384,42 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void convertPublicClientToMember(String clientId, String groupId) {
+        LOGGER.info("Promoting client {} as member with groupId {}", clientId, groupId);
         ProfileEntity group = profileEntityManager.findByOrcid(groupId);
         ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
-        clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name());
+        LOGGER.info("Client {} will be a {}", clientId, clientType);
+        // Change client type
+        if (clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name())) {
+            // Change role from 'ROLE_PUBLIC' to 'ROLE_CLIENT'
+            LOGGER.info("Updating granted authority for client {}", clientId);
+            clientDetailsDao.updateClientGrantedAuthority(clientId, "ROLE_CLIENT");
+            // Assign scopes to client
+            List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
+            Set<String> newScopes = null;
+            if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
+                newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
+            } else {
+                newScopes = ClientType.getScopes(ClientType.UPDATER);
+            }
+
+            for (String activeScope : clientScopes) {
+                if (!newScopes.contains(activeScope)) {
+                    // Delete scope
+                    LOGGER.info("Deleting scope {} from client {}", activeScope, clientId);
+                    clientScopeDao.deleteScope(clientId, activeScope);
+                }
+            }
+
+            for (String newScope : newScopes) {
+                if (!clientScopes.contains(newScope)) {
+                    LOGGER.info("Adding scope {} to client {}", newScope, clientId);
+                    clientScopeDao.insertClientScope(clientId, newScope);
+                }
+            }
+            LOGGER.info("Client {} was succesfully promoted to {}", clientId, clientType);
+        }
     }
     
 }

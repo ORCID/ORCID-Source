@@ -3,21 +3,24 @@
 	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
-	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.3.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.6.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
+       http://www.springframework.org/schema/security/oauth2 https://raw.githubusercontent.com/spring-attic/spring-security-oauth/main/spring-security-oauth2/src/main/resources/org/springframework/security/oauth2/spring-security-oauth2-2.0.xsd">
 
 	<context:component-scan base-package="org.orcid"/>
 	<context:annotation-config />
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
 	<sec:global-method-security pre-post-annotations="enabled" />
 	
+	<bean id="orcidOauthRedirectResolver" class="org.orcid.core.oauth.security.OrcidOauthRedirectResolver" />
+	
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
 		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />		
+		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />	
+		<property name="redirectResolver" ref="orcidOauthRedirectResolver" />	
 	</bean>
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
@@ -112,9 +115,9 @@
 	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
 	<sec:http pattern="/webStatus.json" security="none" create-session="stateless" />
 	<sec:http pattern="/error" security="none" />
-	<sec:http pattern="/not-found" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
 	<sec:http pattern="/static/**" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[x](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
 	<sec:http pattern="/.well-known/**" security="none" />
@@ -272,6 +275,8 @@
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/not-found"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/home(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/identifiers/norm/(.*)?"
@@ -292,6 +297,8 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />			
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/person.json(\?.*)?"
@@ -315,8 +322,12 @@
  	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResource.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />  	      	 	      	
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 
- 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-review.json(\?.*)?"
+ 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-review.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-minimized.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	    
 		
 		<sec:intercept-url pattern="/messages.json(\?.*)?"
@@ -364,8 +375,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/registerConfirm.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/dupicateResearcher.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/claim/.*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/resend-claim(\?.*)?"
@@ -383,6 +392,10 @@
 		<sec:intercept-url pattern="/reset-password-email/.*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/reset-password-email.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
+		<sec:intercept-url pattern="/reset-password-email-v2.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/reset-password-email-validate-token.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -506,7 +519,7 @@
 		<property name="exitUserUrl" value="/exit-user" />
 		<property name="targetUrl" value="/my-orcid" />
 		<property name="switchFailureUrl" value="/signin" />
-	</bean>
+	</bean>	
 	
 	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
 					

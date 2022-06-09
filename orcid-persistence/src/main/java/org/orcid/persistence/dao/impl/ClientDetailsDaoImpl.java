@@ -64,6 +64,22 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
+    
+    /**
+     * Update the last modified dates of given client ids
+     * 
+     * @param clientIds
+     *            A list of client ids
+     * @return the amount of modified rows
+     * */
+    
+    @Override
+    @Transactional
+    public int updateLastModifiedBulk(List<String> clientIds) {
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id in :clientIds");
+        updateQuery.setParameter("clientIds", clientIds);
+        return updateQuery.executeUpdate();
+    }
 
     @Override
     @Transactional
@@ -230,12 +246,21 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     @Transactional
-    public void convertPublicClientToMember(String clientId, String groupId, String clientType) {
+    public boolean convertPublicClientToMember(String clientId, String groupId, String clientType) {
         Query updateQuery = entityManager.createNativeQuery("UPDATE client_details SET last_modified = now(), group_orcid = :groupId, client_type = :clientType WHERE client_details_id = :clientId");
         updateQuery.setParameter("clientId", clientId);
         updateQuery.setParameter("groupId", groupId);
         updateQuery.setParameter("clientType", clientType);
-        updateQuery.executeUpdate();
+        return updateQuery.executeUpdate() > 0;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateClientGrantedAuthority(String clientId, String grantedAuthority) {
+        Query updateGrantedAuthorityQuery = entityManager.createNativeQuery("UPDATE client_granted_authority SET granted_authority = :authority WHERE client_details_id = :clientId");
+        updateGrantedAuthorityQuery.setParameter("authority", grantedAuthority);
+        updateGrantedAuthorityQuery.setParameter("clientId", clientId);
+        return updateGrantedAuthorityQuery.executeUpdate() > 0;
     }
 
 }

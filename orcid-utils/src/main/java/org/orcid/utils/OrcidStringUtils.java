@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 
 /**
  * <p>
@@ -24,7 +24,7 @@ public class OrcidStringUtils {
     public static String ORCID_URI_STRING = "http://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String ORCID_URI_2_1_STRING = "https://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String EMAIL_REGEXP = "^([^@\\s]|(\".+\"))+@([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]+\\.)+([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]{2,})+$";
-    public static String URL_REGEXP = "^((((https?|ftps?|gopher|telnet|nntp)://)|(mailto:|news:))(%[0-9A-Fa-f]{2}|[-()_.!~*';/?:@&=+$,A-Za-z0-9])+)([).!';/?:,][[:blank:]])?$";
+    public static String URL_REGEXP = "^((https?):\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#%\\[\\]@!\\$&'\\(\\)\\*\\+\\\\,;=.><\\ ]+$";
 
     private static String LT = "&lt;";
     private static String GT = "&gt;";
@@ -43,7 +43,7 @@ public class OrcidStringUtils {
     private static final Pattern orcidUri2_1Pattern = Pattern.compile(ORCID_URI_2_1_STRING);
     private static final Pattern clientIdPattern = Pattern.compile("APP-[\\dA-Z]{16}");
     private static final Pattern emailPattern = Pattern.compile(EMAIL_REGEXP);
-    private static final Pattern urlPattern = Pattern.compile(URL_REGEXP);
+    private static final Pattern urlPattern = Pattern.compile(URL_REGEXP, Pattern.CASE_INSENSITIVE);
 
     private static final Pattern invalidXMLCharactersPattern = Pattern.compile("(\u0000|\uFFFE|\uFFFF)");
 
@@ -74,7 +74,7 @@ public class OrcidStringUtils {
     }
 
     public static boolean isValidURL(String url) {
-        if (StringUtils.isNotBlank(url)) {
+        if (StringUtils.isNotBlank(url) && url.length() <= 2000) {
             return urlPattern.matcher(url).matches();
         } else {
             return false;
@@ -110,14 +110,14 @@ public class OrcidStringUtils {
     }
 
     public static String stripHtml(String s) {
-        String output = Jsoup.clean(s, "", Whitelist.none(), outputSettings);
+        String output = Jsoup.clean(s, "", Safelist.none(), outputSettings);
         output = output.replace(GT, DECODED_GT);
         output = output.replace(AMP, DECODED_AMP);
         return output;
     }
 
     public static String simpleHtml(String s) {
-        String output = Jsoup.clean(s, "", Whitelist.simpleText(), outputSettings);
+        String output = Jsoup.clean(s, "", Safelist.simpleText(), outputSettings);
         // According to
         // http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
         // jsoup scape lt, gt, amp, apos, and quot for xhtml

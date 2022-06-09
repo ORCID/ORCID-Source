@@ -26,8 +26,8 @@ import org.springframework.test.context.ContextConfiguration;
 public class WorkDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4443";
-    private static String OTHER_USER_ORCID = "0000-0000-0000-0003";    
-    
+    private static String OTHER_USER_ORCID = "0000-0000-0000-0003";
+
     @Resource(name = "workDao")
     private WorkDao dao;
 
@@ -41,7 +41,7 @@ public class WorkDaoTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }
-    
+
     @Test
     public void removeAllWorksTest() {
         long initialNumber = dao.countAll();
@@ -52,7 +52,7 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(6, otherUserElements);
         //Remove all elements that belongs to USER_ORCID
         dao.removeWorks(USER_ORCID);
-        
+
         long finalNumberOfElements = dao.countAll();
         long finalNumberOfOtherUserElements = dao.getWorkLastModifiedList(OTHER_USER_ORCID).size();
         long finalNumberOfElementsThatBelogsToUser = dao.getWorkLastModifiedList(USER_ORCID).size();
@@ -60,7 +60,7 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
     }
-    
+
     @Test
     public void getWorksByOrcidIdTest() {
         List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");
@@ -72,13 +72,13 @@ public class WorkDaoTest extends DBUnitTest {
         }
         assertTrue("Elements not found: " + existingIds, existingIds.isEmpty());
     }
-    
+
     @Test
     public void testHasPublicWorks() {
         assertTrue(dao.hasPublicWorks("0000-0000-0000-0003"));
         assertFalse(dao.hasPublicWorks("0000-0000-0000-0002"));
     }
-    
+
     @Test
     public void mergeTest() {
         WorkEntity e = dao.find(18L);
@@ -91,19 +91,19 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(dateCreated, updated.getDateCreated());
         assertTrue(updated.getLastModified().after(lastModified));
     }
-    
+
     @Test
     public void persistTest() {
         WorkEntity e = new WorkEntity();
-        e.setOrcid("0000-0000-0000-0002"); 
+        e.setOrcid("0000-0000-0000-0002");
         e.setVisibility("PRIVATE");
-        
+
         dao.persist(e);
         assertNotNull(e.getId());
         assertNotNull(e.getDateCreated());
         assertNotNull(e.getLastModified());
         assertEquals(e.getDateCreated(), e.getLastModified());
-        
+
         WorkEntity e2 = dao.find(e.getId());
         assertNotNull(e2.getDateCreated());
         assertNotNull(e2.getLastModified());

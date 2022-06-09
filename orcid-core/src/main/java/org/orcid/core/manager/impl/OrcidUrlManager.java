@@ -220,7 +220,7 @@ public class OrcidUrlManager {
         String url = null;
         if(isOauthRequest) {
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);            
-            if(queryString.startsWith("oauth&")) {
+            if(queryString != null && queryString.startsWith("oauth&")) {
                 queryString = queryString.replaceFirst("oauth&", "");
             }
             url = getBaseUrl() + "/oauth/authorize?" + queryString;

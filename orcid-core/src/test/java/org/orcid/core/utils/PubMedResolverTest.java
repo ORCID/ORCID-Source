@@ -80,7 +80,7 @@ public class PubMedResolverTest {
         when(normalizationService.generateNormalisedURL(eq("pmc"), anyString())).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
-                return "https://europepmc.org/articles/" + invocation.getArgument(1).toString();
+                return "https://europepmc.org/article/pmc/" + invocation.getArgument(1).toString();
             }
         });
 
@@ -129,7 +129,7 @@ public class PubMedResolverTest {
 
         when(cache.isHttp200(anyString())).thenReturn(true);
 
-        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=PMCID:pmc1&resultType=core&format=json", MediaType.APPLICATION_JSON))
+        when(cache.get("https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=PMCID:PMC1&resultType=core&format=json", MediaType.APPLICATION_JSON))
                 .thenAnswer(new Answer<InputStream>() {
 
                     @Override
@@ -152,7 +152,7 @@ public class PubMedResolverTest {
 
     @Test
     public void resolvePMCMetadataTest() {
-        Work work = resolver.resolveMetadata("pmc", "pmc1");
+        Work work = resolver.resolveMetadata("pmc", "1");
         assertNotNull(work);
         assertEquals("PMC title", work.getWorkTitle().getTitle().getContent());
         assertEquals("Journal title", work.getJournalTitle().getContent());

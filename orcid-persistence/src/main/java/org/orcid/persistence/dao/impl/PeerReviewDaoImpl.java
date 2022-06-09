@@ -45,7 +45,29 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
     }
-    
+
+    @Override
+    public List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic) {
+        String sqlString = null;
+        if (justPublic) {
+            sqlString = "SELECT g.id, p.group_id, p.id as put_code, p.visibility, g.group_name FROM peer_review p, group_id_record g WHERE p.orcid=:orcid AND p.visibility='PUBLIC' AND p.group_id=g.group_id ORDER BY p.group_id, p.display_index, p.date_created";
+        } else {
+            sqlString = "SELECT g.id, p.group_id, p.id as put_code, p.visibility, g.group_name FROM peer_review p, group_id_record g WHERE p.orcid=:orcid AND p.group_id=g.group_id ORDER BY p.group_id, p.display_index, p.date_created";
+        }
+        Query query = entityManager.createNativeQuery(sqlString);
+        query.setParameter("orcid", orcid);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId) {
+        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where profile.id=:orcid and groupId=:groupId order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("groupId", groupId);
+        return query.getResultList();
+    }
+
     @Override
     @Transactional
     @UpdateProfileLastModified

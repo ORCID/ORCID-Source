@@ -15,18 +15,23 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidApiException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.exception.OrcidNotificationException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -46,6 +51,7 @@ import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -111,15 +117,23 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof RedirectMismatchException) {
             logShortError(t, clientId);
+        } else if (t instanceof DuplicatedGroupIdRecordException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidDuplicatedActivityException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidDuplicatedElementException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidNotificationException) {
+            logShortError(t, clientId);
         } else {
-                LOGGER.error("An exception has occured processing request from client " + clientId, t);
+            LOGGER.error("An exception has occured processing request from client " + clientId, t);
         }
 
         if (isOAuthTokenRequest()) {
             return oAuthErrorResponse(t);
         }
 
-        String apiVersion = getApiVersion();
+        String apiVersion = ApiUtils.getApiVersion();
 
         if (!PojoUtil.isEmpty(apiVersion)) {
             switch (apiVersion) {
@@ -337,12 +351,6 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
         return apiSection != null ? apiSection : ApiSection.V1;
-    }
-
-    private String getApiVersion() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiVersion;
     }
 
     private boolean isOAuthTokenRequest() {

@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.util.Iterator;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -22,7 +23,6 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
@@ -120,11 +120,19 @@ public class LoginController extends OauthControllerBase {
     // We should go back to regular spring sign out with CSRF protection
     @RequestMapping(value = { "/signout" }, method = RequestMethod.GET)
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
-        // in case have come via a link that requires them to be signed out
-        logoutCurrentUser(request, response);
+        String query = request.getQueryString();
+        
         String redirectString = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin";
-        ModelAndView mav = new ModelAndView(redirectString);
-        return mav;
+        Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+        
+        if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+            // Just redirect to the authorization screen
+            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            redirectString += '?' + queryString; 
+        }
+        
+        logoutCurrentUser(request, response);         
+        return new ModelAndView(redirectString);
     }
 
     @RequestMapping("wrong-user")
@@ -262,7 +270,7 @@ public class LoginController extends OauthControllerBase {
             @RequestParam(name = "error_reason", required = false) String errorReason) throws UnsupportedEncodingException, IOException, JSONException {
         String facebookSessionState = (String) request.getSession().getAttribute("f_state");
         if (!state.equals(facebookSessionState)) {
-            LOGGER.warn("Google session state doesnt match");
+            LOGGER.warn("Facebook session state doesnt match");
             return new ModelAndView("redirect:/login");
         }
 
@@ -335,10 +343,10 @@ public class LoginController extends OauthControllerBase {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
         }
         userCookieGenerator.addCookie(userConnectionId, response);
-        
-        if (Features.ORCID_ANGULAR_SIGNIN.isActive() && "social_2FA".equals(view.getViewName())) {
-            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin?social=true");
-        }                   
+
+        if ("social_2FA".equals(view.getViewName())) {
+            return new ModelAndView("redirect:" + orcidUrlManager.getBaseUrl() + "/2fa-signin?social=true");
+        }
 
         return view;
     }
@@ -373,15 +381,12 @@ public class LoginController extends OauthControllerBase {
     }
 
     private ModelAndView socialLinking(HttpServletRequest request) {
-        if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-            String socialLinking = "/social-linking";
-            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
-            if (queryString != null) {
-                socialLinking = socialLinking + "?" + queryString;
-            }
-            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + socialLinking, true));
-        } else {
-            return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + "/social/access", true));
+        String socialLinking = "/social-linking";
+        String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+        if (queryString != null) {
+            socialLinking = socialLinking + "?" + queryString;
         }
+        return new ModelAndView(new RedirectView(orcidUrlManager.getBaseUrl() + socialLinking, true));
+
     }
 }

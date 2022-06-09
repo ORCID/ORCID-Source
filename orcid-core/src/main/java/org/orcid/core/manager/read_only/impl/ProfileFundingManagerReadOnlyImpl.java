@@ -1,6 +1,5 @@
 package org.orcid.core.manager.read_only.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -9,7 +8,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
 import org.orcid.core.manager.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.solr.OrcidSolrFundingSubtypeClient;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.activities.GroupableActivityComparator;
@@ -22,7 +20,6 @@ import org.orcid.jaxb.model.record_v2.GroupAble;
 import org.orcid.jaxb.model.record_v2.GroupableActivity;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
     
@@ -31,28 +28,10 @@ public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl i
         
     protected ProfileFundingDao profileFundingDao;      
     
-    @Resource
-    protected OrcidSolrFundingSubtypeClient orcidSolrFundingSubtypeClient;
-    
     public void setProfileFundingDao(ProfileFundingDao profileFundingDao) {
         this.profileFundingDao = profileFundingDao;
     }
 
-    /**
-     * Looks for the org defined funding subtypes that matches a given pattern
-     * @param subtype pattern to look for
-     * @param limit the max number of results to look for
-     * @return a list of all org defined funding subtypes that matches the given pattern
-     * */
-    public List<String> getIndexedFundingSubTypes(String subtype, int limit) {
-        List<OrgDefinedFundingTypeSolrDocument> types = orcidSolrFundingSubtypeClient.getFundingTypes(subtype, 0, 100); 
-        List<String> result = new ArrayList<String>();
-        for (OrgDefinedFundingTypeSolrDocument type : types) {
-            result.add(type.getOrgDefinedFundingType());
-        }
-        return result; 
-    }
-        
     /**
      * Get the funding associated with the given profileFunding id
      * 

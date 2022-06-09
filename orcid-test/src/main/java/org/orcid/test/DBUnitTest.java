@@ -167,6 +167,7 @@ public class DBUnitTest {
         Connection jdbcConnection = dataSource.getConnection();
         IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
         connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new CustomDataTypeFactory());
+        connection.getConfig().setProperty(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, true);
         return connection;
     }
 

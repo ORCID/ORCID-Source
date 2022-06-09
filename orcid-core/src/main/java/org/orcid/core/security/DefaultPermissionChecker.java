@@ -259,8 +259,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
                 if (scopeRemoved) {
                     for (String scope : removeScopes)
                         scopes.remove(scope);
-                    tokenDetail.setScope(OAuth2Utils.formatParameterList(scopes));
-                    orcidOauthTokenDetailService.saveOrUpdate(tokenDetail);
+                    orcidOauthTokenDetailService.updateScopes(tokenDetail.getTokenValue(), scopes);
                     return true;
                 }
             }

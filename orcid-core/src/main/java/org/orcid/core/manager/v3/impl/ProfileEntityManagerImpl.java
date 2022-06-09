@@ -609,8 +609,8 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the account was locked
      */
     @Override
-    public boolean lockProfile(String orcid, String lockReason, String description) {
-        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description);
+    public boolean lockProfile(String orcid, String lockReason, String description, String adminUser) {
+        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description, adminUser);
         if (wasLocked) {
             notificationManager.sendOrcidLockedEmail(orcid);
         }
@@ -651,6 +651,23 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void update2FASecret(String orcid, String secret) {
         profileDao.update2FASecret(orcid, secret);
+    }
+    
+    
+    public void startSigninLock(String orcid) {
+        profileDao.startSigninLock(orcid);
+    }
+    
+    public void resetSigninLock(String orcid) {
+        profileDao.resetSigninLock(orcid);
+    }
+    
+    public void updateSigninLock(String orcid, Integer count) {
+        profileDao.updateSigninLock(orcid, count);
+    }
+    
+    public List<Object[]> getSigninLock(String orcid) {
+        return profileDao.getSigninLock(orcid);
     }
 
     /**

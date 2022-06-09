@@ -46,6 +46,8 @@ public class WebhookManagerImplTest extends BaseTest {
     private ClientDetailsEntity clientDetails;
 
     private ProfileEntity testProfile;
+    
+    private String orcid;
 
     @Before
     public void init() throws Exception {
@@ -73,8 +75,8 @@ public class WebhookManagerImplTest extends BaseTest {
 
         assertFalse(PojoUtil.isEmpty(clientDetails.getGroupProfileId()));
         assertNotNull(clientDetails.getId());
-
-        testProfile = new ProfileEntity("4444-4444-4444-4444");
+        orcid = "4444-4444-4444-4444";
+        testProfile = new ProfileEntity(orcid);
     }   
         
     @After
@@ -86,9 +88,9 @@ public class WebhookManagerImplTest extends BaseTest {
     @Test
     public void testValidUriOnWebhook() {
         WebhookEntity webhook = new WebhookEntity();
-        webhook.setClientDetails(clientDetails);
+        webhook.setClientDetailsId(clientDetails.getId());
         webhook.setUri("http://qa-1.orcid.org");
-        webhook.setProfile(testProfile);
+        webhook.setProfile(orcid);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 0);
         verify(mockWebhookDao, times(1)).merge(webhook);
@@ -97,9 +99,9 @@ public class WebhookManagerImplTest extends BaseTest {
     @Test
     public void testUnexsistingUriOnWebhook() {
         WebhookEntity webhook = new WebhookEntity();
-        webhook.setClientDetails(clientDetails);
+        webhook.setClientDetailsId(clientDetails.getId());
         webhook.setUri("http://unexisting.orcid.com");
-        webhook.setProfile(testProfile);
+        webhook.setProfile(orcid);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
         for (int i = 0; i < 3; i++) {
@@ -112,9 +114,9 @@ public class WebhookManagerImplTest extends BaseTest {
     @Test
     public void testInvalidUriOnWebhook() {
         WebhookEntity webhook = new WebhookEntity();
-        webhook.setClientDetails(clientDetails);
+        webhook.setClientDetailsId(clientDetails.getId());
         webhook.setUri("http://123.qa-1.orcid.org");
-        webhook.setProfile(testProfile);
+        webhook.setProfile(orcid);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
         for (int i = 0; i < 3; i++) {
@@ -127,9 +129,9 @@ public class WebhookManagerImplTest extends BaseTest {
     @Test
     public void testFailAttemptCounterReset() {
         WebhookEntity webhook = new WebhookEntity();
-        webhook.setClientDetails(clientDetails);
+        webhook.setClientDetailsId(clientDetails.getId());
         webhook.setUri("http://123.qa-1.orcid.org");
-        webhook.setProfile(testProfile);
+        webhook.setProfile(orcid);
         webhookManager.processWebhook(webhook);
         assertEquals(webhook.getFailedAttemptCount(), 1);
 

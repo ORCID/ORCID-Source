@@ -4,8 +4,9 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.LinkedHashSet;
+import java.util.List;
 
-import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.Test;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument;
 import org.orcid.api.common.writer.schemaorg.SchemaOrgDocument.SchemaOrgAddress;
@@ -17,7 +18,6 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.common.collect.Lists;
 
 public class SchemaOrgDocumentTest {
 
@@ -131,7 +131,7 @@ public class SchemaOrgDocumentTest {
         doc.name = "Joe McJoeface";
         doc.givenName = "Joseph";
         doc.familyName = "McJoeFace";
-        doc.alternateName = Lists.newArrayList("Face");
+        doc.alternateName = List.of("Face");
 
         doc.address.add(new SchemaOrgAddress("UK"));
         doc.address.add(new SchemaOrgAddress("US"));
@@ -148,9 +148,11 @@ public class SchemaOrgDocumentTest {
         doc.affiliation.add(new SchemaOrgAffiliation(null, "Org4", "JobTitle2", null, new SchemaOrgExternalID("RINGGGOLD", "C")));
 
         doc.worksAndFunding.creator.add(new SchemaOrgWork("https://doi.org/1", "WorkTitle1", null));
-        doc.worksAndFunding.creator.add(new SchemaOrgWork("https://doi.org/2", "WorkTitle2", Sets.newLinkedHashSet(Lists.newArrayList("http://worldcat.org/isbn/1234567890")),
+        doc.worksAndFunding.creator.add(new SchemaOrgWork("https://doi.org/2", "WorkTitle2", new LinkedHashSet(List.of("http://worldcat.org/isbn/1234567890")),
                 new SchemaOrgExternalID("isbn", "1234567890"), new SchemaOrgExternalID("pmc", "12345678")));
 
+        
+        
         doc.worksAndFunding.funder.add(new SchemaOrgAffiliation("https://doi.org/5", "Org5", "GrantTitle1", null));// fundref
         // fundref and lei
         doc.worksAndFunding.funder.add(new SchemaOrgAffiliation("https://doi.org/6", "Org6", "GrantTitle2", "2222", new SchemaOrgExternalID("grant_number", "abcd")));

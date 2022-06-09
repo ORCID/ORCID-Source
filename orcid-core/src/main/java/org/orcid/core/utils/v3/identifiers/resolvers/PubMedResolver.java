@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -59,7 +58,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-    List<String> types = Lists.newArrayList("pmc", "pmid");
+    List<String> types = List.of("pmc", "pmid");
 
     private String metadataEndpoint = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={type}:{id}&resultType=core&format=json";
 
@@ -124,6 +123,9 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     // returns PID without prefix or URL etc
     private String getPubMedEndpoint(String apiTypeName, String userInput) {
         String normalised = normalizationService.normalise(apiTypeName, userInput);
+        if (apiTypeName.equals("pmc")) {
+            normalised = "PMC" + normalised;            
+        }
         String endpoint = metadataEndpoint.replace("{id}", normalised);
         if (apiTypeName.equals("pmid")) {
             return endpoint.replace("{type}", "EXT_ID");

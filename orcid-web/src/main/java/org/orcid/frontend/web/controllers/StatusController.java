@@ -8,11 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -27,14 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class StatusController {
     
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatusController.class);
-
     @Resource
     private LocaleManager localeManager;
-    
-    @Resource
-    private InternalSSOManager internalSSOManager;
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;

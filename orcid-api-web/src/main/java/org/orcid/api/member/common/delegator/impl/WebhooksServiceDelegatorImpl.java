@@ -2,6 +2,7 @@ package org.orcid.api.member.common.delegator.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,8 +20,6 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 
@@ -57,18 +56,20 @@ public class WebhooksServiceDelegatorImpl implements WebhooksServiceDelegator {
             throw new OrcidNotFoundException(params);
         }
 
-        ProfileEntity profile = new ProfileEntity(orcid);
         String clientId = sourceManager.retrieveActiveSourceId();
 
-        WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
+        WebhookEntityPk webhookPk = new WebhookEntityPk(orcid, webhookUri);
         WebhookEntity webhook = webhookManager.find(webhookPk);
         boolean isNew = webhook == null;
         if (isNew) {
+            Date lastModifiedDate = profileEntityManager.getLastModifiedDate(orcid);
             webhook = new WebhookEntity();
-            webhook.setProfile(profile);
+
+            webhook.setProfileLastModified(lastModifiedDate);
+            webhook.setProfile(orcid);
             webhook.setEnabled(true);
             webhook.setUri(webhookUri);
-            webhook.setClientDetails(new ClientDetailsEntity(clientId));
+            webhook.setClientDetailsId(clientId);
         }
         webhookManager.update(webhook);
         return isNew ? Response.created(absolutePathUri).build() : Response.noContent().build();
@@ -83,8 +84,7 @@ public class WebhooksServiceDelegatorImpl implements WebhooksServiceDelegator {
             throw new OrcidNotFoundException(params);
         }
 
-        ProfileEntity profile = new ProfileEntity(orcid);
-        WebhookEntityPk webhookPk = new WebhookEntityPk(profile, webhookUri);
+        WebhookEntityPk webhookPk = new WebhookEntityPk(orcid, webhookUri);
         WebhookEntity webhook = webhookManager.find(webhookPk);
         if (webhook == null) {
             Map<String, String> params = new HashMap<String, String>();
@@ -95,7 +95,7 @@ public class WebhooksServiceDelegatorImpl implements WebhooksServiceDelegator {
             String clientId = sourceManager.retrieveActiveSourceId();
 
             // Check if client can unregister this webhook
-            if (webhook.getClientDetails().getId().equals(clientId)) {
+            if (webhook.getClientDetailsId().equals(clientId)) {
                 webhookManager.delete(webhookPk);
                 return Response.noContent().build();
             } else {

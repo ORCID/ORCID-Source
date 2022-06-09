@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
@@ -35,6 +36,8 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -246,13 +249,27 @@ public class GridOrgLoadSource implements OrgLoadSource {
                 existingBySourceId.setRegion(region);
                 existingBySourceId.setUrl(url);
                 existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
+                try {
+                    // mark group for indexing
+                    new OrgGrouping(existingBySourceId, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                } catch (Exception ex) {
+                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                }
                 orgDisambiguatedManager.updateOrgDisambiguated(existingBySourceId);
             }
             return existingBySourceId;
         }
 
         // Create a new disambiguated org
-        return createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+        OrgDisambiguatedEntity newEntity = createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+        try {
+          //mark group for indexing
+            new OrgGrouping(newEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+        } catch (Exception ex) {
+            LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
+        }
+        return newEntity;
     }
 
     private void processExternalIdentifiers(OrgDisambiguatedEntity org, JsonNode institute) {

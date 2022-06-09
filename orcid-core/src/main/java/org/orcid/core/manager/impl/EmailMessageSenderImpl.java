@@ -7,7 +7,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -97,8 +96,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Value("${org.notifications.max_elements_to_show:20}")
     private Integer maxNotificationsToShowPerClient;
-    
-    protected Features feature;
     
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
@@ -201,98 +198,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
         params.put("bodyHtmlAdminDelegate", bodyHtmlAdminDelegate);
 
-        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
-        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
-
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
-            bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
-        }
-
-        EmailMessage emailMessage = new EmailMessage();
-
-        emailMessage.setSubject(subject);
-        emailMessage.setBodyText(bodyText);
-        emailMessage.setBodyHtml(bodyHtml);
-        return emailMessage;
-    }
-    
-    @Override
-    public EmailMessage createDigestLegacy(String orcid, Collection<Notification> notifications) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);                
-        Locale locale = getUserLocaleFromProfileEntity(record);
-        int orcidMessageCount = 0;
-        int addActivitiesMessageCount = 0;
-        int amendedMessageCount = 0;
-        int activityCount = 0;
-        Set<String> memberIds = new HashSet<>();
-        DigestEmail digestEmail = new DigestEmail();
-        String subjectDelegate = null;
-        String bodyHtmlDelegate = null;
-        String bodyHtmlDelegateRecipient = null;
-        String bodyHtmlAdminDelegate = null;
-
-        for (Notification notification : notifications) {
-            if (notification instanceof NotificationAdministrative) {
-                NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
-                subjectDelegate = notificationAdministrative.getSubject();
-                if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record")) {
-                    bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
-                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual")) {
-                    bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
-                } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
-                    bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
-                }
-            }
-            digestEmail.addNotification(notification);
-            if (notification.getSource() == null) {
-                orcidMessageCount++;
-            } else {
-                SourceClientId clientId = notification.getSource().getSourceClientId();
-                if (clientId != null) {
-                    memberIds.add(clientId.getPath());
-                }
-            }
-            if (notification instanceof NotificationPermission) {
-                addActivitiesMessageCount++;
-                NotificationPermission permissionNotification = (NotificationPermission) notification;
-                activityCount += permissionNotification.getItems().getItems().size();
-                permissionNotification.setEncryptedPutCode(encryptAndEncodePutCode(permissionNotification.getPutCode()));
-            } else if (notification instanceof NotificationInstitutionalConnection) {
-                notification.setEncryptedPutCode(encryptAndEncodePutCode(notification.getPutCode()));
-            } else if (notification instanceof NotificationAmended) {
-                amendedMessageCount++;
-            }
-        }
-        String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
-        String subject = messages.getMessage("email.subject.digest", new String[] { emailName }, locale);
-        Map<String, Object> params = new HashMap<>();
-        params.put("locale", locale);
-        params.put("messages", messages);
-        params.put("messageArgs", new Object[0]);        
-        params.put("emailName", emailName);
-        params.put("digestEmail", digestEmail);        
-        params.put("orcidMessageCount", orcidMessageCount);
-        params.put("addActivitiesMessageCount", addActivitiesMessageCount);
-        params.put("activityCount", activityCount);
-        params.put("amendedMessageCount", amendedMessageCount);
-        params.put("memberIdsCount", memberIds.size());
-        params.put("baseUri", orcidUrlManager.getBaseUrl());
-        params.put("subject", subject);
-        params.put("verboseNotifications", false);
-        params.put("orcidValue", record.getId());
-        params.put("subjectDelegate", subjectDelegate);
-        params.put("bodyHtmlDelegate", bodyHtmlDelegate);
-        params.put("bodyHtmlDelegateRecipient", bodyHtmlDelegateRecipient);
-        params.put("bodyHtmlAdminDelegate", bodyHtmlAdminDelegate);
-
-        String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
-        String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
-
-        if (Features.ORCID_ANGULAR_INBOX.isActive()) {
-            bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
-            bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
-        }
+        String bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
+        String bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
 
         EmailMessage emailMessage = new EmailMessage();
 
@@ -343,13 +250,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage;
-                    if(Features.VERBOSE_NOTIFICATIONS.isActive()) {
-                        digestMessage = createDigest(orcid, notifications);
-                    } else {
-                        digestMessage = createDigestLegacy(orcid, notifications);
-                    }
-                    
+                    EmailMessage digestMessage = createDigest(orcid, notifications);                    
                     digestMessage.setFrom(DIGEST_FROM_ADDRESS);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),

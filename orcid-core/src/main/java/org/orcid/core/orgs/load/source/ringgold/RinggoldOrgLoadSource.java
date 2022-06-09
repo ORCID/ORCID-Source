@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.OrgManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.FtpsFileDownloader;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
@@ -36,6 +37,8 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -294,7 +297,16 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             }
             entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
-            orgDisambiguatedManager.createOrgDisambiguated(entity);
+            
+            OrgDisambiguatedEntity newEntity= orgDisambiguatedManager.createOrgDisambiguated(entity);
+            try {
+              //mark group for indexing
+                new OrgGrouping(newEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+            }
+            catch (Exception ex) {
+                LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+            }
         } else {
             // If the element have changed
             if (changed(entity, parentId, name, country, city, state, type)) {
@@ -304,7 +316,15 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 entity.setOrgType(type);
                 entity.setRegion(state);
                 entity.setIndexingStatus(IndexingStatus.REINDEX);
+                try {
+                    // mark group for indexing
+                    new OrgGrouping(entity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                } catch (Exception ex) {
+                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                }
                 orgDisambiguatedManager.updateOrgDisambiguated(entity);
+                
             }
         }
 

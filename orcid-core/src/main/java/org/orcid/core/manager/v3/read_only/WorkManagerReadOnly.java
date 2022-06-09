@@ -8,6 +8,8 @@ import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.WorkSummaryExtended;
+import org.orcid.pojo.WorksExtended;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase {           
     
@@ -52,13 +54,19 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
     /**
      * Get the list of works that belongs to a user
      * 
-     * @param userOrcid
-     * @param lastModified
-     *          Last modified date used to check the cache
+     * @param orcid
      * @return the list of works that belongs to this user
      * */
     List<WorkSummary> getWorksSummaryList(String orcid);
-    
+
+    /**
+     * Get the list of works that belongs to a user
+     *
+     * @param orcid
+     * @return the list of works that belongs to this user
+     * */
+    List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid);
+
     /**
      * Generate a grouped list of works with the given list of works
      * 
@@ -74,7 +82,7 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * Returns a WorkBulk object containing a list of specified works.
      * 
      * @param orcid
-     * @param ids of required works
+     * @param putCodesAsString of required works
      * @return WorkBulk element containing the specified works
      */
     WorkBulk findWorkBulk(String orcid, String putCodesAsString);
@@ -85,6 +93,13 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * @return org.orcid.jaxb.model.v3.release.record.summary.Works object
      */
     Works getWorksAsGroups(String orcid);
+
+    /**
+     * Returns a org.orcid.jaxb.model.v3.release.record.summary.Works object containing grouped WorkSummary objects for the given user.
+     * @param orcid
+     * @return WorksExtended object
+     */
+    WorksExtended getWorksExtendedAsGroups(String orcid);
 
     /**
      * Returns a list of works that matches the given list of WorkLastModifiedEntity entities
@@ -102,5 +117,7 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      */
     ExternalIDs getAllExternalIDs(String orcid);
 
-    Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid);        
+    Works groupWorksAndGenerateGroupingSuggestions(List<WorkSummary> summaries, String orcid);
+
+    WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid);
 }

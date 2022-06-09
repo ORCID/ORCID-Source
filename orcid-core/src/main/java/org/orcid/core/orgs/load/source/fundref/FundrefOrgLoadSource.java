@@ -20,6 +20,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.orgs.load.io.FileRotator;
 import org.orcid.core.orgs.load.io.OrgDataClient;
 import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
@@ -29,7 +30,9 @@ import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,9 +52,9 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Component
 public class FundrefOrgLoadSource implements OrgLoadSource {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FundrefOrgLoadSource.class);
-    
+
     private static final String CONCEPTS_EXPRESSION = "/RDF/ConceptScheme/hasTopConcept";
     private static final String ITEM_EXPRESSION = "/RDF/Concept[@about='%s']";
     private static final String ORG_NAME_EXPRESSION = "prefLabel/Label/literalForm";
@@ -67,10 +70,10 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
     @Resource(name = "fundrefOrgDataClient")
     private OrgDataClient orgDataClient;
-    
+
     @Value("${org.orcid.core.orgs.fundref.latestReleaseUrl:url}")
     private String fundrefDataUrl;
-    
+
     @Value("${org.orcid.core.orgs.fundref.localFilePath:/tmp/ringgold/fundref.rdf}")
     private String localFilePath;
 
@@ -82,23 +85,23 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.fundref.enabled:true}")
     private boolean enabled;
-    
+
     @Resource(name = "geonamesApiUrl")
     private String geonamesApiUrl;
-    
+
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
-    
+
     @Resource(name = "geonamesUser")
     private String apiUser;
 
     private XPath xPath = XPathFactory.newInstance().newXPath();
-    
+
     private Client geoNamesApiClient = Client.create();
-    
+
     @Override
     public String getSourceName() {
         return "FUNDREF";
@@ -112,7 +115,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
         return importData();
     }
-    
+
     private boolean importData() {
         Map<String, String> cache = new HashMap<String, String>();
         InputStream stream = null;
@@ -143,10 +146,24 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         existingEntity.setStatus(rdfOrganization.status);
+                        try {
+                            // mark group for indexing
+                            new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                        } catch (Exception ex) {
+                            LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                        }
                         orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     } else if (statusChanged(rdfOrganization, existingEntity)) {
                         existingEntity.setStatus(rdfOrganization.status);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        try {
+                            // mark group for indexing
+                            new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                        } catch (Exception ex) {
+                            LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                        }
                         orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                     } else {
                         if (StringUtils.isNotBlank(rdfOrganization.isReplacedBy)) {
@@ -154,12 +171,30 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                                 existingEntity.setSourceParentId(rdfOrganization.isReplacedBy);
                                 existingEntity.setStatus(OrganizationStatus.DEPRECATED.name());
                                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                                try {
+                                    // mark group for indexing
+                                    new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                                } catch (Exception ex) {
+                                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                                }
                                 orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
                             }
                         }
                     }
                 } else {
-                    createDisambiguatedOrg(rdfOrganization);
+                    OrgDisambiguatedEntity newEntity = createDisambiguatedOrg(rdfOrganization);
+                    try {
+                        try {
+                            // mark group for indexing
+                            new OrgGrouping(newEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                        } catch (Exception ex) {
+                            LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                        }
+                    } catch (Exception ex) {
+                        LOGGER.error("Error when grouping by ROR and removing related orgs solr index, eating the exception", ex);
+                    }
                 }
             }
             long end = System.currentTimeMillis();
@@ -488,7 +523,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
             orgDisambiguatedEntity.setSourceParentId(organization.isReplacedBy);
             orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());
         }
-        
+
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
         orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;

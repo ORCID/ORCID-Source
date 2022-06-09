@@ -19,19 +19,15 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.validator.routines.DomainValidator;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
@@ -46,10 +42,10 @@ import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
@@ -133,9 +129,6 @@ public class BaseController {
 
     @Resource(name = "orcidSecurityManagerV3")
     protected OrcidSecurityManager orcidSecurityManager;
-
-    @Resource
-    private InternalSSOManager internalSSOManager;
     
     protected static final String EMPTY = "empty";
     
@@ -225,43 +218,6 @@ public class BaseController {
 
     protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (internalSSOManager.enableCookie()) {
-            Cookie[] cookies = request.getCookies();
-            // Delete cookie and token associated with that cookie
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (InternalSSOManager.COOKIE_NAME.equals(cookie.getName())) {
-                        try {
-                            // If it is a valid cookie, extract the orcid value
-                            // and
-                            // remove the token and the cookie
-                            @SuppressWarnings("unchecked")
-                            HashMap<String, String> cookieValues = JsonUtils.readObjectFromJsonString(cookie.getValue(), HashMap.class);
-                            if (cookieValues.containsKey(InternalSSOManager.COOKIE_KEY_ORCID)
-                                    && !PojoUtil.isEmpty(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID))) {
-                                internalSSOManager.deleteToken(cookieValues.get(InternalSSOManager.COOKIE_KEY_ORCID), request, response);
-                            } else {
-                                // If it is not valid, just remove the cookie
-                                cookie.setValue(StringUtils.EMPTY);
-                                cookie.setMaxAge(0);
-                                response.addCookie(cookie);
-                            }
-                        } catch (RuntimeException re) {
-                            // If any exception happens, but, the cookie exists,
-                            // remove the cookie
-                            cookie.setValue(StringUtils.EMPTY);
-                            cookie.setMaxAge(0);
-                            response.addCookie(cookie);
-                        }
-                        break;
-                    }
-                }
-            }
-            // Delete token if exists
-            if (authentication != null && !PojoUtil.isEmpty(authentication.getName())) {
-                internalSSOManager.deleteToken(authentication.getName());
-            }
-        }
         if (authentication != null && authentication.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }        
@@ -477,11 +433,11 @@ public class BaseController {
             // add protocol if missing
             boolean valid = false;
             try {
-                valid = urlValidator.isValid(encodeUrl(urlString.getValue()));
+                valid = OrcidStringUtils.isValidURL(urlString.getValue().toLowerCase());
                 if (!valid) {
                     String tempUrl = encodeUrl("http://" + urlString.getValue());
                     // test validity again
-                    valid = urlValidator.isValid(tempUrl);
+                    valid = OrcidStringUtils.isValidURL(tempUrl);
                     if (valid) {
                         urlString.setValue("http://" + urlString.getValue());
                     } 
@@ -602,10 +558,7 @@ public class BaseController {
             }
             targetUrl += '?' + queryString;
             request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-            if (Features.ORCID_ANGULAR_SIGNIN.isActive()) {
-                // Remove the prompt parameter after a successful login 
-                targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
-            }
+            targetUrl = removeParameterFromURI(targetUrl, OrcidOauth2Constants.PROMPT.toString());
         } else {
             targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         }
@@ -660,7 +613,7 @@ public class BaseController {
     protected void passwordChecklistValidate(Text passwordConfirm, Text password, List<String> userEmails) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_EIGHT_CHARACTERS)) {
+        if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_CHARACTER_LIMIT)) {
             password.getErrors().add("Pattern.registrationForm.password.eigthCharacters");
         }
 
@@ -695,8 +648,8 @@ public class BaseController {
     protected void passwordValidate(Text passwordConfirm, Text password) {
         password.setErrors(new ArrayList<String>());
         // validate password regex
-        if (password.getValue() == null || !password.getValue().matches(OrcidPasswordConstants.ORCID_PASSWORD_REGEX)) {
-            setError(password, "Pattern.registrationForm.password");
+        if (password.getValue() == null || !password.getValue().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
+            setError(password, "Pattern.registrationForm.passwordRequirement");
         }
         
         if (CommonPasswords.passwordIsCommon(password.getValue())) {
@@ -1134,10 +1087,7 @@ public class BaseController {
         if (StringUtils.isBlank(this.staticContentPath)) {
             String generatedStaticContentPath = orcidUrlManager.getBaseUrl();
             generatedStaticContentPath = generatedStaticContentPath.replace("https:", "");
-            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");
-            if (!request.isSecure()) {
-                generatedStaticContentPath = generatedStaticContentPath.replace(":8443", ":8080");
-            }
+            generatedStaticContentPath = generatedStaticContentPath.replace("http:", "");            
             this.staticContentPath = generatedStaticContentPath + STATIC_FOLDER_PATH;
         }
         return this.staticContentPath;

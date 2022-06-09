@@ -42,10 +42,6 @@ import { GenericService }
     from '../../shared/generic.service';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { IsThisYouComponent } from '@bit/orcid.angular.is-this-you';
-
-import { PlatformInfoService } from '@bit/orcid.angular.platform-info';
-
 @Component({
     selector: 'oauth-authorization-ng2',
     template:  scriptTmpl("oauth-authorization-ng2-template")
@@ -139,8 +135,7 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
         private oauthService: OauthService,
         private searchSrvc: SearchService,
         private nameService: GenericService,
-        public dialog: MatDialog,
-        public _platformInfo: PlatformInfoService
+        public dialog: MatDialog
     ) {
         window['angularComponentReference'] = {
             zone: this.zone,
@@ -218,10 +213,6 @@ export class OauthAuthorizationComponent implements AfterViewInit, OnDestroy, On
                   this.userInfo = {};
               } 
           );
-
-        _platformInfo.get().subscribe(platformInfo => {
-            this.isMobileView = platformInfo.tabletOrHandset
-        })
         
     }
 
@@ -486,39 +477,6 @@ ok: "${error.ok}"
 
     };
 
-    getDuplicates(): void{
-        let url = getBaseUri() + '/dupicateResearcher.json?familyNames=' + this.registrationForm.familyNames.value + '&givenNames=' + this.registrationForm.givenNames.value;
-        this.oauthService.getDuplicates( url )
-        .pipe(    
-            takeUntil(this.ngUnsubscribe)
-        )
-        .subscribe(
-            duplicates => {
-                var diffDate = new Date();
-                // reg was filled out to fast reload the page
-                if (this.loadTime + 5000 > diffDate.getTime()) {
-                    window.location.reload();
-                    return;
-                }
-                if (duplicates.length > 0 ) {
-                    this.showRegisterProcessing = false;
-                    this.openDialog(duplicates)
-                } else {
-                    this.oauth2ScreensPostRegisterConfirm();                          
-                }
-
-            },
-            error => {
-                // something bad is happening!
-                console.log("error fetching dupicateResearcher.json");
-                // continue to registration, as solr dup lookup failed.
-                this.oauth2ScreensPostRegisterConfirm();
-        } 
-        );
-
-    };
-
-
     openDialog(duplicateRecords): void {
         const dialogParams = {
             width: `1078px`,
@@ -545,13 +503,6 @@ ok: "${error.ok}"
             dialogParams["maxHeight"] = "95vh"
         }
 
-        const dialogRef = this.dialog.open(IsThisYouComponent, dialogParams);
-
-        dialogRef.afterClosed().subscribe(confirmRegistration => {
-            if (confirmRegistration) {
-                this.oauth2ScreensPostRegisterConfirm()
-            }
-        });
     }
 
     sendReactivationEmail(email, $event?): void {        
@@ -672,10 +623,7 @@ ok: "${error.ok}"
         .subscribe(
             data => {
                 this.registrationForm = data;
-                if (this.registrationForm.errors == undefined 
-                    || this.registrationForm.errors.length == 0) {                                 
-                    this.getDuplicates();
-                } else {
+                if (this.registrationForm.errors && this.registrationForm.errors.length > 0) {
                     this.theFormWasSubmittedAndHasSomeErrors = true
                     if(this.registrationForm.email.errors.length > 0) {
                         this.errorEmail = data.email.value;

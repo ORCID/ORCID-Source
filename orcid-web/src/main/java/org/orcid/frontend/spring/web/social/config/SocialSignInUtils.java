@@ -120,7 +120,11 @@ public class SocialSignInUtils {
                         .getAttribute(OrcidOauth2Constants.SOCIAL_SESSION_ATT_NAME + data.get(OrcidOauth2Constants.PROVIDER_USER_ID));
                 JSONObject json = new JSONObject(sessionStoredData);
                 data.put("firstName", json.getString(OrcidOauth2Constants.FIRST_NAME));
-                data.put("lastName", json.getString(OrcidOauth2Constants.LAST_NAME));
+                try {
+                    data.put("lastName", json.getString(OrcidOauth2Constants.LAST_NAME));                    
+                } catch (JSONException e) {
+                    // No surname provided - do nothing
+                }
             } catch (Exception e) {
                 userCookieGenerator.removeCookie(response);
             }
@@ -209,7 +213,12 @@ public class SocialSignInUtils {
             String providerUserId = jsonClaims.getString("sub");
             String userName = jsonClaims.getString("name");
             String firstName = jsonClaims.getString("given_name");
-            String lastName = jsonClaims.getString("family_name");
+            String lastName = "";
+            try {               
+                lastName = jsonClaims.getString("family_name");                
+            } catch (JSONException e) {
+                // No surname provided - do nothing
+            }
 
             userInfoJson.put(OrcidOauth2Constants.ACCESS_TOKEN, accessToken);
             userInfoJson.put(OrcidOauth2Constants.EXPIRES_IN, expiresIn);
@@ -240,7 +249,11 @@ public class SocialSignInUtils {
                     // Read JSON response
                     JSONObject googleUserInfoJson = new JSONObject(googleUserInfoResponse.toString());
                     userInfoJson.put(OrcidOauth2Constants.FIRST_NAME, googleUserInfoJson.get("given_name"));
-                    userInfoJson.put(OrcidOauth2Constants.LAST_NAME, googleUserInfoJson.get("family_name"));
+                    try {               
+                        userInfoJson.put(OrcidOauth2Constants.LAST_NAME, googleUserInfoJson.get("family_name"));
+                    } catch (JSONException e) {
+                        // No surname provided - do nothing
+                    }
                 }
             }
         }

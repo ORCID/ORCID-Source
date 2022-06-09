@@ -2,21 +2,21 @@ package org.orcid.core.oauth;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 
-import com.google.common.collect.Maps;
 import com.nimbusds.jwt.SignedJWT;
 
 public class IETFTokenExchangeResponse implements OAuth2AccessToken {
 
-    private Map<String, Object> additionalInformation = Maps.newHashMap();
-    private Set<String> scope = Sets.newHashSet();
+    private Map<String, Object> additionalInformation = new HashMap<String, Object>();
+    private Set<String> scope = new HashSet<String>();
     private OAuth2RefreshToken refreshToken = null;
     private String tokenType;
     private Date expiration;

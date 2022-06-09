@@ -52,17 +52,6 @@ public interface ProfileFundingManager extends ProfileFundingManagerReadOnly {
      */
     boolean updateProfileFundingVisibilities(String orcid, ArrayList<Long> profileFundingIds, Visibility visibility);
 
-        
-    /**
-     * Add a new funding subtype to the list of pending for indexing subtypes
-     * */
-    void addFundingSubType(String subtype, String orcid);        
-    
-    /**
-     * A process that will process all funding subtypes, filter and index them. 
-     * */
-    void indexFundingSubTypes();        
-    
     /**
      * Get the funding associated with the given profileFunding id
      * 

@@ -16,8 +16,7 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors" />
-	
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors, org.orcid.core.salesforce" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -34,6 +33,8 @@
 		<property name="apiRecordCreationEmailEnabled"
 			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
+	
+	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
 	
 	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
@@ -384,7 +385,6 @@
 	
 	<!-- Utilities -->
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
-		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -393,7 +393,6 @@
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
-		<property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
 		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -410,7 +409,6 @@
 	</bean>
 	
 	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
     	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -419,7 +417,6 @@
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="profileEntityCacheManager" ref="profileEntityCacheManager" />
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
         <property name="recordNameDao" ref="recordNameDaoReadOnly" />
@@ -723,12 +720,10 @@
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
 		<property name="maxJobsPerClient" value="${org.orcid.core.maxJobsPerClient:50}" />
-		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:4}" />
-        <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:5}" />
+		<property name="numberOfWebhookThreads" value="${org.orcid.core.numberOfWebhookThreads:6}" />
+        <property name="retryDelayMinutes" value="${org.orcid.core.webhookRetryDelayMinutes:10}" />
         <property name="maxPerRun" value="${org.orcid.core.webhookMaxPerRun:10000}" />
 	</bean>	
-
-	<bean id="crossRefManager" class="org.orcid.core.manager.impl.CrossRefManagerImpl" />
 
 	<bean id="referenceDataManager" class="org.orcid.core.manager.impl.ReferenceDataManagerImpl" />
 
@@ -738,136 +733,10 @@
 
 	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" />	
 
-	<bean id="thirdPartyLinkManager" class="org.orcid.core.manager.impl.ThirdPartyLinkManagerImpl" />
-
 	<bean id="passwordGenerationManager"
 		class="org.orcid.core.manager.impl.PasswordGenerationManagerImpl">
 		<constructor-arg value="12"></constructor-arg>
-	</bean>		
-
-    <alias name="incomingValidationManagerV1_2_rc6" alias="incomingValidationManagerLatest"/>
-    <alias name="outgoingValidationManagerV1_2_rc6" alias="outgoingValidationManagerLatest"/>
-    
-    <bean id="incomingValidationManagerRoot" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="${org.orcid.core.default_api}" />
-        <property name="requireOrcidProfile" value="${org.orcid.core.api.validation.default.requireOrcidProfile:true}"/>        
-        <property name="validateTitle" value="${org.orcid.core.api.validation.default.validateTitle:true}"/>
-        <property name="validateOnlyOnePrimaryEmail" value="${org.orcid.core.api.validation.default.validateOnlyOnePrimaryEmail:true}"/>
-        <property name="validateWorksHaveExternalIds" value="${org.orcid.core.api.validation.default.validateWorksHaveExternalIds:true}"/>
-        <property name="validateFundingHaveExternalIds" value="${org.orcid.core.api.validation.default.validateFundingHaveExternalIds:true}"/>       
-    </bean>
-    <bean id="outgoingValidationManagerRoot" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />     
-        <property name="version" value="${org.orcid.core.default_api}" />
-    </bean>
-    
-    <bean id="incomingValidationManagerV1_1" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.1" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-    </bean>
-    <bean id="outgoingValidationManagerV1_1" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.1" />
-    </bean>
-    
-    <bean id="incomingValidationManagerV1_2_rc3" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.2_rc3" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>        
-    </bean>
-    <bean id="outgoingValidationManagerV1_2_rc3" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.2_rc3" />
-    </bean>
-
-  <bean id="incomingValidationManagerV1_2_rc4" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.2_rc4" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>        
-    </bean>
-    <bean id="outgoingValidationManagerV1_2_rc4" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.2_rc4" />
-    </bean>
-
-  <bean id="incomingValidationManagerV1_2_rc5" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.2_rc5" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>
-        <property name="validateWorksHaveExternalIds" value="true"/>
-		<property name="validateFundingHaveExternalIds" value="true"/>
-    </bean>
-    <bean id="outgoingValidationManagerV1_2_rc5" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.2_rc5" />
-    </bean>
-    
-    <bean id="incomingValidationManagerV1_2_rc6" class="org.orcid.core.manager.impl.ValidationManagerForLegacyApiVersionsImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.2_rc6" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>
-        <property name="validateWorksHaveExternalIds" value="true"/>
-		<property name="validateFundingHaveExternalIds" value="true"/>
-    </bean>
-    <bean id="outgoingValidationManagerV1_2_rc6" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.2_rc6" />
-    </bean>
-    
-    <bean id="incomingValidationManagerV1_2_rc7" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.2_rc7" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>
-        <property name="validateWorksHaveExternalIds" value="true"/>
-        <property name="validateFundingHaveExternalIds" value="true"/>
-    </bean>
-    <bean id="outgoingValidationManagerV1_2_rc7" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.2_rc7" />
-    </bean>
-
-    <bean id="incomingValidationManagerV1_2" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="THROW_VALIDATION_EXCEPTION" />
-        <property name="version" value="1.2" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
-        <property name="validateOnlyOnePrimaryEmail" value="true"/>
-        <property name="validateWorksHaveExternalIds" value="true"/>
-        <property name="validateFundingHaveExternalIds" value="true"/>
-    </bean>
-    <bean id="outgoingValidationManagerV1_2" class="org.orcid.core.manager.impl.ValidationManagerImpl">
-        <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="version" value="1.2" />
-    </bean>
+	</bean>
 
     <bean id="notificationValidationManager" class="org.orcid.core.manager.impl.NotificationValidationManagerImpl" />
     
@@ -901,17 +770,15 @@
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
-	<bean id="internalSSOManager" class="org.orcid.core.manager.impl.InternalSSOManagerImpl" />		
-	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
     
     <bean id="salesForceAdapter" class="org.orcid.core.salesforce.adapter.SalesForceAdapter" />
     
-    <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImpl" />
+    <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImplLegacy" />
     
-    <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl">
+    <bean id="salesForceManagerLegacy" class="org.orcid.core.manager.impl.SalesForceManagerImplLegacy">
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
@@ -1101,6 +968,15 @@
         <property name="maxMegaBytesOnDisk" value="0" />
         <property name="copyValues" value="true" />
     </bean>
+
+	<bean id="minimizedExtendedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="minimized-extended-work" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.minimizedExtendedWorkEntityCache.maxMegaBytesInMemory:512}" />
+		<property name="timeToIdleSeconds" value="600" />
+		<property name="maxMegaBytesOnDisk" value="0" />
+		<property name="copyValues" value="true" />
+	</bean>
     
     <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="full-work-entity" />
@@ -1245,6 +1121,14 @@
         <property name="timeToIdleSeconds" value="3600" />
         <property name="maxMegaBytesOnDisk" value="256" />
     </bean>
+
+	<bean id="groupedWorksExtendedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="grouped-works-extended" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxElementsInMemory" value="500" />
+		<property name="timeToIdleSeconds" value="3600" />
+		<property name="maxMegaBytesOnDisk" value="256" />
+	</bean>
     
     <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="grouping-suggestions" />
@@ -1417,10 +1301,6 @@
         <property name="mapperFacade" ref="clientMapperFacade" />
     </bean>
 
-
-    <bean id="salesForceMapperFacadeFactoryLegacy" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactoryLegacy" />
-    <bean id="salesForceMemberMapperFacadeLegacy" factory-bean="&amp;salesForceMapperFacadeFactoryLegacy" factory-method="getMemberMapperFacade"/>
-
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
     <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
            
@@ -1567,9 +1447,11 @@
 	<bean id="preferenceManager" class="org.orcid.core.manager.impl.PreferenceManagerImpl" />
 		
 	<bean id="worksCacheManager" class="org.orcid.core.manager.v3.impl.WorksCacheManagerImpl" />
+
+	<bean id="worksExtendedCacheManager" class="org.orcid.core.manager.v3.impl.WorksExtendedCacheManagerImpl" />
 	
 	<bean id="groupingSuggestionsCacheManager" class="org.orcid.core.manager.v3.impl.GroupingSuggestionsCacheManagerImpl" />
-	
+
 	<bean id="groupedWorksGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="groupedWorksCache" />
         <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
@@ -1577,8 +1459,16 @@
     </bean>
     
     <bean id="groupedWorksRetriever" class="org.orcid.core.cache.impl.GroupedWorksRetriever" />
-    
-    <bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
+
+	<bean id="groupedWorksExtendedGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+	    <property name="cache" ref="groupedWorksExtendedCache" />
+	    <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+	    <property name="retriever" ref="groupedWorksExtendedRetriever" />
+	</bean>
+
+	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
+
+	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	
 	<bean id="apiAnalyticsTaskExecutor"
         class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
@@ -1660,5 +1550,21 @@
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
     
     <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+
+    <bean id="workContributorsConverter" class="org.orcid.core.adapter.v3.converter.WorkContributorsConverter">
+        <constructor-arg ref="workContributorRoleConverter" />
+    </bean>
     
+    <bean id="jsonWorkExternalIdentifiersConverterV3" class="org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3">
+        <constructor-arg ref="PIDNormalizationService" />
+        <constructor-arg ref="PIDResolverService" />
+        <constructor-arg ref="localeManager" />
+    </bean>
+
+	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter">
+		<constructor-arg ref="workContributorRoleConverter" />
+	</bean>
+
+	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>
+
 </beans>

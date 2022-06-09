@@ -7,10 +7,19 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.hibernate.type.BigIntegerType;
+import org.hibernate.type.DateType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.StringType;
+import org.hibernate.type.TimestampType;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -39,6 +48,18 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         List<MinimizedWorkEntity> list = new ArrayList<>();
         for (List<Long> partition : Lists.partition(ids, 50)) {
             TypedQuery<MinimizedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
+            query.setParameter("ids", partition);
+            list.addAll(query.getResultList());
+        }
+        return list;
+    }
+
+    @Override
+    public List<MinimizedExtendedWorkEntity> getMinimizedExtendedWorkEntities(List<Long> ids) {
+        // batch up list into sets of 50;
+        List<MinimizedExtendedWorkEntity> list = new ArrayList<>();
+        for (List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<MinimizedExtendedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedExtendedWorkEntity x WHERE x.id IN :ids", MinimizedExtendedWorkEntity.class);
             query.setParameter("ids", partition);
             list.addAll(query.getResultList());
         }
@@ -344,6 +365,60 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     public WorkEntity merge(WorkEntity entity) {
         return super.merge(entity);
+    }
+
+    @Override
+    public List<Object[]> getWorksByOrcid(String orcid) {
+        //TODO @DanielPalafox fetch only the top_contributors_json after CLI finishes
+        String sqlString =
+                "SELECT " +
+                        " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
+                        " w.publication_year, w.publication_month, w.publication_day, w.date_created, " +
+                        " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," +
+                        " w.assertion_origin_source_id, w.assertion_origin_client_source_id, " +
+                        " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as contributors, " +
+                        " w.top_contributors_json " +
+                        " FROM work w" +
+                        " WHERE w.work_id IN (SELECT work_id FROM work WHERE orcid=:orcid)";
+
+        Query query = entityManager.createNativeQuery(sqlString);
+        query.setParameter("orcid", orcid)
+                .unwrap(org.hibernate.query.NativeQuery.class)
+                .addScalar("work_id", BigIntegerType.INSTANCE)
+                .addScalar("work_type", StringType.INSTANCE)
+                .addScalar("title", StringType.INSTANCE)
+                .addScalar("journal_title", StringType.INSTANCE)
+                .addScalar("external_ids_json", StringType.INSTANCE)
+                .addScalar("publication_year", IntegerType.INSTANCE)
+                .addScalar("publication_month", IntegerType.INSTANCE)
+                .addScalar("publication_day", IntegerType.INSTANCE)
+                .addScalar("visibility", StringType.INSTANCE)
+                .addScalar("display_index", BigIntegerType.INSTANCE)
+                .addScalar("source_id", StringType.INSTANCE)
+                .addScalar("client_source_id", StringType.INSTANCE)
+                .addScalar("assertion_origin_source_id", StringType.INSTANCE)
+                .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
+                .addScalar("date_created", TimestampType.INSTANCE)
+                .addScalar("last_modified", TimestampType.INSTANCE)
+                .addScalar("contributors", StringType.INSTANCE)
+                .addScalar("top_contributors_json", StringType.INSTANCE);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Object[]> getWorksStartingFromWorkId(Long workId, int numberOfWorks) {
+        Query query = entityManager.createNativeQuery(
+                "SELECT " +
+                        "work_id, " +
+                        "(SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 250) t) as contributors_json " +
+                        " FROM work as w WHERE work_id >=:workId AND contributors_json is not null " +
+                        " ORDER BY work_id ASC LIMIT :numberOfWorks");
+        query.setParameter("workId", workId);
+        query.setParameter("numberOfWorks", numberOfWorks)
+                .unwrap(org.hibernate.query.NativeQuery.class)
+                .addScalar("work_id", BigIntegerType.INSTANCE)
+                .addScalar("contributors_json", StringType.INSTANCE);
+        return query.getResultList();
     }
 }
 

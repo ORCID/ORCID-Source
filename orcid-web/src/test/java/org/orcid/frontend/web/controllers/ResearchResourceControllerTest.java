@@ -6,17 +6,15 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.jena.ext.com.google.common.collect.Sets;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -87,27 +85,23 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
     public void testReadPage() {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> page = controller.getresearchResourcePage(0, 0, "title", true);
         assertNotNull(page);
         assertEquals(2, page.getTotalGroups());
         assertEquals(2, page.getGroups().size());
 
         // check we have one group of one and one group of two.
-        Set<Integer> setI = new HashSet<Integer>();
-        setI.add(page.getGroups().get(0).getResearchResources().size());
-        setI.add(page.getGroups().get(1).getResearchResources().size());
-        assertEquals(setI, Sets.newHashSet(1, 2));
+        assertEquals(2, page.getGroups().get(0).getResearchResources().size());
+        assertEquals(1, page.getGroups().get(1).getResearchResources().size());        
 
         int bg = getBigGroupIndex(page); // has 2 rr
         int sg = getSmallGroupIndex(page); // has 1 rr
 
         // grouped dude
         assertEquals("work:external-identifier-id#1", page.getGroups().get(bg).getExternalIdentifiers().get(0).getExternalIdentifierId().getValue());
-        Set<String> titles = new HashSet<String>();
-        titles.add(page.getGroups().get(bg).getResearchResources().get(0).getTitle());
-        titles.add(page.getGroups().get(bg).getResearchResources().get(1).getTitle());
-        assertEquals(titles, Sets.newHashSet("the title", "the title2"));
-
+        assertEquals("the title2", page.getGroups().get(bg).getResearchResources().get(0).getTitle());
+        assertEquals("the title", page.getGroups().get(bg).getResearchResources().get(1).getTitle());
+        
         // in the big group, rr 1 has an org, 2 has higher display index (so is
         // the default and should be first in the list).
         assertEquals("2", page.getGroups().get(bg).getResearchResources().get(0).getPutCode());
@@ -160,20 +154,20 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> pageBefore = controller.getresearchResourcePage(0, 0, "title", true);
         int bgBefore = getBigGroupIndex(pageBefore);
         assertEquals("2", pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getPutCode());
         assertEquals("2", pageBefore.getGroups().get(bgBefore).getDefaultResearchResource().getDisplayIndex());
 
         controller.updateToMaxDisplay(1l);
-        Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> pageAfter = controller.getresearchResourcePage(0, 0, "title", true);
         int bgAfter = getBigGroupIndex(pageAfter);
         assertEquals("4", pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getDisplayIndex());
         assertEquals("1", pageAfter.getGroups().get(bgAfter).getDefaultResearchResource().getPutCode());
 
         // set back
         controller.updateToMaxDisplay(2l);
-        Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0, "title", true);
+        Page<ResearchResourceGroupPojo> pageLast = controller.getresearchResourcePage(0, 0, "title", true);
         int bgLast = getBigGroupIndex(pageLast);
         assertEquals("2", pageLast.getGroups().get(bgLast).getDefaultResearchResource().getPutCode());
     }
@@ -183,19 +177,19 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
 
-        Page<ResearchResourceGroupPojo> page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.TITLE_SORT_KEY, true);
+        Page<ResearchResourceGroupPojo> page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.TITLE_SORT_KEY, true);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.TITLE_SORT_KEY, false);
+        page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.TITLE_SORT_KEY, false);
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, true);
+        page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.DATE_SORT_KEY, true);
         assertEquals("the title3", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title2", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
-        page1 = controller.getresearchResourcePage(0, ResearchResourcePaginator.DATE_SORT_KEY, false);
+        page1 = controller.getresearchResourcePage(0, 0, ResearchResourcePaginator.DATE_SORT_KEY, false);
         assertEquals("the title2", page1.getGroups().get(0).getDefaultResearchResource().getTitle());
         assertEquals("the title3", page1.getGroups().get(1).getDefaultResearchResource().getTitle());
 
@@ -207,7 +201,7 @@ public class ResearchResourceControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         controller.removeWork("3");
         try {
-            org.orcid.pojo.ResearchResource rrDeleted = controller.getResearchResource(3);
+            controller.getResearchResource(3);
             fail();
         } catch (NoResultException nre) {
 
