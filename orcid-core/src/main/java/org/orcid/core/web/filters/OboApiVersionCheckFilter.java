@@ -4,7 +4,6 @@ import java.util.regex.Matcher;
 
 import javax.ws.rs.ext.Provider;
 
-import org.orcid.api.common.filter.ApiVersionCheckFilter;
 import org.orcid.core.exception.OboNotValidForApiVersionException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -17,6 +16,8 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
+
+import org.orcid.core.api.OrcidApiConstants;
 
 @Provider
 public class OboApiVersionCheckFilter implements ContainerRequestFilter {
@@ -54,7 +55,7 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
 
     private String getApiVersion(ContainerRequest request) {
         String path = request.getPath();
-        Matcher matcher = ApiVersionCheckFilter.VERSION_PATTERN.matcher(path);
+        Matcher matcher = OrcidApiConstants.VERSION_PATTERN.matcher(path);
         if (matcher.lookingAt()) {
             return matcher.group(1);
         }

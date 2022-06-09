@@ -20,6 +20,8 @@ import com.sun.jersey.api.core.InjectParam;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 
+import org.orcid.core.api.OrcidApiConstants;
+
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
 
@@ -27,8 +29,6 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     private LocaleManager localeManager;
     
     @Context private HttpServletRequest httpRequest;
-
-    public static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
     private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
     
@@ -48,7 +48,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {        
         String path = requestContext.getUriInfo().getPath(); 
         String method = requestContext.getMethod() == null ? null : requestContext.getMethod().toUpperCase();
-        Matcher matcher = VERSION_PATTERN.matcher(path);        
+        Matcher matcher = OrcidApiConstants.API_VERSION_PATTERN.matcher(path);        
         String version = null;
         if (matcher.lookingAt()) {
             version = matcher.group(1);

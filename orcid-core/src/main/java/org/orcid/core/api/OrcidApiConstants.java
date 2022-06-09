@@ -1,5 +1,7 @@
 package org.orcid.core.api;
 
+import java.util.regex.Pattern;
+
 public class OrcidApiConstants {
     public static final String EXPERIMENTAL_RDF_V1 = "/experimental_rdf_v1";
     public static final String PROFILE_ROOT_PATH = "/{orcid}";
@@ -118,4 +120,6 @@ public class OrcidApiConstants {
     public static final String PERSON = "/{orcid}/person";
     
     public static final int MAX_NOTIFICATIONS_AVAILABLE = 1000;
+    
+    public static final Pattern API_VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 }
