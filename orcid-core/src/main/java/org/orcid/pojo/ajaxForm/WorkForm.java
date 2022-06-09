@@ -473,8 +473,8 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                     contributors.getContributor().add(workContributor);
                 }
             }
+            work.setWorkContributors(contributors);
         }
-        work.setWorkContributors(contributors);
     }
 
     public Work toWork() {
