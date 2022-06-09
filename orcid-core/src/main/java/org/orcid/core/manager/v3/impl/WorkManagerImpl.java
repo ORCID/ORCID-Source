@@ -372,10 +372,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);            
         }
 
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            filterContributors(work, workEntity);
-        }
-
         orcidSecurityManager.checkSourceAndThrow(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
     	if (workEntity.getVisibility() == null) {
@@ -385,7 +381,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
-
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            filterContributors(work, workEntity);
+        }
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
