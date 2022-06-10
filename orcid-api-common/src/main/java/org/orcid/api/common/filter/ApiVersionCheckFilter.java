@@ -2,12 +2,12 @@ package org.orcid.api.common.filter;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
+import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -19,8 +19,6 @@ import com.sun.jersey.api.core.InjectParam;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
-
-import org.orcid.core.api.OrcidApiConstants;
 
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
