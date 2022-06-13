@@ -1,5 +1,7 @@
 package org.orcid.api.common.analytics;
 
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.orcid.core.analytics.AnalyticsData;
@@ -9,9 +11,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.http.HttpMethod;
-
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerResponseContext;
 
 public class AnalyticsProcess implements Runnable {
 
@@ -87,7 +86,6 @@ public class AnalyticsProcess implements Runnable {
 
     private AnalyticsData getAnalyticsData() {
         ip = maskIp(ip);
-
         APIEndpointParser parser = new APIEndpointParser(request.getUriInfo().getPathSegments());
         String url = request.getUriInfo().getAbsolutePath().toString();
         url = correctScheme(url);

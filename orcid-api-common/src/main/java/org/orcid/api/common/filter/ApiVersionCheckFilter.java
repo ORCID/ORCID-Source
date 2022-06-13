@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
@@ -16,9 +18,6 @@ import org.orcid.utils.OrcidStringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sun.jersey.api.core.InjectParam;
-
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
 
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
@@ -67,4 +66,5 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
             }
         }
     }
+
 }

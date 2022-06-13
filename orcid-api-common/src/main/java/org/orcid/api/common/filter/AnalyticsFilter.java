@@ -3,8 +3,10 @@ package org.orcid.api.common.filter;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
 
 import org.orcid.api.common.analytics.AnalyticsProcess;
 import org.orcid.core.analytics.client.AnalyticsClient;
@@ -16,12 +18,9 @@ import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.jersey.api.core.InjectParam;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
 
-@Provider
-public class AnalyticsFilter implements ContainerResponseFilter {
+
+public abstract class AnalyticsFilter implements ContainerResponseFilter {
 
     @InjectParam("orcidSecurityManager")
     private OrcidSecurityManager orcidSecurityManager;
@@ -41,13 +40,10 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     @Context
     private HttpServletRequest httpServletRequest;
     
-    private final Boolean isPublicApi;
+    protected Boolean isPublicApi;
     
+    public abstract void setIsPublicApi();
     
-    public AnalyticsFilter(Boolean isPublicApi) {
-        this.isPublicApi = isPublicApi;
-    }
-
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         AnalyticsProcess analyticsProcess = getAnalyticsProcess(requestContext, responseContext);

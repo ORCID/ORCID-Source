@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.ws.rs.core.SecurityContext;
+
 import org.glassfish.jersey.internal.PropertiesDelegate;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.junit.Before;
@@ -18,8 +20,6 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import jakarta.ws.rs.core.SecurityContext;
 
 public class ApiVersionCheckFilterTest {
 

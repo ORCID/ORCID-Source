@@ -1,8 +1,8 @@
 package org.orcid.api.common.analytics;
 
 import java.util.List;
-import jakarta.ws.rs.core.PathSegment;
-import jakarta.ws.rs.core.UriInfo;
+
+import javax.ws.rs.core.PathSegment;
 
 import org.orcid.core.analytics.AnalyticsEventCategory;
 

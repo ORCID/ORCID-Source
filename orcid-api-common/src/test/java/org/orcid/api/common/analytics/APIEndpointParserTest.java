@@ -4,25 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
-import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.PathSegment;
 
 import org.glassfish.jersey.uri.UriComponent;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.orcid.api.common.analytics.APIEndpointParser;
-
-import com.sun.jersey.core.header.InBoundHeaders;
-import com.sun.jersey.server.impl.application.WebApplicationImpl;
-import com.sun.jersey.spi.container.ContainerRequest;
-
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.core.PathSegment;
 
 public class APIEndpointParserTest {
     
