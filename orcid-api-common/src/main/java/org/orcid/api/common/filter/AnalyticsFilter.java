@@ -1,4 +1,6 @@
-package org.orcid.api.filters;
+package org.orcid.api.common.filter;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -14,9 +16,9 @@ import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.container.ContainerResponseFilter;
 
 @Provider
 public class AnalyticsFilter implements ContainerResponseFilter {
@@ -39,21 +41,27 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     @Context
     private HttpServletRequest httpServletRequest;
     
+    private final Boolean isPublicApi;
+    
+    
+    public AnalyticsFilter(Boolean isPublicApi) {
+        this.isPublicApi = isPublicApi;
+    }
+
     @Override
-    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
-        AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        AnalyticsProcess analyticsProcess = getAnalyticsProcess(requestContext, responseContext);
         apiAnalyticsTaskExecutor.execute(analyticsProcess);
-        return response;
     }
     
-    private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
+    private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
         AnalyticsProcess process = new AnalyticsProcess();
         process.setRequest(request);
         process.setResponse(response);
         process.setAnalyticsClient(analyticsClient);
         process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
         process.setClientDetailsId(orcidSecurityManager.getClientIdFromAPIRequest());
-        process.setPublicApi(false);
+        process.setPublicApi(this.isPublicApi);
         process.setProfileEntityCacheManager(profileEntityCacheManager);
         process.setIp(OrcidRequestUtil.getIpAddress(httpServletRequest));
         process.setScheme(OrcidUrlManager.getscheme(httpServletRequest));
