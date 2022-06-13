@@ -3,14 +3,12 @@ package org.orcid.frontend.oauth2;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -27,13 +25,11 @@ import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
-import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
-import org.orcid.pojo.ajaxForm.ScopeInfoForm;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -377,26 +373,18 @@ public class OauthController {
         if(requestInfoForm.getStateParam() != null) {
             authorizationRequestMap.put(OAuth2Utils.STATE, requestInfoForm.getStateParam());
         }
-        
+        if (requestInfoForm.getResponseType() != null) {
+            authorizationRequestMap.put(OAuth2Utils.RESPONSE_TYPE, Set.of(requestInfoForm.getResponseType()));
+        }
         if (requestInfoForm.getScopes() != null) {
             Set<String> scopes = new HashSet<String>();
             requestInfoForm.getScopes().forEach(s -> {scopes.add(s.getValue());});
             authorizationRequestMap.put(OAuth2Utils.SCOPE, Set.copyOf(scopes));
         }
 
-        if (requestInfoForm.getResponseType() != null) {
-            String scope = requestInfoForm.getScopesAsString();
-            String responseType = requestInfoForm.getResponseType();
-            if(authorizationEndpoint.isOpenIdWithTokenResponseType(scope, responseType)) {
-                authorizationRequestMap.put(OAuth2Utils.RESPONSE_TYPE, Set.of("id_token", "token"));
-            } else {
-                authorizationRequestMap.put(OAuth2Utils.RESPONSE_TYPE, Set.of(requestInfoForm.getResponseType()));
-            }
-        }
-        
         Map<String, Object> originalAuthorizationRequest = Map.copyOf(authorizationRequestMap);
         request.getSession().setAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalAuthorizationRequest);
-    }    
+    }
     
     private RequestInfoForm setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal, RequestInfoForm requestInfoForm) {
