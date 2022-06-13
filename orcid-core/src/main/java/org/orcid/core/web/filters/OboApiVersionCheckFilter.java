@@ -55,7 +55,7 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
 
     private String getApiVersion(ContainerRequest request) {
         String path = request.getPath();
-        Matcher matcher = OrcidApiConstants.VERSION_PATTERN.matcher(path);
+        Matcher matcher = OrcidApiConstants.API_VERSION_PATTERN.matcher(path);
         if (matcher.lookingAt()) {
             return matcher.group(1);
         }

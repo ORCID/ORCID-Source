@@ -163,7 +163,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
+            <param-value>org.orcid.api.member.common.filter.MembersApiAnalyticsFilter</param-value>
         </init-param>
         <init-param>
 			<param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>

@@ -21,31 +21,27 @@ import javax.xml.validation.Validator;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.persistence.dao.ValidatedPublicProfileDao;
 import org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.api.client.config.ClientConfig;
+import jakarta.ws.rs.core.Response;
 
 public class PublicProfileValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PublicProfileValidator.class);
 
-    protected Client jerseyClient;
-
     @Resource
     protected ValidatedPublicProfileDao validatedPublicProfileDao;
 
+    @Resource
+    private RESTHelper httpHelper;
+    
     private URI baseUri;
 
     private Schema schema;
-
-    private boolean developmentMode;
 
     @Value("${org.orcid.scheduler.api.profile.validation.maxAgeInDays:90}")
     private int validationMaxAgeInDays;
@@ -54,10 +50,8 @@ public class PublicProfileValidator {
     private int batchSize;
 
     @SuppressWarnings("resource")
-    public PublicProfileValidator(String baseUri, boolean developmentMode) throws URISyntaxException {
+    public PublicProfileValidator(String baseUri) throws URISyntaxException {
         this.baseUri = new URI(baseUri);
-        this.developmentMode = developmentMode;
-
         Source source = new StreamSource(getClass().getResourceAsStream("/record_3.0/record-3.0.xsd"));
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setResourceResolver(new PublicProfileValidatorResourceResolver());
@@ -80,7 +74,6 @@ public class PublicProfileValidator {
     }
 
     public void validateRecords() {
-        jerseyClient = PublicProfileValidationClient.create(developmentMode);
         List<String> orcidIds = validatedPublicProfileDao.getNextRecordsToValidate(batchSize);
         for (String orcid : orcidIds) {
             try {
@@ -96,11 +89,11 @@ public class PublicProfileValidator {
 
     private ValidatedPublicProfileEntity validatePublicProfile(String orcid) throws JAXBException, IOException {
         ValidatedPublicProfileEntity validation = getValidation(orcid);
-        ClientResponse response = getApiResponse(orcid);
+        Response response = httpHelper.executeGetRequest(baseUri, orcid + "/record");
         if (response.getStatus() == 200) {
             // validate profile
             JAXBContext context = JAXBContext.newInstance(Record.class);
-            Source source = new JAXBSource(context, response.getEntity(Record.class));
+            Source source = new JAXBSource(context, response.readEntity(Record.class));
             Validator validator = schema.newValidator();
             try {
                 validator.validate(source);
@@ -120,18 +113,5 @@ public class PublicProfileValidator {
         ValidatedPublicProfileEntity validation = new ValidatedPublicProfileEntity();
         validation.setId(orcid);
         return validation;
-    }
-
-    private ClientResponse getApiResponse(String orcid) {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/record");
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML);
-        ClientResponse response = builder.get(ClientResponse.class);
-        return response;
-    }
-
-    public void setDevelopmentMode(boolean developmentMode) {
-        this.developmentMode = developmentMode;
-    }
-
+    }    
 }

@@ -1567,4 +1567,6 @@
 
 	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>
 
+    <bean id="RESTHelper" class="org.orcid.utils.rest.RESTHelper" />
+
 </beans>

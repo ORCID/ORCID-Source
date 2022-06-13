@@ -65,13 +65,6 @@
 			<version>1.14.3</version>
 		</dependency>		
 
-
-
-
-
-
-
-
         <!-- Jersey client -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
@@ -118,17 +111,6 @@
             <scope>runtime</scope>
         </dependency> 
         
-
-
-
-
-
-
-
-
-
-
-
 		<!-- Test dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>

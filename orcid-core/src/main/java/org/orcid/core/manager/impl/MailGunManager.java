@@ -1,32 +1,14 @@
 package org.orcid.core.manager.impl;
 
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-import javax.ws.rs.core.MediaType;
+import javax.annotation.Resource;
 
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.Response;
 
 public class MailGunManager {
 
@@ -62,6 +44,9 @@ public class MailGunManager {
 
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
+    
+    @Resource
+    private RESTHelper restHelper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
@@ -75,43 +60,41 @@ public class MailGunManager {
     
     public boolean sendEmail(String from, String to, String subject, String text, String html, boolean marketing) {
 
-        Client client = Client.create();
-        client.addFilter(new HTTPBasicAuthFilter("api", getApiKey()));
-
         // determine correct api based off domain.
-        WebResource webResource = null;
+        String url;
+        
         String fromEmail = getFromEmail(from);
         if(marketing)
-            webResource = client.resource(getMarketingApiUrl());
+            url = getMarketingApiUrl();
         else if (fromEmail.endsWith("@verify.orcid.org"))
-            webResource = client.resource(getVerifyApiUrl());
+            url = getVerifyApiUrl();
         else if (fromEmail.endsWith("@notify.orcid.org"))
-            webResource = client.resource(getNotifyApiUrl());
+            url = getNotifyApiUrl();
         else
-            webResource = client.resource(getApiUrl());        
+            url = getApiUrl();        
         
-        MultivaluedMapImpl formData = new MultivaluedMapImpl();
-        formData.add("from", from);
-        formData.add("to", to);
-        formData.add("subject", subject);
-        formData.add("text", text);
+        Form form = new Form();
+        form.param("from", from);
+        form.param("to", to);
+        form.param("subject", subject);
+        form.param("text", text);
         if (html != null) {
-            formData.add("html", html);
+            form.param("html", html);
         }
-        formData.add("o:testmode", testmode);
+        form.param("o:testmode", testmode);
 
         // the filter is used to prevent sending email to users in qa and
         // sandbox
         if (to.matches(filter)) {
-            ClientResponse cr = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
-            if (cr.getStatus() != 200) {
+            Response response = restHelper.postWithAuthentication(url, "api", getApiKey(), null);
+            if (response.getStatus() != 200) {
                 LOGGER.warn("Post MailGunManager.sendEmail to {} not accepted\nstatus: {}\nbody: {}", 
-                        new Object[] { formData.get("to"), cr.getStatus(), cr.getEntity(String.class) });
+                        new Object[] { to, response.getStatus(), response.readEntity(String.class) });
                 return false;
             }
             return true;
         } else {
-            LOGGER.debug("Email not sent to {} due to regex mismatch", formData.get("to"));
+            LOGGER.debug("Email not sent to {} due to regex mismatch", to);
             return false;
         }
     }

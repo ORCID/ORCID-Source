@@ -190,7 +190,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
+            <param-value>org.orcid.api.filter.PublicApiAnalyticsFilter</param-value>
         </init-param>
 		<init-param>
 			<param-name>jersey.config.servlet.filter.staticContentRegex</param-name>

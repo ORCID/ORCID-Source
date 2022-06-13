@@ -1,10 +1,12 @@
 package org.orcid.core.manager.impl;
 
-import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
+import javax.annotation.Resource;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
+import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
+import org.orcid.utils.rest.RESTHelper;
+
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * 
@@ -13,12 +15,10 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
 
-    private Client client = Client.create();
+    @Resource
+    private RESTHelper restHelper;
+    
     private static String X_BIBTEX = "application/x-bibtex";
-
-    public DoiBibtexCacheEntryFactory(){
-        client.setFollowRedirects(true);
-    }
 
     /**
      * Keys MUST be URLs
@@ -26,9 +26,9 @@ public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Obj
      */
     @Override
     public Object load(Object key) throws Exception {
-        ClientResponse cr = client.resource(key.toString()).accept(X_BIBTEX).get(ClientResponse.class);
-        if (cr.getStatus() == Status.OK.getStatusCode()) {
-            return cr.getEntity(String.class);
+        Response response = restHelper.executeGetRequest(key.toString(), true, X_BIBTEX);
+        if (response.getStatus() == Status.OK.getStatusCode()) {
+            return response.readEntity(String.class);
         }
         return null;
     }

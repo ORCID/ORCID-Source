@@ -32,12 +32,6 @@
 	
 	<bean id="orcidRecordIndexer" class="org.orcid.scheduler.indexer.impl.OrcidRecordIndexerImpl" />
 	
-	<!-- PUBLIC API VALIDATION - the following beans can be removed once we have validated (and fixed) all profiles against public api v3 -->
-	<bean id="publicProfileValidator" class="org.orcid.scheduler.validation.PublicProfileValidator">
-	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0/}" />
-	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.developmentMode:false}" />
-	</bean>
-	
 	<bean id="emailQueueListener" class="org.orcid.scheduler.email.trickle.listener.EmailQueueListener" >
 	   <property name="trickleManager" ref="trickleManager" />
 	</bean>
@@ -45,5 +39,27 @@
 	<bean id="emailQueueErrorHandler" class="org.orcid.scheduler.email.trickle.EmailTrickleErrorHandler" />
 	
 	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
+
+    <!-- PUBLIC API VALIDATION - the following beans can be removed once we have validated (and fixed) all profiles against public api v3 -->
+	<bean id="publicProfileValidator" class="org.orcid.scheduler.validation.PublicProfileValidator">
+	    <constructor-arg value="${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0/}" />	    
+	</bean>
+
+    <!-- Jersey client -->
+    <bean id="jerseyClient" class="org.orcid.utils.jersey.OrcidJerseyClientHandler" factory-method="create">
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
+        <constructor-arg ref="jerseyProperties" />
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+
+    <bean id="RESTHelper" class="org.orcid.utils.rest.RESTHelper" />
+    	
+    <bean id="ORCIDMarshaller" class="org.orcid.utils.jersey.marshaller.ORCIDMarshaller" />
 
 </beans>
