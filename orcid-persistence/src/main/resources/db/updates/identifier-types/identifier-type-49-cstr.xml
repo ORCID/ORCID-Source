@@ -5,6 +5,6 @@
         <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">select count(*) from identifier_type where id_name='CSTR';</sqlCheck>
         </preConditions>
-        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use) VALUES (49, 'CSTR', 'https://datapid.cn/', false, now(), now(), 'work');</sql>
+        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use) VALUES (49, 'CSTR', 'https://www.cstr.cn/', false, now(), now(), 'work');</sql>
     </changeSet>
 </databaseChangeLog>
