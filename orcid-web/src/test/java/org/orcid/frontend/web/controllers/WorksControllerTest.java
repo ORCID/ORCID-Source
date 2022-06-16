@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -29,6 +30,7 @@ import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;
 import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -39,6 +41,7 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -53,6 +56,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.google.common.collect.Lists;
 
 import orcid.pojo.ajaxForm.WorkFormTest;
+import org.togglz.junit.TogglzRule;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -74,6 +78,9 @@ public class WorksControllerTest extends BaseControllerTest {
     
     @Mock
     ActivitiesSummaryManager activitiesSummaryManagerMock;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
     
     @Captor
     private ArgumentCaptor<List<Long>> idsCaptor;
@@ -171,6 +178,31 @@ public class WorksControllerTest extends BaseControllerTest {
         contributor = work.getContributors().get(3);
         assertNull(contributor.getEmail());
         assertNull(contributor.getCreditName().getValue());
+    }
+
+    @Test
+    public void testGetWorkInfoWithContributorsGroupedByOrcid() throws Exception {
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+        WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
+        assertNotNull(work);
+        assertNotNull(work.getContributorsGroupedByOrcid());
+        assertEquals(4, work.getContributorsGroupedByOrcid().size());
+
+        ContributorsRolesAndSequences contributor = work.getContributorsGroupedByOrcid().get(0);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("Jaylen Kessler", contributor.getCreditName().getContent());
+
+        contributor = work.getContributorsGroupedByOrcid().get(1);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("John Smith", contributor.getCreditName().getContent());
+
+        contributor = work.getContributorsGroupedByOrcid().get(2);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("Credit Name", contributor.getCreditName().getContent());
+
+        contributor = work.getContributorsGroupedByOrcid().get(3);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("Name is private", contributor.getCreditName().getContent());
     }
 
     @Test
