@@ -438,4 +438,32 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         result.setAdditionalInformation(additionalInfo);
         return result;        
     }
+
+    @Override
+    public OAuth2AccessToken createRevokedAccessToken(OAuth2Authentication authentication, RevokeReason revokeReason) throws AuthenticationException {
+        // create the regular token
+        DefaultOAuth2AccessToken accessToken = generateAccessToken(authentication);
+        try {
+            orcidTokenStore.storeRevokedAccessToken(accessToken, authentication, revokeReason);
+        } catch (PersistenceException e) {
+            // In the unlikely case that there is a constraint violation, lets
+            // try to generate the token one more time
+            if (e.getCause() instanceof ConstraintViolationException) {
+                accessToken = generateAccessToken(authentication);
+                try {
+                    orcidTokenStore.storeRevokedAccessToken(accessToken, authentication, revokeReason);
+                    return accessToken;
+                } catch (Exception e2) {
+                    // Just throw the first exception
+                }
+
+            }
+            OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
+            LOGGER.error("Exception creating revoked access token for client {}, scopes {} and user {}",
+                    new Object[] { authInfo.getClientId(), authInfo.getScopes(), authInfo.getUserOrcid() });
+            LOGGER.error("Error info", e);
+            throw e;
+        }
+        return accessToken;
+    }
 }
