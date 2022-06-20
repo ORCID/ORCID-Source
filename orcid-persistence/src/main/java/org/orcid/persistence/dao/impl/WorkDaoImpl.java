@@ -368,14 +368,21 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    public List<Object[]> getWorksByOrcid(String orcid) {
+    public List<Object[]> getWorksByOrcid(String orcid, boolean topContributorsTogglz) {
+        String contributorsSQL = null;
+        if (topContributorsTogglz) {
+            contributorsSQL = " w.top_contributors_json as contributors";
+        } else {
+            contributorsSQL = " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as contributors ";
+        }
+
         String sqlString =
                 "SELECT " +
                         " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
                         " w.publication_year, w.publication_month, w.publication_day, w.date_created, " +
                         " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," +
                         " w.assertion_origin_source_id, w.assertion_origin_client_source_id, " +
-                        " w.top_contributors_json " +
+                        contributorsSQL +
                         " FROM work w" +
                         " WHERE orcid=:orcid";
 
@@ -398,7 +405,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
                 .addScalar("date_created", TimestampType.INSTANCE)
                 .addScalar("last_modified", TimestampType.INSTANCE)
-                .addScalar("top_contributors_json", StringType.INSTANCE);
+                .addScalar("contributors", StringType.INSTANCE);
         return query.getResultList();
     }
 

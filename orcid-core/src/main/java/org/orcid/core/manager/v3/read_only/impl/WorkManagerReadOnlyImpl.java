@@ -213,7 +213,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
-        List<Object[]> list = workDao.getWorksByOrcid(orcid);
+        List<Object[]> list = workDao.getWorksByOrcid(orcid, Features.STORE_TOP_CONTRIBUTORS.isActive());
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
             String workType = isEmpty(q1[1]);
@@ -231,7 +231,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             String assertionOriginClientSourceId = isEmpty(q1[13]);
             Timestamp createdDate = (Timestamp) q1[14];
             Timestamp lastModifiedDate = (Timestamp) q1[15];
-            String topContributors = isEmpty(q1[16]);
+            String contributors = isEmpty(q1[16]);
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
                 externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
@@ -256,8 +256,10 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             List<WorkContributorsList> contributorList = new ArrayList<>();
             List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive() && topContributors != null && !"".equals(topContributors)) {
-                contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(topContributors);
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive() && contributors != null && !"".equals(contributors)) {
+                contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
+            } else {
+                contributorList = workContributorsConverter.getContributorsList(contributors);
             }
 
             WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
@@ -272,6 +274,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     .displayIndex(displayIndex)
                     .assertionOriginSourceId(assertionOriginSourceId)
                     .assertionOriginClientSourceId(assertionOriginClientSourceId)
+                    .contributors(contributorList)
                     .topContributors(contributorsRolesAndSequencesList)
                     .build();
             workSummaryExtendedList.add(wse);

@@ -69,6 +69,7 @@ public class WorkSummaryExtended extends WorkSummary {
             super.setCreatedDate(new CreatedDate(builder.createdDate));
             super.setLastModifiedDate(new LastModifiedDate(builder.lastModifiedDate));
         }
+        this.contributors = builder.contributors;
         this.contributorsGroupedByOrcid = builder.topContributors;
     }
 
