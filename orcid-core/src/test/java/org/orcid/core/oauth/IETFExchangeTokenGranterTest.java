@@ -57,7 +57,7 @@ public class IETFExchangeTokenGranterTest {
     private static final String ACTIVE_CLIENT_ID = "ACTIVE";
 
     @Mock
-    private AuthorizationServerTokenServices tokenServicesMock;
+    private OrcidRandomValueTokenServices tokenServicesMock;
 
     @Mock
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManagerMock;
@@ -287,6 +287,26 @@ public class IETFExchangeTokenGranterTest {
         }
     }
 
+    @Test
+    public void grantDisabledTokenDoesntWorkTest() {
+        fail();
+    }
+    
+    @Test
+    public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest() {
+        fail();
+    }
+    
+    @Test
+    public void grantDisabledTokenWithActivitiesReadLimitedAndOtherActiveTokenWithOtherScopesGenerateDeactivatedTokenTest() {
+        fail();
+    }
+    
+    @Test
+    public void grantDisabledTokenWithActivitiesReadLimitedAndOtherActiveTokenWithActivitiesReadLimitedScopesGenerateActiveTokenTest() {
+        fail();
+    }
+    
     @Test
     public void grantTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
