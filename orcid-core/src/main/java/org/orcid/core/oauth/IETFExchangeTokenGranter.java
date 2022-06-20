@@ -282,7 +282,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         // do we have requested scopes?
         String requestedScopesString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.SCOPE_PARAM);
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromSpaceSeparatedString(requestedScopesString);
-        if (!requestedScopes.isEmpty()) {
+        if (requestedScopes != null && !requestedScopes.isEmpty()) {
             scopesOBO = Sets.intersection(combinedOBOScopes, requestedScopes);
         }
         if (scopesOBO.isEmpty()) {
