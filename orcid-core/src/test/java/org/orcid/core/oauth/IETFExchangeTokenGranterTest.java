@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,18 +13,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
-import javax.annotation.Resource;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -37,9 +30,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
-import org.orcid.core.togglz.Features;
-import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.persistence.dao.MemberOBOWhitelistedClientDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -49,14 +39,11 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
-import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 
 public class IETFExchangeTokenGranterTest {
@@ -66,6 +53,8 @@ public class IETFExchangeTokenGranterTest {
     private static final String ORCID = "0000-0000-0000-0000";
 
     private static final String AUDIENCE_CLIENT_ID = "AUD_CLIENT";
+
+    private static final String ACTIVE_CLIENT_ID = "ACTIVE";
 
     @Mock
     private AuthorizationServerTokenServices tokenServicesMock;
@@ -103,13 +92,13 @@ public class IETFExchangeTokenGranterTest {
         ClientDetailsEntity lockedClient = new ClientDetailsEntity("LOCKED");
         ClientDetailsEntity deactivatedClient = new ClientDetailsEntity("DEACTIVATED");
 
-        when(activeClientMock.getId()).thenReturn("ACTIVE");
-        when(activeClientMock.getClientId()).thenReturn("ACTIVE");
+        when(activeClientMock.getId()).thenReturn(ACTIVE_CLIENT_ID);
+        when(activeClientMock.getClientId()).thenReturn(ACTIVE_CLIENT_ID);
         when(activeClientMock.getAuthorizedGrantTypes()).thenReturn(Set.of(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE));
 
         // For sake of testing, ACTIVE and AUD_CLIENT could be the same mock
-        when(clientDetailsEntityCacheManagerMock.retrieve("ACTIVE")).thenReturn(activeClientMock);
-        when(clientDetailsEntityCacheManagerMock.retrieve("AUD_CLIENT")).thenReturn(activeClientMock);
+        when(clientDetailsEntityCacheManagerMock.retrieve(ACTIVE_CLIENT_ID)).thenReturn(activeClientMock);
+        when(clientDetailsEntityCacheManagerMock.retrieve(AUDIENCE_CLIENT_ID)).thenReturn(activeClientMock);
 
         when(clientDetailsEntityCacheManagerMock.retrieve("LOCKED")).thenReturn(lockedClient);
         when(clientDetailsEntityCacheManagerMock.retrieve("DEACTIVATED")).thenReturn(deactivatedClient);
@@ -119,13 +108,13 @@ public class IETFExchangeTokenGranterTest {
 
         when(openIDConnectKeyServiceMock.verify(any())).thenReturn(true);
 
-        ClientDetailsEntity oboClient = new ClientDetailsEntity("AUD_CLIENT");
+        ClientDetailsEntity oboClient = new ClientDetailsEntity(AUDIENCE_CLIENT_ID);
         MemberOBOWhitelistedClientEntity e = new MemberOBOWhitelistedClientEntity();
         e.setWhitelistedClientDetailsEntity(oboClient);
 
         List<MemberOBOWhitelistedClientEntity> oboClients = List.of(e);
 
-        when(memberOBOWhitelistedClientDaoMock.getWhitelistForClient("ACTIVE")).thenReturn(oboClients);
+        when(memberOBOWhitelistedClientDaoMock.getWhitelistForClient(ACTIVE_CLIENT_ID)).thenReturn(oboClients);
 
         OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
         token1.setApproved(true);
@@ -175,7 +164,7 @@ public class IETFExchangeTokenGranterTest {
 
     @Test
     public void grantMissingRequestParamsTest() {
-        String clientId = "ACTIVE";
+        String clientId = ACTIVE_CLIENT_ID;
         List<String> scope = List.of("/read-limited");
 
         try {
@@ -226,7 +215,7 @@ public class IETFExchangeTokenGranterTest {
         // Remove the required grant type
         when(activeClientMock.getAuthorizedGrantTypes()).thenReturn(Set.of(OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS));
         try {
-            tokenGranter.grant(GRANT_TYPE, getTokenRequest("ACTIVE", List.of("/read-limited")));
+            tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals("Client does not have urn:ietf:params:oauth:grant-type:token-exchange enabled", iae.getMessage());
@@ -243,7 +232,7 @@ public class IETFExchangeTokenGranterTest {
             requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN, buildJWTToken(true));
             requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE, "urn:ietf:params:oauth:token-type:id_token");
             requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, "urn:ietf:params:oauth:token-type:access_token");
-            tokenGranter.grant(GRANT_TYPE, new TokenRequest(requestParameters, "ACTIVE", List.of("/read-limited"), GRANT_TYPE));
+            tokenGranter.grant(GRANT_TYPE, new TokenRequest(requestParameters, ACTIVE_CLIENT_ID, List.of("/read-limited"), GRANT_TYPE));
             fail();
         } catch (IllegalArgumentException iae) {
             assertEquals(String.format("Token issued to client AUD_CLIENT and user 0000-0000-0000-0000 expired on %s", new Date(0)), iae.getMessage());
@@ -251,26 +240,56 @@ public class IETFExchangeTokenGranterTest {
             fail();
         }
     }
-    
+
     @Test
     public void grantClientNotOboWhitelistedTest() {
         try {
             ClientDetailsEntity oboClient = new ClientDetailsEntity("OTHER_CLIENT");
             MemberOBOWhitelistedClientEntity e = new MemberOBOWhitelistedClientEntity();
             e.setWhitelistedClientDetailsEntity(oboClient);
-            when(memberOBOWhitelistedClientDaoMock.getWhitelistForClient("AUD_CLIENT")).thenReturn(List.of(e));
-            tokenGranter.grant(GRANT_TYPE, getTokenRequest("ACTIVE", List.of("/read-limited")));
+            when(memberOBOWhitelistedClientDaoMock.getWhitelistForClient(AUDIENCE_CLIENT_ID)).thenReturn(List.of(e));
+            tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
             fail();
-        } catch(IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             assertEquals("Client ACTIVE cannot act on behalf of client AUD_CLIENT", iae.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             fail();
         }
     }
-    
+
+    @Test
+    public void grantRequestingAndOBOClientMustNotBeTheSameClientTest() throws JOSEException, NoSuchAlgorithmException, IOException, ParseException, URISyntaxException {
+        Builder claims = new JWTClaimsSet.Builder();
+        claims.claim("aud", AUDIENCE_CLIENT_ID);
+        claims.claim("sub", ORCID);
+        claims.expirationTime(new Date(System.currentTimeMillis() + 60000));
+
+        OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig config = new OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig();
+        config.setKeyName("OpenIDTestKey1");
+        config.setJsonKey(
+                "{\"keys\":[{\"kty\":\"RSA\",\"d\":\"i6C2Vdr7HDMj9wOBx28epQ7KPpzU_RDfGmQF8c81MoQU2KkpuNcFD49Rixzp3nQa58vtCOzAKeHwglpqm4elcai-uTW0bcdW1DOqYbwzQEk7pVQF-mMEUC-Rvd3Y5SIhCrHQYHGq9Q58uyuolG-Exq4h1AgyhUBX3CETCqzhPshOmB_Y4OuasdhyuVNySBbo-ZOYSd-HMrsrv1lt5WckWz22wmsREjO5AoRPpF17UVp3nMRCTy2v1acUrNtG64MdaFUpmLt9a-RqseFErE2Tm-kEUSBjYucswQ0_ZIs_VUdPWet4twqulB2bJi2ET6pP25DufOtR0x3ijvEPAfvhwQ\",\"e\":\"AQAB\",\"use\":\"sig\",\"kid\":\"OpenIDTestKey1\",\"alg\":\"RS256\",\"n\":\"qCtxWP2HppC8PBEXUh6b5RPECAzQS01khDwbxCSndO-YtS1MYpNlmtUgdtoAEoIP9TFMqXOsltKmGFioy0CeWLi53M-iX-Ygjd3zSQAbr0BU0-86somdbIlFxuvGA8v6AC7MNlICTwbGExCufL_hivrzF1XVqi5zIovM1LA8k2bP4BKMEjNwhGBGJ0E9KcQYv65foZr9K0C6YYJDFE6YqsHP_czvbI1ij7MfDvN5cwmHRGMGOyzDCmT_SmjoZAZ4vSXbl2wI5txIj70RLLSK4oahktb-09c0lDVYpCno7LqsLR8E3DuTUniYwYMHlXeBor_G7sJw2alF568m1iZ_zQ\"}]}");
+        OpenIDConnectKeyService service = new OpenIDConnectKeyService(config);
+
+        String token = service.sign(claims.build()).serialize();
+
+        Map<String, String> requestParameters = new HashMap<String, String>();
+        requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN, token);
+        requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE, "urn:ietf:params:oauth:token-type:id_token");
+        requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, "urn:ietf:params:oauth:token-type:access_token");
+        TokenRequest tokenRequest = new TokenRequest(requestParameters, AUDIENCE_CLIENT_ID, List.of("/read-limited"), GRANT_TYPE);
+        try {
+            tokenGranter.grant(GRANT_TYPE, tokenRequest);
+            fail();
+        } catch (IllegalArgumentException iae) {
+            assertEquals("Attempt to exchange own id_token, use refresh token instead", iae.getMessage());
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
     @Test
     public void grantTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
-        tokenGranter.grant(GRANT_TYPE, getTokenRequest("ACTIVE", List.of("/read-limited")));
+        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
         verify(tokenServicesMock, times(1)).createAccessToken(any());
     }
 
