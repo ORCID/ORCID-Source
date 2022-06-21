@@ -145,15 +145,15 @@ public class IETFExchangeTokenGranterTest {
         token.setValue("");
 
         when(tokenServicesMock.createAccessToken(any())).thenReturn(token);
-        
-        //Disabled token
+
+        // Disabled token
         DefaultOAuth2AccessToken disabledToken = new DefaultOAuth2AccessToken("");
         disabledToken.setAdditionalInformation(new HashMap<String, Object>());
         disabledToken.setExpiration(new Date(System.currentTimeMillis() + 60000));
         disabledToken.setScope(Set.of());
         disabledToken.setTokenType("");
         disabledToken.setValue("");
-        
+
         when(tokenServicesMock.createRevokedAccessToken(any(), any())).thenReturn(disabledToken);
 
         tokenGranter = new IETFExchangeTokenGranter(tokenServicesMock);
@@ -321,9 +321,10 @@ public class IETFExchangeTokenGranterTest {
             fail();
         }
     }
-    
+
     @Test
-    public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+    public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest()
+            throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
         token1.setApproved(true);
         token1.setScope("/activities/update");
@@ -332,23 +333,65 @@ public class IETFExchangeTokenGranterTest {
         token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
 
         when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
-        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
-        //Verify revoke token was created
+        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
+        // Verify revoke token was created
         verify(tokenServicesMock, times(1)).createRevokedAccessToken(any(), eq(RevokeReason.USER_REVOKED));
-        //Verify regular token was never created
+        // Verify regular token was never created
         verify(tokenServicesMock, never()).createAccessToken(any());
     }
-    
+
     @Test
-    public void grantDisabledTokenWithActivitiesReadLimitedAndOtherActiveTokenWithOtherScopesGenerateDeactivatedTokenTest() {
-        fail();
+    public void grantDisabledTokenWithActivitiesUpdateAndOtherActiveTokenWithOtherScopesGenerateDeactivatedTokenTest()
+            throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        // Deactivated token
+        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
+        token1.setApproved(true);
+        token1.setScope("/activities/update");
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+        token1.setTokenDisabled(true);
+        token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
+        // Active token with other scope
+        OrcidOauth2TokenDetail token2 = new OrcidOauth2TokenDetail();
+        token2.setApproved(true);
+        token2.setScope("/activities/read-limited /read-limited /read-public");
+        token2.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+        token2.setTokenDisabled(false);
+
+        // Revoke token should be generated
+        when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1, token2));
+        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
+        // Verify revoke token was created
+        verify(tokenServicesMock, times(1)).createRevokedAccessToken(any(), eq(RevokeReason.USER_REVOKED));
+        // Verify regular token was never created
+        verify(tokenServicesMock, never()).createAccessToken(any());
     }
-    
+
     @Test
-    public void grantDisabledTokenWithActivitiesReadLimitedAndOtherActiveTokenWithActivitiesReadLimitedScopesGenerateActiveTokenTest() {
-        fail();
+    public void grantDisabledTokenWithActivitiesUpdateAndOtherActiveTokenWithActivitiesUpdateScopesGenerateActiveTokenTest()
+            throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        // Deactivated token
+        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
+        token1.setApproved(true);
+        token1.setScope("/activities/update");
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+        token1.setTokenDisabled(true);
+        token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
+        // Active token with other scope
+        OrcidOauth2TokenDetail token2 = new OrcidOauth2TokenDetail();
+        token2.setApproved(true);
+        token2.setScope("/activities/read-limited /read-limited /activities/update /read-public");
+        token2.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+        token2.setTokenDisabled(false);
+
+        // Revoke token should be generated
+        when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1, token2));
+        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
+        // Verify revoke token was never created
+        verify(tokenServicesMock, never()).createRevokedAccessToken(any(), any());
+        // Verify regular token was created
+        verify(tokenServicesMock, times(1)).createAccessToken(any());
     }
-    
+
     @Test
     public void grantTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
