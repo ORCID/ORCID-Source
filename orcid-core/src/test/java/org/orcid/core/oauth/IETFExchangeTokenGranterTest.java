@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,8 +25,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
+import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
@@ -39,6 +42,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
@@ -132,6 +136,7 @@ public class IETFExchangeTokenGranterTest {
         oga.setProfileEntity(profile);
         when(profileDaoMock.getGrantedAuthoritiesForProfile(eq(ORCID))).thenReturn(List.of(oga));
 
+        // Active token
         DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("");
         token.setAdditionalInformation(new HashMap<String, Object>());
         token.setExpiration(new Date(System.currentTimeMillis() + 60000));
@@ -140,6 +145,16 @@ public class IETFExchangeTokenGranterTest {
         token.setValue("");
 
         when(tokenServicesMock.createAccessToken(any())).thenReturn(token);
+        
+        //Disabled token
+        DefaultOAuth2AccessToken disabledToken = new DefaultOAuth2AccessToken("");
+        disabledToken.setAdditionalInformation(new HashMap<String, Object>());
+        disabledToken.setExpiration(new Date(System.currentTimeMillis() + 60000));
+        disabledToken.setScope(Set.of());
+        disabledToken.setTokenType("");
+        disabledToken.setValue("");
+        
+        when(tokenServicesMock.createRevokedAccessToken(any(), any())).thenReturn(disabledToken);
 
         tokenGranter = new IETFExchangeTokenGranter(tokenServicesMock);
 
@@ -288,13 +303,40 @@ public class IETFExchangeTokenGranterTest {
     }
 
     @Test
-    public void grantDisabledTokenDoesntWorkTest() {
-        fail();
+    public void grantDisabledTokenDoesntWorkTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        try {
+            OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
+            token1.setApproved(true);
+            token1.setScope("/read-limited");
+            token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+            token1.setTokenDisabled(true);
+            token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
+
+            when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
+            tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
+            fail();
+        } catch (OrcidInvalidScopeException oise) {
+            assertEquals("The id_token is not associated with a valid scope", oise.getMessage());
+        } catch (Exception e) {
+            fail();
+        }
     }
     
     @Test
-    public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest() {
-        fail();
+    public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
+        token1.setApproved(true);
+        token1.setScope("/activities/update");
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+        token1.setTokenDisabled(true);
+        token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
+
+        when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
+        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
+        //Verify revoke token was created
+        verify(tokenServicesMock, times(1)).createRevokedAccessToken(any(), eq(RevokeReason.USER_REVOKED));
+        //Verify regular token was never created
+        verify(tokenServicesMock, never()).createAccessToken(any());
     }
     
     @Test
