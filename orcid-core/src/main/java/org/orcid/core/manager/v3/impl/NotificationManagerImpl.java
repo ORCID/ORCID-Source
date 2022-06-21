@@ -834,16 +834,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public Notification createPermissionNotification(String orcid, NotificationPermission notification) {
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(orcid);
-        String frequencyString = frequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS);
-        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-
-        if (SendEmailFrequency.NEVER.equals(memberUpdateEmailFrequency)) {
-            LOGGER.debug("Not sending acknowledge notification, because option to send member updates is set to never for record: {}",
-                    orcid);
-            return null;
-        }
-        
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
