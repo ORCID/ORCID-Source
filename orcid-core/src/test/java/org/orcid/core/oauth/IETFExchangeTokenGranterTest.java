@@ -120,11 +120,7 @@ public class IETFExchangeTokenGranterTest {
 
         when(memberOBOWhitelistedClientDaoMock.getWhitelistForClient(ACTIVE_CLIENT_ID)).thenReturn(oboClients);
 
-        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
-        token1.setApproved(true);
-        token1.setScope("/read-limited");
-        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
-        token1.setTokenDisabled(false);
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/read-limited", System.currentTimeMillis() + 60000, false);
 
         when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
 
@@ -305,11 +301,7 @@ public class IETFExchangeTokenGranterTest {
     @Test
     public void grantDisabledTokenDoesntWorkTest() throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         try {
-            OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
-            token1.setApproved(true);
-            token1.setScope("/read-limited");
-            token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
-            token1.setTokenDisabled(true);
+            OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/read-limited", System.currentTimeMillis() + 60000, true);
             token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
 
             when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
@@ -325,11 +317,7 @@ public class IETFExchangeTokenGranterTest {
     @Test
     public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest()
             throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
-        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
-        token1.setApproved(true);
-        token1.setScope("/activities/update");
-        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
-        token1.setTokenDisabled(true);
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
         token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
 
         when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
@@ -344,14 +332,11 @@ public class IETFExchangeTokenGranterTest {
     public void grantDisabledTokenWithActivitiesUpdateAndOtherActiveTokenWithOtherScopesGenerateDeactivatedTokenTest()
             throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         // Deactivated token
-        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
-        token1.setApproved(true);
-        token1.setScope("/activities/update");
-        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
-        token1.setTokenDisabled(true);
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
         token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
+        
         // Active token with other scope
-        OrcidOauth2TokenDetail token2 = new OrcidOauth2TokenDetail();
+        OrcidOauth2TokenDetail token2 = getOrcidOauth2TokenDetail(true, "/activities/read-limited /read-limited /read-public", System.currentTimeMillis() + 60000, false);
         token2.setApproved(true);
         token2.setScope("/activities/read-limited /read-limited /read-public");
         token2.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
@@ -370,17 +355,11 @@ public class IETFExchangeTokenGranterTest {
     public void grantDisabledTokenWithActivitiesUpdateAndOtherActiveTokenWithActivitiesUpdateScopesGenerateActiveTokenTest()
             throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         // Deactivated token
-        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();
-        token1.setApproved(true);
-        token1.setScope("/activities/update");
-        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
-        token1.setTokenDisabled(true);
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
         token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
+        
         // Active token with other scope
-        OrcidOauth2TokenDetail token2 = new OrcidOauth2TokenDetail();
-        token2.setApproved(true);
-        token2.setScope("/activities/read-limited /read-limited /activities/update /read-public");
-        token2.setTokenExpiration(new Date(System.currentTimeMillis() + 60000));
+        OrcidOauth2TokenDetail token2 = getOrcidOauth2TokenDetail(true, "/activities/read-limited /read-limited /activities/update /read-public", System.currentTimeMillis() + 60000, true);
         token2.setTokenDisabled(false);
 
         // Revoke token should be generated
@@ -420,5 +399,14 @@ public class IETFExchangeTokenGranterTest {
         OpenIDConnectKeyService service = new OpenIDConnectKeyService(config);
 
         return service.sign(claims.build()).serialize();
+    }
+    
+    private OrcidOauth2TokenDetail getOrcidOauth2TokenDetail(Boolean approved, String scope, long expiration, Boolean disabled) {
+        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
+        token.setApproved(approved);
+        token.setScope(scope);
+        token.setTokenExpiration(new Date(expiration));
+        token.setTokenDisabled(disabled);
+        return token;
     }
 }
