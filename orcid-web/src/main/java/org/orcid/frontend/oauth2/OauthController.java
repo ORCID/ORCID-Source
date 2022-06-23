@@ -189,6 +189,32 @@ public class OauthController {
             return requestInfoForm;
         }
 
+        // Check that the client have the required permissions
+        // Get client name
+        String clientId = requestInfoForm.getClientId();
+        if (PojoUtil.isEmpty(clientId)) {
+            requestInfoForm.setError("invalid_client");
+            requestInfoForm.setErrorDescription("invalid client_id");
+            return requestInfoForm;
+        }
+
+        // Validate client details
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        try {
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        } catch (LockedException e) {
+            requestInfoForm.setError("client_locked");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        } catch (ClientDeactivatedException e) {
+            requestInfoForm.setError("client_deactivated");
+            requestInfoForm.setErrorDescription(e.getMessage());
+            return requestInfoForm;
+        }
+
+        // Populate the user session
+        populateSession(request, requestInfoForm);
+        
         // handle openID behaviour
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())
                 && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID)) {
@@ -216,30 +242,7 @@ public class OauthController {
                 return requestInfoForm;
             }
         }
-
-        // Check that the client have the required permissions
-        // Get client name
-        String clientId = requestInfoForm.getClientId();
-        if (PojoUtil.isEmpty(clientId)) {
-            requestInfoForm.setError("invalid_client");
-            requestInfoForm.setErrorDescription("invalid client_id");
-            return requestInfoForm;
-        }
-
-        // Validate client details
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        try {
-            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (LockedException e) {
-            requestInfoForm.setError("client_locked");
-            requestInfoForm.setErrorDescription(e.getMessage());
-            return requestInfoForm;
-        } catch (ClientDeactivatedException e) {
-            requestInfoForm.setError("client_deactivated");
-            requestInfoForm.setErrorDescription(e.getMessage());
-            return requestInfoForm;
-        }
-
+        
         //implicit id_token requests must have nonce.
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())
                 && ScopePathType.getScopesFromSpaceSeparatedString(requestInfoForm.getScopesAsString()).contains(ScopePathType.OPENID)
@@ -289,8 +292,6 @@ public class OauthController {
         if (clientDetails.isPersistentTokensEnabled()) {
             usePersistentTokens = true;
         }
-
-        populateSession(request, requestInfoForm);
 
         if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
