@@ -3,6 +3,7 @@ package org.orcid.core.oauth.service;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -111,6 +113,22 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         token.getAdditionalInformation().put(OrcidOauth2Constants.TOKEN_ID, detail.getId());
     }
 
+    /**
+     * Store a revoked access token with the intention of allowing the member to use it for deleting their own activities when required
+     * */
+    @Override
+    public void storeRevokedAccessToken(DefaultOAuth2AccessToken token, OAuth2Authentication authentication, RevokeReason revokeReason) {
+        OrcidOauth2TokenDetail detail = populatePropertiesFromTokenAndAuthentication(token, authentication, null);
+        detail.setTokenDisabled(true);
+        detail.setRevocationDate(new Date());
+        if(revokeReason != null) {
+            detail.setRevokeReason(revokeReason.name());
+        }
+        orcidOauthTokenDetailService.createNew(detail);
+        // Set the token id in the additional details
+        token.getAdditionalInformation().put(OrcidOauth2Constants.TOKEN_ID, detail.getId());
+    }    
+    
     /**
      * Read an access token from the store.
      * 
@@ -469,5 +487,6 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
             }
         }
         return accessTokens;
-    }          
+    }
+
 }
