@@ -110,7 +110,9 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 }
 
             } catch (Exception ex) {
-                LOGGER.error("Exception while saving sign in lock.", ex);
+                if (!(ex instanceof javax.persistence.NoResultException)) {
+                    LOGGER.error("Exception while saving sign in lock.", ex);
+                }
             }
             throw bce;
         }
