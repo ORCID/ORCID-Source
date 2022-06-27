@@ -67,6 +67,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         ProfileEntity profile = null;
         Integer signinLockCount = null;
         Date signinLockStart = null;
+        boolean succesfulLoginAccountLocked = false;
         try {
 
             result = super.authenticate(auth);
@@ -80,6 +81,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 // 2.lock window active
                 if (isLockThreshHoldExceeded(profile.getSigninLockCount(), profile.getSigninLockStart())) {
                     LOGGER.info("Correct sign in but threshhold exceeded for: " + profile.getId());
+                    succesfulLoginAccountLocked = true;
                     throw new BadCredentialsException("Lock Threashold Exceeded for " + profile.getId());
                 } else if ((profile.getSigninLockCount() == null) || (profile.getSigninLockCount() > 0 && Features.ENABLE_ACCOUNT_LOCKOUT.isActive())) {
                     LOGGER.info("Reset the signin lock after correct login outside of locked window for: " + profile.getId());
@@ -90,27 +92,27 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         } catch (BadCredentialsException bce) {
             // update the DB for lock threshhold fields
             try {
-                if ((result == null || !result.isAuthenticated()) && Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
+                if (Features.ENABLE_ACCOUNT_LOCKOUT.isActive() && !succesfulLoginAccountLocked) {
                     LOGGER.info("Invalid password attempt updating signin lock");
                     if (profile == null) {
                         profile = getProfileEntity(auth.getName());
-                        // get the locking info
-                        List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
-                        signinLockCount = (Integer) lockInfoList.get(0)[2];
-                        signinLockStart = (Date) lockInfoList.get(0)[0];
-                        if (signinLockStart == null) {
-                            profileEntityManager.startSigninLock(profile.getId());
-                        }
-                        profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
-                        if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
-                            profileEntityCacheManager.remove(profile.getId());
-                        }
-
                     }
+                    // get the locking info
+                    List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
+                    signinLockCount = (Integer) lockInfoList.get(0)[2];
+                    signinLockStart = (Date) lockInfoList.get(0)[0];
+                    if (signinLockStart == null) {
+                        profileEntityManager.startSigninLock(profile.getId());
+                    }
+
+                    profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
+                    profileEntityCacheManager.remove(profile.getId());
                 }
 
             } catch (Exception ex) {
-                LOGGER.error("Exception while saving sign in lock.", ex);
+                if (!(ex instanceof javax.persistence.NoResultException)) {
+                    LOGGER.error("Exception while saving sign in lock.", ex);
+                }
             }
             throw bce;
         }
@@ -169,7 +171,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
     private boolean isLockThreshHoldExceeded(Integer signinLockCount, Date signinLockStart) {
         if ((signinLockCount != null) && signinLockCount > 0 && signinLockStart != null) {
-            int multiplyWaitWindow = (signinLockCount - lockoutThreshhold) > 0 ? 1 : ((signinLockCount - lockoutThreshhold) + 1);
+            int multiplyWaitWindow = (signinLockCount - lockoutThreshhold) + 1;
             Instant waitLock = signinLockStart.toInstant().plusSeconds(multiplyWaitWindow * lockoutWindow * 60);
             if (waitLock.isAfter(Instant.now())) {
                 return true;

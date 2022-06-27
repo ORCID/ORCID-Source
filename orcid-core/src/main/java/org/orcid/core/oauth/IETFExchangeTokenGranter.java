@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -73,6 +74,8 @@ public class IETFExchangeTokenGranter implements TokenGranter {
 
     @Resource
     OpenIDConnectTokenEnhancer openIDConnectTokenEnhancer;
+    
+    private List<String> doNotAllowDeleteOnTheseRevokeReasons = List.of(RevokeReason.CLIENT_REVOKED.name(), RevokeReason.STAFF_REVOKED.name());
 
     public IETFExchangeTokenGranter(AuthorizationServerTokenServices tokenServices) {
         this.tokenServices = tokenServices;
@@ -124,6 +127,9 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             JWTClaimsSet claimsSet = parseIdToken(subjectToken);
             String oboClient = claimsSet.getAudience().get(0);
             String oboOrcid = claimsSet.getSubject();
+            if(new Date().after(claimsSet.getExpirationTime())) {
+                throw new IllegalArgumentException(String.format("Token issued to client %s and user %s expired on %s", oboClient, oboOrcid, claimsSet.getExpirationTime()));
+            }
             if (oboClientWhitelisted(oboClient, clientDetails.getId())) {
                 return generateAccessToken(tokenRequest, oboClient, oboOrcid);
             } else {
@@ -229,13 +235,44 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         // this means only "token id_token" requests will work (not code
         // id_token). Balls. Just means we must never enable "code id_token".
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(OBOClient, OBOOrcid);
-        Set<ScopePathType> scopesOBO = Sets.newHashSet();
+        Set<ScopePathType> activeScopesOBO = Sets.newHashSet();
+        Set<ScopePathType> inactiveScopesOBO = Sets.newHashSet();
+        boolean issueRevokedToken = false;
+        RevokeReason revokeReason = null;
         for (OrcidOauth2TokenDetail d : details) {
-            if ((d.getTokenDisabled() == null || !d.getTokenDisabled()) && d.getTokenExpiration().after(new Date())) {
-                // TODO: do we need to check revocation dates?
-                scopesOBO.addAll(ScopePathType.getScopesFromSpaceSeparatedString(d.getScope()));
+            Set<ScopePathType> scopesInToken = ScopePathType.getScopesFromSpaceSeparatedString(d.getScope());
+            // If token is expired, we should ignore it
+            if (d.getTokenExpiration().after(new Date())) {
+                // If token is disabled, we should know if it have the /activities/update scope on it
+                if(d.getTokenDisabled() == null || !d.getTokenDisabled()) {
+                    activeScopesOBO.addAll(scopesInToken);
+                } else {
+                    if(scopesInToken.contains(ScopePathType.ACTIVITIES_UPDATE)) {
+                        //Save the revoke reason
+                        try {
+                            revokeReason = StringUtils.isEmpty(d.getRevokeReason()) ? null : RevokeReason.valueOf(d.getRevokeReason());
+                        } catch(Exception e) {
+                            //In case a weird revoke reason was added or is empty, leave the revoke reason null                            
+                        }
+                        // Keep only the /activities/update scope if the token was not revoked by a client or staff member
+                        if(revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
+                            inactiveScopesOBO.add(ScopePathType.ACTIVITIES_UPDATE);
+                        }
+                    } 
+                }                
             }
         }
+        
+        Set<ScopePathType> scopesOBO = Sets.newHashSet();
+        
+        // If the list of inactive scopes contains /activities/update AND the list of active scopes doesn't, then, we should issue a revoked token that allows obo members to delete
+        if(inactiveScopesOBO.contains(ScopePathType.ACTIVITIES_UPDATE) && !activeScopesOBO.contains(ScopePathType.ACTIVITIES_UPDATE)) {
+            issueRevokedToken = true;
+            scopesOBO.addAll(inactiveScopesOBO);
+        } else {
+            issueRevokedToken = false;
+            scopesOBO.addAll(activeScopesOBO);
+        }        
         
         if (scopesOBO.isEmpty()) {
             throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
@@ -248,7 +285,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         // do we have requested scopes?
         String requestedScopesString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.SCOPE_PARAM);
         Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromSpaceSeparatedString(requestedScopesString);
-        if (!requestedScopes.isEmpty()) {
+        if (requestedScopes != null && !requestedScopes.isEmpty()) {
             scopesOBO = Sets.intersection(combinedOBOScopes, requestedScopes);
         }
         if (scopesOBO.isEmpty()) {
@@ -257,8 +294,8 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         Set<String> tokenScopes = Sets.newHashSet();
         for (ScopePathType s : scopesOBO) {
             tokenScopes.add(s.value());
-        }
-
+        }        
+        
         // Create access token for calling client
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(OBOOrcid);
         List<OrcidGrantedAuthority> authorities = profileDao.getGrantedAuthoritiesForProfile(profileEntity.getId());
@@ -276,7 +313,16 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                 extensionProperties);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuth);
-        OAuth2AccessToken token = tokenServices.createAccessToken(authentication);
+        OAuth2AccessToken token;
+        if(issueRevokedToken) {
+            if(!(tokenServices instanceof OrcidRandomValueTokenServices)) {
+                throw new OrcidInvalidScopeException("Unable to instantiate the tokenServices as a OrcidRandomValueTokenServices");
+            }
+            OrcidRandomValueTokenServices orcidRandomValueTokenServices = (OrcidRandomValueTokenServices) tokenServices;
+            token = orcidRandomValueTokenServices.createRevokedAccessToken(authentication, revokeReason);
+        } else {
+            token = tokenServices.createAccessToken(authentication);    
+        }        
 
         return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.accessToken(token));
         // Note, redirect_uri is left blank.

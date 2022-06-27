@@ -286,6 +286,11 @@ public class PasswordResetController extends BaseController {
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+        //reset the lock fields
+        if (Features.ENABLE_ACCOUNT_LOCKOUT.isActive()) {
+            profileEntityManager.resetSigninLock(orcid);
+            profileEntityCacheManager.remove(orcid);
+        }
 
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
@@ -324,6 +329,8 @@ public class PasswordResetController extends BaseController {
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+        //reset the lock fields
+        profileEntityManager.resetSigninLock(orcid);
 
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
