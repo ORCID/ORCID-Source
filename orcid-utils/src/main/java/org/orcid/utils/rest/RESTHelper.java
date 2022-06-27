@@ -1,6 +1,9 @@
 package org.orcid.utils.rest;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -9,9 +12,10 @@ import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
-import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.Response;
 
@@ -54,4 +58,13 @@ public class RESTHelper {
         Builder builder = webTarget.request(MediaType.APPLICATION_FORM_URLENCODED);
         return builder.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED));
     }
+    
+    public Response getWithQueryParameters(String url, Map<String, String> params) {
+        WebTarget webTarget = jerseyClient.target(url);
+        for(Entry<String, String> entry : params.entrySet()) {
+            webTarget = webTarget.queryParam(entry.getKey(), entry.getValue());
+        } 
+        Builder builder = webTarget.request(MediaType.APPLICATION_JSON);
+        return builder.get(Response.class);
+    }        
 }

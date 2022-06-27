@@ -295,6 +295,13 @@
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
             <version>1.4.1</version>
-        </dependency>        
+        </dependency>
+        
+        <!-- Jersey -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>3.0.4</version>            
+        </dependency>   
     </dependencies>
 </project>

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,9 +29,8 @@ import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.grouping.OrgGroup;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,10 +43,8 @@ import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+
+import jakarta.ws.rs.core.Response;
 
 @Component
 public class FundrefOrgLoadSource implements OrgLoadSource {
@@ -98,9 +94,10 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     @Resource(name = "geonamesUser")
     private String apiUser;
 
+    @Resource
+    private RESTHelper httpHelper;
+    
     private XPath xPath = XPathFactory.newInstance().newXPath();
-
-    private Client geoNamesApiClient = Client.create();
 
     @Override
     public String getSourceName() {
@@ -339,14 +336,13 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-            params.add("geonameId", geoNameId);
-            params.add("username", apiUser);
-            WebResource r = geoNamesApiClient.resource(geonamesApiUrl).queryParams(params);
-            ClientResponse response = r.get(ClientResponse.class);
+            Map<String, String> params = new HashMap();
+            params.put("geonameId", geoNameId);
+            params.put("username", apiUser);
+            Response response = httpHelper.getWithQueryParameters(geonamesApiUrl, params);
             int status = response.getStatus();
             if (status == 200) {
-                result = response.getEntity(String.class);
+                result = response.readEntity(String.class);
             } else {
                 LOGGER.warn("Got error status from geonames: {}", status);
                 try {
@@ -355,10 +351,10 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                ClientResponse retryResponse = r.get(ClientResponse.class);
+                Response retryResponse = httpHelper.getWithQueryParameters(geonamesApiUrl, params);
                 int retryStatus = retryResponse.getStatus();
                 if (retryStatus == 200) {
-                    result = retryResponse.getEntity(String.class);
+                    result = retryResponse.readEntity(String.class);
                 } else {
                     String message = "Geonames failed after retry with status: " + retryStatus;
                     LOGGER.error(message);
