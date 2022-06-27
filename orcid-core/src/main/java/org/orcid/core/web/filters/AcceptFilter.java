@@ -9,6 +9,7 @@ import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -41,15 +43,20 @@ public class AcceptFilter extends OncePerRequestFilter {
 
         if (accept == null || accept.equals("*/*")) {
             HttpServletRequestWrapper requestWrapper = null;
-            if (isValidAcceptType(contentType))
-                requestWrapper = new AcceptHeaderRequestWrapper(request, contentType);
+            if (isStandardJsonRequest(request))
+                requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
             else
-                if (isStandardJsonRequest(request))
-                    requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
-                else
-                    requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
+                requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
             filterChain.doFilter(requestWrapper, response);
-        } else {
+        } else if (!isValidAcceptType(contentType)){
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            response.getWriter().println("<html><head><title>HTTP Status 406, Not Acceptable</title></head>");
+            response.getWriter().println("<body>406 Not Acceptable: The target resource does not have a current representation that would be acceptable to the user agent, according to the proactive negotiation header fields received in the request, and the server is unwilling to supply a default representation.</body>");
+            response.getWriter().println("</html>");
+            
+            return;
+        }
+        else {
             filterChain.doFilter(request, response);
         }
     }
