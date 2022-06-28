@@ -3,16 +3,17 @@ package org.orcid.core.manager.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.core.Response;
 
 /**
  * 
@@ -27,7 +28,8 @@ public class SlackManagerImpl implements SlackManager {
     @Value("${org.orcid.core.slack.channel}")
     private String channel;
 
-    private Client client = Client.create();
+    @Resource
+    private RESTHelper httpHelper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SlackManagerImpl.class);
 
@@ -53,8 +55,7 @@ public class SlackManagerImpl implements SlackManager {
     }
     
     private void send(String bodyJson) {
-        WebResource resource = client.resource(webhookUrl);
-        ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
+        Response response = httpHelper.postMessage(webhookUrl, bodyJson);
         int status = response.getStatus();
         if (status != 200) {
             LOGGER.warn("Unable to send message to Slack: \n{}", bodyJson);

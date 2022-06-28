@@ -9,8 +9,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -25,6 +25,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,13 +36,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+
+import au.com.bytecode.opencsv.CSVWriter;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 public class TransformFundRefDataIntoCSV {
 
@@ -64,6 +64,7 @@ public class TransformFundRefDataIntoCSV {
     // Resources
     private GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> genericDao;
     private String apiUser;
+    private RESTHelper restHelper;
 
     // xPath queries
     private String conceptsExpression = "/RDF/ConceptScheme/hasTopConcept";
@@ -87,6 +88,8 @@ public class TransformFundRefDataIntoCSV {
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
+        // Rest helper
+        restHelper = (RESTHelper) context.getBean("httpHelper");
 
         // Init the CSV file for existing orgs
         try {
@@ -283,12 +286,11 @@ public class TransformFundRefDataIntoCSV {
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            Client c = Client.create();
-            WebResource r = c.resource(geonamesApiUrl);
-            MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-            params.add("geonameId", geoNameId);
-            params.add("username", apiUser);
-            result = r.queryParams(params).get(String.class);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("geonameId", geoNameId);
+            params.put("username", apiUser);
+            Response response = restHelper.executeGetRequest(geonamesApiUrl, true, MediaType.APPLICATION_JSON, params);
+            result = response.readEntity(String.class);
             cache.put("geoname_json_" + geoNameId, result);
         }
         return result;

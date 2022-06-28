@@ -3,6 +3,7 @@ package org.orcid.core.orgs.load.source.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,8 +13,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,11 +29,10 @@ import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.fundref.FundrefOrgLoadSource;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.orcid.utils.rest.RESTHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.core.Response;
 
 public class FundrefOrgLoadSourceTest {
     
@@ -50,6 +48,12 @@ public class FundrefOrgLoadSourceTest {
     @Mock
     private OrgDisambiguatedManager mockOrgDisambiguatedManager;
     
+    @Mock
+    private Response mockResponse;
+    
+    @Mock
+    private RESTHelper mockHttpHelper;
+    
     @InjectMocks
     private FundrefOrgLoadSource fundrefOrgLoadSource;
     
@@ -58,9 +62,14 @@ public class FundrefOrgLoadSourceTest {
     
     @Before
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "enabled", true);
-        ReflectionTestUtils.setField(fundrefOrgLoadSource, "geoNamesApiClient", getMockedGeoNamesClientWithSuccessfulResponse());
+        
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.readEntity(String.class)).thenReturn("test");
+        when(mockHttpHelper.executeGetRequest(any(), any(), any(), any())).thenReturn(mockResponse);
+        
+        ReflectionTestUtils.setField(fundrefOrgLoadSource, "httpHelper", mockHttpHelper);
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "geonamesApiUrl", "https://test/url");
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "localFilePath", localFilePath);
         ReflectionTestUtils.setField(fundrefOrgLoadSource, "userAgent", "userAgent");
@@ -80,17 +89,17 @@ public class FundrefOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsDownloadFailed() {
-        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath))).thenReturn(false);
+        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq(localFilePath))).thenReturn(false);
         assertFalse(fundrefOrgLoadSource.downloadOrgData());
-        verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath));
+        verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq(localFilePath));
     }
     
     @Test
     public void testDownloadOrgData() {
-        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath))).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("url"), Mockito.eq(localFilePath))).thenReturn(true);
         assertTrue(fundrefOrgLoadSource.downloadOrgData());
         verify(mockFileRotator, Mockito.times(1)).removeFileIfExists(Mockito.eq(localFilePath));
-        verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq("userAgent"), Mockito.eq(localFilePath));
+        verify(orgDataClient).downloadFile(Mockito.eq("url"), Mockito.eq(localFilePath));
     }
     
     @Test
@@ -144,21 +153,6 @@ public class FundrefOrgLoadSourceTest {
         assertEquals(1, entities.size());
         assertEquals("http://dx.doi.org/10.13039/100000003", entities.get(0).getSourceId());
         assertEquals("FUNDREF", entities.get(0).getSourceType());
-    }
-    
-    @SuppressWarnings("unchecked")
-    private Client getMockedGeoNamesClientWithSuccessfulResponse() throws IOException {
-        Client client = Mockito.mock(Client.class);
-        WebResource webResource = Mockito.mock(WebResource.class);
-        ClientResponse response = Mockito.mock(ClientResponse.class);
-        
-        Mockito.when(client.resource(Mockito.anyString())).thenReturn(webResource);
-        Mockito.when(webResource.queryParams(Mockito.any(MultivaluedMap.class))).thenReturn(webResource);
-        Mockito.when(webResource.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
-        Mockito.when(response.getStatus()).thenReturn(200);
-        Mockito.when(response.getEntity(Mockito.eq(String.class))).thenReturn("test");
-        
-        return client;
-    }
+    }        
 }
 

@@ -3,6 +3,7 @@ package org.orcid.core.groupIds.issn;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.annotation.Resource;
 
@@ -72,6 +73,7 @@ public class IssnClient {
     }
 
     private String getJsonDataFromIssnPortal(String issn) throws IOException {
+        int bufferSize = 8192;
         String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
         
         Response response = httpHelper.executeGetRequest(issnUrl);
@@ -79,19 +81,19 @@ public class IssnClient {
         if (status != 200) {
             return null;
         }
-
-        return response.reade
         
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        InputStream input = response.getEntityInputStream();
-
+        InputStream is = response.readEntity(InputStream.class);
         try {
-            IOUtils.copy(response.getEntityInputStream(), output);
-            return output.toString("UTF-8");
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            byte[] buffer = new byte[bufferSize];
+            int length;
+            while ((length = is.read(buffer)) != -1) {
+                output.write(buffer, 0, length);
+            }
+            return output.toString(StandardCharsets.UTF_8);
         } finally {
-            input.close();
-            output.close();
-        }
+            is.close();
+        }                
     }
     
     private String cleanText(String text) {

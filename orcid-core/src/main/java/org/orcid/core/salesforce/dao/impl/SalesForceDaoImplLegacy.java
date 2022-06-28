@@ -33,14 +33,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.api.representation.Form;
 
+/***
+ * This is deprecated and should be removed ASAP, it is not working anymore
+ * However, some of the queries provided here might still be useful when we develop the self service in the portal, 
+ * so, all functions will be commented and will return null; but we will keep it here for a while.
+ * 
+ * @author Angel Montenegro
+ */
 @Deprecated
 public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean {
 
@@ -70,7 +71,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     @Resource
     private SalesForceAdapter salesForceAdapter;
 
-    private Client client;
+    //private Client client;
 
     private String accessToken;
     
@@ -78,32 +79,38 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
 
     @Override
     public List<Member> retrieveConsortia() {
-        return retry(accessToken -> retrieveConsortiaFromSalesForce(accessToken));
+        //return retry(accessToken -> retrieveConsortiaFromSalesForce(accessToken));
+        return null;
     }
 
     @Override
     public List<Member> retrieveMembers() {
-        return retry(accessToken -> retrieveMembersFromSalesForce(accessToken));
+        //return retry(accessToken -> retrieveMembersFromSalesForce(accessToken));
+        return null;
     }
 
     @Override
     public Member retrieveMember(String accountId) {
-        return retry(accessToken -> retrieveMemberFromSalesForce(accessToken, accountId));
+        //return retry(accessToken -> retrieveMemberFromSalesForce(accessToken, accountId));
+        return null;
     }
 
     @Override
     public List<Member> retrieveMembersByWebsite(String websiteUrl) {
-        return retry(accessToken -> retrieveMembersByWebsiteFromSalesForce(accessToken, websiteUrl));
+        //return retry(accessToken -> retrieveMembersByWebsiteFromSalesForce(accessToken, websiteUrl));
+        return null;
     }
 
     @Override
     public Consortium retrieveConsortium(String consortiumId) {
-        return retry(accessToken -> retrieveConsortiumFromSalesForce(accessToken, consortiumId));
+        //return retry(accessToken -> retrieveConsortiumFromSalesForce(accessToken, consortiumId));
+        return null;
     }
 
     @Override
     public List<Contact> retrieveContactsAllowedToEdit(String accountId, String consortiumLeadId) {
-        return retry(accessToken -> retrieveContactsAllowedToEdit(accessToken, accountId, consortiumLeadId));
+        //return retry(accessToken -> retrieveContactsAllowedToEdit(accessToken, accountId, consortiumLeadId));
+        return null;
     }
     
     @Override
@@ -112,12 +119,14 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         if (consortiumLeadId != null) {
             validateSalesForceId(consortiumLeadId);
         }
-        return retry(accessToken -> retrieveDetailsFromSalesForce(accessToken, memberId, consortiumLeadId));
+        //return retry(accessToken -> retrieveDetailsFromSalesForce(accessToken, memberId, consortiumLeadId));
+        return null;
     }
 
     @Override
     public List<Contact> retrieveAllContactsByAccountId(String accountId) {
-        return retry(accessToken -> retrieveAllContactsFromSalesForceByAccountId(accessToken, accountId));
+        //return retry(accessToken -> retrieveAllContactsFromSalesForceByAccountId(accessToken, accountId));
+        return null;
     }
 
     @Override
@@ -127,114 +136,128 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
 
     @Override
     public List<Contact> retrieveContactsWithRolesByAccountId(String accountId, boolean includeNonCurrent) {
-        return retry(accessToken -> retrieveContactsWithRolesFromSalesForceByAccountId(accessToken, accountId, includeNonCurrent));
+        //return retry(accessToken -> retrieveContactsWithRolesFromSalesForceByAccountId(accessToken, accountId, includeNonCurrent));
+        return null;
     }
 
     @Override
     public List<ContactRole> retrieveContactRolesByContactIdAndAccountId(String contactId, String accountId) {
-        return retry(accessToken -> retrieveContactRolesFromSalesForceByContactIdAndAccountId(accessToken, contactId, accountId));
+        //return retry(accessToken -> retrieveContactRolesFromSalesForceByContactIdAndAccountId(accessToken, contactId, accountId));
+        return null;
     }
 
     @Override
     public String retrievePremiumConsortiumMemberTypeId() {
-        return retry(accessToken -> retrievePremiumConsortiumMemberTypeIdFromSalesForce(accessToken));
+        //return retry(accessToken -> retrievePremiumConsortiumMemberTypeIdFromSalesForce(accessToken));
+        return null;
     }
 
     @Override
     public String retrieveConsortiumMemberRecordTypeId() {
-        return retry(accessToken -> retrieveConsortiumMemberRecordTypeIdFromSalesForce(accessToken));
+        //return retry(accessToken -> retrieveConsortiumMemberRecordTypeIdFromSalesForce(accessToken));
+        return null;
     }
     
     @Override
     public String retrieveConsortiumMemberRecordTypeIdFromAccountAndConsortiumMember() {
-        return retry(accessToken -> retrieveRecordTypeIdForAccountAndConsortiumMember(accessToken));
+        //return retry(accessToken -> retrieveRecordTypeIdForAccountAndConsortiumMember(accessToken));
+        return null;
     }
     
     @Override
     public List<OrgId> retrieveOrgIdsByAccountId(String accountId) {
-        return retry(accessToken -> retrieveOrgIdsFromSalesForceByAccountId(accessToken, accountId));
+        //return retry(accessToken -> retrieveOrgIdsFromSalesForceByAccountId(accessToken, accountId));
+        return null;
     }
     
     @Override
     public String createOrgId(OrgId orgId) {
-        return retry(accessToken -> createOrgIdInSalesForce(accessToken, orgId));
+        //return retry(accessToken -> createOrgIdInSalesForce(accessToken, orgId));
+        return null;
     }
     
     @Override
     public void removeOrgId(String salesForceObjectId) {
-        retryConsumer(accessToken -> removeOrgIdInSalesForce(accessToken, salesForceObjectId));
+        //retryConsumer(accessToken -> removeOrgIdInSalesForce(accessToken, salesForceObjectId));        
     }
 
 
     @Override
     public String createContact(Contact contact) {
-        return retry(accessToken -> createContactInSalesForce(accessToken, contact));
+        //return retry(accessToken -> createContactInSalesForce(accessToken, contact));
+        return null;
     }
 
     @Override
     public void updateContact(Contact contact) {
-        retryConsumer(accessToken -> updateContactInSalesForce(accessToken, contact));
+        //retryConsumer(accessToken -> updateContactInSalesForce(accessToken, contact));
     }
 
     @Override
     public String createContactRole(ContactRole contact) {
-        return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
+        //return retry(accessToken -> createContactRoleInSalesForce(accessToken, contact));
+        return null;
     }
 
     @Override
     public void updateContactRole(ContactRole contactRole) {
-        retryConsumer(accessToken -> updateContactRoleInSalesForce(accessToken, contactRole));
+        //retryConsumer(accessToken -> updateContactRoleInSalesForce(accessToken, contactRole));
     }
 
     @Override
     public void removeContactRole(String contactRoleId) {
-        retryConsumer(accessToken -> removeContactRoleInSalesForce(accessToken, contactRoleId));
+        //retryConsumer(accessToken -> removeContactRoleInSalesForce(accessToken, contactRoleId));
     }
 
     @Override
     public String createOpportunityContactRole(OpportunityContactRole contactRole) {
-        return retry(accessToken -> createOpportunityContactRoleInSalesForce(accessToken, contactRole));
+        //return retry(accessToken -> createOpportunityContactRoleInSalesForce(accessToken, contactRole));
+        return null;
     }
 
     @Override
     public String createMember(Member member) {
-        return retry(accessToken -> createMemberInSalesForce(accessToken, member));
+        //return retry(accessToken -> createMemberInSalesForce(accessToken, member));
+        return null;
     }
 
     @Override
     public void updateMember(Member member) {
-        retryConsumer(accessToken -> updateMemberInSalesForce(accessToken, member));
+        //retryConsumer(accessToken -> updateMemberInSalesForce(accessToken, member));
     }
 
     @Override
     public Opportunity retrieveOpportunity(String opportunityId) {
-        return retry(accessToken -> retrieveOpportunityFromSalesForce(accessToken, opportunityId));
+        //return retry(accessToken -> retrieveOpportunityFromSalesForce(accessToken, opportunityId));
+        return null;
     }
     
     @Override
     public String createOpportunity(Opportunity opportunity) {
-        return retry(accessToken -> createOpportunityInSalesForce(accessToken, opportunity));
+        //return retry(accessToken -> createOpportunityInSalesForce(accessToken, opportunity));
+        return null;
     }
 
     @Override
     public void updateOpportunity(Opportunity opportunity) {
-        retryConsumer(accessToken -> updateOpportunityInSalesForce(accessToken, opportunity));
+        //retryConsumer(accessToken -> updateOpportunityInSalesForce(accessToken, opportunity));
     }
 
     @Override
     public void removeOpportunity(String opportunityId) {
-        retryConsumer(accessToken -> removeOpportunityInSalesForce(accessToken, opportunityId));
+        //retryConsumer(accessToken -> removeOpportunityInSalesForce(accessToken, opportunityId));
     }
     
     @Override
     public List<Badge> retrieveBadges() {
-        return retry(accessToken -> retrieveBadgesFromSalesForce(accessToken));
+        //return retry(accessToken -> retrieveBadgesFromSalesForce(accessToken));
+        return null;
     }
 
     @Override
     public String getAccessToken() {
         if (accessToken == null) {
-            accessToken = getFreshAccessToken();
+            //accessToken = getFreshAccessToken();
         }
         return accessToken;
     }
@@ -254,14 +277,14 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     }
     
     private List<String> getConsortiumLeadIds(String accessToken) {
-        if (consotiumLeadRecordTypeIds == null) {
+        /*if (consotiumLeadRecordTypeIds == null) {
             WebResource resource1 = createQueryResource("Select Id From RecordType Where Name = 'Consortium Lead'");
             WebResource resource = resource1;
             ClientResponse response = doGetRequest(resource, accessToken);
             checkAuthorization(response);
             JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
             consotiumLeadRecordTypeIds = salesForceAdapter.extractIds(result);
-        }
+        }*/
         return this.consotiumLeadRecordTypeIds;
     }
     
@@ -269,7 +292,8 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     public void clearConsortiumLeadIdsCache() {
         this.consotiumLeadRecordTypeIds = null;
     }
-
+    
+    /*
     private String escapeStringInput(String input) {
         if (input == null) {
             return null;
@@ -285,6 +309,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating org id in SalesForce");
         return result.optString("id");
+        return null;
     }
     
     private void removeOrgIdInSalesForce(String accessToken, String salesForceObjectId) {
@@ -293,7 +318,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         WebResource resource = createObjectsResource("/Organization_Identifier__c/", salesForceObjectId);
         ClientResponse response = doDeleteRequest(resource, accessToken);
         checkAuthorization(response);
-        checkResponse(response, 204, "Error removing org id in SalesForce");
+        checkResponse(response, 204, "Error removing org id in SalesForce");        
     }
 
     private String createContactInSalesForce(String accessToken, Contact contact) {
@@ -309,7 +334,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     }
 
     private void updateContactInSalesForce(String accessToken, Contact contact) {
-        LOGGER.info("About update contact in SalesForce");
+       LOGGER.info("About update contact in SalesForce");
         String contactId = contact.getId();
         validateSalesForceId(contactId);
         WebResource resource = createObjectsResource("/Contact/", contactId).queryParam("_HttpMethod", "PATCH");
@@ -335,7 +360,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     }
 
     private String createOpportunityContactRoleInSalesForce(String accessToken, OpportunityContactRole contactRole) {
-        LOGGER.info("About to create opportunity contact role in SalesForce");
+       LOGGER.info("About to create opportunity contact role in SalesForce");
         validateSalesForceId(contactRole.getOpportunityId());
         validateSalesForceId(contactRole.getContactId());
         WebResource resource = createObjectsResource("/OpportunityContactRole/");
@@ -376,9 +401,9 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         ClientResponse response = doPostRequest(resource, memberJson, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 201, "Error creating member in SalesForce");
-        return result.optString("id");
+        return result.optString("id");        
     }
-
+    
     private void updateMemberInSalesForce(String accessToken, Member member) {
         LOGGER.info("About update member in SalesForce");
         String accountId = member.getId();
@@ -428,13 +453,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return "'" + String.join("','", salesForceIds) + "'";
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private List<Member> retrieveMembersFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of members from SalesForce");
         List<Member> membersList = new ArrayList<>();
@@ -450,13 +468,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return membersList;
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private Member retrieveMemberFromSalesForce(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get member from SalesForce");
         List<Member> membersList = new ArrayList<>();
@@ -500,13 +511,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return resource;
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private List<Member> retrieveMembersByWebsiteFromSalesForce(String accessToken, String websiteUrl) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of members from SalesForce by website");
         WebResource resource = createQueryResource(String.format(
@@ -518,13 +522,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createMembersListFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private List<Member> retrieveConsortiaFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of consortia from SalesForce");
         WebResource resource = null;
@@ -540,13 +537,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createMembersListFromJson(result);
     }
     
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private Consortium retrieveConsortiumFromSalesForce(String accessToken, String consortiumId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
@@ -559,12 +549,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createConsortiumFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException If the status code from
-     * SalesForce is 401, e.g. access token expired.
-     * 
-     */
     private List<Contact> retrieveContactsAllowedToEdit(String accessToken, String accountId, String consortiumLeadId) {
         LOGGER.info("About to get list of contacts from SalesForce allowed to edit account with id " + accountId);
         validateSalesForceId(accountId);
@@ -586,13 +570,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.extractAllContactsWithRolesFromJson(result);
     }
     
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private MemberDetails retrieveDetailsFromSalesForce(String accessToken, String memberId, String consortiumLeadId) throws SalesForceUnauthorizedException {
         MemberDetails details = new MemberDetails();
         String parentOrgName = retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId);
@@ -613,13 +590,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.extractParentOrgNameFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private List<Integration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         String query = "SELECT Integration__c.Id, Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Level__c, Integration__c.BadgeAwarded__c, (Select Id, Name, Status__c, Badge__c from Achievements__r Where Status__c = 'Awarded') from Integration__c WHERE Integration__c.inactive__c=FALSE And Organization__c='%s'";
 
@@ -631,13 +601,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createIntegrationsListFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private List<Contact> retrieveAllContactsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of all contacts from SalesForce");
         validateSalesForceId(accountId);
@@ -648,14 +611,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         JSONObject result = checkResponse(response, 200, "Error getting all contacts from SalesForce");
         return salesForceAdapter.createContactsFromJson(result);
     }
-
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
+    
     private List<Contact> retrieveContactsWithRolesFromSalesForceByAccountId(String accessToken, String accountId, boolean includeNonCurrent)
             throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
@@ -673,13 +629,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createContactsWithRolesFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private List<ContactRole> retrieveContactRolesFromSalesForceByContactIdAndAccountId(String accessToken, String contactId, String accountId)
             throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contact roles from SalesForce");
@@ -694,13 +643,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createContactRolesFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     private String retrievePremiumConsortiumMemberTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get premium consortium member type ID from SalesForce");
         WebResource resource1 = createQueryResource("Select Id From Member_Type__c Where Name = 'Premium Consortium Member'");
@@ -710,14 +652,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         JSONObject result = checkResponse(response, 200, "Error getting premium consortium member type ID from SalesForce");
         return salesForceAdapter.extractIdFromFirstRecord(result);
     }
-
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
+    
     private String retrieveConsortiumMemberRecordTypeIdFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium member record type ID from SalesForce");
         WebResource resource = createQueryResource("Select Id, Name, SobjectType From RecordType  Where SobjectType = 'Opportunity' And Name = 'Consortium Member'");
@@ -727,13 +662,6 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.extractIdFromFirstRecord(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
     public String retrieveRecordTypeIdForAccountAndConsortiumMember(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get consortium member record type ID from SalesForce");
         WebResource resource = createQueryResource("SELECT Id FROM RecordType WHERE SobjectType='Account' AND Name='Consortium Member'");
@@ -743,13 +671,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.extractIdFromFirstRecord(result);
     }
     
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
+    
     private Opportunity retrieveOpportunityFromSalesForce(String accessToken, String opportunityId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get opportunity from SalesForce");
         validateSalesForceId(opportunityId);
@@ -757,16 +679,10 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         ClientResponse response = doGetRequest(resource, accessToken);
         checkAuthorization(response);
         JSONObject result = checkResponse(response, 200, "Error getting opportunity from SalesForce");
-        return salesForceAdapter.createOpportunityFromSalesForceRecord(result);
+        return salesForceAdapter.createOpportunityFromSalesForceRecord(result)
     }
     
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
+   
     private List<OrgId> retrieveOrgIdsFromSalesForceByAccountId(String accessToken, String accountId) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of org ids from SalesForce");
         validateSalesForceId(accountId);
@@ -778,13 +694,7 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
         return salesForceAdapter.createOrgIdsFromJson(result);
     }
 
-    /**
-     * 
-     * @throws SalesForceUnauthorizedException
-     *             If the status code from SalesForce is 401, e.g. access token
-     *             expired.
-     * 
-     */
+    
     private List<Badge> retrieveBadgesFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of badges from SalesForce");
         WebResource resource = createQueryResource(
@@ -807,9 +717,9 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     private WebResource createObjectsResource(String path) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects" + path);
         return resource;
-    }
+    }*/
 
-    private WebResource createObjectsResource(String path, String id) {
+    /*private WebResource createObjectsResource(String path, String id) {
         validateSalesForceId(id);
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/sobjects" + path + id);
         return resource;
@@ -888,14 +798,15 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
             return null;
         }
         return response.getEntity(JSONObject.class);
-    }
+    }*/
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        client = Client.create();
+        /*client = Client.create();
         if (clientLoggingEnabled) {
             client.addFilter(new LoggingFilter());
         }
+        */
     }
 
 }

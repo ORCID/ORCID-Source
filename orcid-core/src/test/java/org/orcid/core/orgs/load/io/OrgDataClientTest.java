@@ -4,6 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,26 +17,39 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 
 public class OrgDataClientTest {
     
     @InjectMocks
     private OrgDataClient orgDataClient;
     
+    @Mock
+    private Response mockResponse;
+    
+    @Mock
+    private WebTarget mockWebTarget; 
+    
+    @Mock
+    private Builder mockBuilder;
+    
+    @Mock
+    protected Client mockJerseyClient;
+    
     private File tempFile; 
 
     @Before
     public void setUp() throws IOException {
-        MockitoAnnotations.initMocks(this);
-        tempFile = File.createTempFile("fundref-test-", ".rdf");
+        MockitoAnnotations.openMocks(this);
+        tempFile = File.createTempFile("fundref-test-", ".rdf");        
     }
     
     @After
@@ -44,70 +61,54 @@ public class OrgDataClientTest {
     
     @Test
     public void testDownloadFileSuccess() throws IOException {
-        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithSuccessfulResponse(getClass().getResourceAsStream("/fundref/fundref-test.rdf")));
-        assertTrue(orgDataClient.downloadFile("url", "userAgent", tempFile.getAbsolutePath()));
+        setMocks(getClass().getResourceAsStream("/fundref/fundref-test.rdf"));
+        assertTrue(orgDataClient.downloadFile("url", tempFile.getAbsolutePath()));
     }
     
     @Test
     public void testDownloadFileFailure() throws IOException {
-        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithFailureResponse());
-        assertFalse(orgDataClient.downloadFile("url", "userAgent", tempFile.getAbsolutePath()));
+        setMockedClientWithFailureResponse();
+        assertFalse(orgDataClient.downloadFile("url", tempFile.getAbsolutePath()));
     }
     
     @Test
     public void testGetFailure() throws IOException {
-        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithFailureResponse());
-        assertNull(orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
+        setMockedClientWithFailureResponse();
+        assertNull(orgDataClient.get("url", "user-agent", new GenericType<String>() {}));
     }
     
     @Test
-    public void testGet() throws IOException {
-        ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithSuccessfulEntityResponse());
-        assertEquals("success", orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
+    public void testGetSuccess() throws IOException {
+        setMockedClientWithSuccessfulEntityResponse();
+        assertEquals("success", orgDataClient.get("url",  "user-agent", new GenericType<String>() {}));
     }
     
-    @SuppressWarnings("resource")
-    private Client getMockedClientWithSuccessfulResponse(InputStream inputStream) throws IOException {
-        Client client = Mockito.mock(Client.class);
-        WebResource webResource = Mockito.mock(WebResource.class);
-        ClientResponse response = Mockito.mock(ClientResponse.class);
-        WebResource.Builder builder = Mockito.mock(WebResource.Builder.class);
-        
-        Mockito.when(client.resource(Mockito.anyString())).thenReturn(webResource);
-        Mockito.when(webResource.header(Mockito.anyString(), Mockito.anyString())).thenReturn(builder);
-        Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
-        Mockito.when(response.getStatus()).thenReturn(200);
-        Mockito.when(response.getEntityInputStream()).thenReturn(inputStream);
-        return client;
+    private void initJerseyMocks() {
+        when(mockJerseyClient.target(anyString())).thenReturn(mockWebTarget);
+        when(mockWebTarget.request()).thenReturn(mockBuilder);
+        when(mockBuilder.header(anyString(), any())).thenReturn(mockBuilder);
+        when(mockBuilder.get(eq(Response.class))).thenReturn(mockResponse);        
     }
     
-    private Client getMockedClientWithFailureResponse() throws IOException {
-        Client client = Mockito.mock(Client.class);
-        WebResource webResource = Mockito.mock(WebResource.class);
-        ClientResponse response = Mockito.mock(ClientResponse.class);
-        WebResource.Builder builder = Mockito.mock(WebResource.Builder.class);
+    private void setMocks(InputStream inputStream) throws IOException {
+        initJerseyMocks();
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.readEntity(InputStream.class)).thenReturn(inputStream);
+        ReflectionTestUtils.setField(orgDataClient, "jerseyClient", mockJerseyClient);
+    }
         
-        Mockito.when(client.resource(Mockito.anyString())).thenReturn(webResource);
-        Mockito.when(webResource.header(Mockito.anyString(), Mockito.anyString())).thenReturn(builder);
-        Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
-        Mockito.when(response.getStatus()).thenReturn(403);
-        return client;
+    private void setMockedClientWithFailureResponse() throws IOException {
+        initJerseyMocks();
+        when(mockResponse.getStatus()).thenReturn(403);
+        ReflectionTestUtils.setField(orgDataClient, "jerseyClient", mockJerseyClient);
     }
     
     @SuppressWarnings("unchecked")
-    private Client getMockedClientWithSuccessfulEntityResponse() throws IOException {
-        Client client = Mockito.mock(Client.class);
-        WebResource webResource = Mockito.mock(WebResource.class);
-        ClientResponse response = Mockito.mock(ClientResponse.class);
-        WebResource.Builder builder = Mockito.mock(WebResource.Builder.class);
-        
-        Mockito.when(client.resource(Mockito.eq("url"))).thenReturn(webResource);
-        Mockito.when(webResource.header(Mockito.eq("User-Agent"), Mockito.eq("userAgent"))).thenReturn(builder);
-        Mockito.when(builder.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
-        Mockito.when(response.getStatus()).thenReturn(200);
-        Mockito.when(response.getEntity(Mockito.any(GenericType.class))).thenReturn("success");
-        
-        return client;
+    private void setMockedClientWithSuccessfulEntityResponse() throws IOException {        
+        initJerseyMocks();
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.readEntity(any(GenericType.class))).thenReturn("success");  
+        ReflectionTestUtils.setField(orgDataClient, "jerseyClient", mockJerseyClient);
     }
     
 }
