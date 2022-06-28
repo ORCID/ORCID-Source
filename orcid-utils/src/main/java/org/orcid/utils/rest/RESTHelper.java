@@ -1,7 +1,6 @@
 package org.orcid.utils.rest;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,7 +11,6 @@ import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 
 import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
@@ -24,6 +22,13 @@ public class RESTHelper {
     @Resource
     protected Client jerseyClient;
     
+    public Response executeGetRequest(String url) {
+        WebTarget webTarget = jerseyClient.target(url);
+        webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
+        Builder builder = webTarget.request();
+        return builder.get(Response.class);
+    }
+    
     public Response executeGetRequest(URI baseUri, String path) {
         WebTarget webTarget = jerseyClient.target(baseUri).path(path);
         webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
@@ -32,7 +37,14 @@ public class RESTHelper {
     }
     
     public Response executeGetRequest(String url, Boolean followRedirects, String mediaType) {
+        return executeGetRequest(url, followRedirects, mediaType, Map.of());
+    }
+    
+    public Response executeGetRequest(String url, Boolean followRedirects, String mediaType, Map<String, String> queryParams) {
         WebTarget webTarget = jerseyClient.target(url);
+        for(Entry<String, String> entry : queryParams.entrySet()) {
+            webTarget = webTarget.queryParam(entry.getKey(), entry.getValue());
+        } 
         webTarget.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
         Builder builder = webTarget.request(mediaType);
         return builder.get(Response.class);
@@ -57,14 +69,5 @@ public class RESTHelper {
         WebTarget webTarget = jerseyClient.target(url).register(auth);
         Builder builder = webTarget.request(MediaType.APPLICATION_FORM_URLENCODED);
         return builder.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED));
-    }
-    
-    public Response getWithQueryParameters(String url, Map<String, String> params) {
-        WebTarget webTarget = jerseyClient.target(url);
-        for(Entry<String, String> entry : params.entrySet()) {
-            webTarget = webTarget.queryParam(entry.getKey(), entry.getValue());
-        } 
-        Builder builder = webTarget.request(MediaType.APPLICATION_JSON);
-        return builder.get(Response.class);
-    }        
+    }   
 }

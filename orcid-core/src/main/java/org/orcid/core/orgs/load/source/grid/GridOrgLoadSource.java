@@ -36,8 +36,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
-import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +43,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.sun.jersey.api.client.GenericType;
+
+import jakarta.ws.rs.core.GenericType;
 
 @Component
 public class GridOrgLoadSource implements OrgLoadSource {
@@ -110,7 +109,6 @@ public class GridOrgLoadSource implements OrgLoadSource {
         try {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
-            orgDataClient.init();
             List<FigshareCollectionArticleSummary> gridCollectionArticles = orgDataClient.get(gridFigshareCollectionUrl, userAgent,
                     new GenericType<List<FigshareCollectionArticleSummary>>() {
                     });
@@ -133,10 +131,10 @@ public class GridOrgLoadSource implements OrgLoadSource {
             boolean success = false;
             for (FigshareCollectionArticleFile file : files) {
                 if (file.getName().endsWith(FILE_EXTENSION)) {
-                    success = orgDataClient.downloadFile(file.getDownloadUrl(), userAgent, zipFilePath);
+                    success = orgDataClient.downloadFile(file.getDownloadUrl(), zipFilePath);
                 }
             }
-            orgDataClient.cleanUp();
+            
             try {
                 unzipData();
             } catch (IOException e) {

@@ -44,6 +44,7 @@ import org.xml.sax.SAXException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Component
@@ -72,9 +73,6 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.fundref.localFilePath:/tmp/ringgold/fundref.rdf}")
     private String localFilePath;
-
-    @Value("${org.orcid.core.orgs.clients.userAgent}")
-    private String userAgent;
 
     @Resource
     private FileRotator fileRotator;
@@ -336,10 +334,10 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            Map<String, String> params = new HashMap();
+            Map<String, String> params = new HashMap<String, String>();
             params.put("geonameId", geoNameId);
             params.put("username", apiUser);
-            Response response = httpHelper.getWithQueryParameters(geonamesApiUrl, params);
+            Response response = httpHelper.executeGetRequest(geonamesApiUrl, true, MediaType.APPLICATION_JSON, params);
             int status = response.getStatus();
             if (status == 200) {
                 result = response.readEntity(String.class);
@@ -351,7 +349,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                Response retryResponse = httpHelper.getWithQueryParameters(geonamesApiUrl, params);
+                Response retryResponse = httpHelper.executeGetRequest(geonamesApiUrl, true, MediaType.APPLICATION_JSON, params);
                 int retryStatus = retryResponse.getStatus();
                 if (retryStatus == 200) {
                     result = retryResponse.readEntity(String.class);
@@ -528,10 +526,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     @Override
     public boolean downloadOrgData() {
         fileRotator.removeFileIfExists(localFilePath);
-        orgDataClient.init();
-        boolean success = orgDataClient.downloadFile(fundrefDataUrl, userAgent, localFilePath);
-        orgDataClient.cleanUp();
-        return success;
+        return orgDataClient.downloadFile(fundrefDataUrl, localFilePath);
     }
 
     @Override

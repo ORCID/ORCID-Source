@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +25,6 @@ import org.orcid.core.orgs.load.source.LoadSourceDisabledException;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
 import org.orcid.core.orgs.load.source.zenodo.api.ZenodoRecords;
 import org.orcid.core.orgs.load.source.zenodo.api.ZenodoRecordsHit;
-
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -35,8 +33,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
-import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.pojo.grouping.OrgGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,8 +40,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.sun.jersey.api.client.GenericType;
 
+import jakarta.ws.rs.core.GenericType;
 
 @Component
 public class RorOrgLoadSource implements OrgLoadSource {
@@ -53,7 +49,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RorOrgLoadSource.class);
 
     private static final String WIKIPEDIA_URL = "wikipedia_url";
-
 
     @Value("${org.orcid.core.orgs.ror.enabled:true}")
     private boolean enabled;
@@ -104,7 +99,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
         try {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
-            orgDataClient.init();
             
             ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl+"&sort=-publication_date&size=1", userAgent,
                     new GenericType<ZenodoRecords>() {
@@ -117,9 +111,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
             //we are returning the collection ordered by last publication date and size 1, just need to get first element in the list
             String zenodoUrl = zenodoHit.getFiles().get(0).getLinks().getSelf();
             
-            success = orgDataClient.downloadFile(zenodoUrl, userAgent, zipFilePath);
-            orgDataClient.cleanUp();
-         
+            success = orgDataClient.downloadFile(zenodoUrl, zipFilePath);
+            
             try {
                 LOGGER.info("Unzipping  ROR ....");
                 unzipData();

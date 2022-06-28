@@ -1,39 +1,29 @@
 package org.orcid.core.orgs.load.io;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
-import org.apache.commons.io.IOUtils;
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.Response;
 
 public class OrgDataClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDataClient.class);        
     
-    private Client client;
-
-    /**
-     * To be called before any set of operations involving the OrgDataClient
-     */
-    public void init() {
-        client = Client.create();
-    }
-    
-    /**
-     * To be called after any set of operations involving the OrgDataClient
-     */
-    public void cleanUp() {
-        client.destroy();
-    }
+    @Resource
+    protected Client jerseyClient;
 
     /**
      * Attempts to return the entity specified by the Class parameter
@@ -44,38 +34,31 @@ public class OrgDataClient {
      * @return - entity of specified type, retrieved from the specified URL
      */
     public <T> T get(String url, String userAgent, GenericType<T> type) {
-        WebResource resource = client.resource(url);
-        ClientResponse response = resource.header("User-Agent", userAgent).get(ClientResponse.class);
+        WebTarget webTarget = jerseyClient.target(url);
+        Builder builder = webTarget.request().header("User-Agent", userAgent);
+        Response response = builder.get(Response.class);
         int status = response.getStatus();
         if (status != 200) {
             LOGGER.warn("Unable to fetch file {}: {}", new Object[] { url, status });
             return null;
         }
-        T entity = response.getEntity(type);
+        T entity = response.readEntity(type);
         return entity;
     }
     
     /**
      * Downloads a file from the specified url, using the specified userAgent as a header
      * @param url
-     * @param userAgent
      * @return boolean indicator of success
      */
-    public boolean downloadFile(String url, String userAgent, String localFilePath) {
-        WebResource resource = client.resource(url);
-        ClientResponse response = resource.header("User-Agent", userAgent).get(ClientResponse.class);
-        int status = response.getStatus();
-        if (status != 200) {
-            LOGGER.warn("Unable to fetch file {}: {}", new Object[] { url, status });
-            return false;
-        }
-        try (InputStream data = response.getEntityInputStream(); OutputStream outputStream = new FileOutputStream(new File(localFilePath))) {
-            IOUtils.copy(data, outputStream);
-            return true;
+    public boolean downloadFile(String url, String localFilePath) {
+        try (InputStream crunchifyInputStream = URI.create(url).toURL().openStream()) {
+            Files.copy(crunchifyInputStream, Paths.get(localFilePath), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            LOGGER.error("Error writing to local file", e);
+            LOGGER.warn("Unable to fetch file {}: {}", new Object[] { url, e.getMessage() });
             return false;
         }
+        return true;
     }
 
 }

@@ -27,6 +27,7 @@ import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
 import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,9 +39,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.core.Response;
 
 /**
  * 
@@ -66,6 +65,9 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     @Resource(name = "identityProviderNameCache")
     private Cache<IdentityProviderNameCacheKey, String> identityProviderNameCache;
 
+    @Resource
+    private RESTHelper httpHelper;
+    
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
@@ -181,10 +183,8 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
 
     private Document downloadMetadata(String metadataUrl) {
         LOGGER.info("About to download idp metadata from {}", metadataUrl);
-        Client client = Client.create();
-        WebResource resource = client.resource(metadataUrl);
-        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-        Document document = response.getEntity(Document.class);
+        Response response = httpHelper.executeGetRequest(metadataUrl, false, MediaType.APPLICATION_XML);
+        Document document = response.readEntity(Document.class);
         return document;
     }
 

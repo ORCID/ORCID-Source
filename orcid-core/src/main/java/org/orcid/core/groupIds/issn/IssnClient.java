@@ -10,20 +10,20 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.utils.rest.RESTHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.core.Response;
 
 @Component
 public class IssnClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
 
-    private Client client = Client.create();
+    @Resource
+    private RESTHelper httpHelper;
 
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
@@ -73,13 +73,15 @@ public class IssnClient {
 
     private String getJsonDataFromIssnPortal(String issn) throws IOException {
         String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
-        WebResource resource = client.resource(issnUrl);
-        ClientResponse response = resource.get(ClientResponse.class);
+        
+        Response response = httpHelper.executeGetRequest(issnUrl);
         int status = response.getStatus();
         if (status != 200) {
             return null;
         }
 
+        return response.reade
+        
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         InputStream input = response.getEntityInputStream();
 
