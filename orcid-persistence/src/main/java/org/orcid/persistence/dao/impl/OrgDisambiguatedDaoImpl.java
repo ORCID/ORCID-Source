@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEntity, Long> implements OrgDisambiguatedDao {
+    
+    @Value("${org.orcid.core.orgsToGroup.query:select * from org_disambiguated where source_type='ROR'}" )
+    private String GROUPING_ORGS_QUERY;
 
     public OrgDisambiguatedDaoImpl() {
         super(OrgDisambiguatedEntity.class);
@@ -84,12 +88,10 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery(
-                "from OrgDisambiguatedEntity where source_type=:ROR",
-                OrgDisambiguatedEntity.class);
-        query.setParameter("ROR", "ROR");
+        Query query = entityManager.createNativeQuery(GROUPING_ORGS_QUERY, OrgDisambiguatedEntity.class);
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResult);
         return query.getResultList();
