@@ -63,18 +63,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
+        <!-- http://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
         <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>2.35</version>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>            
         </dependency>
-        <!-- https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>2.1.6</version>
-        </dependency>        
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
@@ -121,8 +114,20 @@
             <version>0.6</version>
         </dependency>
 
-        <!-- Test dependencies -->
+        <!--  Jersey server old -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-bundle</artifactId>
+        </dependency>  
+        <!-- https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
 
+
+        <!-- Test dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-test</artifactId>

@@ -1,15 +1,12 @@
 package org.orcid.api.common.filter;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
-import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -18,6 +15,8 @@ import org.orcid.utils.OrcidStringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sun.jersey.api.core.InjectParam;
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
@@ -26,6 +25,8 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     private LocaleManager localeManager;
     
     @Context private HttpServletRequest httpRequest;
+
+    public static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
     private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
     
@@ -42,10 +43,10 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     }
     
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {        
-        String path = requestContext.getUriInfo().getPath(); 
-        String method = requestContext.getMethod() == null ? null : requestContext.getMethod().toUpperCase();
-        Matcher matcher = OrcidApiConstants.API_VERSION_PATTERN.matcher(path);        
+    public ContainerRequest filter(ContainerRequest request) {
+        String path = request.getPath();
+        String method = request.getMethod() == null ? null : request.getMethod().toUpperCase();
+        Matcher matcher = VERSION_PATTERN.matcher(path);        
         String version = null;
         if (matcher.lookingAt()) {
             version = matcher.group(1);
@@ -65,6 +66,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));
             }
         }
-    }
 
+        return request;
+    }
 }

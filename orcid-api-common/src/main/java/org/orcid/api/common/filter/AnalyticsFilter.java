@@ -3,9 +3,6 @@ package org.orcid.api.common.filter;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 
 import org.orcid.api.common.analytics.AnalyticsProcess;
@@ -18,7 +15,6 @@ import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.jersey.api.core.InjectParam;
-
 
 public abstract class AnalyticsFilter implements ContainerResponseFilter {
 

@@ -273,7 +273,8 @@ public class SalesForceDaoImplLegacy implements SalesForceDao, InitializingBean 
     
     @Override
     public List<String> getConsortiumLeadIds() {
-        return retry(accessToken -> getConsortiumLeadIds(accessToken));
+        //return retry(accessToken -> getConsortiumLeadIds(accessToken));
+        return null;
     }
     
     private List<String> getConsortiumLeadIds(String accessToken) {

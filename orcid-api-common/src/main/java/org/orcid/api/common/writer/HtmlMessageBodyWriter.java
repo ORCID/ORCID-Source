@@ -1,6 +1,11 @@
 package org.orcid.api.common.writer;
 
-import org.orcid.jaxb.model.message.OrcidMessage;
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -8,12 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 
-import static javax.ws.rs.core.MediaType.TEXT_HTML;
+import org.orcid.jaxb.model.message.OrcidMessage;
 
 /**
  * @author Declan Newman (declan) Date: 02/03/2012

@@ -297,11 +297,16 @@
             <version>1.4.1</version>
         </dependency>
         
-        <!-- Jersey -->
+        <!-- Jersey Client-->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
             <version>3.0.4</version>            
+        </dependency>
+        <!--  Jersey server old -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-bundle</artifactId>
         </dependency>   
-    </dependencies>
+    </dependencies>        
 </project>

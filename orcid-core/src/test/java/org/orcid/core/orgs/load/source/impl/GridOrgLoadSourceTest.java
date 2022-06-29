@@ -80,9 +80,9 @@ public class GridOrgLoadSourceTest {
         when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(1));
         when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(2));
         when(orgDataClient.get(Mockito.eq("gridFigshareArticleUrl/3"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(getFigshareGridCollectionArticleDetails(3));
-        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString())).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString())).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString())).thenReturn(true);
         
         Path path = Paths.get(getClass().getClassLoader().getResource("grid/dummy.zip").toURI());
         File testFile = path.toFile();
@@ -116,9 +116,9 @@ public class GridOrgLoadSourceTest {
         verify(orgDataClient, Mockito.never()).get(Mockito.eq("gridFigshareArticleUrl/1"), Mockito.eq("userAgent"), Mockito.any());
         verify(orgDataClient, Mockito.never()).get(Mockito.eq("gridFigshareArticleUrl/2"), Mockito.eq("userAgent"), Mockito.any());
         verify(orgDataClient, Mockito.times(1)).get(Mockito.eq("gridFigshareArticleUrl/3"), Mockito.eq("userAgent"), Mockito.any());
-        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString());
-        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString());
-        verify(orgDataClient, Mockito.times(1)).downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString());
+        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString());
+        verify(orgDataClient, Mockito.never()).downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString());
+        verify(orgDataClient, Mockito.times(1)).downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString());
     }
 
     @Test

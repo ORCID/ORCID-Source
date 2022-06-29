@@ -1,7 +1,5 @@
 package org.orcid.api.common.analytics;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.orcid.core.analytics.AnalyticsData;
@@ -11,6 +9,9 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.http.HttpMethod;
+
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
 
@@ -24,9 +25,9 @@ public class AnalyticsProcess implements Runnable {
 
     private static final String DEFAULT_CONTENT_TYPE = "default";
     
-    private ContainerRequestContext request;
+    private ContainerRequest request;
 
-    private ContainerResponseContext response;
+    private ContainerResponse response;
 
     private AnalyticsClient analyticsClient;
 
@@ -48,11 +49,11 @@ public class AnalyticsProcess implements Runnable {
         analyticsClient.sendAnalyticsData(data);
     }
 
-    public void setRequest(ContainerRequestContext request) {
+    public void setRequest(ContainerRequest request) {
         this.request = request;
     }
 
-    public void setResponse(ContainerResponseContext response) {
+    public void setResponse(ContainerResponse response) {
         this.response = response;
     }
 
@@ -86,8 +87,8 @@ public class AnalyticsProcess implements Runnable {
 
     private AnalyticsData getAnalyticsData() {
         ip = maskIp(ip);
-        APIEndpointParser parser = new APIEndpointParser(request.getUriInfo().getPathSegments());
-        String url = request.getUriInfo().getAbsolutePath().toString();
+        APIEndpointParser parser = new APIEndpointParser(request);
+        String url = request.getAbsolutePath().toString();
         url = correctScheme(url);
         url = getUrlWithHashedOrcidId(parser.getOrcidId(), url);
 
@@ -96,7 +97,7 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
         analyticsData.setMethod(request.getMethod());
         analyticsData.setContentType(getContentType());
-        analyticsData.setUserAgent(request.getHeaderString(HttpHeaders.USER_AGENT));
+        analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
         analyticsData.setResponseCode(response.getStatus());
         analyticsData.setIpAddress(ip);
         analyticsData.setCategory(parser.getCategory());
@@ -106,7 +107,7 @@ public class AnalyticsProcess implements Runnable {
 
     private String getContentType() {
         if (HttpMethod.GET.name().equals(request.getMethod())) {
-            String accept = request.getHeaderString(HttpHeaders.ACCEPT);
+            String accept = request.getHeaderValue(HttpHeaders.ACCEPT);
             if (accept != null && !accept.isEmpty()) {
                 return accept;
             }
@@ -115,7 +116,7 @@ public class AnalyticsProcess implements Runnable {
         // If accept header not set for GETs content type will be used - see
         // AcceptFilter.
         // For other methods content type will be used anyway
-        String contentType = request.getHeaderString(HttpHeaders.CONTENT_TYPE);
+        String contentType = request.getHeaderValue(HttpHeaders.CONTENT_TYPE);
         if (contentType != null && !contentType.isEmpty()) {
             return contentType;
         }

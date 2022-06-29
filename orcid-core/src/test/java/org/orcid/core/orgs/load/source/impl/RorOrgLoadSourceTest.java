@@ -76,9 +76,9 @@ public class RorOrgLoadSourceTest {
         ReflectionTestUtils.setField(rorOrgLoadSource, "enabled", true);
         
         when(orgDataClient.get(Mockito.eq("rorZenodoRecordsUrl"), Mockito.eq("userAgent"), Mockito.any())).thenReturn(Arrays.asList(getFigsharerorCollectionArticleSummary(1, "2019-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(2, "2020-01-01T07:00:00"), getFigsharerorCollectionArticleSummary(3, "2020-06-01T07:00:00")));
-        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
-        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/1"), Mockito.anyString())).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/2"), Mockito.anyString())).thenReturn(true);
+        when(orgDataClient.downloadFile(Mockito.eq("downloadUrl/3"), Mockito.anyString())).thenReturn(true);
         
         Path path = Paths.get(getClass().getClassLoader().getResource("ror/dummy.zip").toURI());
         File testFile = path.toFile();

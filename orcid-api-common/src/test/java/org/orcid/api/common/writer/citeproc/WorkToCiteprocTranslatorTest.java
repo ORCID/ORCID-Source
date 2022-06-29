@@ -1,5 +1,6 @@
 package org.orcid.api.common.writer.citeproc;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.Citation;
@@ -9,7 +10,6 @@ import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Work;
 
 import de.undercouch.citeproc.csl.CSLItemData;
-import org.junit.Assert;
 
 public class WorkToCiteprocTranslatorTest {
 
