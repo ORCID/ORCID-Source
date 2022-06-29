@@ -1,7 +1,5 @@
 package org.orcid.api.common.filter;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
@@ -15,6 +13,10 @@ import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.sun.jersey.api.core.InjectParam;
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
+import com.sun.jersey.spi.container.ContainerResponseFilter;
+
 
 public abstract class AnalyticsFilter implements ContainerResponseFilter {
 
@@ -41,12 +43,13 @@ public abstract class AnalyticsFilter implements ContainerResponseFilter {
     public abstract void setIsPublicApi();
     
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        AnalyticsProcess analyticsProcess = getAnalyticsProcess(requestContext, responseContext);
+    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
+        AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
         apiAnalyticsTaskExecutor.execute(analyticsProcess);
+        return response;
     }
     
-    private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
+    private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
         AnalyticsProcess process = new AnalyticsProcess();
         process.setRequest(request);
         process.setResponse(response);

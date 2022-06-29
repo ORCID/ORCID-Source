@@ -4,9 +4,11 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
     <import resource="orcid-core-context.xml"/>
@@ -134,5 +136,18 @@
     	<constructor-arg value="${org.orcid.core.pubBaseUri}" />
     	<constructor-arg value="false" />
     </bean>
+    
+    <!-- Jersey client -->
+    <bean id="jerseyClient" class="org.orcid.utils.jersey.OrcidJerseyClientHandler" factory-method="create">
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
+        <constructor-arg ref="jerseyProperties" />
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
     
 </beans>

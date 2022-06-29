@@ -7,6 +7,10 @@ import org.orcid.api.common.filter.AnalyticsFilter;
 @Provider
 public class MembersApiAnalyticsFilter extends AnalyticsFilter {
 
+    public MembersApiAnalyticsFilter() {
+        this.setIsPublicApi();
+    }
+    
     @Override
     public void setIsPublicApi() {
         this.isPublicApi = true;      
