@@ -12,8 +12,10 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.NotificationType;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
@@ -110,6 +112,8 @@ public class JpaJaxbNotificationAdapterTest {
         activity.setExternalIdentifier(extId);
         extId.setType("doi");
         extId.setValue("1234/abc123");
+        extId.setUrl(new Url("https://example.com/1234/abc123"));
+        extId.setRelationship(Relationship.SELF);
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
@@ -135,7 +139,9 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals(org.orcid.jaxb.model.notification.permission_v2.ItemType.WORK.name(), activityEntity.getItemType());
         assertEquals("Latest Research Article", activityEntity.getItemName());
         assertEquals("DOI", activityEntity.getExternalIdType());
-        assertEquals("1234/abc123", activityEntity.getExternalIdValue());        
+        assertEquals("1234/abc123", activityEntity.getExternalIdValue());
+        assertEquals("https://example.com/1234/abc123", activityEntity.getExternalIdUrl());
+        assertEquals("SELF", activityEntity.getExternalIdRelationship());
     }
 
     @Test
