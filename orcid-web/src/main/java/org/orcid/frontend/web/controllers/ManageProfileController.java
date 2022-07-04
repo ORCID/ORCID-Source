@@ -305,6 +305,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
+            //reset the lock fields
+            profileEntityManager.resetSigninLock(getCurrentUserOrcid());
+            profileEntityCacheManager.remove(getCurrentUserOrcid());
             cp = new ChangePassword();
             errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
         }
