@@ -935,18 +935,6 @@ the software.
     </dependencyManagement>
 
     <repositories>
-        <!-- temporary repo until 2.0.6 is out -->
-        <repository>
-            <id>orcid-spring-oauth-copy</id>
-            <name>copy of spring security oauth</name>
-            <url>https://raw.github.com/ORCID/spring-security-oauth/mvn-repo/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
         <repository>
             <id>spring-social-facebook-orcid-snapshot</id>
             <name>copy of spring-social-facebook to work with Graph API 2.10</name>
