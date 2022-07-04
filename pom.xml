@@ -475,7 +475,7 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
-			<!-- Jersey -->
+            <!-- Jersey -->
             <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-server</artifactId>
@@ -486,7 +486,13 @@ the software.
                 <artifactId>jersey-client</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
-			<dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-json</artifactId>
+                <version>${jersey.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-spring</artifactId>
                 <version>${jersey.version}</version> 
@@ -515,9 +521,9 @@ the software.
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-aop</artifactId>
                     </exclusion>
-                </exclusions>				
+                </exclusions>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-core</artifactId>
                 <version>${jersey.version}</version>
@@ -529,7 +535,12 @@ the software.
                 <version>${jersey.version}</version>
                 <scope>compile</scope>
             </dependency>
-			
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-apache-client4</artifactId>
+                <version>${jersey.version}</version>
+                <scope>compile</scope>
+            </dependency>
             <!-- Web -->
             <dependency>
                 <groupId>org.freemarker</groupId>
@@ -557,7 +568,20 @@ the software.
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-csv</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>            
+            </dependency>
+			
+			
+			
+			<dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+			
+			
+			
+			
+			
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
