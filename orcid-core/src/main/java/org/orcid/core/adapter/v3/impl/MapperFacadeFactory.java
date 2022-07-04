@@ -329,8 +329,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         amendNotificationClassMap.field("items.items", "notificationItems");
         mapCommonFields(amendNotificationClassMap).register();
 
-        mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter")
-                .add().field("externalIdValue", "externalIdentifier.value").customize(new CustomMapper<NotificationItemEntity, Item>() {
+        ClassMapBuilder<NotificationItemEntity, Item> itemClassMap = mapperFactory.classMap(NotificationItemEntity.class, Item.class);
+        itemClassMap.fieldMap("externalIdType", "externalIdentifier.type").converter("externalIdentifierIdConverter").add();
+        itemClassMap.field("externalIdValue", "externalIdentifier.value");
+        itemClassMap.field("externalIdUrl", "externalIdentifier.url.value");
+        itemClassMap.field("externalIdRelationship", "externalIdentifier.relationship");
+
+        itemClassMap.customize(new CustomMapper<NotificationItemEntity, Item>() {
                     @Override
                     public void mapAtoB(NotificationItemEntity entity, Item item, MappingContext context) {
                         if (!PojoUtil.isEmpty(entity.getAdditionalInfo())) {

@@ -24,6 +24,8 @@ public class NotificationItemEntity extends BaseEntity<Long> {
     private String itemName;
     private String externalIdType;
     private String externalIdValue;
+    private String externalIdUrl;
+    private String externalIdRelationship;
     private String actionType;
     private String additionalInfo;
     
@@ -75,6 +77,25 @@ public class NotificationItemEntity extends BaseEntity<Long> {
         this.externalIdValue = externalIdValue;
     }
 
+    @Column(name = "external_id_url")
+    public String getExternalIdUrl() {
+        return externalIdUrl;
+    }
+
+    public void setExternalIdUrl(String externalIdUrl) {
+        this.externalIdUrl = externalIdUrl;
+    }
+
+    @Column(name = "external_id_relationship")
+    public String getExternalIdRelationship() {
+        return externalIdRelationship;
+    }
+
+    public void setExternalIdRelationship(String externalIdRelationship) {
+        this.externalIdRelationship = externalIdRelationship;
+    }
+
+    
     @Column(name = "action_type")
     public String getActionType() {
         return actionType;
