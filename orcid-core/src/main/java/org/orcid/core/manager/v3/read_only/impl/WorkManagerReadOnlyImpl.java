@@ -36,6 +36,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkContributorsList;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
@@ -410,6 +411,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             result.add(jpaJaxbWorkAdapter.toWork(entity));
         }
         return result;
+    }
+
+    @Override
+    public WorkExtended getWorkExtended(String orcid, Long workId) {
+        WorkEntity work = workDao.getWork(orcid, workId);
+        return jpaJaxbWorkAdapter.toWorkExtended(work);
     }
 
     @Override

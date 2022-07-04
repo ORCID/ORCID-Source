@@ -8,6 +8,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -19,9 +20,9 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.ContributorsRolesAndSequences;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 public class WorkForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -188,9 +189,12 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             w.setCitation(citation);
         }
 
-        // Set contributors
-        populateContributors(work, w, maxContributorsForUI);
-
+        if (work instanceof WorkExtended) {
+            w.setContributorsGroupedByOrcid(((WorkExtended) work).getContributorsGroupedByOrcid());
+        } else {
+            // Set contributors
+            populateContributors(work, w, maxContributorsForUI);
+        }
         // Set external identifiers
         populateExternalIdentifiers(work, w);
 
@@ -405,7 +409,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         }
         workForm.setContributors(contributorsList);
     }
-    
+
     private static void populateContributors(WorkForm workForm, Work work) {
         org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
         if(workForm.getContributors() != null && !workForm.getContributors().isEmpty()) {
@@ -440,6 +444,37 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             }
         }
         work.setWorkContributors(contributors);
+    }
+
+    private static void populateContributorsGroupedByOrcid(WorkForm workForm, Work work) {
+        org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
+        if(workForm.getContributorsGroupedByOrcid() != null && !workForm.getContributorsGroupedByOrcid().isEmpty()) {
+            for(ContributorsRolesAndSequences contributor : workForm.getContributorsGroupedByOrcid()) {
+                for(ContributorAttributes ca : contributor.getRolesAndSequences()) {
+                    org.orcid.jaxb.model.v3.release.common.Contributor workContributor = new org.orcid.jaxb.model.v3.release.common.Contributor();
+                    org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+                    if(ca.getContributorRole() != null) {
+                        contributorAttributes.setContributorRole(ca.getContributorRole());
+                    }
+
+                    if(ca.getContributorSequence() != null) {
+                        contributorAttributes.setContributorSequence(ca.getContributorSequence());
+                    }
+                    workContributor.setContributorAttributes(contributorAttributes);
+
+                    if (contributor.getCreditName() != null) {
+                        workContributor.setCreditName(contributor.getCreditName());
+                    }
+
+                    if(contributor.getContributorOrcid() != null) {
+                        workContributor.setContributorOrcid(contributor.getContributorOrcid());
+                    }
+
+                    contributors.getContributor().add(workContributor);
+                }
+            }
+            work.setWorkContributors(contributors);
+        }
     }
 
     public Work toWork() {
@@ -545,6 +580,8 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                         
         // Set contributors
         populateContributors(this, work);
+
+        populateContributorsGroupedByOrcid(this, work);
 
         // Set external identifiers
         populateExternalIdentifiers(this, work);

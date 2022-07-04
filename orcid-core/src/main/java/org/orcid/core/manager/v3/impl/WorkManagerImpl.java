@@ -198,7 +198,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
-        if (isApiRequest && Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
             filterContributors(work, workEntity);
         }
         workDao.persist(workEntity);
@@ -367,15 +367,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
             }
-
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                filterContributors(work, workEntity);
-            }
         }else{
             //validate external ID vocab
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);            
         }
-                        
+
         orcidSecurityManager.checkSourceAndThrow(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
     	if (workEntity.getVisibility() == null) {
@@ -385,7 +381,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
-
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            filterContributors(work, workEntity);
+        }
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));

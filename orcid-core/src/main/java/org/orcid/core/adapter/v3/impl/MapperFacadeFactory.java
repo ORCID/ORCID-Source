@@ -18,6 +18,7 @@ import org.orcid.core.adapter.jsonidentifier.converter.JSONExternalIdentifiersCo
 import org.orcid.core.adapter.jsonidentifier.converter.JSONFundingExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONPeerReviewWorkExternalIdentifierConverterV3;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.CreditNameConverter;
 import org.orcid.core.adapter.v3.converter.FamilyNameConverter;
 import org.orcid.core.adapter.v3.converter.FundingContributorsConverter;
@@ -140,6 +141,7 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.FactoryBean;
@@ -529,10 +531,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
-        
+        ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter = new ContributorsRolesAndSequencesConverter(workContributorsRoleConverter);
+
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
         converterFactory.registerConverter("workContributorsConverterId", wcc);
+        converterFactory.registerConverter("contributorsRolesAndSequencesConverter", contributorsRolesAndSequencesConverter);
         converterFactory.registerConverter("visibilityConverter", new VisibilityConverter());
 
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
@@ -750,7 +754,61 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         mapperFactory.classMap(PublicationDate.class, PublicationDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
                 .register();
-        
+
+        ClassMapBuilder<WorkExtended, WorkEntity> workExtendedClassMap = mapperFactory.classMap(WorkExtended.class, WorkEntity.class);
+        workExtendedClassMap.field("putCode", "id");
+        addV3DateFields(workClassMap);
+        registerSourceConverters(mapperFactory, workClassMap);
+        workExtendedClassMap.field("shortDescription", "description");
+        workExtendedClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        workExtendedClassMap.field("languageCode", "languageCode");
+        workExtendedClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        workExtendedClassMap.field("url.value", "workUrl");
+        workExtendedClassMap.field("country.value", "iso2Country");
+        workExtendedClassMap.field("workTitle.title.content", "title");
+        workExtendedClassMap.field("workTitle.translatedTitle.content", "translatedTitle");
+        workExtendedClassMap.field("workTitle.translatedTitle.languageCode", "translatedTitleLanguageCode");
+        workExtendedClassMap.field("workTitle.subtitle.content", "subtitle");
+        workExtendedClassMap.field("workCitation.workCitationType", "citationType");
+        workExtendedClassMap.field("workCitation.citation", "citation");
+        workExtendedClassMap.exclude("workType").exclude("journalTitle").customize(new CustomMapper<WorkExtended, WorkEntity>() {
+            /**
+             * From model object to database object
+             */
+            @Override
+            public void mapAtoB(WorkExtended a, WorkEntity b, MappingContext context) {
+                b.setWorkType(a.getWorkType().name());
+                b.setWorkUrl(a.getUrl() == null ? null : a.getUrl().getValue());
+                b.setIso2Country(a.getCountry() == null ? null : a.getCountry().getValue().toString());
+                b.setJournalTitle(a.getJournalTitle() == null ? null : a.getJournalTitle().getContent());
+                b.setTranslatedTitle(
+                        (a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getContent());
+                b.setTranslatedTitleLanguageCode(
+                        (a.getWorkTitle() == null || a.getWorkTitle().getTranslatedTitle() == null) ? null : a.getWorkTitle().getTranslatedTitle().getLanguageCode());
+                b.setSubtitle((a.getWorkTitle() == null || a.getWorkTitle().getSubtitle() == null) ? null : a.getWorkTitle().getSubtitle().getContent());
+                b.setCitation(a.getWorkCitation() == null ? null : a.getWorkCitation().getCitation());
+                b.setCitationType(
+                        (a.getWorkCitation() == null || a.getWorkCitation().getWorkCitationType() == null) ? null : a.getWorkCitation().getWorkCitationType().toString());
+            }
+
+            /**
+             * From database to model object
+             */
+            @Override
+            public void mapBtoA(WorkEntity b, WorkExtended a, MappingContext context) {
+                a.setWorkType(WorkType.valueOf(b.getWorkType()));
+                a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
+
+                if (!PojoUtil.isEmpty(b.getTopContributorsJson())) {
+                    a.setContributorsGroupedByOrcid(contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(b.getTopContributorsJson()));
+                }
+            }
+
+        });
+        workExtendedClassMap.byDefault();
+        workExtendedClassMap.register();
+
+
         mapFuzzyDateToPublicationDateEntity(mapperFactory);
 
         return mapperFactory.getMapperFacade();

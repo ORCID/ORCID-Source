@@ -20,8 +20,11 @@ import org.orcid.core.manager.v3.BibtexManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
@@ -36,6 +39,7 @@ import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
@@ -71,6 +75,9 @@ public class WorksController extends BaseWorkspaceController {
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
 
+    @Resource(name = "workManagerReadOnlyV3")
+    private WorkManagerReadOnly workManagerReadOnly;
+
     @Resource
     private WorksPaginator worksPaginator;
 
@@ -100,6 +107,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Resource
     PIDResolverService resolverService;
+
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -300,10 +310,16 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
+        WorkForm workForm = null;
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
+            workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        } else {
+            Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
+            workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        }
 
-        if (work != null) {
-            WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        if (workForm != null) {
             if (workForm.getPublicationDate() == null) {
                 initializePublicationDate(workForm);
             } else {
@@ -384,8 +400,14 @@ public class WorksController extends BaseWorkspaceController {
                 workForm.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            if (workForm.getContributors() != null) {
-                workForm.setContributors(filterContributors(workForm.getContributors(), activityManager));
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                if (workForm.getContributorsGroupedByOrcid() != null) {
+                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                }
+            } else {
+                if (workForm.getContributors() != null) {
+                    workForm.setContributors(filterContributors(workForm.getContributors(), activityManager));
+                }
             }
 
             return workForm;
