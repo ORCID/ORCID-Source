@@ -511,15 +511,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             LOGGER.debug("Not sending amend email, because self edited: {}", userOrcid);
             return null;
         }
-        
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);
-        String frequencyString = frequencies.get(EmailFrequencyManager.CHANGE_NOTIFICATIONS);
-        SendEmailFrequency amendEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-        
-        if (SendEmailFrequency.NEVER.equals(amendEmailFrequency)) {
-            LOGGER.debug("Not sending amend email, because option to send change notifications is disabled: {}", userOrcid);
-            return null;
-        }
+
         String amenderType = profileDao.retrieveOrcidType(amenderOrcid);
         if (amenderType != null && OrcidType.ADMIN.equals(OrcidType.valueOf(amenderType))) {
             LOGGER.debug("Not sending amend email, because modified by admin ({}): {}", amenderOrcid, userOrcid);
@@ -539,16 +531,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Transactional
     public void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission) {
         ProfileEntity delegateProfileEntity = profileEntityCacheManager.retrieve(userReceivingPermission);
-
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userReceivingPermission);
-        String frequencyString = frequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS);
-        SendEmailFrequency administrativeChangeEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-        
-        if (SendEmailFrequency.NEVER.equals(administrativeChangeEmailFrequency)) {
-            LOGGER.debug("Not sending added delegate email, because option to send administrative change notifications not set to true for delegate: {}",
-                    userReceivingPermission);
-            return;
-        }
 
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
@@ -772,15 +754,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link) {
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(managedOrcid);
-        String frequencyString = frequencies.get(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS);
-        SendEmailFrequency adminEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-        
-        if (SendEmailFrequency.NEVER.equals(adminEmailFrequency)) {
-            LOGGER.debug("Not sending delegation request email, because option to send administrative change notifications is disabled: {}", managedOrcid);
-            return;
-        }
-        
         // Create map of template params        
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -834,16 +807,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public Notification createPermissionNotification(String orcid, NotificationPermission notification) {
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(orcid);
-        String frequencyString = frequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS);
-        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-
-        if (SendEmailFrequency.NEVER.equals(memberUpdateEmailFrequency)) {
-            LOGGER.debug("Not sending acknowledge notification, because option to send member updates is set to never for record: {}",
-                    orcid);
-            return null;
-        }
-        
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
@@ -1023,16 +986,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     
     @Override
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
-        Map<String, String> frequencies = emailFrequencyManager.getEmailFrequency(userOrcid);
-        String frequencyString = frequencies.get(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS);
-        SendEmailFrequency memberUpdateEmailFrequency = SendEmailFrequency.fromValue(frequencyString);
-        
-        if (SendEmailFrequency.NEVER.equals(memberUpdateEmailFrequency)) {
-            LOGGER.debug("Not sending acknowledge notification, because option is set to never for record: {}",
-                    userOrcid);
-            return;
-        }
-        
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
         String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
 

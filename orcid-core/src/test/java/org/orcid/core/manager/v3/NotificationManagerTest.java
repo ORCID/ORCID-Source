@@ -619,13 +619,11 @@ public class NotificationManagerTest extends DBUnitTest {
         map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
         when(mockEmailFrequencyManager.getEmailFrequency(orcidNever)).thenReturn(map);
 
-        // Should not generate the notification
+        // Should generate the notification ignoring the emailFrequency
         notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
-        verify(mockNotificationDao, never()).persist(Matchers.any());
-
         // Should generate the notification
         notificationManager.sendAcknowledgeMessage(orcidDaily, clientId);
-        verify(mockNotificationDao, times(1)).persist(Matchers.any());
+        verify(mockNotificationDao, times(2)).persist(Matchers.any());
 
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
     }
