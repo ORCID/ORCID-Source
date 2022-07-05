@@ -1,15 +1,18 @@
 package org.orcid.utils.jersey;
 
 import java.net.URI;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
@@ -17,30 +20,40 @@ import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.Response;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 @Component
-public class JerseyClientHelper implements InitializingBean, DisposableBean {
+public class JerseyClientHelper implements DisposableBean {
     
     @Value("${org.orcid.message-listener.development_mode:false}")
     private boolean isDevelopmentMode; 
     
     protected Client jerseyClient;
     
+    public JerseyClientHelper() {
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        Map<String, Object> jerseyProperties = new HashMap<String, Object>();
+        jerseyProperties.put("com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER", connectionManager);
+        jerseyClient = OrcidJerseyClientHandler.create(isDevelopmentMode, jerseyProperties);
+    }
+    
     @Override
     public void destroy() throws Exception {
-        // TODO Auto-generated method stub
-        
+        if(jerseyClient != null) {
+            jerseyClient.close();
+        }
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        // TODO Auto-generated method stub
-        new Date().after(null);
-    }  
+    public <T> T executeGetRequest(String url, Class<T> responseType) {
+        WebTarget webTarget = jerseyClient.target(url);
+        webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
+        Builder builder = webTarget.request();
+        Response response = builder.get(Response.class);
+        if(response.getStatus() != 200) {
+            throw new IllegalArgumentException(String.format("Unable to connect to %s, response code: %s", url, response.getStatus()));
+        } 
+        
+        return response.readEntity(responseType);
+    }
     
     public Response executeGetRequest(String url) {
         WebTarget webTarget = jerseyClient.target(url);
