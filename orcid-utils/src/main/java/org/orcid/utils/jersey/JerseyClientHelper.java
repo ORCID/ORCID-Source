@@ -12,7 +12,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import jakarta.ws.rs.client.Client;
@@ -25,16 +24,13 @@ import jakarta.ws.rs.core.Response;
 @Component
 public class JerseyClientHelper implements DisposableBean {
     
-    @Value("${org.orcid.message-listener.development_mode:false}")
-    private boolean isDevelopmentMode; 
-    
     protected Client jerseyClient;
     
-    public JerseyClientHelper() {
+    public JerseyClientHelper(Boolean isInDevelopmentMode) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         Map<String, Object> jerseyProperties = new HashMap<String, Object>();
         jerseyProperties.put("com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER", connectionManager);
-        jerseyClient = OrcidJerseyClientHandler.create(isDevelopmentMode, jerseyProperties);
+        jerseyClient = OrcidJerseyClientHandler.create(isInDevelopmentMode, jerseyProperties);
     }
     
     @Override

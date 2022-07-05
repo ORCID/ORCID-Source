@@ -166,7 +166,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
 
     private Activity fetchEntity(String orcid, Long putCode, String endpoint, Class<? extends Activity> c) {
         String url = baseUri + orcid + "/" + endpoint + "/" + putCode;
-        JerseyClientResponse<Activity, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, Activity.class, OrcidError.class);
+        JerseyClientResponse<? extends Activity, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, c, OrcidError.class);
         
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {

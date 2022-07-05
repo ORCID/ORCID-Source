@@ -14,7 +14,9 @@ import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.Work;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ORCIDMarshaller {
     private final JAXBContext jaxbContext_2_0_api;
     private final JAXBContext jaxbContext_2_0_activities_api;

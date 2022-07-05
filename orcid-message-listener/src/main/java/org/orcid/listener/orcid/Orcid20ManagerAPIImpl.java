@@ -11,6 +11,8 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
+import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.Record;
@@ -118,16 +120,29 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     @Override
     public Affiliation fetchAffiliation(String orcid, Long putCode, AffiliationType type){
         String url = baseUri + orcid + "/" + type.value() + "/" + putCode;
-        JerseyClientResponse<Affiliation, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, Affiliation.class, OrcidError.class);
-        if (response.getStatus() != 200) {
-            switch (response.getStatus()) {
-                default:
-                LOG.error("Unable to fetch affiliation from record " + orcid + "/" + type.value() + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
-                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+        if(AffiliationType.EDUCATION.equals(type)) {
+            JerseyClientResponse<Education, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, Education.class, OrcidError.class);
+            if (response.getStatus() != 200) {
+                switch (response.getStatus()) {
+                    default:
+                    LOG.error("Unable to fetch affiliation from record " + orcid + "/" + type.value() + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
+                    throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+                }
             }
-        }
-        
-        return response.getEntity();
+            
+            return response.getEntity();   
+        } else {
+            JerseyClientResponse<Employment, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, Employment.class, OrcidError.class);
+            if (response.getStatus() != 200) {
+                switch (response.getStatus()) {
+                    default:
+                    LOG.error("Unable to fetch affiliation from record " + orcid + "/" + type.value() + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
+                    throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+                }
+            }
+            
+            return response.getEntity();
+        }        
     }
     
     //TODO: add caching for solr once activities listener is also here.

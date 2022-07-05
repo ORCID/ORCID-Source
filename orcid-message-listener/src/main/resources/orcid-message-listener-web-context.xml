@@ -153,5 +153,9 @@
 		<constructor-arg ref="mongoClientURI" />
 	</bean>
 
-	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper" />	
+	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+		<constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
+	</bean>	
+	
+	<bean id="ORCIDMarshaller" class="org.orcid.utils.jersey.marshaller.ORCIDMarshaller" />
 </beans>
