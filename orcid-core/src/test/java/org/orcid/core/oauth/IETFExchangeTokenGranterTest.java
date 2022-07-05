@@ -244,7 +244,9 @@ public class IETFExchangeTokenGranterTest {
             requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE, "urn:ietf:params:oauth:token-type:id_token");
             requestParameters.put(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, "urn:ietf:params:oauth:token-type:access_token");
             tokenGranter.grant(GRANT_TYPE, new TokenRequest(requestParameters, ACTIVE_CLIENT_ID, List.of("/read-limited"), GRANT_TYPE));
-            fail();
+            //TODO: This must fail once the member portal stops using the implicit flow grant
+            //fail();
+            //TODO
         } catch (IllegalArgumentException iae) {
             assertEquals(String.format("Token issued to client AUD_CLIENT and user 0000-0000-0000-0000 expired on %s", new Date(0)), iae.getMessage());
         } catch (Exception e) {
