@@ -127,9 +127,15 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             JWTClaimsSet claimsSet = parseIdToken(subjectToken);
             String oboClient = claimsSet.getAudience().get(0);
             String oboOrcid = claimsSet.getSubject();
+            //TODO: We must add this back once the member portal stops using the implicit flow
+            /*
             if(new Date().after(claimsSet.getExpirationTime())) {
                 throw new IllegalArgumentException(String.format("Token issued to client %s and user %s expired on %s", oboClient, oboOrcid, claimsSet.getExpirationTime()));
             }
+            */
+            //TODO
+            
+            
             if (oboClientWhitelisted(oboClient, clientDetails.getId())) {
                 return generateAccessToken(tokenRequest, oboClient, oboOrcid);
             } else {
