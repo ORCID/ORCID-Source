@@ -294,7 +294,7 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 
 | Parameter | Value        |
 |--------------------|--------------------------|
-| URL 				| https://api.[host]/[version]/[ORCID iD]/funding/[put-code] |
+| URL 				| https://api.[host]/[version]/[ORCID iD]/peer-review/[put-code] |
 | Method    | DELETE |
 | header      | Authorization: Bearer [Your authorization code] |
 | header      | Content-Type: application/vnd.orcid+json or /vnd.orcid+xml|
