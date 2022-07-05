@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -43,34 +44,77 @@ public class JerseyClientHelper implements DisposableBean {
         }
     }
 
-    public <T> T executeGetRequest(String url, Class<T> responseType) {
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, Class<T> responseType, Class<E> errorResponseType) {
+        return executeGetRequest(url, null, null, responseType, errorResponseType);
+    }
+    
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, Class<T> responseType, Class<E> errorResponseType) {
+        return executeGetRequest(url, mediaType, null, responseType, errorResponseType);
+    }
+    
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
+        return executeGetRequest(url, mediaType,  accessToken, false, responseType, errorResponseType);
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Boolean followRedirects, Class<T> responseType, Class<E> errorResponseType) {
         WebTarget webTarget = jerseyClient.target(url);
-        webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
-        Builder builder = webTarget.request();
-        Response response = builder.get(Response.class);
-        if(response.getStatus() != 200) {
-            throw new IllegalArgumentException(String.format("Unable to connect to %s, response code: %s", url, response.getStatus()));
-        } 
+        if(followRedirects == null || !followRedirects) {
+            // Follow redirects is set to false by default
+            webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
+        } else {
+            webTarget.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
+        }
         
-        return response.readEntity(responseType);
-    }
+        Builder builder;
+        
+        if(StringUtils.isEmpty(mediaType)) {
+            builder = webTarget.request(); 
+        } else {
+            builder = webTarget.request(mediaType);
+        }
+        
+        if(!StringUtils.isEmpty(accessToken)) {            
+            builder = builder.header("Authorization", "Bearer " + accessToken);
+        }
+        
+        Response response = builder.get(Response.class);        
+        JerseyClientResponse<T, E> jcr;
+        if(response.getStatus() == 200) {
+            jcr = new JerseyClientResponse(response.getStatus(), response.readEntity(responseType), null);
+        } else {
+            jcr = new JerseyClientResponse(response.getStatus(), null, response.readEntity(errorResponseType));
+        }
+        
+        return jcr;
+    }       
     
-    public Response executeGetRequest(String url) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, String mediaType, String message, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
         WebTarget webTarget = jerseyClient.target(url);
-        webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
-        Builder builder = webTarget.request();
-        return builder.get(Response.class);
-    }
-    
-    public Response executeGetRequest(URI baseUri, String path) {
-        WebTarget webTarget = jerseyClient.target(baseUri).path(path);
-        webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
-        Builder builder = webTarget.request(MediaType.APPLICATION_XML);
-        return builder.get(Response.class);
-    }
-    
-    public Response executeGetRequest(String url, Boolean followRedirects, String mediaType) {
-        return executeGetRequest(url, followRedirects, mediaType, Map.of());
+        
+        Builder builder;
+        
+        if(StringUtils.isEmpty(mediaType)) {
+            builder = webTarget.request(); 
+        } else {
+            builder = webTarget.request(mediaType);
+        }
+        
+        if(!StringUtils.isEmpty(accessToken)) {            
+            builder = builder.header("Authorization", "Bearer " + accessToken);
+        }
+        
+        Response response = builder.post(Entity.entity(message, mediaType));
+                        
+        JerseyClientResponse<T, E> jcr;
+        if(response.getStatus() == 200) {
+            jcr = new JerseyClientResponse(response.getStatus(), response.readEntity(responseType), null);
+        } else {
+            jcr = new JerseyClientResponse(response.getStatus(), null, response.readEntity(errorResponseType));
+        }
+        
+        return jcr;
     }
     
     public Response executeGetRequest(String url, Boolean followRedirects, String mediaType, Map<String, String> queryParams) {
