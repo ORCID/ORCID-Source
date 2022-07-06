@@ -337,7 +337,7 @@ See [TESTAUTO.md](TESTAUTO.md)
 
 ## Manual Testing
 
-See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integration-test/src/test/manual-test)
+See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/development/manual-test)
 
 * Finally help out by improving these instructions!    
 
