@@ -9,54 +9,6 @@
 		file-encoding="UTF-8" location="classpath:staging-orcid-api-client.properties"
 		ignore-unresolvable="true" />
 
-	<bean id="t2OrcidApiClient" class="org.orcid.api.t2.integration.T2OrcidApiClientImpl">
-		<constructor-arg value="${org.orcid.t2.client.base_url}" />
-		<constructor-arg ref="jerseyClient" />
-	</bean>
-
-	<bean id="jerseyClient" class="com.sun.jersey.api.client.Client"
-		factory-method="create">
-		<constructor-arg ref="clientConfig" />
-	</bean>
-
-	<bean id="clientConfig" class="org.orcid.api.t2.integration.OrcidJerseyT2ClientConfig">
-		<constructor-arg ref="providers" />
-		<property name="properties" ref="jerseyProperties" />
-		<property name="keyStore" ref="keyStore" />
-		<property name="keyStorePassword" value="${org.orcid.t2.client.keyStorePass}" />
-		<property name="trustStore" ref="trustStore" />
-	</bean>
-
-	<util:map id="jerseyProperties">
-		<entry
-			key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
-			value-ref="multiThreadedConnectionManager" />
-	</util:map>
-
-	<util:set id="providers">
-		<value>com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider
-		</value>
-		<value>org.orcid.api.common.jaxb.OrcidJacksonJaxbJsonProvider</value>
-	</util:set>
-
-	<bean id="multiThreadedConnectionManager"
-		class="org.apache.http.impl.conn.PoolingClientConnectionManager" />
-
-	<bean id="addJerseyLoggingFilter"
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetObject">
-			<ref bean="jerseyClient" />
-		</property>
-		<property name="targetMethod">
-			<value>addFilter</value>
-		</property>
-		<property name="arguments">
-			<list>
-				<bean class="com.sun.jersey.api.client.filter.LoggingFilter" />
-			</list>
-		</property>
-	</bean>
-
 	<bean id="keyStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
 		<property name="location" value="${org.orcid.t2.client.keyStoreLocation}" />
 		<property name="password" value="${org.orcid.t2.client.keyStorePass}" />

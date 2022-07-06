@@ -3,6 +3,8 @@ package org.orcid.core.issn;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,14 +13,13 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
 import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 public class IssnClientTest {
     
@@ -26,6 +27,7 @@ public class IssnClientTest {
     
     @Before
     public void setUp() throws IOException {
+        MockitoAnnotations.initMocks(this);
         IssnPortalUrlBuilder mockUrlBuilder = Mockito.mock(IssnPortalUrlBuilder.class);
         Mockito.when(mockUrlBuilder.buildJsonIssnPortalUrlForIssn(Mockito.anyString())).thenReturn("anything");
         ReflectionTestUtils.setField(issnClient, "issnPortalUrlBuilder", mockUrlBuilder);
@@ -80,17 +82,10 @@ public class IssnClientTest {
         return getClass().getResourceAsStream("/issn-response-bad-characters.json");
     }
     
-    private Client getMockedClient(InputStream inputStream) throws IOException {
-        Client client = Mockito.mock(Client.class);
-        WebResource webResource = Mockito.mock(WebResource.class);
-        ClientResponse response = Mockito.mock(ClientResponse.class);
-        
-        Mockito.when(client.resource(Mockito.anyString())).thenReturn(webResource);
-        Mockito.when(webResource.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
-        Mockito.when(response.getStatus()).thenReturn(200);
-        Mockito.when(response.getEntityInputStream()).thenReturn(inputStream);
-        
-        return client;
+    private JerseyClientHelper getMockedClient(InputStream inputStream) throws IOException {
+        JerseyClientHelper jerseyClientHelper = Mockito.mock(JerseyClientHelper.class);  
+        Mockito.when(jerseyClientHelper.executeGetRequest(any(), eq(InputStream.class), eq(String.class))).thenReturn(new JerseyClientResponse(200, inputStream, null));
+        return jerseyClientHelper;
     }
 
 }

@@ -10,21 +10,20 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 @Component
 public class IssnClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
 
-    private Client client = Client.create();
-
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
+    
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
 
@@ -73,18 +72,17 @@ public class IssnClient {
 
     private String getJsonDataFromIssnPortal(String issn) throws IOException {
         String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
-        WebResource resource = client.resource(issnUrl);
-        ClientResponse response = resource.get(ClientResponse.class);
+        JerseyClientResponse<InputStream, String> response = jerseyClientHelper.executeGetRequest(issnUrl, InputStream.class, String.class);
         int status = response.getStatus();
         if (status != 200) {
             return null;
         }
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        InputStream input = response.getEntityInputStream();
+        InputStream input = response.getEntity();
 
         try {
-            IOUtils.copy(response.getEntityInputStream(), output);
+            IOUtils.copy(input, output);
             return output.toString("UTF-8");
         } finally {
             input.close();
