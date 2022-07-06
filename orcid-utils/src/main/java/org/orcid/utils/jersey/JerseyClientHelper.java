@@ -78,9 +78,16 @@ public class JerseyClientHelper implements DisposableBean {
         JerseyClientResponse<T, E> jcr;
         if(response.getStatus() == 200) {
             jcr = new JerseyClientResponse(response.getStatus(), response.readEntity(responseType), null);
-        } else {
-            jcr = new JerseyClientResponse(response.getStatus(), null, response.readEntity(errorResponseType));
-        }
+        } else {            
+            // Try to obtain the error object if available
+            E errorEntity = null;
+            try {
+                errorEntity = response.readEntity(errorResponseType);
+            } catch(Exception e) {
+                // Do nothing
+            }
+            jcr = new JerseyClientResponse(response.getStatus(), null, errorEntity);
+        } 
         
         return jcr;
     }       
