@@ -134,6 +134,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Provide required classes for the JSON provider JacksonJaxbJsonProvider -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

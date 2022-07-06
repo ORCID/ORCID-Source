@@ -26,6 +26,10 @@ public class JerseyClientHelper implements DisposableBean {
     
     protected Client jerseyClient;
     
+    public JerseyClientHelper() {
+        this(false);
+    }
+    
     public JerseyClientHelper(Boolean isInDevelopmentMode) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         Map<String, Object> jerseyProperties = new HashMap<String, Object>();
