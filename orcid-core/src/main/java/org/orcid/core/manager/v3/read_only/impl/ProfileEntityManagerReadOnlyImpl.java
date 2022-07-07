@@ -44,8 +44,8 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         if (profileEntity.getRecordLockedDate() != null) {
             strDate = " on " + sdf.format(profileEntity.getRecordLockedDate());
-        } else if (profileEntity.getLastIndexedDate() != null) {
-            strDate = " on " + sdf.format(profileEntity.getLastIndexedDate());
+        } else if (profileEntity.getLastModified() != null) {
+            strDate = " on " + sdf.format(profileEntity.getLastModified());
         }
 
         if (profileEntity.getReasonLockedDescription() != null) {
