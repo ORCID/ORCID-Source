@@ -6,35 +6,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
+import org.orcid.utils.jersey.JerseyClientHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
 
 public class OrgDataClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDataClient.class);        
     
-    private Client client;
-
-    /**
-     * To be called before any set of operations involving the OrgDataClient
-     */
-    public void init() {
-        client = Client.create();
-    }
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
     
-    /**
-     * To be called after any set of operations involving the OrgDataClient
-     */
-    public void cleanUp() {
-        client.destroy();
-    }
-
     /**
      * Attempts to return the entity specified by the Class parameter
      * @param <T> - Type of entity class

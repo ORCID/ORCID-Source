@@ -324,7 +324,7 @@ public class LoadFundRefData {
             Map<String, String> params = new HashMap<String, String>();
             params.put("geonameId", geoNameId);
             params.put("username", apiUser);
-            JerseyClientResponse<String, String> response = jerseyClientHelper.executeGetRequest(geonamesApiUrl, null, null, params, String.class, String.class); 
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executeGetRequest(geonamesApiUrl, params);
             
             int status = response.getStatus();
             if (status == 200) {
