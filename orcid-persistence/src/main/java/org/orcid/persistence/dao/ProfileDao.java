@@ -146,7 +146,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
 
-    public List<Object[]> getLockedReason(String orcid);
+    ProfileEntity getLockedReason(String orcid);
 
     int deleteProfilesOfType(String orcidType);
 
