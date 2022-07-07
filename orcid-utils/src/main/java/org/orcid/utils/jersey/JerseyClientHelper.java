@@ -53,18 +53,29 @@ public class JerseyClientHelper implements DisposableBean {
     }
     
     public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
-        return executeGetRequest(url, mediaType,  accessToken, false, responseType, errorResponseType);
+        return executeGetRequest(url, mediaType,  accessToken, false, Map.of(), responseType, errorResponseType);
+    }
+    
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Map<String, String> queryParams, Class<T> responseType, Class<E> errorResponseType) {
+        return executeGetRequest(url, mediaType,  accessToken, false, queryParams, responseType, errorResponseType);
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Boolean followRedirects, Class<T> responseType, Class<E> errorResponseType) {
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Boolean followRedirects, Map<String, String> queryParams, Class<T> responseType, Class<E> errorResponseType) {
         WebTarget webTarget = jerseyClient.target(url);
+        
+        if(queryParams != null) {
+            for(Entry<String, String> entry : queryParams.entrySet()) {
+                webTarget = webTarget.queryParam(entry.getKey(), entry.getValue());
+            } 
+        }
+        
         if(followRedirects == null || !followRedirects) {
             // Follow redirects is set to false by default
             webTarget.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
         } else {
             webTarget.property(ClientProperties.FOLLOW_REDIRECTS, followRedirects);
-        }
+        }                
         
         Builder builder;
         
@@ -98,8 +109,7 @@ public class JerseyClientHelper implements DisposableBean {
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, String mediaType, String message, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
-        WebTarget webTarget = jerseyClient.target(url);
-        
+        WebTarget webTarget = jerseyClient.target(url);        
         Builder builder;
         
         if(StringUtils.isEmpty(mediaType)) {

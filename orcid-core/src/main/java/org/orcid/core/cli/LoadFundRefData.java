@@ -5,8 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,6 +27,8 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -39,10 +41,6 @@ import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -89,6 +87,8 @@ public class LoadFundRefData {
     private long addedDisambiguatedOrgs = 0;    
     private long depreciatedOrgs = 0;
 
+    private JerseyClientHelper jerseyClientHelper;
+    
     public static void main(String[] args) {
         LoadFundRefData loadFundRefData = new LoadFundRefData();
         CmdLineParser parser = new CmdLineParser(loadFundRefData);
@@ -118,6 +118,8 @@ public class LoadFundRefData {
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
+        // Jersey client
+        jerseyClientHelper = (JerseyClientHelper) context.getBean("jerseyClientHelper");
     }
 
     /**
@@ -319,15 +321,14 @@ public class LoadFundRefData {
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            Client c = Client.create();
-            MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-            params.add("geonameId", geoNameId);
-            params.add("username", apiUser);
-            WebResource r = c.resource(geonamesApiUrl).queryParams(params);
-            ClientResponse response = r.get(ClientResponse.class);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("geonameId", geoNameId);
+            params.put("username", apiUser);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executeGetRequest(geonamesApiUrl, null, null, params, String.class, String.class); 
+            
             int status = response.getStatus();
             if (status == 200) {
-                result = response.getEntity(String.class);
+                result = response.getEntity();
             } else {
                 LOGGER.warn("Got error status from geonames: {}", status);
                 try {
@@ -336,10 +337,10 @@ public class LoadFundRefData {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                ClientResponse retryResponse = r.get(ClientResponse.class);
+                JerseyClientResponse<String, String> retryResponse = jerseyClientHelper.executeGetRequest(geonamesApiUrl, null, null, params, String.class, String.class);
                 int retryStatus = retryResponse.getStatus();
                 if (retryStatus == 200) {
-                    result = retryResponse.getEntity(String.class);
+                    result = retryResponse.getEntity();
                 } else {
                     String message = "Geonames failed after retry with status: " + retryStatus;
                     LOGGER.error(message);

@@ -9,6 +9,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +26,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -39,9 +42,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class TransformFundRefDataIntoCSV {
 
@@ -78,6 +78,8 @@ public class TransformFundRefDataIntoCSV {
     private String FUNDREF_CSV = "C:/Users/angel.montenegro/Desktop/fundref/crossref_complete.csv";
     private CSVWriter fundrefCSV = null;
     
+    private JerseyClientHelper jerseyClientHelper;
+    
     /**
      * INIT
      * */
@@ -87,6 +89,7 @@ public class TransformFundRefDataIntoCSV {
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
+        jerseyClientHelper = (JerseyClientHelper) context.getBean("jerseyClientHelper");
 
         // Init the CSV file for existing orgs
         try {
@@ -283,13 +286,11 @@ public class TransformFundRefDataIntoCSV {
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            Client c = Client.create();
-            WebResource r = c.resource(geonamesApiUrl);
-            MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-            params.add("geonameId", geoNameId);
-            params.add("username", apiUser);
-            result = r.queryParams(params).get(String.class);
-            cache.put("geoname_json_" + geoNameId, result);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("geonameId", geoNameId);
+            params.put("username", apiUser);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executeGetRequest(geonamesApiUrl, null, null, params, String.class, String.class);
+            cache.put("geoname_json_" + geoNameId, response.getEntity());
         }
         return result;
     }
