@@ -9,8 +9,6 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.orgs.load.manager.OrgLoadManager;
 import org.orcid.core.orgs.load.source.OrgLoadSource;
-import org.orcid.core.orgs.load.source.grid.GridOrgLoadSource;
-import org.orcid.core.orgs.load.source.ror.RorOrgLoadSource;
 import org.orcid.persistence.dao.OrgImportLogDao;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.slf4j.Logger;

@@ -6,6 +6,7 @@ import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
 
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 /**
@@ -15,7 +16,7 @@ import jakarta.ws.rs.core.Response;
  */
 public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
     
-    private static String X_BIBTEX = "application/x-bibtex";
+    private static MediaType X_BIBTEX = new MediaType("application", "x-bibtex");
 
     @Resource
     private JerseyClientHelper jerseyClientHelper;
@@ -44,5 +45,4 @@ public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Obj
         // Not needed, populating only
 
     }
-
 }

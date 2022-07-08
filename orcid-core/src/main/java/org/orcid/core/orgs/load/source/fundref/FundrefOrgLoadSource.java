@@ -527,9 +527,7 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
     @Override
     public boolean downloadOrgData() {
         fileRotator.removeFileIfExists(localFilePath);
-        orgDataClient.init();
         boolean success = orgDataClient.downloadFile(fundrefDataUrl, userAgent, localFilePath);
-        orgDataClient.cleanUp();
         return success;
     }
 

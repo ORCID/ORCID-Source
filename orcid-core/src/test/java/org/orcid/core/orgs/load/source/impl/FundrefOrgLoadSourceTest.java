@@ -32,10 +32,6 @@ import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-
 public class FundrefOrgLoadSourceTest {
     
     @Mock

@@ -252,7 +252,7 @@ public class ResendV3FailedMessages {
                 throw new RuntimeException(e);
             }
 
-            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON, bodyJson, null, String.class, String.class);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, null, String.class, String.class);
             int status = response.getStatus();
             if (status != 200) {
                 LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getError(), message });

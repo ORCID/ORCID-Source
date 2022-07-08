@@ -1,32 +1,16 @@
 package org.orcid.core.manager.impl;
 
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.annotation.Resource;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+import jakarta.ws.rs.core.MediaType;
 
 public class MailGunManager {
 
@@ -62,6 +46,9 @@ public class MailGunManager {
 
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com|rcpeters\\.com)$}")
     private String filter;
+    
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
@@ -74,39 +61,34 @@ public class MailGunManager {
     }
     
     public boolean sendEmail(String from, String to, String subject, String text, String html, boolean marketing) {
-
-        Client client = Client.create();
-        client.addFilter(new HTTPBasicAuthFilter("api", getApiKey()));
-
-        // determine correct api based off domain.
-        WebResource webResource = null;
         String fromEmail = getFromEmail(from);
+        String apiUrl;
         if(marketing)
-            webResource = client.resource(getMarketingApiUrl());
+            apiUrl = getMarketingApiUrl();
         else if (fromEmail.endsWith("@verify.orcid.org"))
-            webResource = client.resource(getVerifyApiUrl());
+            apiUrl = getVerifyApiUrl();
         else if (fromEmail.endsWith("@notify.orcid.org"))
-            webResource = client.resource(getNotifyApiUrl());
+            apiUrl = getNotifyApiUrl();
         else
-            webResource = client.resource(getApiUrl());        
+            apiUrl = getApiUrl();        
         
-        MultivaluedMapImpl formData = new MultivaluedMapImpl();
-        formData.add("from", from);
-        formData.add("to", to);
-        formData.add("subject", subject);
-        formData.add("text", text);
+        Map<String, String> formData = new HashMap<String, String>();
+        formData.put("from", from);
+        formData.put("to", to);
+        formData.put("subject", subject);
+        formData.put("text", text);
         if (html != null) {
-            formData.add("html", html);
+            formData.put("html", html);
         }
-        formData.add("o:testmode", testmode);
+        formData.put("o:testmode", testmode);
 
         // the filter is used to prevent sending email to users in qa and
         // sandbox
         if (to.matches(filter)) {
-            ClientResponse cr = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
+            JerseyClientResponse<String, String> cr = jerseyClientHelper.executePostRequest(apiUrl, MediaType.APPLICATION_FORM_URLENCODED_TYPE, formData, getApiKey(), String.class, String.class);
             if (cr.getStatus() != 200) {
                 LOGGER.warn("Post MailGunManager.sendEmail to {} not accepted\nstatus: {}\nbody: {}", 
-                        new Object[] { formData.get("to"), cr.getStatus(), cr.getEntity(String.class) });
+                        new Object[] { formData.get("to"), cr.getStatus(), cr.getEntity() });
                 return false;
             }
             return true;

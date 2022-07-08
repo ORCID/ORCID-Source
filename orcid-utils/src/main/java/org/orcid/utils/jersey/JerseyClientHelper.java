@@ -1,16 +1,12 @@
 package org.orcid.utils.jersey;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +14,7 @@ import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.Form;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Component
@@ -44,12 +40,16 @@ public class JerseyClientHelper implements DisposableBean {
         }
     }
 
+    public JerseyClientResponse<String, String> executeGetRequest(String url, MediaType mediaType) {
+        return executeGetRequest(url, mediaType, null, false, Map.of(), Map.of(), String.class, String.class);
+    }
+    
     public JerseyClientResponse<String, String> executeGetRequest(String url, String userAgent) {
         Map<String, String> headers = Map.of("User-Agent", userAgent);
         return executeGetRequest(url, null, null, false, Map.of(), headers, String.class, String.class);
     }
     
-    public JerseyClientResponse<String, String> executeGetRequest(String url, String mediaType, Boolean followRedirects) {
+    public JerseyClientResponse<String, String> executeGetRequest(String url, MediaType mediaType, Boolean followRedirects) {
         return executeGetRequest(url, mediaType, null, followRedirects, Map.of(), Map.of(), String.class, String.class);
     }
 
@@ -60,22 +60,22 @@ public class JerseyClientHelper implements DisposableBean {
     public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, Class<T> responseType, Class<E> errorResponseType) {
         return executeGetRequest(url, null, null, responseType, errorResponseType);
     }
-
-    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, Class<T> responseType, Class<E> errorResponseType) {
+    
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, MediaType mediaType, Class<T> responseType, Class<E> errorResponseType) {
         return executeGetRequest(url, mediaType, null, responseType, errorResponseType);
     }
 
-    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, MediaType mediaType, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
         return executeGetRequest(url, mediaType, accessToken, false, Map.of(), Map.of(), responseType, errorResponseType);
     }
 
-    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Map<String, String> queryParams, Class<T> responseType,
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, MediaType mediaType, String accessToken, Map<String, String> queryParams, Class<T> responseType,
             Class<E> errorResponseType) {
         return executeGetRequest(url, mediaType, accessToken, false, queryParams, Map.of(), responseType, errorResponseType);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, String mediaType, String accessToken, Boolean followRedirects, Map<String, String> queryParams,
+    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, MediaType mediaType, String accessToken, Boolean followRedirects, Map<String, String> queryParams,
             Map<String, String> headers, Class<T> responseType, Class<E> errorResponseType) {
         WebTarget webTarget = jerseyClient.target(url);
 
@@ -94,7 +94,7 @@ public class JerseyClientHelper implements DisposableBean {
 
         Builder builder;
 
-        if (StringUtils.isEmpty(mediaType)) {
+        if (mediaType != null) {
             builder = webTarget.request();
         } else {
             builder = webTarget.request(mediaType);
@@ -129,12 +129,12 @@ public class JerseyClientHelper implements DisposableBean {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, String mediaType, String message, String accessToken, Class<T> responseType,
+    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, MediaType mediaType, Object message, String accessToken, Class<T> responseType,
             Class<E> errorResponseType) {
         WebTarget webTarget = jerseyClient.target(url);
         Builder builder;
 
-        if (StringUtils.isEmpty(mediaType)) {
+        if (mediaType != null) {
             builder = webTarget.request();
         } else {
             builder = webTarget.request(mediaType);
@@ -155,5 +155,4 @@ public class JerseyClientHelper implements DisposableBean {
 
         return jcr;
     }
-
 }

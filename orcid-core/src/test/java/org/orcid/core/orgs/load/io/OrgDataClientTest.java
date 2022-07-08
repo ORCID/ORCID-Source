@@ -17,11 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
-import com.sun.jersey.api.client.WebResource;
-
 public class OrgDataClientTest {
     
     @InjectMocks
@@ -57,13 +52,13 @@ public class OrgDataClientTest {
     @Test
     public void testGetFailure() throws IOException {
         ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithFailureResponse());
-        assertNull(orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
+        assertNull(orgDataClient.get("url", "userAgent", String.class));
     }
     
     @Test
     public void testGet() throws IOException {
         ReflectionTestUtils.setField(orgDataClient, "client", getMockedClientWithSuccessfulEntityResponse());
-        assertEquals("success", orgDataClient.get("url", "userAgent", new GenericType<String>() {}));
+        assertEquals("success", orgDataClient.get("url", "userAgent", String.class));
     }
     
     @SuppressWarnings("resource")

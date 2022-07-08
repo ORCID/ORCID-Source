@@ -5,7 +5,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Activity;
@@ -40,6 +39,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import jakarta.ws.rs.core.MediaType;
+
 @Component
 public class Orcid30ManagerImpl implements Orcid30Manager {
 
@@ -55,7 +56,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
                 public RecordContainer load(BaseMessage message) {
                     RecordContainer container = new RecordContainer();
                     String url = baseUri + message.getOrcid() + "/record";
-                    JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, Record.class, OrcidError.class);
+                    JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, Record.class, OrcidError.class);
                     if (response.getStatus() != 200) {
                         container.status = response.getStatus();
                         container.error = response.getError();
@@ -100,7 +101,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     @Override
     public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
         String url = baseUri + message.getOrcid() + "/activities";
-        JerseyClientResponse<ActivitiesSummary, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, ActivitiesSummary.class, OrcidError.class);
+        JerseyClientResponse<ActivitiesSummary, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, ActivitiesSummary.class, OrcidError.class);
         
         if (response.getStatus() != 200) {
             OrcidError orcidError = null;
@@ -166,7 +167,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
 
     private Activity fetchEntity(String orcid, Long putCode, String endpoint, Class<? extends Activity> c) {
         String url = baseUri + orcid + "/" + endpoint + "/" + putCode;
-        JerseyClientResponse<? extends Activity, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, c, OrcidError.class);
+        JerseyClientResponse<? extends Activity, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, c, OrcidError.class);
         
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
@@ -188,7 +189,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     @Override
     public ResearchResources fetchResearchResources(String orcid) {
         String url = baseUri + orcid + "/research-resources";
-        JerseyClientResponse<ResearchResources, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, accessToken, ResearchResources.class, OrcidError.class);
+        JerseyClientResponse<ResearchResources, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, ResearchResources.class, OrcidError.class);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
             default:

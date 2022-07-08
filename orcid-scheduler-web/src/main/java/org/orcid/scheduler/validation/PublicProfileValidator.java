@@ -1,13 +1,11 @@
 package org.orcid.scheduler.validation;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
+
+import jakarta.ws.rs.core.MediaType;
 
 public class PublicProfileValidator {
 
@@ -120,7 +120,7 @@ public class PublicProfileValidator {
 
     private JerseyClientResponse<Record, String> getApiResponse(String orcid) {
         String url = (baseUri.endsWith("/") ? baseUri : baseUri + '/') + orcid + "/record";
-        return jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML, Record.class, String.class);        
+        return jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, Record.class, String.class);        
     }
 
     public void setDevelopmentMode(boolean developmentMode) {

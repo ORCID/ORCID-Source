@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.MediaType;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -27,6 +26,8 @@ import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
 import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,9 +39,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * 
@@ -66,6 +65,9 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     @Resource(name = "identityProviderNameCache")
     private Cache<IdentityProviderNameCacheKey, String> identityProviderNameCache;
 
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
+    
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
@@ -181,10 +183,8 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
 
     private Document downloadMetadata(String metadataUrl) {
         LOGGER.info("About to download idp metadata from {}", metadataUrl);
-        Client client = Client.create();
-        WebResource resource = client.resource(metadataUrl);
-        ClientResponse response = resource.accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-        Document document = response.getEntity(Document.class);
+        JerseyClientResponse<Document, String> response = jerseyClientHelper.executeGetRequest(metadataUrl, MediaType.APPLICATION_XML_TYPE, Document.class, String.class);
+        Document document = response.getEntity();
         return document;
     }
 
