@@ -1,0 +1,434 @@
+package org.orcid.frontend.email;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.LocaleUtils;
+import org.orcid.core.constants.EmailConstants;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.email.MailGunManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.stereotype.Component;
+
+@Component
+public class RecordEmailSender {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecordEmailSender.class);
+
+    @Value("${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}")
+    private boolean apiRecordCreationEmailEnabled;
+    
+    @Resource
+    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    
+    @Resource(name = "messageSource")
+    private MessageSource messages;
+
+    @Resource(name = "messageSourceNoFallback")
+    private MessageSource messageSourceNoFallback;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource(name = "emailManagerReadOnly")
+    private EmailManagerReadOnly emailManager;
+
+    @Resource
+    private EncryptionManager encryptionManager;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+
+    @Resource
+    private TemplateManager templateManager;
+
+    @Resource(name = "sourceManagerV3")
+    private SourceManager sourceManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManager;
+
+    @Resource
+    private MailGunManager mailgunManager;
+    
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+
+    public void sendWelcomeEmail(String userOrcid, String email) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
+
+        String emailName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+        String verificationUrl = verifyEmailUtils.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        String orcidId = userOrcid;
+        String baseUri = orcidUrlManager.getBaseUrl();
+        String baseUriHttp = orcidUrlManager.getBaseUriHttp();
+
+        templateParams.put("subject", subject);
+        templateParams.put("emailName", emailName);
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("orcidId", orcidId);
+        templateParams.put("baseUri", baseUri);
+        templateParams.put("baseUriHttp", baseUriHttp);
+
+        SourceEntity source = sourceManager.retrieveActiveSourceEntity();
+        if (source != null) {
+            String sourceId = SourceEntityUtils.getSourceId(source);
+            String sourceName = sourceEntityUtils.getSourceName(source);
+            // If the source is not the user itself
+            if (sourceId != null && !sourceId.equals(orcidId)) {
+                if (!PojoUtil.isEmpty(sourceName)) {
+                    String paramValue = " " + messages.getMessage("common.through", null, userLocale) + " " + sourceName + ".";
+                    templateParams.put("source_name_if_exists", paramValue);
+                } else {
+                    templateParams.put("source_name_if_exists", ".");
+                }
+            } else {
+                templateParams.put("source_name_if_exists", ".");
+            }
+        } else {
+            templateParams.put("source_name_if_exists", ".");
+        }
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("welcome_email_v2.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams);
+
+        mailgunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
+    }
+
+    public void sendOrcidDeactivateEmail(String userOrcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = verifyEmailUtils.getSubject("email.subject.deactivate", userLocale);
+        String email = primaryEmail.getEmail();
+        String encryptedEmail = encryptionManager.encryptForExternalUse(email);
+        String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
+        String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
+
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
+        templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
+
+        mailgunManager.sendEmail(EmailConstants.DEACTIVATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+    }
+
+    public void sendOrcidLockedEmail(String orcidToLock) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcidToLock);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+
+        String subject = verifyEmailUtils.getSubject("email.subject.locked", userLocale);
+        String email = emailManager.findPrimaryEmail(orcidToLock).getEmail();
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcidToLock);
+
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", orcidToLock);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("locked_orcid_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
+
+        mailgunManager.sendEmail(EmailConstants.LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
+    }
+
+    public void sendPasswordResetEmail(String submittedEmail, String userOrcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        Locale locale = getUserLocaleFromProfileEntity(record);
+
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", submittedEmail);
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        // Generate body from template
+        String resetUrl = verifyEmailUtils.createResetEmail(primaryEmail, orcidUrlManager.getBaseUrl());
+        templateParams.put("passwordResetUrl", resetUrl);
+
+        verifyEmailUtils.addMessageParams(templateParams, locale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset", locale), body, htmlBody);
+    }
+
+    public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", submittedEmail);
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.reset_not_found", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        verifyEmailUtils.addMessageParams(templateParams, locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset_not_found", locale), body, htmlBody);
+    }
+
+    public void sendReactivationEmail(String submittedEmail, String userOrcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
+        Locale locale = getUserLocaleFromProfileEntity(record);
+
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", recordNameManager.deriveEmailFriendlyName(userOrcid));
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.reactivation", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        // Generate body from template
+        String reactivationUrl = verifyEmailUtils.createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
+        templateParams.put("reactivationUrl", reactivationUrl);
+
+        verifyEmailUtils.addMessageParams(templateParams, locale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reactivation", locale), body, htmlBody);
+    }
+
+    public void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(currentUserOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+
+        // build up old template
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = verifyEmailUtils.getSubject("email.subject.email_removed", userLocale);
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(currentUserOrcid);
+        templateParams.put("emailName", emailFriendlyName);
+        String verificationUrl = verifyEmailUtils.createVerificationUrl(newEmail, orcidUrlManager.getBaseUrl());
+        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("oldEmail", oldEmail);
+        templateParams.put("newEmail", newEmail);
+        templateParams.put("orcid", currentUserOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("email_removed.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
+
+        mailgunManager.sendEmail(EmailConstants.EMAIL_CHANGED_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
+    }
+
+    public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+
+        if (primaryEmail == null) {
+            LOGGER.info("Cant send claim reminder email if primary email is null: {}", userOrcid);
+            return;
+        }
+
+        Locale locale = getUserLocaleFromProfileEntity(record);
+
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", recordNameManager.deriveEmailFriendlyName(userOrcid));
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.claim_reminder", locale));
+        SourceEntity source = record.getSource();
+        String creatorName = "";
+        if (source != null) {
+            String sourceName = sourceEntityUtils.getSourceName(source);
+            if (!PojoUtil.isEmpty(sourceName)) {
+                creatorName = sourceName;
+            } else {
+                creatorName = SourceEntityUtils.getSourceId(source);
+            }
+        }
+        templateParams.put("creatorName", creatorName);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("daysUntilActivation", daysUntilActivation);
+
+        String verificationUrl = verifyEmailUtils.createClaimVerificationUrl(primaryEmail, orcidUrlManager.getBaseUrl());
+        templateParams.put("verificationUrl", verificationUrl);
+
+        verifyEmailUtils.addMessageParams(templateParams, locale);
+
+        // Generate body from template
+        String body;
+        String htmlBody;
+        boolean useV2Template = false;
+        try {
+            messageSourceNoFallback.getMessage("email.new_claim_reminder.this_is_a_reminder.1", null, locale);
+            useV2Template = true;
+        } catch (NoSuchMessageException e) {
+
+        }
+
+        if (useV2Template) {
+            body = templateManager.processTemplate("new_claim_reminder_email.ftl", templateParams);
+            htmlBody = templateManager.processTemplate("new_claim_reminder_email_html.ftl", templateParams);
+        } else {
+            body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
+            htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
+        }
+
+        // Send message
+        if (apiRecordCreationEmailEnabled) {
+            mailgunManager.sendEmail(EmailConstants.CLAIM_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.claim_reminder", locale), body, htmlBody);
+            profileEventDao.persist(new ProfileEventEntity(userOrcid, ProfileEventType.CLAIM_REMINDER_SENT));
+        } else {
+            LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
+        }
+    }
+
+    public void send2FADisabledEmail(String userOrcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        Emails emails = emailManager.getEmails(userOrcid);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = verifyEmailUtils.getSubject("email.2fa_disabled.subject", userLocale);
+
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("email_2fa_disabled.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_2fa_disabled_html.ftl", templateParams);
+
+        for (Email email : emails.getEmails()) {
+            mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+        }
+    }
+
+    public void sendForgottenIdEmail(String email, String orcid) {
+        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
+        Locale locale = getUserLocaleFromProfileEntity(record);
+
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", email);
+        templateParams.put("orcid", orcid);
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.forgotten_id", getUserLocaleFromProfileEntity(record)));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        verifyEmailUtils.addMessageParams(templateParams, locale);
+
+        String body = templateManager.processTemplate("forgot_id_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("forgot_id_email_html.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.forgotten_id", locale), body, htmlBody);
+    }
+
+    public void sendForgottenIdEmailNotFoundEmail(String email, Locale locale) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("submittedEmail", email);
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.forgotten_id", locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        verifyEmailUtils.addMessageParams(templateParams, locale);
+
+        String body = templateManager.processTemplate("forgot_id_email_not_found_email.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("forgot_id_email_not_found_email_html.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.forgotten_id", locale), body, htmlBody);
+    }
+
+    public void sendVerificationEmailToNonPrimaryEmails(String userOrcid) {
+        emailManager.getEmails(userOrcid).getEmails().stream().filter(e -> !e.isPrimary()).map(e -> e.getEmail()).forEach(e -> {
+            sendVerificationEmail(userOrcid, e);
+        });
+    }
+
+    public void sendVerificationEmail(String userOrcid, String email) {
+        processVerificationEmail(userOrcid, email, false);
+    }
+
+    private void processVerificationEmail(String userOrcid, String email, boolean isVerificationReminder) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale locale = getUserLocaleFromProfileEntity(profile);
+
+        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, primaryEmail, locale);
+        String subject = (String) templateParams.get("subject");
+        templateParams.put("isReminder", isVerificationReminder);
+        // Generate body from template
+        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+    }
+      
+    private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
+        String locale = profile.getLocale();
+        if (locale != null) {
+            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
+            return LocaleUtils.toLocale(loc.value());
+        }
+
+        return LocaleUtils.toLocale("en");
+    }       
+}

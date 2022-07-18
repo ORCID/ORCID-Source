@@ -59,9 +59,5 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     Date getLastLogin(String orcid);
     
-    void disable2FA(String orcid);
-    
-    void enable2FA(String orcid);
-
     void update2FASecret(String orcid, String secret);
 }

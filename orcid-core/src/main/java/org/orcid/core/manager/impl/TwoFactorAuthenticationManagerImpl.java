@@ -10,9 +10,9 @@ import org.orcid.core.exception.UserAlreadyUsing2FAException;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
@@ -24,14 +24,14 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
     private static final String APP_NAME = "orcid.org";
     
+    @Resource(name = "profileEntityManagerV3")
+    ProfileEntityManager profileEntityManagerV3;
+    
     @Resource
     private EncryptionManager encryptionManager;
 
     @Resource
-    private EmailManagerReadOnly emailManagerReadOnly;
-
-    @Resource
-    private ProfileEntityManager profileEntityManager;
+    private EmailManagerReadOnly emailManagerReadOnly;    
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -47,7 +47,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
         }
         // generate secret but don't switch on using2FA - user may abort process
         String secret = Base32.random();
-        profileEntityManager.update2FASecret(orcid, encryptionManager.encryptForInternalUse(secret));
+        profileEntityManagerV3.update2FASecret(orcid, encryptionManager.encryptForInternalUse(secret));
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         //generatate URL for QR code per https://github.com/google/google-authenticator/wiki/Key-Uri-Format
         //do not URL encode - authenticator app throws error
@@ -56,12 +56,12 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
     @Override
     public void enable2FA(String orcid) {
-        profileEntityManager.enable2FA(orcid);
+        profileEntityManagerV3.enable2FA(orcid);
     }
 
     @Override
     public void disable2FA(String orcid) {
-        profileEntityManager.disable2FA(orcid);
+        profileEntityManagerV3.disable2FA(orcid);
         backupCodeManager.removeUnusedBackupCodes(orcid);
     }
 

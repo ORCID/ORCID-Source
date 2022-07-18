@@ -1,12 +1,42 @@
 package org.orcid.core.manager.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDateTime;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.*;
+import org.orcid.core.manager.EmailMessage;
+import org.orcid.core.manager.EmailMessageSender;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -17,26 +47,27 @@ import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
-import org.orcid.persistence.jpa.entities.*;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.EmailEventType;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
+import org.orcid.persistence.jpa.entities.NotificationTipEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DigestEmail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * 
@@ -51,6 +82,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private final Integer MAX_RETRY_COUNT;
     
     ExecutorService pool;
+    
+    private int verifyReminderAfterDays = 2;
     
     @Resource
     private NotificationDao notificationDao;
@@ -91,11 +124,29 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
+    @Resource
+    private GenericDao<EmailEventEntity, Long> emailEventDao;
+    
+    @Resource
+    private ProfileDao profileDaoReadOnly;
+    
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManagerV3;
+    
+    @Resource
+    private MailGunManager mailgunManager;
+    
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+    
     @Value("${org.notifications.service_announcements.batchSize:60000}")
     private Integer batchSize;
     
     @Value("${org.notifications.max_elements_to_show:20}")
-    private Integer maxNotificationsToShowPerClient;
+    private Integer maxNotificationsToShowPerClient;           
+    
+    @Value("${org.orcid.core.email.verify.tooOld:15}")
+    private int emailTooOld;    
     
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
@@ -178,7 +229,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
         sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
 
-        String emailName = notificationManager.deriveEmailFriendlyName(record.getId());
+        String emailName = recordNameManagerV3.deriveEmailFriendlyName(record.getId());
         String subject = messages.getMessage("email.subject.digest", new String[] { emailName }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
@@ -513,4 +564,69 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
         return notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);
     }
+    
+    @Override
+    synchronized public void processUnverifiedEmails2Days() {
+        LOGGER.info("About to process unverIfied emails for reminder");
+        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
+        do {
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100);
+            LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
+            LocalDateTime now = LocalDateTime.now();
+            Date tooOld = now.minusDays(emailTooOld).toDate();
+            for (Pair<String, Date> element : elements) {
+                if(element.getRight() == null || element.getRight().after(tooOld)) {
+                    processUnverifiedEmails2DaysInTransaction(element.getLeft());
+                } else {
+                    // Mark is as too old to send the verification email
+                    markUnverifiedEmailAsTooOld(element.getLeft());
+                }
+            }
+        } while (!elements.isEmpty());
+    }
+
+    private void processUnverifiedEmails2DaysInTransaction(final String email) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    String userOrcid = emailManagerReadOnly.findOrcidIdByEmail(email);
+                    sendVerificationReminderEmail(userOrcid, email);
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
+                    emailEventDao.flush();
+                } catch (Exception e) {
+                    LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED));
+                    emailEventDao.flush();
+                }
+            }
+        });
+    }
+    
+    private void markUnverifiedEmailAsTooOld(final String email) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {                                
+                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_TOO_OLD));
+                emailEventDao.flush();
+            }
+        });
+    }
+    
+    private void sendVerificationReminderEmail(String userOrcid, String email) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale locale = getUserLocaleFromProfileEntity(profile);
+
+        String primaryEmail = emailManagerReadOnly.findPrimaryEmail(userOrcid).getEmail();
+        String emailFriendlyName = recordNameManagerV3.deriveEmailFriendlyName(userOrcid);
+        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, primaryEmail, locale);
+        String subject = (String) templateParams.get("subject");
+        templateParams.put("isReminder", true);
+        // Generate body from template
+        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
+        mailgunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+    }        
 }

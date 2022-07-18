@@ -14,8 +14,6 @@ public interface RegistrationManager {
 
     VerifyRegistrationToken parseEncyrptedParamsForVerification(String encryptedParams);
 
-    void resetUserPassword(String toEmail, String userOrcid, Boolean isClaimed);
-
     String createMinimalRegistration(Registration registration, boolean usedCaptcha, Locale locale, String ip);
     
     Long getCount();

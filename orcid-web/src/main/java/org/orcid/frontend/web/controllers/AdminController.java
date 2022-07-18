@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -85,6 +86,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "spamManager")
     SpamManager spamManager;
+    
+    @Resource 
+    private RecordEmailSender recordEmailSender;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -322,9 +326,14 @@ public class AdminController extends BaseController {
         }
 
         if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0) {
-            // Null Reactivation object means the reactivation is done by an
-            // admin
-            profileEntityManager.reactivate(orcid, email, null);
+            // Return a list of email addresses that should be notified by this change
+            List<String> emailsToNotify = profileEntityManager.reactivate(orcid, email, null);
+            // Notify any new email address
+            if (!emailsToNotify.isEmpty()) {
+                for (String emailToNotify : emailsToNotify) {
+                    recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+                }
+            }
             profileDetails.setStatus(getMessage("admin.success"));
         }
         return profileDetails;
@@ -745,7 +754,10 @@ public class AdminController extends BaseController {
                         } else if (lockAccounts.getDescription() == null || lockAccounts.getDescription().isEmpty()) {
                             descriptionMissing.add(nextToken);
                         } else {
-                            profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
+                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
+                            if (wasLocked) {
+                                recordEmailSender.sendOrcidLockedEmail(orcidId);
+                            }                            
                             successIds.add(nextToken);
                         }
                     }
@@ -933,7 +945,7 @@ public class AdminController extends BaseController {
                         } else {
                             email = emailOrOrcid;
                         }
-                        notificationManager.sendClaimReminderEmail(orcidId,0,email);
+                        recordEmailSender.sendClaimReminderEmail(orcidId,0,email);
                         successIds.add(emailOrOrcid);
                     }
                 }
@@ -974,6 +986,9 @@ public class AdminController extends BaseController {
 
                     if (entity.getUsing2FA()) {
                         profileEntityManager.disable2FA(orcidId);
+                        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
+                            recordEmailSender.send2FADisabledEmail(orcidId);
+                        }
                         disabledIds.add(emailOrOrcid);
                     } else {
                         without2FAs.add(emailOrOrcid);

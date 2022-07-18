@@ -1,4 +1,4 @@
-package org.orcid.core.manager.impl;
+package org.orcid.utils.email;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +9,11 @@ import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import jakarta.ws.rs.core.MediaType;
 
+@Component
 public class MailGunManager {
 
     /*

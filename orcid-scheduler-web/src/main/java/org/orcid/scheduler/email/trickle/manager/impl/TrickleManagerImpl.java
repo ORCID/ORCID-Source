@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.email.trickle.producer.EmailTrickleItem;
-import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.EmailMessage;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.persistence.dao.EmailFrequencyDao;
@@ -19,6 +18,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.scheduler.email.trickle.TrickleTooHeavyException;
 import org.orcid.scheduler.email.trickle.manager.TrickleManager;
+import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

@@ -18,5 +18,6 @@ public interface EmailMessageSender {
     void sendTips(Integer customBatchSize, String fromAddress);
     
     void sendEmailMessages();
-
+    
+    void processUnverifiedEmails2Days();
 }

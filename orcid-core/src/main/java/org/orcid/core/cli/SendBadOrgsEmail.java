@@ -21,11 +21,10 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
@@ -37,6 +36,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.utils.NullUtils;
+import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -67,7 +67,7 @@ public class SendBadOrgsEmail {
     private MessageSource messageSource;
     private OrcidUrlManager orcidUrlManager;
     private MailGunManager mailGunManager;
-    private NotificationManager notificationManager;
+    private RecordNameManager recordNameManager;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
@@ -173,7 +173,7 @@ public class SendBadOrgsEmail {
         messageSource = (MessageSource) context.getBean("messageSource");
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         mailGunManager = (MailGunManager) context.getBean("mailGunManager");
-        notificationManager = (NotificationManager) context.getBean("notificationManager");
+        recordNameManager = (RecordNameManager) context.getBean("recordNameManager");
     }
 
     private String createOrgDescription(OrgEntity org, Locale locale) {
@@ -297,7 +297,7 @@ public class SendBadOrgsEmail {
         LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
                 new Object[] { profile.getId(), badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
-        String emailName = notificationManager.deriveEmailFriendlyName(profile.getId());
+        String emailName = recordNameManager.deriveEmailFriendlyName(profile.getId());
         Map<String, Object> templateParams = createTemplateParams(profile.getId(), emailName, locale, orgDescriptions);
         // Generate body from template
         String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);

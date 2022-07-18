@@ -30,8 +30,6 @@
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="templateManager" ref="templateManager" />
-		<property name="apiRecordCreationEmailEnabled"
-			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>
 	
 	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
@@ -525,9 +523,7 @@
     
     <bean id="notificationManagerV3" class="org.orcid.core.manager.v3.impl.NotificationManagerImpl">
         <property name="encryptionManager" ref="encryptionManager" />
-        <property name="templateManager" ref="templateManager" />
-        <property name="apiRecordCreationEmailEnabled"
-            value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
+        <property name="templateManager" ref="templateManager" />        
     </bean>
     
     <bean id="orcidSearchManagerReadOnlyV3" class="org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl" />

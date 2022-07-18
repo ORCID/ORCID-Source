@@ -13,29 +13,10 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
-
-    void sendPasswordResetEmail(String toEmail, String userOrcid);
     
-    void sendReactivationEmail(String submittedEmail, String userOrcid);
-
-    public String createVerificationUrl(String email, String baseUri);
-
-    public String deriveEmailFriendlyName(String orcid);    
-
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
-
-    void sendOrcidDeactivateEmail(String userOrcid);
-
-    void sendOrcidLockedEmail(String orcidToLock);
-    
-    void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
-
-    void sendClaimReminderEmail(String userOrcid, int daysUntilActivation);
-
-    void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
     public List<Notification> findUnsentByOrcid(String orcid);
 
@@ -67,14 +48,10 @@ public interface NotificationManager {
 
     public Notification setActionedAndReadDate(String orcid, Long id);
 
-    public String createClaimVerificationUrl(String email, String baseUri);
-
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
     
-    public void sendAutoDeprecateNotification(String primaryOrcid, String deprecatedOrcid);
-
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
     int getUnreadCount(String orcid);
@@ -89,9 +66,6 @@ public interface NotificationManager {
 
     void removeNotification(Long notificationId);
 
-    String createUpdateEmailFrequencyUrl(String email);
-    
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
     
-    public void send2FADisabledEmail(String userOrcid);
 }
