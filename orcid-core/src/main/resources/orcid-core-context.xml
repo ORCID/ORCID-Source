@@ -746,9 +746,7 @@
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />	
 	
-	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
-
-    <bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />	
+	<bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />	
 	
 	<bean id="activityManager" class="org.orcid.core.manager.impl.ActivityManagerImpl" />
 	

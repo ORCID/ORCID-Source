@@ -732,7 +732,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
         if(orcid.equals(owner)) {            
-            // Sets the given user as primary
+            // Sets the given email as primary
             Map<String, String> keys = emailManager.setPrimary(orcid, email.getValue().trim(), request);
             if(!keys.isEmpty()) {
                 String newPrimary = keys.get("new");

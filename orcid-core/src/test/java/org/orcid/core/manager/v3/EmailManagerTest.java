@@ -66,10 +66,7 @@ public class EmailManagerTest extends BaseTest {
     private SourceManager sourceManager;
 
     @Resource
-    private EmailDao emailDao;
-    
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
+    private EmailDao emailDao;    
     
     @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;
@@ -91,7 +88,6 @@ public class EmailManagerTest extends BaseTest {
         source.setSourceProfile(new ProfileEntity(ORCID));
         when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(source);
         //Set the default manager and dao
-        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
     
@@ -103,7 +99,6 @@ public class EmailManagerTest extends BaseTest {
     @After
     public void after() throws JAXBException {
         ReflectionTestUtils.setField(emailManager, "sourceManager", sourceManager);
-        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
     
@@ -300,8 +295,6 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).persist(captor.capture());
         Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
-        Mockito.verify(mockNotificationManager).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
-        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
         
         EmailEntity mergedEntity = captor.getValue();
         assertEquals("edited", mergedEntity.getEmail());
@@ -328,8 +321,6 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).persist(captor.capture());
         Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
-        Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
-        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
         
         EmailEntity mergedEntity = captor.getValue();
         assertEquals("edited", mergedEntity.getEmail());
@@ -356,8 +347,6 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).persist(captor.capture());
         Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
-        Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("email"), Mockito.eq("email"), Mockito.eq("original"));
-        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("email"));
         
         EmailEntity mergedEntity = captor.getValue();
         assertEquals("email", mergedEntity.getEmail());

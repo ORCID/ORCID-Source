@@ -8,11 +8,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -46,9 +44,6 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Resource
     private ProfileDao profileDao;
-    
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
     
     @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;   

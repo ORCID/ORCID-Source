@@ -20,7 +20,6 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
@@ -28,6 +27,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -97,8 +97,8 @@ public class RegistrationController extends BaseController {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
+    @Resource
+    private RecordEmailSender recordEmailSender;
 
     @Resource
     private RecaptchaVerifier recaptchaVerifier;
@@ -549,8 +549,8 @@ public class RegistrationController extends BaseController {
         String newUserOrcid = registrationManager.createMinimalRegistration(registration, usedCaptcha, locale, ip);
 
         processProfileHistoryEvents(registration, newUserOrcid);
-        notificationManager.sendWelcomeEmail(newUserOrcid, email);
-        notificationManager.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
+        recordEmailSender.sendWelcomeEmail(newUserOrcid, email);
+        recordEmailSender.sendVerificationEmailToNonPrimaryEmails(newUserOrcid);
         request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
         LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}", new Object[] { newUserOrcid, email, sessionId });
         return newUserOrcid;

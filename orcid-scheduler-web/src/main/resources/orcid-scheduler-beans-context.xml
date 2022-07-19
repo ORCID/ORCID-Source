@@ -46,4 +46,6 @@
 	
 	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
 
+	<bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
+
 </beans>

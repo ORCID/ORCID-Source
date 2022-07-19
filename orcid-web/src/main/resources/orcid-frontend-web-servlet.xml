@@ -100,5 +100,9 @@
     <bean id="socialSignInUtils" class="org.orcid.frontend.spring.web.social.config.SocialSignInUtils" />
     
     <bean id="thirdPartyLinkManager" class="org.orcid.frontend.web.util.ThirdPartyLinkManager" />
+    
+    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
+    
+    <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />
 
 </beans>

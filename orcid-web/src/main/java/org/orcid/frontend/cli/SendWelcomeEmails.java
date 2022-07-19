@@ -1,21 +1,18 @@
-package org.orcid.core.cli;
+package org.orcid.frontend.cli;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -34,8 +31,8 @@ public class SendWelcomeEmails {
     private ProfileDao profileDao;
     private EmailDao emailDao;
     
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
+    @Resource
+    private RecordEmailSender recordEmailSender;
 
     @Option(name = "-sd", usage = "Start Date")
     private String startDate;
@@ -80,7 +77,7 @@ public class SendWelcomeEmails {
                 try {
                     String pEmail =  emailDao.findNewestPrimaryEmail(orcid);
                     LOG.info("Sending welcome email to " + pEmail + " with orcid " + orcid);
-                    notificationManager.sendWelcomeEmail(orcid, pEmail);
+                    recordEmailSender.sendWelcomeEmail(orcid, pEmail);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -94,7 +91,7 @@ public class SendWelcomeEmails {
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
+        recordEmailSender = (RecordEmailSender) context.getBean("recordEmailSender");
         emailDao = (EmailDao) context.getBean("emailDao");
         profileDao = (ProfileDao) context.getBean("profileDao");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
