@@ -1,11 +1,11 @@
-package org.orcid.core.analytics.client.google;
+package org.orcid.api.common.analytics.client.google;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.orcid.core.analytics.AnalyticsData;
+import org.orcid.api.common.analytics.AnalyticsData;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.yaml.snakeyaml.util.UriEncoder;
 

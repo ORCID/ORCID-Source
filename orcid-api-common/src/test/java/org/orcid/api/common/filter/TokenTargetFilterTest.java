@@ -1,4 +1,4 @@
-package org.orcid.core.web.filters;
+package org.orcid.api.common.filter;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.orcid.api.common.filter.TokenTargetFilter;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.ScopePathType;

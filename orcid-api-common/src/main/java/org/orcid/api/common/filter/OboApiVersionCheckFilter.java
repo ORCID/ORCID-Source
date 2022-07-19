@@ -1,4 +1,4 @@
-package org.orcid.core.web.filters;
+package org.orcid.api.common.filter;
 
 import java.util.regex.Matcher;
 

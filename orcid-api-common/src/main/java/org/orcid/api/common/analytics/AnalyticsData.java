@@ -1,4 +1,4 @@
-package org.orcid.core.analytics;
+package org.orcid.api.common.analytics;
 
 public class AnalyticsData {
 

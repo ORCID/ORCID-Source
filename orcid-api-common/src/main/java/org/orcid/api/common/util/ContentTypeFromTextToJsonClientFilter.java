@@ -1,4 +1,4 @@
-package org.orcid.core.utils;
+package org.orcid.api.common.util;
 
 import com.sun.jersey.api.client.ClientRequest;
 import com.sun.jersey.api.client.ClientResponse;

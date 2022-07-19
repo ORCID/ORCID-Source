@@ -1,4 +1,4 @@
-package org.orcid.core.web.filters;
+package org.orcid.api.common.filter;
 
 import java.security.AccessControlException;
 import java.util.regex.Matcher;
@@ -8,6 +8,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.Authentication;

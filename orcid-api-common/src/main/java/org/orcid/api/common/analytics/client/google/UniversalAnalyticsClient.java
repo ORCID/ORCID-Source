@@ -1,4 +1,4 @@
-package org.orcid.core.analytics.client.google;
+package org.orcid.api.common.analytics.client.google;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +10,8 @@ import javax.ws.rs.HttpMethod;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.analytics.AnalyticsData;
-import org.orcid.core.analytics.client.AnalyticsClient;
+import org.orcid.api.common.analytics.AnalyticsData;
+import org.orcid.api.common.analytics.client.AnalyticsClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

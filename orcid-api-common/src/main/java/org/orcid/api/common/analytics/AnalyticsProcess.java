@@ -1,8 +1,8 @@
-package org.orcid.core.analytics;
+package org.orcid.api.common.analytics;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.orcid.core.analytics.client.AnalyticsClient;
+import org.orcid.api.common.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;

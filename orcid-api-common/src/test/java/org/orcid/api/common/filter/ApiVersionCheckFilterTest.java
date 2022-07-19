@@ -1,4 +1,4 @@
-package org.orcid.core.web.filters;
+package org.orcid.api.common.filter;
 
 import static org.junit.Assert.fail;
 
@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.orcid.api.common.filter.ApiVersionCheckFilter;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
