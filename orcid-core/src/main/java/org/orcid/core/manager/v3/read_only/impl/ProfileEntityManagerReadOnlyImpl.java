@@ -49,7 +49,7 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         }
 
         if (profileEntity.getReasonLockedDescription() != null) {
-            description = " - " + description;
+            description = " - " + profileEntity.getReasonLockedDescription();
         }
 
         return (reason == null || reason.isEmpty()) ? "" : adminUser + strDate + " for: " + reason + description;
