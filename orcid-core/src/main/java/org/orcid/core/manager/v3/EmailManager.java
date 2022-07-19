@@ -18,7 +18,13 @@ public interface EmailManager extends EmailManagerReadOnly {
     public static final String FILTERED_EMAIL = "filtered_email";
     public static final String HASH = "hash";
 
-    void addEmail(HttpServletRequest request, String orcid, Email email);
+    /**
+     * TODO: Returns a map with the old primary email and the new primary email
+     * when the primary email is verified, this because the email sender is on
+     * the orcid-web project until we finish migrating the jersey libs, so, the
+     * calling function should know that the primary email have changed
+     */
+    Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email);
     
     void removeEmail(String orcid, String email);        
     
@@ -47,7 +53,13 @@ public interface EmailManager extends EmailManagerReadOnly {
 
     boolean updateVisibility(String orcid, String email, Visibility visibility);
     
-    void setPrimary(String orcid, String email, HttpServletRequest request);
+    /**
+     * TODO: Returns a map with the new primary email and the old primary email
+     * when the primary email is updated, this because the email sender is on
+     * the orcid-web project until we finish migrating the jersey libs, so, the
+     * calling function should know that the primary email have changed
+     */
+    Map<String, String> setPrimary(String orcid, String email, HttpServletRequest request);
     
     void reactivatePrimaryEmail(String orcid, String email);
     
@@ -63,7 +75,13 @@ public interface EmailManager extends EmailManagerReadOnly {
      * */
     boolean reactivateOrCreate(String orcid, String email, Visibility visibility);
 
-    void editEmail(String orcid, String original, String edited, HttpServletRequest request);
+    /**
+     * TODO: Returns a map with the new primary email and the old primary email
+     * when the primary email is updated, this because the email sender is on
+     * the orcid-web project until we finish migrating the jersey libs, so, the
+     * calling function should know that the primary email have changed
+     */
+    Map<String, String> editEmail(String orcid, String original, String edited, HttpServletRequest request);
 
     Map<String, String> getEmailKeys(String email);
 

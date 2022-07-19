@@ -7,11 +7,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,7 +47,6 @@ import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.AuthorizationUrl;
@@ -57,7 +54,6 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermission;
 import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
-import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -66,9 +62,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -193,35 +187,6 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @Test
-    public void testResetEmail() throws Exception {
-        EncryptionManager mockEncypter = mock(EncryptionManager.class);
-        getTargetObject(notificationManager, NotificationManagerImpl.class).setEncryptionManager(mockEncypter);
-        when(mockEncypter.encryptForExternalUse(any(String.class)))
-                .thenReturn("Ey+qsh7G2BFGEuqqkzlYRidL4NokGkIgDE+1KOv6aLTmIyrppdVA6WXFIaQ3KsQpKEb9FGUFRqiWorOfhbB2ww==");
-        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
-        final String orcid = "0000-0000-0000-0003";
-        
-        ProfileEntity profile = new ProfileEntity(orcid);
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC.name());        
-        
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        Email email = new Email();
-        email.setEmail(primaryEmail);
-        
-        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
-        when(mockEmailManagerReadOnly.findPrimaryEmail(orcid)).thenReturn(email);
-        
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(orcid, locale);
-            notificationManager.sendPasswordResetEmail(primaryEmail, orcid);
-        }
-    }
-
-    @Test
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
@@ -242,157 +207,6 @@ public class NotificationManagerTest extends DBUnitTest {
             assertTrue(latestNotification.getId() > minNotificationId);
             assertEquals(NotificationType.AMENDED.name(), latestNotification.getNotificationType());
         }
-    }
-
-    @Test
-    public void testSendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
-        final String orcid = "0000-0000-0000-0003";
-        
-        ProfileEntity profile = new ProfileEntity(orcid);
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordName.setCreditName("My credit name");
-        recordName.setVisibility(Visibility.PUBLIC.name());        
-        
-        Email email = new Email();
-        email.setEmail("test@email.com");
-        
-        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
-        when(mockEmailManagerReadOnly.findPrimaryEmail(orcid)).thenReturn(email);
-        
-        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
-            profile.setLocale(locale.name());
-            notificationManager.sendOrcidDeactivateEmail(orcid);
-        }        
-    }
-
-    // @Test
-    // public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
-    //     ClientDetailsEntity c = new ClientDetailsEntity("APP-5555555555555555");
-    //     c.setClientName("ClientName");
-    //     SourceEntity sourceEntity = new SourceEntity(c);
-        
-    //     TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-    //     TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
-
-    //     String userOrcid = "0000-0000-0000-0003";
-    //     String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        
-    //     ProfileEntity profile = new ProfileEntity(userOrcid);
-    //     profile.setSource(sourceEntity);
-    //     Email email = new Email();
-    //     email.setEmail("test@email.com");
-        
-    //     when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-    //     when(mockEmailManagerReadOnly.findPrimaryEmail(userOrcid)).thenReturn(email);
-        
-    //     for (Locale locale : Locale.values()) {
-    //         profileEntityManager.updateLocale(userOrcid, locale);
-    //         notificationManager.sendApiRecordCreationEmail(primaryEmail, userOrcid);
-    //     }
-    // }    
-
-    @Test
-    public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
-        ClientDetailsEntity c = new ClientDetailsEntity("APP-5555555555555555");
-        c.setClientName("ClientName");
-        SourceEntity sourceEntity = new SourceEntity(c);
-        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
-
-        String userOrcid = "0000-0000-0000-0003";
-        
-        ProfileEntity profile = new ProfileEntity(userOrcid);
-        profile.setSource(sourceEntity);
-        Email email = new Email();
-        email.setEmail("test@email.com");
-        
-        when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-        when(mockEmailManagerReadOnly.findPrimaryEmail(userOrcid)).thenReturn(email);
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
-            notificationManager.sendClaimReminderEmail(userOrcid, 2);
-        }
-    }
-
-    @Test
-    public void testChangeEmailAddress() throws Exception {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
-        final String orcid = "0000-0000-0000-0003";
-        
-        ProfileEntity profile = new ProfileEntity(orcid);
-        
-        Email email = new Email();
-        email.setEmail("test@email.com");
-        
-        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
-        when(mockEmailManagerReadOnly.findPrimaryEmail(orcid)).thenReturn(email);
-        
-        for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {            
-            profile.setLocale(locale.name());
-            notificationManager.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
-        }
-    }
-
-    @Test
-    public void testSendReactivationEmail() throws Exception {
-        ClientDetailsEntity c = new ClientDetailsEntity("APP-5555555555555555");
-        c.setClientName("ClientName");
-        SourceEntity sourceEntity = new SourceEntity(c);
-        
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManagerReadOnly);
-
-        String userOrcid = "0000-0000-0000-0003";
-        String primaryEmail = "public_0000-0000-0000-0003@test.orcid.org";
-        
-        ProfileEntity profile = new ProfileEntity(userOrcid);
-        profile.setSource(sourceEntity);
-        String email = "original@email.com";
-        Email emailObj = new Email();
-        emailObj.setEmail("test@email.com");
-        
-        when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-        when(mockEmailManagerReadOnly.findPrimaryEmail(userOrcid)).thenReturn(emailObj);
-
-        for (Locale locale : Locale.values()) {
-            profileEntityManager.updateLocale(userOrcid, locale);
-            notificationManager.sendReactivationEmail(email, userOrcid);
-        }
-    }
-
-    @Test
-    public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
-        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
-
-        for (Locale locale : Locale.values()) {            
-            notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
-        }
-    } 
-
-    /**
-     * 0000-0000-0000-0003 Must have notifications enabled
-     */
-    @Test
-    public void sendAcknowledgeMessageToAccountWithNotificationsEnabledTest() throws Exception {
-        String clientId = "APP-5555555555555555";
-        String orcid = "0000-0000-0000-0003";
-        // Mock the notification DAO
-        NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
-        notificationManagerImpl.setNotificationDao(mockNotificationDao);
-        notificationManagerImpl.setMailGunManager(mockMailGunManager);
-        notificationManagerImpl.sendAcknowledgeMessage(orcid, clientId);
-        verify(mockNotificationDao, times(1)).persist(Matchers.any(NotificationEntity.class));
-        verify(mockMailGunManager, never()).sendEmail(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
-
-        // Rollback mocked
-        notificationManagerImpl.setNotificationDao(notificationDao);
-        notificationManagerImpl.setMailGunManager(mailGunManager);
     }
 
     /**

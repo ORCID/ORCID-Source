@@ -31,6 +31,7 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
@@ -134,6 +135,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+    
+    @Resource
+    private RecordEmailSender recordEmailSender;
     
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -502,7 +506,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         	throw new IllegalArgumentException("Invalid email address provided");
         }
         
-        notificationManager.sendVerificationEmail(currentUserOrcid, email);
+        recordEmailSender.sendVerificationEmail(currentUserOrcid, email);
         return new Errors();
     }
 
@@ -515,7 +519,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
     public @ResponseBody String startDeactivateOrcidAccount(HttpServletRequest request) {
         String currentUserOrcid = getCurrentUserOrcid();
-        notificationManager.sendOrcidDeactivateEmail(currentUserOrcid);
+        recordEmailSender.sendOrcidDeactivateEmail(currentUserOrcid);
         return emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
     }
 
@@ -634,7 +638,12 @@ public class ManageProfileController extends BaseWorkspaceController {
             // clear errors
             email.setErrors(new ArrayList<String>());
             String currentUserOrcid = getCurrentUserOrcid();            
-            emailManager.addEmail(request, currentUserOrcid, email.toV3Email());                            
+            Map<String, String> keys = emailManager.addEmail(request, currentUserOrcid, email.toV3Email());
+            if(!keys.isEmpty()) {
+                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+                recordEmailSender.sendEmailAddressChangedNotification(currentUserOrcid, keys.get("new"), keys.get("old"));
+            }
+            recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()));
         } else {
             email.setErrors(errors);
         }
@@ -724,7 +733,16 @@ public class ManageProfileController extends BaseWorkspaceController {
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
         if(orcid.equals(owner)) {            
             // Sets the given user as primary
-            emailManager.setPrimary(orcid, email.getValue().trim(), request);               
+            Map<String, String> keys = emailManager.setPrimary(orcid, email.getValue().trim(), request);
+            if(!keys.isEmpty()) {
+                String newPrimary = keys.get("new");
+                String oldPrimary = keys.get("old");
+                recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);
+                if(keys.containsKey("sendVerification")) {
+                    recordEmailSender.sendVerificationEmail(orcid, newPrimary);
+                    request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+                }
+            }
         }
         return email;
     }
@@ -764,7 +782,14 @@ public class ManageProfileController extends BaseWorkspaceController {
             editEmail.setErrors(new ArrayList<String>());
             String original = editEmail.getOriginal();
             String edited = editEmail.getEdited();
-            emailManager.editEmail(orcid, original, edited, request);            
+            Map<String, String> keys = emailManager.editEmail(orcid, original, edited, request);
+            if(!keys.isEmpty()) {
+                String newPrimary = keys.get("new");
+                String oldPrimary = keys.get("old");
+                recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);                
+            }
+            String verifyAddress = keys.get("verifyAddress");
+            recordEmailSender.sendVerificationEmail(orcid, verifyAddress);
         } else {
             editEmail.setErrors(errors);
         }

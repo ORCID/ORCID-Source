@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -140,10 +141,17 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         Map<String, String> emailKeys = getEmailKeys(email);
         return emailDao.isAutoDeprecateEnableForEmailUsingHash(emailKeys.get(HASH));        
     }
-
+    
+    /**
+     * TODO: Returns true when the primary email is verified, this because the
+     * email sender is on the orcid-web project until we finish migrating the
+     * jersey libs, so, the calling function should know that the primary email
+     * have changed
+     */    
     @Override
     @Transactional
-    public void addEmail(HttpServletRequest request, String orcid, Email email) {
+    public Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email) {
+        Map<String, String> keys = new HashMap<String, String>();
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();        
@@ -154,12 +162,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         emailDao.addEmail(orcid, emailKeys.get(FILTERED_EMAIL), emailKeys.get(HASH), email.getVisibility().name(), sourceId, clientSourceId);
         if (email.isPrimary()) {
             // if primary email changed send notification.
-            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), emailKeys.get(FILTERED_EMAIL))) {
-                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(orcid, emailKeys.get(FILTERED_EMAIL), currentPrimaryEmail.getEmail());
+            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), emailKeys.get(FILTERED_EMAIL))) {                
+                keys.put("new", emailKeys.get(FILTERED_EMAIL));
+                keys.put("old", currentPrimaryEmail.getEmail());                
             }
         }
-        notificationManager.sendVerificationEmail(orcid, emailKeys.get(FILTERED_EMAIL));
+        return keys;
     }
     
     @Override
@@ -172,23 +180,38 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         return emailDao.updateVisibility(orcid, email, visibility.name());
     }
     
+    /**
+     * TODO: Returns a map with the new primary email and the old primary email
+     * when the primary email is updated, this because the email sender is on
+     * the orcid-web project until we finish migrating the jersey libs, so, the
+     * calling function should know that the primary email have changed
+     */
     @Override
-    public void setPrimary(String orcid, String email, HttpServletRequest request) {
+    public Map<String, String> setPrimary(String orcid, String email, HttpServletRequest request) {
+        Map<String, String> keys = new HashMap<String, String>();
         Email currentPrimaryEmail = this.findPrimaryEmail(orcid);
         EmailEntity newPrimary = emailDao.findByEmail(email); 
         if(newPrimary != null && !currentPrimaryEmail.getEmail().equals(email)) {
-            emailDao.updatePrimary(orcid, email);                 
-            notificationManager.sendEmailAddressChangedNotification(orcid, email, currentPrimaryEmail.getEmail());
+            emailDao.updatePrimary(orcid, email);
+            keys.put("new", email);
+            keys.put("old", currentPrimaryEmail.getEmail());
             
             if (!newPrimary.getVerified()) {
-                notificationManager.sendVerificationEmail(orcid, email);
-                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+                keys.put("sendVerification", "true");                
             }
-        }        
+        }
+        return keys;
     }
     
+    /**
+     * TODO: Returns true when the primary email is verified, this because the
+     * email sender is on the orcid-web project until we finish migrating the
+     * jersey libs, so, the calling function should know that the primary email
+     * have changed
+     */    
     @Override
-    public void editEmail(String orcid, String original, String edited, HttpServletRequest request) {
+    public Map<String, String> editEmail(String orcid, String original, String edited, HttpServletRequest request) {
+        Map<String, String> keys = new HashMap<String, String>();
         EmailEntity originalEntity = emailDao.findByEmail(original); 
         Map<String, String> emailKeys = getEmailKeys(edited);        
         EmailEntity updatedEntity = new EmailEntity();
@@ -204,14 +227,15 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         if (originalEntity.getPrimary()) {
             // if primary email changed send notification.
             if (!StringUtils.equals(original, emailKeys.get(FILTERED_EMAIL))) {
-                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                notificationManager.sendEmailAddressChangedNotification(orcid, emailKeys.get(FILTERED_EMAIL), original);
+                keys.put("new", emailKeys.get(FILTERED_EMAIL));
+                keys.put("old", original);                
             }
         }
         
         emailDao.persist(updatedEntity);
         emailDao.remove(originalEntity.getId());
-        notificationManager.sendVerificationEmail(orcid, emailKeys.get(FILTERED_EMAIL));
+        keys.put("verifyAddress", emailKeys.get(FILTERED_EMAIL));
+        return keys;
     }
 
     @Override

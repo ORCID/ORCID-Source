@@ -16,6 +16,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -57,6 +58,9 @@ public class ClaimController extends BaseController {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
+    @Resource 
+    private RecordEmailSender recordEmailSender;
+    
     @Resource
     private AuthenticationManager authenticationManager;
 
@@ -226,7 +230,7 @@ public class ClaimController extends BaseController {
             return resendClaimRequest;
         }
 
-        notificationManager.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays), email);
+        recordEmailSender.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays), email);
         resendClaimRequest.setSuccessMessage(getMessage("resend_claim.successful_resend"));
         return resendClaimRequest;
     }
