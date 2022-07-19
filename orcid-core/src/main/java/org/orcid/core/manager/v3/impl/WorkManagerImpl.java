@@ -394,11 +394,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
+        Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         orcidSecurityManager.checkSourceAndThrow(workEntity);
         try {
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, null, ActionType.DELETE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;
