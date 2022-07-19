@@ -17,13 +17,15 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
-import org.orcid.core.manager.*;
+import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.PreferenceManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.GivenPermissionToManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
@@ -33,11 +35,11 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -88,22 +90,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
-
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-
     @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
     
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
-    @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;
-
-    @Resource(name = "emailManagerReadOnlyV3")
+   @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource
@@ -734,7 +727,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if(orcid.equals(owner)) {            
             // Sets the given email as primary
             Map<String, String> keys = emailManager.setPrimary(orcid, email.getValue().trim(), request);
-            if(!keys.isEmpty()) {
+            if(keys.containsKey("new")) {
                 String newPrimary = keys.get("new");
                 String oldPrimary = keys.get("old");
                 recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);
@@ -783,7 +776,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             String original = editEmail.getOriginal();
             String edited = editEmail.getEdited();
             Map<String, String> keys = emailManager.editEmail(orcid, original, edited, request);
-            if(!keys.isEmpty()) {
+            if(keys.containsKey("new")) {
                 String newPrimary = keys.get("new");
                 String oldPrimary = keys.get("old");
                 recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);                

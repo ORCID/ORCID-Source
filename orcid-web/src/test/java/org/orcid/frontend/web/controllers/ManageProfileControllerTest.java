@@ -648,7 +648,7 @@ public class ManageProfileControllerTest {
         ProfileEntity deprecatedEntity = new ProfileEntity();
         deprecatedEntity.setId("0000-0000-0000-0123");
         deprecatedEntity.setDeprecatedDate(new Date());
-        Mockito.when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
+        when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0123"));
         DeprecateProfile deprecateProfile = new DeprecateProfile();
@@ -667,7 +667,7 @@ public class ManageProfileControllerTest {
         ProfileEntity deprecatedEntity = new ProfileEntity();
         deprecatedEntity.setId("0000-0000-0000-0123");
         deprecatedEntity.setDeactivationDate(new Date());
-        Mockito.when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
+        when(mockProfileEntityCacheManager.retrieve("0000-0000-0000-0123")).thenReturn(deprecatedEntity);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0123"));
         DeprecateProfile deprecateProfile = new DeprecateProfile();
@@ -964,61 +964,61 @@ public class ManageProfileControllerTest {
     @Test
     public void testDeleteEmailJsonWrongOwner() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn("another-orcid-id");
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn("another-orcid-id");
         
         Errors errors = controller.deleteEmailJson("email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
         
-        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
     }
     
     @Test
     public void testDeleteEmailPrimaryEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
-        Mockito.when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
         
         Errors errors = controller.deleteEmailJson("email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
         
-        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
-        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
     }
     
     @Test
     public void testDeleteEmailOnlyEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
-        Mockito.when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
-        Mockito.when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
+        when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(true);
         
         Errors errors = controller.deleteEmailJson("email@email.com");
         assertNotNull(errors);
         assertEquals(1, errors.getErrors().size());
         
-        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
-        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
-        Mockito.verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
     }
     
     @Test
     public void testDeleteEmail() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
-        Mockito.when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
-        Mockito.when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
+        when(mockEmailManager.isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"))).thenReturn(false);
         Mockito.doNothing().when(mockEmailManager).removeEmail(eq(USER_ORCID), eq("email@email.com"));
         
         Errors errors = controller.deleteEmailJson("email@email.com");
         assertNotNull(errors);
         assertEquals(0, errors.getErrors().size());
         
-        Mockito.verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
-        Mockito.verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
-        Mockito.verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
-        Mockito.verify(mockEmailManager, Mockito.times(1)).removeEmail(eq(USER_ORCID), eq("email@email.com"));        
+        verify(mockEmailManager, Mockito.times(1)).findOrcidIdByEmail(eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).isPrimaryEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).isUsersOnlyEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockEmailManager, Mockito.times(1)).removeEmail(eq(USER_ORCID), eq("email@email.com"));        
     }
     
     @Test
@@ -1026,149 +1026,172 @@ public class ManageProfileControllerTest {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         Email email = new Email();
         email.setEmail("email@email.com");
-        Mockito.when(mockEmailManager.findPrimaryEmail(eq(USER_ORCID))).thenReturn(email);
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.findPrimaryEmail(eq(USER_ORCID))).thenReturn(email);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
         
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
-        controller.verifyEmail(mockRequest, DEPRECATED_USER_ORCID);
+        controller.verifyEmail(mockRequest, "email@email.com");
         
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@email.com"));
     }
     
     @Test
     public void testAddEmail_noPrimaryEmailChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         AddEmail newEmail = new AddEmail();
         newEmail.setValue("new@email.com");
+        newEmail.setPassword("password");
+        newEmail.setCurrent(true);
+        newEmail.setPrimary(false);
+        newEmail.setVerified(false);        
         
-        Mockito.when(mockEmailManager.addEmail(eq(mockRequest), USER_ORCID, eq(newEmail.toV3Email()))).thenReturn(Map.of());                        
+        when(mockEmailManager.addEmail(eq(mockRequest), eq(USER_ORCID), eq(newEmail.toV3Email()))).thenReturn(Map.of());                        
+        when(mockEmailManager.emailExists(eq("new@email.com"))).thenReturn(false);
         
         controller.addEmails(mockRequest, newEmail);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"));
+        verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"));
     }
     
     @Test
     public void testAddEmail_primaryEmailChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         AddEmail newEmail = new AddEmail();
         newEmail.setValue("new@email.com");
+        newEmail.setPassword("password");
+        newEmail.setCurrent(true);
+        newEmail.setPrimary(false);
+        newEmail.setVerified(false);
         
-        Mockito.when(mockEmailManager.addEmail(eq(mockRequest), USER_ORCID, eq(newEmail.toV3Email()))).thenReturn(Map.of("new", "new@email.com", "old", "old@email.com"));                     
+        when(mockEmailManager.addEmail(eq(mockRequest), eq(USER_ORCID), eq(newEmail.toV3Email()))).thenReturn(Map.of("new", "new@email.com", "old", "old@email.com"));                     
+        when(mockEmailManager.emailExists(eq("new@email.com"))).thenReturn(false);        
         
         controller.addEmails(mockRequest, newEmail);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("new@email.com"), eq("old@email.com"));
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("new@email.com"), eq("old@email.com"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"));
     }
     
     @Test
     public void testSetPrimary_nothingChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@orcid.org"))).thenReturn(USER_ORCID);
         
         org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
         email.setValue("email@orcid.org");
         
-        Mockito.when(mockEmailManager.setPrimary(USER_ORCID, eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of());
+        when(mockEmailManager.setPrimary(eq(USER_ORCID), eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of());
         
         controller.setPrimary(mockRequest, email);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
-        Mockito.verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any());
+        verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
+        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any());
     }
     
     @Test
     public void testSetPrimary_primaryEmailChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@orcid.org"))).thenReturn(USER_ORCID);
         
         org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
         email.setValue("email@orcid.org");
-        
-        Mockito.when(mockEmailManager.setPrimary(USER_ORCID, eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of("new", "email@orcid.org", "old", "old@orcid.org"));
+                
+        when(mockEmailManager.setPrimary(eq(USER_ORCID), eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of("new", "email@orcid.org", "old", "old@orcid.org"));
         
         controller.setPrimary(mockRequest, email);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
-        Mockito.verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any());
+        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any());
     }
     
     @Test
     public void testSetPrimary_primaryEmailChangeAndPrimaryIsNotVerified() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.findOrcidIdByEmail(eq("email@orcid.org"))).thenReturn(USER_ORCID);
         
         org.orcid.pojo.ajaxForm.Email email = new org.orcid.pojo.ajaxForm.Email();
         email.setValue("email@orcid.org");
+        email.setCurrent(true);
+        email.setPrimary(false);
+        email.setVerified(false);
         
-        Mockito.when(mockEmailManager.setPrimary(USER_ORCID, eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of("new", "email@orcid.org", "old", "old@orcid.org", "sendVerification", "true"));
+        when(mockEmailManager.setPrimary(eq(USER_ORCID), eq("email@orcid.org"), eq(mockRequest))).thenReturn(Map.of("new", "email@orcid.org", "old", "old@orcid.org", "sendVerification", "true"));
         
         controller.setPrimary(mockRequest, email);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
     }
     
     @Test
     public void testEditEmail_noPrimaryChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.findOrcidIdByEmail(eq("old@orcid.org"))).thenReturn(USER_ORCID);
         
         org.orcid.pojo.ajaxForm.EditEmail email = new org.orcid.pojo.ajaxForm.EditEmail();
         email.setEdited("email@orcid.org");
         email.setOriginal("old@orcid.org");
         
-        Mockito.when(mockEmailManager.editEmail(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"), mockRequest)).thenReturn(Map.of("verifyAddress", "email@orcid.org"));
+        when(mockEmailManager.editEmail(eq(USER_ORCID), eq("old@orcid.org"), eq("email@orcid.org"), any())).thenReturn(Map.of("verifyAddress", "email@orcid.org"));
+        when(mockEmailManager.emailExists(eq("old@orcid.org"))).thenReturn(true);
+        when(mockEmailManager.emailExists(eq("email@orcid.org"))).thenReturn(false);
+        
         controller.editEmail(mockRequest, email);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
     }
     
     @Test
     public void testEditEmail_primaryEmailChange() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(); 
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));       
-        Mockito.when(mockEmailManager.findOrcidIdByEmail(eq("email@email.com"))).thenReturn(USER_ORCID);
+        when(mockEmailManager.findOrcidIdByEmail(eq("old@orcid.org"))).thenReturn(USER_ORCID);
         
         org.orcid.pojo.ajaxForm.EditEmail email = new org.orcid.pojo.ajaxForm.EditEmail();
         email.setEdited("email@orcid.org");
         email.setOriginal("old@orcid.org");
         
-        Mockito.when(mockEmailManager.editEmail(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"), mockRequest)).thenReturn(Map.of("verifyAddress", "email@orcid.org", "new", "email@orcid.org", "old", "old@orcid.org"));
+        when(mockEmailManager.editEmail(eq(USER_ORCID), eq("old@orcid.org"), eq("email@orcid.org"), any())).thenReturn(Map.of("verifyAddress", "email@orcid.org", "new", "email@orcid.org", "old", "old@orcid.org"));
         controller.editEmail(mockRequest, email);
         
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
     }
     
     protected Authentication getAuthentication(String orcid) {

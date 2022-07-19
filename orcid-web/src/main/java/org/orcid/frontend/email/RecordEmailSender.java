@@ -54,7 +54,7 @@ public class RecordEmailSender {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource(name = "emailManagerReadOnly")
+    @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManager;
 
     @Resource

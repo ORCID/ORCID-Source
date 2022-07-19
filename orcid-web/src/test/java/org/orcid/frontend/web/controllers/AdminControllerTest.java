@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -101,19 +100,13 @@ public class AdminControllerTest extends BaseControllerTest {
     private ProfileDao profileDao;
 
     @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;
-
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
+    private EmailManager emailManager;    
     
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
-    
-    @Mock
-    private NotificationManager mockNotificationManager;
     
     @Mock
     private ProfileLastModifiedAspect mockProfileLastModifiedAspect; 
@@ -447,7 +440,6 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @Test
     public void verifyEmailTest() throws Exception {
-        TargetProxyHelper.injectIntoProxy(emailManager, "notificationManager", mockNotificationManager);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         when(mockEmailManagerReadOnly.findOrcidIdByEmail("not-verified@email.com")).thenReturn("4444-4444-4444-4499");
         
@@ -472,7 +464,6 @@ public class AdminControllerTest extends BaseControllerTest {
         EmailEntity emailEntity = emailManager.find("not-verified@email.com");
         assertNotNull(emailEntity);
         assertTrue(emailEntity.getVerified());
-        TargetProxyHelper.injectIntoProxy(emailManager, "notificationManager", notificationManager);
     }
 
     @Test
