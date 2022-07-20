@@ -32,6 +32,7 @@ import org.orcid.core.manager.EmailMessage;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;

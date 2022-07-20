@@ -1,6 +1,6 @@
-package org.orcid.core.cli;
+package org.orcid.scheduler.email.cli;
 
-import org.orcid.core.manager.IdentityProviderManager;
+import org.orcid.scheduler.tasks.IdentityProviderLoader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -14,8 +14,8 @@ public class LoadIdentityProviders {
     @SuppressWarnings("resource")
     public static void main(String args[]) {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        IdentityProviderManager identityProviderManager = (IdentityProviderManager) context.getBean("identityProviderManager");
-        identityProviderManager.loadIdentityProviders();
+        IdentityProviderLoader loader = (IdentityProviderLoader) context.getBean("identityProviderLoader");
+        loader.loadIdentityProviders();
         System.exit(0);
     }
 

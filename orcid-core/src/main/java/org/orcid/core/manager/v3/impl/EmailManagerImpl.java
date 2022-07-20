@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
@@ -46,10 +45,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     private ProfileDao profileDao;
     
     @Resource(name = "encryptionManager")
-    private EncryptionManager encryptionManager;   
-
-    @Resource
-    private SlackManager slackManager;
+    private EncryptionManager encryptionManager;
     
     @Override
     @Transactional
@@ -80,20 +76,14 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         } catch (javax.persistence.NoResultException nre) {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            
             String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
-            LOGGER.error(message);
-            
-            slackManager.sendSystemAlert(message);
+            LOGGER.error(message);            
             throw nre;
         } catch (javax.persistence.NonUniqueResultException nure) {
             String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);            
             String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
-            LOGGER.error(message);
-            
-            slackManager.sendSystemAlert(message);    
+            LOGGER.error(message);                         
             throw nure;
         }               
     }

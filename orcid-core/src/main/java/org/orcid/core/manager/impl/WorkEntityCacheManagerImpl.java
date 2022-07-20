@@ -1,20 +1,30 @@
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections4.ListUtils;
 import org.ehcache.Cache;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.*;
+import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkBaseEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.Resource;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * 
@@ -44,9 +54,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
     private WorkDao workDao;
-
-    @Resource
-    private SlackManager slackManager;
 
     public WorkEntityCacheManagerImpl(@Value("${org.orcid.works.db.batch_size:10}") Integer batchSize, @Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.batchSize = (batchSize == null || batchSize < 1 || batchSize > bulkReadSize) ? (bulkReadSize == null || bulkReadSize > 100 ? 100 : bulkReadSize) : batchSize;

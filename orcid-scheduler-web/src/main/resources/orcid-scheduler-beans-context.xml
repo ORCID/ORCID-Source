@@ -66,4 +66,6 @@
         <constructor-arg value="true"/>
     </bean>
 
+    <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
+
 </beans>

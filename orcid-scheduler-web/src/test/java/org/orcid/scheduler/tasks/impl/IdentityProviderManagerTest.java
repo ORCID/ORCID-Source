@@ -1,6 +1,8 @@
-package org.orcid.core.manager;
+package org.orcid.scheduler.tasks.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +15,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
-import org.orcid.core.manager.impl.IdentityProviderManagerImpl;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
 import org.w3c.dom.Document;
@@ -27,7 +28,7 @@ import org.xml.sax.SAXException;
  */
 public class IdentityProviderManagerTest {
 
-    private IdentityProviderManager identityProviderManager = new IdentityProviderManagerImpl();
+    private IdentityProviderLoaderImpl identityProviderLoaderImpl = new IdentityProviderLoaderImpl();
 
     @Test
     public void testCreateEntityFromXml() throws SAXException, IOException, ParserConfigurationException {
@@ -36,7 +37,7 @@ public class IdentityProviderManagerTest {
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(getClass().getResourceAsStream("example_idp.xml"));
         Element idpElement = doc.getDocumentElement();
-        IdentityProviderEntity result = identityProviderManager.createEntityFromXml(idpElement);
+        IdentityProviderEntity result = identityProviderLoaderImpl.createEntityFromXml(idpElement);
         assertNotNull(result);
         assertEquals("https://idp.example.ch/idp/shibboleth", result.getProviderid());
         List<IdentityProviderNameEntity> names = result.getNames();
@@ -60,7 +61,7 @@ public class IdentityProviderManagerTest {
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(getClass().getResourceAsStream("example_idp_legacy.xml"));
         Element idpElement = doc.getDocumentElement();
-        IdentityProviderEntity result = identityProviderManager.createEntityFromXml(idpElement);
+        IdentityProviderEntity result = identityProviderLoaderImpl.createEntityFromXml(idpElement);
         assertNotNull(result);
         assertEquals("https://registry.shibboleth.example.ac.uk/idp", result.getProviderid());
         List<IdentityProviderNameEntity> names = result.getNames();

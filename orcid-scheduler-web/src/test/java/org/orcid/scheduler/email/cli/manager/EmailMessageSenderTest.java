@@ -1,4 +1,4 @@
-package org.orcid.core.manager;
+package org.orcid.scheduler.email.cli.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,7 +22,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.BaseTest;
+import org.orcid.core.manager.EmailMessage;
+import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.ActionType;
@@ -45,7 +47,6 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.scheduler.email.cli.manager.EmailMessageSender;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.togglz.junit.TogglzRule;
@@ -55,7 +56,7 @@ import org.togglz.junit.TogglzRule;
  * @author Will Simpson
  *
  */
-public class EmailMessageSenderTest extends BaseTest {
+public class EmailMessageSenderTest {
 
     @Resource
     private EmailMessageSender emailMessageSender;

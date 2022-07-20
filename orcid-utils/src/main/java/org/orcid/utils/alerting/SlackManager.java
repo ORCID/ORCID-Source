@@ -1,4 +1,4 @@
-package org.orcid.core.manager;
+package org.orcid.utils.alerting;
 
 /**
  * 

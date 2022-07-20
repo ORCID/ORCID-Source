@@ -1,4 +1,4 @@
-package org.orcid.core.manager.impl;
+package org.orcid.utils.alerting.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,13 +6,15 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.manager.SlackManager;
-import org.orcid.core.utils.JsonUtils;
+import org.orcid.utils.alerting.SlackManager;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -30,6 +32,8 @@ public class SlackManagerImpl implements SlackManager {
     @Resource
     private JerseyClientHelper jerseyClientHelper;
 
+    private ObjectMapper mapper = new ObjectMapper();
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(SlackManagerImpl.class);
 
     @Override
@@ -38,7 +42,12 @@ public class SlackManagerImpl implements SlackManager {
             Map<String, String> bodyMap = new HashMap<>();
             bodyMap.put("text", message);
             bodyMap.put("channel", channel);
-            send(JsonUtils.convertToJsonString(bodyMap));
+            try {
+                send(mapper.writeValueAsString(bodyMap));
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Unable to transform map into string: " + bodyMap.toString());
+                throw new RuntimeException(e);
+            }
         }
     }
     
@@ -49,7 +58,12 @@ public class SlackManagerImpl implements SlackManager {
             bodyMap.put("text", message);
             bodyMap.put("channel", customChannel);
             bodyMap.put("username", from);
-            send(JsonUtils.convertToJsonString(bodyMap));
+            try {
+                send(mapper.writeValueAsString(bodyMap));
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Unable to transform map into string: " + bodyMap.toString());
+                throw new RuntimeException(e);
+            }
         }
     }
     

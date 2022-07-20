@@ -6,11 +6,11 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.SlackManager;
 import org.orcid.persistence.dao.OrgImportLogDao;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.orcid.scheduler.loader.manager.OrgLoadManager;
 import org.orcid.scheduler.loader.source.OrgLoadSource;
+import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

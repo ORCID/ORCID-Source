@@ -17,11 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.persistence.dao.OrgImportLogDao;
 import org.orcid.persistence.jpa.entities.OrgImportLogEntity;
 import org.orcid.scheduler.loader.manager.impl.OrgLoadManagerImpl;
 import org.orcid.scheduler.loader.source.OrgLoadSource;
+import org.orcid.utils.alerting.SlackManager;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class OrgLoadManagerTest {

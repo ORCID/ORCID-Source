@@ -165,7 +165,4 @@
     
     <bean id="analyticsClient" class="org.orcid.api.common.analytics.client.google.UniversalAnalyticsClient" />
 
-    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
-        <constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
-    </bean>	
 </beans>

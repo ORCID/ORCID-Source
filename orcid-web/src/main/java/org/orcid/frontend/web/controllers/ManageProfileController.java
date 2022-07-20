@@ -62,6 +62,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.alerting.SlackManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -131,6 +132,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private RecordEmailSender recordEmailSender;
+    
+    @Resource
+    private SlackManager slackManager;
     
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -1004,7 +1008,13 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     private void verifyPrimaryEmailIfNeeded(String orcid) {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
-            emailManager.verifyPrimaryEmail(orcid);
+            try {
+                emailManager.verifyPrimaryEmail(orcid);
+            } catch(javax.persistence.NoResultException nre) {
+                slackManager.sendSystemAlert(String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid));
+            } catch(javax.persistence.NonUniqueResultException nure) {
+                slackManager.sendSystemAlert(String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid));
+            } 
         }
     }
     
