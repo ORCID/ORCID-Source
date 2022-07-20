@@ -104,7 +104,7 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
-    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />         
+    <bean id="apiVersionFilter" class="org.orcid.api.common.filter.ApiVersionFilter" />         
 
     <!-- Add in order for it to be referenced in the filter order -->
     <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">

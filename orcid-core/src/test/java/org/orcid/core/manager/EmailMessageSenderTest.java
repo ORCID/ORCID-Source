@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.scheduler.email.cli.manager.EmailMessageSender;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.togglz.junit.TogglzRule;

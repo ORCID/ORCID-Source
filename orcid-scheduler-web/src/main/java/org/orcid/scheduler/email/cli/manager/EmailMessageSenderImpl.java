@@ -1,4 +1,4 @@
-package org.orcid.core.manager.impl;
+package org.orcid.scheduler.email.cli.manager;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ import org.joda.time.LocalDateTime;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
-import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;

@@ -1,7 +1,7 @@
-package org.orcid.core.cli;
+package org.orcid.scheduler.email.cli;
 
-import org.orcid.core.manager.EmailMessageSender;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
+import org.orcid.scheduler.email.cli.manager.EmailMessageSender;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.togglz.core.context.ContextClassLoaderFeatureManagerProvider;

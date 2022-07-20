@@ -34,6 +34,9 @@ public class PublicProfileValidator {
 
     @Resource
     private JerseyClientHelper jerseyClientHelper;
+    
+    @Resource(name = "jerseyClientHelperDevelopmentMode")
+    private JerseyClientHelper jerseyClientHelperDevelopmentMode;
 
     @Resource
     protected ValidatedPublicProfileDao validatedPublicProfileDao;
@@ -120,7 +123,14 @@ public class PublicProfileValidator {
 
     private JerseyClientResponse<Record, String> getApiResponse(String orcid) {
         String url = (baseUri.endsWith("/") ? baseUri : baseUri + '/') + orcid + "/record";
-        return jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, Record.class, String.class);        
+        JerseyClientResponse<Record, String> response;
+        if(developmentMode) {
+            LOGGER.warn("You are running the public profile validation in development mode!!!!");
+            response = jerseyClientHelperDevelopmentMode.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, Record.class, String.class);
+        } else {
+            response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, Record.class, String.class); 
+        }
+        return response;
     }
 
     public void setDevelopmentMode(boolean developmentMode) {

@@ -1,10 +1,10 @@
-package org.orcid.core.cli;
+package org.orcid.scheduler.email.cli;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.core.manager.EmailMessageSender;
+import org.orcid.scheduler.email.cli.manager.EmailMessageSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

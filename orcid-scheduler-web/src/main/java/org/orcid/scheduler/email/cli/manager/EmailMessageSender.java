@@ -1,7 +1,8 @@
-package org.orcid.core.manager;
+package org.orcid.scheduler.email.cli.manager;
 
 import java.util.Collection;
 
+import org.orcid.core.manager.EmailMessage;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 
 /**

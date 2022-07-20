@@ -48,6 +48,8 @@
 
 	<bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
 	
+	<bean id="emailMessageSender" class="org.orcid.scheduler.email.cli.manager.EmailMessageSenderImpl" />
+	
 	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.scheduler.loader.io.FtpsFileDownloader" />
 
 	<bean id="fundrefOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
@@ -55,5 +57,13 @@
 	<bean id="gridOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
     
 	<bean id="rorOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+
+    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
+    </bean>
+	
+    <bean id="jerseyClientHelperDevelopmentMode" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg value="true"/>
+    </bean>
 
 </beans>

@@ -34,8 +34,6 @@
 	
 	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
 	
-	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
-	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
 	
 	<!-- Effectively a wrapper around the client details service, converting client to user details -->
@@ -788,9 +786,7 @@
 	
 	<bean id="userConnectionManager" class="org.orcid.core.manager.impl.UserConnectionManagerImpl" />
     
-    <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
-    
-    <bean id="analyticsClient" class="org.orcid.core.analytics.client.google.UniversalAnalyticsClient" />		
+    <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />        	
     
     <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
@@ -1551,10 +1547,6 @@
 		<constructor-arg ref="workContributorRoleConverter" />
 	</bean>
 
-	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>
-
-	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
-		<constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
-	</bean>
+	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>	
 
 </beans>

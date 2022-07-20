@@ -41,8 +41,6 @@ import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.jersey.api.client.ClientResponse.Status;
-
 /**
  * @author Declan Newman (declan) Date: 18/04/2012
  */
@@ -158,8 +156,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
-            Status status = Status.fromStatusCode(error.getResponseStatus().getStatusCode());
-            return Response.status(status).entity(error).build();
+            return Response.status(error.getResponseStatus().getStatusCode()).entity(error).build();
         }
     }
 

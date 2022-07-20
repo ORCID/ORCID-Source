@@ -8,7 +8,6 @@ import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.Authentication;
