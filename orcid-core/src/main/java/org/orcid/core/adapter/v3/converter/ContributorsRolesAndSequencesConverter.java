@@ -47,9 +47,6 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
                 if (contributorsRolesAndSequences.getRolesAndSequences() != null) {
                     for (ContributorAttributes crs : contributorsRolesAndSequences.getRolesAndSequences()) {
                         String providedRoleValue = crs.getContributorRole();
-                        if ("unspecified".equals(providedRoleValue)) {
-                            return contributorsRolesAndSequencesResult;
-                        }
                         if (!PojoUtil.isEmpty(providedRoleValue)) {
                             crs.setContributorRole(contributorUtils.getCreditRole(roleConverter.toRoleValue(providedRoleValue)));
                         }
