@@ -40,9 +40,6 @@ public class WorkContributorsConverter extends BidirectionalConverter<WorkContri
         // convert role to db format
         source.getContributor().forEach(c -> {
             if (c.getContributorAttributes() != null && c.getContributorAttributes().getContributorRole() != null) {
-                if ("unspecified".equals(c.getContributorAttributes().getContributorRole())) {
-                    return;
-                }
                 String providedRoleValue = c.getContributorAttributes().getContributorRole();
                 String resolvedRoleValue = roleConverter.toDBRole(providedRoleValue);
                 if (resolvedRoleValue == null) {
