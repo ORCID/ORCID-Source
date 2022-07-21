@@ -1,17 +1,15 @@
 package org.orcid.core.groupIds.issn;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.utils.jersey.JerseyClientHelper;
-import org.orcid.utils.jersey.JerseyClientResponse;
+import org.orcid.core.utils.http.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -20,21 +18,21 @@ import org.springframework.stereotype.Component;
 public class IssnClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
-
-    @Resource
-    private JerseyClientHelper jerseyClientHelper;
     
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
+    
+    @Resource
+    private HttpRequestUtils httpRequestUtils;
 
     public IssnData getIssnData(String issn) {
         String json = null;
         try {
             // ensure any lower case x is X otherwise issn portal won't work
             json = getJsonDataFromIssnPortal(issn.toUpperCase());
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | URISyntaxException e) {
             throw new RuntimeException("Error extracting json from issn portal response", e);
-        }
+        } 
         try {
             return extractIssnData(json);
         } catch (JSONException e) {
@@ -70,24 +68,13 @@ public class IssnClient {
         return null;
     }
 
-    private String getJsonDataFromIssnPortal(String issn) throws IOException {
-        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
-        JerseyClientResponse<InputStream, String> response = jerseyClientHelper.executeGetRequest(issnUrl, InputStream.class, String.class);
-        int status = response.getStatus();
-        if (status != 200) {
+    private String getJsonDataFromIssnPortal(String issn) throws IOException, InterruptedException, URISyntaxException {
+        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);        
+        HttpResponse<String> response = httpRequestUtils.doGet(issnUrl);
+        if(response.statusCode() != 200) {
             return null;
         }
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        InputStream input = response.getEntity();
-
-        try {
-            IOUtils.copy(input, output);
-            return output.toString("UTF-8");
-        } finally {
-            input.close();
-            output.close();
-        }
+        return response.body();
     }
     
     private String cleanText(String text) {

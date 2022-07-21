@@ -1,13 +1,12 @@
 package org.orcid.core.manager.impl;
 
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
+
 import javax.annotation.Resource;
 
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
-import org.orcid.utils.jersey.JerseyClientHelper;
-import org.orcid.utils.jersey.JerseyClientResponse;
-
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import org.orcid.core.utils.http.HttpRequestUtils;
 
 /**
  * 
@@ -16,10 +15,8 @@ import jakarta.ws.rs.core.Response;
  */
 public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
     
-    private static MediaType X_BIBTEX = new MediaType("application", "x-bibtex");
-
     @Resource
-    private JerseyClientHelper jerseyClientHelper;
+    private HttpRequestUtils httpRequestUtils;
     
     /**
      * Keys MUST be URLs
@@ -27,9 +24,9 @@ public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Obj
      */
     @Override
     public Object load(Object key) throws Exception {
-        JerseyClientResponse<String, String> cr = jerseyClientHelper.executeGetRequest(key.toString(), X_BIBTEX, true);
-        if (cr.getStatus() == Response.Status.OK.getStatusCode()) {
-            return cr.getEntity();
+        HttpResponse<String> response = httpRequestUtils.doGet(key.toString(), "application/x-bibtex", HttpClient.Redirect.ALWAYS);
+        if (response.statusCode() == 200) {
+            return response.body();
         }
         return null;
     }

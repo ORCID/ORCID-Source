@@ -37,12 +37,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-core</artifactId>
             <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>orcid-utils</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
+        </dependency>        
 
         <!-- External dependencies -->
         <dependency>
@@ -67,11 +62,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-spring</artifactId>
@@ -137,15 +128,6 @@
             <version>2.4.1.Final</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Provide required classes for the JSON provider JacksonJaxbJsonProvider -->
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-
-
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
