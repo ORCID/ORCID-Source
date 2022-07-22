@@ -68,4 +68,6 @@
 
     <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
 
+    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
+
 </beans>

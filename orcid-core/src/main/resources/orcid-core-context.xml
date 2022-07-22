@@ -1549,4 +1549,6 @@
 
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
 
+	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />
+
 </beans>

@@ -52,7 +52,8 @@ public class OrcidJerseyClientHandler {
         .register(V3ResearchResourceBodyReader.class)
         .register(V3ResearchResourcesBodyReader.class)
         .register(V3ServiceBodyReader.class)
-        .register(V3WorkBodyReader.class);        
+        .register(V3WorkBodyReader.class)
+        .register(W3CDocumentBodyReader.class);
         
         if (isDevelopmentMode) {
             // DANGER!!! Trust all certs

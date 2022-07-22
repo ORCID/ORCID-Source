@@ -109,4 +109,6 @@
         <constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
     </bean>
 
+    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
+
 </beans>
