@@ -14,7 +14,7 @@ ORCID supports the Basic OpenID Provider conformance profile, which is an extens
 This means that ORCID:
 
 *   Embeds signed id tokens within token responses for authorization codes generated with the 'openid' scope
-*   Supports the implicit flow when using 'token' or 'token id_token' response_types and the 'openid' scope. 
+*   Supports the implicit flow when using 'token' or 'id_token token' response_types and the 'openid' scope. 
 *   Supports the 'prompt', 'nonce' and 'max_age' parameters for authorisation requests that include the 'openid' scope.
 *   Supports Openid Connect discovery and userinfo endpoints
 *   The payload from the id_token now contains a new data field called “amr” in which the value is “mfa” for users who have enabled two-factor authentication on their ORCID account, and “pwd” for users who haven’t. ( This data is not returned by the Public API only the Member API)
