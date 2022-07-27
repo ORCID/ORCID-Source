@@ -29,6 +29,7 @@ public class W3CDocumentBodyReader implements MessageBodyReader<Document> {
     public W3CDocumentBodyReader() {
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setNamespaceAware(true);
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
             throw new ProcessingException("Error deserializing a " + Document.class, e);
@@ -47,6 +48,8 @@ public class W3CDocumentBodyReader implements MessageBodyReader<Document> {
             return dBuilder.parse(entityStream);
         } catch (SAXException e) {
             throw new ProcessingException("Error deserializing a " + Document.class, e);
+        } finally {
+            entityStream.close();
         }
     }
 
