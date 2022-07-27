@@ -134,9 +134,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private RecordNameManager recordNameManagerV3;
     
     @Resource
-    private MailGunManager mailgunManager;
-    
-    @Resource
     private VerifyEmailUtils verifyEmailUtils;
     
     @Value("${org.notifications.service_announcements.batchSize:60000}")
@@ -627,6 +624,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        mailGunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
     }        
 }

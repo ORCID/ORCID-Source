@@ -1,5 +1,6 @@
 package org.orcid.utils.jersey;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -7,10 +8,12 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
 
 import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
@@ -129,20 +132,23 @@ public class JerseyClientHelper implements DisposableBean {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, MediaType mediaType, Object message, String accessToken, Class<T> responseType,
+    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, MediaType mediaType, Object message, SimpleEntry<String, String> auth, Class<T> responseType,
             Class<E> errorResponseType) {
-        WebTarget webTarget = jerseyClient.target(url);
+
+        final Client client = ClientBuilder.newClient();
+        
+        if (auth != null) {
+            HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(auth.getKey(), auth.getValue());
+            client.register(feature);
+        }
+        WebTarget webTarget = client.target(url);
         Builder builder;
 
         if (mediaType != null) {
             builder = webTarget.request();
         } else {
             builder = webTarget.request(mediaType);
-        }
-
-        if (!StringUtils.isEmpty(accessToken)) {
-            builder = builder.header("Authorization", "Bearer " + accessToken);
-        }
+        }        
 
         Response response = builder.post(Entity.entity(message, mediaType));
 

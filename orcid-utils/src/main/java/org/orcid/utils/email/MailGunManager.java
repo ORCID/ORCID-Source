@@ -1,9 +1,9 @@
 package org.orcid.utils.email;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 
 import javax.annotation.Resource;
+
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jakarta.ws.rs.core.Form;
 import jakarta.ws.rs.core.MediaType;
 
 @Component
@@ -73,29 +74,30 @@ public class MailGunManager {
             apiUrl = getNotifyApiUrl();
         else
             apiUrl = getApiUrl();        
-        
-        Map<String, String> formData = new HashMap<String, String>();
-        formData.put("from", from);
-        formData.put("to", to);
-        formData.put("subject", subject);
-        formData.put("text", text);
+        Form formData = new Form();
+        formData.param("from", from);
+        formData.param("to", to);
+        formData.param("subject", subject);
+        formData.param("text", text);
         if (html != null) {
-            formData.put("html", html);
+            formData.param("html", html);
         }
-        formData.put("o:testmode", testmode);
+        formData.param("o:testmode", testmode);
 
         // the filter is used to prevent sending email to users in qa and
         // sandbox
         if (to.matches(filter)) {
-            JerseyClientResponse<String, String> cr = jerseyClientHelper.executePostRequest(apiUrl, MediaType.APPLICATION_FORM_URLENCODED_TYPE, formData, getApiKey(), String.class, String.class);
+            // username and password
+            SimpleEntry<String, String> auth = new SimpleEntry<String, String>("api", getApiKey());
+            JerseyClientResponse<String, String> cr = jerseyClientHelper.executePostRequest(apiUrl, MediaType.APPLICATION_FORM_URLENCODED_TYPE, formData, auth, String.class, String.class);
             if (cr.getStatus() != 200) {
                 LOGGER.warn("Post MailGunManager.sendEmail to {} not accepted\nstatus: {}\nbody: {}", 
-                        new Object[] { formData.get("to"), cr.getStatus(), cr.getEntity() });
+                        new Object[] { to, cr.getStatus(), cr.getEntity() });
                 return false;
             }
             return true;
         } else {
-            LOGGER.debug("Email not sent to {} due to regex mismatch", formData.get("to"));
+            LOGGER.debug("Email not sent to {} due to regex mismatch", to);
             return false;
         }
     }
