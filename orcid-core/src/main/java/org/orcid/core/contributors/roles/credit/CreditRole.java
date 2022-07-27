@@ -16,8 +16,8 @@ public enum CreditRole implements Serializable {
     SUPERVISION("http://credit.niso.org/contributor-roles/supervision/", "supervision"),
     VALIDATION("http://credit.niso.org/contributor-roles/validation/", "validation"),
     VISUALIZATION("http://credit.niso.org/contributor-roles/visualization/", "visualization"),
-    WRITING_ORIGINAL_DRAFT("http://credit.niso.org/contributor-roles/writing-original-draft/", "writing – original draft"),
-    WRITING_REVIEW_EDITING("http://credit.niso.org/contributor-roles/writing-review-editing/", "writing – review & editing");
+    WRITING_ORIGINAL_DRAFT("http://credit.niso.org/contributor-roles/writing-original-draft/", "writing - original draft"),
+    WRITING_REVIEW_EDITING("http://credit.niso.org/contributor-roles/writing-review-editing/", "writing - review & editing");
 
     private final String value;
     private final String uiValue;

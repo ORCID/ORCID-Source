@@ -27,6 +27,7 @@ import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
@@ -48,6 +49,7 @@ import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ResearchResource;
 import org.orcid.pojo.ResearchResourceGroupPojo;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -446,10 +448,19 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work workObj = workManagerReadOnly.getWork(orcid, workId);
-        if (workObj != null && validateVisibility(workObj.getVisibility())) {
+        WorkForm work = null;
+        Work workObj = null;
+        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+            WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
+            work = WorkForm.valueOf(workExtended, maxContributorsForUI);
+            workObj = workExtended;
+        } else {
+            workObj = workManagerReadOnly.getWork(orcid, workId);
+            work = WorkForm.valueOf(workObj, maxContributorsForUI);
+        }
+
+        if (work != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
-            WorkForm work = WorkForm.valueOf(workObj, maxContributorsForUI);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
                 Text countryName = Text.valueOf(retrieveIsoCountries().get(work.getCountryCode().getValue()));
@@ -466,8 +477,14 @@ public class PublicProfileController extends BaseWorkspaceController {
                 work.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            if (work.getContributors() != null) {
-                work.setContributors(filterContributors(work.getContributors(), activityManager));
+            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+                if (work.getContributorsGroupedByOrcid() != null) {
+                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(work.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                }
+            } else {
+                if (work.getContributors() != null) {
+                    work.setContributors(filterContributors(work.getContributors(), activityManager));
+                }
             }
 
             return new ResponseEntity<>(work, HttpStatus.OK);

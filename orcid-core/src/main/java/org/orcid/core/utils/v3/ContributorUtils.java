@@ -186,8 +186,7 @@ public class ContributorUtils {
                     idsToPopulateName.add(orcid);
                     contributorsToPopulateName.add(contributor);
                 } else {
-                    CreditName creditName = new CreditName(cachedName);
-                    contributor.setCreditName(creditName);
+                    contributor.setCreditName(new CreditName(isPrivateName(cachedName)));
                 }
             }
         }
@@ -201,8 +200,7 @@ public class ContributorUtils {
             // If the key doesn't exists in the name, it means the name is private or the orcid id doesn't exists
             if(contributorNames.containsKey(orcid)) {
                 String name = contributorNames.get(orcid);
-                CreditName creditName = new CreditName(name);
-                contributor.setCreditName(creditName);
+                contributor.setCreditName(new CreditName(isPrivateName(name)));
             }
         }
     }

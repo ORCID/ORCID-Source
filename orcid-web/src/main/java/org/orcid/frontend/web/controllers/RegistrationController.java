@@ -294,7 +294,6 @@ public class RegistrationController extends BaseController {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
         String redirectUrl = calculateRedirectUrl(request, response, true);
-
         if (request.getQueryString() == null || request.getQueryString().isEmpty()) {
             redirectUrl = calculateRedirectUrl(request, response, true, true);
         } 

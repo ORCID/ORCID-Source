@@ -465,13 +465,11 @@ public class NotificationManagerTest extends DBUnitTest {
         
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         
-        // Should not generate the notification
+        // Should generate the notification ignoring the emailFrequency
         notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
-        verify(mockNotificationDao, never()).persist(Matchers.any());
-        
         // Should generate the notification
         notificationManager.sendAcknowledgeMessage(orcidDaily, clientId);
-        verify(mockNotificationDao, times(1)).persist(Matchers.any());
+        verify(mockNotificationDao, times(2)).persist(Matchers.any());
         
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
     }

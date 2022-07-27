@@ -286,6 +286,10 @@ public class PasswordResetController extends BaseController {
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+        //reset the lock fields
+        profileEntityManager.resetSigninLock(orcid);
+        profileEntityCacheManager.remove(orcid);
+        
 
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
@@ -324,7 +328,9 @@ public class PasswordResetController extends BaseController {
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
-
+        //reset the lock fields
+        profileEntityManager.resetSigninLock(orcid);
+        profileEntityCacheManager.remove(orcid);
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         return oneTimeResetPasswordForm;
@@ -358,6 +364,7 @@ public class PasswordResetController extends BaseController {
 
     private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
         try {
+            
             String paramsString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedLink), "UTF-8"));
             return new PasswordResetToken(paramsString);
         } catch (UnsupportedEncodingException e) {

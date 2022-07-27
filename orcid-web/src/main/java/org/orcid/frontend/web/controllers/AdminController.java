@@ -514,6 +514,10 @@ public class AdminController extends BaseController {
             if (orcid != null) {
                 if (profileEntityManager.orcidExists(orcid)) {
                     profileEntityManager.updatePassword(orcid, password);
+                  //reset the lock fields
+                    profileEntityManager.resetSigninLock(orcid);
+                    profileEntityCacheManager.remove(orcid);
+                    
                 } else {
                     form.setError(getMessage("admin.errors.unexisting_orcid"));
                 }

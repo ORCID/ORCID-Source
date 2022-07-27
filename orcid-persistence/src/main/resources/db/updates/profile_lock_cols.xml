@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Camelia Dumitru" id="ADD-LOCK-FIELDS-TO-PROFILE">
+	   <preConditions onFail="MARK_RAN">            
+            <not>
+                <columnExists tableName="profile" columnName="signin_lock_start"/>
+				<columnExists tableName="profile" columnName="signin_lock_last_attempt"/>
+				<columnExists tableName="profile" columnName="signin_lock_count"/>
+            </not>
+		</preConditions>
+	    <addColumn tableName="profile">				
+				<column name="signin_lock_start" type="TIMESTAMP WITHOUT TIME ZONE"/>
+				<column name="signin_lock_last_attempt" type="TIMESTAMP WITHOUT TIME ZONE"/>
+				<column name="signin_lock_count" type="INTEGER"/>
+		</addColumn>
+    </changeSet>           
+</databaseChangeLog>	

@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Daniel Palafox" id="ADD-EXTERNAL-URL-AND-RELATIONSHIP-TO-NOTIFICATION-ITEM">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <and>
+                    <columnExists tableName="notification_item" columnName="external_id_url"/>
+                    <columnExists tableName="notification_item" columnName="external_id_relationship"/>
+                </and>
+            </not>
+        </preConditions>
+        <addColumn tableName="notification_item">
+            <column name="external_id_url" type="VARCHAR(255)" />
+            <column name="external_id_relationship" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

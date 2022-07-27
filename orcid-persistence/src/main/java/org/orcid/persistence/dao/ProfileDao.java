@@ -16,33 +16,41 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not, boolean checkQuarterlyTipsEnabled);
-    
+
     /**
      * Get a list of the ORCID ids with the given indexing status
+     * 
      * @param indexingStatuses
-     *          The list of desired indexing status
+     *            The list of desired indexing status
      * @param maxResults
-     *          Max number of results
+     *            Max number of results
      * @param delay
-     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
+     *            A delay that will allow us to obtain records after no one is
+     *            modifying it anymore, so, we prevent processing the same
+     *            record several times
+     * @return a list of object arrays where the object[0] contains the orcid id
+     *         and object[1] contains the indexing status
+     */
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
+     * 
      * @param indexingStatuses
-     *          The list of desired indexing status
+     *            The list of desired indexing status
      * @param maxResults
-     *          Max number of results
+     *            Max number of results
      * @param orcidsToExclude
-     *          List of ORCID ids to exclude from the results
+     *            List of ORCID ids to exclude from the results
      * @param delay
-     *          A delay that will allow us to obtain records after no one is modifying it anymore, so, we prevent processing the same record several times
-     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
-     * */
+     *            A delay that will allow us to obtain records after no one is
+     *            modifying it anymore, so, we prevent processing the same
+     *            record several times
+     * @return a list of object arrays where the object[0] contains the orcid id
+     *         and object[1] contains the indexing status
+     */
     List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
-    
+
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNeedingReminder(int reminderAfterDays, int maxResults, Collection<String> orcidsToExclude);
@@ -95,7 +103,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
     public boolean getClaimedStatus(String orcid);
-    
+
     public boolean getClaimedStatusByEmailHash(String email);
 
     String getClientType(String orcid);
@@ -117,19 +125,19 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean reviewProfile(String orcid);
 
     boolean unreviewProfile(String orcid);
-        
+
     boolean updateDefaultVisibility(String orcid, String visibility);
-    
+
     List<String> getProfilesWithNoHashedOrcid(int limit);
-    
+
     void hashOrcidIds(String orcid, String hashedOrcid);
-    
+
     public Date getLastLogin(String orcid);
 
     void disable2FA(String orcid);
 
     void enable2FA(String orcid);
-    
+
     void update2FASecret(String orcid, String secret);
 
     boolean deactivate(String orcid);
@@ -138,15 +146,24 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<ProfileEventEntity> getProfileEvents(String orcid, List<ProfileEventType> eventTypeNames);
 
-    public List<Object[]> getLockedReason(String orcid);
+    ProfileEntity getLockedReason(String orcid);
 
     int deleteProfilesOfType(String orcidType);
 
     List<String> getAllOrcidIdsForInvalidRecords();
 
     void updateIndexingStatus(List<String> ids, IndexingStatus reindex);
-    
+
     public List<String> registeredBetween(Date startDate, Date endDate);
-        
+
     boolean isOrcidValidAsDelegate(String orcid);
+
+    // ********* Signin Lock Methods *********
+    public List<Object[]> getSigninLock(String orcid);
+
+    public void startSigninLock(String orcid);
+    
+    public void resetSigninLock(String orcid);
+
+    public void updateSigninLock(String orcid, Integer count);
 }

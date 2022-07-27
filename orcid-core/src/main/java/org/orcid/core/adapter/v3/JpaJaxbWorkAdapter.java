@@ -8,6 +8,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 
 /**
@@ -34,5 +35,7 @@ public interface JpaJaxbWorkAdapter {
     List<WorkSummaryExtended> toWorkSummaryExtendedFromMinimized(Collection<MinimizedExtendedWorkEntity> workEntities);
 
     WorkEntity toWorkEntity(Work work, WorkEntity existing);
+
+    WorkExtended toWorkExtended(WorkEntity workEntity);
 
 }

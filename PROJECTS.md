@@ -104,11 +104,11 @@ The following code has been incorporated into the ORCID code:
 **SECURITY**
 * **[Semantico Spring Security OAuth Library](https://github.com/semantico/spring-security-oauth)** 
 
-<!--<br>This repository was forked the the main spring-security-oath project to allow us to support multiple redirect URLs. These changes have subsequently been incorporated into the core product and should be used in preference to this unless you are developing against the ORCID codebase.</i> | **[Apache License V2.0](https://github.com/semantico/spring-security-oauth/blob/master/license.txt)-->
+<!-- <br>This repository was forked the the main spring-security-oath project to allow us to support multiple redirect URLs. These changes have subsequently been incorporated into the core product and should be used in preference to this unless you are developing against the ORCID codebase.</i> | **[Apache License V2.0](https://github.com/semantico/spring-security-oauth/blob/master/license.txt) -->
 
 * **[Spring OAuth Security](http://static.springsource.org/spring-security/oauth/)**<i></i>
 
-<!--<br>This project provides support for using Spring Security with OAuth (1a) and OAuth2. It provides features for implementing both consumers and providers of these protocols using standard Spring and Spring Security programming models and configuration idioms. | **[Apache License V 2.0](https://github.com/SpringSource/spring-security-oauth/blob/master/license.txt)**-->
+<!-- <br>This project provides support for using Spring Security with OAuth (1a) and OAuth2. It provides features for implementing both consumers and providers of these protocols using standard Spring and Spring Security programming models and configuration idioms. | **[Apache License V 2.0](https://github.com/SpringSource/spring-security-oauth/blob/master/license.txt)** -->
 
 * **[Spring Framework](http://www.springsource.org/spring-framework)** <i>org.springframework</i> 
 
@@ -117,8 +117,8 @@ The following code has been incorporated into the ORCID code:
 * **[jasypt](http://www.jasypt.org/)** - <i>org.jasypt</i> 
 
 <!--<br>Jasypt is a java library which allows the developer to add basic encryption capabilities to his/her projects with minimum effort, and without the need of having deep knowledge on how cryptography works. | **[]()** |-->
-
 <br>
+
 **CODE & DATABASE**
 * **[Java JDK](http://docs.oracle.com/javase/7/docs/)** 
 
@@ -135,8 +135,8 @@ The following code has been incorporated into the ORCID code:
 * **[Apache Solr](http://lucene.apache.org/solr/)** - <i>schema.constants.SolrConstants</i> 
 
 <!--<br>SolrTM is the popular, blazing fast open source enterprise search platform from the Apache LuceneTM project. Its major features include powerful full-text search, hit highlighting, faceted search, near real-time indexing, dynamic clustering, database integration, rich document (e.g., Word, PDF) handling, and geospatial search. Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more. Solr powers the search and navigation features of many of the world's largest internet sites. | **[]()** |-->
-
 <br>
+
 **API SUPPORT**
 * **[Jersey](http://jersey.java.net/)** <i>com.sun.jersey.api</i>
 
@@ -153,8 +153,8 @@ The following code has been incorporated into the ORCID code:
 * **[args4j](http://args4j.kohsuke.org/)** - <i>org.kohsuke.args4j</i>
 
 <!--<br>args4j is a small Java class library that makes it easy to parse command line options/arguments in your CUI application. | **[]()** |-->
-
 <br>
+
 **UTILITIES & TOOLS**
 * **[java-bibtex](http://code.google.com/p/java-bibtex/)** <i>org.jbibtex</i>
 
@@ -183,8 +183,8 @@ The following code has been incorporated into the ORCID code:
 * **[SAX](http://www.saxproject.org/)** - <i>org.xml.sax</i>
 
 <!--<br>SAX is the Simple API for XML, originally a Java-only API. SAX was the first widely adopted API for XML in Java, and is a “de facto” standard. The current version is SAX 2.0.1, and there are versions for several programming language environments other than Java. | **[]()** |-->
-
 <br>
+
 **TESTING**
 * **[JUnit](http://en.wikipedia.org/wiki/JUnit)** <i>org.junit</i>
 

@@ -25,7 +25,7 @@ the software.
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>5.3.19</spring.version>
+        <spring.version>5.3.20</spring.version>
         <security.version>5.6.2</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>1.19.1</jersey.version>
@@ -53,7 +53,6 @@ the software.
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
-        <module>orcid-integration-test</module>
         <module>orcid-internal-api</module>
         <module>orcid-activemq</module>
         <module>orcid-message-listener</module>
@@ -66,33 +65,7 @@ the software.
         <url>https://github.com/ORCID</url>
     </organization>
 
-    <url>http://orcid.org</url>
-
-    <scm>
-        <connection>scm:git:ssh://git@github.com/ORCID/ORCID-Work-in-Progress.git</connection>
-        <developerConnection>scm:git:git://github.com/ORCID/ORCID-Work-in-Progress.git</developerConnection>
-        <url>https://github.com/ORCID/ORCID-Work-in-Progress</url>
-    </scm>
-
-    <ciManagement>
-        <system>Jenkins</system>
-        <url>http://jenkins.semantico.net/</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>false</sendOnSuccess>
-                <sendOnWarning>false</sendOnWarning>
-                <configuration>
-                    <recipients>will.simpson@semantico.com
-                        declan.newman@semantico.com
-                        james.bowen@semantico.com
-                    </recipients>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
+    <url>http://orcid.org</url>    
 
     <!-- End -->
 
@@ -944,7 +917,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.9</version>
+               <version>3.0.11</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
@@ -962,18 +935,6 @@ the software.
     </dependencyManagement>
 
     <repositories>
-        <!-- temporary repo until 2.0.6 is out -->
-        <repository>
-            <id>orcid-spring-oauth-copy</id>
-            <name>copy of spring security oauth</name>
-            <url>https://raw.github.com/ORCID/spring-security-oauth/mvn-repo/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
         <repository>
             <id>spring-social-facebook-orcid-snapshot</id>
             <name>copy of spring-social-facebook to work with Graph API 2.10</name>
