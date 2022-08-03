@@ -221,6 +221,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNotNull(token.getRevocationDate());
         assertEquals("USER_REVOKED", token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
+        assertEquals(token.getRevocationDate(), token.getLastModified());
     }
     
     @Test
@@ -239,6 +240,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNotNull(token.getRevocationDate());
         assertEquals("CLIENT_REVOKED", token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
+        assertEquals(token.getRevocationDate(), token.getLastModified());
     }
 
     @Test
@@ -293,6 +295,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNotNull(token.getRevocationDate());
         assertEquals("USER_REVOKED", token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
+        assertEquals(token.getRevocationDate(), token.getLastModified());
     }
 
     @Test
@@ -303,7 +306,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNull(token.getRevocationDate());
         assertNull(token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
-        
+
         orcidOauth2TokenDetailDao.revokeAccessToken(token.getTokenValue());
         
         token = orcidOauth2TokenDetailDao.find(token.getId());
@@ -311,6 +314,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNotNull(token.getRevocationDate());
         assertEquals("CLIENT_REVOKED", token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
+        assertEquals(token.getRevocationDate(), token.getLastModified());
     }
     
     @Test

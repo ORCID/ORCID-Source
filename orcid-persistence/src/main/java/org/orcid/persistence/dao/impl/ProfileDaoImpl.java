@@ -750,13 +750,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Object[]> getLockedReason(String orcid) {
-        Query query = entityManager.createNativeQuery(
-                "SELECT reason_locked, reason_locked_description, record_locked_admin_id, record_locked_date, last_indexed_date from profile where orcid = :orcid");
+    public ProfileEntity getLockedReason(String orcid) {
+        TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where orcid = :orcid", ProfileEntity.class);
         query.setParameter("orcid", orcid);
-        return query.getResultList();
+        return query.getSingleResult();
     }
 
     @Override

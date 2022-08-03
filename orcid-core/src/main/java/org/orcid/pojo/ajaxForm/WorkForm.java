@@ -449,24 +449,38 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private static void populateContributorsGroupedByOrcid(WorkForm workForm, Work work) {
         org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
         if(workForm.getContributorsGroupedByOrcid() != null && !workForm.getContributorsGroupedByOrcid().isEmpty()) {
-            for(ContributorsRolesAndSequences contributor : workForm.getContributorsGroupedByOrcid()) {
-                for(ContributorAttributes ca : contributor.getRolesAndSequences()) {
+            for (ContributorsRolesAndSequences contributor : workForm.getContributorsGroupedByOrcid()) {
+                if (contributor.getRolesAndSequences() != null && !contributor.getRolesAndSequences().isEmpty()) {
+                    for (ContributorAttributes ca : contributor.getRolesAndSequences()) {
+                        org.orcid.jaxb.model.v3.release.common.Contributor workContributor = new org.orcid.jaxb.model.v3.release.common.Contributor();
+                        org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+                        if (ca.getContributorRole() != null) {
+                            contributorAttributes.setContributorRole(ca.getContributorRole());
+                        }
+
+                        if (ca.getContributorSequence() != null) {
+                            contributorAttributes.setContributorSequence(ca.getContributorSequence());
+                        }
+                        workContributor.setContributorAttributes(contributorAttributes);
+
+                        if (contributor.getCreditName() != null) {
+                            workContributor.setCreditName(contributor.getCreditName());
+                        }
+
+                        if (contributor.getContributorOrcid() != null) {
+                            workContributor.setContributorOrcid(contributor.getContributorOrcid());
+                        }
+
+                        contributors.getContributor().add(workContributor);
+                    }
+                } else {
                     org.orcid.jaxb.model.v3.release.common.Contributor workContributor = new org.orcid.jaxb.model.v3.release.common.Contributor();
                     org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
-                    if(ca.getContributorRole() != null) {
-                        contributorAttributes.setContributorRole(ca.getContributorRole());
-                    }
-
-                    if(ca.getContributorSequence() != null) {
-                        contributorAttributes.setContributorSequence(ca.getContributorSequence());
-                    }
-                    workContributor.setContributorAttributes(contributorAttributes);
-
                     if (contributor.getCreditName() != null) {
                         workContributor.setCreditName(contributor.getCreditName());
                     }
 
-                    if(contributor.getContributorOrcid() != null) {
+                    if (contributor.getContributorOrcid() != null) {
                         workContributor.setContributorOrcid(contributor.getContributorOrcid());
                     }
 
