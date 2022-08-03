@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -35,6 +36,7 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
@@ -543,6 +545,11 @@ public class WorksController extends BaseWorkspaceController {
         validateWork(workForm);
         if (workForm.getErrors().size() == 0) {
             removeEmptyExternalIdentifiers(workForm);
+            if (isRecordHolderInContributors(workForm)) {
+                List<String> errors = workForm.getErrors();
+                errors.add(getMessage("web.orcid.record_holder_not_contributor.exception"));
+                return workForm;
+            }
             if (workForm.getPutCode() != null)
                 updateWork(workForm);
             else
@@ -589,6 +596,16 @@ public class WorksController extends BaseWorkspaceController {
         Work updatedWork = workForm.toWork();
         // Edit work
         workManager.updateWork(userOrcid, updatedWork, false);
+    }
+
+    private boolean isRecordHolderInContributors(WorkForm work) {
+        if (work.getContributorsGroupedByOrcid() != null && !work.getContributorsGroupedByOrcid().isEmpty()) {
+            String userOrcid = getEffectiveUserOrcid();
+            Optional<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid().stream().filter(contributorsRolesAndSequences ->
+                    contributorsRolesAndSequences.getContributorOrcid() != null && userOrcid.equals(contributorsRolesAndSequences.getContributorOrcid().getPath())).findFirst();
+            return contributors.isEmpty();
+        }
+        return false;
     }
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
