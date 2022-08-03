@@ -545,7 +545,7 @@ public class WorksController extends BaseWorkspaceController {
         validateWork(workForm);
         if (workForm.getErrors().size() == 0) {
             removeEmptyExternalIdentifiers(workForm);
-            if (isRecordHolderInContributors(workForm)) {
+            if (isRecordHolderNotInContributors(workForm)) {
                 List<String> errors = workForm.getErrors();
                 errors.add(getMessage("web.orcid.record_holder_not_contributor.exception"));
                 return workForm;
@@ -598,7 +598,7 @@ public class WorksController extends BaseWorkspaceController {
         workManager.updateWork(userOrcid, updatedWork, false);
     }
 
-    private boolean isRecordHolderInContributors(WorkForm work) {
+    private boolean isRecordHolderNotInContributors(WorkForm work) {
         if (work.getContributorsGroupedByOrcid() != null && !work.getContributorsGroupedByOrcid().isEmpty()) {
             String userOrcid = getEffectiveUserOrcid();
             Optional<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid().stream().filter(contributorsRolesAndSequences ->
