@@ -4,6 +4,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,24 @@ public class OrcidJerseyClientHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidJerseyClientHandler.class);
 
+    static Client create(List<Class<?>> bodyReaders, Map<String, Object> properties) {
+        Client client;
+        ClientBuilder builder = ClientBuilder.newBuilder();
+        //Always register the json provider
+        builder.register(JacksonJaxbJsonProvider.class)
+        // And the DOM provider
+        .register(W3CDocumentBodyReader.class);
+        for(Class<?> c : bodyReaders) {
+            builder.register(c);
+        }
+        client = builder.build();
+        Set<String> keyset = properties.keySet();
+        for (String key : keyset) {
+            client.property(key, properties.get(key));
+        }
+        return client;
+    }
+    
     public static Client create(boolean isDevelopmentMode, Map<String, Object> properties) {
         Client client;
         ClientBuilder builder = ClientBuilder.newBuilder();

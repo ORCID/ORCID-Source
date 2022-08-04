@@ -19,8 +19,8 @@ public class OrgDataClient {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDataClient.class);        
     
-    @Resource
-    private JerseyClientHelper jerseyClientHelper;
+    @Resource(name = "jerseyClientHelperForOrgLoaders")
+    private JerseyClientHelper jerseyClientHelperForOrgLoaders;
     
     /**
      * Attempts to return the entity specified by the Class parameter
@@ -31,7 +31,7 @@ public class OrgDataClient {
      * @return - entity of specified type, retrieved from the specified URL
      */
     public <T> T get(String url, String userAgent, Class<T> type) {
-        JerseyClientResponse<T, String> response = jerseyClientHelper.executeGetRequest(url, null, null, false, Map.of(), Map.of("User-Agent", userAgent), type, String.class);
+        JerseyClientResponse<T, String> response = jerseyClientHelperForOrgLoaders.executeGetRequest(url, null, null, false, Map.of(), Map.of("User-Agent", userAgent), type, String.class);
         int status = response.getStatus();
         if (status != 200) {
             LOGGER.warn("Unable to fetch file {}: {}", new Object[] { url, status });
@@ -47,7 +47,7 @@ public class OrgDataClient {
      * @return boolean indicator of success
      */
     public boolean downloadFile(String url, String userAgent, String localFilePath) {
-        JerseyClientResponse<InputStream, String> response = jerseyClientHelper.executeGetRequest(url, null, null, false, Map.of(), Map.of("User-Agent", userAgent), InputStream.class, String.class);
+        JerseyClientResponse<InputStream, String> response = jerseyClientHelperForOrgLoaders.executeGetRequest(url, null, null, false, Map.of(), Map.of("User-Agent", userAgent), InputStream.class, String.class);
         int status = response.getStatus();
         if (status != 200) {
             LOGGER.warn("Unable to fetch file {}: {}", new Object[] { url, status });

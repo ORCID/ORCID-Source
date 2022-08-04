@@ -2,6 +2,7 @@ package org.orcid.utils.jersey;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,6 +30,13 @@ public class JerseyClientHelper implements DisposableBean {
         this(false);
     }
 
+    public JerseyClientHelper(List<Class<?>> bodyReaders) {
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        Map<String, Object> jerseyProperties = new HashMap<String, Object>();
+        jerseyProperties.put("com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER", connectionManager);
+        jerseyClient = OrcidJerseyClientHandler.create(bodyReaders, jerseyProperties);
+    }
+    
     public JerseyClientHelper(Boolean isInDevelopmentMode) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         Map<String, Object> jerseyProperties = new HashMap<String, Object>();
@@ -97,7 +105,7 @@ public class JerseyClientHelper implements DisposableBean {
 
         Builder builder;
 
-        if (mediaType != null) {
+        if (mediaType == null) {
             builder = webTarget.request();
         } else {
             builder = webTarget.request(mediaType);
@@ -116,6 +124,12 @@ public class JerseyClientHelper implements DisposableBean {
         Response response = builder.get(Response.class);
         JerseyClientResponse<T, E> jcr;
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            // Terrible hack! https://zenodo.org/api/files/25d4f93f-6854-4dd4-9954-173197e7fad7/v1.0-2022-03-17-ror-data.json.zip comes with a duplicated 
+            // Content-Type header which is breaking the jersey
+            String contentType = response.getHeaderString("Content-Type");
+            if(contentType.equals("application/octet-stream,application/octet-stream")) {
+                response.getHeaders().putSingle("Content-Type", "application/octet-stream");
+            }            
             jcr = new JerseyClientResponse(response.getStatus(), response.readEntity(responseType), null);
         } else {
             // Try to obtain the error object if available
