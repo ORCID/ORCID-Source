@@ -84,7 +84,7 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
                 throw new RuntimeException(e);
             }
 
-            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, null, String.class, String.class);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, String.class, String.class);
             int status = response.getStatus();
             if (status != 200) {
                 LOG.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getError(), message });

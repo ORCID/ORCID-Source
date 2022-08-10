@@ -68,7 +68,7 @@ public class SlackManagerImpl implements SlackManager {
     }
     
     private void send(String bodyJson) {
-        JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, null, bodyJson, null, String.class, String.class);
+        JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, null, bodyJson, String.class, String.class);
         int status = response.getStatus();
         if (status != 200) {
             LOGGER.warn("Unable to send message to Slack: \n{}", bodyJson);

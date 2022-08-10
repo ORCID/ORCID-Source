@@ -232,7 +232,7 @@ public class ResendFailedMessages {
                 throw new RuntimeException(e);
             }
 
-            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, null, String.class, String.class);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, String.class, String.class);
             
             int status = response.getStatus();
             if (status != 200) {

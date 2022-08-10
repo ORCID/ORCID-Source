@@ -37,6 +37,17 @@ public class JerseyClientHelper implements DisposableBean {
         jerseyClient = OrcidJerseyClientHandler.create(bodyReaders, jerseyProperties);
     }
     
+    public JerseyClientHelper(SimpleEntry<String, String> auth) {
+        final Client client = ClientBuilder.newClient();
+        
+        if (auth != null) {
+            HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(auth.getKey(), auth.getValue());
+            client.register(feature);
+        }
+        
+        this.jerseyClient = client;
+    }
+    
     public JerseyClientHelper(Boolean isInDevelopmentMode) {
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         Map<String, Object> jerseyProperties = new HashMap<String, Object>();
@@ -79,10 +90,10 @@ public class JerseyClientHelper implements DisposableBean {
     public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, MediaType mediaType, String accessToken, Class<T> responseType, Class<E> errorResponseType) {
         return executeGetRequest(url, mediaType, accessToken, false, Map.of(), Map.of(), responseType, errorResponseType);
     }
-
-    public <T, E> JerseyClientResponse<T, E> executeGetRequest(String url, MediaType mediaType, String accessToken, Map<String, String> queryParams, Class<T> responseType,
+    
+    public <T, E> JerseyClientResponse<T, E> executeGetRequestWithCustomHeaders(String url, MediaType mediaType, String accessToken, Map<String, String> headers, Class<T> responseType,
             Class<E> errorResponseType) {
-        return executeGetRequest(url, mediaType, accessToken, false, queryParams, Map.of(), responseType, errorResponseType);
+        return executeGetRequest(url, mediaType, accessToken, false, Map.of(), headers, responseType, errorResponseType);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -146,19 +157,12 @@ public class JerseyClientHelper implements DisposableBean {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, MediaType mediaType, Object message, SimpleEntry<String, String> auth, Class<T> responseType,
+    public <T, E> JerseyClientResponse<T, E> executePostRequest(String url, MediaType mediaType, Object message, Class<T> responseType,
             Class<E> errorResponseType) {
-
-        final Client client = ClientBuilder.newClient();
-        
-        if (auth != null) {
-            HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(auth.getKey(), auth.getValue());
-            client.register(feature);
-        }
-        WebTarget webTarget = client.target(url);
+        WebTarget webTarget = jerseyClient.target(url);
         Builder builder;
 
-        if (mediaType != null) {
+        if (mediaType == null) {
             builder = webTarget.request();
         } else {
             builder = webTarget.request(mediaType);

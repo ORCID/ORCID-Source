@@ -101,7 +101,9 @@
     
     <bean id="thirdPartyLinkManager" class="org.orcid.frontend.web.util.ThirdPartyLinkManager" />
     
-    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
+    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager">
+		<constructor-arg value="${com.mailgun.apiKey:XXXX}"/>
+    </bean>
     
     <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />
 

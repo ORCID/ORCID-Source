@@ -279,7 +279,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
-        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();        
+        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();       
         
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];                        

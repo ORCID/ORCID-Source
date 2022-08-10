@@ -51,7 +51,9 @@
 	
 	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
 
-	<bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
+	<bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager">
+		<constructor-arg value="${com.mailgun.apiKey:XXXX}"/>
+	</bean>
 	
 	<bean id="emailMessageSender" class="org.orcid.scheduler.email.cli.manager.EmailMessageSenderImpl" />
 	

@@ -1,6 +1,7 @@
 package org.orcid.listener.orcid;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +51,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
                 public RecordContainer load(BaseMessage message){
                     RecordContainer container = new RecordContainer();
                     String url = baseUri + message.getOrcid() + "/record";
-                    JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, Record.class, OrcidError.class);
+                    JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Record.class, OrcidError.class);
                     if (response.getStatus() != 200) {
                         container.status = response.getStatus();
                         container.error = response.getError();
@@ -96,7 +97,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     @Override
     public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
         String url = baseUri + message.getOrcid() + "/activities";
-        JerseyClientResponse<ActivitiesSummary, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, ActivitiesSummary.class, OrcidError.class);
+        JerseyClientResponse<ActivitiesSummary, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), ActivitiesSummary.class, OrcidError.class);
         
         if (response.getStatus() != 200) {
             OrcidError orcidError = null;
@@ -122,7 +123,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     public Affiliation fetchAffiliation(String orcid, Long putCode, AffiliationType type){
         String url = baseUri + orcid + "/" + type.value() + "/" + putCode;
         if(AffiliationType.EDUCATION.equals(type)) {
-            JerseyClientResponse<Education, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, Education.class, OrcidError.class);
+            JerseyClientResponse<Education, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Education.class, OrcidError.class);
             if (response.getStatus() != 200) {
                 switch (response.getStatus()) {
                     default:
@@ -133,7 +134,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
             
             return response.getEntity();   
         } else {
-            JerseyClientResponse<Employment, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, Employment.class, OrcidError.class);
+            JerseyClientResponse<Employment, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Employment.class, OrcidError.class);
             if (response.getStatus() != 200) {
                 switch (response.getStatus()) {
                     default:
@@ -150,7 +151,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     @Override
     public Funding fetchFunding(String orcid, Long putCode){
         String url = baseUri + orcid + "/funding/" + putCode;
-        JerseyClientResponse<Funding, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, Funding.class, OrcidError.class);        
+        JerseyClientResponse<Funding, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Funding.class, OrcidError.class);        
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:
@@ -167,7 +168,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     @Override
     public Work fetchWork(String orcid, Long putCode){
         String url = baseUri + orcid + "/work/" + putCode;
-        JerseyClientResponse<Work, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, Work.class, OrcidError.class);
+        JerseyClientResponse<Work, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Work.class, OrcidError.class);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:
@@ -184,7 +185,7 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     @Override
     public PeerReview fetchPeerReview(String orcid, Long putCode){
         String url = baseUri + orcid + "/peer-review/" + putCode;
-        JerseyClientResponse<PeerReview, OrcidError> response = jerseyClientHelper.executeGetRequest(url, MediaType.APPLICATION_XML_TYPE, accessToken, PeerReview.class, OrcidError.class);
+        JerseyClientResponse<PeerReview, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), PeerReview.class, OrcidError.class);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:

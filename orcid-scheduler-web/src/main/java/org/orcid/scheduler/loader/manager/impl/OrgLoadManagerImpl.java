@@ -80,7 +80,7 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     private OrgLoadSource getNextOrgLoader() {
         List<String> nextImportSourceNames = orgImportLogDao.getImportSourceOrder();
         addOrgLoadSourcesNeverRun(nextImportSourceNames);
-
+        
         for (String name : nextImportSourceNames) {
             Optional<OrgLoadSource> nextOrgLoader = orgLoadSources.stream().filter(l -> name.equals(l.getSourceName()) && l.isEnabled()).findAny();
             if (!nextOrgLoader.isPresent()) {
