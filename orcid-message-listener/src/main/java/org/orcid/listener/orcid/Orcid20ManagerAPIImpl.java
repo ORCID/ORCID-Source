@@ -98,7 +98,6 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
         String url = baseUri + message.getOrcid() + "/activities";
         JerseyClientResponse<ActivitiesSummary, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), ActivitiesSummary.class, OrcidError.class);
-        
         if (response.getStatus() != 200) {
             OrcidError orcidError = null;
             switch (response.getStatus()) {

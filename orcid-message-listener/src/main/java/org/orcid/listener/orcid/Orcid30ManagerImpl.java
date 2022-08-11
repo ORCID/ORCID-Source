@@ -103,7 +103,6 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
         String url = baseUri + message.getOrcid() + "/activities";
         JerseyClientResponse<ActivitiesSummary, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), ActivitiesSummary.class, OrcidError.class);
-        
         if (response.getStatus() != 200) {
             OrcidError orcidError = null;
             switch (response.getStatus()) {
@@ -169,7 +168,6 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     private Activity fetchEntity(String orcid, Long putCode, String endpoint, Class<? extends Activity> c) {
         String url = baseUri + orcid + "/" + endpoint + "/" + putCode;
         JerseyClientResponse<? extends Activity, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), c, OrcidError.class);
-        
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
             default:
