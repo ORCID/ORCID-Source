@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.api.common.exception.OrcidUnauthorizedException;
 import org.orcid.core.manager.read_only.ManagerReadOnlyBase;
 import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.Consortium;

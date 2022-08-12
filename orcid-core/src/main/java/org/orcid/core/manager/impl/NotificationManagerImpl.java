@@ -28,7 +28,6 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
@@ -58,7 +57,6 @@ import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEnt
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -81,8 +79,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
-
-    private TemplateManager templateManager;
 
     private EncryptionManager encryptionManager;
 
@@ -126,11 +122,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private SourceEntityUtils sourceEntityUtils;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
-
-    @Required
-    public void setTemplateManager(TemplateManager templateManager) {
-        this.templateManager = templateManager;
-    }
 
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -469,15 +460,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public void removeNotification(Long notificationId) {
         notificationDao.remove(notificationId);
-    }
-    
-    private String getAssetsUrl() {
-        String baseUrl = orcidUrlManager.getBaseUrl();
-        if(!baseUrl.endsWith("/")) {
-            baseUrl += '/';
-        }
-        
-        return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
-    }
+    }    
 
 }

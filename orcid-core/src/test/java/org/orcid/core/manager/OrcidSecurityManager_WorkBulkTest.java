@@ -8,13 +8,13 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 
 public class OrcidSecurityManager_WorkBulkTest extends OrcidSecurityManagerTestBase {
 
