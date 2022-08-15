@@ -1546,6 +1546,31 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", contributorsRolesAndSequencesConverter);
     }
 
+    @Test
+    public void testCreateWorkFromAPIAndValidateContributorsDefaultValue() {
+        String orcid = "0000-0000-0000-0004";
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+
+        Work work = workManager.createWork(orcid, getWork(null), true);
+
+        ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
+        Mockito.verify(mockDao).persist(workEntityCaptor.capture());
+
+        WorkEntity workEntity = workEntityCaptor.getValue();
+
+        assertEquals(workEntity.getContributorsJson(), "{\"contributor\":[]}");
+        assertEquals(workEntity.getTopContributorsJson(), "{\"contributor\":[]}");
+
+        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+    }
+
     private WorkEntity getUserPreferredWork() {
         WorkEntity userPreferred = new WorkEntity();
         userPreferred.setId(4l);

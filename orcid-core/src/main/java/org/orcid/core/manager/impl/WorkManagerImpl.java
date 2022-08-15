@@ -442,7 +442,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverterV2.convertTo(topContributors, null));
             }
         } else {
-            workEntity.setTopContributorsJson(null);
+            workEntity.setContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("{\"contributor\":[]}");
         }
     }
 }
