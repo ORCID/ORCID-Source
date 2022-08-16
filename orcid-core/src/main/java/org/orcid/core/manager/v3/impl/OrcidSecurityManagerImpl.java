@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.api.common.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -22,6 +21,7 @@ import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;

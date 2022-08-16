@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
-import org.orcid.api.common.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;

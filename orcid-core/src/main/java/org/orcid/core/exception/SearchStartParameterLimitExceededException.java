@@ -1,19 +1,17 @@
-package org.orcid.api.common.exception;
+package org.orcid.core.exception;
 
-import javax.ws.rs.core.Response;
-
-import org.orcid.core.exception.OrcidApiException;
+import javax.servlet.http.HttpServletResponse;
 
 public class SearchStartParameterLimitExceededException extends OrcidApiException {
 
     private static final long serialVersionUID = 7814378059339926519L;
     
     public SearchStartParameterLimitExceededException(String message) {
-        super(message, Response.Status.BAD_REQUEST);
+        super(message, HttpServletResponse.SC_BAD_REQUEST);
     }
 
     public SearchStartParameterLimitExceededException(String message, Throwable t) {
-        super(message, Response.Status.BAD_REQUEST, t);
+        super(message, HttpServletResponse.SC_BAD_REQUEST, t);
     }
     
 }

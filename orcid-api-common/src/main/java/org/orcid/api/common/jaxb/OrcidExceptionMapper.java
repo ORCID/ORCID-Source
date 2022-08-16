@@ -15,7 +15,6 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
@@ -25,6 +24,7 @@ import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidApiException;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;

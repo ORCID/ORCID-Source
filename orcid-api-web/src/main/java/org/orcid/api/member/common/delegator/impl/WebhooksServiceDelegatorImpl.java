@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.orcid.api.common.exception.OrcidBadRequestException;
-import org.orcid.api.common.exception.OrcidForbiddenException;
 import org.orcid.api.member.common.delegator.WebhooksServiceDelegator;
+import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidWebhookNotFoundException;
 import org.orcid.core.locale.LocaleManager;

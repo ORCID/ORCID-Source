@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.api.common.exception.OrcidUnauthorizedException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManagerImpl;
 import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SourceManager;

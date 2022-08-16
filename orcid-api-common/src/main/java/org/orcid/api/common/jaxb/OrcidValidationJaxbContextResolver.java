@@ -29,10 +29,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.log4j.Logger;
-import org.orcid.api.common.exception.OrcidBadRequestException;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.common.adapters.IllegalEnumValueException;
 import org.orcid.jaxb.model.message.ErrorDesc;
