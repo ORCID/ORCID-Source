@@ -156,10 +156,11 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
     }
     
-    public boolean isOpenIdWithTokenResponseType(String scope, String responseTypes) {
+    public boolean isOpenIdWithTokenResponseType(String scopes, String responseTypes) {
         // if we have an id_token response_type but no token scope, add it in.
         // this is because spring can't cope without the 'token' response type.
-        boolean isOpenId = ScopePathType.OPENID.value().equals(scope);
+        List<String> scopesList = Arrays.stream(scopes.split("\\s+")).map(String::trim).collect(Collectors.toList());
+        boolean isOpenId = scopesList.contains(ScopePathType.OPENID.value());
         if (isOpenId && responseTypes != null) {
             List<String> responseTypeList = Arrays.stream(responseTypes.split("\\s+")).collect(Collectors.toList());
             if (responseTypeList != null
