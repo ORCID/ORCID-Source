@@ -79,7 +79,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.email.MailGunManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,9 +100,6 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Mock
     private NotificationDao mockNotificationDao;
-
-    @Mock
-    private MailGunManager mockMailGunManager;
 
     @Mock
     private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
@@ -143,9 +139,6 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Resource
     private NotificationDao notificationDao;
-
-    @Resource
-    private MailGunManager mailGunManager;
 
     @Resource
     private ClientDetailsDao clientDetailsDao;
@@ -194,7 +187,6 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", mockNotificationAdapter);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "mailGunManager", mockMailGunManager);
         when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);
 
         Map<String, String> map = new HashMap<>();
@@ -203,8 +195,6 @@ public class NotificationManagerTest extends DBUnitTest {
         map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
         map.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
         when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        
-        Mockito.when(mockMailGunManager.sendEmail(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
     }
 
     @After
@@ -330,7 +320,6 @@ public class NotificationManagerTest extends DBUnitTest {
         notificationManagerImpl.setNotificationDao(mockNotificationDao);
         notificationManagerImpl.sendAcknowledgeMessage(orcid, clientId);
         verify(mockNotificationDao, times(1)).persist(Matchers.any(NotificationEntity.class));
-        verify(mockMailGunManager, never()).sendEmail(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
 
         // Rollback mocked
         notificationManagerImpl.setNotificationDao(notificationDao);        
