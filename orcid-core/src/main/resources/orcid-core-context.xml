@@ -67,8 +67,7 @@
 			<ref bean="openIDConnectTokenEnhancer" />
 		</list>
 		</property>
-	</bean>
-	
+	</bean>	
 	
 	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
 	

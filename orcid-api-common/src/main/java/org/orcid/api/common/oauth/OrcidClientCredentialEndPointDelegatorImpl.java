@@ -1,4 +1,4 @@
-package org.orcid.core.oauth.impl;
+package org.orcid.api.common.oauth;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +18,6 @@ import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
-import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
@@ -272,8 +271,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
-        }
-        
+        }        
         
         return Response.ok((DefaultOAuth2AccessToken)accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
     }

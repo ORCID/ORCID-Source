@@ -1,4 +1,4 @@
-package org.orcid.core.oauth;
+package org.orcid.api.common.oauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -45,7 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath:orcid-persistence-context.xml"})
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml", "classpath:orcid-persistence-context.xml"})
 public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";

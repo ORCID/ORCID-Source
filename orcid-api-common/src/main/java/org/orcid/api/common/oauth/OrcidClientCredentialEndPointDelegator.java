@@ -1,4 +1,4 @@
-package org.orcid.core.oauth;
+package org.orcid.api.common.oauth;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;

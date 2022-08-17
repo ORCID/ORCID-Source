@@ -8,10 +8,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
