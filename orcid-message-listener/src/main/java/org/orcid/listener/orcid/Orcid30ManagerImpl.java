@@ -60,7 +60,9 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
                     RecordContainer container = new RecordContainer();
                     WebResource webResource = jerseyClient.resource(baseUri).path(message.getOrcid() + "/record");
                     webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-                    Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+                    Builder builder = webResource.accept(MediaType.APPLICATION_XML)
+                            .header("Authorization", "Bearer " + accessToken)
+                            .header("User-Agent","orcid/message-listener");
                     ClientResponse response = builder.get(ClientResponse.class);
                     if (response.getStatus() != 200) {
                         container.status = response.getStatus();
@@ -107,7 +109,9 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     public ActivitiesSummary fetchPublicActivitiesSummary(BaseMessage message) throws LockedRecordException, DeprecatedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri).path(message.getOrcid() + "/activities");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML)
+                .header("Authorization", "Bearer " + accessToken)
+                .header("User-Agent","orcid/message-listener");
         ClientResponse response = builder.get(ClientResponse.class);
         if (response.getStatus() != 200) {
             OrcidError orcidError = null;
@@ -174,7 +178,9 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     private Activity fetchEntity(String orcid, Long putCode, String endpoint, Class<? extends Activity> c) {
         WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/" + endpoint + "/" + putCode);
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML)
+                .header("Authorization", "Bearer " + accessToken)
+                .header("User-Agent","orcid/message-listener");
         ClientResponse response = builder.get(ClientResponse.class);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
@@ -197,7 +203,9 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     public ResearchResources fetchResearchResources(String orcid) {
         WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/research-resources");
         webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
+        Builder builder = webResource.accept(MediaType.APPLICATION_XML)
+                .header("Authorization", "Bearer " + accessToken)
+                .header("User-Agent","orcid/message-listener");
         ClientResponse response = builder.get(ClientResponse.class);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {

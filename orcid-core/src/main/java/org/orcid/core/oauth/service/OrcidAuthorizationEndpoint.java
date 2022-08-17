@@ -3,13 +3,15 @@ package org.orcid.core.oauth.service;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator.OpenIDConnectScopesToIgnore;
-import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.security.oauth2.common.exceptions.ClientAuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -85,8 +87,7 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
         }
         // if we have an id_token response_type but no token scope, add it in.
         // this is because spring can't cope without the 'token' response type.
-        if (OrcidOauth2Constants.ID_TOKEN.equals(requestParameters.get(OAuth2Utils.RESPONSE_TYPE))
-                && requestParameters.get(OAuth2Utils.SCOPE).contains(ScopeConstants.OPENID)) {
+        if(isOpenIdWithTokenResponseType(requestParameters.get(OAuth2Utils.SCOPE), requestParameters.get(OAuth2Utils.RESPONSE_TYPE))) {
             requestParameters.put(OAuth2Utils.RESPONSE_TYPE, "id_token token");
         }
     }
@@ -153,5 +154,20 @@ public class OrcidAuthorizationEndpoint extends AuthorizationEndpoint {
 
     public void setOrcidOAuth2RequestValidator(OrcidOAuth2RequestValidator orcidOAuth2RequestValidator) {
         this.orcidOAuth2RequestValidator = orcidOAuth2RequestValidator;
-    }            
+    }
+    
+    public boolean isOpenIdWithTokenResponseType(String scopes, String responseTypes) {
+        // if we have an id_token response_type but no token scope, add it in.
+        // this is because spring can't cope without the 'token' response type.
+        List<String> scopesList = Arrays.stream(scopes.split("\\s+")).map(String::trim).collect(Collectors.toList());
+        boolean isOpenId = scopesList.contains(ScopePathType.OPENID.value());
+        if (isOpenId && responseTypes != null) {
+            List<String> responseTypeList = Arrays.stream(responseTypes.split("\\s+")).collect(Collectors.toList());
+            if (responseTypeList != null
+                    && (responseTypeList.contains(OrcidOauth2Constants.ID_TOKEN) || responseTypeList.contains(OrcidOauth2Constants.IMPLICIT_TOKEN_RESPONSE_TYPE))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
