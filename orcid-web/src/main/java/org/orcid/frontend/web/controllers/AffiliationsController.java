@@ -301,12 +301,6 @@ public class AffiliationsController extends BaseWorkspaceController {
         String orcid = getCurrentUserOrcid();
         List<EmploymentSummary> employmentsList = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
 
-        List<EmploymentSummary> filteredList = null;
-        if (employmentsList != null) {
-            filteredList = new ArrayList<>(employmentsList);
-        }
-        employmentsList = filteredList;
-
         Employments employments = new Employments(affiliationsManagerReadOnly.groupAffiliations(employmentsList, false));
         ActivityUtils.setPathToAffiliations(employments, orcid);
         return employments;
