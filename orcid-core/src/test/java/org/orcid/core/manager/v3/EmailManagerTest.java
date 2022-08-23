@@ -367,11 +367,12 @@ public class EmailManagerTest extends BaseTest {
             emailManager.addEmail(new MockHttpServletRequest(), ORCID, email);
             
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-            Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(OrcidStringUtils.filterEmailAddress(emailAddress)), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
+            Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(filteredEmailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
             String hashValue = captor.getValue();
             
             assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
-            assertEquals(hashValue, encryptionManager.getEmailHash(filteredEmailAddress));           
+            assertEquals(hashValue, encryptionManager.getEmailHash(filteredEmailAddress));
+            Mockito.reset(mockEmailDao);
         }
     }
     
