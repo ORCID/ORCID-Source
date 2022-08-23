@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,11 +49,15 @@ import org.orcid.scheduler.loader.io.FileRotator;
 import org.orcid.scheduler.loader.io.FtpsFileDownloader;
 import org.orcid.scheduler.loader.source.LoadSourceDisabledException;
 import org.orcid.scheduler.loader.source.ringgold.RinggoldOrgLoadSource;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
 public class RinggoldOrgLoadSourceTest {
 
     @Mock
@@ -111,7 +116,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testDownloadOrgData() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_add_disambiguated_org.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_add_disambiguated_org.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -126,7 +131,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsAddDisambiguatedOrg() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_add_disambiguated_org.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_add_disambiguated_org.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -163,7 +168,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsAddExternalIdentifier() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_add_external_identifier.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_add_external_identifier.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -193,7 +198,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsAddOrg() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_add_org.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_add_org.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -224,7 +229,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsDoNothing() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_do_nothing.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_do_nothing.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -244,7 +249,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsDeprecatedDisamgiguatedOrg() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_deprecated_disambiguated_org.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_deprecated_disambiguated_org.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -283,7 +288,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsLinkOrgs() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_link_orgs.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_link_orgs.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -315,7 +320,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsRemoveExternalIdentifier() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_remove_external_identifier.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_remove_external_identifier.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         
@@ -351,7 +356,7 @@ public class RinggoldOrgLoadSourceTest {
     
     @Test
     public void testLoadLatestOrgsUpdateDisambiguatedOrgs() throws URISyntaxException {
-        Path path = Paths.get(getClass().getResource("/ringgold/zip/Ringgold_Identify_json_update_disambiguated_orgs.zip").toURI());
+        Path path = Paths.get(RinggoldOrgLoadSourceTest.class.getClassLoader().getResource("ringgold/zip/Ringgold_Identify_json_update_disambiguated_orgs.zip").toURI());
         File zip = path.toFile();
         assertTrue(zip.exists());
         

@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -47,8 +48,10 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
+import org.springframework.test.context.ContextConfiguration;
 import org.togglz.junit.TogglzRule;
 
 /**
@@ -56,6 +59,8 @@ import org.togglz.junit.TogglzRule;
  * @author Will Simpson
  *
  */
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
 public class EmailMessageSenderTest {
 
     @Resource
@@ -124,8 +129,8 @@ public class EmailMessageSenderTest {
         assertNotNull(emailMessage);
         String html = emailMessage.getBodyHtml();
         String text = emailMessage.getBodyText();
-        String expectedBodyText = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.txt"));
-        String expectedBodyHtml = IOUtils.toString(getClass().getResourceAsStream("example_digest_email_body.html"));
+        String expectedBodyText = IOUtils.toString(EmailMessageSenderTest.class.getClassLoader().getResourceAsStream("email/example_digest_email_body.txt"));
+        String expectedBodyHtml = IOUtils.toString(EmailMessageSenderTest.class.getClassLoader().getResourceAsStream("email/example_digest_email_body.html"));
         assertEquals("[ORCID] John Watson you have new notifications", emailMessage.getSubject());
         assertEquals(expectedBodyHtml, html);
         assertEquals(expectedBodyText, text);
