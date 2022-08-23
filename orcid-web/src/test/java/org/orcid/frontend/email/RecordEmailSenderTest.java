@@ -2,6 +2,7 @@ package org.orcid.frontend.email;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,15 +15,18 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.LocaleUtils;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
@@ -32,13 +36,19 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.test.TargetProxyHelper;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.email.MailGunManager;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml", "classpath:statistics-core-context.xml" })
 public class RecordEmailSenderTest {
 
     @Mock
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private GenericDao<ProfileEventEntity, Long> mockProfileEventDao;
 
     @Mock
     private SourceManager sourceManager;
@@ -73,15 +83,34 @@ public class RecordEmailSenderTest {
     @Mock
     public EmailFrequencyManager mockEmailFrequencyManager;
     
+    @Mock
+    public RecordNameManager mockRecordNameManager;
+    
     @Resource
     RecordEmailSender recordEmailSender;
     
-    @Test
-    public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
         ProfileEntity p = new ProfileEntity();
         p.setLocale("EN");
         when(mockProfileEntityCacheManager.retrieve(anyString())).thenReturn(p);
-
+        
+        Email e = new Email();
+        e.setEmail("public_0000-0000-0000-0003@test.orcid.org");
+        when(mockEmailManager.findPrimaryEmail(eq("0000-0000-0000-0003"))).thenReturn(e);
+        
+        when(mockRecordNameManager.deriveEmailFriendlyName(anyString())).thenReturn("User name");
+        
+        ReflectionTestUtils.setField(recordEmailSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
+        ReflectionTestUtils.setField(recordEmailSender, "emailManager", mockEmailManager);
+        ReflectionTestUtils.setField(recordEmailSender, "recordNameManager", mockRecordNameManager);
+        ReflectionTestUtils.setField(recordEmailSender, "profileEventDao", mockProfileEventDao);
+        
+    }
+    
+    @Test
+    public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {        
         Email email = new Email();
         email.setEmail("josiah_carberry@brown.edu");
         when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
@@ -145,9 +174,13 @@ public class RecordEmailSenderTest {
         String userOrcid = "0000-0000-0000-0003";
         ProfileEntity profile = new ProfileEntity(userOrcid);
         for (AvailableLocales locale : AvailableLocales.values()) {
-            profile.setLocale(locale.name());
-            when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-            recordEmailSender.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
+            // Ignore CS and DE locale as there is no available locale for it on
+            // common_v2.Locale
+            if (!locale.equals(AvailableLocales.CS) && !locale.equals(AvailableLocales.DE)) {
+                profile.setLocale(locale.name());
+                when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+                recordEmailSender.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
+            }
         }
     }
 
@@ -203,9 +236,13 @@ public class RecordEmailSenderTest {
         String userOrcid = "0000-0000-0000-0003";
         ProfileEntity profile = new ProfileEntity(userOrcid);
         for (AvailableLocales locale : AvailableLocales.values()) {
-            profile.setLocale(locale.name());
-            when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
-            recordEmailSender.sendForgottenIdEmail("test@test.com", userOrcid);
+            // Ignore CS and DE locale as there is no available locale for it on
+            // common_v2.Locale
+            if (!locale.equals(AvailableLocales.CS) && !locale.equals(AvailableLocales.DE)) {
+                profile.setLocale(locale.name());
+                when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
+                recordEmailSender.sendForgottenIdEmail("test@test.com", userOrcid);
+            }
         }
     }
     
