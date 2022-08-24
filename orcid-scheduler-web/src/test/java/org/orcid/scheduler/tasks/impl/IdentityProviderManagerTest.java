@@ -15,8 +15,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -26,6 +29,8 @@ import org.xml.sax.SAXException;
  * @author Will Simpson
  *
  */
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
 public class IdentityProviderManagerTest {
 
     private IdentityProviderLoaderImpl identityProviderLoaderImpl = new IdentityProviderLoaderImpl();
@@ -35,7 +40,7 @@ public class IdentityProviderManagerTest {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(getClass().getResourceAsStream("example_idp.xml"));
+        Document doc = dBuilder.parse(IdentityProviderManagerTest.class.getClassLoader().getResourceAsStream("org/orcid/core/manager/example_idp.xml"));
         Element idpElement = doc.getDocumentElement();
         IdentityProviderEntity result = identityProviderLoaderImpl.createEntityFromXml(idpElement);
         assertNotNull(result);
@@ -59,7 +64,7 @@ public class IdentityProviderManagerTest {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(getClass().getResourceAsStream("example_idp_legacy.xml"));
+        Document doc = dBuilder.parse(IdentityProviderManagerTest.class.getClassLoader().getResourceAsStream("org/orcid/core/manager/example_idp_legacy.xml"));
         Element idpElement = doc.getDocumentElement();
         IdentityProviderEntity result = identityProviderLoaderImpl.createEntityFromXml(idpElement);
         assertNotNull(result);

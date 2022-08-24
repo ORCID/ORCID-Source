@@ -10,8 +10,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,13 +17,18 @@ import java.io.InputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
 public class OrgDataClientTest {
     
     @InjectMocks
@@ -39,8 +42,8 @@ public class OrgDataClientTest {
     @Before
     public void setUp() throws IOException {
         MockitoAnnotations.initMocks(this);
-        tempFile = File.createTempFile("fundref-test-", ".rdf");
-        ReflectionTestUtils.setField(orgDataClient, "jerseyClientHelper", jerseyClientHelper);
+        tempFile = File.createTempFile("fundref-test-", ".rdf");        
+        ReflectionTestUtils.setField(orgDataClient, "jerseyClientHelperForOrgLoaders", jerseyClientHelper);
     }
     
     @After
@@ -58,7 +61,8 @@ public class OrgDataClientTest {
     
     @Test
     public void testDownloadFileFailure() throws IOException {
-        setMockedClientWithFailureResponse();
+        JerseyClientResponse<InputStream, String> response = new JerseyClientResponse<InputStream, String>(403, null, null);
+        when(jerseyClientHelper.executeGetRequest(anyString(), isNull(), isNull(), eq(false), anyMap(), anyMap(), eq(InputStream.class), eq(String.class))).thenReturn(response);
         assertFalse(orgDataClient.downloadFile("url", "userAgent", tempFile.getAbsolutePath()));
     }
     
@@ -80,15 +84,13 @@ public class OrgDataClientTest {
     }
     
     private void setMockedClientWithFailureResponse() throws IOException {
-        JerseyClientResponse<InputStream, String> response = new JerseyClientResponse<InputStream, String>(403, null, null);
-        when(jerseyClientHelper.executeGetRequest(anyString(), isNull(), isNull(), eq(false), anyMap(), anyMap(), eq(InputStream.class), eq(String.class))).thenReturn(response);
+        JerseyClientResponse<String, String> response = new JerseyClientResponse<String, String>(403, null, null);
+        when(jerseyClientHelper.executeGetRequest(anyString(), isNull(), isNull(), eq(false), anyMap(), anyMap(), eq(String.class), eq(String.class))).thenReturn(response);
     }
-    
-    @SuppressWarnings("unchecked")
+        
     private void setMockedClientWithSuccessfulEntityResponse() throws IOException {
-        InputStream targetStream = new ByteArrayInputStream("success".getBytes());
-        JerseyClientResponse<InputStream, String> response = new JerseyClientResponse<InputStream, String>(200, new DataInputStream(targetStream), null);
-        when(jerseyClientHelper.executeGetRequest(anyString(), isNull(), isNull(), eq(false), anyMap(), anyMap(), eq(InputStream.class), eq(String.class))).thenReturn(response);
+        JerseyClientResponse<String, String> response = new JerseyClientResponse<String, String>(200, "success", null);
+        when(jerseyClientHelper.executeGetRequest(anyString(), isNull(), isNull(), eq(false), anyMap(), anyMap(), eq(String.class), eq(String.class))).thenReturn(response);
     }
     
 }
