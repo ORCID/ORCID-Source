@@ -2,6 +2,8 @@ package org.orcid.listener.orcid;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,7 +71,8 @@ public class v2ClientPerMessageCacheTest {
         JerseyClientResponse<Record, OrcidError> responseMock = new JerseyClientResponse<Record, OrcidError>(200, record, null);
         
         //mock methods
-        when(jerseyClientHelperMock.executeGetRequest(any(), any(), any(), eq(Record.class), eq(OrcidError.class))).thenReturn(responseMock);                        
+        //url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Record.class, OrcidError.class
+        when(jerseyClientHelperMock.executeGetRequestWithCustomHeaders(anyString(), any(), anyString(), anyMap(), eq(Record.class), eq(OrcidError.class))).thenReturn(responseMock);                        
     }
     
     @Test
@@ -80,17 +83,17 @@ public class v2ClientPerMessageCacheTest {
 
         Record r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
-        verify(jerseyClientHelperMock, times(1)).executeGetRequest(any(), any(), any(), eq(Record.class), eq(OrcidError.class));
+        verify(jerseyClientHelperMock, times(1)).executeGetRequestWithCustomHeaders(anyString(), any(), anyString(), anyMap(), eq(Record.class), eq(OrcidError.class));
         
         r = orcid20ApiClient.fetchPublicRecord(message1);
         assertEquals("http://orcid.org/0000-0000-0000-0000",r.getOrcidIdentifier().getPath());
         // Verify the mock was called only once
-        verify(jerseyClientHelperMock, times(1)).executeGetRequest(any(), any(), any(), eq(Record.class), eq(OrcidError.class));
+        verify(jerseyClientHelperMock, times(1)).executeGetRequestWithCustomHeaders(anyString(), any(), anyString(), anyMap(), eq(Record.class), eq(OrcidError.class));
         
         //get it with a different message, should return fresh
         BaseMessage message2 = new LastModifiedMessage("0000-0000-0000-0000",new Date());
         
         r = orcid20ApiClient.fetchPublicRecord(message2);
-        verify(jerseyClientHelperMock, times(2)).executeGetRequest(any(), any(), any(), eq(Record.class), eq(OrcidError.class));        
+        verify(jerseyClientHelperMock, times(2)).executeGetRequestWithCustomHeaders(anyString(), any(), anyString(), anyMap(), eq(Record.class), eq(OrcidError.class));        
     }           
 }
