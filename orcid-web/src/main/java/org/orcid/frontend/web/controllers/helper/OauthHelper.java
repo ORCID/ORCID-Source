@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers.helper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,10 +136,11 @@ public class OauthHelper {
             Matcher emailMatcher = RegistrationController.emailPattern.matcher(requestUrl);
             if (emailMatcher.find()) {
                 String email = emailMatcher.group(1);
-                try {
-                    email = OrcidStringUtils.stripHtml(URLDecoder.decode(email, "UTF-8").trim());
-                } catch (UnsupportedEncodingException e) {
+                if (email != null && email.contains("%20")) {
+                    email = email.replace("%20", "%2B");
                 }
+
+                email = OrcidStringUtils.stripHtml(URLDecoder.decode(email, StandardCharsets.UTF_8).trim());
 
                 if (!userIdSet && !PojoUtil.isEmpty(email)) {
                     email = OrcidStringUtils.filterEmailAddress(email);
