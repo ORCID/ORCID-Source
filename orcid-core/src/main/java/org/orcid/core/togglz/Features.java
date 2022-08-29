@@ -6,9 +6,6 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
-    @Label("Display only current employment affiliation in work contributors form")
-    ORCID_ANGULAR_CURRENT_EMPLOYMENT_AFFILIATIONS_WORK_CONTRIBUTORS,
-
     @Label("Store and read top_contributors_json")
     STORE_TOP_CONTRIBUTORS,
 
