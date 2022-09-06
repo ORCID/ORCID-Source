@@ -9,6 +9,6 @@ trello_in_progress_list_id="50a2a79da535468428000175"
 trello_submitted_list="Ready on this sprint"
 trello_submitted_list_id="50d22ac32c146a385f0010fa"
 
-github_poke_slack_channel=tech-team
+github_poke_slack_channel=team-tech
 
 gitub_pr_default_reviewers=ORCID/orcid-core-ost-open-source-team
