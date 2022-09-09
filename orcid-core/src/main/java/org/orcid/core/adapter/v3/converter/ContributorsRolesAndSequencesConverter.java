@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
@@ -48,6 +49,10 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
                     for (ContributorAttributes crs : contributorsRolesAndSequences.getRolesAndSequences()) {
                         String providedRoleValue = crs.getContributorRole();
                         if (!PojoUtil.isEmpty(providedRoleValue)) {
+                            CreditRole cr = CreditRole.fromUiValue(providedRoleValue);
+                            if (cr != null) {
+                                providedRoleValue = cr.name();
+                            }
                             crs.setContributorRole(contributorUtils.getCreditRole(roleConverter.toRoleValue(providedRoleValue)));
                         }
                     }

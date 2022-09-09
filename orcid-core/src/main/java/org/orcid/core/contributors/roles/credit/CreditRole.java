@@ -42,5 +42,14 @@ public enum CreditRole implements Serializable {
             }
         }
         throw new IllegalArgumentException(v);
-    }        
+    }
+
+    public static CreditRole fromUiValue(String v) {
+        for (CreditRole c : CreditRole.values()) {
+            if (c.uiValue.equalsIgnoreCase(v)) {
+                return c;
+            }
+        }
+        return null;
+    }
 }
