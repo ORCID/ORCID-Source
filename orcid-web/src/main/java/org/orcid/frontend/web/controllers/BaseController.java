@@ -329,12 +329,16 @@ public class BaseController {
 
     private boolean emailMatchesCurrentUser(String email) {
         String effectiveOrcid = getEffectiveUserOrcid();
+        return emailMatchesUser(effectiveOrcid, email);
+    }
+
+    boolean emailMatchesUser(String orcid, String email) {
         OrcidProfileUserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
             return false;
         }
         boolean match = false;
-        Emails emails = emailManagerReadOnly.getEmails(effectiveOrcid);
+        Emails emails = emailManagerReadOnly.getEmails(orcid);
         for (Email cuEmail : emails.getEmails()) {
             if (cuEmail.getEmail() != null && cuEmail.getEmail().equalsIgnoreCase(email))
                 match = true;
