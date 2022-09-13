@@ -286,6 +286,13 @@ public class ActivityUtils {
                     if (c.getCreditName() != null && PojoUtil.isEmpty(c.getCreditName().getContent())) {
                         c.setCreditName(null);
                     }
+                    
+                    if(c.getContributorAttributes() != null) {
+                        if(c.getContributorAttributes().getContributorRole() == null && c.getContributorAttributes().getContributorSequence() == null) {
+                            //If the contributor attributes are empty, remove them from the object
+                            c.setContributorAttributes(null);
+                        }
+                    }
                 }
             }
         }

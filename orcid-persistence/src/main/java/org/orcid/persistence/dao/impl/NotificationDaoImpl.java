@@ -382,14 +382,12 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
-    @UpdateProfileLastModified
     @Transactional
     public void persist(NotificationEntity entity) {
         super.persist(entity);
     }
     
     @Override
-    @UpdateProfileLastModified
     @Transactional
     public NotificationEntity merge(NotificationEntity entity) {
         return super.merge(entity);

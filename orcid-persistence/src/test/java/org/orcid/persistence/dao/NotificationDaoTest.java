@@ -573,7 +573,7 @@ public class NotificationDaoTest extends DBUnitTest {
 
         NotificationEntity updated = notificationDao.find(14L);
         assertEquals(dateCreated, updated.getDateCreated());
-        assertTrue(updated.getLastModified().after(lastModified));
+        assertTrue(updated.getLastModified().equals(lastModified));
     }
     
     @Test

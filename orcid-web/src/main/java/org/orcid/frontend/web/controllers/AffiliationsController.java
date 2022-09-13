@@ -9,9 +9,11 @@ import java.util.stream.IntStream;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
@@ -24,6 +26,8 @@ import org.orcid.jaxb.model.v3.release.record.Qualification;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Employments;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -60,6 +64,9 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource(name = "affiliationsManagerReadOnlyV3")
+    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
 
     /**
      * Removes a affiliation from a profile
@@ -287,6 +294,16 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody List<String> getAffiliationsJson(HttpServletRequest request) {
         // Get cached profile
         return createAffiliationsIdList(request);
+    }
+
+    @RequestMapping(value = "/employments.json", method = RequestMethod.GET)
+    public @ResponseBody Employments getEmploymentSummaryList() {
+        String orcid = getCurrentUserOrcid();
+        List<EmploymentSummary> employmentsList = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
+
+        Employments employments = new Employments(affiliationsManagerReadOnly.groupAffiliations(employmentsList, false));
+        ActivityUtils.setPathToAffiliations(employments, orcid);
+        return employments;
     }
 
     /**

@@ -190,7 +190,13 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         }
 
         if (work instanceof WorkExtended) {
+            List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = ((WorkExtended) work).getContributorsGroupedByOrcid();
             w.setContributorsGroupedByOrcid(((WorkExtended) work).getContributorsGroupedByOrcid());
+            if (contributorsGroupedByOrcid != null) {
+                w.setNumberOfContributors(contributorsGroupedByOrcid.size());
+            } else {
+                w.setNumberOfContributors(0);
+            }
         } else {
             // Set contributors
             populateContributors(work, w, maxContributorsForUI);
