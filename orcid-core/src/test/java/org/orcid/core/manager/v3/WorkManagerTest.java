@@ -1570,7 +1570,7 @@ public class WorkManagerTest extends BaseTest {
         WorkEntity workEntity = workEntityCaptor.getValue();
 
         assertEquals(workEntity.getContributorsJson(), "{\"contributor\":[]}");
-        assertEquals(workEntity.getTopContributorsJson(), "{\"contributor\":[]}");
+        assertEquals(workEntity.getTopContributorsJson(), "[]");
 
         workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
 

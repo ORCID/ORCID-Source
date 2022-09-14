@@ -522,7 +522,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setTopContributorsJson(topContributorsJSON);
         } else {
             workEntity.setContributorsJson("{\"contributor\":[]}");
-            workEntity.setTopContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("[]");
         }
         workDao.persist(workEntity);
         workDao.flush();
@@ -558,7 +558,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setTopContributorsJson(topContributorsJSON);
         } else {
             workEntity.setContributorsJson("{\"contributor\":[]}");
-            workEntity.setTopContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("[]");
         }
         workDao.merge(workEntity);
         workDao.flush();
@@ -600,7 +600,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
         } else {
             workEntity.setContributorsJson("{\"contributor\":[]}");
-            workEntity.setTopContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("[]");
         }
     }
 
