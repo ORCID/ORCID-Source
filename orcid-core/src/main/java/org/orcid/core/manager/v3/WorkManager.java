@@ -7,6 +7,7 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
 public interface WorkManager extends WorkManagerReadOnly {
     
@@ -94,6 +95,10 @@ public interface WorkManager extends WorkManagerReadOnly {
      * 
      * @param workIds
      */
-    void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException;    
-    
+    void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException;
+
+    Work createWork(String orcid, WorkForm work);
+
+    Work updateWork(String orcid, WorkForm work);
+
 }

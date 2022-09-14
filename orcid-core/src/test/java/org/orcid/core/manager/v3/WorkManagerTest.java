@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
+import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
@@ -50,6 +51,8 @@ import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -74,6 +77,9 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
+import org.orcid.pojo.WorkExtended;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.DateUtils;
@@ -1571,6 +1577,63 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "workDao", workDao);
     }
 
+    @Test
+    public void testCreateWorkFromUIAndValidateTopContributorsInWorkEntity() {
+        String orcid = "0000-0000-0000-0004";
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+
+        Work workResult = workManager.createWork(orcid, getWorkWithContributorsMultipleRoles());
+
+        ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
+        Mockito.verify(mockDao).persist(workEntityCaptor.capture());
+
+        WorkEntity workEntity = workEntityCaptor.getValue();
+
+        assertNotNull(workResult);
+        assertNotNull(workEntity);
+        assertNotNull(workEntity.getTopContributorsJson());
+        assertEquals("[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"},{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"}]}]", workEntity.getTopContributorsJson());
+
+        workManager.removeWorks(orcid, Arrays.asList(workResult.getPutCode()));
+
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+    }
+
+    @Test
+    public void testUpdateWorkFromUIAndRemoveOneCreditRole() {
+        String orcid = "0000-0000-0000-0004";
+
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+
+        WorkForm workForm = getWorkWithContributorsMultipleRoles();
+
+        Work work = workManager.createWork(orcid, workForm);
+
+        workForm.setPutCode(Text.valueOf(work.getPutCode()));
+        workForm.getContributorsGroupedByOrcid().forEach(contributorsRolesAndSequences -> {
+            List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
+            ContributorAttributes ca = new ContributorAttributes();
+            ca.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+            rolesAndSequences.add(ca);
+            contributorsRolesAndSequences.setRolesAndSequences(rolesAndSequences);
+        });
+
+        Work workResult = workManager.updateWork(orcid, workForm);
+
+        WorkExtended workExtended = workManager.getWorkExtended(orcid, workResult.getPutCode());
+
+        assertNotNull(workExtended);
+        assertNotNull(workExtended.getContributorsGroupedByOrcid());
+        assertEquals(workExtended.getContributorsGroupedByOrcid().get(0).getRolesAndSequences().size(), 1);
+        workManager.removeWorks(orcid, Arrays.asList(workResult.getPutCode()));
+    }
+
     private WorkEntity getUserPreferredWork() {
         WorkEntity userPreferred = new WorkEntity();
         userPreferred.setId(4l);
@@ -1715,5 +1778,25 @@ public class WorkManagerTest extends BaseTest {
         }
         work.setWorkContributors(new WorkContributors(contributorList));
         return work;
+    }
+
+    private WorkForm getWorkWithContributorsMultipleRoles() {
+        Work work = getWork(null);
+        WorkForm workForm = WorkForm.valueOf(work, 50);
+        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = new ArrayList<>();
+        ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
+        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
+        crs.setCreditName(new CreditName("Contributor 1"));
+        List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
+        ContributorAttributes ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+        rolesAndSequences.add(ca);
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
+        rolesAndSequences.add(ca);
+        crs.setRolesAndSequences(rolesAndSequences);
+        contributorsGroupedByOrcid.add(crs);
+        workForm.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+        return workForm;
     }
 }

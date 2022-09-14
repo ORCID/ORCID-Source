@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3.impl;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
@@ -40,6 +41,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,6 +107,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+
+    @Resource
+    private WorkContributorRoleConverter workContributorsRoleConverter;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -491,10 +496,79 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workDao.persist(allPreferredMetadata);
         }
     }
-    
+
+    @Override
+    @Transactional
+    public Work createWork(String orcid, WorkForm workForm) {
+        Work work = workForm.toWork();
+        work.setPutCode(null);
+
+        Source activeSource = sourceManager.retrieveActiveSource();
+
+        externalIDValidator.validateWork(work.getExternalIdentifiers(), false);
+
+        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        workEntity.setOrcid(orcid);
+        workEntity.setAddedToProfileDate(new Date());
+
+        //Set the source
+        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
+
+        setIncomingWorkPrivacy(workEntity, profile, false);
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, false);
+        String topContributorsJSON = getTopContributorsJson(workForm);
+        if (topContributorsJSON != null) {
+            workEntity.setTopContributorsJson(topContributorsJSON);
+        } else {
+            workEntity.setContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("{\"contributor\":[]}");
+        }
+        workDao.persist(workEntity);
+        workDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
+        return jpaJaxbWorkAdapter.toWork(workEntity);
+    }
+
+    @Override
+    @Transactional
+    public Work updateWork(String orcid, WorkForm workForm) {
+        Work work = workForm.toWork();
+
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+        Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
+
+        //Save the original source
+        String existingSourceId = workEntity.getSourceId();
+        String existingClientSourceId = workEntity.getClientSourceId();
+
+        externalIDValidator.validateWork(work.getExternalIdentifiers(), false);
+
+        orcidSecurityManager.checkSourceAndThrow(workEntity);
+        jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
+        if (workEntity.getVisibility() == null) {
+            workEntity.setVisibility(originalVisibility.name());
+        }
+
+        //Be sure it doesn't overwrite the source
+        workEntity.setSourceId(existingSourceId);
+        workEntity.setClientSourceId(existingClientSourceId);
+        String topContributorsJSON = getTopContributorsJson(workForm);
+        if (topContributorsJSON != null) {
+            workEntity.setTopContributorsJson(topContributorsJSON);
+        } else {
+            workEntity.setContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("{\"contributor\":[]}");
+        }
+        workDao.merge(workEntity);
+        workDao.flush();
+        notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
+        return jpaJaxbWorkAdapter.toWork(workEntity);
+    }
+
     private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {
         WorkEntity preferredFullData = workDao.find(preferred.getId());
-        
+
         WorkEntity workEntity = new WorkEntity();
         workEntity.setAddedToProfileDate(new Date());
         workEntity.setCitation(preferredFullData.getCitation());
@@ -529,5 +603,20 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setTopContributorsJson("{\"contributor\":[]}");
         }
     }
-    
+
+    private String getTopContributorsJson(WorkForm work) {
+        if (work.getContributorsGroupedByOrcid() != null && !work.getContributorsGroupedByOrcid().isEmpty()) {
+            work.getContributorsGroupedByOrcid().forEach(contributorsRolesAndSequences -> {
+                if (contributorsRolesAndSequences.getRolesAndSequences() != null && contributorsRolesAndSequences.getRolesAndSequences().size() > 0) {
+                    contributorsRolesAndSequences.getRolesAndSequences().forEach(contributorAttributes -> {
+                        if (contributorAttributes.getContributorRole() != null) {
+                            contributorAttributes.setContributorRole(workContributorsRoleConverter.toDBRole(contributorAttributes.getContributorRole()));
+                        }
+                    });
+                }
+            });
+        }
+        return contributorsRolesAndSequencesConverter.convertTo(work.getContributorsGroupedByOrcid(), null);
+    }
+
 }
