@@ -575,11 +575,8 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     private void addWork(WorkForm workForm) {
-        Work newWork = workForm.toWork();
-        newWork.setPutCode(null);
-
         // Create work
-        newWork = workManager.createWork(getEffectiveUserOrcid(), newWork, false);
+        Work newWork = workManager.createWork(getEffectiveUserOrcid(), workForm);
 
         // Set the id in the work to be returned
         Long workId = newWork.getPutCode();
@@ -595,7 +592,7 @@ public class WorksController extends BaseWorkspaceController {
 
         Work updatedWork = workForm.toWork();
         // Edit work
-        workManager.updateWork(userOrcid, updatedWork, false);
+        workManager.updateWork(userOrcid, workForm);
     }
 
     private boolean isRecordHolderNotInContributors(WorkForm work) {
