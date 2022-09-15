@@ -496,6 +496,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/add-email-to-record", method = RequestMethod.POST)
     public @ResponseBody ProfileDetails addEmailToRecord(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ProfileDetails profileDetails)
             throws IllegalAccessException {
+        isAdmin(serverRequest, response);
         profileDetails.setErrors(new ArrayList<String>());
         if (StringUtils.isNotBlank(profileDetails.getEmail())) {
             profileDetails.setEmail(OrcidStringUtils.filterEmailAddress(profileDetails.getEmail()));
