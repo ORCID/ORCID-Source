@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -94,6 +95,9 @@ import org.orcid.jaxb.model.v3.release.record.Emails;
 @ContextConfiguration(locations = { "classpath:statistics-core-context.xml", "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
 public class AdminControllerTest extends BaseControllerTest {
 
+    @Resource(name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+    
     @Resource(name = "adminController")
     AdminController adminController;
 
@@ -145,6 +149,9 @@ public class AdminControllerTest extends BaseControllerTest {
     @Resource
     private RecordNameDao recordNameDao;
     
+    @Resource 
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Mock
     private TwoFactorAuthenticationManager mockTwoFactorAuthenticationManager;
     
@@ -190,6 +197,15 @@ public class AdminControllerTest extends BaseControllerTest {
     public static void afterClass() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml",
                 "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
+    }
+    @After
+    public void after() {
+        //Restore the original beans
+        TargetProxyHelper.injectIntoProxy(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", emailManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(adminController, "emailManager", emailManager);
+
+        
     }
 
     @Override
@@ -365,20 +381,23 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Test
     public void addANewEmailToARecordThatIsDuplicated() throws Exception {
+        ProfileEntityCacheManager profileEntityCacheManagerMock = Mockito.mock(ProfileEntityCacheManager.class);
+        TargetProxyHelper.injectIntoProxy(adminController, "profileEntityCacheManager", profileEntityCacheManagerMock);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManager", mockEmailManager);
 
         // Handle an email that was already added to the user 
+        Mockito.when(profileEntityCacheManagerMock.retrieve(Mockito.eq("1111-1111-1111-111X"))).thenReturn(new ProfileEntity());
         Emails emails = new Emails();
         java.util.List<Email> emailsList = new ArrayList<Email>();
         Email emailObj = new Email();
         emailObj.setEmail("test@test.com"); 
         emailsList.add(emailObj);
         emails.setEmails(emailsList);
-        when(mockEmailManagerReadOnly.getEmails(Mockito.eq("4444-4444-4444-4441"))).thenReturn(emails);
+        when(mockEmailManagerReadOnly.getEmails(Mockito.eq("1111-1111-1111-111X"))).thenReturn(emails);
         Mockito.when(mockEmailManager.emailExists(Mockito.eq("test@test.com"))).thenReturn(true);
         ProfileDetails r = new ProfileDetails();
-        r.setOrcid("4444-4444-4444-4441");
+        r.setOrcid("1111-1111-1111-111X");
         r.setEmail("test@test.com");
         ProfileDetails result = adminController.addEmailToRecord(mockRequest, mockResponse, r);
         assertEquals(1, result.getErrors().size());
@@ -387,19 +406,22 @@ public class AdminControllerTest extends BaseControllerTest {
     }
     @Test
     public void addANewEmailToARecordThatAlreadyExistOnOtherAccount() throws Exception {
+        ProfileEntityCacheManager profileEntityCacheManagerMock = Mockito.mock(ProfileEntityCacheManager.class);
+        TargetProxyHelper.injectIntoProxy(adminController, "profileEntityCacheManager", profileEntityCacheManagerMock);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManager", mockEmailManager);
 
         // Handle an email that was already added to the user 
+        Mockito.when(profileEntityCacheManagerMock.retrieve(Mockito.eq("1111-1111-1111-111X"))).thenReturn(new ProfileEntity());
         Emails emails = new Emails();
         java.util.List<Email> emailsList = new ArrayList<Email>();
         Email emailObj = new Email();
         emailObj.setEmail("test@test.com"); 
         emails.setEmails(emailsList);
-        when(mockEmailManagerReadOnly.getEmails(Mockito.eq("4444-4444-4444-4441"))).thenReturn(emails);
+        when(mockEmailManagerReadOnly.getEmails(Mockito.eq("1111-1111-1111-111X"))).thenReturn(emails);
         Mockito.when(mockEmailManager.emailExists(Mockito.eq("test@test.com"))).thenReturn(true);
         ProfileDetails r = new ProfileDetails();
-        r.setOrcid("4444-4444-4444-4441");
+        r.setOrcid("1111-1111-1111-111X");
         r.setEmail("test@test.com");
         ProfileDetails result = adminController.addEmailToRecord(mockRequest, mockResponse, r);
         assertEquals(1, result.getErrors().size());
@@ -933,6 +955,7 @@ public class AdminControllerTest extends BaseControllerTest {
         AdminController adminController = new AdminController();
         ReflectionTestUtils.setField(adminController, "adminManager", adminManager);
         TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
+        List<String> reasons = adminController.getLockReasons();
         Mockito.verify(adminManager, Mockito.times(1)).getLockReasons();
     }
 
