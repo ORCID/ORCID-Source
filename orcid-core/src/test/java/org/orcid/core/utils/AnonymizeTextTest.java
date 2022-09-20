@@ -8,6 +8,8 @@ import java.net.MalformedURLException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+
 
 public class AnonymizeTextTest {
 
@@ -32,20 +34,25 @@ public class AnonymizeTextTest {
     @Test
     public void testAnonymizeWorkContributor() throws MalformedURLException, JSONException {
         String contributor1 = "{\"contributorOrcid\":null,\"creditName\":{\"content\":\"Vogel, Peter\"},\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":\"ADDITIONAL\",\"contributorRole\":\"AUTHOR\"}}";
-        JSONObject anonymizedContributor1 = AnonymizeText.anonymizeWorkContributor(new JSONObject(contributor1));
-        assertNotEquals(contributor1, anonymizedContributor1);
+        JSONObject contrJSON = new JSONObject(contributor1);
+        
+        Contributor anonymizedContributor1 = AnonymizeText.anonymizeWorkContributor(contrJSON);
+        assertNotEquals(contrJSON.getJSONObject("creditName").getString("content"), anonymizedContributor1.getCreditName().getContent());
 
         String contributor2 = "{\"contributorOrcid\":{\"uri\":\"https://sandbox.orcid.org/0000-0002-8811-9027\",\"path\":\"0000-0002-8811-9027\",\"host\":null},\"creditName\":{\"content\":\"Paula Demain\"},\"contributorEmail\":null,\"contributorAttributes\":{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"}}";
-        JSONObject anonymizedContributor2 = AnonymizeText.anonymizeWorkContributor(new JSONObject(contributor2));
-        assertNotEquals(contributor2, anonymizedContributor2);
+        contrJSON = new JSONObject(contributor2);
+        Contributor anonymizedContributor2 = AnonymizeText.anonymizeWorkContributor(contrJSON);
+        assertNotEquals(contrJSON.getJSONObject("contributorOrcid").getString("uri"), anonymizedContributor2.getContributorOrcid().getUri());
     }
 
     @Test
     public void testAnonymizeWorkExternalIdentifier() throws MalformedURLException, JSONException {
         String externalId1 = "{\"relationship\":\"SELF\",\"url\":null,\"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"978-88-8212-926-2\"}}";
-        assertNotEquals(externalId1, AnonymizeText.anonymizeWorkExternalIdentifier(new JSONObject(externalId1)));
+        JSONObject extIdJSON = new JSONObject(externalId1);
+        assertNotEquals(extIdJSON.getJSONObject("workExternalIdentifierId").getString("content"), AnonymizeText.anonymizeWorkExternalIdentifier(extIdJSON).getValue());
         String externalId2 = "{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://hdl.handle.net/1814/51605\"},\"workExternalIdentifierType\":\"HANDLE\",\"workExternalIdentifierId\":{\"content\":\"http://hdl.handle.net/1814/51605\"}}";
-        assertNotEquals(externalId1, AnonymizeText.anonymizeWorkExternalIdentifier(new JSONObject(externalId2)));
+        extIdJSON = new JSONObject(externalId2);
+        assertNotEquals(extIdJSON.getJSONObject("url").getString("value"), AnonymizeText.anonymizeWorkExternalIdentifier(extIdJSON).getUrl().getValue());
 
     }
 
