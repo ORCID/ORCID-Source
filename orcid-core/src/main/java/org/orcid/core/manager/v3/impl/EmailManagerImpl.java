@@ -144,22 +144,46 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public void addEmail(HttpServletRequest request, String orcid, Email email) {
+        addEmail(request, orcid, email, false);
+    }
+    
+    @Override
+    @Transactional
+    public void addEmail(HttpServletRequest request, String orcid, Email email, boolean isAdminAction) {
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();        
-        Email currentPrimaryEmail = findPrimaryEmail(orcid);
         Map<String, String> emailKeys = getEmailKeys(email.getEmail());
+        
+        Email currentPrimaryEmail = null;
+        try {
+            currentPrimaryEmail = findPrimaryEmail(orcid);
+        } catch(Exception e) {
+            LOGGER.error(String.format("User with orcid %s doesnt have a primary email address", orcid));
+        }
         
         // Create the new email
         emailDao.addEmail(orcid, emailKeys.get(FILTERED_EMAIL), emailKeys.get(HASH), email.getVisibility().name(), sourceId, clientSourceId);
         if (email.isPrimary()) {
             // if primary email changed send notification.
-            if (!StringUtils.equals(currentPrimaryEmail.getEmail(), emailKeys.get(FILTERED_EMAIL))) {
+            if (currentPrimaryEmail != null && !StringUtils.equals(currentPrimaryEmail.getEmail(), emailKeys.get(FILTERED_EMAIL))) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
                 notificationManager.sendEmailAddressChangedNotification(orcid, emailKeys.get(FILTERED_EMAIL), currentPrimaryEmail.getEmail());
             }
         }
-        notificationManager.sendVerificationEmail(orcid, emailKeys.get(FILTERED_EMAIL));
+        
+        try {
+            notificationManager.sendVerificationEmail(orcid, emailKeys.get(FILTERED_EMAIL));
+        } catch(Exception e) {
+            // There is an edge case in which users can end up with no primary email, in that case, sending the verification email will fail
+            // This is why we added the admin functionality to add email addresses, so, if this is an admin action we should be fine
+           if(isAdminAction) {
+               LOGGER.warn("Verification email couldnt be sent because user didnt have any primary email; however, this is an admin action, so we might not worry about it");
+           } else {
+               // If this is not an admin action, lets propagate the exception
+               throw e;
+           }
+        }
     }
     
     @Override

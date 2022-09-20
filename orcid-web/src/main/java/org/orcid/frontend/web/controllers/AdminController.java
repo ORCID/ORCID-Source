@@ -518,8 +518,6 @@ public class AdminController extends BaseController {
             profileDetails.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
         } else if (PojoUtil.isEmpty(email)) {
             profileDetails.getErrors().add(getMessage("admin.error_please_provided_an_email_to_be_added"));
-        } else if (profileToUpdate.getDeactivationDate() != null) {
-            profileDetails.getErrors().add(getMessage("admin.error_deactivated_account"));
         } else if (profileToUpdate.getDeprecatedDate() != null) {
             profileDetails.getErrors().add(getMessage("admin.errors.deprecated_account"));
         } else if (!validateEmailAddress(email)) {
@@ -537,18 +535,13 @@ public class AdminController extends BaseController {
                 profileDetails.setErrors(new ArrayList<String>());
                 Email emailEntity = new Email();
                 emailEntity.setEmail(email);
-                // emailEntity.setId(hash);
-                // emailEntity.setProfile(newRecord);
                 emailEntity.setPrimary(false);
-                // emailEntity.setCurrent(true);
                 emailEntity.setVerified(false);
-                // Email is private by default
                 emailEntity.setVisibility(Visibility.PRIVATE);
-                // emailEntity.setSourceId(orcid);
-
-                emailManager.addEmail(serverRequest, orcid, emailEntity);
+                emailManager.addEmail(serverRequest, orcid, emailEntity, true);
             } catch (NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
+                LOGGER.error("Couldnt add email address to " + orcid);
             }
         }
 
