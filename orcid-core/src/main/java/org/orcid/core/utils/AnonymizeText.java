@@ -1,0 +1,352 @@
+package org.orcid.core.utils;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.v3.release.common.Contributor;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.WorkContributors;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
+
+public class AnonymizeText {
+
+    private static String protocolRegex = "^(?i)(https?|ftp)://.*$";
+    private static final String KEY_RELATIONSHIP = "relationship";
+    private static final String KEY_URL = "url";
+    private static final String KEY_VALUE = "value";
+    private static final String KEY_WORK_EXTERNAL_IDENTIFIER_TYPE = "workExternalIdentifierType";
+    private static final String KEY_WORK_EXTERNAL_IDENTIFIER_ID = "workExternalIdentifierId";
+    private static final String KEY_CONTENT = "content";
+
+    private static final String KEY_CONTRIBUTOR_ORCID = "contributorOrcid";
+    private static final String KEY_URI = "uri";
+    private static final String KEY_PATH = "path";
+    private static final String KEY_HOST = "host";
+    private static final String KEY_CREDIT_NAME = "creditName";
+    private static final String KEY_CONTRIBUTOR_EMAIL = "contributorEmail";
+    private static final String KEY_CONTRIBUTOR_ATTRIBUTES = "contributorAttributes";
+    private static final String KEY_CONTRIBUTOR_SEQUENCE = "contributorSequence";
+    private static final String KEY_CONTRIBUTOR_ROLE = "contributorRole";
+
+    public static String anonymizeString(String s) {
+        if (StringUtils.isBlank(s)) {
+            return "";
+        }
+
+        List<Character> l = new ArrayList<Character>();
+        for (char c : s.toCharArray())
+            l.add(c);
+        Collections.shuffle(l); // shuffle the list
+        StringBuilder sb = new StringBuilder();
+        for (char c : l)
+            sb.append(c);
+        return sb.toString();
+
+    }
+
+    public static String anonymizeURL(String url) throws MalformedURLException {
+        if (StringUtils.isBlank(url)) {
+            return url;
+        }
+        // just in case invalid URL anonymize it as string
+        if (!isValidURL(url)) {
+            return anonymizeString(url);
+        }
+
+        String filePath = getFileFromURL(url);
+
+        String domain = url.substring(0, url.length() - filePath.length());
+        if (StringUtils.isNotBlank(filePath)) {
+            filePath = filePath.substring(1);
+            domain = domain + "/";
+        }
+        return domain + anonymizeString(filePath);
+    }
+
+    public static ExternalID anonymizeWorkExternalIdentifier(JSONObject original) throws MalformedURLException, JSONException {
+        if (original == null) {
+            return null;
+        }
+
+        ExternalID wExtId = new ExternalID();
+        if (original.has(KEY_RELATIONSHIP)) {
+            wExtId.setRelationship(Relationship.valueOf(original.getString(KEY_RELATIONSHIP)));
+        }
+        if (original.has(KEY_URL)) {
+
+            if (!original.isNull(KEY_URL)) {
+
+                JSONObject urlObj = original.getJSONObject(KEY_URL);
+                if (urlObj.has(KEY_VALUE)) {
+                    wExtId.setUrl(new org.orcid.jaxb.model.v3.release.common.Url(anonymizeURL(urlObj.getString(KEY_VALUE))));
+                }
+            }
+        }
+
+        if (original.has(KEY_WORK_EXTERNAL_IDENTIFIER_TYPE)) {
+            wExtId.setType(original.getString(KEY_WORK_EXTERNAL_IDENTIFIER_TYPE));
+        }
+
+        if (original.has(KEY_WORK_EXTERNAL_IDENTIFIER_ID) && !original.isNull(KEY_WORK_EXTERNAL_IDENTIFIER_ID)) {
+            JSONObject extIdObj = original.getJSONObject(KEY_WORK_EXTERNAL_IDENTIFIER_ID);
+            if (extIdObj.has(KEY_CONTENT)) {
+                wExtId.setValue(anonymizeURL(extIdObj.getString(KEY_CONTENT)));
+            }
+
+        }
+
+        return wExtId;
+    }
+
+    public static ExternalID anonymizeWorkExternalIdentifier(ExternalID original) throws MalformedURLException, JSONException {
+        if (original == null) {
+            return null;
+        }
+
+        ExternalID wExtId = new ExternalID();
+        if (original.getRelationship() != null) {
+            wExtId.setRelationship(original.getRelationship());
+        }
+        if (original.getUrl() != null) {
+
+            wExtId.setUrl(new org.orcid.jaxb.model.v3.release.common.Url(anonymizeURL(original.getUrl().getValue())));
+        }
+
+        if (original.getType() != null) {
+            wExtId.setType(original.getType());
+        }
+
+        if (original.getValue() != null) {
+            wExtId.setValue(anonymizeURL(original.getValue()));
+
+        }
+
+        return wExtId;
+    }
+
+    public static ExternalIDs anonymizeWorkExternalIdentifiers(ExternalIDs extIds) throws MalformedURLException, JSONException {
+        ExternalIDs workExternalIds = new ExternalIDs();
+        if (extIds != null) {
+
+            for (ExternalID extId : workExternalIds.getExternalIdentifier()) {
+                workExternalIds.getExternalIdentifier().add(anonymizeWorkExternalIdentifier(extId));
+            }
+        }
+        return workExternalIds;
+
+    }
+
+    public static ExternalIDs anonymizeWorkExternalIdentifiers(JSONArray extArray) throws MalformedURLException, JSONException {
+        ExternalIDs workExternalIds = new ExternalIDs();
+        if (extArray != null) {
+
+            for (int i = 0; i < extArray.length(); i++) {
+                if (extArray.getJSONObject(i) != null) {
+                    workExternalIds.getExternalIdentifier().add(anonymizeWorkExternalIdentifier(extArray.getJSONObject(i)));
+                }
+            }
+        }
+        return workExternalIds;
+
+    }
+
+    public static Contributor anonymizeWorkContributor(JSONObject original) throws JSONException, MalformedURLException {
+        if (original == null) {
+            return null;
+        }
+
+        Contributor newContributor = new Contributor();
+        if (original.has(KEY_CONTRIBUTOR_ORCID) && !original.isNull(KEY_CONTRIBUTOR_ORCID)) {
+
+            org.orcid.jaxb.model.v3.release.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.v3.release.common.ContributorOrcid();
+
+            JSONObject origContributorOrcid = original.getJSONObject(KEY_CONTRIBUTOR_ORCID);
+
+            if (origContributorOrcid.has(KEY_URI) && !origContributorOrcid.isNull(KEY_URI)) {
+
+                contributorOrcid.setUri(anonymizeURL(origContributorOrcid.getString(KEY_URI)));
+
+            }
+
+            if (origContributorOrcid.has(KEY_PATH) && !origContributorOrcid.isNull(KEY_PATH)) {
+
+                contributorOrcid.setPath(anonymizeString(origContributorOrcid.getString(KEY_PATH)));
+
+            }
+
+            if (origContributorOrcid.has(KEY_HOST) && !origContributorOrcid.isNull(KEY_HOST)) {
+
+                contributorOrcid.setHost(anonymizeString(origContributorOrcid.getString(KEY_HOST)));
+
+            }
+
+            newContributor.setContributorOrcid(contributorOrcid);
+
+        }
+
+        if (original.has(KEY_CONTRIBUTOR_EMAIL)) {
+            if (!original.isNull(KEY_CONTRIBUTOR_EMAIL)) {
+                org.orcid.jaxb.model.v3.release.common.ContributorEmail email = new org.orcid.jaxb.model.v3.release.common.ContributorEmail();
+                email.setValue(anonymizeString(original.getString(KEY_CONTRIBUTOR_EMAIL)));
+                newContributor.setContributorEmail(email);
+            }
+        }
+
+        if (original.has(KEY_CREDIT_NAME)) {
+            if (!original.isNull(KEY_CREDIT_NAME)) {
+                JSONObject creditNameObj = original.getJSONObject(KEY_CREDIT_NAME);
+                if (creditNameObj.has(KEY_CONTENT)) {
+
+                    org.orcid.jaxb.model.v3.release.common.CreditName creditName = new org.orcid.jaxb.model.v3.release.common.CreditName();
+                    creditName.setContent(anonymizeString(creditNameObj.getString(KEY_CONTENT)));
+                    newContributor.setCreditName(creditName);
+                }
+            }
+        }
+
+        // no need to anonymize attributes
+        org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        if (original.has(KEY_CONTRIBUTOR_ATTRIBUTES)) {
+            if (!original.isNull(KEY_CONTRIBUTOR_ATTRIBUTES)) {
+                if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_SEQUENCE)) {
+                    if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_SEQUENCE)) {
+                        contributorAttributes.setContributorSequence(
+                                org.orcid.jaxb.model.common.SequenceType.valueOf(original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_SEQUENCE)));
+                    }
+                }
+
+                if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_ROLE)) {
+                    if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_ROLE)) {
+                        contributorAttributes.setContributorRole(original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_ROLE));
+                    }
+                }
+            }
+            newContributor.setContributorAttributes(contributorAttributes);
+        }
+
+        return newContributor;
+    }
+
+    public static Contributor anonymizeWorkContributor(Contributor original) throws JSONException, MalformedURLException {
+        if (original == null) {
+            return null;
+        }
+
+        Contributor newContributor = new Contributor();
+        if (original.getContributorOrcid() != null) {
+
+            org.orcid.jaxb.model.v3.release.common.ContributorOrcid contributorOrcid = new org.orcid.jaxb.model.v3.release.common.ContributorOrcid();
+
+            if (!PojoUtil.isEmpty(original.getContributorOrcid().getUri())) {
+
+                contributorOrcid.setUri(anonymizeURL(original.getContributorOrcid().getUri()));
+
+            }
+
+            if (!PojoUtil.isEmpty(original.getContributorOrcid().getPath())) {
+
+                contributorOrcid.setPath(anonymizeString(original.getContributorOrcid().getPath()));
+
+            }
+
+            if (!PojoUtil.isEmpty(original.getContributorOrcid().getHost())) {
+
+                contributorOrcid.setHost(anonymizeString(original.getContributorOrcid().getHost()));
+
+            }
+
+            newContributor.setContributorOrcid(contributorOrcid);
+
+        }
+
+        if (original.getContributorEmail() != null && !PojoUtil.isEmpty(original.getContributorEmail().getValue())) {
+
+            org.orcid.jaxb.model.v3.release.common.ContributorEmail email = new org.orcid.jaxb.model.v3.release.common.ContributorEmail();
+            email.setValue(anonymizeString(original.getContributorEmail().getValue()));
+            newContributor.setContributorEmail(email);
+
+        }
+
+        if (original.getCreditName() != null && !PojoUtil.isEmpty(original.getCreditName().getContent())) {
+            org.orcid.jaxb.model.v3.release.common.CreditName creditName = new org.orcid.jaxb.model.v3.release.common.CreditName();
+            creditName.setContent(anonymizeString(original.getCreditName().getContent()));
+            newContributor.setCreditName(creditName);
+
+        }
+
+        // no need to anonymize attributes
+        org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
+        if (original.getContributorAttributes() != null) {
+            if (original.getContributorAttributes().getContributorSequence() != null)
+                contributorAttributes.setContributorSequence(original.getContributorAttributes().getContributorSequence());
+
+            if (original.getContributorAttributes().getContributorRole() != null)
+                contributorAttributes.setContributorRole(original.getContributorAttributes().getContributorRole());
+
+            newContributor.setContributorAttributes(contributorAttributes);
+        }
+
+        return newContributor;
+    }
+
+    public static WorkContributors anonymizeWorkContributors(WorkContributors originalContributors) throws JSONException, MalformedURLException {
+        org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
+
+        if (originalContributors != null) {
+
+            for (Contributor contributor : originalContributors.getContributor()) {
+
+                contributors.getContributor().add(anonymizeWorkContributor(contributor));
+
+            }
+        }
+        return contributors;
+    }
+
+    public static WorkContributors anonymizeWorkContributors(JSONArray contrArray) throws JSONException, MalformedURLException {
+        org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
+
+        if (contrArray != null) {
+
+            for (int i = 0; i < contrArray.length(); i++) {
+                if (contrArray.getJSONObject(i) != null) {
+                    contributors.getContributor().add(anonymizeWorkContributor(contrArray.getJSONObject(i)));
+                }
+            }
+        }
+
+        return contributors;
+    }
+
+    private static String getFileFromURL(String url) throws MalformedURLException {
+        if (!url.matches(protocolRegex)) {
+            url = "http://" + url;
+        }
+
+        URL aURL = new URL(url);
+        if (url.contains("#"))
+            return aURL.getFile() + "#" + aURL.getRef();
+        else
+            return aURL.getFile();
+    }
+
+    private static boolean isValidURL(String url) {
+        if (StringUtils.isNotBlank(url)) {
+            return url.matches(OrcidStringUtils.URL_REGEXP);
+        } else {
+            return false;
+        }
+    }
+
+}
