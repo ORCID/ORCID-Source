@@ -44,16 +44,18 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesResult = new ArrayList<>();
         try {
             contributorsRolesAndSequencesResult = objectMapper.readValue(source, new TypeReference<List<ContributorsRolesAndSequences>>(){});
-            for (ContributorsRolesAndSequences contributorsRolesAndSequences : contributorsRolesAndSequencesResult) {
-                if (contributorsRolesAndSequences.getRolesAndSequences() != null) {
-                    for (ContributorAttributes crs : contributorsRolesAndSequences.getRolesAndSequences()) {
-                        String providedRoleValue = crs.getContributorRole();
-                        if (!PojoUtil.isEmpty(providedRoleValue)) {
-                            CreditRole cr = CreditRole.fromUiValue(providedRoleValue);
-                            if (cr != null) {
-                                providedRoleValue = cr.name();
+            if (contributorsRolesAndSequencesResult != null) {
+                for (ContributorsRolesAndSequences contributorsRolesAndSequences : contributorsRolesAndSequencesResult) {
+                    if (contributorsRolesAndSequences.getRolesAndSequences() != null) {
+                        for (ContributorAttributes crs : contributorsRolesAndSequences.getRolesAndSequences()) {
+                            String providedRoleValue = crs.getContributorRole();
+                            if (!PojoUtil.isEmpty(providedRoleValue)) {
+                                CreditRole cr = CreditRole.fromUiValue(providedRoleValue);
+                                if (cr != null) {
+                                    providedRoleValue = cr.name();
+                                }
+                                crs.setContributorRole(contributorUtils.getCreditRole(roleConverter.toRoleValue(providedRoleValue)));
                             }
-                            crs.setContributorRole(contributorUtils.getCreditRole(roleConverter.toRoleValue(providedRoleValue)));
                         }
                     }
                 }
