@@ -518,10 +518,10 @@ public class AdminController extends BaseController {
             profileDetails.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
         } else if (PojoUtil.isEmpty(email)) {
             profileDetails.getErrors().add(getMessage("admin.error_please_provided_an_email_to_be_added"));
+        } else if (profileToUpdate.getDeprecatedDate() != null) {
+            profileDetails.getErrors().add(getMessage("admin.errors_deprecated_account"));
         } else if (profileToUpdate.getDeactivationDate() != null) {
             profileDetails.getErrors().add(getMessage("admin.error_deactivated_account"));
-        } else if (profileToUpdate.getDeprecatedDate() != null) {
-            profileDetails.getErrors().add(getMessage("admin.errors.deprecated_account"));
         } else if (!validateEmailAddress(email)) {
             profileDetails.getErrors().add(getMessage("admin.error_invalid_email_addres"));
         } else if (emailManager.emailExists(email)) {
