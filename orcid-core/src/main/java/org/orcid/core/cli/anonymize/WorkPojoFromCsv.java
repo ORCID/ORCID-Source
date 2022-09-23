@@ -2,22 +2,16 @@ package org.orcid.core.cli.anonymize;
 
 import java.net.MalformedURLException;
 
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.core.utils.AnonymizeText;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
-import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Url;
-import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidStringUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -87,6 +81,7 @@ public class WorkPojoFromCsv {
     protected String assertionOriginSourceId;
     @JsonProperty("assertion_origin_client_source_id")
     protected String assertionOriginClientSourceId;
+    
 
     public String getCitation() {
         return citation;
@@ -338,6 +333,7 @@ public class WorkPojoFromCsv {
 
     public Work toAnonymizedWork(String orcid) throws MalformedURLException, JSONException {
         Work work = new Work();
+        AnonymizeText anonymizeText = new AnonymizeText();
 
         // Set language
         if (!PojoUtil.isEmpty(this.getLanguageCode())) {
@@ -352,13 +348,13 @@ public class WorkPojoFromCsv {
         org.orcid.jaxb.model.v3.release.record.WorkTitle workTitle = new org.orcid.jaxb.model.v3.release.record.WorkTitle();
         // Set title
         if (!PojoUtil.isEmpty(this.getTitle())) {
-            workTitle.setTitle(new org.orcid.jaxb.model.v3.release.common.Title(AnonymizeText.anonymizeString(this.getTitle())));
+            workTitle.setTitle(new org.orcid.jaxb.model.v3.release.common.Title(anonymizeText.anonymizeString(this.getTitle())));
         }
 
         // Set translated title
         if (this.getTranslatedTitle() != null && !PojoUtil.isEmpty(this.getTranslatedTitle())) {
             org.orcid.jaxb.model.v3.release.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.release.common.TranslatedTitle();
-            translatedTitle.setContent(AnonymizeText.anonymizeString(this.getTranslatedTitle()));
+            translatedTitle.setContent(anonymizeText.anonymizeString(this.getTranslatedTitle()));
             translatedTitle.setLanguageCode(this.getLanguageCode());
             workTitle.setTranslatedTitle(translatedTitle);
         }
@@ -366,7 +362,7 @@ public class WorkPojoFromCsv {
         // Set subtitle
         if (!PojoUtil.isEmpty(this.getSubtitle())) {
             org.orcid.jaxb.model.v3.release.common.Subtitle subtitle = new org.orcid.jaxb.model.v3.release.common.Subtitle();
-            subtitle.setContent(AnonymizeText.anonymizeString(this.getSubtitle()));
+            subtitle.setContent(anonymizeText.anonymizeString(this.getSubtitle()));
             workTitle.setSubtitle(subtitle);
         }
 
@@ -374,17 +370,17 @@ public class WorkPojoFromCsv {
 
         // Set journal title
         if (!PojoUtil.isEmpty(this.getJournalTitle())) {
-            work.setJournalTitle(new org.orcid.jaxb.model.v3.release.common.Title(AnonymizeText.anonymizeString(this.getJournalTitle())));
+            work.setJournalTitle(new org.orcid.jaxb.model.v3.release.common.Title(anonymizeText.anonymizeString(this.getJournalTitle())));
         }
 
         // Set description
         if (!PojoUtil.isEmpty(this.getDescription())) {
-            work.setShortDescription(AnonymizeText.anonymizeString(this.getDescription()));
+            work.setShortDescription(anonymizeText.anonymizeString(this.getDescription()));
         }
 
         // Set url
         if (!PojoUtil.isEmpty(this.getWorkUrl())) {
-            work.setUrl(new Url(AnonymizeText.anonymizeString(this.getWorkUrl())));
+            work.setUrl(new Url(anonymizeText.anonymizeString(this.getWorkUrl())));
         } else {
             work.setUrl(new Url());
         }
@@ -421,7 +417,7 @@ public class WorkPojoFromCsv {
         if (this.getCitation() != null) {
             org.orcid.jaxb.model.v3.release.record.Citation citation = new org.orcid.jaxb.model.v3.release.record.Citation();
             if (!PojoUtil.isEmpty(this.getCitation())) {
-                citation.setCitation(AnonymizeText.anonymizeString(this.getCitation()));
+                citation.setCitation(anonymizeText.anonymizeString(this.getCitation()));
             }
 
             if (!PojoUtil.isEmpty(this.getCitationType())) {
@@ -434,7 +430,7 @@ public class WorkPojoFromCsv {
         if (this.getContributorsJson() != null && !PojoUtil.isEmpty(this.getContributorsJson())) {
             JSONObject contrJson = new JSONObject(this.getContributorsJson());
             if (contrJson.has("contributor")) {
-                work.setWorkContributors(AnonymizeText.anonymizeWorkContributors(contrJson.getJSONArray("contributor")));
+                work.setWorkContributors(anonymizeText.anonymizeWorkContributors(contrJson.getJSONArray("contributor")));
             }
 
         }
@@ -443,7 +439,7 @@ public class WorkPojoFromCsv {
         if (this.getExternalIdentifiersJson() != null && !PojoUtil.isEmpty(this.getExternalIdentifiersJson())) {
             JSONObject extIdentifiersJson = new JSONObject(this.getExternalIdentifiersJson());
             if (extIdentifiersJson.has("workExternalIdentifier")) {
-                work.setWorkExternalIdentifiers(AnonymizeText.anonymizeWorkExternalIdentifiers(extIdentifiersJson.getJSONArray("workExternalIdentifier")));
+                work.setWorkExternalIdentifiers(anonymizeText.anonymizeWorkExternalIdentifiers(extIdentifiersJson.getJSONArray("workExternalIdentifier")));
 
             }
             // work.setWorkExternalIdentifiers(new ExternalIDs());
