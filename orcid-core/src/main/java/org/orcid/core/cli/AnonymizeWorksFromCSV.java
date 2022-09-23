@@ -57,7 +57,6 @@ public class AnonymizeWorksFromCSV {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
 
     public static void main(String[] args) throws IOException {
         AnonymizeWorksFromCSV anonymizeFromCsv = new AnonymizeWorksFromCSV();
