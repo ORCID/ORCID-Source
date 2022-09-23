@@ -1,0 +1,302 @@
+package org.orcid.core.cli;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONObject;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+import org.orcid.core.admin.LockReason;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.togglz.OrcidTogglzConfiguration;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.togglz.core.context.ContextClassLoaderFeatureManagerProvider;
+import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.manager.FeatureManagerBuilder;
+
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
+public class AnonymizeWorksFromCSV {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AnonymizeWorksFromCSV.class);
+
+    @Option(name = "-oid", usage = "Orcid ID to add the works to")
+    private String orcid;
+
+    @Option(name = "-f", usage = "The location of csv file that contains the works for orcid")
+    private String workCsvFile;
+
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+
+    private static int ONE_DAY = 86400000;
+
+    private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
+    public static void main(String[] args) throws IOException {
+        AnonymizeWorksFromCSV anonymizeFromCsv = new AnonymizeWorksFromCSV();
+        CmdLineParser parser = new CmdLineParser(anonymizeFromCsv);
+        try {
+            parser.parseArgument(args);
+            anonymizeFromCsv.validateParameters(parser);
+            anonymizeFromCsv.init();
+            anonymizeFromCsv.getAllWorks();
+        } catch (Exception e) {
+            LOG.error("Exception when locking spam records", e);
+            System.err.println(e.getMessage());
+        } finally {
+            System.exit(0);
+        }
+        /*
+         * AnonymizeWorksFromCSV autolockSpamRecords = new
+         * AnonymizeWorksFromCSV(); CmdLineParser parser = new
+         * CmdLineParser(autolockSpamRecords); List<String> allIDs; try {
+         * parser.parseArgument(args);
+         * autolockSpamRecords.validateParameters(parser);
+         * autolockSpamRecords.init();
+         * 
+         * allIDs = autolockSpamRecords.getAllSpamIDs();
+         * System.out.println("Found " + allIDs.size() +
+         * " profiles for autolocking");
+         * LOG.info("Found {} profiles for autolocking", allIDs.size());
+         * 
+         * List<String> toLock = autolockSpamRecords.getNextIdSubset(allIDs);
+         * while (toLock != null && !toLock.isEmpty()) {
+         * autolockSpamRecords.autolockRecords(toLock);
+         * LOG.info("Locked {} profiles, {} remaining to lock", new Object[] {
+         * toLock.size(), allIDs.size() }); LOG.info("Profiles autolocked");
+         * Thread.sleep(ONE_DAY); toLock =
+         * autolockSpamRecords.getNextIdSubset(allIDs); } } catch (Exception e)
+         * { LOG.error("Exception when locking spam records", e);
+         * System.err.println(e.getMessage()); } finally { System.exit(0); }
+         */
+
+    }
+
+
+    
+
+    @SuppressWarnings("resource")
+    private void init() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        //profileEntityManager = (ProfileEntityManager) context.getBean("profileEntityManagerV3");
+       // profileEntityCacheManager = (ProfileEntityCacheManager) context.getBean("profileEntityCacheManager");
+       // notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
+       // bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
+    }
+
+  
+
+    private JSONArray getAllWorks() throws IOException {
+        FileReader reader = new FileReader(workCsvFile);
+        
+        CsvSchema csvSchema = CsvSchema.emptySchema().withHeader();
+        CsvMapper csvMapper = new CsvMapper();
+        JSONArray worksArray = new JSONArray();
+        try {
+            List<Map<?, ?>> list;
+            try (MappingIterator<Map<?, ?>> mappingIterator = csvMapper.reader()
+                    .forType(Map.class)
+                    .with(csvSchema)
+                    .readValues(reader)) {
+                list = mappingIterator.readAll();
+            }
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            worksArray =  new JSONArray(objectMapper.writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(list));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return worksArray;
+    }
+
+    public void validateParameters(CmdLineParser parser) throws CmdLineException {
+        if (PojoUtil.isEmpty(orcid)) {
+            throw new CmdLineException(parser, "-oid parameter must not be null. A valid orcid is expected.");
+        }
+
+        if (PojoUtil.isEmpty(workCsvFile)) {
+            throw new CmdLineException(parser, "-f parameter must not be null. Please specify the location of csv file");
+        }
+    }
+    
+    private String
+    public Work toWork(JSONObject workObj) {
+        Work work = new Work();
+        
+        // NO WORK ID as is a new one
+        /*if (!PojoUtil.isEmpty(this.getPutCode())) {
+            work.setPutCode(Long.valueOf(this.getPutCode().getValue()));
+        }*/
+
+        // Set language
+        if (!workObj.isNull("language_code")) {
+            work.setLanguageCode(this.getLanguageCode().getValue());
+        }
+
+        // Set type
+        if (!PojoUtil.isEmpty(this.getWorkType())) {
+            work.setWorkType(WorkType.fromValue(this.getWorkType().getValue()));
+        }        
+        
+        org.orcid.jaxb.model.v3.release.record.WorkTitle workTitle = new org.orcid.jaxb.model.v3.release.record.WorkTitle();
+        // Set title
+        if(!PojoUtil.isEmpty(this.getTitle())) {            
+            workTitle.setTitle(new org.orcid.jaxb.model.v3.release.common.Title(this.getTitle().getValue()));
+        }
+        
+        // Set translated title        
+        if(this.getTranslatedTitle() != null && !PojoUtil.isEmpty(this.getTranslatedTitle().getContent())) {
+            org.orcid.jaxb.model.v3.release.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.release.common.TranslatedTitle();
+            translatedTitle.setContent(this.getTranslatedTitle().getContent());
+            translatedTitle.setLanguageCode(this.getTranslatedTitle().getLanguageCode());
+            workTitle.setTranslatedTitle(translatedTitle);
+        }
+        
+        // Set subtitle
+        if (!PojoUtil.isEmpty(this.getSubtitle())) {
+            org.orcid.jaxb.model.v3.release.common.Subtitle subtitle = new  org.orcid.jaxb.model.v3.release.common.Subtitle();
+            subtitle.setContent(this.getSubtitle().getValue());
+            workTitle.setSubtitle(subtitle);
+        }
+        
+        work.setWorkTitle(workTitle);
+        
+        // Set journal title
+        if(!PojoUtil.isEmpty(this.getJournalTitle())) {
+            work.setJournalTitle(new org.orcid.jaxb.model.v3.release.common.Title(this.getJournalTitle().getValue()));            
+        }
+
+        // Set description
+        if (!PojoUtil.isEmpty(this.getShortDescription())) {
+            work.setShortDescription(this.getShortDescription().getValue());
+        }
+
+        // Set url
+        if (!PojoUtil.isEmpty(this.getUrl())) {
+            work.setUrl(new Url(this.getUrl().getValue()));
+        } else {
+            work.setUrl(new Url());
+        }
+
+        // Set visibility
+        if (this.getVisibility() != null && this.getVisibility().getVisibility() != null) {
+            work.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+        }
+        
+        // Set country
+        if (!PojoUtil.isEmpty(this.getCountryCode())) {
+            work.setCountry(new org.orcid.jaxb.model.v3.release.common.Country(org.orcid.jaxb.model.common.Iso3166Country.fromValue(this.getCountryCode().getValue())));
+        }
+
+        // Set publication date        
+        if(this.getPublicationDate() != null) {            
+            Integer yearInteger = PojoUtil.isEmpty(this.getPublicationDate().getYear()) ? null : Integer.valueOf(this.getPublicationDate().getYear());
+            Integer monthInteger = PojoUtil.isEmpty(this.getPublicationDate().getMonth()) ? null : Integer.valueOf(this.getPublicationDate().getMonth());
+            Integer dayInteger = PojoUtil.isEmpty(this.getPublicationDate().getDay()) ? null : Integer.valueOf(this.getPublicationDate().getDay());
+            org.orcid.jaxb.model.v3.release.common.Year year = null;
+            org.orcid.jaxb.model.v3.release.common.Month month = null;
+            org.orcid.jaxb.model.v3.release.common.Day day = null;
+            if(yearInteger != null) {
+                year = new org.orcid.jaxb.model.v3.release.common.Year(yearInteger);
+            }
+            if(monthInteger != null) {
+                month = new org.orcid.jaxb.model.v3.release.common.Month(monthInteger);
+            }
+            if(dayInteger != null) {
+                day = new org.orcid.jaxb.model.v3.release.common.Day(dayInteger);
+            }                                                  
+            work.setPublicationDate(new org.orcid.jaxb.model.v3.release.common.PublicationDate(year, month, day));
+        }
+                
+        // Set citation
+        if(this.getCitation() != null) {
+            org.orcid.jaxb.model.v3.release.record.Citation citation = new org.orcid.jaxb.model.v3.release.record.Citation();
+            if(!PojoUtil.isEmpty(this.getCitation().getCitation())) {
+                citation.setCitation(this.getCitation().getCitation().getValue());
+            }
+            
+            if(!PojoUtil.isEmpty(this.getCitation().getCitationType())) {
+                citation.setWorkCitationType(CitationType.fromValue(this.getCitation().getCitationType().getValue()));
+            }                        
+            work.setWorkCitation(citation);
+        }
+                        
+        // Set contributors
+        populateContributors(this, work);
+
+        populateContributorsGroupedByOrcid(this, work);
+
+        // Set external identifiers
+        populateExternalIdentifiers(this, work);
+
+        // Set created date
+        if(!PojoUtil.isEmpty(this.getCreatedDate())) {
+            CreatedDate createdDate = new CreatedDate();
+            createdDate.setValue(DateUtils.convertToXMLGregorianCalendar(this.getCreatedDate().toJavaDate()));            
+            work.setCreatedDate(createdDate);
+        }
+        
+        // Set last modified
+        if(!PojoUtil.isEmpty(this.getLastModified())) {
+            org.orcid.jaxb.model.v3.release.common.LastModifiedDate lastModified = new org.orcid.jaxb.model.v3.release.common.LastModifiedDate();
+            lastModified.setValue(DateUtils.convertToXMLGregorianCalendar(this.getLastModified().toJavaDate()));
+            work.setLastModifiedDate(lastModified);
+        }
+
+        if(!PojoUtil.isEmpty(this.getSource())) {
+            org.orcid.jaxb.model.v3.release.common.Source source = new org.orcid.jaxb.model.v3.release.common.Source();
+            
+            if(OrcidStringUtils.isClientId(this.getSource())) {
+                source.setSourceClientId(new SourceClientId(this.getSource()));
+            } else {
+                source.setSourceOrcid(new SourceOrcid(this.getSource()));
+            }
+                       
+            work.setSource(source);
+        }
+        
+        return work;
+    }  
+
+   /* private static void bootstrapTogglz(OrcidTogglzConfiguration togglzConfig) {
+        FeatureManager featureManager = new FeatureManagerBuilder().togglzConfig(togglzConfig).build();
+        ContextClassLoaderFeatureManagerProvider.bind(featureManager);
+    }*/
+
+}

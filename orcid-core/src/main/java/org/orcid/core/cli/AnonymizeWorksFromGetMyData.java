@@ -1,9 +1,7 @@
 package org.orcid.core.cli;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,12 +17,11 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
-
+import org.orcid.core.cli.anonymize.AnonymizeText;
 import org.orcid.core.cli.anonymize.UnzipFile;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
-import org.orcid.core.utils.AnonymizeText;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.persistence.dao.WorkDao;
 
@@ -133,6 +130,8 @@ public class AnonymizeWorksFromGetMyData {
 
     private Work toAnonymizedWork(Work origWork, String orcid) throws MalformedURLException, JSONException {
         Work work = new Work();
+        AnonymizeText anonymizeText = new AnonymizeText();
+
 
         // Set language
         if (!PojoUtil.isEmpty(origWork.getLanguageCode())) {
@@ -147,13 +146,13 @@ public class AnonymizeWorksFromGetMyData {
         org.orcid.jaxb.model.v3.release.record.WorkTitle workTitle = new org.orcid.jaxb.model.v3.release.record.WorkTitle();
         // Set title
         if (origWork.getWorkTitle() != null) {
-            workTitle.setTitle(new org.orcid.jaxb.model.v3.release.common.Title(AnonymizeText.anonymizeString(origWork.getWorkTitle().getTitle().getContent())));
+            workTitle.setTitle(new org.orcid.jaxb.model.v3.release.common.Title(anonymizeText.anonymizeString(origWork.getWorkTitle().getTitle().getContent())));
         }
 
         // Set translated title
         if (origWork.getWorkTitle().getTranslatedTitle() != null && !PojoUtil.isEmpty(origWork.getWorkTitle().getTranslatedTitle().getContent())) {
             org.orcid.jaxb.model.v3.release.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.release.common.TranslatedTitle();
-            translatedTitle.setContent(AnonymizeText.anonymizeString(origWork.getWorkTitle().getTranslatedTitle().getContent()));
+            translatedTitle.setContent(anonymizeText.anonymizeString(origWork.getWorkTitle().getTranslatedTitle().getContent()));
             translatedTitle.setLanguageCode(origWork.getWorkTitle().getTranslatedTitle().getLanguageCode());
             workTitle.setTranslatedTitle(translatedTitle);
         }
@@ -161,7 +160,7 @@ public class AnonymizeWorksFromGetMyData {
         // Set subtitle
         if (origWork.getWorkTitle().getSubtitle() != null) {
             org.orcid.jaxb.model.v3.release.common.Subtitle subtitle = new org.orcid.jaxb.model.v3.release.common.Subtitle();
-            subtitle.setContent(AnonymizeText.anonymizeString(origWork.getWorkTitle().getSubtitle().getContent()));
+            subtitle.setContent(anonymizeText.anonymizeString(origWork.getWorkTitle().getSubtitle().getContent()));
             workTitle.setSubtitle(subtitle);
         }
 
@@ -169,17 +168,17 @@ public class AnonymizeWorksFromGetMyData {
 
         // Set journal title
         if (origWork.getJournalTitle() != null) {
-            work.setJournalTitle(new org.orcid.jaxb.model.v3.release.common.Title(AnonymizeText.anonymizeString(origWork.getJournalTitle().getContent())));
+            work.setJournalTitle(new org.orcid.jaxb.model.v3.release.common.Title(anonymizeText.anonymizeString(origWork.getJournalTitle().getContent())));
         }
 
         // Set description
         if (!PojoUtil.isEmpty(origWork.getShortDescription())) {
-            work.setShortDescription(AnonymizeText.anonymizeString(origWork.getShortDescription()));
+            work.setShortDescription(anonymizeText.anonymizeString(origWork.getShortDescription()));
         }
 
         // Set url
         if (!PojoUtil.isEmpty(origWork.getUrl())) {
-            work.setUrl(new Url(AnonymizeText.anonymizeString(origWork.getUrl().getValue())));
+            work.setUrl(new Url(anonymizeText.anonymizeString(origWork.getUrl().getValue())));
         } else {
             work.setUrl(new Url());
         }
@@ -206,7 +205,7 @@ public class AnonymizeWorksFromGetMyData {
         if (origWork.getWorkCitation() != null) {
             org.orcid.jaxb.model.v3.release.record.Citation citation = new org.orcid.jaxb.model.v3.release.record.Citation();
             if (!PojoUtil.isEmpty(origWork.getWorkCitation().getCitation())) {
-                citation.setCitation(AnonymizeText.anonymizeString(origWork.getWorkCitation().getCitation()));
+                citation.setCitation(anonymizeText.anonymizeString(origWork.getWorkCitation().getCitation()));
             }
 
             if (origWork.getWorkCitation().getWorkCitationType() != null) {
@@ -218,14 +217,14 @@ public class AnonymizeWorksFromGetMyData {
         // Set contributors
         if (origWork.getWorkContributors() != null) {
 
-            work.setWorkContributors(AnonymizeText.anonymizeWorkContributors(origWork.getWorkContributors()));
+            work.setWorkContributors(anonymizeText.anonymizeWorkContributors(origWork.getWorkContributors()));
 
         }
 
         // Set externalids
         if (origWork.getWorkExternalIdentifiers() != null) {
 
-            work.setWorkExternalIdentifiers(AnonymizeText.anonymizeWorkExternalIdentifiers(origWork.getWorkExternalIdentifiers()));
+            work.setWorkExternalIdentifiers(anonymizeText.anonymizeWorkExternalIdentifiers(origWork.getWorkExternalIdentifiers()));
         }
 
         // Set created date
