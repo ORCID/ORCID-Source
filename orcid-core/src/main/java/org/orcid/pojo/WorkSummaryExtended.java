@@ -45,13 +45,16 @@ public class WorkSummaryExtended extends WorkSummary {
             super.setTitle(wt);
             super.setJournalTitle(new Title(builder.journalTitle));
             super.setExternalIdentifiers(builder.externalIdsJson);
-            Year year = new Year();
-            year.setValue(builder.publicationYear);
-            Month month = new Month();
-            month.setValue(builder.publicationMonth);
-            Day day = new Day();
-            day.setValue(builder.publicationDay);
-            PublicationDate pd = new PublicationDate(year, month, day);
+            PublicationDate pd = null;
+            if (builder.publicationYear != null) {
+                Year year = new Year();
+                year.setValue(builder.publicationYear);
+                Month month = new Month();
+                month.setValue(builder.publicationMonth);
+                Day day = new Day();
+                day.setValue(builder.publicationDay);
+                pd = new PublicationDate(year, month, day);
+            }
             super.setPublicationDate(pd);
             super.setVisibility(Visibility.valueOf(builder.visibility));
             super.setDisplayIndex(builder.displayIndex.toString());

@@ -1550,6 +1550,10 @@
     <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
     
     <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
+    
+    <bean id="rorOrgDataSource" class="org.orcid.core.orgs.load.source.ror.RorOrgLoadSource" />
+    <bean id="fundrefOrgDataSource" class="org.orcid.core.orgs.load.source.fundref.FundrefOrgLoadSource" />
+    <bean id="ringgoldOrgDataSource" class="org.orcid.core.orgs.load.source.ringgold.RinggoldOrgLoadSource" />
 
     <bean id="workContributorsConverter" class="org.orcid.core.adapter.v3.converter.WorkContributorsConverter">
         <constructor-arg ref="workContributorRoleConverter" />
