@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +26,15 @@ import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.DOIResolver;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.IdentifierType;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.togglz.junit.TogglzRule;
 
 public class DOIResolverTest {
     @Mock
@@ -53,6 +58,7 @@ public class DOIResolverTest {
         TargetProxyHelper.injectIntoProxy(resolver, "cache", cache);
         TargetProxyHelper.injectIntoProxy(resolver, "identifierTypeManager", identifierTypeManager);
         TargetProxyHelper.injectIntoProxy(resolver, "localeManager", localeManager);
+        ReflectionTestUtils.setField(resolver, "maxContributorsForUI", 50);
 
         when(localeManager.getLocale()).thenReturn(Locale.ENGLISH);
         
@@ -180,7 +186,25 @@ public class DOIResolverTest {
                 return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-journal-title-in-container-title-short.json");
             }
 
-        });        
+        });
+
+        when(cache.get(eq("https://doi.org/10.000/0000.0004"), any(HashMap.class))).thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-multiple-contributors.json");
+            }
+
+        });
+
+        when(cache.get(eq("https://doi.org/10.000/0000.0004"), eq("application/x-bibtex"))).thenAnswer(new Answer<InputStream>() {
+
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return DOIResolverTest.class.getResourceAsStream("/examples/works/form_autofill/doi-multiple-contributors.json");
+            }
+
+        });
         
     }
 
@@ -221,6 +245,30 @@ public class DOIResolverTest {
         assertEquals("journal-title-in-container-title-short", work.getJournalTitle().getContent());
         verifyDoi(work, true);
     }
+
+
+    @Test
+    public void resolveMetadataContributorTest() {
+        WorkExtended work = resolver.resolveMetadata("doi", "10.000/0000.0003");
+        List<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid();
+        assertEquals(1, contributors.size());
+        assertEquals( "author", getRole(contributors, 0));
+        verifyDoi(work, true);
+    }
+
+    @Test
+    public void resolveMetadataWithMultipleContributorsTest() {
+        WorkExtended work = resolver.resolveMetadata("doi", "10.000/0000.0004");
+        List<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid();
+        assertEquals(6, contributors.size());
+        assertEquals("author", getRole(contributors, 0));
+        assertEquals(SequenceType.FIRST, getSequenceType(contributors, 0));
+        assertEquals("ORCID Consortium", getName(contributors, 0));
+        assertEquals("author", getRole(contributors, 1));
+        assertEquals(SequenceType.ADDITIONAL, getSequenceType(contributors, 1));
+        assertEquals("Tom Demeranville", getName(contributors, 1));
+        assertEquals("0000-0003-0902-4386", getOrcid(contributors, 1));
+    }
     
     private void verifyDoi(Work work, boolean checkPublicationDate) {
         assertNotNull(work);
@@ -260,5 +308,21 @@ public class DOIResolverTest {
         assertEquals("https://www.test.org/issn/ISSN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(4).getUrl().getValue());
         assertEquals("ISSN-0000-0001", work.getExternalIdentifiers().getExternalIdentifier().get(4).getValue());
         assertEquals(Relationship.PART_OF, work.getExternalIdentifiers().getExternalIdentifier().get(4).getRelationship());
+    }
+
+    private String getRole(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {
+        return contributors.get(contributorsIndex).getRolesAndSequences().get(0).getContributorRole();
+    }
+
+    private SequenceType getSequenceType(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {
+        return contributors.get(contributorsIndex).getRolesAndSequences().get(0).getContributorSequence();
+    }
+
+    private String getName(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {
+        return contributors.get(contributorsIndex).getCreditName().getContent();
+    }
+
+    private String getOrcid(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {
+        return contributors.get(contributorsIndex).getContributorOrcid().getPath();
     }
 }
