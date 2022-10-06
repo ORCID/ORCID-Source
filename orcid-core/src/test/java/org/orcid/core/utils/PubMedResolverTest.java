@@ -33,6 +33,10 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.togglz.junit.TogglzRule;
+import org.junit.Rule;
+import org.orcid.core.togglz.Features;
+
 
 public class PubMedResolverTest {
     @Mock
@@ -46,6 +50,9 @@ public class PubMedResolverTest {
 
     @Mock
     protected LocaleManager localeManager;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     private PubMedResolver resolver = new PubMedResolver();
 
@@ -219,6 +226,7 @@ public class PubMedResolverTest {
 
     @Test
     public void resolvePMIDMetadataContributorsTest() {
+        togglzRule.enable(Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED);
         WorkExtended work = resolver.resolveMetadata("pmid", "pmid1");
         List<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid();
         assertNotNull(work);

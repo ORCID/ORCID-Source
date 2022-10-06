@@ -34,7 +34,11 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.orcid.core.togglz.Features;
 import org.togglz.junit.TogglzRule;
+import org.junit.Rule;
+
+
 
 public class DOIResolverTest {
     @Mock
@@ -48,6 +52,9 @@ public class DOIResolverTest {
 
     @Mock
     protected LocaleManager localeManager;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     private DOIResolver resolver = new DOIResolver();
 
@@ -188,6 +195,7 @@ public class DOIResolverTest {
 
         });
 
+        togglzRule.enable(Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED);
         when(cache.get(eq("https://doi.org/10.000/0000.0004"), any(HashMap.class))).thenAnswer(new Answer<InputStream>() {
 
             @Override
