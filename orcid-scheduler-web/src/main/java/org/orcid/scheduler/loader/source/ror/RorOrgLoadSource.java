@@ -100,17 +100,16 @@ public class RorOrgLoadSource implements OrgLoadSource {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
             
-            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl+"&sort=-publication_date&size=1", userAgent, ZenodoRecords.class);
-            
+            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl+"&sort=mostrecent&size=1", userAgent, ZenodoRecords.class);
             ZenodoRecordsHit zenodoHit = zenodoRecords.getHits().getHits().get(0);
      
             boolean success = false;
             
-            //we are returning the collection ordered by last publication date and size 1, just need to get first element in the list
-            String zenodoUrl = zenodoHit.getFiles().get(0).getLinks().getSelf();
+            //we are returning the collection ordered by mostrecent and size 1, we need to get the last element in the list that has the last version
+            String zenodoUrl = zenodoHit.getFiles().get(zenodoHit.getFiles().size()>0?zenodoHit.getFiles().size()-1:0).getLinks().getSelf();
+            LOGGER.info("Retrieving ROR data from: " + zenodoUrl);
+            success = orgDataClient.downloadFile(zenodoUrl, userAgent, zipFilePath);
             
-            success = orgDataClient.downloadFile(zenodoUrl, userAgent, zipFilePath);            
-         
             try {
                 LOGGER.info("Unzipping  ROR ....");
                 unzipData();

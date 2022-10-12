@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,12 +20,17 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Day;
 import org.orcid.jaxb.model.v3.release.common.Month;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
@@ -36,11 +43,15 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -62,6 +73,9 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     protected LocaleManager localeManager;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     public List<String> canHandle() {
         return norm.canHandle();
@@ -91,7 +105,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
      * providers (although other formats may be better...)
      */
     @Override
-    public Work resolveMetadata(String apiTypeName, String value) {
+    public WorkExtended resolveMetadata(String apiTypeName, String value) {
         PIDResolutionResult rr = this.resolve(apiTypeName, value);
         if (!rr.isResolved())
             return null;
@@ -144,7 +158,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             JSONObject json = new JSONObject(response.toString());
 
             if (json != null) {
-                return getWork(json);
+                return getWorkExtended(json);
             }
         } catch (UnexpectedResponseCodeException e) {
             LOG.warn(String.format("UnexpectedResponseCode retrieving DOI %s. Expected %s, got %s", rr.getGeneratedUrl(), e.getExpectedCode(), e.getReceivedCode()), e);
@@ -154,8 +168,8 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         return null;
     }
 
-    private Work getWork(JSONObject json) throws JSONException {
-        Work result = new Work();
+    private WorkExtended getWorkExtended(JSONObject json) throws JSONException {
+        WorkExtended result = new WorkExtended();
         Locale locale = localeManager.getLocale();
         if (json.has("type")) {
             try {
@@ -338,6 +352,49 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
                 }
             }           
         }
+
+        if (json.has("author") && Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED.isActive() ) {
+            List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = new ArrayList<>();
+            try {
+                JSONArray contributors = json.getJSONArray("author");
+                for (int i = 0; i < (contributors.length() > maxContributorsForUI ? maxContributorsForUI + 1 : contributors.length()); i++) {
+                    ContributorsRolesAndSequences newContributor = new ContributorsRolesAndSequences();
+                    JSONObject contributor = contributors.getJSONObject(i);
+
+                    if (contributor.has("ORCID")) {
+                        newContributor.setContributorOrcid(new ContributorOrcid(OrcidStringUtils.getOrcidNumber(contributor.getString("ORCID"))));
+                    }
+
+                    if (contributor.has("name")) {
+                        newContributor.setCreditName(new CreditName(contributor.getString("name")));
+                    } else {
+                        StringBuilder sb = new StringBuilder();
+                        if (contributor.has("given")) {
+                            sb.append(contributor.getString("given"));
+                        }
+                        if (contributor.has("family")) {
+                            String family = contributor.getString("family");
+                            sb.append(sb.length() > 0 ? ' ' + family : family);
+                        }
+                        newContributor.setCreditName(new CreditName(sb.toString()));
+                    }
+
+                    ContributorAttributes contributorAttributes = new ContributorAttributes();
+                    contributorAttributes.setContributorRole("author");
+                    if (contributor.has("sequence")) {
+                        contributorAttributes.setContributorSequence(SequenceType.fromValue(contributor.getString("sequence")));
+                    }
+                    newContributor.setRolesAndSequences(Arrays.asList(contributorAttributes));
+                    contributorsGroupedByOrcid.add(newContributor);
+                }
+            } catch (IllegalArgumentException | JSONException e) {
+                // ignore if language value doesn't match our LanguageCode
+            }
+
+            result.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+
+        }
+
         return result;
     }
     

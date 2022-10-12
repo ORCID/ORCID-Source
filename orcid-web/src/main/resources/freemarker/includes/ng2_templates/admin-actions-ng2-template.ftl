@@ -95,6 +95,40 @@
     </div>
 </div>
 
+<!-- Add Email to record -->
+<div class="workspace-accordion-item" id="reactivate-record">
+    <p>
+        <a *ngIf="showAddEmailToRecord" (click)="showAddEmailToRecord = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.profile_add_email' /></a>
+        <a *ngIf="!showAddEmailToRecord" (click)="showAddEmailToRecord = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.profile_add_email' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showAddEmailToRecord">    
+        <div class="form-group">
+            <label for="orcidId"><@orcid.msg 'admin.profile_add_email.to_add_email' /></label>
+            <input type="text" id="orcidId" (keyup.enter)="showAddEmailToRecordConfirm = true" [(ngModel)]="elementAddEmailToRecord.orcid" placeholder="<@orcid.msg 'admin.profile_add_email.placeholder.to_add_email' />" class="input-xlarge" />
+        </div>
+        <div class="form-group">
+            <label for="email"><@orcid.msg 'admin.profile_add_email.email' /></label>
+            <input type="text" id="email" (keyup.enter)="showAddEmailToRecordConfirm = true" [(ngModel)]="elementAddEmailToRecord.email" placeholder="<@orcid.msg 'admin.profile_add_email.placeholder.email' />" class="input-xlarge" />
+        </div>
+        <div *ngIf="showAddEmailToRecordMessages">
+            <div *ngIf="elementAddEmailToRecord.errors?.length > 0">
+                <span class="orcid-error" *ngFor='let error of elementAddEmailToRecord.errors' [innerHTML]="error"></span><br />
+            </div>
+            <div *ngIf="!elementAddEmailToRecord.errors?.length">
+                <@orcid.msg 'admin.add_email_sucess' />
+            </div>
+        </div>
+        <div class="controls save-btns pull-left" *ngIf="!showAddEmailToRecordConfirm">
+            <span id="deactivate-btn" (click)="showAddEmailToRecordConfirm = true" class="btn btn-primary"><@orcid.msg 'admin.profile_add_email.reactivate_account'/></span>                       
+        </div>
+        <div class="controls save-btns pull-left" *ngIf="showAddEmailToRecordConfirm">
+            <label class="orcid-error"><@orcid.msg 'admin.profile_add_email.confirm.message'/> {{elementAddEmailToRecord.orcid}}?</label><br>
+            <span (click)="addEmailToRecord()" class="btn btn-primary"><@orcid.msg 'admin.profile_add_email.reactivate_account'/></span>&nbsp; 
+            <a href="" class="cancel-action" (click)="showAddEmailToRecordConfirm = false" ><@orcid.msg 'freemarker.btncancel'/></a>
+        </div> 
+    </div>
+</div>
+
 <!-- Verify email -->
 <div class="workspace-accordion-item" id="verify-email">
     <p>

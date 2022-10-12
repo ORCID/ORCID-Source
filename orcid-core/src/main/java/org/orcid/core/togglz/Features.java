@@ -6,6 +6,12 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Add other people contributions via DOI & PUBMED")
+    ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
+
+    @Label("Add other people contributions manually")
+    ADD_OTHER_WORK_CONTRIBUTORS,
+
     @Label("Store and read top_contributors_json")
     STORE_TOP_CONTRIBUTORS,
 

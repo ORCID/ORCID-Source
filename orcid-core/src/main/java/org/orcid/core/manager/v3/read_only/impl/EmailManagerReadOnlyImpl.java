@@ -140,6 +140,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     }
     
     @Override
+    
     public Emails getEmails(String orcid) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid, getLastModified(orcid));
         return toEmails(entities);

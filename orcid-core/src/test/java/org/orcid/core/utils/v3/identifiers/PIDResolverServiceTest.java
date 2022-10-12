@@ -20,6 +20,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.WorkExtended;
 import org.springframework.test.util.ReflectionTestUtils;
 
 //@RunWith(OrcidJUnit4ClassRunner.class)
@@ -302,8 +303,8 @@ public class PIDResolverServiceTest {
         assertEquals(Relationship.PART_OF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
     }
 
-    private Work getBookChapterWorkWithISBNExternalIdentifier() {
-        Work work = new Work();
+    private WorkExtended getBookChapterWorkWithISBNExternalIdentifier() {
+        WorkExtended work = new WorkExtended();
         work.setWorkType(WorkType.BOOK_CHAPTER);
         ExternalIDs externalIds = new ExternalIDs();
         ExternalID isbn = new ExternalID();

@@ -579,7 +579,11 @@ public class WorksController extends BaseWorkspaceController {
         newWork.setPutCode(null);
 
         // Create work
-        newWork = workManager.createWork(getEffectiveUserOrcid(), newWork, false);
+        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
+            newWork = workManager.createWork(getEffectiveUserOrcid(), workForm);
+        } else {
+            newWork = workManager.createWork(getEffectiveUserOrcid(), newWork, false);
+        }
 
         // Set the id in the work to be returned
         Long workId = newWork.getPutCode();
@@ -595,7 +599,11 @@ public class WorksController extends BaseWorkspaceController {
 
         Work updatedWork = workForm.toWork();
         // Edit work
-        workManager.updateWork(userOrcid, updatedWork, false);
+        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
+            workManager.updateWork(userOrcid, workForm);
+        } else {
+            workManager.updateWork(userOrcid, updatedWork, false);
+        }
     }
 
     private boolean isRecordHolderNotInContributors(WorkForm work) {

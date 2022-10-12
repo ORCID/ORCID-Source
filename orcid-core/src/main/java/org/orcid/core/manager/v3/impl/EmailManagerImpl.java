@@ -131,17 +131,35 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
      * TODO: Returns true when the primary email is verified, this because the
      * email sender is on the orcid-web project until we finish migrating the
      * jersey libs, so, the calling function should know that the primary email
-     * have changed
+     * have changed; for now it returns the new and old primary email
      */    
     @Override
     @Transactional
     public Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email) {
+        return addEmail(request, orcid, email, false);
+    }
+    
+    /**
+     * TODO: Returns true when the primary email is verified, this because the
+     * email sender is on the orcid-web project until we finish migrating the
+     * jersey libs, so, the calling function should know that the primary email
+     * have changed; for now it returns the new and old primary email
+     */
+    @Override
+    @Transactional
+    public Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email, boolean isAdminAction) {
         Map<String, String> keys = new HashMap<String, String>();
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
         String clientSourceId = sourceEntity.getSourceClient() == null ? null : sourceEntity.getSourceClient().getId();        
-        Email currentPrimaryEmail = findPrimaryEmail(orcid);
         Map<String, String> emailKeys = getEmailKeys(email.getEmail());
+        
+        Email currentPrimaryEmail = null;
+        try {
+            currentPrimaryEmail = findPrimaryEmail(orcid);
+        } catch(Exception e) {
+            LOGGER.error(String.format("User with orcid %s doesnt have a primary email address", orcid));
+        }
         
         // Create the new email
         emailDao.addEmail(orcid, emailKeys.get(FILTERED_EMAIL), emailKeys.get(HASH), email.getVisibility().name(), sourceId, clientSourceId);

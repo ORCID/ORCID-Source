@@ -443,7 +443,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
         } else {
             workEntity.setContributorsJson("{\"contributor\":[]}");
-            workEntity.setTopContributorsJson("{\"contributor\":[]}");
+            workEntity.setTopContributorsJson("[]");
         }
     }
 }

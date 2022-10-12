@@ -114,8 +114,8 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -917,7 +917,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.11</version>
+               <version>3.0.12</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

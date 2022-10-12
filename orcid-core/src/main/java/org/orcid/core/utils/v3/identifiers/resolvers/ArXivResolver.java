@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.stereotype.Component;
 import org.xml.sax.Attributes;
@@ -86,7 +87,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     }
 
     @Override
-    public Work resolveMetadata(String apiTypeName, String value) {
+    public WorkExtended resolveMetadata(String apiTypeName, String value) {
         PIDResolutionResult rr = this.resolve(apiTypeName, value);
         if (!rr.isResolved())
             return null;
@@ -102,7 +103,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             WorksHandler handler = new WorksHandler();
 
             saxParser.parse(is, handler);
-            Work w = handler.getWork();
+            WorkExtended w = handler.getWork();
             w.setWorkType(WorkType.PREPRINT); // default type for arXiv (arXiv data has no type)s
             return w;
         } catch (UnexpectedResponseCodeException e) {
@@ -123,7 +124,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
     }
 
     private class WorksHandler extends DefaultHandler {
-        private Work work = new Work();
+        private WorkExtended work = new WorkExtended();
         private Stack<String> elementStack = new Stack<String>();
         boolean isOnEntry = false;
         StringBuffer title = new StringBuffer();
@@ -227,7 +228,7 @@ public class ArXivResolver implements LinkResolver, MetadataResolver {
             }
         }
 
-        public Work getWork() {
+        public WorkExtended getWork() {
             return work;
         }
 
