@@ -64,6 +64,10 @@
 	<bean id="gridOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
     
 	<bean id="rorOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+	
+	<bean id="rorOrgDataSource" class="org.orcid.core.orgs.load.source.ror.RorOrgLoadSource" />
+    <bean id="fundrefOrgDataSource" class="org.orcid.core.orgs.load.source.fundref.FundrefOrgLoadSource" />
+    <bean id="ringgoldOrgDataSource" class="org.orcid.core.orgs.load.source.ringgold.RinggoldOrgLoadSource" />
 
     <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
         <constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
