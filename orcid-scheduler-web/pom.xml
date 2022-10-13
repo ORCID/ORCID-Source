@@ -34,15 +34,15 @@
          	<!-- javax.xml -->
 	<!-- javax.xml -->
     <dependency>
-    <groupId>jakarta.xml.bind</groupId>
-    <artifactId>jakarta.xml.bind-api</artifactId>
-    <version>2.3.3</version>
-</dependency>
-<dependency>
-<groupId>com.sun.xml.bind</groupId>
-<artifactId>jaxb-impl</artifactId>
-<version>2.3.3</version>
-</dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>2.3.3</version>
+    </dependency>
+    <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>2.3.3</version>
+    </dependency>
 	<dependency>
          <groupId>javax.annotation</groupId>
          <artifactId>javax.annotation-api</artifactId>
@@ -55,7 +55,13 @@
             <artifactId>orcid-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>       
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-junit</artifactId>
+            <version>2.4.1.Final</version>
+            <scope>test</scope>
+        </dependency>  
     </dependencies>
 
     <build>

@@ -9,6 +9,8 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+
+import jakarta.ws.rs.core.MediaType;
 
 @Component
 public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDocument> {
@@ -39,7 +40,8 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
 
     static ObjectMapper mapper = new ObjectMapper();
 
-    private Client client = Client.create();
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
 
     @Autowired
     public SolrOrgsMessageProcessor() throws JAXBException {
@@ -82,11 +84,10 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
                 throw new RuntimeException(e);
             }
 
-            WebResource resource = client.resource(webhookUrl);
-            ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, String.class, String.class);
             int status = response.getStatus();
             if (status != 200) {
-                LOG.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getEntity(String.class), message });
+                LOG.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getError(), message });
             }
         }
     }

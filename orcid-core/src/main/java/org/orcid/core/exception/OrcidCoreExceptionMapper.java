@@ -23,7 +23,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.sun.jersey.api.NotFoundException;
+
+import jakarta.ws.rs.NotFoundException;
 
 public class OrcidCoreExceptionMapper {
     

@@ -6,11 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.utils.http.HttpRequestUtils;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.slf4j.Logger;
@@ -35,13 +37,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import au.com.bytecode.opencsv.CSVWriter;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class TransformFundRefDataIntoCSV {
 
@@ -64,6 +63,7 @@ public class TransformFundRefDataIntoCSV {
     // Resources
     private GenericDao<OrgDisambiguatedExternalIdentifierEntity, Long> genericDao;
     private String apiUser;
+    private HttpRequestUtils httpRequestUtils;    
 
     // xPath queries
     private String conceptsExpression = "/RDF/ConceptScheme/hasTopConcept";
@@ -87,7 +87,7 @@ public class TransformFundRefDataIntoCSV {
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
-
+        httpRequestUtils = (HttpRequestUtils) context.getBean("httpRequestUtils");
         // Init the CSV file for existing orgs
         try {
             Writer writer1 = new FileWriter(this.FUNDREF_CSV);
@@ -109,7 +109,7 @@ public class TransformFundRefDataIntoCSV {
         }
     }
 
-    public void process() {
+    public void process() throws InterruptedException, URISyntaxException {
         // Init
         init();
         // Load fundref organizations
@@ -135,8 +135,10 @@ public class TransformFundRefDataIntoCSV {
 
     /**
      * Load data from FundRef
+     * @throws URISyntaxException 
+     * @throws InterruptedException 
      * */
-    private List<FundRefOrganization> loadFundRefOrgs() {
+    private List<FundRefOrganization> loadFundRefOrgs() throws InterruptedException, URISyntaxException {
         List<FundRefOrganization> fundRefOrgs = new ArrayList<FundRefOrganization>();
         System.out.println("Begin loading FundRef orgs");
         try {
@@ -166,8 +168,11 @@ public class TransformFundRefDataIntoCSV {
 
     /**
      * Parse a RDF node and convert it into a FundRefOrganization object
+     * @throws URISyntaxException 
+     * @throws InterruptedException 
+     * @throws IOException 
      * */
-    private FundRefOrganization getFundrefOrganization(Document xmlDocument, NamedNodeMap attrs) {
+    private FundRefOrganization getFundrefOrganization(Document xmlDocument, NamedNodeMap attrs) throws IOException, InterruptedException, URISyntaxException {
         FundRefOrganization organization = new FundRefOrganization();
         try {
             Node node = attrs.getNamedItem("rdf:resource");
@@ -251,8 +256,11 @@ public class TransformFundRefDataIntoCSV {
 
     /**
      * Fetch a property from geonames
+     * @throws URISyntaxException 
+     * @throws InterruptedException 
+     * @throws IOException 
      * */
-    private String fetchFromGeoNames(String geoNameUri, String propertyToFetch) {
+    private String fetchFromGeoNames(String geoNameUri, String propertyToFetch) throws IOException, InterruptedException, URISyntaxException {
         String result = null;
         String geoNameId = geoNameUri.replaceAll("[^\\d]", "");
         if (StringUtils.isNotBlank(geoNameId)) {
@@ -277,19 +285,17 @@ public class TransformFundRefDataIntoCSV {
 
     /**
      * Queries GeoNames API for a given geonameId and return the JSON string
+     * @throws URISyntaxException 
+     * @throws InterruptedException 
+     * @throws IOException 
      * */
-    private String fetchJsonFromGeoNames(String geoNameId) {
+    private String fetchJsonFromGeoNames(String geoNameId) throws IOException, InterruptedException, URISyntaxException {
         String result = null;
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            Client c = Client.create();
-            WebResource r = c.resource(geonamesApiUrl);
-            MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-            params.add("geonameId", geoNameId);
-            params.add("username", apiUser);
-            result = r.queryParams(params).get(String.class);
-            cache.put("geoname_json_" + geoNameId, result);
+            HttpResponse<String> response = httpRequestUtils.doGet(geonamesApiUrl + "?geonameId=" + geoNameId + "&username=" + apiUser);
+            cache.put("geoname_json_" + geoNameId, response.body());
         }
         return result;
     }
@@ -334,9 +340,11 @@ public class TransformFundRefDataIntoCSV {
     }
 
     /*****************************************************************************
-     ************************************* MAIN **********************************
+     ************************************* MAIN 
+     * @throws URISyntaxException 
+     * @throws InterruptedException **********************************
      ***************************************************************************** */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, URISyntaxException {
         TransformFundRefDataIntoCSV mergeData = new TransformFundRefDataIntoCSV();
         CmdLineParser parser = new CmdLineParser(mergeData);
         try {

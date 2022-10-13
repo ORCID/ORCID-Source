@@ -31,10 +31,10 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -89,8 +89,8 @@ public class PasswordResetControllerTest extends DBUnitTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Mock
-    private NotificationManager notificationManager;
-    
+    private RecordEmailSender mockRecordEmailSender;
+        
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
     
@@ -113,7 +113,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "notificationManager", notificationManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "recordEmailSender", mockRecordEmailSender);        
         
         // Disable all features by default
         togglzRule.disableAll();

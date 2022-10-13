@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.SalesForceManagerLegacy;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.MemberDetails;
@@ -62,9 +61,6 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     
     @Resource
     private OrcidSecurityManager securityMgr;
-
-    @Resource
-    private SlackManager slackManager;
 
     @Resource
     private SalesForceManagerLegacy salesForceManager;
@@ -159,8 +155,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             
             String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
             LOGGER.error(message);
-            
-            slackManager.sendSystemAlert(message);
+                        
             return alternativePrimaryEmail;
         } catch (javax.persistence.NonUniqueResultException nure) {
             String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(profile.getId());
@@ -169,7 +164,6 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
             LOGGER.error(message);
             
-            slackManager.sendSystemAlert(message);
             return alternativePrimaryEmail;
         }
     }

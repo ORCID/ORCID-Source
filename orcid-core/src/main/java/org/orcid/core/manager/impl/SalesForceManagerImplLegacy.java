@@ -23,7 +23,6 @@ import org.eclipse.jetty.util.StringUtil;
 import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SourceManager;
@@ -57,6 +56,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.google.common.base.Functions;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
+import org.orcid.core.exception.OrcidUnauthorizedException;
 
 /**
  * 

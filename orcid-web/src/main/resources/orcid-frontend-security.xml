@@ -11,6 +11,7 @@
 	<context:component-scan base-package="org.orcid"/>
 	<context:annotation-config />
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
 	<sec:global-method-security pre-post-annotations="enabled" />
 	
 	<bean id="orcidOauthRedirectResolver" class="org.orcid.core.oauth.security.OrcidOauthRedirectResolver" />

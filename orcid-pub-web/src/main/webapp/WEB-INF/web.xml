@@ -186,7 +186,7 @@
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>org.orcid.core.web.filters.ApiVersionCheckFilter</param-value>
+            <param-value>org.orcid.api.common.filter.ApiVersionCheckFilter</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>

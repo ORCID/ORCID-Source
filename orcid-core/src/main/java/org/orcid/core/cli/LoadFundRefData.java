@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 
-import javax.ws.rs.core.MultivaluedMap;
+import javax.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,6 +22,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.utils.http.HttpRequestUtils;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -39,10 +41,6 @@ import org.xml.sax.SAXException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 /**
  * 
@@ -88,7 +86,8 @@ public class LoadFundRefData {
     private long updatedOrgs = 0;
     private long addedDisambiguatedOrgs = 0;    
     private long depreciatedOrgs = 0;
-
+    private HttpRequestUtils httpRequestUtils;
+    
     public static void main(String[] args) {
         LoadFundRefData loadFundRefData = new LoadFundRefData();
         CmdLineParser parser = new CmdLineParser(loadFundRefData);
@@ -114,7 +113,8 @@ public class LoadFundRefData {
         @SuppressWarnings("resource")
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");     
-        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");     
+        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager"); 
+        httpRequestUtils = (HttpRequestUtils) context.getBean("httpRequestUtils");
         // Geonames params
         geonamesApiUrl = (String) context.getBean("geonamesApiUrl");
         apiUser = (String) context.getBean("geonamesUser");
@@ -319,32 +319,32 @@ public class LoadFundRefData {
         if (cache.containsKey("geoname_json_" + geoNameId)) {
             return cache.get("geoname_json_" + geoNameId);
         } else {
-            Client c = Client.create();
-            MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-            params.add("geonameId", geoNameId);
-            params.add("username", apiUser);
-            WebResource r = c.resource(geonamesApiUrl).queryParams(params);
-            ClientResponse response = r.get(ClientResponse.class);
-            int status = response.getStatus();
-            if (status == 200) {
-                result = response.getEntity(String.class);
-            } else {
-                LOGGER.warn("Got error status from geonames: {}", status);
-                try {
-                    LOGGER.info("Waiting before retrying geonames...");
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                ClientResponse retryResponse = r.get(ClientResponse.class);
-                int retryStatus = retryResponse.getStatus();
-                if (retryStatus == 200) {
-                    result = retryResponse.getEntity(String.class);
+            try {
+                HttpResponse<String> response = httpRequestUtils.doGet(geonamesApiUrl + "?geonameId=" + geoNameId + "&username=" + apiUser);
+                int status = response.statusCode();
+                if (status == 200) {
+                    result = response.body();
                 } else {
-                    String message = "Geonames failed after retry with status: " + retryStatus;
-                    LOGGER.error(message);
-                    throw new RuntimeException(message);
+                    LOGGER.warn("Got error status from geonames: {}", status);
+                    try {
+                        LOGGER.info("Waiting before retrying geonames...");
+                        Thread.sleep(30000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    HttpResponse<String> retryResponse = httpRequestUtils.doGet(geonamesApiUrl + "?geonameId=" + geoNameId + "&username=" + apiUser);
+                    int retryStatus = retryResponse.statusCode();
+                    if (retryStatus == 200) {
+                        result = retryResponse.body();
+                    } else {
+                        String message = "Geonames failed after retry with status: " + retryStatus;
+                        LOGGER.error(message);
+                        throw new RuntimeException(message);
+                    }
                 }
+            } catch (Exception e1) {
+                LOGGER.warn("Exception fetching information from geonames");
+                throw new RuntimeException("Exception fetching information from geonames");
             }
             cache.put("geoname_json_" + geoNameId, result);
         }

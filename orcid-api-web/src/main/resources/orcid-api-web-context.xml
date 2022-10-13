@@ -162,5 +162,7 @@
     	<constructor-arg value="${org.orcid.core.apiBaseUri}" />
     	<constructor-arg value="true" />
     </bean>
-           
+    
+    <bean id="analyticsClient" class="org.orcid.api.common.analytics.client.google.UniversalAnalyticsClient" />
+
 </beans>

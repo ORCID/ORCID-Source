@@ -13,14 +13,16 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -52,6 +54,12 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
+    
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+    
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManager;
     
     String orcidId;
 
@@ -100,9 +108,9 @@ public class VerifiedRequiredAnnouncement2017 implements ProfileEvent {
     }
     
     public boolean sendVerifiedRequiredAnnouncement2017(String orcid, String email, String localeString) {
-        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcid);
-        String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(email);
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcid);
+        String verificationUrl = verifyEmailUtils.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        String emailFrequencyUrl = verifyEmailUtils.createUpdateEmailFrequencyUrl(email);
 
         Map<String, Boolean> features = new HashMap<String, Boolean>();
         for(Features f : Features.values()) {

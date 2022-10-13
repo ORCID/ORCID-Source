@@ -14,8 +14,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.api.common.exception.JSONInputValidator;
+import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.core.exception.InvalidJSONException;
-import org.orcid.core.web.filters.ApiVersionFilter;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 

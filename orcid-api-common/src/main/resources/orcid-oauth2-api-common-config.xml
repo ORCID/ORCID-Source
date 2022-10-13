@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+        
+	<!-- As we have a Jersey endpoint, we need to create an extension to the 
+		Spring MVC, so we use a delegator -->
+	<bean id="orcidClientCredentialEndPointDelegator"
+		class="org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegatorImpl">
+		<property name="tokenGranter" ref="tokenGranter" />
+		<property name="clientDetailsService" ref="clientDetailsManager" />
+	</bean>
+	
+	<!-- Use the composite granter to enable granting of tokens for both client 
+		credentials and auth codes -->
+	<bean id="tokenGranter"
+		class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
+		<constructor-arg>
+			<list>
+				<ref bean="clientCredentialsTokenGranter" />
+				<ref bean="authorizationCodeTokenGranter" />
+				<ref bean="refreshTokenTokenGranter" />
+				<ref bean="ietfExchangeTokenGranter" />
+				<ref bean="orcidImplicitTokenGranter" />
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>

@@ -3,11 +3,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jms="http://www.springframework.org/schema/jms"   
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
 
     <import resource="classpath*:orcid-core-context.xml"/>
     <import resource="classpath*:statistics-core-context.xml"/>
+
+    <context:component-scan
+		base-package="org.orcid.scheduler.loader" />
 
     <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
 
@@ -45,5 +50,44 @@
 	<bean id="emailQueueErrorHandler" class="org.orcid.scheduler.email.trickle.EmailTrickleErrorHandler" />
 	
 	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
+
+	<bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager">
+		<constructor-arg value="${com.mailgun.apiKey:XXXX}"/>
+	</bean>
+	
+	<bean id="emailMessageSender" class="org.orcid.scheduler.email.cli.manager.EmailMessageSenderImpl" />
+	
+	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.scheduler.loader.io.FtpsFileDownloader" />
+
+	<bean id="fundrefOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+
+	<bean id="gridOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+    
+	<bean id="rorOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+	
+	<bean id="rorOrgDataSource" class="org.orcid.core.orgs.load.source.ror.RorOrgLoadSource" />
+    <bean id="fundrefOrgDataSource" class="org.orcid.core.orgs.load.source.fundref.FundrefOrgLoadSource" />
+    <bean id="ringgoldOrgDataSource" class="org.orcid.core.orgs.load.source.ringgold.RinggoldOrgLoadSource" />
+
+    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
+    </bean>
+	
+    <bean id="jerseyClientHelperDevelopmentMode" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg value="true"/>
+    </bean>
+    
+    <bean id="jerseyClientHelperForOrgLoaders" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg>
+        	<list value-type="java.lang.Class">
+        		<value>org.orcid.scheduler.jersey.ZenodoRecordsJsonBodyReader</value>
+        	</list>
+        </constructor-arg>
+    </bean>
+    
+
+    <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
+
+    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
 
 </beans>

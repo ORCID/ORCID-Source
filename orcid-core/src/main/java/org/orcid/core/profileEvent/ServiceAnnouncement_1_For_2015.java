@@ -11,17 +11,18 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.jaxb.model.v3.rc1.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -29,9 +30,6 @@ import org.springframework.context.MessageSource;
 public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
 
     private static Logger LOG = LoggerFactory.getLogger(ServiceAnnouncement_1_For_2015.class);
-
-    @Resource
-    private NotificationManager notificationManager;
 
     @Resource(name = "messageSource")
     private MessageSource messages;
@@ -53,6 +51,12 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
     
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
+    
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+    
+    @Resource(name = "recordNameManagerV3")
+    private RecordNameManager recordNameManager;
     
     String orcidId;
 
@@ -108,12 +112,12 @@ public class ServiceAnnouncement_1_For_2015 implements ProfileEvent {
     }
     
     public boolean sendServiceAnnouncement_1_For_2015(String orcid, String email, String localeString) {
-        String emailFriendlyName = notificationManager.deriveEmailFriendlyName(orcid);
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcid);
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = notificationManager.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
+        String verificationUrl = verifyEmailUtils.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         templateParams.put("verificationUrl", verificationUrl);
-        String emailFrequencyUrl = notificationManager.createUpdateEmailFrequencyUrl(email);
+        String emailFrequencyUrl = verifyEmailUtils.createUpdateEmailFrequencyUrl(email);
         templateParams.put("emailFrequencyUrl", emailFrequencyUrl);
         templateParams.put("orcid", orcid);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());

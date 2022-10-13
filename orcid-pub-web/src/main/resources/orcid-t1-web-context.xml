@@ -135,4 +135,6 @@
     	<constructor-arg value="false" />
     </bean>
     
+    <bean id="analyticsClient" class="org.orcid.api.common.analytics.client.google.UniversalAnalyticsClient" />    
+    
 </beans>

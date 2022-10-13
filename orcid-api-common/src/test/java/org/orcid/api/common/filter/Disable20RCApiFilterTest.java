@@ -32,7 +32,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.test.TargetProxyHelper;
 import org.togglz.junit.TogglzRule;
 

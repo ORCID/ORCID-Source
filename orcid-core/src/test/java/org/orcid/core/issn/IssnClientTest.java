@@ -3,94 +3,108 @@ package org.orcid.core.issn;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
 import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
+import org.orcid.core.utils.http.HttpRequestUtils;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 public class IssnClientTest {
     
     private IssnClient issnClient = new IssnClient();
     
+    @Mock
+    private HttpRequestUtils mockHttpRequestUtils;
+    
+    @Mock
+    private HttpResponse<String> mockResponse;
+    
     @Before
     public void setUp() throws IOException {
+        MockitoAnnotations.initMocks(this);
         IssnPortalUrlBuilder mockUrlBuilder = Mockito.mock(IssnPortalUrlBuilder.class);
         Mockito.when(mockUrlBuilder.buildJsonIssnPortalUrlForIssn(Mockito.anyString())).thenReturn("anything");
         ReflectionTestUtils.setField(issnClient, "issnPortalUrlBuilder", mockUrlBuilder);
+        ReflectionTestUtils.setField(issnClient, "httpRequestUtils", mockHttpRequestUtils);
     }
     
     @Test
-    public void testGetIssnData() throws IOException, JSONException {
-        ReflectionTestUtils.setField(issnClient, "client", getMockedClient(getJsonInputStream()));
+    public void testGetIssnData() throws IOException, JSONException, InterruptedException, URISyntaxException {
+        when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
+        when(mockResponse.body()).thenReturn(getJsonInputStream());
+        when(mockResponse.statusCode()).thenReturn(200);
+        
         IssnData data = issnClient.getIssnData("doesn't matter");
         assertEquals("Nature chemistry.", data.getMainTitle());
         assertEquals("1755-4349", data.getIssn());
     }
     
     @Test
-    public void testGetIssnDataNoMainTitle() throws IOException, JSONException {
-        ReflectionTestUtils.setField(issnClient, "client", getMockedClient(getJsonInputStreamNoMainTitle()));
+    public void testGetIssnDataNoMainTitle() throws IOException, JSONException, InterruptedException, URISyntaxException {
+        when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
+        when(mockResponse.body()).thenReturn(getJsonInputStreamNoMainTitle());
+        when(mockResponse.statusCode()).thenReturn(200);
+        
         IssnData data = issnClient.getIssnData("doesn't matter");
         assertEquals("Journal of food engineering", data.getMainTitle());
         assertEquals("0260-8774", data.getIssn());
     }
     
     @Test
-    public void testGetIssnDataNoMainTitleNameArray() throws IOException, JSONException {
-        ReflectionTestUtils.setField(issnClient, "client", getMockedClient(getJsonInputStreamNoMainTitleNameArray()));
+    public void testGetIssnDataNoMainTitleNameArray() throws IOException, JSONException, InterruptedException, URISyntaxException {
+        when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
+        when(mockResponse.body()).thenReturn(getJsonInputStreamNoMainTitleNameArray());
+        when(mockResponse.statusCode()).thenReturn(200);
+                
         IssnData data = issnClient.getIssnData("doesn't matter");
         assertEquals("Shalom (Glyvrar)", data.getMainTitle());
-        assertEquals("0906-8724", data.getIssn());
+        assertEquals("0906-8724", data.getIssn());        
     }
     
     @Test
-    public void testGetIssnDataBadCharacters() throws IOException, JSONException {
-        ReflectionTestUtils.setField(issnClient, "client", getMockedClient(getJsonInputStreamBadCharacters()));
+    public void testGetIssnDataBadCharacters() throws IOException, JSONException, InterruptedException, URISyntaxException {
+        when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
+        when(mockResponse.body()).thenReturn(getJsonInputStreamBadCharacters());
+        when(mockResponse.statusCode()).thenReturn(200);
+        
         IssnData data = issnClient.getIssnData("doesn't matter");
         assertFalse("\u0098The \u009CJournal of cell biology.".equals(data.getMainTitle()));
         assertEquals("The Journal of cell biology.", data.getMainTitle());
         assertTrue("\u0098The \u009CJournal of cell biology.".getBytes().length != data.getMainTitle().getBytes().length);
     }
 
-    private InputStream getJsonInputStream() throws IOException {
-        return getClass().getResourceAsStream("/issn-response.json");
+    private String getJsonInputStream() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response.json");
+        return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
     
-    private InputStream getJsonInputStreamNoMainTitle() throws IOException {
-        return getClass().getResourceAsStream("/issn-response-no-mainTitle.json");
+    private String getJsonInputStreamNoMainTitle() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response-no-mainTitle.json");
+        return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
     
-    private InputStream getJsonInputStreamNoMainTitleNameArray() throws IOException {
-        return getClass().getResourceAsStream("/issn-response-no-mainTitle-name-array.json");
+    private String getJsonInputStreamNoMainTitleNameArray() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response-no-mainTitle-name-array.json");
+        return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
     
-    private InputStream getJsonInputStreamBadCharacters()  throws IOException {
-        return getClass().getResourceAsStream("/issn-response-bad-characters.json");
-    }
-    
-    private Client getMockedClient(InputStream inputStream) throws IOException {
-        Client client = Mockito.mock(Client.class);
-        WebResource webResource = Mockito.mock(WebResource.class);
-        ClientResponse response = Mockito.mock(ClientResponse.class);
-        
-        Mockito.when(client.resource(Mockito.anyString())).thenReturn(webResource);
-        Mockito.when(webResource.get(Mockito.eq(ClientResponse.class))).thenReturn(response);
-        Mockito.when(response.getStatus()).thenReturn(200);
-        Mockito.when(response.getEntityInputStream()).thenReturn(inputStream);
-        
-        return client;
-    }
-
+    private String getJsonInputStreamBadCharacters()  throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response-bad-characters.json");
+        return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    }        
 }

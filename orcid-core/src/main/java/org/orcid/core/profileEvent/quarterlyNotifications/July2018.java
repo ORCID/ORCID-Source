@@ -7,8 +7,8 @@ import java.util.Map;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.context.ApplicationContext;
@@ -17,7 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class July2018 extends QuarterlyNotificationsManager {
     private static final String NOTIFICATION_FAMILY = "JULY_2018";
     
-    private NotificationManager notificationManager;
+    private RecordNameManager recordNameManager;
     
     private TemplateManager templateManager;
     
@@ -31,7 +31,7 @@ public class July2018 extends QuarterlyNotificationsManager {
     public July2018() {
         super(ProfileEventType.JULY_2018_CREATED, ProfileEventType.JULY_2018_SKIPPED, ProfileEventType.JULY_2018_FAIL, NOTIFICATION_FAMILY, true, 10);
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        notificationManager = (NotificationManager) context.getBean("notificationManager");
+        recordNameManager = (RecordNameManager) context.getBean("recordNameManager");
         templateManager = (TemplateManager) context.getBean("templateManager");
     }
     
@@ -41,7 +41,7 @@ public class July2018 extends QuarterlyNotificationsManager {
     
     public Map<String, Object> generateTemplateParams(ProfileEntity profileEntity, Locale locale) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
-        String emailName = notificationManager.deriveEmailFriendlyName(profileEntity.getId());
+        String emailName = recordNameManager.deriveEmailFriendlyName(profileEntity.getId());
         templateParams.put("emailName", emailName);   
         return templateParams;
     }

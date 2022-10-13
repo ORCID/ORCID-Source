@@ -1,0 +1,5 @@
+[{"rec_id":1,"parent_ringgold_id":0,"ringgold_id":1,"name":"1. Name","city":"City#1","country":"US","state":"State#1","type":"type/1","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":2,"parent_ringgold_id":0,"ringgold_id":2,"name":"2. Name","city":"City#2","country":"CR","type":"type/2","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":3,"parent_ringgold_id":0,"ringgold_id":3,"name":"3. Name","city":"City#3","country":"US","type":"type/3","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":4,"parent_ringgold_id":1,"ringgold_id":4,"name":"4. Name","city":"City#4","country":"CR","state":"State#4","type":"type/4","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":5,"parent_ringgold_id":4,"ringgold_id":5,"name":"5. Name","city":"City#5","country":"US","state":"State#5","type":"type/5","timestamp":"2018-01-01T00:00:00.000Z"}]
