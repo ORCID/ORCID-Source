@@ -11,7 +11,7 @@ import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 
 public class IdentifierTypeConverterTest extends BaseTest {
 

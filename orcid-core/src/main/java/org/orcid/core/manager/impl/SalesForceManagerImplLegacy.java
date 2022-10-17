@@ -49,8 +49,8 @@ import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Functions;

@@ -24,7 +24,7 @@ import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.utils.email.MailGunManager;
 
 public class TrickleManagerImplTest {

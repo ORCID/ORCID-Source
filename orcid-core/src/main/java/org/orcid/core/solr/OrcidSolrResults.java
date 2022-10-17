@@ -1,4 +1,4 @@
-package org.orcid.utils.solr.entities;
+package org.orcid.core.solr;
 
 import java.util.List;
 

@@ -21,8 +21,8 @@ import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 
 public class WorkForm extends VisibilityForm implements ErrorsInterface, Serializable {
 

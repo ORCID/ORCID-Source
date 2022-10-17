@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,7 +21,6 @@ import org.orcid.persistence.jpa.entities.SourceType;
 import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -57,7 +57,9 @@ public class SpamDaoTest extends DBUnitTest {
     @Test
     public void testWriteSpam() throws IllegalAccessException {
         SpamEntity spamEntity = new SpamEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(spamEntity, new Date());
+        Date date = new Date();
+        FieldUtils.writeField(spamEntity, "dateCreated", date, true);
+        FieldUtils.writeField(spamEntity, "lastModified", date, true);
         spamEntity.setOrcid(USER_ORCID);
         spamEntity.setSourceType(SourceType.USER);
         spamEntity.setSpamCounter(1);

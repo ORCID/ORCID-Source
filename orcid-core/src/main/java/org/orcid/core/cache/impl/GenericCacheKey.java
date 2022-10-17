@@ -18,7 +18,7 @@ package org.orcid.core.cache.impl;
 
 import java.io.Serializable;
 
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 
 /**
  * 

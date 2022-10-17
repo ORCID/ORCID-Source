@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Activity;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
@@ -46,7 +47,6 @@ import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;

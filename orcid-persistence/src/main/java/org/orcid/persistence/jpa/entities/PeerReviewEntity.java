@@ -1,7 +1,5 @@
 package org.orcid.persistence.jpa.entities;
 
-import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +13,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.persistence.util.OrcidStringUtils;
+
 
 @Entity
 @Table(name = "peer_review")
@@ -221,17 +220,17 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
             throw new NullPointerException("Can't compare with null");
         }
                 
-        int typeCompare = compareObjectsNullSafe(type, other.getType());
+        int typeCompare = OrcidStringUtils.compareObjectsNullSafe(type, other.getType());
         if(typeCompare != 0) {
             return typeCompare;
         }
         
-        int roleCompare = compareObjectsNullSafe(role, other.getRole());
+        int roleCompare = OrcidStringUtils.compareObjectsNullSafe(role, other.getRole());
         if(roleCompare != 0) {
             return roleCompare;
         }
         
-        int completionDateCompare = compareObjectsNullSafe((FuzzyDateEntity)completionDate, (FuzzyDateEntity)other.getCompletionDate());
+        int completionDateCompare = OrcidStringUtils.compareObjectsNullSafe((FuzzyDateEntity)completionDate, (FuzzyDateEntity)other.getCompletionDate());
         if(completionDateCompare != 0) {
             return completionDateCompare;
         }
@@ -267,7 +266,7 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
             return subjectExtIdCompare;
         }
         
-        int subjectTypeCompare = compareObjectsNullSafe(subjectType, other.getSubjectType());
+        int subjectTypeCompare = OrcidStringUtils.compareObjectsNullSafe(subjectType, other.getSubjectType());
         if(subjectTypeCompare != 0) {
             return subjectTypeCompare;
         }

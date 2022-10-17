@@ -1,4 +1,4 @@
-package org.orcid.utils;
+package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
+import org.orcid.core.utils.DateUtils;
 
 /**
  * 

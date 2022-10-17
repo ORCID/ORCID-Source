@@ -21,7 +21,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Value;
  *
  */
 public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkEntityCacheManagerImpl.class);   
     
     @Resource(name = "workLastModifiedCache")
     private Cache<ProfileCacheKey, List<WorkLastModifiedEntity>> workLastModifiedCache;

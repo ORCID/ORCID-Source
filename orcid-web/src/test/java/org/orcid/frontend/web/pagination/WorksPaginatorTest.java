@@ -20,6 +20,7 @@ import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
@@ -49,7 +50,6 @@ import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.orcid.utils.DateUtils;
 
 public class WorksPaginatorTest {
 
