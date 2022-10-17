@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)

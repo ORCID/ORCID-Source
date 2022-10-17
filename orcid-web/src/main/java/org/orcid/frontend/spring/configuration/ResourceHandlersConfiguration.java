@@ -1,6 +1,6 @@
 package org.orcid.frontend.spring.configuration;
 
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;

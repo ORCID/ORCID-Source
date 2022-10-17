@@ -29,7 +29,7 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateUtils;
 
 public class Api2_0_rc2_LastModifiedDatesHelper {
 

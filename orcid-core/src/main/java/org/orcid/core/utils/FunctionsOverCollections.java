@@ -1,4 +1,4 @@
-package org.orcid.utils;
+package org.orcid.core.utils;
 
 import java.util.Comparator;
 import java.util.Map;

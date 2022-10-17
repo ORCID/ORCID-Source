@@ -1,20 +1,13 @@
 package org.orcid.core.solr;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -29,10 +22,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.solr.entities.OrcidSolrDocument;
-import org.orcid.utils.solr.entities.OrcidSolrResult;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.test.context.ContextConfiguration;
 
 /**

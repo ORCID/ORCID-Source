@@ -15,7 +15,7 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 /**

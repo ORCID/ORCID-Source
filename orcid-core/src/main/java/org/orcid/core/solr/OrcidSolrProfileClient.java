@@ -1,16 +1,6 @@
 package org.orcid.core.solr;
 
-import static org.orcid.utils.solr.entities.SolrConstants.AFFILIATE_CURRENT_INSTITUTION_NAME;
-import static org.orcid.utils.solr.entities.SolrConstants.AFFILIATE_PAST_INSTITUTION_NAMES;
-import static org.orcid.utils.solr.entities.SolrConstants.CREDIT_NAME;
-import static org.orcid.utils.solr.entities.SolrConstants.EMAIL_ADDRESS;
-import static org.orcid.utils.solr.entities.SolrConstants.FAMILY_NAME;
-import static org.orcid.utils.solr.entities.SolrConstants.GIVEN_NAMES;
-import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
-import static org.orcid.utils.solr.entities.SolrConstants.OTHER_NAMES;
-import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
-import static org.orcid.utils.solr.entities.SolrConstants.PUBLIC_PROFILE;
-import static org.orcid.utils.solr.entities.SolrConstants.SCORE;
+import static org.orcid.core.solr.SolrConstants.*;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -27,9 +17,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.orcid.utils.solr.entities.OrcidSolrResult;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
-import org.orcid.utils.solr.entities.SolrConstants;
+import org.orcid.core.solr.OrcidSolrResult;
+import org.orcid.core.solr.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -101,7 +90,7 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
                 fieldList.add(field);
             }
         } else {
-            fieldList.addAll(SolrConstants.ALLOWED_FIELDS);
+            fieldList.addAll(ALLOWED_FIELDS);
         }
         fieldList.add(SCORE);
         return findByDocumentCriteria(queryMap, fieldList.toArray(new String[0]));

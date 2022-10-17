@@ -21,8 +21,8 @@ import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**

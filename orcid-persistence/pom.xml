@@ -42,15 +42,21 @@
                 </excludes>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>
-        <!-- Internal dependencies -->
-        <dependency>
-            <groupId>org.orcid</groupId>
-            <artifactId>orcid-utils</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        <!-- Internal dependencies -->        
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
@@ -165,6 +171,10 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>			
         </dependency>
         
         <!-- Encryption -->

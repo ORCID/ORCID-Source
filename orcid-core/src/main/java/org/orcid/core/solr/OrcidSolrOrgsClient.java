@@ -1,6 +1,6 @@
 package org.orcid.core.solr;
 
-import static org.orcid.utils.solr.entities.SolrConstants.ORG_DISAMBIGUATED_ID;
+import static org.orcid.core.solr.SolrConstants.*;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -14,8 +14,7 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.orcid.core.togglz.Features;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
-import org.orcid.utils.solr.entities.SolrConstants;
+import org.orcid.core.solr.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

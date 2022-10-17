@@ -1,13 +1,13 @@
 package org.orcid.persistence.jpa.entities;
 
-import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
+import org.orcid.persistence.util.OrcidStringUtils;
 
 /**
  * @author Declan Newman (declan) Date: 08/08/2012
@@ -73,19 +73,19 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
         if (other == null) {
             return -1;
         }
-        int compareSequenceTypes = compareObjectsNullSafe(sequence, other.getSequence());
+        int compareSequenceTypes = OrcidStringUtils.compareObjectsNullSafe(sequence, other.getSequence());
         if (compareSequenceTypes != 0) {
             return compareSequenceTypes;
         }
-        int compareRoles = compareObjectsNullSafe(contributorRole, other.getContributorRole());
+        int compareRoles = OrcidStringUtils.compareObjectsNullSafe(contributorRole, other.getContributorRole());
         if (compareRoles != 0) {
             return compareRoles;
         }
-        int compareCreditNames = compareObjectsNullSafe(creditName, other.getCreditName());
+        int compareCreditNames = OrcidStringUtils.compareObjectsNullSafe(creditName, other.getCreditName());
         if (compareCreditNames != 0) {
             return compareCreditNames;
         }
-        int compareEmails = compareObjectsNullSafe(contributorEmail, other.getContributorEmail());
+        int compareEmails = OrcidStringUtils.compareObjectsNullSafe(contributorEmail, other.getContributorEmail());
         if (compareEmails != 0) {
             return compareEmails;
         }

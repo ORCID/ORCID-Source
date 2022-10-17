@@ -16,7 +16,7 @@ import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.togglz.Features;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -26,7 +27,6 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3Manager;
 import org.orcid.listener.s3.S3MessagingService;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.jersey.marshaller.ORCIDMarshaller;
 
 import com.amazonaws.AmazonClientException;

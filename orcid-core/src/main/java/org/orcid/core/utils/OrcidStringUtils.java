@@ -1,4 +1,4 @@
-package org.orcid.utils;
+package org.orcid.core.utils;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -14,10 +14,9 @@ import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Safelist;
 
 /**
- * <p>
- * User: Declan Newman (declan) Date: 10/02/2012
- * </p>
- */
+ * TODO: Once the jersey migration is over, this should go back to the orcid-utils package so it could be reused form the orcid-persistence package
+ * */
+@Deprecated
 public class OrcidStringUtils {
 
     public static String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";

@@ -50,7 +50,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.togglz.junit.TogglzRule;
 

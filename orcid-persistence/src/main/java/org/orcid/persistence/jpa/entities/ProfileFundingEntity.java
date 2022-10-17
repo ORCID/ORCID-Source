@@ -1,7 +1,5 @@
 package org.orcid.persistence.jpa.entities;
 
-import static org.orcid.utils.NullUtils.compareObjectsNullSafe;
-
 import java.math.BigDecimal;
 
 import javax.persistence.Basic;
@@ -17,8 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.utils.NullUtils;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.persistence.util.OrcidStringUtils;
 
 /**
  * orcid-entities - Dec 6, 2011 - ProfileInstitutionEntity
@@ -256,7 +253,7 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
             return compareStarts;
         }        
 
-        int compareNumericAmounts = compareObjectsNullSafe(numericAmount, other.getNumericAmount());
+        int compareNumericAmounts = OrcidStringUtils.compareObjectsNullSafe(numericAmount, other.getNumericAmount());
         if (compareNumericAmounts != 0) {
             return compareNumericAmounts;
         }
@@ -295,29 +292,29 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
     }
 
     private int compareTypes(String type, String otherType) {
-        if (NullUtils.anyNull(type, otherType)) {
-            return -NullUtils.compareNulls(type, otherType);
+        if (OrcidStringUtils.anyNull(type, otherType)) {
+            return -OrcidStringUtils.compareNulls(type, otherType);
         }
         return -type.compareTo(otherType);
     }
 
     private int compareEnds(FuzzyDateEntity endDate, FuzzyDateEntity otherEndDate) {
-        if (NullUtils.anyNull(endDate, otherEndDate)) {
-            return -NullUtils.compareNulls(endDate, otherEndDate);
+        if (OrcidStringUtils.anyNull(endDate, otherEndDate)) {
+            return -OrcidStringUtils.compareNulls(endDate, otherEndDate);
         }
         return -endDate.compareTo(otherEndDate);
     }
 
     private int compareStarts(FuzzyDateEntity startDate, FuzzyDateEntity otherStartDate) {
-        if (NullUtils.anyNull(startDate, otherStartDate)) {
-            return NullUtils.compareNulls(startDate, otherStartDate);
+        if (OrcidStringUtils.anyNull(startDate, otherStartDate)) {
+            return OrcidStringUtils.compareNulls(startDate, otherStartDate);
         }
         return -startDate.compareTo(otherStartDate);
     }
 
     private int compareLongs(Long l1, Long l2 ) {
-        if (NullUtils.anyNull(l1, l2)) {
-            return NullUtils.compareNulls(l1, l2);
+        if (OrcidStringUtils.anyNull(l1, l2)) {
+            return OrcidStringUtils.compareNulls(l1, l2);
         }
         return l1.compareTo(l2);
     }

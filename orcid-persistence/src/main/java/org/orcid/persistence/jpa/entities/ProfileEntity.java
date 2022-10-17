@@ -22,10 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
-import org.orcid.utils.DateUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -881,21 +879,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     public void setReviewed(boolean reviewed) {
         this.reviewed = reviewed;
     }
-
-    /**
-     * Generates a string that will be used for caching proposes
-     * 
-     * @param profile
-     * @return a string containing the orcid id and the last modified day,
-     *         concatenated by '_'
-     * */
-    @Transient
-    public String getCacheKey() {
-        String orcid = this.getId();
-        Date lastModified = this.getLastModified() == null ? new Date() : this.getLastModified();
-        String lastModifiedString = DateUtils.convertToXMLGregorianCalendar(lastModified).toXMLFormat();
-        return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
-    }   
 
     @Column(name="last_login")
     public Date getLastLogin() {

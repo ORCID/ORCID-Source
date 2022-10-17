@@ -5,7 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.utils.listener.LastModifiedMessage;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.core.solr.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.JmsException;

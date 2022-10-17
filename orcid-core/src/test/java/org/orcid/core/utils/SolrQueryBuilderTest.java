@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.orcid.utils.solr.entities.SolrConstants;
+import org.orcid.core.solr.SolrConstants;
 
 public class SolrQueryBuilderTest {
 

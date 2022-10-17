@@ -23,6 +23,11 @@
            <artifactId>orcid-core</artifactId>
            <version>${project.version}</version>
         </dependency>		
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>orcid-utils</artifactId>
+           <version>${project.version}</version>
+        </dependency>
 
 		<!-- Solr -->
 		<dependency>

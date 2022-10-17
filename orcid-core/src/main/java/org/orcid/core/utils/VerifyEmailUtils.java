@@ -14,7 +14,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.utils.DateUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,7 @@
-package org.orcid.utils;
+package org.orcid.core.utils;
 
 import org.junit.Test;
+import org.orcid.core.utils.OrcidStringUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
