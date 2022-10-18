@@ -20,7 +20,11 @@
 	
     <context:property-placeholder location="${org.orcid.message-listener.properties}" />
     
-	<context:component-scan base-package="org.orcid" />
+	<context:component-scan base-package="org.orcid">
+		<!-- We don't need the mailgun manager in the message listener -->
+		<context:exclude-filter type="assignable" expression="org.orcid.utils.email.MailGunManager"/>
+	</context:component-scan>
+	
 	<context:annotation-config />
 
 	<bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
