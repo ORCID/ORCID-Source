@@ -37,7 +37,7 @@ public class LoadDataForOrganizationSource {
      */
     @SuppressWarnings({ "resource" })
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-beans-context.xml");
         orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
         rorOrgSource = (OrgLoadSource) context.getBean("rorOrgDataSource");
         fundrefOrgSource = (OrgLoadSource) context.getBean("fundrefOrgDataSource");

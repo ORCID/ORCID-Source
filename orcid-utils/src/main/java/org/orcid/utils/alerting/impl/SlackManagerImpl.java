@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.ws.rs.core.MediaType;
+
 /**
  * 
  * @author Will Simpson
@@ -68,7 +70,7 @@ public class SlackManagerImpl implements SlackManager {
     }
     
     private void send(String bodyJson) {
-        JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, null, bodyJson, String.class, String.class);
+        JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, new MediaType(), bodyJson, String.class, String.class);
         int status = response.getStatus();
         if (status != 200) {
             LOGGER.warn("Unable to send message to Slack: \n{}", bodyJson);
