@@ -56,8 +56,16 @@ public class PublicProfileValidator {
     @SuppressWarnings("resource")
     public PublicProfileValidator(String baseUri, boolean developmentMode) throws URISyntaxException {
         this.baseUri = baseUri;
-        this.developmentMode = developmentMode;
+        this.developmentMode = developmentMode;        
+    }
 
+    public void processValidationCycle() {
+        init();
+        removeOldRecords();
+        validateRecords();
+    }
+
+    private void init() {
         Source source = new StreamSource(getClass().getResourceAsStream("/record_3.0/record-3.0.xsd"));
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setResourceResolver(new PublicProfileValidatorResourceResolver());
@@ -67,12 +75,7 @@ public class PublicProfileValidator {
             throw new RuntimeException("Error creating PublicProfileValidator: " + e);
         }
     }
-
-    public void processValidationCycle() {
-        removeOldRecords();
-        validateRecords();
-    }
-
+    
     private void removeOldRecords() {
         Calendar maxAge = Calendar.getInstance();
         maxAge.add(Calendar.DAY_OF_YEAR, -validationMaxAgeInDays);
