@@ -14,7 +14,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.email.trickle.producer.EmailTrickleItem;
-import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.v3.EmailMessage;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.persistence.dao.EmailFrequencyDao;
@@ -25,7 +24,8 @@ import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.utils.email.MailGunManager;
 
 public class TrickleManagerImplTest {
 

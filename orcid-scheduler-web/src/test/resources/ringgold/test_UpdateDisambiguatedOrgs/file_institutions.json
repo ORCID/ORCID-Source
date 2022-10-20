@@ -1,0 +1,4 @@
+[{"rec_id":1,"parent_ringgold_id":0,"ringgold_id":1,"name":"1. Name - updated","city":"City#1","country":"US","state":"State#1","type":"type/1","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":2,"parent_ringgold_id":0,"ringgold_id":2,"name":"2. Name","city":"City#2 - updated","country":"CR","type":"type/2","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":3,"parent_ringgold_id":0,"ringgold_id":3,"name":"3. Name","city":"City#3","country":"ZW","type":"type/3","timestamp":"2018-01-01T00:00:00.000Z"}
+,{"rec_id":4,"parent_ringgold_id":1,"ringgold_id":4,"name":"4. Name","city":"City#4","country":"CR","state":"State#4 - updated","type":"type/4/updated","timestamp":"2018-01-01T00:00:00.000Z"}]

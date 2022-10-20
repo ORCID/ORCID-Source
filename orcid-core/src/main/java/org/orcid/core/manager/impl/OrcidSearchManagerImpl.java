@@ -13,7 +13,7 @@ import org.orcid.core.solr.OrcidSolrProfileClient;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.core.solr.OrcidSolrResults;
 import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {

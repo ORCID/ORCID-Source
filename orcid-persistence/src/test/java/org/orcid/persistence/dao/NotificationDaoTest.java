@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hsqldb.types.NumberType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -32,7 +33,6 @@ import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -287,7 +287,8 @@ public class NotificationDaoTest extends DBUnitTest {
         for (int i = 0; i < 5; i++) {
             Date now = new Date();
             NotificationAmendedEntity newEntity = new NotificationAmendedEntity();
-            DateFieldsOnBaseEntityUtils.setDateFields(newEntity, now);
+            FieldUtils.writeField(newEntity, "dateCreated", now, true);
+            FieldUtils.writeField(newEntity, "lastModified", now, true);
             newEntity.setAmendedSection(AMENDED_SECTION_UNKNOWN);
             newEntity.setClientSourceId("APP-6666666666666666");
             newEntity.setNotificationIntro("Intro");

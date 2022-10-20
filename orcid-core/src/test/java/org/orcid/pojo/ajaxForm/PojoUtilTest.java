@@ -14,7 +14,7 @@ import org.orcid.jaxb.model.v3.release.common.Month;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateUtils;
 
 public class PojoUtilTest {
 

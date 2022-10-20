@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -57,9 +56,6 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
 
     @Resource
     protected NotificationManager notificationManager;
-
-    @Resource
-    private SlackManager slackManager;
 
     @Override
     @Transactional

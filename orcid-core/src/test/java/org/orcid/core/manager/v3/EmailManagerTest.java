@@ -44,7 +44,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -54,8 +54,6 @@ public class EmailManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
 
-    private final Date pastDate= new Date();
-    
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
     
@@ -66,10 +64,7 @@ public class EmailManagerTest extends BaseTest {
     private SourceManager sourceManager;
 
     @Resource
-    private EmailDao emailDao;
-    
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
+    private EmailDao emailDao;    
     
     @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;
@@ -80,9 +75,6 @@ public class EmailManagerTest extends BaseTest {
     @Mock
     private EmailDao mockEmailDao;
     
-    @Mock
-    private NotificationManager mockNotificationManager;
-    
     @Before
     public void before() throws JAXBException {
         MockitoAnnotations.initMocks(this);
@@ -91,7 +83,6 @@ public class EmailManagerTest extends BaseTest {
         source.setSourceProfile(new ProfileEntity(ORCID));
         when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(source);
         //Set the default manager and dao
-        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
     
@@ -103,7 +94,6 @@ public class EmailManagerTest extends BaseTest {
     @After
     public void after() throws JAXBException {
         ReflectionTestUtils.setField(emailManager, "sourceManager", sourceManager);
-        ReflectionTestUtils.setField(emailManager, "notificationManager", notificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
     
@@ -284,7 +274,6 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void testEditPrimaryEmail() throws IllegalAccessException {
-        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         EmailEntity primaryEmailEntity = new EmailEntity();
@@ -300,8 +289,6 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).persist(captor.capture());
         Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
-        Mockito.verify(mockNotificationManager).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
-        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
         
         EmailEntity mergedEntity = captor.getValue();
         assertEquals("edited", mergedEntity.getEmail());
@@ -312,7 +299,6 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void testEditSecondaryEmail() throws IllegalAccessException {       
-        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         EmailEntity primaryEmailEntity = new EmailEntity();
         primaryEmailEntity.setEmail("original");
@@ -328,8 +314,6 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).persist(captor.capture());
         Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
-        Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("orcid"), Mockito.eq("edited"), Mockito.eq("original"));
-        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("edited"));
         
         EmailEntity mergedEntity = captor.getValue();
         assertEquals("edited", mergedEntity.getEmail());
@@ -340,7 +324,6 @@ public class EmailManagerTest extends BaseTest {
     
     @Test
     public void testEditPrimaryEmailNoAddressChange() throws IllegalAccessException {
-        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         EmailEntity primaryEmailEntity = new EmailEntity();
@@ -356,8 +339,6 @@ public class EmailManagerTest extends BaseTest {
         ArgumentCaptor<EmailEntity> captor = ArgumentCaptor.forClass(EmailEntity.class);
         Mockito.verify(mockEmailDao).persist(captor.capture());
         Mockito.verify(mockEmailDao).remove(Mockito.eq("some-email-hash"));
-        Mockito.verify(mockNotificationManager, Mockito.never()).sendEmailAddressChangedNotification(Mockito.eq("email"), Mockito.eq("email"), Mockito.eq("original"));
-        Mockito.verify(mockNotificationManager).sendVerificationEmail(Mockito.eq("orcid"), Mockito.eq("email"));
         
         EmailEntity mergedEntity = captor.getValue();
         assertEquals("email", mergedEntity.getEmail());
@@ -386,11 +367,12 @@ public class EmailManagerTest extends BaseTest {
             emailManager.addEmail(new MockHttpServletRequest(), ORCID, email);
             
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-            Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(OrcidStringUtils.filterEmailAddress(emailAddress)), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
+            Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(filteredEmailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
             String hashValue = captor.getValue();
             
             assertNotEquals(hashValue, encryptionManager.sha256Hash(emailAddress));
-            assertEquals(hashValue, encryptionManager.getEmailHash(filteredEmailAddress));           
+            assertEquals(hashValue, encryptionManager.getEmailHash(filteredEmailAddress));
+            Mockito.reset(mockEmailDao);
         }
     }
     
@@ -399,7 +381,6 @@ public class EmailManagerTest extends BaseTest {
         char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
                 '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };
         
-        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         EmailEntity primaryEmailEntity = new EmailEntity();
@@ -430,7 +411,6 @@ public class EmailManagerTest extends BaseTest {
     public void reactivateOrCreateRemovesSpaceChars_ReactivateTest() throws IllegalAccessException {
         char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
                 '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };        
-        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         EmailEntity primaryEmailEntity = new EmailEntity();
@@ -462,7 +442,6 @@ public class EmailManagerTest extends BaseTest {
     public void reactivateOrCreateRemovesSpaceChars_CreateTest() {
         char[] chars = { ' ', '\n', '\t', '\u00a0', '\u0020', '\u1680', '\u2000', '\u2001', '\u2002', '\u2003', '\u2004', '\u2005', '\u2006', '\u2007', '\u2008',
                 '\u2009', '\u200a', '\u202f', '\u205f', '\u3000' };
-        ReflectionTestUtils.setField(emailManager, "notificationManager", mockNotificationManager);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
         
         Mockito.when(mockEmailDao.find(Mockito.anyString())).thenReturn(null);

@@ -13,7 +13,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailMessage;
-import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailFrequencyDao;
@@ -37,7 +37,7 @@ public class Send2019EmailVisibilityNewsletter {
     
     private EmailDao emailDaoReadOnly;
     
-    private NotificationManager notificationManager;
+    private RecordNameManager recordNameManager;
     
     private EmailFrequencyDao emailFrequencyDaoReadOnly;
     
@@ -58,7 +58,7 @@ public class Send2019EmailVisibilityNewsletter {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         emailDaoReadOnly = (EmailDao) context.getBean("emailDaoReadOnly");
         emailFrequencyDaoReadOnly = (EmailFrequencyDao) context.getBean("emailFrequencyDaoReadOnly");
-        notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
+        recordNameManager = (RecordNameManager) context.getBean("recordNameManager");
         encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         templateManager = (TemplateManager) context.getBean("templateManager");
@@ -96,7 +96,7 @@ public class Send2019EmailVisibilityNewsletter {
     private EmailMessage getEmailMessage(EmailEntity email) {
         Locale locale = getUserLocaleFromProfileEntity(email.getProfile());
         String orcid = email.getProfile().getId();
-        String emailName = notificationManager.deriveEmailFriendlyName(orcid);
+        String emailName = recordNameManager.deriveEmailFriendlyName(orcid);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);

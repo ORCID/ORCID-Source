@@ -46,7 +46,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -108,10 +108,7 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
         
         TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockV3NotificationManager);
-        doNothing().when(mockV3NotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());
-        
-        TargetProxyHelper.injectIntoProxy(profileEntityManager, "notificationManager", mockV3NotificationManager);
-        doNothing().when(mockV3NotificationManager).send2FADisabledEmail(Mockito.anyString());
+        doNothing().when(mockV3NotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());               
         
         TargetProxyHelper.injectIntoProxy(profileEntityManager, "twoFactorAuthenticationManager", mockTwoFactorAuthenticationManager);
         doNothing().when(mockTwoFactorAuthenticationManager).disable2FA(Mockito.anyString());

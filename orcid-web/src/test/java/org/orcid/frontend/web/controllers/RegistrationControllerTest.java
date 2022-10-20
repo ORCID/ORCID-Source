@@ -41,7 +41,6 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -51,6 +50,7 @@ import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -102,7 +102,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     private ProfileHistoryEventManager profileHistoryEventManager;
     
     @Mock
-    private NotificationManager notificationManager;    
+    private RecordEmailSender recordEmailSender;    
     
     @Mock
     private EncryptionManager encryptionManagerMock;
@@ -144,7 +144,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "orcidUserDetailsService", orcidUserDetailsServiceMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "notificationManager", notificationManager);         
+        TargetProxyHelper.injectIntoProxy(registrationController, "recordEmailSender", recordEmailSender);         
         
         when(servletRequest.getLocale()).thenReturn(Locale.ENGLISH);
         
@@ -177,7 +177,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         });
         
         doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString());
-        doNothing().when(notificationManager).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());
+        doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());
         
         // Disable all features by default
         togglzRule.disableAll();

@@ -41,7 +41,6 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -513,7 +512,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void reactivate(String orcid, String primaryEmail, Reactivation reactivation) {
+    public List<String> reactivate(String orcid, String primaryEmail, Reactivation reactivation) {
         ArrayList<String> emailsToNotify = new ArrayList<String>();
         // Null reactivation object means the reactivation request comes from an
         // admin
@@ -570,13 +569,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             }
         });
 
-        // Notify any new email address
-        if (!emailsToNotify.isEmpty()) {
-            for (String emailToNotify : emailsToNotify) {
-                notificationManager.sendVerificationEmail(orcid, emailToNotify);
-            }
-        }
-
+        return emailsToNotify;
     }
 
     @Override
@@ -610,11 +603,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      */
     @Override
     public boolean lockProfile(String orcid, String lockReason, String description, String adminUser) {
-        boolean wasLocked = profileDao.lockProfile(orcid, lockReason, description, adminUser);
-        if (wasLocked) {
-            notificationManager.sendOrcidLockedEmail(orcid);
-        }
-        return wasLocked;
+        return profileDao.lockProfile(orcid, lockReason, description, adminUser);
     }
 
     /**
@@ -637,10 +626,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public void disable2FA(String orcid) {
         LOGGER.info("v3 disabling 2FA for " + orcid);
-        profileDao.disable2FA(orcid);
-        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
-            notificationManager.send2FADisabledEmail(orcid);
-        }
+        profileDao.disable2FA(orcid);        
     }
 
     @Override

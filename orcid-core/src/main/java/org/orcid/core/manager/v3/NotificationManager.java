@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -17,38 +16,12 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 
 public interface NotificationManager {
-
-    void sendWelcomeEmail(String userOrcid, String email);
-    
-    void sendVerificationEmailToNonPrimaryEmails(String orcid);
-
-    void sendVerificationEmail(String userOrcid, String email);
-    
-    void sendVerificationReminderEmail(String userOrcid, String email);
-    
-    void sendPasswordResetEmail(String toEmail, String userOrcid);
-    
-    void sendPasswordResetNotFoundEmail(String toEmail, Locale locale);
-
-    void sendReactivationEmail(String submittedEmail, String userOrcid);
-
-    public String createVerificationUrl(String email, String baseUri);
-
-    public String deriveEmailFriendlyName(String orcid);
-
+   
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
     void sendNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission);
 
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
-
-    void sendOrcidDeactivateEmail(String userOrcid);
-
-    void sendOrcidLockedEmail(String orcidToLock);   
-
-    void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail);
-
-    void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email);
 
     void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link);
 
@@ -82,8 +55,6 @@ public interface NotificationManager {
 
     public Notification setActionedAndReadDate(String orcid, Long id);
 
-    public String createClaimVerificationUrl(String email, String baseUri);
-
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
@@ -100,8 +71,6 @@ public interface NotificationManager {
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
     
-    void processUnverifiedEmails2Days();
-    
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
 
     Integer archiveOffsetNotifications();
@@ -110,12 +79,6 @@ public interface NotificationManager {
     
     void deleteNotificationsForRecord(String orcid);
 
-    NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);
-
-    void sendForgottenIdEmail(String email, String orcid);
-
-    void sendForgottenIdEmailNotFoundEmail(String email, Locale locale);
-    
-    public void send2FADisabledEmail(String userOrcid);
+    NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);    
 
 }

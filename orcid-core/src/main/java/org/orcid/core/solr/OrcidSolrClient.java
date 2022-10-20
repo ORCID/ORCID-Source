@@ -1,7 +1,5 @@
 package org.orcid.core.solr;
 
-import org.orcid.utils.solr.entities.SolrConstants;
-
 public abstract class OrcidSolrClient {
 
     // generate or filter specified fl param to only include allowed values

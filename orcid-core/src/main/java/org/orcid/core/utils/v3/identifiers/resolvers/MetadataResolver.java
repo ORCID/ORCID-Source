@@ -1,6 +1,7 @@
 package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.pojo.WorkExtended;
 
 public interface MetadataResolver extends LinkResolver{
 
@@ -13,6 +14,6 @@ public interface MetadataResolver extends LinkResolver{
      * @param providedURL
      * @return
      */
-    public Work resolveMetadata(String apiTypeName, String value);
+    public WorkExtended resolveMetadata(String apiTypeName, String value);
 
 }

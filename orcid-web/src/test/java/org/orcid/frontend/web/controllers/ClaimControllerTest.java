@@ -28,6 +28,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -64,6 +65,9 @@ public class ClaimControllerTest {
 
     @Mock
     private EmailManager emailManager;
+    
+    @Mock
+    private RecordEmailSender mockRecordEmailSender;
 
     @Mock
     private NotificationManager notificationManager;
@@ -76,6 +80,7 @@ public class ClaimControllerTest {
         TargetProxyHelper.injectIntoProxy(claimController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(claimController, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(claimController, "notificationManager", notificationManager);
+        TargetProxyHelper.injectIntoProxy(claimController, "recordEmailSender", mockRecordEmailSender);        
     }
 
     @Test

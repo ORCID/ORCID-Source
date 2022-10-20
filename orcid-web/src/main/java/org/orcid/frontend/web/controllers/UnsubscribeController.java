@@ -2,7 +2,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,6 +14,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.UnsubscribeData;
+import org.orcid.utils.alerting.SlackManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +40,9 @@ public class UnsubscribeController extends BaseController {
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
     
+    @Resource
+    private SlackManager slackManager;
+    
     @RequestMapping(value="/{encryptedId}", method = RequestMethod.GET)
     public ModelAndView unsubscribeView(@PathVariable("encryptedId") String encryptedId) throws UnsupportedEncodingException {
         ModelAndView result = new ModelAndView("unsubscribe");
@@ -53,7 +56,13 @@ public class UnsubscribeController extends BaseController {
         
         // Verify primary email address if it is not verified already        
         if(!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
-            emailManager.verifyPrimaryEmail(orcid);
+            try {
+                emailManager.verifyPrimaryEmail(orcid);
+            } catch(javax.persistence.NoResultException nre) {
+                slackManager.sendSystemAlert(String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid));
+            } catch(javax.persistence.NonUniqueResultException nure) {
+                slackManager.sendSystemAlert(String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid));
+            } 
         }
         return result;
     }

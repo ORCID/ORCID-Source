@@ -12,7 +12,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -22,7 +21,6 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -142,13 +140,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         
         Biography bio = biographyManager.getBiography("0000-0000-0000-0001");
         assertEquals(Visibility.PRIVATE, bio.getVisibility());
-    }
-    
-    public void testDisable2FA() {
-        ProfileDao profileDao = Mockito.mock(ProfileDao.class);
-        Mockito.doNothing().when(profileDao).disable2FA(Mockito.eq("some-orcid"));
-        profileEntityManager.disable2FA("some-orcid");
-        Mockito.verify(profileDao).disable2FA(Mockito.eq("some-orcid"));
-    }
+    }    
     
 }

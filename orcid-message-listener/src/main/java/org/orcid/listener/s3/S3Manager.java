@@ -16,31 +16,20 @@
  */
 package org.orcid.listener.s3;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
-import org.orcid.jaxb.model.error_v2.OrcidError;
-import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.jersey.marshaller.ORCIDMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -50,120 +39,34 @@ import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 @Component
 public class S3Manager {
 
     Logger LOG = LoggerFactory.getLogger(S3Manager.class);
 
-    private final ObjectMapper mapper;
-
     @Resource
     private S3MessagingService s3MessagingService;
 
-    private final JAXBContext jaxbContext_2_0_api;
-    private final JAXBContext jaxbContext_2_0_activities_api;
-
-    private final JAXBContext jaxbContext_3_0_api;
-    private final JAXBContext jaxbContext_3_0_activities_api;
-
     @Value("${org.orcid.message-listener.index.s3.search.max_elements:3000}")
     private Integer maxElements;
-
-    public S3Manager() throws JAXBException {
-        mapper = new ObjectMapper();
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        mapper.registerModule(module);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        // Initialize JAXBContext
-        this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
-        this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
-        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class,
-                org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
-        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Distinction.class,
-                org.orcid.jaxb.model.v3.release.record.Education.class, org.orcid.jaxb.model.v3.release.record.Employment.class,
-                org.orcid.jaxb.model.v3.release.record.Funding.class, org.orcid.jaxb.model.v3.release.record.InvitedPosition.class,
-                org.orcid.jaxb.model.v3.release.record.Membership.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class,
-                org.orcid.jaxb.model.v3.release.record.Qualification.class, org.orcid.jaxb.model.v3.release.record.ResearchResource.class,
-                org.orcid.jaxb.model.v3.release.record.Service.class, org.orcid.jaxb.model.v3.release.record.Work.class);
-    }
-
-    /**
-     * Writes a profile to S3
-     * 
-     * @param writeToFileNotS3
-     *            if true, write to local file system temp directory instead of
-     *            S3
-     * @throws JAXBException
-     */
-    @Autowired
-    public S3Manager(@Value("${org.orcid.message-listener.s3.bucket_prefix}") String bucketPrefix) throws JAXBException {
-        mapper = new ObjectMapper();
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        mapper.registerModule(module);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-
-        // Initialize JAXBContext
-        this.jaxbContext_2_0_api = JAXBContext.newInstance(Record.class, ActivitiesSummary.class, OrcidError.class);
-        this.jaxbContext_2_0_activities_api = JAXBContext.newInstance(Education.class, Employment.class, Funding.class, Work.class, PeerReview.class);
-        this.jaxbContext_3_0_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Record.class,
-                org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class, org.orcid.jaxb.model.v3.release.error.OrcidError.class);
-        this.jaxbContext_3_0_activities_api = JAXBContext.newInstance(org.orcid.jaxb.model.v3.release.record.Distinction.class,
-                org.orcid.jaxb.model.v3.release.record.Education.class, org.orcid.jaxb.model.v3.release.record.Employment.class,
-                org.orcid.jaxb.model.v3.release.record.Funding.class, org.orcid.jaxb.model.v3.release.record.InvitedPosition.class,
-                org.orcid.jaxb.model.v3.release.record.Membership.class, org.orcid.jaxb.model.v3.release.record.PeerReview.class,
-                org.orcid.jaxb.model.v3.release.record.Qualification.class, org.orcid.jaxb.model.v3.release.record.ResearchResource.class,
-                org.orcid.jaxb.model.v3.release.record.Service.class, org.orcid.jaxb.model.v3.release.record.Work.class);
-    }   
-
+    
+    @Resource
+    private ORCIDMarshaller marshaller; 
+   
     public void setS3MessagingService(S3MessagingService s3MessagingService) {
         this.s3MessagingService = s3MessagingService;
     }
 
-    @Deprecated
-    private byte[] toXML(Object object) throws JAXBException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Marshaller marshaller = null;
-        Class<?> c = object.getClass();
-        if (org.orcid.jaxb.model.record_v2.Record.class.isAssignableFrom(c) || org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(c)) {
-            marshaller = jaxbContext_2_0_api.createMarshaller();
-        } else if (org.orcid.jaxb.model.record_v2.Education.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Employment.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.record_v2.Funding.class.isAssignableFrom(c) || org.orcid.jaxb.model.record_v2.Work.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.record_v2.PeerReview.class.isAssignableFrom(c)) {
-            marshaller = jaxbContext_2_0_activities_api.createMarshaller();
-        } else if (org.orcid.jaxb.model.v3.release.record.Record.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(c)) {
-            marshaller = jaxbContext_3_0_api.createMarshaller();
-        } else if (org.orcid.jaxb.model.v3.release.record.Distinction.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.Education.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.Employment.class.isAssignableFrom(c) 
-                || org.orcid.jaxb.model.v3.release.record.Funding.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.InvitedPosition.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.Membership.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.PeerReview.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.Qualification.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.ResearchResource.class.isAssignableFrom(c)
-                || org.orcid.jaxb.model.v3.release.record.Service.class.isAssignableFrom(c) 
-                || org.orcid.jaxb.model.v3.release.record.Work.class.isAssignableFrom(c)) {
-            marshaller = jaxbContext_3_0_activities_api.createMarshaller();
-        } else {
-            throw new IllegalArgumentException("Unable to unmarshall class " + c);
-        }
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(object, baos);
-        return baos.toByteArray();
+    public void setMarshaller(ORCIDMarshaller m) {
+        this.marshaller = m;
     }
-
+    
     public void uploadV2RecordSummary(String orcid, org.orcid.jaxb.model.record_v2.Record record) throws JAXBException, JsonProcessingException, AmazonClientException, AmazonServiceException {
         Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid);
-        byte[] xmlElement = toXML(record);
+        byte[] xmlElement = marshaller.toXML(record);
         s3MessagingService.sendV2Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
@@ -171,7 +74,7 @@ public class S3Manager {
         Date lastModified = DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid);
-        byte[] xmlElement = toXML(record);
+        byte[] xmlElement = marshaller.toXML(record);
         s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
@@ -179,7 +82,7 @@ public class S3Manager {
         Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
-        byte[] xmlElement = toXML(activity);
+        byte[] xmlElement = marshaller.toXML(activity);
         s3MessagingService.sendV2Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
 
@@ -187,7 +90,7 @@ public class S3Manager {
         Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
         // Upload XML
         String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
-        byte[] xmlElement = toXML(activity);
+        byte[] xmlElement = marshaller.toXML(activity);
         s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
     }
 
@@ -196,7 +99,7 @@ public class S3Manager {
 
         // Upload XML
         String xmlElementName = getElementName(orcid);
-        byte[] xmlElement = toXML(error);
+        byte[] xmlElement = marshaller.toXML(error);
         s3MessagingService.sendV2Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
@@ -205,7 +108,7 @@ public class S3Manager {
 
         // Upload XML
         String xmlElementName = getElementName(orcid);
-        byte[] xmlElement = toXML(error);
+        byte[] xmlElement = marshaller.toXML(error);
         s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 

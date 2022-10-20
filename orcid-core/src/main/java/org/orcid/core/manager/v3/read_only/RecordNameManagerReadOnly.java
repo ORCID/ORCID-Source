@@ -22,4 +22,5 @@ public interface RecordNameManagerReadOnly {
     
     String fetchDisplayableDisplayName(String orcid);
     
+    String deriveEmailFriendlyName(String orcid);
 }

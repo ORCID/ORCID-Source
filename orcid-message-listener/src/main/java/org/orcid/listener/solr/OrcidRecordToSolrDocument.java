@@ -46,7 +46,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
-import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
 import org.slf4j.Logger;
@@ -130,7 +129,7 @@ public class OrcidRecordToSolrDocument {
                         extIdRefs.add(externalIdentifier.getValue());
                         extIdTypeAndValue.add(externalIdentifier.getType() + '=' + externalIdentifier.getValue());
                     }
-                    if (NullUtils.noneNull(sourcePath, externalIdentifier.getValue())) {
+                    if (noneNull(sourcePath, externalIdentifier.getValue())) {
                         extIdSourceAndRefs.add(sourcePath + "=" + externalIdentifier.getValue());
                     }
                 }
@@ -849,4 +848,18 @@ public class OrcidRecordToSolrDocument {
             } 
         }
     }
+    
+    public boolean anyNull(Object... objects) {
+        for (Object object : objects) {
+            if (object == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean noneNull(Object... objects) {
+        return !anyNull(objects);
+    }
+    
 }

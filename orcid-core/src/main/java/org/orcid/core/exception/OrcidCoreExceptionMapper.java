@@ -23,7 +23,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.sun.jersey.api.NotFoundException;
 
 public class OrcidCoreExceptionMapper {
     
@@ -104,7 +103,6 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidWebhookNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9028));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationNotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9029));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNoBioException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9041));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(NotFoundException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9016));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNoResultException.class, new ImmutablePair<>(Response.Status.NOT_FOUND, 9016));
 
         // 409

@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 import org.junit.Test;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.ContributorRole;
 import org.orcid.jaxb.model.common.Iso3166Country;
@@ -35,7 +36,6 @@ import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.orcid.utils.DateUtils;
 
 public class WorkFormTest {
 

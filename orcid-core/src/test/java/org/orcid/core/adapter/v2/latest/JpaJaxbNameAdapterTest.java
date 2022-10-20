@@ -23,8 +23,8 @@ import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**

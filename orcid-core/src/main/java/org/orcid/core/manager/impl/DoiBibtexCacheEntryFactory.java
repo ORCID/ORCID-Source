@@ -1,10 +1,12 @@
 package org.orcid.core.manager.impl;
 
-import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
+import javax.annotation.Resource;
+
+import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
+import org.orcid.core.utils.http.HttpRequestUtils;
 
 /**
  * 
@@ -12,23 +14,19 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  *
  */
 public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Object> {
-
-    private Client client = Client.create();
-    private static String X_BIBTEX = "application/x-bibtex";
-
-    public DoiBibtexCacheEntryFactory(){
-        client.setFollowRedirects(true);
-    }
-
+    
+    @Resource
+    private HttpRequestUtils httpRequestUtils;
+    
     /**
      * Keys MUST be URLs
      * 
      */
     @Override
     public Object load(Object key) throws Exception {
-        ClientResponse cr = client.resource(key.toString()).accept(X_BIBTEX).get(ClientResponse.class);
-        if (cr.getStatus() == Status.OK.getStatusCode()) {
-            return cr.getEntity(String.class);
+        HttpResponse<String> response = httpRequestUtils.doGet(key.toString(), "application/x-bibtex", HttpClient.Redirect.ALWAYS);
+        if (response.statusCode() == 200) {
+            return response.body();
         }
         return null;
     }
@@ -44,5 +42,4 @@ public class DoiBibtexCacheEntryFactory implements CacheLoaderWriter<Object, Obj
         // Not needed, populating only
 
     }
-
 }

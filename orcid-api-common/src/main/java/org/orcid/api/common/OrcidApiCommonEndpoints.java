@@ -17,8 +17,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.springframework.stereotype.Component;
 
 @Path(OAUTH_TOKEN)

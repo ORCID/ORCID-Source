@@ -3,7 +3,9 @@ package org.orcid.core.utils;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RecordNameUtils {
 
     public static String getPublicName(RecordNameEntity recordName) {

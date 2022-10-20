@@ -22,6 +22,7 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
@@ -53,13 +54,13 @@ public class EmailFrequencyServiceAnnouncement2018 {
 
     private TemplateManager templateManager;
 
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
-
-    private NotificationManager notificationManager;
+    private GenericDao<ProfileEventEntity, Long> profileEventDao;    
 
     private NotificationDao notificationDao;
     
     private OrcidUrlManager orcidUrlManager;
+    
+    private RecordNameManager recordNameManager;
 
     private static final int CHUNK_SIZE = 50000;
 
@@ -100,9 +101,9 @@ public class EmailFrequencyServiceAnnouncement2018 {
         messages = (MessageSource) context.getBean("messageSource");
         templateManager = (TemplateManager) context.getBean("templateManager");
         profileEventDao = (GenericDao) context.getBean("profileEventDao");
-        notificationManager = (NotificationManager) context.getBean("notificationManager");
         notificationDao = (NotificationDao) context.getBean("notificationDao");
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
+        recordNameManager = (RecordNameManager) context.getBean("recordNameManagerV3");
     }
 
     private void execute() throws InterruptedException {
@@ -144,7 +145,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
             }
             Locale locale = getUserLocale(profileEntity.getLocale());
             Map<String, Object> templateParams = new HashMap<String, Object>();
-            String emailName = notificationManager.deriveEmailFriendlyName(profileEntity.getId());
+            String emailName = recordNameManager.deriveEmailFriendlyName(profileEntity.getId());
             templateParams.put("emailName", emailName);
             templateParams.put("messages", this.messages);
             templateParams.put("messageArgs", new Object[0]);

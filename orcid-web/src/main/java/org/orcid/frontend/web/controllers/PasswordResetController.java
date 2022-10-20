@@ -22,11 +22,12 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -41,7 +42,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -67,9 +67,6 @@ public class PasswordResetController extends BaseController {
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
-
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
 
@@ -90,6 +87,9 @@ public class PasswordResetController extends BaseController {
     
     @Resource
     private SocialSignInUtils socialSignInUtils;
+    
+    @Resource
+    private RecordEmailSender recordEmailSender;
 
     private static final List<String> RESET_PASSWORD_PARAMS_WHITELIST = Arrays.asList("_");
 
@@ -122,15 +122,15 @@ public class PasswordResetController extends BaseController {
         if (emailManager.emailExists(forgotIdRequest.getEmail())) {
             String orcid = emailManager.findOrcidIdByEmail(forgotIdRequest.getEmail());
             if (profileEntityManager.isDeactivated(orcid)) {
-                notificationManager.sendReactivationEmail(forgotIdRequest.getEmail(), orcid);
+                recordEmailSender.sendReactivationEmail(forgotIdRequest.getEmail(), orcid);
             } else if (!profileEntityManager.isProfileClaimedByEmail(forgotIdRequest.getEmail())) {
-                notificationManager.sendClaimReminderEmail(orcid,0,forgotIdRequest.getEmail());
+                recordEmailSender.sendClaimReminderEmail(orcid,0,forgotIdRequest.getEmail());
             } else {
-                notificationManager.sendForgottenIdEmail(forgotIdRequest.getEmail(), orcid);
+                recordEmailSender.sendForgottenIdEmail(forgotIdRequest.getEmail(), orcid);
             }
         } else {
             Locale locale = localeManager.getLocale();
-            notificationManager.sendForgottenIdEmailNotFoundEmail(forgotIdRequest.getEmail(), locale);
+            recordEmailSender.sendForgottenIdEmailNotFoundEmail(forgotIdRequest.getEmail(), locale);
         }
         forgotIdRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + forgotIdRequest.getEmail());
         return forgotIdRequest;
@@ -159,18 +159,18 @@ public class PasswordResetController extends BaseController {
                     String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
                     if (profileEntityManager.isDeactivated(orcid)) {
                         LOGGER.info("Password reset: Reactivation email sent to '{}'", passwordResetRequest.getEmail());
-                        notificationManager.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
+                        recordEmailSender.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
                     } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
                         LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
-                        notificationManager.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
+                        recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
                     } else {
                         LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
-                        notificationManager.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
+                        recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                     }
                 } else {
                     Locale locale = localeManager.getLocale();
                     LOGGER.info("Password reset: Email not found email sent to '{}' with locale '{}'", passwordResetRequest.getEmail(), locale);
-                    notificationManager.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
+                    recordEmailSender.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
                 }
                 passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
                 return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
@@ -207,7 +207,15 @@ public class PasswordResetController extends BaseController {
                     return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
                 }
 
-                registrationManager.resetUserPassword(passwordResetRequest.getEmail(), orcid, profile.getClaimed());
+                Boolean isClaimed = profile.getClaimed();
+                String toEmail = passwordResetRequest.getEmail();
+                if (isClaimed == null || !isClaimed) {
+                    LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcid);
+                    recordEmailSender.sendClaimReminderEmail(orcid, 0, toEmail);
+                } else {
+                    recordEmailSender.sendPasswordResetEmail(toEmail, orcid);
+                }
+                
                 passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
             } catch (NoResultException nre) {
                 errors.add(getMessage("Email.resetPasswordForm.error"));
@@ -407,7 +415,7 @@ public class PasswordResetController extends BaseController {
             return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
         }
 
-        notificationManager.sendReactivationEmail(email, orcid);
+        recordEmailSender.sendReactivationEmail(email, orcid);
         return ResponseEntity.ok("{\"sent\":true}");
     }
 

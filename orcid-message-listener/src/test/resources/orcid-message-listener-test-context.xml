@@ -85,7 +85,13 @@
 	</jms:listener-container>
 	
 	<!-- Jersey client -->
-    <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
+	<bean id="ORCIDMarshaller" class="org.orcid.utils.jersey.marshaller.ORCIDMarshaller" />
+	
+	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+		<constructor-arg value="true"/>
+	</bean>	
+	
+    <bean id="jerseyClient" class="org.orcid.utils.jersey.OrcidJerseyClientHandler" factory-method="create">
         <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
         <constructor-arg ref="jerseyProperties" />
     </bean>

@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbEmailAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.SlackManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Email;
@@ -25,7 +24,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,10 +43,7 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     private EncryptionManager encryptionManager;
     
     @Resource
-    private LocaleManager localeManager;
-    
-    @Resource
-    private SlackManager slackManager;
+    private LocaleManager localeManager;    
     
     protected EmailDao emailDao;
     
@@ -122,18 +118,14 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             
             String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
-            LOGGER.error(message);
-            
-            slackManager.sendSystemAlert(message);
+            LOGGER.error(message);            
             throw nre;
         } catch (javax.persistence.NonUniqueResultException nure) {
             String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             
             String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
-            LOGGER.error(message);
-            
-            slackManager.sendSystemAlert(message);    
+            LOGGER.error(message);    
             throw nure;
         }                        
     }

@@ -15,6 +15,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.ClientDeactivatedException;
@@ -39,7 +40,6 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.version.ApiSection;
-import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.Orcid;
@@ -47,11 +47,10 @@ import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.PrimaryRecord;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -182,7 +181,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
-            return ((OrcidApiException) t).getResponse();
+            return Response.status(((OrcidApiException) t).getHttpStatus()).build();            
         } else if (OrcidValidationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request: ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();

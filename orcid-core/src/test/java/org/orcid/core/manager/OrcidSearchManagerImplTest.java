@@ -22,8 +22,8 @@ import org.orcid.core.solr.OrcidSolrProfileClient;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.solr.entities.OrcidSolrResult;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.core.solr.OrcidSolrResult;
+import org.orcid.core.solr.OrcidSolrResults;
 
 /**
  * Tests for the invocation of Solr retrieval. This class isn't required to have

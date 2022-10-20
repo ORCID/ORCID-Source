@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.orcid.core.exception.OrcidAccessControlException;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -27,6 +26,7 @@ import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 
 /**
  * 

@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,10 +24,15 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
+import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Day;
 import org.orcid.jaxb.model.v3.release.common.Month;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
@@ -36,9 +43,12 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -55,6 +65,9 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
     @Resource
     protected LocaleManager localeManager;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -90,7 +103,7 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
     }
 
     @Override
-    public Work resolveMetadata(String apiTypeName, String value) {
+    public WorkExtended resolveMetadata(String apiTypeName, String value) {
         PIDResolutionResult rr = this.resolve(apiTypeName, value);
         if (!rr.isResolved())
             return null;
@@ -133,8 +146,8 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
         return endpoint.replace("{type}", "PMCID");
     }
 
-    private Work getWork(JSONObject json) throws JSONException, ParseException {
-        Work work = new Work();
+    private WorkExtended getWork(JSONObject json) throws JSONException, ParseException {
+        WorkExtended work = new WorkExtended();
         work.setWorkType(WorkType.JOURNAL_ARTICLE); // default for pubMed
         
         Locale locale = localeManager.getLocale();
@@ -219,9 +232,49 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                 if (workMetadata.has("doi")) {
                     addExternalIdentifier(work, "doi", workMetadata.getString("doi"), locale);
                 }
+
+                if (workMetadata.has("authorList") && Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED.isActive()) {
+                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = new ArrayList<>();
+                    JSONObject authorList = workMetadata.getJSONObject("authorList");
+                    JSONArray contributors = authorList.getJSONArray("author");
+                    for (int i = 0; i < (contributors.length() > maxContributorsForUI ? maxContributorsForUI + 1 : contributors.length()); i++) {
+                        ContributorsRolesAndSequences newContributor = new ContributorsRolesAndSequences();
+                        JSONObject contributor = contributors.getJSONObject(i);
+                        if (contributor.has("collectiveName")) {
+                            newContributor.setCreditName(new CreditName(contributor.getString("collectiveName")));
+                        } else {
+                            if (contributor.has("fullName")) {
+                                newContributor.setCreditName(new CreditName(contributor.getString("fullName")));
+                            } else {
+                                StringBuilder sb = new StringBuilder();
+                                if (contributor.has("firstName")) {
+                                    sb.append(contributor.getString("firstName"));
+                                }
+                                if (contributor.has("lastName")) {
+                                    String family = contributor.getString("lastName");
+                                    sb.append(sb.length() > 0 ? ' ' + family : family);
+                                }
+                                newContributor.setCreditName(new CreditName(sb.toString()));
+                            }
+                        }
+                        if (contributor.has("authorId")) {
+                            JSONObject authorId = contributor.getJSONObject("authorId");
+                            if (authorId.has("type") && "ORCID".equalsIgnoreCase(authorId.getString("type"))) {
+                                if (authorId.has("value")) {
+                                    newContributor.setContributorOrcid(new ContributorOrcid(authorId.getString("value")));
+                                }
+                            }
+                        }
+
+                        ContributorAttributes contributorAttributes = new ContributorAttributes();
+                        contributorAttributes.setContributorRole("author");
+                        newContributor.setRolesAndSequences(Arrays.asList(contributorAttributes));
+                        contributorsGroupedByOrcid.add(newContributor);
+                    }
+                    work.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                }
             }
         }
-
         return work;
     }
 

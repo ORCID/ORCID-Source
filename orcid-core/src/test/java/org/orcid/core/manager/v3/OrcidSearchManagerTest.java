@@ -2,9 +2,7 @@ package org.orcid.core.manager.v3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -20,18 +18,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.LockedException;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.solr.OrcidSolrProfileClient;
+import org.orcid.core.solr.OrcidSolrResult;
+import org.orcid.core.solr.OrcidSolrResults;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.solr.entities.OrcidSolrResult;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
 import org.springframework.test.context.ContextConfiguration;
 
 /**

@@ -20,8 +20,8 @@ import org.orcid.jaxb.model.v3.release.search.Result;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedResult;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
-import org.orcid.utils.solr.entities.OrcidSolrResult;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.core.solr.OrcidSolrResult;
+import org.orcid.core.solr.OrcidSolrResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

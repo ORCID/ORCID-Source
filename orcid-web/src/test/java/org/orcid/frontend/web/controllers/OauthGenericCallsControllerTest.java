@@ -14,9 +14,9 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.oauth.OAuthError;
-import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
