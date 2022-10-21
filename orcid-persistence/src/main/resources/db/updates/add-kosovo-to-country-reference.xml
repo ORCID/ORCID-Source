@@ -1,0 +1,16 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-KOSOVO-TO-COUNTRY-REFERENCE" author="Daniel Palafox">
+
+        <insert tableName="country_reference_data">
+
+            <column name="country_name" value="KOSOVO" />
+            <column name="country_iso_code" value="XK" />
+            <column name="date_created" valueComputed="now()" />
+            <column name="last_modified" valueComputed="now()" />
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
