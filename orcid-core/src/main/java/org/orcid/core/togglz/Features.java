@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Enable Crazy Egg")
+    CRAZY_EGG,
+
     @Label("Add other people contributions via DOI & PUBMED")
     ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
 
