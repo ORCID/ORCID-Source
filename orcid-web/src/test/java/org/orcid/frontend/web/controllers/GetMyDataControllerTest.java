@@ -52,6 +52,7 @@ import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.Person;
 import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
@@ -114,6 +116,9 @@ public class GetMyDataControllerTest {
     @Mock
     private WorkManagerReadOnly mockWorkManagerReadOnly;
 
+    @Mock
+    private ResearchResourceManagerReadOnly mockResearchResourceManagerReadOnly;
+
     private GetMyDataController getMyDataController;
 
     {
@@ -134,6 +139,7 @@ public class GetMyDataControllerTest {
         TargetProxyHelper.injectIntoProxy(getMyDataController, "profileFundingManagerReadOnly", mockProfileFundingManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(getMyDataController, "peerReviewManagerReadOnly", mockPeerReviewManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(getMyDataController, "workManagerReadOnly", mockWorkManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(getMyDataController, "researchResourceManagerReadOnly", mockResearchResourceManagerReadOnly);
 
         when(mockPersonDetailsManager.getPersonDetails(anyString(), Mockito.eq(true))).thenAnswer(new Answer<Person>() {
             @Override
@@ -283,6 +289,19 @@ public class GetMyDataControllerTest {
 
         });
 
+        when(mockResearchResourceManagerReadOnly.findResearchResources(anyString())).thenAnswer(new Answer<List<ResearchResource>>() {
+
+            @Override
+            public List<ResearchResource> answer(InvocationOnMock invocation) throws Throwable {
+                List<ResearchResource> researchResourcesList = new ArrayList<ResearchResource>();
+                ResearchResource researchResource = new ResearchResource();
+                researchResource.setPutCode(1L);
+                researchResourcesList.add(researchResource);
+                return researchResourcesList;
+            }
+
+        });
+
     }
 
     @Test
@@ -296,7 +315,7 @@ public class GetMyDataControllerTest {
         ZipEntry zipEntry = zip.getNextEntry();
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(Person.class, Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class,
-                Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class);
+                Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class, ResearchResource.class);
         Unmarshaller u = jaxbContext1.createUnmarshaller();
 
         boolean personFound = false;
@@ -310,6 +329,7 @@ public class GetMyDataControllerTest {
         boolean fundingFound = false;
         boolean peerReviewFound = false;
         boolean workFound = false;
+        boolean researchResourceFound = false;
 
         while (zipEntry != null) {
             String fileName = zipEntry.getName();
@@ -406,7 +426,13 @@ public class GetMyDataControllerTest {
                 assertNotNull(x);
                 assertEquals(Long.valueOf(1), x.getPutCode());
                 workFound = true;
-            }
+            } else if (fileName.startsWith("research_resources")) {
+                assertEquals("research_resources/1.xml", fileName);
+                ResearchResource x = (ResearchResource) u.unmarshal(in);
+                assertNotNull(x);
+                assertEquals(Long.valueOf(1), x.getPutCode());
+                researchResourceFound = true;
+        }
 
             zipEntry = zip.getNextEntry();
         }
@@ -422,6 +448,7 @@ public class GetMyDataControllerTest {
         assertTrue(fundingFound);
         assertTrue(peerReviewFound);
         assertTrue(workFound);
+        assertTrue(researchResourceFound);
 
         zip.closeEntry();
         zip.close();
