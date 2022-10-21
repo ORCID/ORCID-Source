@@ -34,7 +34,9 @@ public class IssnClient {
             throw new RuntimeException("Error extracting json from issn portal response", e);
         } 
         try {
-            return extractIssnData(json);
+            IssnData data = extractIssnData(json);
+            data.setIssn(issn);
+            return data;
         } catch (JSONException e) {
             LOG.warn("Error extracting issn data from json returned from issn portal", e);
             return null;
@@ -50,12 +52,9 @@ public class IssnClient {
                 String title = jsonArray.getJSONObject(i).getString("mainTitle");
                 String cleanTitle = cleanText(title);
                 issnData.setMainTitle(cleanTitle);
-                issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
                 return issnData;
             } else if (jsonArray.getJSONObject(i).has("name")) {
                 // name and mainTitle always in same object - therefore if no mainTitle but name present, no mainTitle in data
-                issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
-                
                 try {
                     issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
                 } catch (JSONException e) {
