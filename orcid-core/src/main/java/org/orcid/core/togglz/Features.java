@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Disable matching subdomains")
+    DISABLE_MATCHING_SUBDOMAINS,
+    
     @Label("Enable Crazy Egg")
     CRAZY_EGG,
 

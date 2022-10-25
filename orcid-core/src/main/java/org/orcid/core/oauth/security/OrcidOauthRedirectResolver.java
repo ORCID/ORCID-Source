@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.orcid.core.togglz.Features;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
@@ -21,7 +22,7 @@ public class OrcidOauthRedirectResolver extends DefaultRedirectResolver {
     private Collection<String> redirectGrantTypes = Arrays.asList("implicit", "authorization_code");
 
     public OrcidOauthRedirectResolver() {
-        this.setMatchSubdomains(true);
+        
     }
     
     @Override
@@ -87,5 +88,14 @@ public class OrcidOauthRedirectResolver extends DefaultRedirectResolver {
 
     private boolean isEqual(String str1, String str2) {
         return Objects.equals(str1, str2);
+    }
+    
+    @Override
+    protected boolean hostMatches(String registered, String requested) {
+        // If matching subdomains is enabled
+        if (!Features.DISABLE_MATCHING_SUBDOMAINS.isActive()) {
+            return isEqual(registered, requested) || (requested != null && requested.endsWith("." + registered));
+        }
+        return isEqual(registered, requested);
     }
 }
