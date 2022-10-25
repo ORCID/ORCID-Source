@@ -92,7 +92,7 @@ public class OrcidOauthRedirectResolver extends DefaultRedirectResolver {
     
     @Override
     protected boolean hostMatches(String registered, String requested) {
-        // If matching subdomains is enabled
+        // If we should allow subdomains
         if (!Features.DISABLE_MATCHING_SUBDOMAINS.isActive()) {
             return isEqual(registered, requested) || (requested != null && requested.endsWith("." + registered));
         }
