@@ -529,8 +529,16 @@ public class PasswordResetController extends BaseController {
         String password = reactivation.getPassword().getValue();
 
         // Reactivate the user
-        profileEntityManager.reactivate(orcid, email, reactivation);
+        // Return a list of email addresses that should be notified by this change
+        List<String> emailsToNotify = profileEntityManager.reactivate(orcid, email, reactivation);
 
+        // Notify any new email address
+        if (!emailsToNotify.isEmpty()) {
+            for (String emailToNotify : emailsToNotify) {
+                recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+            }
+        }
+        
         // Log user in
         registrationController.logUserIn(request, response, orcid, password);
     }
