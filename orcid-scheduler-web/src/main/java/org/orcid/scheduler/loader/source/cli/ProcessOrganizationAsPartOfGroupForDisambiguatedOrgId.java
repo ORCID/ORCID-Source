@@ -1,10 +1,15 @@
-package org.orcid.scheduler.loader.cli;
+package org.orcid.scheduler.loader.source.cli;
 
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.core.orgs.OrgDisambiguatedSourceType;
+import org.orcid.core.orgs.grouping.OrgGrouping;
+import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.scheduler.loader.manager.OrgLoadManager;
 import org.orcid.scheduler.loader.source.OrgLoadSource;
@@ -13,9 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LoadDataForOrganizationSource {
-    private static final Logger LOG = LoggerFactory.getLogger(LoadDataForOrganizationSource.class);
-    private OrgLoadManager orgLoadManager;
+public class ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId {
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId.class);
+    private OrgDisambiguatedManager orgDisambiguatedManager;
+    private OrgDisambiguatedDao orgDisambiguatedDao;
     
 
     private OrgLoadSource rorOrgSource;
@@ -28,8 +34,8 @@ public class LoadDataForOrganizationSource {
     
     
     
-    @Option(name = "-o", usage = "The organization type. Can be one of the following ROR, FUNDREF, RINGGOLD")
-    private String orgType;
+    @Option(name = "-oid", usage = "The disambiguated org id.")
+    private String orgID;
     
     /**
      * Setup our spring resources
@@ -38,35 +44,28 @@ public class LoadDataForOrganizationSource {
     @SuppressWarnings({ "resource" })
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-beans-context.xml");
-        orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
+        orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
         rorOrgSource = (OrgLoadSource) context.getBean("rorOrgDataSource");
         fundrefOrgSource = (OrgLoadSource) context.getBean("fundrefOrgDataSource");
         ringgoldOrgSource = (OrgLoadSource) context.getBean("ringgoldOrgDataSource");
+        orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
     }
 
     public static void main(String[] args) {
-        LoadDataForOrganizationSource loadData  = new LoadDataForOrganizationSource();
+        ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId loadData  = new ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId();
         CmdLineParser parser = new CmdLineParser(loadData);
         // TODO Auto-generated method stub
         try {
             parser.parseArgument(args);
             loadData.validateParameters(parser);
+
             loadData.init();
-            if(StringUtils.equalsIgnoreCase(loadData.orgType, FUNDREF_TYPE)) {
-                LOG.info("Loading orgs from Fundref");
-                loadData.orgLoadManager.loadOrg(loadData.fundrefOrgSource);
-            }
-            else if(StringUtils.equalsIgnoreCase(loadData.orgType, RINGGOLD_TYPE)) {
-                LOG.info("Loading orgs from Ringgold");
-                loadData.orgLoadManager.loadOrg(loadData.ringgoldOrgSource);
-            }
-            else { //default to ROR
-                LOG.info("Loading orgs from ROR");
-                loadData.orgLoadManager.loadOrg(loadData.rorOrgSource);
-            }
+            OrgDisambiguatedEntity existingBySourceId = loadData.orgDisambiguatedDao.find(Long.valueOf(loadData.orgID));
+            new OrgGrouping(existingBySourceId, loadData.orgDisambiguatedManager).markGroupForIndexing(loadData.orgDisambiguatedDao);
+
   
         } catch (Exception e) {
-            LOG.error("Exception when importing data for org type: " + loadData.orgType , e);
+            LOG.error("Exception when importing data for org type: " + loadData.orgID , e);
             System.err.println(e.getMessage());
         } finally {
             System.exit(0);
@@ -76,12 +75,9 @@ public class LoadDataForOrganizationSource {
     
     public void validateParameters(CmdLineParser parser) throws CmdLineException {
 
-        if (PojoUtil.isEmpty(orgType)) {
-            throw new CmdLineException(parser, "-o parameter must not be null.");
-            
-        } else if(!orgType.toUpperCase().equals(ROR_TYPE) && !orgType.toUpperCase().equals(FUNDREF_TYPE)&& !orgType.toUpperCase().equals(RINGGOLD_TYPE)){
-            throw new CmdLineException(parser, "-o parameter must be one of the following.");
-        }
+        if (PojoUtil.isEmpty(orgID)) {
+            throw new CmdLineException(parser, "-oid parameter must not be null."); 
+        } 
     }
 
 }
