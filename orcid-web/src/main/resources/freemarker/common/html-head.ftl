@@ -73,11 +73,7 @@
         </#if>
     </script>
 
-    <@orcid.checkFeatureStatus 'HOTJAR'>
-        <#include "/layout/hotjar.ftl">
-    </@orcid.checkFeatureStatus>
     <#include "/macros/orcid_ga.ftl">
-
 
     <link rel="stylesheet" href="${staticCdn}/css/spinner.css"/>  
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
