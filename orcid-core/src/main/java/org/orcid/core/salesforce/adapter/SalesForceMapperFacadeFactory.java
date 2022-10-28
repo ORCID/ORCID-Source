@@ -269,7 +269,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
     private class StringConverter extends CustomConverter<Object, String> {
         @Override
         public String convert(Object source, Type<? extends String> destinationType) {
-            if (JSONObject.NULL.equals(source)) {
+            if (JSONObject.NULL.equals(source) || JSONObject.EXPLICIT_NULL.equals(source)) {
                 return null;
             }
             return source.toString();
@@ -286,7 +286,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
     private class ReverseURLConverter extends CustomConverter<Object, URL> {
         @Override
         public URL convert(Object source, Type<? extends URL> destinationType) {
-            if (JSONObject.NULL.equals(source)) {
+            if (JSONObject.NULL.equals(source) || JSONObject.EXPLICIT_NULL.equals(source)) {
                 return null;
             }
             String s = source.toString();
