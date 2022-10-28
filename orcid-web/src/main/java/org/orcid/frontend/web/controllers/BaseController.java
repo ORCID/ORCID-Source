@@ -104,8 +104,6 @@ public class BaseController {
 
     private String googleAnalyticsTrackingId;
     
-    private String hotjarTrackingId;
-
     protected List<String> domainsAllowingRobots;
 
     protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
@@ -184,16 +182,6 @@ public class BaseController {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
     
-    @ModelAttribute("hotjarTrackingId")
-    public String getHotjarTrackingId() {
-        return hotjarTrackingId;
-    }
-
-    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
-    public void setHotjarTrackingId(String hotjarTrackingId) {
-        this.hotjarTrackingId = hotjarTrackingId;
-    }
-
     @ModelAttribute("sendEmailFrequencies")
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
