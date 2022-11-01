@@ -9,6 +9,7 @@ import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -355,7 +356,7 @@ public class WorkPojoFromCsv {
         if (this.getTranslatedTitle() != null && !PojoUtil.isEmpty(this.getTranslatedTitle())) {
             org.orcid.jaxb.model.v3.release.common.TranslatedTitle translatedTitle = new org.orcid.jaxb.model.v3.release.common.TranslatedTitle();
             translatedTitle.setContent(anonymizeText.anonymizeString(this.getTranslatedTitle()));
-            translatedTitle.setLanguageCode(this.getLanguageCode());
+            translatedTitle.setLanguageCode(this.getTranslatedTitleLanguageCode());
             workTitle.setTranslatedTitle(translatedTitle);
         }
 
@@ -438,11 +439,18 @@ public class WorkPojoFromCsv {
         // Set externalids
         if (this.getExternalIdentifiersJson() != null && !PojoUtil.isEmpty(this.getExternalIdentifiersJson())) {
             JSONObject extIdentifiersJson = new JSONObject(this.getExternalIdentifiersJson());
+            boolean haveExternalIdentifiers = false;
             if (extIdentifiersJson.has("workExternalIdentifier")) {
-                work.setWorkExternalIdentifiers(anonymizeText.anonymizeWorkExternalIdentifiers(extIdentifiersJson.getJSONArray("workExternalIdentifier")));
+                ExternalIDs extIds = anonymizeText.anonymizeWorkExternalIdentifiers(extIdentifiersJson.getJSONArray("workExternalIdentifier"));
+                if(extIds != null && !extIds.getExternalIdentifier().isEmpty()) {
+                    work.setWorkExternalIdentifiers(extIds);
+                    haveExternalIdentifiers = true;
+                }
 
             }
-            // work.setWorkExternalIdentifiers(new ExternalIDs());
+            if(!haveExternalIdentifiers) {
+                work.setWorkExternalIdentifiers(new ExternalIDs());
+            }
         }
 
         // Set created date

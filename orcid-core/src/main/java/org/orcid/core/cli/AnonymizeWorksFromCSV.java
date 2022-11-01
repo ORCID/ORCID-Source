@@ -121,10 +121,7 @@ public class AnonymizeWorksFromCSV {
         Work work;
 
         // delete all existent works for orcid provided
-        for (WorkEntity workEntity : workDao.getAll()) {
-            workDao.remove(workEntity.getId());
-            workDao.flush();
-        }
+        workDao.removeWorks(orcid);
 
         for (WorkPojoFromCsv workCsv : worksFromCsv) {
 
