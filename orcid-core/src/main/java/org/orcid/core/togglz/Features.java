@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Add other people contributions via BIBTEXT")
+    ADD_OTHER_WORK_CONTRIBUTORS_WITH_BIBTEX,
+
     @Label("Disable matching subdomains")
     DISABLE_MATCHING_SUBDOMAINS,
     
