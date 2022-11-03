@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common_v2.Contributor;
+import org.orcid.jaxb.model.common_v2.ContributorAttributes;
+import org.orcid.jaxb.model.common_v2.ContributorRole;
 import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Organization;
 import org.orcid.jaxb.model.common_v2.OrganizationAddress;
@@ -219,6 +221,7 @@ public class ActivityUtilsTest {
         assertNull(w.getWorkTitle().getTranslatedTitle());
         assertNull(w.getWorkCitation());
         assertNull(w.getWorkContributors().getContributor().get(0).getCreditName());
+        assertNull(w.getWorkContributors().getContributor().get(0).getContributorAttributes());
         
         // Test it doesn't remove non empty fields
         w = getEmptyWork();
@@ -226,7 +229,8 @@ public class ActivityUtilsTest {
         w.getWorkTitle().getTranslatedTitle().setLanguageCode("en_us");
         w.getWorkCitation().setCitation("citation");
         w.getWorkCitation().setWorkCitationType(CitationType.BIBTEX);
-        w.getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name");        
+        w.getWorkContributors().getContributor().get(0).getCreditName().setContent("credit_name"); 
+        w.getWorkContributors().getContributor().get(0).getContributorAttributes().setContributorRole(ContributorRole.AUTHOR);
         assertEquals("translated_title", w.getWorkTitle().getTranslatedTitle().getContent());
         assertEquals("en_us", w.getWorkTitle().getTranslatedTitle().getLanguageCode());
         assertEquals("citation", w.getWorkCitation().getCitation());
@@ -238,6 +242,7 @@ public class ActivityUtilsTest {
         assertEquals("citation", w.getWorkCitation().getCitation());
         assertEquals(CitationType.BIBTEX, w.getWorkCitation().getWorkCitationType());
         assertEquals("credit_name", w.getWorkContributors().getContributor().get(0).getCreditName().getContent());
+        assertEquals(ContributorRole.AUTHOR, w.getWorkContributors().getContributor().get(0).getContributorAttributes().getContributorRole());
     }
 
     @Test
@@ -417,6 +422,7 @@ public class ActivityUtilsTest {
         // Contributors
         Contributor c = new Contributor();
         c.setCreditName(new CreditName(""));
+        c.setContributorAttributes(new ContributorAttributes());
         wc.getContributor().add(c);
         w.setWorkContributors(wc);
         return w;

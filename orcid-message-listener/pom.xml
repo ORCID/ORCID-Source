@@ -62,12 +62,7 @@
 	      <groupId>org.apache.activemq</groupId>
 	      <artifactId>activemq-spring</artifactId>
 	  	  <version>5.13.3</version>
-	  </dependency>
-	  
-	     <dependency>
-            <groupId>com.sun.jersey</groupId>              
-            <artifactId>jersey-client</artifactId>
-        </dependency> 
+	  </dependency>	  	     
         
 	    <dependency>
 	      <groupId>junit</groupId>

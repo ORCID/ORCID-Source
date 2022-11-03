@@ -16,7 +16,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.web.filters.ApiVersionFilter;
 import org.orcid.jaxb.model.v3.rc2.error.OrcidError;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;

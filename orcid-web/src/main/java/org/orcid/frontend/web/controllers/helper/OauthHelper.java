@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers.helper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +15,7 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.RegistrationController;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
@@ -24,7 +26,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.ScopeInfoForm;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
@@ -135,10 +136,11 @@ public class OauthHelper {
             Matcher emailMatcher = RegistrationController.emailPattern.matcher(requestUrl);
             if (emailMatcher.find()) {
                 String email = emailMatcher.group(1);
-                try {
-                    email = OrcidStringUtils.stripHtml(URLDecoder.decode(email, "UTF-8").trim());
-                } catch (UnsupportedEncodingException e) {
+                if (email != null && email.contains("%20")) {
+                    email = email.replace("%20", "%2B");
                 }
+
+                email = OrcidStringUtils.stripHtml(URLDecoder.decode(email, StandardCharsets.UTF_8).trim());
 
                 if (!userIdSet && !PojoUtil.isEmpty(email)) {
                     email = OrcidStringUtils.filterEmailAddress(email);

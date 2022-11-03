@@ -47,7 +47,7 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateUtils;
 
 public class VersionConverterImplV2_0_rc1ToV2_0_rc2 implements V2VersionConverter {
 

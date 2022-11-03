@@ -9,7 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class StaticContentFilter extends OncePerRequestFilter {

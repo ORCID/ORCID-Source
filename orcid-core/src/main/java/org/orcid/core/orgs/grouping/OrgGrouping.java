@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.datacite.schema.kernel_4.FunderIdentifierType;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.persistence.constants.OrganizationStatus;
@@ -22,7 +21,8 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.pojo.grouping.OrgGroup;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.FunderIdentifierType;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

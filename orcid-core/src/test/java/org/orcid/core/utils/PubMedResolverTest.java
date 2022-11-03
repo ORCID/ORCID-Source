@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
@@ -27,8 +28,15 @@ import org.orcid.core.utils.v3.identifiers.resolvers.PubMedResolver;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.IdentifierType;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.togglz.junit.TogglzRule;
+import org.junit.Rule;
+import org.orcid.core.togglz.Features;
+
 
 public class PubMedResolverTest {
     @Mock
@@ -43,6 +51,9 @@ public class PubMedResolverTest {
     @Mock
     protected LocaleManager localeManager;
 
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+
     private PubMedResolver resolver = new PubMedResolver();
 
     @Before
@@ -52,6 +63,7 @@ public class PubMedResolverTest {
         TargetProxyHelper.injectIntoProxy(resolver, "cache", cache);
         TargetProxyHelper.injectIntoProxy(resolver, "identifierTypeManager", identifierTypeManager);
         TargetProxyHelper.injectIntoProxy(resolver, "localeManager", localeManager);
+        ReflectionTestUtils.setField(resolver, "maxContributorsForUI", 50);
 
         when(localeManager.getLocale()).thenReturn(Locale.ENGLISH);
 
@@ -210,5 +222,28 @@ public class PubMedResolverTest {
         
         assertNotNull(work.getWorkType());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+    }
+
+    @Test
+    public void resolvePMIDMetadataContributorsTest() {
+        togglzRule.enable(Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED);
+        WorkExtended work = resolver.resolveMetadata("pmid", "pmid1");
+        List<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid();
+        assertNotNull(work);
+        assertNotNull(contributors);
+        assertEquals(3, contributors.size());
+        assertEquals("author", getRole(contributors, 0));
+        assertEquals("Author One", getName(contributors, 0));
+        assertEquals(getRole(contributors, 1), "author");
+        assertEquals("Author Two", getName(contributors, 1));
+        assertEquals("ORCID Consortium", getName(contributors, 2));
+    }
+
+    private String getRole(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {
+        return contributors.get(contributorsIndex).getRolesAndSequences().get(0).getContributorRole();
+    }
+
+    private String getName(List<ContributorsRolesAndSequences> contributors, Integer contributorsIndex) {
+        return contributors.get(contributorsIndex).getCreditName().getContent();
     }
 }

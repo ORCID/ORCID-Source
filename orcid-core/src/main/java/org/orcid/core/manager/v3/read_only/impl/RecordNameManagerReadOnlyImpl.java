@@ -3,11 +3,13 @@ package org.orcid.core.manager.v3.read_only.impl;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbNameAdapter;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.RecordNameUtils;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,5 +79,13 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
         RecordNameEntity recordName = recordNameDao.getRecordName(orcid, getLastModified(orcid));
         return RecordNameUtils.getDisplayName(recordName);
     }
-        
+    
+    @Override
+    public String deriveEmailFriendlyName(String orcid) {
+        String result = fetchDisplayableCreditName(orcid);
+        if (PojoUtil.isEmpty(result)) {
+            result = EmailConstants.LAST_RESORT_ORCID_USER_EMAIL_NAME;            
+        }
+        return result;
+    }
 }

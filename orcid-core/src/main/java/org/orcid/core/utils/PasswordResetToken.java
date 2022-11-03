@@ -11,8 +11,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.NullUtils;
 
 public class PasswordResetToken {
 

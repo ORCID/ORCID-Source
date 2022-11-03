@@ -124,6 +124,14 @@ export class AdminActionsService {
                 { headers: this.headers }
         )        
     };
+
+    addEmailToRecord( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/add-email-to-record', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )        
+    };
     
     getLockReasons() : Observable<any> {
         return this.http.get( 

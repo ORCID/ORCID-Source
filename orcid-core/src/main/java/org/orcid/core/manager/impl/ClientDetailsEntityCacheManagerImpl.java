@@ -8,7 +8,7 @@ import org.ehcache.Cache;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;

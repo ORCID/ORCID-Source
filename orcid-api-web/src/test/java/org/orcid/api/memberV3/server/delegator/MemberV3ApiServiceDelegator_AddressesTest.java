@@ -30,6 +30,7 @@ import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.release.common.Country;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
@@ -400,5 +401,34 @@ public class MemberV3ApiServiceDelegator_AddressesTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_UPDATE);
         serviceDelegator.deleteAddress("4444-4444-4444-4447", 5L);
         fail();
+    }
+
+    @Test
+    public void testAddKosovoAddress() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Address kosovo = Utils.getAddress();
+        kosovo.setCountry(new Country(Iso3166Country.XK));
+        Response response = serviceDelegator.createAddress("4444-4444-4444-4442", kosovo);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Long putCode = Utils.getPutCode(response);
+
+        response = serviceDelegator.viewAddress("4444-4444-4444-4442", putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        Address newAddress = (Address) response.getEntity();
+        assertNotNull(newAddress);
+        Utils.verifyLastModified(newAddress.getLastModifiedDate());
+        assertEquals(Iso3166Country.XK, newAddress.getCountry().getValue());
+        assertEquals(Visibility.LIMITED, newAddress.getVisibility());
+        assertNotNull(newAddress.getSource());
+        assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
+        assertNotNull(newAddress.getCreatedDate());
+        Utils.verifyLastModified(newAddress.getLastModifiedDate());
+
+        // Remove it
+        response = serviceDelegator.deleteAddress("4444-4444-4444-4442", putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
 }

@@ -35,6 +35,7 @@ import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
@@ -46,6 +47,7 @@ import org.orcid.jaxb.model.v3.release.record.Membership;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.Person;
 import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
@@ -68,12 +70,13 @@ public class GetMyDataController extends BaseController {
     private static final String FUNDINGS_DIR_NAME = "fundings";
     private static final String PEER_REVIEWS_DIR_NAME = "peer_reviews";
     private static final String WORKS_DIR_NAME = "works";
+    private static final String RESEARCH_RESOURCES_DIR_NAME = "research_resources";
 
     private final Marshaller marshaller;
 
     public GetMyDataController() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Person.class, Distinction.class, Education.class, Employment.class, InvitedPosition.class, Membership.class,
-                Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class);
+                Qualification.class, Service.class, Funding.class, PeerReview.class, Work.class, ResearchResource.class);
         marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     }
@@ -97,7 +100,10 @@ public class GetMyDataController extends BaseController {
     private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
 
     @Resource(name = "workManagerReadOnlyV3")
-    private WorkManagerReadOnly workManagerReadOnly;           
+    private WorkManagerReadOnly workManagerReadOnly;
+
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
     
     @RequestMapping(method = {RequestMethod.POST},  produces = MediaType.APPLICATION_OCTET_STREAM)
     public void getMyData(HttpServletResponse response) throws JAXBException, IOException {
@@ -112,6 +118,7 @@ public class GetMyDataController extends BaseController {
         generateFundingData(currentUserOrcid, zip);
         generatePeerReviewData(currentUserOrcid, zip);
         generateWorksData(currentUserOrcid, zip);
+        generateResearchResourcesData(currentUserOrcid, zip);
         zip.close();
                    
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
@@ -173,6 +180,13 @@ public class GetMyDataController extends BaseController {
             for (Work work : works) {
                 writeElement(toByteArray(work), (WORKS_DIR_NAME + '/' + work.getPutCode() + ".xml"), zip);
             }
+        }
+    }
+
+    private void generateResearchResourcesData(String orcid, ZipOutputStream zip) throws JAXBException, IOException {
+        List<ResearchResource> researchResources = researchResourceManagerReadOnly.findResearchResources(orcid);
+        for (ResearchResource researchResource : researchResources) {
+            writeElement(toByteArray(researchResource), (RESEARCH_RESOURCES_DIR_NAME + '/' + researchResource.getPutCode() + ".xml"), zip);
         }
     }
 

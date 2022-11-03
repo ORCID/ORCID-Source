@@ -6,7 +6,6 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +14,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDateTime;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.OrcidNotFoundException;
@@ -30,7 +26,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -55,10 +50,8 @@ import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
-import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
-import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -66,7 +59,6 @@ import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
@@ -74,18 +66,13 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -93,41 +80,20 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {
 
-    private static final String SUPPORT_VERIFY_ORCID_ORG = "ORCID <support@verify.orcid.org>";
-
-    private static final String RESET_NOTIFY_ORCID_ORG = "ORCID <reset@notify.orcid.org>";
-
-    private static final String CLAIM_NOTIFY_ORCID_ORG = "ORCID <claim@notify.orcid.org>";
-
-    private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "ORCID <deactivate@notify.orcid.org>";
-
-    private static final String LOCKED_NOTIFY_ORCID_ORG = "ORCID <locked@notify.orcid.org>";
-
-    private static final String EMAIL_CHANGED_NOTIFY_ORCID_ORG = "ORCID <email-changed@notify.orcid.org>";
-
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
     public static final int DELETE_BATCH_SIZE = 500;
     
-    @Value("${org.orcid.core.email.verify.tooOld:15}")
-    private int emailTooOld;
-    
-    private int verifyReminderAfterDays = 2;
-
     @Resource(name = "messageSource")
     private MessageSource messages;
     
     @Resource(name = "messageSourceNoFallback")
-    private MessageSource messageSourceNoFallback;
-
-    @Resource
-    private MailGunManager mailGunManager;
-
-    private String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";    
+    private MessageSource messageSourceNoFallback;      
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
 
+    @Value("${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}")
     private boolean apiRecordCreationEmailEnabled;
 
     private TemplateManager templateManager;
@@ -199,14 +165,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
-    public boolean isApiRecordCreationEmailEnabled() {
-        return apiRecordCreationEmailEnabled;
-    }
-
-    public void setApiRecordCreationEmailEnabled(boolean apiRecordCreationEmailEnabled) {
-        this.apiRecordCreationEmailEnabled = apiRecordCreationEmailEnabled;
-    }
-
     @Required
     public void setTemplateManager(TemplateManager templateManager) {
         this.templateManager = templateManager;
@@ -233,173 +191,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         this.notificationDao = notificationDao;
     }
 
-    public void setMailGunManager(MailGunManager mailGunManager) {
-        this.mailGunManager = mailGunManager;
-    }
-
-    @Override
-    public void sendWelcomeEmail(String userOrcid, String email) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
-        Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        
-        String subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
-        
-        String emailName = deriveEmailFriendlyName(userOrcid);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        String orcidId = userOrcid;
-        String baseUri = orcidUrlManager.getBaseUrl();
-        String baseUriHttp = orcidUrlManager.getBaseUriHttp();
-
-        templateParams.put("subject", subject);
-        templateParams.put("emailName", emailName);
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcidId", orcidId);
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("baseUriHttp", baseUriHttp);
-
-        SourceEntity source = sourceManager.retrieveActiveSourceEntity();
-        if (source != null) {
-            String sourceId = SourceEntityUtils.getSourceId(source);
-            String sourceName = sourceEntityUtils.getSourceName(source);
-            // If the source is not the user itself
-            if (sourceId != null && !sourceId.equals(orcidId)) {
-                if (!PojoUtil.isEmpty(sourceName)) {
-                    String paramValue = " " + messages.getMessage("common.through", null, userLocale) + " " + sourceName + ".";
-                    templateParams.put("source_name_if_exists", paramValue);
-                } else {
-                    templateParams.put("source_name_if_exists", ".");
-                }
-            } else {
-                templateParams.put("source_name_if_exists", ".");
-            }
-        } else {
-            templateParams.put("source_name_if_exists", ".");
-        }
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("welcome_email_v2.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams);
-
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
-    }
-
-    @Override
-    public void sendOrcidDeactivateEmail(String userOrcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = getSubject("email.subject.deactivate", userLocale);
-        String email = primaryEmail.getEmail();
-        String encryptedEmail = encryptionManager.encryptForExternalUse(email);
-        String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
-        String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
-
-        String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
-        templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
-        templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
-        templateParams.put("subject", subject);
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
-
-        mailGunManager.sendEmail(DEACTIVATE_NOTIFY_ORCID_ORG, email, subject, body, html);
-    }
-
-    @Override
-    public void sendOrcidLockedEmail(String orcidToLock) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcidToLock);
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);   
-        
-        String subject = getSubject("email.subject.locked", userLocale);
-        String email = emailManager.findPrimaryEmail(orcidToLock).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(orcidToLock);
-        
-        Map<String, Object> templateParams = new HashMap<String, Object>();                
-        templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", orcidToLock);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", subject);
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("locked_orcid_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
-
-        mailGunManager.sendEmail(LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
-    }
-    
-    @Override
-    public void sendVerificationEmailToNonPrimaryEmails(String userOrcid) {
-        emailManager.getEmails(userOrcid).getEmails().stream().filter(e -> !e.isPrimary()).map(e -> e.getEmail()).forEach(e -> {
-            sendVerificationEmail(userOrcid, e);
-        });
-    }
-    
-    // look like the following is our best best for i18n emails
-    // http://stackoverflow.com/questions/9605828/email-internationalization-using-velocity-freemarker-templates
-    @Override
-    public void sendVerificationEmail(String userOrcid, String email) {
-        processVerificationEmail(userOrcid, email, false);
-    }
-
-    @Override
-    public void sendVerificationReminderEmail(String userOrcid, String email) {
-        processVerificationEmail(userOrcid, email, true);
-    }
-    
-    private void processVerificationEmail(String userOrcid, String email, boolean isVerificationReminder) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        Locale locale = getUserLocaleFromProfileEntity(profile);
-        
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
-        String subject = createSubjectForVerificationEmail(email, primaryEmail, locale);
-        Map<String, Object> templateParams = createParamsForVerificationEmail(subject, emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        templateParams.put("isReminder", isVerificationReminder);
-        // Generate body from template
-        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
-        mailGunManager.sendEmail(SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);    
-    }
-
-    private String createSubjectForVerificationEmail(String email, String primaryEmail, Locale userLocale) {
-        return getSubject(primaryEmail.equalsIgnoreCase(email) ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder", userLocale);
-    }
-    
-    private Map<String, Object> createParamsForVerificationEmail(String subject, String emailFriendlyName, String orcid, String email, String primaryEmail,
-            Locale locale) {
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("primaryEmail", primaryEmail);
-        templateParams.put("isPrimary", primaryEmail.equalsIgnoreCase(email));
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("orcid", orcid);
-        templateParams.put("email", email);
-        templateParams.put("subject", subject);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        addMessageParams(templateParams, locale);
-        return templateParams;
-    }
-
     public String createUpdateEmailFrequencyUrl(String email) {
         return createEmailBaseUrl(email, orcidUrlManager.getBaseUrl(), "notifications/frequencies");
     }
@@ -423,82 +214,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private String getSubject(String code, Locale locale) {
         return messages.getMessage(code, null, locale);
     }
-
-    @Override
-    public String deriveEmailFriendlyName(String orcid) {
-        String result = recordNameManagerV3.fetchDisplayableCreditName(orcid);
-        if (PojoUtil.isEmpty(result)) {
-            result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
-        }
-        return result;
-    }
     
-    @Override
-    public void sendPasswordResetEmail(String submittedEmail, String userOrcid) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        Locale locale = getUserLocaleFromProfileEntity(record);
-        
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("submittedEmail", submittedEmail);
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("subject", getSubject("email.subject.reset", getUserLocaleFromProfileEntity(record)));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        // Generate body from template
-        String resetUrl = createResetEmail(primaryEmail, orcidUrlManager.getBaseUrl());
-        templateParams.put("passwordResetUrl", resetUrl);
-
-        addMessageParams(templateParams, locale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset", locale), body, htmlBody);
-    }
-    
-    @Override
-    public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {     
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("submittedEmail", submittedEmail);
-        templateParams.put("subject", getSubject("email.subject.reset_not_found", locale));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        addMessageParams(templateParams, locale);
-        // Generate body from template
-        String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reset_not_found", locale), body, htmlBody);
-    }
-
-
-    @Override
-    public void sendReactivationEmail(String submittedEmail, String userOrcid) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
-        Locale locale = getUserLocaleFromProfileEntity(record);
-        
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(userOrcid));
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("subject", getSubject("email.subject.reactivation", locale));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        // Generate body from template
-        String reactivationUrl = createReactivationUrl(submittedEmail, orcidUrlManager.getBaseUrl());
-        templateParams.put("reactivationUrl", reactivationUrl);
-
-        addMessageParams(templateParams, locale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, submittedEmail, getSubject("email.subject.reactivation", locale), body, htmlBody);
-    }
-
-    @Override
+   @Override
     public Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveActiveSourceId();
         
@@ -535,7 +252,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         Locale userLocale = getUserLocaleFromProfileEntity(delegateProfileEntity);
         String subject = getSubject("email.subject.added_as_delegate", userLocale);
 
-        String emailNameGrantingPermission = deriveEmailFriendlyName(userGrantingPermission);
+        String emailNameGrantingPermission = recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission);
 
         StringBuffer sb = new StringBuffer();
         sb.append(emailNameGrantingPermission);
@@ -545,7 +262,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
-        String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
+        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(userReceivingPermission);
         String assetsUrl = getAssetsUrl();
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
@@ -554,7 +271,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailNameGrantingPermission", emailNameGrantingPermission);
         templateParams.put("emailNameGrantingPermissionWithApostrophe", emailNameGrantingPermission + "'s");
         templateParams.put("grantingOrcidValue", userGrantingPermission);
-        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
+        templateParams.put("grantingOrcidName", recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
@@ -580,12 +297,12 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public void sendNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission) {
         ProfileEntity userGrantingProfileEntity = profileEntityCacheManager.retrieve(userGrantingPermission);
-        String emailName = deriveEmailFriendlyName(userGrantingPermission);
+        String emailName = recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission);
 
         Locale userLocale = getUserLocaleFromProfileEntity(userGrantingProfileEntity);
 
         String subject = getSubject("email.subject.delegate.recipient", userLocale);
-        String emailNameForDelegate = deriveEmailFriendlyName(userReceivingPermission);
+        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(userReceivingPermission);
 
         StringBuffer sb = new StringBuffer();
         sb.append(emailNameForDelegate);
@@ -602,7 +319,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("orcidValueForDelegate", userReceivingPermission);
         templateParams.put("grantingOrcidValue", userGrantingPermission);
-        templateParams.put("grantingOrcidName", deriveEmailFriendlyName(userGrantingPermission));
+        templateParams.put("grantingOrcidName", recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
@@ -622,121 +339,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setBodyHtml(html);
         notification.setBodyText(text);
         createNotification(userGrantingPermission, notification);
-    }
-
-    @Override
-    public void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(currentUserOrcid);        
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        
-        // build up old template
-        Map<String, Object> templateParams = new HashMap<String, Object>();        
-        
-        String subject = getSubject("email.subject.email_removed", userLocale);
-        String emailFriendlyName = deriveEmailFriendlyName(currentUserOrcid);
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(newEmail, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("oldEmail", oldEmail);
-        templateParams.put("newEmail", newEmail);
-        templateParams.put("orcid", currentUserOrcid);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", subject);
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("email_removed.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
-
-        mailGunManager.sendEmail(EMAIL_CHANGED_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
-    }
-
-    @Override
-    public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);        
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
-        Locale locale = getUserLocaleFromProfileEntity(record);
-
-        // Create map of template params
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("emailName", deriveEmailFriendlyName(userOrcid));        
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("subject", getSubject("email.subject.claim_reminder", locale));
-        SourceEntity source = record.getSource();
-        String creatorName = "";
-        if (source != null) {
-            String sourceName = sourceEntityUtils.getSourceName(source);
-            if (!PojoUtil.isEmpty(sourceName)) {
-                creatorName = sourceName;
-            } else {
-                creatorName = SourceEntityUtils.getSourceId(source);
-            }
-        }
-        templateParams.put("creatorName", creatorName);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("daysUntilActivation", daysUntilActivation);
-        if (primaryEmail == null) {
-            LOGGER.info("Cant send claim reminder email if primary email is null: {}", userOrcid);
-            return;
-        }
-        String verificationUrl = createClaimVerificationUrl(primaryEmail, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
-
-        addMessageParams(templateParams, locale);
-
-        // Generate body from template
-        String body;
-        String htmlBody;
-        //https://trello.com/c/q2MpR3Ka/4727-update-claim-reminder-email-to-no-longer-text-saying-it-will-be-public-in-2-days
-        //TODO: cleanup after translations are done
-        boolean useV2Template = false;
-        try {
-            messageSourceNoFallback.getMessage("email.new_claim_reminder.this_is_a_reminder.1", null, locale);
-            useV2Template = true;
-        } catch(NoSuchMessageException e) {
-            
-        }
-        
-        if(useV2Template) {
-            body = templateManager.processTemplate("new_claim_reminder_email.ftl", templateParams);
-            htmlBody = templateManager.processTemplate("new_claim_reminder_email_html.ftl", templateParams);
-        } else {
-            body = templateManager.processTemplate("claim_reminder_email.ftl", templateParams);
-            htmlBody = templateManager.processTemplate("claim_reminder_email_html.ftl", templateParams);
-        }
-        
-        // Send message
-        if (apiRecordCreationEmailEnabled) {
-            mailGunManager.sendEmail(CLAIM_NOTIFY_ORCID_ORG, email, getSubject("email.subject.claim_reminder", locale), body, htmlBody);
-            profileEventDao.persist(new ProfileEventEntity(userOrcid, ProfileEventType.CLAIM_REMINDER_SENT));
-        } else {
-            LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
-        }
-    }
-    
-    @Override
-    public String createClaimVerificationUrl(String email, String baseUri) {
-        return createEmailBaseUrl(email, baseUri, "claim");
-    }
-
-    public String createVerificationUrl(String email, String baseUri) {
-        return createEmailBaseUrl(email, baseUri, "verify-email");
-    }
-
-    private String createResetEmail(String userEmail, String baseUri) {
-        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
-        String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
-        return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
-    }
-    
-    private String createReactivationUrl(String userEmail, String baseUri) {
-        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
-        String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
-        return createEmailBaseUrl(resetParams, baseUri, "reactivation");
     }
 
     public String createEmailBaseUrl(String unencryptedParams, String baseUri, String path) {
@@ -762,8 +364,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         ProfileEntity managedEntity = profileEntityCacheManager.retrieve(managedOrcid);
         
-        String emailNameForDelegate = deriveEmailFriendlyName(managedOrcid);
-        String trustedOrcidName = deriveEmailFriendlyName(trustedOrcid);
+        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(managedOrcid);
+        String trustedOrcidName = recordNameManagerV3.deriveEmailFriendlyName(trustedOrcid);
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
         templateParams.put("trustedOrcidName", trustedOrcidName);
         templateParams.put("trustedOrcidValue", trustedOrcid);
@@ -1049,7 +651,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         // Create map of template params
         templateParams.put("primaryId", primaryOrcid);
-        templateParams.put("name", deriveEmailFriendlyName(primaryOrcid));
+        templateParams.put("name", recordNameManagerV3.deriveEmailFriendlyName(primaryOrcid));
         templateParams.put("assetsUrl", assetsUrl);
         templateParams.put("subject", subject);
         templateParams.put("clientName", clientDetails.getClientName());
@@ -1102,56 +704,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notificationAdapter.toNotification(notifications);
     }
     
-    @Override
-    synchronized public void processUnverifiedEmails2Days() {
-        LOGGER.info("About to process unverIfied emails for reminder");
-        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
-        do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100);
-            LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
-            LocalDateTime now = LocalDateTime.now();
-            Date tooOld = now.minusDays(emailTooOld).toDate();
-            for (Pair<String, Date> element : elements) {
-                if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmails2DaysInTransaction(element.getLeft());
-                } else {
-                    // Mark is as too old to send the verification email
-                    markUnverifiedEmailAsTooOld(element.getLeft());
-                }
-            }
-        } while (!elements.isEmpty());
-    }
-
-    private void processUnverifiedEmails2DaysInTransaction(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                try {
-                    String userOrcid = emailManager.findOrcidIdByEmail(email);
-                    sendVerificationReminderEmail(userOrcid, email);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
-                    emailEventDao.flush();
-                } catch (Exception e) {
-                    LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED));
-                    emailEventDao.flush();
-                }
-            }
-        });
-    }
-    
-    private void markUnverifiedEmailAsTooOld(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {                                
-                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_TOO_OLD));
-                emailEventDao.flush();
-            }
-        });
-    }
-    
     private String getAssetsUrl() {
         String baseUrl = orcidUrlManager.getBaseUrl();
         if(!baseUrl.endsWith("/")) {
@@ -1197,64 +749,4 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         }
     }
 
-    @Override
-    public void sendForgottenIdEmail(String email, String orcid) {
-        ProfileEntity record = profileEntityCacheManager.retrieve(orcid);        
-        Locale locale = getUserLocaleFromProfileEntity(record);
-        
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("submittedEmail", email);
-        templateParams.put("orcid", orcid);
-        templateParams.put("subject", getSubject("email.subject.forgotten_id", getUserLocaleFromProfileEntity(record)));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        addMessageParams(templateParams, locale);
-
-        String body = templateManager.processTemplate("forgot_id_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("forgot_id_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email, getSubject("email.subject.forgotten_id", locale), body, htmlBody);
-    }
-
-    @Override
-    public void sendForgottenIdEmailNotFoundEmail(String email, Locale locale) {
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("submittedEmail", email);
-        templateParams.put("subject", getSubject("email.subject.forgotten_id", locale));
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        addMessageParams(templateParams, locale);
-
-        String body = templateManager.processTemplate("forgot_id_email_not_found_email.ftl", templateParams);
-        String htmlBody = templateManager.processTemplate("forgot_id_email_not_found_email_html.ftl", templateParams);
-        mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email, getSubject("email.subject.forgotten_id", locale), body, htmlBody);
-    }
-
-    @Override
-    public void send2FADisabledEmail(String userOrcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);
-        org.orcid.jaxb.model.v3.release.record.Emails emails = emailManager.getEmails(userOrcid);
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = getSubject("email.2fa_disabled.subject", userLocale);
-
-
-        String emailFriendlyName = deriveEmailFriendlyName(userOrcid);
-        templateParams.put("emailName", emailFriendlyName);
-        templateParams.put("orcid", userOrcid);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", subject);
-
-        addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("email_2fa_disabled.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("email_2fa_disabled_html.ftl", templateParams);
-
-        for(Email email: emails.getEmails()) {
-            mailGunManager.sendEmail(RESET_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
-        }
-    }
 }

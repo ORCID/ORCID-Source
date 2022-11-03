@@ -1,0 +1,14 @@
+trello_board="ORCID: Registry Current Development"
+
+trello_backlog_list="Sprint Backlog"
+trello_backlog_list_id="5c0555fad616ea6c04f44d2e"
+
+trello_in_progress_list="In progress"
+trello_in_progress_list_id="50a2a79da535468428000175"
+
+trello_submitted_list="Ready on this sprint"
+trello_submitted_list_id="50d22ac32c146a385f0010fa"
+
+github_poke_slack_channel=team-tech
+
+gitub_pr_default_reviewers=ORCID/orcid-core-ost-open-source-team

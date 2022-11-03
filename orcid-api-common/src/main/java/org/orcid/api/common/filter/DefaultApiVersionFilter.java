@@ -16,7 +16,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class DefaultApiVersionFilter extends OncePerRequestFilter {

@@ -42,6 +42,8 @@ import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
 import org.orcid.frontend.web.forms.validate.RedirectUriValidator;
 import org.orcid.frontend.web.util.CommonPasswords;
@@ -73,8 +75,6 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.VisibilityForm;
-import org.orcid.utils.OrcidStringUtils;
-import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -104,8 +104,6 @@ public class BaseController {
 
     private String googleAnalyticsTrackingId;
     
-    private String hotjarTrackingId;
-
     protected List<String> domainsAllowingRobots;
 
     protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
@@ -184,16 +182,6 @@ public class BaseController {
         this.googleAnalyticsTrackingId = googleAnalyticsTrackingId;
     }
     
-    @ModelAttribute("hotjarTrackingId")
-    public String getHotjarTrackingId() {
-        return hotjarTrackingId;
-    }
-
-    @Value("${org.orcid.frontend.web.hotjarTrackingId:}")
-    public void setHotjarTrackingId(String hotjarTrackingId) {
-        this.hotjarTrackingId = hotjarTrackingId;
-    }
-
     @ModelAttribute("sendEmailFrequencies")
     public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
@@ -329,12 +317,16 @@ public class BaseController {
 
     private boolean emailMatchesCurrentUser(String email) {
         String effectiveOrcid = getEffectiveUserOrcid();
+        return emailMatchesUser(effectiveOrcid, email);
+    }
+
+    boolean emailMatchesUser(String orcid, String email) {
         OrcidProfileUserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
             return false;
         }
         boolean match = false;
-        Emails emails = emailManagerReadOnly.getEmails(effectiveOrcid);
+        Emails emails = emailManagerReadOnly.getEmails(orcid);
         for (Email cuEmail : emails.getEmails()) {
             if (cuEmail.getEmail() != null && cuEmail.getEmail().equalsIgnoreCase(email))
                 match = true;

@@ -27,6 +27,7 @@ import org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.core.manager.v3.ProfileEntityManager;
 
 public class TwoFactorAuthenticationManagerTest {
     
@@ -37,7 +38,8 @@ public class TwoFactorAuthenticationManagerTest {
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @Mock
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityManager profileEntityManagerV3; 
+    
 
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -72,7 +74,7 @@ public class TwoFactorAuthenticationManagerTest {
                 return (String) args[0];
             }
         });
-        doNothing().when(profileEntityManager).update2FASecret(anyString(), anyString());
+        doNothing().when(profileEntityManagerV3).update2FASecret(anyString(), anyString());
         when(emailManagerReadOnly.findPrimaryEmail(anyString())).thenReturn(getEmail());
         
         String qrCodeUrl = twoFactorAuthenticationManager.getQRCode("orcid");
@@ -91,17 +93,17 @@ public class TwoFactorAuthenticationManagerTest {
     
     @Test
     public void testEnable2FA() {
-        doNothing().when(profileEntityManager).enable2FA(anyString());
+        doNothing().when(profileEntityManagerV3).enable2FA(anyString());
         twoFactorAuthenticationManager.enable2FA("orcid");
-        verify(profileEntityManager).enable2FA(anyString());
+        verify(profileEntityManagerV3).enable2FA(anyString());
     }
     
     @Test
     public void testDisable2FA() {
-        doNothing().when(profileEntityManager).disable2FA(anyString());
+        doNothing().when(profileEntityManagerV3).disable2FA(anyString());
         doNothing().when(backupCodeManager).removeUnusedBackupCodes(anyString());
         twoFactorAuthenticationManager.disable2FA("orcid");
-        verify(profileEntityManager).disable2FA(anyString());
+        verify(profileEntityManagerV3).disable2FA(anyString());
         verify(backupCodeManager).removeUnusedBackupCodes(anyString());
     }
     

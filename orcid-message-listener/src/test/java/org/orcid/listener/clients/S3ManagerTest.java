@@ -1,5 +1,6 @@
 package org.orcid.listener.clients;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -16,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -25,7 +27,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3Manager;
 import org.orcid.listener.s3.S3MessagingService;
-import org.orcid.utils.DateUtils;
+import org.orcid.utils.jersey.marshaller.ORCIDMarshaller;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
@@ -37,14 +39,23 @@ public class S3ManagerTest {
     @Mock
     private S3MessagingService s3MessagingService;
 
+    S3Manager s3;
+    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
+        try {
+            ORCIDMarshaller marshaller = new ORCIDMarshaller();
+            s3 = new S3Manager();
+            s3.setMarshaller(marshaller);
+            s3.setS3MessagingService(s3MessagingService);            
+        } catch(JAXBException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
     public void updateS3_V2RecordTest() throws JAXBException, AmazonClientException, IOException {
-        String bucketPrefix = "bucket-production";
         String orcid = "0000-0000-0000-000X";
         Record record = new Record();
         record.setOrcidIdentifier(new OrcidIdentifier(orcid));
@@ -55,8 +66,6 @@ public class S3ManagerTest {
         h.setLastModifiedDate(lmd);
         record.setHistory(h);
                 
-        S3Manager s3 = new S3Manager(bucketPrefix);
-        s3.setS3MessagingService(s3MessagingService);
         s3.uploadV2RecordSummary(orcid, record);
         verify(s3MessagingService, times(1)).sendV2Item(eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
         verify(s3MessagingService, times(0)).sendV3Item(eq("0000-0000-0000-0000"), eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
@@ -64,7 +73,6 @@ public class S3ManagerTest {
 
     @Test
     public void updateS3_V3RecordTest() throws JAXBException, AmazonClientException, IOException {
-        String bucketPrefix = "bucket-production";
         String orcid = "0000-0000-0000-000X";
         org.orcid.jaxb.model.v3.release.record.Record record = new org.orcid.jaxb.model.v3.release.record.Record();
         record.setOrcidIdentifier(new org.orcid.jaxb.model.v3.release.common.OrcidIdentifier(orcid));
@@ -75,8 +83,6 @@ public class S3ManagerTest {
         h.setLastModifiedDate(lmd);
         record.setHistory(h);
         
-        S3Manager s3 = new S3Manager(bucketPrefix);
-        s3.setS3MessagingService(s3MessagingService);
         s3.uploadV3RecordSummary(orcid, record);
         verify(s3MessagingService, times(0)).sendV2Item(eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
         verify(s3MessagingService, times(1)).sendV3Item(eq("0000-0000-0000-000X"), eq("00X/0000-0000-0000-000X.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), eq(now), eq(false));
@@ -91,8 +97,6 @@ public class S3ManagerTest {
         Work w = new Work();
         w.setLastModifiedDate(lmd);
 
-        S3Manager s3 = new S3Manager();
-        s3.setS3MessagingService(s3MessagingService);
         s3.uploadV2Activity(orcid, "1234", w);
         verify(s3MessagingService, times(1)).sendV2Item(eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),
                 eq(now), eq(true));
@@ -109,8 +113,6 @@ public class S3ManagerTest {
         org.orcid.jaxb.model.v3.release.record.Work w = new org.orcid.jaxb.model.v3.release.record.Work();
         w.setLastModifiedDate(lmd);
 
-        S3Manager s3 = new S3Manager();
-        s3.setS3MessagingService(s3MessagingService);
         s3.uploadV3Activity(orcid, "1234", w);
         verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),
                 eq(now), eq(true));
@@ -122,8 +124,6 @@ public class S3ManagerTest {
     public void uploadV2OrcidErrorTest() throws JAXBException, JsonProcessingException {
         String orcid = "0000-0000-0000-0000";
         OrcidError error = new OrcidError();
-        S3Manager s3 = new S3Manager();
-        s3.setS3MessagingService(s3MessagingService);
         s3.uploadV2OrcidError(orcid, error);
 
         verify(s3MessagingService, times(1)).sendV2Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
@@ -134,8 +134,6 @@ public class S3ManagerTest {
     public void uploadV3OrcidErrorTest() throws JAXBException, JsonProcessingException {
         String orcid = "0000-0000-0000-0000";
         org.orcid.jaxb.model.v3.release.error.OrcidError error = new org.orcid.jaxb.model.v3.release.error.OrcidError();
-        S3Manager s3 = new S3Manager();
-        s3.setS3MessagingService(s3MessagingService);
         s3.uploadV3OrcidError(orcid, error);
 
         verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML), any(Date.class), eq(false));
@@ -153,8 +151,6 @@ public class S3ManagerTest {
         r.getObjectSummaries().add(o2);
         when(s3MessagingService.listObjects(any())).thenReturn(r);
         
-        S3Manager s3 = new S3Manager();
-        s3.setS3MessagingService(s3MessagingService);
         s3.clearV2ActivitiesByType("0000-0000-0000-0000", ActivityType.DISTINCTIONS);
         
         verify(s3MessagingService, times(1)).removeV2Activity(eq("0000-0000-0000-0000/work/1.xml"));
@@ -172,8 +168,6 @@ public class S3ManagerTest {
         r.getObjectSummaries().add(o2);
         when(s3MessagingService.listObjects(any())).thenReturn(r);
         
-        S3Manager s3 = new S3Manager();
-        s3.setS3MessagingService(s3MessagingService);
         s3.clearV3ActivitiesByType("0000-0000-0000-0000", ActivityType.DISTINCTIONS);
         
         verify(s3MessagingService, times(1)).removeV3Activity(eq("0000-0000-0000-0000"), eq("0000-0000-0000-0000/work/1.xml"));

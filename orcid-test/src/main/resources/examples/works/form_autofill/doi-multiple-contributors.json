@@ -1,0 +1,52 @@
+{
+  "type": "article",
+  "id": "https://doi.org/10.000/0000.0004",
+  "categories": [
+    "Information Systems",
+    "FOS: Computer and information sciences"
+  ],
+  "author": [
+    {
+      "name": "ORCID Consortium",
+      "sequence":"first"
+    },
+    {
+      "ORCID":"http:\/\/orcid.org\/0000-0003-0902-4386",
+      "family": "Demeranville",
+      "given": "Tom",
+      "sequence":"additional"
+    },
+    {
+      "family": "Mejias",
+      "given": "Gabriela",
+      "sequence":"additional"
+    },
+    {
+      "family": "Oaiya",
+      "given": "Omo",
+      "sequence":"additional"
+    },
+    {
+      "family": "Shillum",
+      "given": "Chris",
+      "sequence":"additional"
+    },
+    {
+      "family": "Paglione",
+      "given": "Laura"
+    }
+  ],
+  "issued": {
+    "date-parts": [
+      [
+        2021
+      ]
+    ]
+  },
+  "abstract": "Slides and notes of the ORCID BoF session that took place on June 17 2021 as a TNC21 side meeting",
+  "DOI": "10.000/0000.0004",
+  "publisher": "ORCID",
+  "title": "20210617 ORCID BoF",
+  "URL": "https://orcid.figshare.com/articles/presentation/20210617_ORCID_BoF/14806755/1",
+  "copyright": "Creative Commons Zero v1.0 Universal"
+}

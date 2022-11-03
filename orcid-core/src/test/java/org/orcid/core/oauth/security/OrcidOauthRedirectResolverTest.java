@@ -3,27 +3,31 @@ package org.orcid.core.oauth.security;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.orcid.core.togglz.Features;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.togglz.junit.TogglzRule;
 
 public class OrcidOauthRedirectResolverTest {
 
     private Collection<String> allRedirectGrantTypes = Arrays.asList("implicit", "refresh_token", "client_credentials", "authorization_code",
             "urn:ietf:params:oauth:grant-type:token-exchange");
 
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
+    
     private OrcidOauthRedirectResolver resolver = new OrcidOauthRedirectResolver();
 
     {
@@ -156,7 +160,18 @@ public class OrcidOauthRedirectResolverTest {
     }
 
     @Test
-    public void redirectMatchesTest() {
+    public void redirectUriGeneralTests() {
+        redirectUriGeneralTest(true);
+        redirectUriGeneralTest(false);
+    }
+    
+    private void redirectUriGeneralTest(Boolean togglzEnabled) {
+        if(togglzEnabled) {
+            togglzRule.enable(Features.DISABLE_MATCHING_SUBDOMAINS);
+        } else {
+            togglzRule.disable(Features.DISABLE_MATCHING_SUBDOMAINS);
+        }
+        
         // No matches at all
         assertFalse(resolver.redirectMatches("https://example.com", "https://qa.orcid.org"));
         assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://example.com"));
@@ -178,15 +193,6 @@ public class OrcidOauthRedirectResolverTest {
         // Different host should not match
         assertFalse(resolver.redirectMatches("https://orcid.org", "http://example.com"));
 
-        // Temp: Subdomain used match, so, we should allow it until we transition members
-        assertTrue(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
-        assertTrue(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));        
-        
-        // If a subdomain is registered but not the domain, it should fail
-        assertFalse(resolver.redirectMatches("https://orcid.org", "https://qa.orcid.org"));
-        // Different subdomains should not match
-        assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://sandbox.orcid.org"));
-
         // Root should not match if it is not registered
         assertFalse(resolver.redirectMatches("https://qa.orcid.org", "http://qa.orcid.org/subdirectory"));
 
@@ -207,5 +213,43 @@ public class OrcidOauthRedirectResolverTest {
         assertTrue(resolver.redirectMatches("https://orcid.org/subdirectory/1/2", "https://orcid.org/subdirectory"));
         assertTrue(resolver.redirectMatches("https://orcid.org/subdirectory/1/2", "https://orcid.org/subdirectory/1"));
         assertTrue(resolver.redirectMatches("https://orcid.org/subdirectory/1/2", "https://orcid.org/subdirectory/1/2"));
+        
+        // If a subdomain is registered but not the domain, it should fail
+        assertFalse(resolver.redirectMatches("https://orcid.org", "https://qa.orcid.org"));
+        // Different subdomains should not match
+        assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://sandbox.orcid.org"));       
+        
+        // Acceptance criteria checks: subdirectory should be allowed
+        assertTrue(resolver.redirectMatches("https://example.com/subdirectory", "https://example.com"));
+    }
+    
+    @Test
+    public void redirectMatches_AllowMatchingSubdomainsTest() {
+        // Allow matching subdomains
+        togglzRule.disable(Features.DISABLE_MATCHING_SUBDOMAINS);
+                
+        // Temp: Subdomain should match if the togglz is OFF
+        assertTrue(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
+        assertTrue(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));        
+        
+        // Acceptance criteria checks: These should pass when the togglz is OFF
+        assertTrue(resolver.redirectMatches("https://subdomain.example.com/", "https://example.com"));
+        assertTrue(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
+        assertTrue(resolver.redirectMatches("https://www.example.com", "https://example.com"));
+    }
+    
+    @Test
+    public void redirectMatches_RejectMatchingSubdomainsTest() {
+        // Reject matching subdomains
+        togglzRule.enable(Features.DISABLE_MATCHING_SUBDOMAINS);
+                
+        // Subdomain should not match if togglz is ON
+        assertFalse(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
+        assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));    
+        
+        // Acceptance criteria checks: subdomains should be rejected
+        assertFalse(resolver.redirectMatches("https://subdomain.example.com/", "https://example.com"));
+        assertFalse(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
+        assertFalse(resolver.redirectMatches("https://www.example.com", "https://example.com"));
     }
 }

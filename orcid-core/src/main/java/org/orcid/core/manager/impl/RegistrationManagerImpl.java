@@ -92,17 +92,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
     }   
     
     @Override
-    public void resetUserPassword(String toEmail, String userOrcid, Boolean isClaimed) {
-        LOGGER.debug("Resetting password for Orcid: {}", userOrcid);
-        if (isClaimed == null || !isClaimed) {
-            LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", userOrcid);
-            notificationManager.sendClaimReminderEmail(userOrcid, 0, toEmail);
-        } else {
-            notificationManager.sendPasswordResetEmail(toEmail, userOrcid);
-        }
-    }
-
-    @Override
     public Long getCount() {
         return profileDao.getConfirmedProfileCount();
     }

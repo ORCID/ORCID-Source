@@ -18,6 +18,8 @@ import org.orcid.listener.persistence.util.AvailableBroker;
 import org.orcid.listener.s3.S3ActivitiesConsumer;
 import org.orcid.listener.s3.S3SummaryConsumer;
 import org.orcid.listener.solr.SolrMessageProcessor;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +30,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
+
+import jakarta.ws.rs.core.MediaType;
 
 @Configuration
 @EnableScheduling
@@ -38,7 +39,8 @@ public class ResendFailedMessages {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResendFailedMessages.class);
     private static final int BATCH_SIZE = 1000;
 
-    private Client client;
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
 
     static ObjectMapper mapper;
 
@@ -64,7 +66,6 @@ public class ResendFailedMessages {
     private SolrMessageProcessor solrProcessor;
 
     public ResendFailedMessages() {
-        client = Client.create();
         mapper = new ObjectMapper();
     }
 
@@ -231,11 +232,11 @@ public class ResendFailedMessages {
                 throw new RuntimeException(e);
             }
 
-            WebResource resource = client.resource(webhookUrl);
-            ClientResponse response = resource.entity(bodyJson).post(ClientResponse.class);
+            JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, MediaType.APPLICATION_JSON_TYPE, bodyJson, String.class, String.class);
+            
             int status = response.getStatus();
             if (status != 200) {
-                LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getEntity(String.class), message });
+                LOGGER.warn("Unable to send message to Slack, status={}, error={}, message={}", new Object[] { status, response.getError(), message });
             }
         }
     }

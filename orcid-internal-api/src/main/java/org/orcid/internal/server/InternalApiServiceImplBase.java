@@ -20,7 +20,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.net.util.Base64;
-import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
+import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.springframework.web.bind.annotation.RequestParam;
 

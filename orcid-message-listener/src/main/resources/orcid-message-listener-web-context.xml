@@ -20,7 +20,11 @@
 	
     <context:property-placeholder location="${org.orcid.message-listener.properties}" />
     
-	<context:component-scan base-package="org.orcid" />
+	<context:component-scan base-package="org.orcid">
+		<!-- We don't need the mailgun manager in the message listener -->
+		<context:exclude-filter type="assignable" expression="org.orcid.utils.email.MailGunManager"/>
+	</context:component-scan>
+	
 	<context:annotation-config />
 
 	<bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser"></bean>
@@ -94,20 +98,7 @@
 		<jms:listener ref="indexDisambiguatedOrgsListener" destination="${org.orcid.persistence.messaging.index.disambiguated_orgs}" concurrency="${org.orcid.persistence.messaging.index.disambiguated_orgs.concurrency}" />
 		<jms:listener ref="updateV3Listener" destination="${org.orcid.persistence.messaging.updated.v3}" concurrency="${org.orcid.persistence.messaging.update.v3.concurrency}" />	
 		<jms:listener ref="reindexV3Listener" destination="${org.orcid.persistence.messaging.reindex.v3}" concurrency="${org.orcid.persistence.messaging.reindex.v3.concurrency}" />	
-	</jms:listener-container>
-	
-    <!-- Jersey client -->
-    <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
-        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
-        <constructor-arg ref="jerseyProperties" />
-    </bean>
-
-    <util:map id="jerseyProperties">
-        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
-               value-ref="multiThreadedConnectionManager"/>
-    </util:map>
-
-    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+	</jms:listener-container>	    
 
 	<!-- Persistence -->
 	<bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
@@ -165,5 +156,10 @@
 	<bean id="mongoClient" class="com.mongodb.MongoClient" lazy-init="true">
 		<constructor-arg ref="mongoClientURI" />
 	</bean>
-		       
+
+	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+		<constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
+	</bean>	
+	
+	<bean id="ORCIDMarshaller" class="org.orcid.utils.jersey.marshaller.ORCIDMarshaller" />
 </beans>

@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
@@ -30,14 +29,9 @@ import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_v2.CreditName;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.FamilyName;
-import org.orcid.jaxb.model.record_v2.GivenNames;
 import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
@@ -349,21 +343,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public Date getLastLogin(String orcid) {
         return profileDao.getLastLogin(orcid);
-    }
-
-    @Override
-    public void disable2FA(String orcid) {
-        LOGGER.info("disabling 2FA for " + orcid);
-        profileDao.disable2FA(orcid);
-        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
-            notificationManager.send2FADisabledEmail(orcid);
-        }
-    }
-
-    @Override
-    public void enable2FA(String orcid) {
-        profileDao.enable2FA(orcid);
-    }
+    }    
 
     @Override
     public void update2FASecret(String orcid, String secret) {

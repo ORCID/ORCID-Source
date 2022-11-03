@@ -61,22 +61,7 @@
 				<ref bean="orcidXmlMessageConverter" />
 			</list>
 		</property>
-	</bean>
-
-	<!-- Use the composite granter to enable granting of tokens for both client 
-		credentials and auth codes -->
-	<bean id="tokenGranter"
-		class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
-		<constructor-arg>
-			<list>
-				<ref bean="clientCredentialsTokenGranter" />
-				<ref bean="authorizationCodeTokenGranter" />
-				<ref bean="refreshTokenTokenGranter" />
-				<ref bean="ietfExchangeTokenGranter" />
-				<ref bean="orcidImplicitTokenGranter" />
-			</list>
-		</constructor-arg>
-	</bean>
+	</bean>	
 
 	<!-- A token granter for the client credentials -->
 	<bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
@@ -105,15 +90,7 @@
 	<!-- An extension of RandomValueAuthorizationCodeServices to create and 
 		remove authorisation codes -->
 	<bean id="orcidAuthorizationCodeService"
-		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />
-
-	<!-- As we have a Jersey endpoint, we need to create an extension to the 
-		Spring MVC, so we use a delegator -->
-	<bean id="orcidClientCredentialEndPointDelegator"
-		class="org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl">
-		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="clientDetailsService" ref="clientDetailsManager" />
-	</bean>
+		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />	
 
 	<bean id="oAuth2RequestFactory"
 		class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">

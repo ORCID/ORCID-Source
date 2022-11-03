@@ -1,43 +1,42 @@
 package org.orcid.core.groupIds.issn;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.utils.http.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 @Component
 public class IssnClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
-
-    private Client client = Client.create();
-
+    
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
+    
+    @Resource
+    private HttpRequestUtils httpRequestUtils;
 
     public IssnData getIssnData(String issn) {
         String json = null;
         try {
             // ensure any lower case x is X otherwise issn portal won't work
             json = getJsonDataFromIssnPortal(issn.toUpperCase());
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException | URISyntaxException e) {
             throw new RuntimeException("Error extracting json from issn portal response", e);
-        }
+        } 
         try {
-            return extractIssnData(json);
+            IssnData data = extractIssnData(json);
+            data.setIssn(issn);
+            return data;
         } catch (JSONException e) {
             LOG.warn("Error extracting issn data from json returned from issn portal", e);
             return null;
@@ -53,12 +52,9 @@ public class IssnClient {
                 String title = jsonArray.getJSONObject(i).getString("mainTitle");
                 String cleanTitle = cleanText(title);
                 issnData.setMainTitle(cleanTitle);
-                issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
                 return issnData;
             } else if (jsonArray.getJSONObject(i).has("name")) {
                 // name and mainTitle always in same object - therefore if no mainTitle but name present, no mainTitle in data
-                issnData.setIssn(jsonArray.getJSONObject(i).getString("issn"));
-                
                 try {
                     issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
                 } catch (JSONException e) {
@@ -71,25 +67,13 @@ public class IssnClient {
         return null;
     }
 
-    private String getJsonDataFromIssnPortal(String issn) throws IOException {
-        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
-        WebResource resource = client.resource(issnUrl);
-        ClientResponse response = resource.get(ClientResponse.class);
-        int status = response.getStatus();
-        if (status != 200) {
+    private String getJsonDataFromIssnPortal(String issn) throws IOException, InterruptedException, URISyntaxException {
+        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);        
+        HttpResponse<String> response = httpRequestUtils.doGet(issnUrl);
+        if(response.statusCode() != 200) {
             return null;
         }
-
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        InputStream input = response.getEntityInputStream();
-
-        try {
-            IOUtils.copy(response.getEntityInputStream(), output);
-            return output.toString("UTF-8");
-        } finally {
-            input.close();
-            output.close();
-        }
+        return response.body();
     }
     
     private String cleanText(String text) {

@@ -26,8 +26,8 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)

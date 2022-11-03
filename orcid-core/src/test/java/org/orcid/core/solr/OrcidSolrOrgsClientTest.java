@@ -23,7 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.core.solr.OrgDisambiguatedSolrDocument;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)

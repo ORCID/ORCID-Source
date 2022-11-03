@@ -28,15 +28,10 @@
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
-		<property name="encryptionManager" ref="encryptionManager" />
-		<property name="templateManager" ref="templateManager" />
-		<property name="apiRecordCreationEmailEnabled"
-			value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
+		<property name="encryptionManager" ref="encryptionManager" />		
 	</bean>
 	
 	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
-	
-	<bean id="emailMessageSender" class="org.orcid.core.manager.impl.EmailMessageSenderImpl" />
 	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
 	
@@ -72,16 +67,10 @@
 			<ref bean="openIDConnectTokenEnhancer" />
 		</list>
 		</property>
-	</bean>
-	
+	</bean>	
 	
 	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
 	
-	<!-- 
-	<bean id="serviceAnnouncement_1_For_2015" class="org.orcid.core.profileEvent.ServiceAnnouncement_1_For_2015" scope="prototype" />	
-	 -->
-	<bean id="verifiedRequiredAnnouncement2017" class="org.orcid.core.profileEvent.VerifiedRequiredAnnouncement2017" scope="prototype" />	
-	 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>
@@ -525,9 +514,7 @@
     
     <bean id="notificationManagerV3" class="org.orcid.core.manager.v3.impl.NotificationManagerImpl">
         <property name="encryptionManager" ref="encryptionManager" />
-        <property name="templateManager" ref="templateManager" />
-        <property name="apiRecordCreationEmailEnabled"
-            value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
+        <property name="templateManager" ref="templateManager" />        
     </bean>
     
     <bean id="orcidSearchManagerReadOnlyV3" class="org.orcid.core.manager.v3.impl.OrcidSearchManagerImpl" />
@@ -750,9 +737,7 @@
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />	
 	
-	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />
-
-    <bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />	
+	<bean id="orcidUrlManager" class="org.orcid.core.manager.impl.OrcidUrlManager" />	
 	
 	<bean id="activityManager" class="org.orcid.core.manager.impl.ActivityManagerImpl" />
 	
@@ -793,10 +778,6 @@
 	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 	
 	<bean id="userConnectionManager" class="org.orcid.core.manager.impl.UserConnectionManagerImpl" />
-    
-    <bean id="slackManager" class="org.orcid.core.manager.impl.SlackManagerImpl" />
-    
-    <bean id="analyticsClient" class="org.orcid.core.analytics.client.google.UniversalAnalyticsClient" />		
     
     <bean id="twoFactorAuthenticationManager" class="org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl" />
 
@@ -1542,15 +1523,7 @@
 	<bean id="jpaJaxbSpamAdapter" class="org.orcid.core.adapter.v3.impl.JpaJaxbSpamAdapterImpl">
 		<property name="mapperFacade" ref="spamMapperFacade"/>
 	</bean>
-	
-	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.core.orgs.load.io.FtpsFileDownloader" />
-
-	<bean id="fundrefOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
-
-    <bean id="gridOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
-    
-    <bean id="rorOrgDataClient" class="org.orcid.core.orgs.load.io.OrgDataClient" />
-
+	    
     <bean id="workContributorsConverter" class="org.orcid.core.adapter.v3.converter.WorkContributorsConverter">
         <constructor-arg ref="workContributorRoleConverter" />
     </bean>
@@ -1565,6 +1538,10 @@
 		<constructor-arg ref="workContributorRoleConverter" />
 	</bean>
 
-	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>
+	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>	
+
+	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
+
+	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />
 
 </beans>

@@ -6,8 +6,20 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
-    @Label("Display only current employment affiliation in work contributors form")
-    ORCID_ANGULAR_CURRENT_EMPLOYMENT_AFFILIATIONS_WORK_CONTRIBUTORS,
+    @Label("Add other people contributions via BIBTEXT")
+    ADD_OTHER_WORK_CONTRIBUTORS_WITH_BIBTEX,
+
+    @Label("Disable matching subdomains")
+    DISABLE_MATCHING_SUBDOMAINS,
+    
+    @Label("Enable Crazy Egg")
+    CRAZY_EGG,
+
+    @Label("Add other people contributions via DOI & PUBMED")
+    ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
+
+    @Label("Add other people contributions manually")
+    ADD_OTHER_WORK_CONTRIBUTORS,
 
     @Label("Store and read top_contributors_json")
     STORE_TOP_CONTRIBUTORS,
@@ -68,9 +80,6 @@ public enum Features implements Feature {
 
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
-
-    @Label("Enable Hotjar tracking")
-    HOTJAR,
     
     @Label("Https for links to iDs")
     HTTPS_IDS,

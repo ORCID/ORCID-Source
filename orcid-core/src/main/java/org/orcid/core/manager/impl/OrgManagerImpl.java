@@ -20,7 +20,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 
 import au.com.bytecode.opencsv.CSVWriter;
 

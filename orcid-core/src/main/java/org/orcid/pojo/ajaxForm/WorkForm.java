@@ -21,8 +21,8 @@ import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.OrcidStringUtils;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 
 public class WorkForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -190,8 +190,13 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         }
 
         if (work instanceof WorkExtended) {
+            List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = ((WorkExtended) work).getContributorsGroupedByOrcid();
             w.setContributorsGroupedByOrcid(((WorkExtended) work).getContributorsGroupedByOrcid());
-            w.setNumberOfContributors(((WorkExtended) work).getContributorsGroupedByOrcid().size());
+            if (contributorsGroupedByOrcid != null) {
+                w.setNumberOfContributors(contributorsGroupedByOrcid.size());
+            } else {
+                w.setNumberOfContributors(0);
+            }
         } else {
             // Set contributors
             populateContributors(work, w, maxContributorsForUI);

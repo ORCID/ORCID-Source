@@ -22,15 +22,17 @@ import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -41,7 +43,6 @@ import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -74,9 +75,6 @@ public class AdminController extends BaseController {
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource(name = "emailManagerReadOnlyV3")
-    private EmailManagerReadOnly emailManagerReadOnly;
-
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
@@ -85,6 +83,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "spamManager")
     SpamManager spamManager;
+    
+    @Resource 
+    private RecordEmailSender recordEmailSender;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -322,9 +323,14 @@ public class AdminController extends BaseController {
         }
 
         if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0) {
-            // Null Reactivation object means the reactivation is done by an
-            // admin
-            profileEntityManager.reactivate(orcid, email, null);
+            // Return a list of email addresses that should be notified by this change
+            List<String> emailsToNotify = profileEntityManager.reactivate(orcid, email, null);
+            // Notify any new email address
+            if (!emailsToNotify.isEmpty()) {
+                for (String emailToNotify : emailsToNotify) {
+                    recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+                }
+            }
             profileDetails.setStatus(getMessage("admin.success"));
         }
         return profileDetails;
@@ -496,6 +502,61 @@ public class AdminController extends BaseController {
         return emailManager.findOricdIdsByCommaSeparatedEmails(csvEmails);
     }
 
+    @RequestMapping(value = "/add-email-to-record", method = RequestMethod.POST)
+    public @ResponseBody ProfileDetails addEmailToRecord(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ProfileDetails profileDetails)
+            throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        profileDetails.setErrors(new ArrayList<String>());
+        if (StringUtils.isNotBlank(profileDetails.getEmail())) {
+            profileDetails.setEmail(OrcidStringUtils.filterEmailAddress(profileDetails.getEmail()));
+        }
+        profileDetails.setErrors(new ArrayList<String>());
+
+        String email = profileDetails.getEmail();
+        String orcid = getOrcidFromParam(profileDetails.getOrcid().trim());
+
+        ProfileEntity profileToUpdate = null;
+
+        try {
+            profileToUpdate = profileEntityCacheManager.retrieve(orcid);
+        } catch (Exception e) {
+
+        }
+
+        if (profileToUpdate == null) {
+            profileDetails.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
+        } else if (PojoUtil.isEmpty(email)) {
+            profileDetails.getErrors().add(getMessage("admin.error_please_provided_an_email_to_be_added"));
+        } else if (profileToUpdate.getDeprecatedDate() != null) {
+            profileDetails.getErrors().add(getMessage("admin.errors.deprecated_account"));
+        } else if (!validateEmailAddress(email)) {
+            profileDetails.getErrors().add(getMessage("admin.error_invalid_email_addres"));
+        } else if (emailManager.emailExists(email)) {
+            if (emailMatchesUser(orcid, email)) {
+                profileDetails.getErrors().add(getMessage("admin.error_this_user_already_has_this_email"));
+            } else {
+                profileDetails.getErrors().add(getMessage("admin.error_other_account_has_this_email"));
+            }
+
+        } else {
+            try {
+
+                profileDetails.setErrors(new ArrayList<String>());
+                Email emailEntity = new Email();
+                emailEntity.setEmail(email);
+                emailEntity.setPrimary(false);
+                emailEntity.setVerified(false);
+                emailEntity.setVisibility(Visibility.PRIVATE);
+                emailManager.addEmail(serverRequest, orcid, emailEntity, true);
+            } catch (NoResultException nre) {
+                // Don't do nothing, the email doesn't exists
+                LOGGER.error("Couldnt add email address to " + orcid);
+            }
+        }
+
+        return profileDetails;
+    }
+
     /**
      * Reset password
      * 
@@ -514,10 +575,10 @@ public class AdminController extends BaseController {
             if (orcid != null) {
                 if (profileEntityManager.orcidExists(orcid)) {
                     profileEntityManager.updatePassword(orcid, password);
-                  //reset the lock fields
+                    // reset the lock fields
                     profileEntityManager.resetSigninLock(orcid);
                     profileEntityCacheManager.remove(orcid);
-                    
+
                 } else {
                     form.setError(getMessage("admin.errors.unexisting_orcid"));
                 }
@@ -745,7 +806,10 @@ public class AdminController extends BaseController {
                         } else if (lockAccounts.getDescription() == null || lockAccounts.getDescription().isEmpty()) {
                             descriptionMissing.add(nextToken);
                         } else {
-                            profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
+                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
+                            if (wasLocked) {
+                                recordEmailSender.sendOrcidLockedEmail(orcidId);
+                            }                            
                             successIds.add(nextToken);
                         }
                     }
@@ -928,12 +992,12 @@ public class AdminController extends BaseController {
                     } else {
                         boolean emailSupplied = !OrcidStringUtils.isValidOrcid(emailOrOrcid) && OrcidStringUtils.isEmailValid(emailOrOrcid);
                         String email;
-                        if (!emailSupplied){
+                        if (!emailSupplied) {
                             email = emailManager.findPrimaryEmail(emailOrOrcid).getEmail();
                         } else {
                             email = emailOrOrcid;
                         }
-                        notificationManager.sendClaimReminderEmail(orcidId,0,email);
+                        recordEmailSender.sendClaimReminderEmail(orcidId,0,email);
                         successIds.add(emailOrOrcid);
                     }
                 }
@@ -974,6 +1038,9 @@ public class AdminController extends BaseController {
 
                     if (entity.getUsing2FA()) {
                         profileEntityManager.disable2FA(orcidId);
+                        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
+                            recordEmailSender.send2FADisabledEmail(orcidId);
+                        }
                         disabledIds.add(emailOrOrcid);
                     } else {
                         without2FAs.add(emailOrOrcid);
@@ -991,10 +1058,10 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/validate-client-conversion.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient validateClientConversion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if(!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
+        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
             throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
         }
-        
+
         isAdmin(serverRequest, response);
         if (PojoUtil.isEmpty(data.getClientId()) || !clientDetailsManager.exists(data.getClientId())) {
             data.setClientNotFound(true);
@@ -1040,10 +1107,10 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/convert-client.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient convertClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if(!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
+        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
             throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
         }
-            
+
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
         if (data.isClientNotFound() || data.isAlreadyMember() || data.isGroupIdNotFound()) {

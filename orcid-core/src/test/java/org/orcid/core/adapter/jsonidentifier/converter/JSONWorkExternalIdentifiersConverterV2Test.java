@@ -23,8 +23,8 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.utils.DateUtils;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 
 public class JSONWorkExternalIdentifiersConverterV2Test {
 

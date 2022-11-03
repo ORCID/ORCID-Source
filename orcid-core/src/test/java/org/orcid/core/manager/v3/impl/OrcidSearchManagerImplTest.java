@@ -25,8 +25,8 @@ import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedResult;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.utils.solr.entities.OrcidSolrResult;
-import org.orcid.utils.solr.entities.OrcidSolrResults;
+import org.orcid.core.solr.OrcidSolrResult;
+import org.orcid.core.solr.OrcidSolrResults;
 
 public class OrcidSearchManagerImplTest extends BaseTest {
 

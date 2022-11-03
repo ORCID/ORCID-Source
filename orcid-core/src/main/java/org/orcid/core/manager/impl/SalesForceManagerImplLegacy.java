@@ -23,7 +23,6 @@ import org.eclipse.jetty.util.StringUtil;
 import org.ehcache.Cache;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.SourceManager;
@@ -50,13 +49,15 @@ import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.dao.SalesForceConnectionDao;
 import org.orcid.persistence.jpa.entities.SalesForceConnectionEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
-import org.orcid.utils.ReleaseNameUtils;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Functions;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
+import org.orcid.core.exception.OrcidUnauthorizedException;
 
 /**
  * 

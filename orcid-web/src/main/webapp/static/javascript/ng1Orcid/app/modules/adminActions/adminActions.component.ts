@@ -80,6 +80,12 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     elementToReactivate: any;
     showReactivateRecordMessages: boolean;
 
+    // Reactivate record
+    showAddEmailToRecord: boolean;
+    showAddEmailToRecordConfirm: boolean;
+    elementAddEmailToRecord: any;
+    showAddEmailToRecordMessages: boolean;
+
     // Lock record
     lockReasons: any;
     showLockRecord: boolean;
@@ -173,6 +179,12 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         this.showReactivateRecordConfirm = false;
         this.elementToReactivate = {errors: [], orcid:'', email:''};
         this.showReactivateRecordMessages = false;
+
+        this.showAddEmailToRecord= false;
+        this.showAddEmailToRecordConfirm = false;
+        this.elementAddEmailToRecord = {errors: [], orcid:'', email:''};
+        this.showAddEmailToRecordMessages = false;
+
 
         this.showLockRecord = false;
         this.lockResults = {};
@@ -494,12 +506,29 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
             } 
         );
     };
-    
-    reactivateRecordReset(): void {
-        this.showReactivateRecordConfirm = false;
-        this.elementToReactivate = {errors: [], orcid:'', email:''};
+
+        
+    addEmailToRecord(): void {
+        this.adminActionsService.addEmailToRecord( this.elementAddEmailToRecord )
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.elementAddEmailToRecord = data; 
+                this.showAddEmailToRecordConfirm = false;
+                this.showAddEmailToRecordMessages = true;
+                setTimeout (() => {
+                    this.showAddEmailToRecordMessages = false;
+                }, 3000);
+               
+            },
+            error => {
+            } 
+        );
     };
     
+
     lockRecords(): void {
         this.adminActionsService.lockRecords( this.lockRecordsParams )
         .pipe(    
