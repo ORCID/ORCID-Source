@@ -55,6 +55,8 @@ import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
 import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,6 +73,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = { "/works" })
 public class WorksController extends BaseWorkspaceController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorksController.class);
+    
     private static final Pattern LANGUAGE_CODE = Pattern.compile("([a-zA-Z]{2})(_[a-zA-Z]{2}){0,2}");
     private static final String PAGE_SIZE_DEFAULT = "50";
 
@@ -534,21 +538,30 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         return null;
-    }
+    }    
+    
     /**
      * Creates a new work
      * 
      * @throws Exception
      */
     @RequestMapping(value = "/work.json", method = RequestMethod.POST)
-    public @ResponseBody WorkForm postWork(HttpServletRequest request, @RequestBody WorkForm workForm) throws Exception {
+    public @ResponseBody WorkForm postWork(HttpServletRequest request, @RequestBody WorkForm workForm,
+            @RequestParam(value = "isBibtex", required = false, defaultValue = "false") Boolean isBibtex) throws Exception {
         validateWork(workForm);
         if (workForm.getErrors().size() == 0) {
             removeEmptyExternalIdentifiers(workForm);
             if (isRecordHolderNotInContributors(workForm)) {
-                List<String> errors = workForm.getErrors();
-                errors.add(getMessage("web.orcid.record_holder_not_contributor.exception"));
-                return workForm;
+                if (Boolean.TRUE.equals(isBibtex)) {
+                    // For now, if the request comes from bibtex, we just need
+                    // to ignore the record owner, we can't validate if it is
+                    // already in one of the provided contributors
+                } else {
+                    LOGGER.error("Record owner is not in contributors list, orcid id: " + getCurrentUserOrcid());
+                    List<String> errors = workForm.getErrors();
+                    errors.add(getMessage("web.orcid.record_holder_not_contributor.exception"));
+                    return workForm;
+                }
             }
             if (workForm.getPutCode() != null)
                 updateWork(workForm);
