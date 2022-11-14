@@ -9,7 +9,7 @@
 
     <import resource="classpath*:orcid-core-context.xml"/>
 
-    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
      
     <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
