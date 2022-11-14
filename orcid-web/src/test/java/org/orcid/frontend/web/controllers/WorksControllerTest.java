@@ -318,7 +318,7 @@ public class WorksControllerTest extends BaseControllerTest {
             work.getCitation().setCitationType(Text.valueOf("formatted-unspecified"));
         }
 
-        work = worksController.postWork(null, work);
+        work = worksController.postWork(null, work, false);
         assertNotNull(work);
         assertFalse(PojoUtil.isEmpty(work.getPutCode()));
         assertEquals(1, work.getWorkExternalIdentifiers().size());
@@ -336,7 +336,7 @@ public class WorksControllerTest extends BaseControllerTest {
         WorkForm work = worksController.getWorkInfo(Long.valueOf("7"));
         boolean throwsError = false;
         try {
-            worksController.postWork(null, work);
+            worksController.postWork(null, work, false);
         } catch (Exception e) {
             throwsError = true;
         }
@@ -383,7 +383,7 @@ public class WorksControllerTest extends BaseControllerTest {
             work.getErrors().forEach(n -> System.out.println(n));
             fail("invalid work update");
         }
-        worksController.postWork(null, work);
+        worksController.postWork(null, work, false);
 
         WorkForm updatedWork = worksController.getWorkInfo(Long.valueOf("6"));
         assertNotNull(updatedWork);
