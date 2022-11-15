@@ -11,7 +11,12 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.OrcidRequestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -19,8 +24,11 @@ import com.sun.jersey.spi.container.ContainerResponse;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
 
 @Provider
-public class AnalyticsFilter implements ContainerResponseFilter {
+@Component
+public class AnalyticsFilter implements ContainerResponseFilter, InitializingBean {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsFilter.class);
+    
     @InjectParam("orcidSecurityManager")
     private OrcidSecurityManager orcidSecurityManager;
 
@@ -39,10 +47,15 @@ public class AnalyticsFilter implements ContainerResponseFilter {
     @Context
     private HttpServletRequest httpServletRequest;
     
+    @Value("${org.orcid.mapi.enableAnalytics:false}")
+    private boolean enableMemberAPIAnalytics;
+    
     @Override
     public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
-        AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
-        apiAnalyticsTaskExecutor.execute(analyticsProcess);
+        if (enableMemberAPIAnalytics) {
+            AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
+            apiAnalyticsTaskExecutor.execute(analyticsProcess);
+        }
         return response;
     }
     
@@ -60,4 +73,8 @@ public class AnalyticsFilter implements ContainerResponseFilter {
         return process;
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        LOGGER.info("Is Members Api Analytics filter enabled? " + enableMemberAPIAnalytics);
+    }
 }
