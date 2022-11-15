@@ -18,6 +18,7 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.dao.GenericDao;
@@ -424,11 +425,14 @@ public class RecordEmailSender {
       
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
-        if (locale != null) {
-            org.orcid.jaxb.model.common_v2.Locale loc = org.orcid.jaxb.model.common_v2.Locale.valueOf(locale);
-            return LocaleUtils.toLocale(loc.value());
+        try {
+            if (locale != null) {
+                return LocaleUtils.toLocale(AvailableLocales.valueOf(locale).value());
+            }
         }
-
+        catch(Exception ex) {
+            LOGGER.error("Locale is not supported in the available locales, defaulting to en", ex);
+        }
         return LocaleUtils.toLocale("en");
     }       
 }
