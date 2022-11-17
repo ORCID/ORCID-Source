@@ -398,9 +398,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             // Assign scopes to client
             List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
             Set<String> newScopes = null;
-            if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
+            if (clientType.equals(ClientType.PREMIUM_UPDATER) || clientType.equals(ClientType.PREMIUM_CREATOR)) {
                 newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
-            } else {
+            }  else {
                 newScopes = ClientType.getScopes(ClientType.UPDATER);
             }
 
