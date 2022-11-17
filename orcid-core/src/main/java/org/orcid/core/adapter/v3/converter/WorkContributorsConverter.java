@@ -10,7 +10,6 @@ import org.orcid.core.contributors.roles.InvalidContributorRoleException;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.contributors.roles.works.LegacyWorkContributorRole;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.pojo.WorkContributorsList;
@@ -27,7 +26,7 @@ import ma.glasnost.orika.metadata.Type;
 
 public class WorkContributorsConverter extends BidirectionalConverter<WorkContributors, String> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WorkContributorsConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkContributorsConverter.class);
 	
     private ContributorRoleConverter roleConverter;
 

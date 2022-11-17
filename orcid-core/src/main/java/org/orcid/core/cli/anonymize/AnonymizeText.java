@@ -42,7 +42,7 @@ public class AnonymizeText {
     
     private static final HashMap<String, ExternalID> extIdsAnonymized = new HashMap<String, ExternalID> ();
     private static final String KEY_SEPARATOR_EXT_ID= "::";
-
+        
     public String anonymizeString(String s) {
         if (StringUtils.isBlank(s)) {
             return "";
@@ -275,7 +275,11 @@ public class AnonymizeText {
 
                 if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_ROLE)) {
                     if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_ROLE)) {
-                        contributorAttributes.setContributorRole(original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_ROLE));
+                        String dbRole = original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_ROLE);
+                        //TODO: should transform the DB role value (which is upper case) to the UI role value, which is usually lowercase, this is done in the 
+                        // ContributorRoleConverterImpl.toRoleValue(), but we need to find a way to inject that here.
+                        // For example, in the DB we store 'SUPERVISION', in the UI we send 'supervision' ... if we don't do this, the mapper will fail to transform this 
+                        contributorAttributes.setContributorRole();
                     }
                 }
             }

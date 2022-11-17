@@ -126,7 +126,8 @@ public class AnonymizeWorksFromCSV {
         for (WorkPojoFromCsv workCsv : worksFromCsv) {
 
             work = workCsv.toAnonymizedWork(orcid);
-
+            
+            //TODO: Error here for works with contributors, trying to anonymize 'SOFTWARE' but the mapper was expecting 'software'
             WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
             workEntity.setOrcid(orcid);
             workEntity.setAddedToProfileDate(new Date());
