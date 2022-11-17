@@ -421,7 +421,7 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(1, result.getErrors().size());
         assertEquals(adminController.getMessage("admin.error_other_account_has_this_email"), result.getErrors().get(0));
 
-    }
+    }   
    
     
 

@@ -218,5 +218,13 @@ export class AdminActionsService {
                 JSON.stringify(obj), 
                 { headers: this.headers }
         )
-    };        
+    };      
+    
+    moveClient( obj ): Observable<any> {
+        return this.http.post( 
+                getBaseUri() + '/admin-actions/move-client.json', 
+                JSON.stringify(obj), 
+                { headers: this.headers }
+        )
+    };   
 }

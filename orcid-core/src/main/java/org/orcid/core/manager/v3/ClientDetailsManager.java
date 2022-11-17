@@ -83,4 +83,6 @@ public interface ClientDetailsManager extends ClientDetailsManagerReadOnly {
 
     void convertPublicClientToMember(String clientId, String groupId);
 
+    void moveClientGroupId(String clientId, String groupId);
+
 }

@@ -1058,7 +1058,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/validate-client-conversion.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient validateClientConversion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
+        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive() && !Features.MOVE_CLIENT.isActive()) {
             throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
         }
 
@@ -1130,4 +1130,28 @@ public class AdminController extends BaseController {
         }
     }
 
+    @RequestMapping(value = "/move-client.json", method = RequestMethod.POST)
+    public @ResponseBody ConvertClient moveClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
+            throws IllegalAccessException {
+        if (!Features.MOVE_CLIENT.isActive()) {
+            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
+        }
+        isAdmin(serverRequest, response);
+        data = validateClientConversion(serverRequest, response, data);
+        if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound()) {
+            data.setError("Invalid data");
+            data.setSuccess(false);
+            return data;
+        }
+            
+        try {
+            clientDetailsManager.moveClientGroupId(data.getClientId(), data.getGroupId());
+            data.setSuccess(true);
+            return data;
+        } catch (Exception e) {
+            data.setSuccess(false);
+            data.setError(e.getMessage());
+            return data;
+        }
+    }
 }

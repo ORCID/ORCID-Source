@@ -421,5 +421,45 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             LOGGER.info("Client {} was succesfully promoted to {}", clientId, clientType);
         }
     }
+
+
+    @Override
+    @Transactional
+    public void moveClientGroupId(String clientId, String groupId) {
+        LOGGER.info("Moving client {} as member with groupId {}", clientId, groupId);
+        ProfileEntity group = profileEntityManager.findByOrcid(groupId);
+        ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+        LOGGER.info("Client {} will be a {}", clientId, clientType);
+        // Change client type
+        if (clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name())) {
+            // // Change role from 'ROLE_PUBLIC' to 'ROLE_CLIENT'
+            // LOGGER.info("Updating granted authority for client {}", clientId);
+            // clientDetailsDao.updateClientGrantedAuthority(clientId, "ROLE_CLIENT");
+            // Assign scopes to client
+            List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
+            Set<String> newScopes = null;
+            if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
+                newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
+            } else {
+                newScopes = ClientType.getScopes(ClientType.UPDATER);
+            }
+
+            for (String activeScope : clientScopes) {
+                if (!newScopes.contains(activeScope)) {
+                    // Delete scope
+                    LOGGER.info("Deleting scope {} from client {}", activeScope, clientId);
+                    clientScopeDao.deleteScope(clientId, activeScope);
+                }
+            }
+
+            for (String newScope : newScopes) {
+                if (!clientScopes.contains(newScope)) {
+                    LOGGER.info("Adding scope {} to client {}", newScope, clientId);
+                    clientScopeDao.insertClientScope(clientId, newScope);
+                }
+            }
+            LOGGER.info("Client {} was succesfully promoted to {}", clientId, clientType);
+        }
+    }
     
 }
