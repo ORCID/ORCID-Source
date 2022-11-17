@@ -430,16 +430,13 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         ProfileEntity group = profileEntityManager.findByOrcid(groupId);
         ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
         LOGGER.info("Client {} will be a {}", clientId, clientType);
-        // Change client type
         if (clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name())) {
-            // // Change role from 'ROLE_PUBLIC' to 'ROLE_CLIENT'
-            // LOGGER.info("Updating granted authority for client {}", clientId);
-            // clientDetailsDao.updateClientGrantedAuthority(clientId, "ROLE_CLIENT");
-            // Assign scopes to client
             List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
             Set<String> newScopes = null;
             if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
                 newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
+            } else if  (clientType.equals(ClientType.PREMIUM_CREATOR)) {
+                newScopes = ClientType.getScopes(ClientType.PREMIUM_CREATOR);
             } else {
                 newScopes = ClientType.getScopes(ClientType.UPDATER);
             }
