@@ -455,7 +455,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                     clientScopeDao.insertClientScope(clientId, newScope);
                 }
             }
-            LOGGER.info("Client {} was succesfully move to the groupId {} with the type {}", clientId, groupId, clientType);
+            LOGGER.info("Client {} was succesfully move to groupId {}", clientId, groupId);
         }
     }
     
