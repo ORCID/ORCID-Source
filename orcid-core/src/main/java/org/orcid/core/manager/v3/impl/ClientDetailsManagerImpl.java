@@ -436,7 +436,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
                 newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
             } else if  (clientType.equals(ClientType.PREMIUM_CREATOR)) {
-                newScopes = ClientType.getScopes(ClientType.PREMIUM_CREATOR);
+                newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
             } else {
                 newScopes = ClientType.getScopes(ClientType.UPDATER);
             }
@@ -455,7 +455,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                     clientScopeDao.insertClientScope(clientId, newScope);
                 }
             }
-            LOGGER.info("Client {} was succesfully move to groupId {}", clientId, groupId);
+            LOGGER.info("Client {} was succesfully move to  {}", clientId, groupId);
         }
     }
     
