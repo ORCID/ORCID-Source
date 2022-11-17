@@ -441,21 +441,21 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                 newScopes = ClientType.getScopes(ClientType.UPDATER);
             }
 
+            // Remoe old scopes related to the old member
             for (String activeScope : clientScopes) {
                 if (!newScopes.contains(activeScope)) {
-                    // Delete scope
                     LOGGER.info("Deleting scope {} from client {}", activeScope, clientId);
                     clientScopeDao.deleteScope(clientId, activeScope);
                 }
             }
-
+             // Add scopes of the new memember client type
             for (String newScope : newScopes) {
                 if (!clientScopes.contains(newScope)) {
                     LOGGER.info("Adding scope {} to client {}", newScope, clientId);
                     clientScopeDao.insertClientScope(clientId, newScope);
                 }
             }
-            LOGGER.info("Client {} was succesfully promoted to {}", clientId, clientType);
+            LOGGER.info("Client {} was succesfully move to the groupId {} with the type {}", clientId, groupId, clientType);
         }
     }
     
