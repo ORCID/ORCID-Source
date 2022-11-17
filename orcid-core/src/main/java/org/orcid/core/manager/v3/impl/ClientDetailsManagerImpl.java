@@ -433,9 +433,7 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         if (clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name())) {
             List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
             Set<String> newScopes = null;
-            if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
-                newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
-            } else if  (clientType.equals(ClientType.PREMIUM_CREATOR)) {
+            if (clientType.equals(ClientType.PREMIUM_UPDATER) || clientType.equals(ClientType.PREMIUM_CREATOR)) {
                 newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
             } else {
                 newScopes = ClientType.getScopes(ClientType.UPDATER);
