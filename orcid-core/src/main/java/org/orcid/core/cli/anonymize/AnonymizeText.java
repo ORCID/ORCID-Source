@@ -18,6 +18,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.utils.OrcidStringUtils;
 
 public class AnonymizeText {
@@ -265,6 +266,7 @@ public class AnonymizeText {
         // no need to anonymize attributes
         org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         if (original.has(KEY_CONTRIBUTOR_ATTRIBUTES)) {
+            WorkContributorRoleConverter  roleConverter = new WorkContributorRoleConverter ();
             if (!original.isNull(KEY_CONTRIBUTOR_ATTRIBUTES)) {
                 if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_SEQUENCE)) {
                     if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_SEQUENCE)) {
@@ -276,10 +278,7 @@ public class AnonymizeText {
                 if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_ROLE)) {
                     if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_ROLE)) {
                         String dbRole = original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_ROLE);
-                        //TODO: should transform the DB role value (which is upper case) to the UI role value, which is usually lowercase, this is done in the 
-                        // ContributorRoleConverterImpl.toRoleValue(), but we need to find a way to inject that here.
-                        // For example, in the DB we store 'SUPERVISION', in the UI we send 'supervision' ... if we don't do this, the mapper will fail to transform this 
-                        contributorAttributes.setContributorRole();
+                        contributorAttributes.setContributorRole(roleConverter.toRoleValue(dbRole));
                     }
                 }
             }
