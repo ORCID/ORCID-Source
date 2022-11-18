@@ -18,6 +18,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.utils.OrcidStringUtils;
 
 public class AnonymizeText {
@@ -39,9 +40,9 @@ public class AnonymizeText {
     private static final String KEY_CONTRIBUTOR_ATTRIBUTES = "contributorAttributes";
     private static final String KEY_CONTRIBUTOR_SEQUENCE = "contributorSequence";
     private static final String KEY_CONTRIBUTOR_ROLE = "contributorRole";
-    
-    private static final HashMap<String, ExternalID> extIdsAnonymized = new HashMap<String, ExternalID> ();
-    private static final String KEY_SEPARATOR_EXT_ID= "::";
+
+    private static final HashMap<String, ExternalID> extIdsAnonymized = new HashMap<String, ExternalID>();
+    private static final String KEY_SEPARATOR_EXT_ID = "::";
 
     public String anonymizeString(String s) {
         if (StringUtils.isBlank(s)) {
@@ -59,7 +60,7 @@ public class AnonymizeText {
 
     }
 
-    public  String anonymizeURL(String url) throws MalformedURLException {
+    public String anonymizeURL(String url) throws MalformedURLException {
         if (StringUtils.isBlank(url)) {
             return url;
         }
@@ -78,33 +79,31 @@ public class AnonymizeText {
         return domain + anonymizeString(filePath);
     }
 
-    public  ExternalID anonymizeWorkExternalIdentifier(JSONObject original) throws MalformedURLException, JSONException {
+    public ExternalID anonymizeWorkExternalIdentifier(JSONObject original) throws MalformedURLException, JSONException {
         if (original == null) {
             return null;
         }
 
-        
         String workIdentifierType = null;
         String workIdentifierId = null;
         if (original.has(KEY_WORK_EXTERNAL_IDENTIFIER_TYPE)) {
-            workIdentifierType =original.getString(KEY_WORK_EXTERNAL_IDENTIFIER_TYPE);
+            workIdentifierType = original.getString(KEY_WORK_EXTERNAL_IDENTIFIER_TYPE);
         }
         if (original.has(KEY_WORK_EXTERNAL_IDENTIFIER_ID) && !original.isNull(KEY_WORK_EXTERNAL_IDENTIFIER_ID)) {
             JSONObject extIdObj = original.getJSONObject(KEY_WORK_EXTERNAL_IDENTIFIER_ID);
             if (extIdObj.has(KEY_CONTENT)) {
-                workIdentifierId= extIdObj.getString(KEY_CONTENT);
+                workIdentifierId = extIdObj.getString(KEY_CONTENT);
             }
         }
-        
+
         String extIdKey = null;
-        if(workIdentifierType != null && workIdentifierId != null)  {
+        if (workIdentifierType != null && workIdentifierId != null) {
             extIdKey = workIdentifierType + KEY_SEPARATOR_EXT_ID + workIdentifierId;
         }
-        
-        
+
         ExternalID wExtId = new ExternalID();
-        if(extIdKey != null) {
-            if( extIdsAnonymized.get(extIdKey) != null) {
+        if (extIdKey != null) {
+            if (extIdsAnonymized.get(extIdKey) != null) {
                 return extIdsAnonymized.get(extIdKey);
             }
         }
@@ -119,8 +118,7 @@ public class AnonymizeText {
             }
 
         }
-        
-        
+
         if (original.has(KEY_RELATIONSHIP)) {
             wExtId.setRelationship(Relationship.valueOf(original.getString(KEY_RELATIONSHIP)));
         }
@@ -135,7 +133,7 @@ public class AnonymizeText {
             }
         }
 
-        if(extIdKey != null) {
+        if (extIdKey != null) {
             extIdsAnonymized.put(extIdKey, wExtId);
         }
 
@@ -147,16 +145,16 @@ public class AnonymizeText {
             return null;
         }
         String extIdKey = null;
-        if(original.getType() != null && original.getValue() != null)  {
+        if (original.getType() != null && original.getValue() != null) {
             extIdKey = original.getType() + KEY_SEPARATOR_EXT_ID + original.getValue();
         }
         ExternalID wExtId = new ExternalID();
-        if(extIdKey != null) {
-            if( extIdsAnonymized.get(extIdKey) != null) {
+        if (extIdKey != null) {
+            if (extIdsAnonymized.get(extIdKey) != null) {
                 return extIdsAnonymized.get(extIdKey);
             }
         }
-        
+
         if (original.getType() != null) {
             wExtId.setType(original.getType());
         }
@@ -165,7 +163,7 @@ public class AnonymizeText {
             wExtId.setValue(anonymizeURL(original.getValue()));
 
         }
-        
+
         if (original.getRelationship() != null) {
             wExtId.setRelationship(original.getRelationship());
         }
@@ -174,15 +172,14 @@ public class AnonymizeText {
             wExtId.setUrl(new org.orcid.jaxb.model.v3.release.common.Url(anonymizeURL(original.getUrl().getValue())));
         }
 
-
-        if(extIdKey != null) {
+        if (extIdKey != null) {
             extIdsAnonymized.put(extIdKey, wExtId);
         }
 
         return wExtId;
     }
 
-    public  ExternalIDs anonymizeWorkExternalIdentifiers(ExternalIDs extIds) throws MalformedURLException, JSONException {
+    public ExternalIDs anonymizeWorkExternalIdentifiers(ExternalIDs extIds) throws MalformedURLException, JSONException {
         ExternalIDs workExternalIds = new ExternalIDs();
         if (extIds != null) {
 
@@ -265,6 +262,7 @@ public class AnonymizeText {
         // no need to anonymize attributes
         org.orcid.jaxb.model.v3.release.common.ContributorAttributes contributorAttributes = new org.orcid.jaxb.model.v3.release.common.ContributorAttributes();
         if (original.has(KEY_CONTRIBUTOR_ATTRIBUTES)) {
+
             if (!original.isNull(KEY_CONTRIBUTOR_ATTRIBUTES)) {
                 if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_SEQUENCE)) {
                     if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_SEQUENCE)) {
@@ -275,7 +273,9 @@ public class AnonymizeText {
 
                 if (original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).has(KEY_CONTRIBUTOR_ROLE)) {
                     if (!original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).isNull(KEY_CONTRIBUTOR_ROLE)) {
-                        contributorAttributes.setContributorRole(original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_ROLE));
+                        String dbRole = original.getJSONObject(KEY_CONTRIBUTOR_ATTRIBUTES).getString(KEY_CONTRIBUTOR_ROLE);
+                        WorkContributorRoleConverter roleConverter = new WorkContributorRoleConverter();
+                        contributorAttributes.setContributorRole(roleConverter.toRoleValue(dbRole));
                     }
                 }
             }
@@ -285,7 +285,7 @@ public class AnonymizeText {
         return newContributor;
     }
 
-    public  Contributor anonymizeWorkContributor(Contributor original) throws JSONException, MalformedURLException {
+    public Contributor anonymizeWorkContributor(Contributor original) throws JSONException, MalformedURLException {
         if (original == null) {
             return null;
         }
@@ -347,7 +347,7 @@ public class AnonymizeText {
         return newContributor;
     }
 
-    public  WorkContributors anonymizeWorkContributors(WorkContributors originalContributors) throws JSONException, MalformedURLException {
+    public WorkContributors anonymizeWorkContributors(WorkContributors originalContributors) throws JSONException, MalformedURLException {
         org.orcid.jaxb.model.v3.release.record.WorkContributors contributors = new org.orcid.jaxb.model.v3.release.record.WorkContributors();
 
         if (originalContributors != null) {
@@ -368,7 +368,7 @@ public class AnonymizeText {
 
             for (int i = 0; i < contrArray.length(); i++) {
                 if (contrArray.getJSONObject(i) != null) {
-                    contributors.getContributor().add( anonymizeWorkContributor(contrArray.getJSONObject(i)));
+                    contributors.getContributor().add(anonymizeWorkContributor(contrArray.getJSONObject(i)));
                 }
             }
         }
@@ -376,7 +376,7 @@ public class AnonymizeText {
         return contributors;
     }
 
-    private  String getFileFromURL(String url) throws MalformedURLException {
+    private String getFileFromURL(String url) throws MalformedURLException {
         if (!url.matches(protocolRegex)) {
             url = "http://" + url;
         }
