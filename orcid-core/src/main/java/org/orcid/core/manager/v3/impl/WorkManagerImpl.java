@@ -232,8 +232,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
-            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, activeSource);
             Map<ExternalID, Long> extIDPutCodeMap = new HashMap<ExternalID, Long>();
+            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, activeSource, extIDPutCodeMap);            
             if((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
                 throw new ExceedMaxNumberOfElementsException();
             }
@@ -263,7 +263,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                     Map<String, String> params = new HashMap<String, String>();
                                     params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
                                     if(extIDPutCodeMap.containsKey(extId)) {
-                                        params.put("pubCode", String.valueOf(extIDPutCodeMap.get(extId)));
+                                        params.put("putCode", String.valueOf(extIDPutCodeMap.get(extId)));
                                     }                                    
                                     throw new OrcidDuplicatedActivityException(params);
                                 }
@@ -319,15 +319,18 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *          The client id we are evaluating
      * @return A set of all the existing external identifiers that belongs to the given user and to the given source id                  
      * */
-    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, Source activeSource) {
+    private Set<ExternalID> buildExistingExternalIdsSet(List<Work> existingWorks, Source activeSource, Map<ExternalID, Long> extIdsPutCodeMap) {
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();        
         for(Work work : existingWorks) {
             //If it is the same source
             if(SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, work.getSource())) {
                 if(work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
                     for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                        //Don't include PART_OF external ids
-                        if(!Relationship.PART_OF.equals(extId.getRelationship()) || !Relationship.FUNDED_BY.equals(extId.getRelationship())) {
+                        if(extIdsPutCodeMap != null) {
+                            extIdsPutCodeMap.put(extId, work.getPutCode());
+                        }
+                        //Don't include PART_OF nor FUNDED_BY external ids
+                        if(!Relationship.PART_OF.equals(extId.getRelationship()) && !Relationship.FUNDED_BY.equals(extId.getRelationship())) {
                             existingExternalIds.add(extId);
                         }                        
                     }
@@ -341,8 +344,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     private void addExternalIdsToExistingSet(Map<ExternalID, Long> extIDPutCodeMap, Work work, Set<ExternalID> existingExternalIDs) {
         if(work != null && work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
             for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                //Don't include PART_OF external ids
-                if(!Relationship.PART_OF.equals(extId.getRelationship()) || !Relationship.FUNDED_BY.equals(extId.getRelationship())) {
+                //Don't include PART_OF nor FUNDED_BY external ids
+                if(!Relationship.PART_OF.equals(extId.getRelationship()) && !Relationship.FUNDED_BY.equals(extId.getRelationship())) {
                     existingExternalIDs.add(extId);
                 }
                 
