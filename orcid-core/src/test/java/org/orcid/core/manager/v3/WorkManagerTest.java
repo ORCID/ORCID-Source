@@ -45,10 +45,8 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -72,7 +70,6 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -122,12 +119,6 @@ public class WorkManagerTest extends BaseTest {
     private ClientDetailsManager clientDetailsManager;
     
     @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-
-    @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
     @Mock
@@ -171,8 +162,6 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(orcidSecurityManager, "sourceManager", sourceManager);
         ReflectionTestUtils.setField(workManager, "sourceManager", sourceManager);
         ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
         ReflectionTestUtils.setField(workManager, "workDao", workDao);
     }
 
@@ -420,8 +409,7 @@ public class WorkManagerTest extends BaseTest {
         assertEquals(Relationship.VERSION_OF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("isbn-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());      
         assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
-        assertEquals("doi-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getValue());      
-        
+        assertEquals("doi-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getValue());              
     
         workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode(), ((Work)updatedBulk.getBulk().get(1)).getPutCode()));
     }
@@ -1761,7 +1749,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     private MinimizedWorkEntity getBasicMinimizedWork() throws IllegalAccessException {
-        Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
+        Date date = new Date();
         MinimizedWorkEntity work = new MinimizedWorkEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
