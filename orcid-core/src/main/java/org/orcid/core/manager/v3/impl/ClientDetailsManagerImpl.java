@@ -398,9 +398,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
             // Assign scopes to client
             List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
             Set<String> newScopes = null;
-            if (clientType.equals(ClientType.PREMIUM_UPDATER)) {
+            if (clientType.equals(ClientType.PREMIUM_UPDATER) || clientType.equals(ClientType.PREMIUM_CREATOR)) {
                 newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
-            } else {
+            }  else {
                 newScopes = ClientType.getScopes(ClientType.UPDATER);
             }
 
@@ -419,6 +419,41 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
                 }
             }
             LOGGER.info("Client {} was succesfully promoted to {}", clientId, clientType);
+        }
+    }
+
+
+    @Override
+    @Transactional
+    public void moveClientGroupId(String clientId, String groupId) {
+        LOGGER.info("Moving client {} as member with groupId {}", clientId, groupId);
+        ProfileEntity group = profileEntityManager.findByOrcid(groupId);
+        ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+        LOGGER.info("Client {} will be a {}", clientId, clientType);
+        if (clientDetailsDao.convertPublicClientToMember(clientId, groupId, clientType.name())) {
+            List<String> clientScopes = clientScopeDao.getActiveScopes(clientId);
+            Set<String> newScopes = null;
+            if (clientType.equals(ClientType.PREMIUM_UPDATER) || clientType.equals(ClientType.PREMIUM_CREATOR)) {
+                newScopes = ClientType.getScopes(ClientType.PREMIUM_UPDATER);
+            } else {
+                newScopes = ClientType.getScopes(ClientType.UPDATER);
+            }
+
+            // Remoe old scopes related to the old member
+            for (String activeScope : clientScopes) {
+                if (!newScopes.contains(activeScope)) {
+                    LOGGER.info("Deleting scope {} from client {}", activeScope, clientId);
+                    clientScopeDao.deleteScope(clientId, activeScope);
+                }
+            }
+             // Add scopes of the new memember client type
+            for (String newScope : newScopes) {
+                if (!clientScopes.contains(newScope)) {
+                    LOGGER.info("Adding scope {} to client {}", newScope, clientId);
+                    clientScopeDao.insertClientScope(clientId, newScope);
+                }
+            }
+            LOGGER.info("Client {} was succesfully move to  {}", clientId, groupId);
         }
     }
     

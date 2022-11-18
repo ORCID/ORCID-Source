@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Move client from a member to another member")
+    MOVE_CLIENT,
+
     @Label("Add other people contributions via BIBTEXT")
     ADD_OTHER_WORK_CONTRIBUTORS_WITH_BIBTEX,
 

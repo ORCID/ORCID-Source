@@ -127,6 +127,10 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
     showConvertClient: boolean;
     convertClient: any;
 
+    // move client
+    showMoveClient: boolean;
+    moveClient: any;
+
     // Force indexing
     showForceIndexing: boolean;
     forceIndexingMessage: string;
@@ -135,6 +139,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
 
     // General
     ids: string;
+
         
     constructor(
         private adminActionsService: AdminActionsService,
@@ -216,6 +221,9 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
 		
 		this.showConvertClient = false;
         this.convertClient = {};
+
+        this.showMoveClient = false;
+        this.moveClient = {};
 
         this.showForceIndexing = false;
         this.forceIndexingMessage = '';
@@ -707,6 +715,35 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
                     	this.convertClient.groupIdNotFound = false;
                     	this.convertClient.alreadyMember = false;
                     	this.convertClient.groupIdDeactivated = false;
+                	}, 10000);  
+                }
+            },
+            error => {
+                console.log('admin: error validating public client data to convert', error);
+            } 
+        );
+    };
+
+    processClientMove(): void {        
+        this.adminActionsService.validateClientConversion(this.moveClient)
+        .pipe(    
+            takeUntil(this.ngUnsubscribe)
+        )
+        .subscribe(
+            data => {
+                this.moveClient = data;
+                if (!this.moveClient.clientNotFound && !this.moveClient.groupIdNotFound && !this.moveClient.groupIdDeactivated && this.moveClient.alreadyMember) {
+                    this.modalService.notifyOther({convertClient:this.moveClient});
+                    this.modalService.notifyOther({
+                        action: "open",
+                        moduleId: "confirmMoveClient"
+                    });
+                } else {
+                	setTimeout (() => {
+                    	this.convertClient.clientNotFound = false;
+                    	this.moveClient.groupIdNotFound = false;
+                    	this.moveClient.alreadyMember = false;
+                    	this.moveClient.groupIdDeactivated = false;
                 	}, 10000);  
                 }
             },

@@ -15,6 +15,7 @@ import { ConvertClientConfirmComponent }
 
 import { CommonNg2Module }
     from './../common/common';
+import { MoveClientConfirmComponent } from './moveClient.component';
     
 // This is the Angular 1 part of the module
 export const AdminActionsModule = angular.module(
@@ -29,10 +30,10 @@ export const AdminActionsModule = angular.module(
             CommonNg2Module
         ],
         declarations: [ 
-            AdminActionsComponent, ConvertClientConfirmComponent
+            AdminActionsComponent, ConvertClientConfirmComponent, MoveClientConfirmComponent
         ],
         entryComponents: [ 
-            AdminActionsComponent, ConvertClientConfirmComponent 
+            AdminActionsComponent, ConvertClientConfirmComponent, MoveClientConfirmComponent
         ]
     }
 )
@@ -44,4 +45,6 @@ AdminActionsModule.directive('adminActionsNg2', <any>downgradeComponent({
   component: AdminActionsComponent,
 })).directive('convertClientConfirmNg2', <any>downgradeComponent({
   component: ConvertClientConfirmComponent
-}));
+})).directive('moveClientConfirmNg2', <any>downgradeComponent({
+    component: MoveClientConfirmComponent
+  }));
