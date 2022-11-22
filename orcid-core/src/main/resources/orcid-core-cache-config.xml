@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
+		xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">	
+	
+	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
+	
+	<bean id="coreCacheManager"
+		class="org.orcid.core.utils.OrcidEhCacheManagerFactoryBean" >
+	</bean>
+	
+	<bean id="springCoreCacheManager" class="org.springframework.cache.jcache.JCacheCacheManager" depends-on="coreCacheManager">
+	    <property name="cacheManager">
+	        <bean class="org.springframework.cache.jcache.JCacheManagerFactoryBean">
+	            <property name="cacheManagerUri" value="classpath:ehcache#{orcidUrlManager.appNameSuffix}.xml" />
+	        </bean>
+        </property>
+    </bean>
+	
+	<bean id="recentOrcidCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="recent-orcid" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.recent_orcid.timeToIdleSeconds:86400}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesInMemory:4}" />		
+		<property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesOnDisk:8}" />
+	</bean>
+	
+	<bean id="profileEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="profile-entity" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.profile_entity.timeToIdleSeconds:1800}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.profile_entity.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.profile_entity.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+	</bean>	
+		
+    <bean id="publicProfileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="public-profile" />
+        <property name="cacheManager" ref="coreCacheManager" />        
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.profile.timeToIdleSeconds:1800}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.profile.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.profile.maxMegaBytesOnDisk:128}" />
+    </bean>
+    
+    <bean id="publicBioCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="public-bio" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.bio.timeToIdleSeconds:1800}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.bio.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.bio.maxMegaBytesOnDisk:128}" />
+    </bean>
+
+    <bean id="profileBioAndInternalCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="profile-bio-and-internal" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.bio.timeToIdleSeconds:1800}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.bio.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.bio.maxMegaBytesOnDisk:128}" />
+    </bean>
+	
+	<bean id="sourceNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean"> 
+		<property name="cacheName" value="source-name" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.source_name.timeToIdleSeconds:1800}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.source_name.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.source_name.maxMegaBytesOnDisk:128}" />
+	</bean>	
+	
+	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="client-details-entity" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details.timeToIdleSeconds:36000}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details.maxMegaBytesOnDisk:128}" />
+	</bean>
+
+	<bean id="clientDetailsEntityIdPCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="client-details-idp-entity" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details.timeToIdleSeconds:36000}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details.maxMegaBytesOnDisk:128}" />
+	</bean>		       
+    
+    <bean id="identityProviderNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="identity-provider-name" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.idp_name.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.idp_name.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.idp_name.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.manager.impl.IdentityProviderNameCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="doiBibtexCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="doi-bibtex" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.doi_bibtex.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.doi_bibtex.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.doi_bibtex.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.manager.impl.DoiBibtexCacheEntryFactory" />
+        </property>
+    </bean>        
+    
+    <bean id="groupingSuggestionsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="grouping-suggestions" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.grouping_suggestions.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.grouping_suggestions.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.grouping_suggestions.maxMegaBytesOnDisk:128}" />
+    </bean>
+    
+    <bean id="contributorsNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="contributors-name" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.contributors_name.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.contributors_name.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.contributors_name.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
+    <!-- Activities caches -->
+    <bean id="affiliationGroupsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="affiliations-group" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.affiliation_groups.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
+    <bean id="groupedWorksCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="grouped-works" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.grouped_works.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.grouped_works.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.grouped_works.maxMegaBytesOnDisk:128}" />
+    </bean>
+
+	<bean id="groupedWorksExtendedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="grouped-works-extended" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.grouped_works.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.grouped_works.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.grouped_works.maxMegaBytesOnDisk:128}" />
+	</bean>
+    
+    <bean id="workLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="work-last-modified" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.work_last_modified.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.work_last_modified.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.work_last_modified.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+    </bean>
+    
+    <bean id="publicWorkLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="public-work-last-modified" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.public_work_last_modified.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.public_work_last_modified.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.public_work_last_modified.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+    </bean>
+
+    <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="minimized-work" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.minimized_work_entity.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.minimized_work_entity.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.minimized_work_entity.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="true" />
+    </bean>
+
+	<bean id="minimizedExtendedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="minimized-extended-work" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.minimized_work_extended_entity.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.minimized_work_extended_entity.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.minimized_work_extended_entity.maxMegaBytesOnDisk:128}" />
+		<property name="copyValues" value="true" />
+	</bean>
+    
+    <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="full-work-entity" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.full_work_entity.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.full_work_entity.maxMegaBytesInMemory:32}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.full_work_entity.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="true" />
+    </bean>
+    
+    <!-- TODO: Remove this, are all deprecated SF caches -->
+    <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-members-list" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.MembersListCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceMemberCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-member" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.MemberCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceMemberDetailsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-member-details" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="true" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.MemberDetailsCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceConsortiaListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-consortia-list" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.ConsortiaListCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceConsortiumCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-consortium" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.ConsortiumCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceContactsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-contacts" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceContactsForAuthenticationCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-contacts-for-authentication" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.ContactsForAuthenticationCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceConsortiumLeadIdsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-consortium-lead-ids" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="copyValues" value="false" />
+        <property name="cacheLoaderWriter">
+            <bean class="org.orcid.core.salesforce.cache.SalesForceConsortiumLeadIdsCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceConnectionCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="sales-force-connection" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+	</bean>
+</beans>

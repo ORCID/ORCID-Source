@@ -123,6 +123,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Cache<?, ?>>, Initia
     public void afterPropertiesSet() throws Exception {
         Cache<Serializable, Serializable> existingCache = cacheManager.getCache(cacheName, Serializable.class, Serializable.class);
         if (existingCache == null) {
+            // https://www.ehcache.org/documentation/3.3/caching-concepts.html#storage-tiers
             ResourcePoolsBuilder resourcePoolsBuilder = ResourcePoolsBuilder.newResourcePoolsBuilder();
             if (this.maxMegaBytesInMemory > 0) {
                 resourcePoolsBuilder = resourcePoolsBuilder.heap(maxMegaBytesInMemory, MemoryUnit.MB);

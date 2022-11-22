@@ -102,15 +102,15 @@
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
             <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="peer-reviews" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
@@ -127,71 +127,71 @@
     <ehcache:cache alias="distinctions-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="educations-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="employments-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="invited-positions-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="memberships-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="qualifications-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="services-summaries" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">5000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="public-keywords" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="dao-keywords" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:heap unit="entries">500</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
@@ -199,15 +199,15 @@
     <ehcache:cache alias="public-other-names" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="dao-other-names" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:heap unit="entries">500</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
@@ -215,15 +215,15 @@
     <ehcache:cache alias="public-address" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="primary-address" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:heap unit="entries">500</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
@@ -231,72 +231,72 @@
     <ehcache:cache alias="dao-address" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="researcher-urls" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="public-researcher-urls" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="public-external-identifiers" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">512</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="dao-external-identifiers" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="record-name" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">1024</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="biography" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">1024</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="emails" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">256</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="public-emails" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
@@ -360,14 +360,14 @@
     
     <ehcache:cache alias="delegates-by-giver" uses-template="defaultTemplate">
         <ehcache:resources>
-            <ehcache:heap unit="entries">10000</ehcache:heap>
+            <ehcache:heap unit="entries">500</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="delegates-by-receiver" uses-template="defaultTemplate">
         <ehcache:resources>
-            <ehcache:heap unit="entries">10000</ehcache:heap>
+            <ehcache:heap unit="entries">500</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
@@ -375,7 +375,7 @@
     <ehcache:cache alias="sales-force-connection" uses-template="defaultTemplate">
          <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
+            <ehcache:heap unit="entries">100</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
