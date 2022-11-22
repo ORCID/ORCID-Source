@@ -5,6 +5,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -44,9 +45,8 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
-import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
@@ -70,7 +70,6 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -80,9 +79,6 @@ import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
-import org.orcid.test.TargetProxyHelper;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.togglz.junit.TogglzRule;
@@ -98,15 +94,9 @@ public class WorkManagerTest extends BaseTest {
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
 
-    @Mock
-    private SourceManager mockSourceManager;
-
-    @Mock
-    private GroupingSuggestionManager groupingSuggestionManager;
-
-    @Mock
-    private GroupingSuggestionManagerReadOnly groupingSuggestionManagerReadOnly;
-
+    @Resource(name = "workEntityCacheManager")
+    private WorkEntityCacheManager workEntityCacheManager;
+    
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
 
@@ -129,23 +119,14 @@ public class WorkManagerTest extends BaseTest {
     private ClientDetailsManager clientDetailsManager;
     
     @Resource
-    private RecordNameDao recordNameDao;
-    
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-
-    @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+
+    @Mock
+    private SourceManager mockSourceManager;
     
     @Mock
     private ClientDetailsManager mockClientDetailsManager;
     
-    @Mock
-    private RecordNameDao mockRecordNameDao;
-    
-    @Mock
-    private RecordNameManagerReadOnly mockRecordNameManager;
-
     @Value("${org.orcid.core.works.bulk.read.max:100}")
     private Long bulkReadSize;
 
@@ -165,29 +146,23 @@ public class WorkManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", mockSourceManager);
-        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", mockSourceManager);
-        TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManager", groupingSuggestionManager);
-        TargetProxyHelper.injectIntoProxy(workManager, "groupingSuggestionManagerReadOnly", groupingSuggestionManagerReadOnly);
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        
+        ReflectionTestUtils.setField(orcidSecurityManager, "sourceManager", mockSourceManager);
+        ReflectionTestUtils.setField(workManager, "sourceManager", mockSourceManager);
         
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
         ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-        
-        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
     }
 
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
-        
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
-        ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", workEntityCacheManager);
+        ReflectionTestUtils.setField(orcidSecurityManager, "sourceManager", sourceManager);
+        ReflectionTestUtils.setField(workManager, "sourceManager", sourceManager);
+        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
     }
 
     @AfterClass
@@ -199,60 +174,30 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testAddWorkToUnclaimedRecordPreserveWorkVisibility() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work work = getWork(null);
-
+        work.setVisibility(Visibility.PRIVATE);
+        
         work = workManager.createWork(unclaimedOrcid, work, true);
-        work = workManager.getWork(unclaimedOrcid, work.getPutCode());
-
-        assertNotNull(work);
-        assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        
+        // Keeps incoming visibility
+        assertEquals(Visibility.PRIVATE, work.getVisibility());
+        assertEquals(CLIENT_1_ID, work.getSource().retrieveSourcePath());
     }
 
     @Test
-    public void testAddWorkToClaimedRecordPreserveUserDefaultVisibility() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+    public void testAddWorkToClaimedRecordPreserveUserDefaultVisibility() {        
         Work work = getWork(null);
-
+        work.setVisibility(Visibility.PRIVATE);
+        
         work = workManager.createWork(claimedOrcid, work, true);
-        work = workManager.getWork(claimedOrcid, work.getPutCode());
 
-        assertNotNull(work);
-        assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
+        // Respects user visibility
         assertEquals(Visibility.LIMITED, work.getVisibility());
-    }
-
-    @Test
-    public void testAddMultipleModifiesIndexingStatus() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
-        Work w1 = getWork("extId1");
-        w1 = workManager.createWork(claimedOrcid, w1, true);
-
-        Work w2 = getWork("extId2");
-        w2 = workManager.createWork(claimedOrcid, w2, true);
-
-        Work w3 = getWork("extId3");
-        w3 = workManager.createWork(claimedOrcid, w3, true);
-
-        WorkEntity entity1 = workDao.find(w1.getPutCode());
-        WorkEntity entity2 = workDao.find(w2.getPutCode());
-        WorkEntity entity3 = workDao.find(w3.getPutCode());
-
-        assertNotNull(entity1.getDisplayIndex());
-        assertNotNull(entity2.getDisplayIndex());
-        assertNotNull(entity3.getDisplayIndex());
-        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
-
-        // Rollback all changes
-        workDao.remove(entity1.getId());
-        workDao.remove(entity2.getId());
-        workDao.remove(entity3.getId());
+        assertEquals(CLIENT_1_ID, work.getSource().retrieveSourcePath());
     }
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -262,8 +207,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+    public void displayIndexIsSetTo_0_FromAPI() {        
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -274,8 +218,7 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testCreateWork() {
-        String orcid = "0000-0000-0000-0003";
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        String orcid = "0000-0000-0000-0003";        
 
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -290,15 +233,16 @@ public class WorkManagerTest extends BaseTest {
         extIds1.getExternalIdentifier().add(extId1);
         work.setWorkExternalIdentifiers(extIds1);
         work.setWorkType(WorkType.BOOK);
+        assertNull(work.getPutCode());
         work = workManager.createWork(orcid, work, true);
-
-        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+        assertNotNull(work.getPutCode());
+        assertEquals(CLIENT_1_ID, work.getSource().retrieveSourcePath());
+        workDao.remove(work.getPutCode());
     }
 
     @Test
     public void testUpdateWork() {
-        String orcid = "0000-0000-0000-0003";
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        String orcid = "0000-0000-0000-0003";        
 
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
@@ -320,9 +264,7 @@ public class WorkManagerTest extends BaseTest {
         work = workManager.updateWork(orcid, work, true);
         assertEquals("updated title", work.getWorkTitle().getTitle().getContent());
 
-        // check grouping suggestion manager called for both creation and
-        // updating of works
-        workManager.removeWorks(orcid, Arrays.asList(work.getPutCode()));
+        workDao.remove(work.getPutCode());
     }
            
     @Test
@@ -467,8 +409,7 @@ public class WorkManagerTest extends BaseTest {
         assertEquals(Relationship.VERSION_OF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         assertEquals("isbn-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());      
         assertEquals(Relationship.SELF, ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getRelationship());
-        assertEquals("doi-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getValue());      
-        
+        assertEquals("doi-1", ((Work)updatedBulk.getBulk().get(1)).getExternalIdentifiers().getExternalIdentifier().get(1).getValue());              
     
         workManager.removeWorks(orcid, Arrays.asList(((Work)updatedBulk.getBulk().get(0)).getPutCode(), ((Work)updatedBulk.getBulk().get(1)).getPutCode()));
     }
@@ -476,8 +417,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorksWithBulk_OneSelfOnePartOf_NoDupError() {
         String orcid = "0000-0000-0000-0003";
-        Long time = System.currentTimeMillis();
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        Long time = System.currentTimeMillis();        
 
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -538,6 +478,150 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
+    public void testCreateWorksWithBulk_OneSelfExisting_OnePartOfNew_NoDupError() throws IllegalAccessException {        
+        String orcid = "0000-0000-0000-0003";
+        
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        
+        MinimizedWorkEntity work = getBasicMinimizedWork();
+        work.setDisplayIndex(1L);
+        work.setId(10000L);
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
+        work.setClientSourceId(CLIENT_1_ID);        
+        
+        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
+        // no work where user is source
+        List<MinimizedWorkEntity> works = new ArrayList<>();
+        works.add(work);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
+
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID partOfExtId1 = new ExternalID();
+        partOfExtId1.setRelationship(Relationship.PART_OF);
+        partOfExtId1.setType("isbn");
+        partOfExtId1.setValue("1234");
+        ExternalID selfExtId1 = new ExternalID();
+        selfExtId1.setRelationship(Relationship.SELF);
+        selfExtId1.setType("doi");
+        selfExtId1.setValue("1234");
+        
+        extIds1.getExternalIdentifier().add(partOfExtId1);
+        extIds1.getExternalIdentifier().add(selfExtId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+
+        //Verify the work doesnt have source yet
+        assertNull(work1.getSource());
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+                
+        //To verify the work was created, verify it have a source
+        assertEquals(1, newBulk.getBulk().size());
+        assertEquals(CLIENT_1_ID, ((Work) newBulk.getBulk().get(0)).getSource().getSourceClientId().getPath());
+    }
+    
+    @Test
+    public void testCreateWorksWithBulk_OnePartOfExisting_OneSelfNew_NoDupError() throws IllegalAccessException {
+        String orcid = "0000-0000-0000-0003";
+        
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        
+        MinimizedWorkEntity work = getBasicMinimizedWork();
+        work.setDisplayIndex(1L);
+        work.setId(10000L);
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"PART_OF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
+        work.setClientSourceId(CLIENT_1_ID);        
+        
+        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
+        // no work where user is source
+        List<MinimizedWorkEntity> works = new ArrayList<>();
+        works.add(work);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
+
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID selfExtId1 = new ExternalID();
+        selfExtId1.setRelationship(Relationship.SELF);
+        selfExtId1.setType("isbn");
+        selfExtId1.setValue("1234");
+        
+        extIds1.getExternalIdentifier().add(selfExtId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+
+        //Verify the work doesnt have source yet
+        assertNull(work1.getSource());
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+                
+        //To verify the work was created, verify it have a source
+        assertEquals(1, newBulk.getBulk().size());
+        assertEquals(CLIENT_1_ID, ((Work) newBulk.getBulk().get(0)).getSource().getSourceClientId().getPath());
+    }
+    
+    @Test
+    public void testCreateWorksWithBulk_OneSelfExisting_OneSelfNew_DupError() throws IllegalAccessException {
+        String orcid = "0000-0000-0000-0003";
+        
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        
+        MinimizedWorkEntity work = getBasicMinimizedWork();
+        work.setDisplayIndex(1L);
+        work.setId(10000L);
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
+        work.setClientSourceId(CLIENT_1_ID);        
+        
+        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
+        // no work where user is source
+        List<MinimizedWorkEntity> works = new ArrayList<>();
+        works.add(work);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
+
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID selfExtId1 = new ExternalID();
+        selfExtId1.setRelationship(Relationship.SELF);
+        selfExtId1.setType("isbn");
+        selfExtId1.setValue("1234");
+        
+        extIds1.getExternalIdentifier().add(selfExtId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+                
+        //Verify it returns a dup error
+        assertEquals(1, newBulk.getBulk().size());
+        OrcidError error = (OrcidError) newBulk.getBulk().get(0);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9021), error.getErrorCode());
+        assertEquals("409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code 10000. If you are trying to edit the item, please use PUT instead of POST.", error.getDeveloperMessage());
+    }
+    
+    @Test
     public void testCreateWorkWithBulk_TwoSelf_DupError() {
         OrcidCoreExceptionMapper orcidCoreExceptionMapper = Mockito.mock(OrcidCoreExceptionMapper.class);        
 
@@ -550,8 +634,7 @@ public class WorkManagerTest extends BaseTest {
 
         
         String orcid = "0000-0000-0000-0003";
-        Long time = System.currentTimeMillis();
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        Long time = System.currentTimeMillis();        
 
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -616,8 +699,7 @@ public class WorkManagerTest extends BaseTest {
         Mockito.when(orcidCoreExceptionMapper.getV3OrcidError(Mockito.any())).thenReturn(orcidError);
         
         String orcid = "0000-0000-0000-0003";
-        Long time = System.currentTimeMillis();
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        Long time = System.currentTimeMillis();        
 
         WorkBulk bulk = new WorkBulk();
         // Work # 1
@@ -675,8 +757,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorksWithBulkAllOK() {
         String orcid = "0000-0000-0000-0003";
-        Long time = System.currentTimeMillis();
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        Long time = System.currentTimeMillis();        
 
         WorkBulk bulk = new WorkBulk();
         for (int i = 0; i < 5; i++) {
@@ -835,8 +916,7 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testCreateWorksWithBulkAllErrors() throws InterruptedException {
-        String orcid = "0000-0000-0000-0003";
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        String orcid = "0000-0000-0000-0003";        
 
         // Set up data:
         // Create one work with a DOI doi-1 so we can create a duplicate
@@ -1328,8 +1408,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateNewWorkGroup() throws MissingGroupableExternalIDException, IllegalAccessException {
         WorkDao mockDao = Mockito.mock(WorkDao.class);
         WorkEntityCacheManager cacheManager = Mockito.mock(WorkEntityCacheManager.class);
-        WorkEntityCacheManager oldCacheManager = (WorkEntityCacheManager) ReflectionTestUtils.getField(workManager, "workEntityCacheManager");
-
+        
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManager);
 
@@ -1377,11 +1456,7 @@ public class WorkManagerTest extends BaseTest {
 
         // only identifiers should have been updated
         assertEquals("work:title", userSource.getTitle());
-        assertEquals("work:subtitle", userSource.getSubtitle());
-
-        // reset dao
-        ReflectionTestUtils.setField(workManager, "workDao", workDao);
-        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", oldCacheManager);
+        assertEquals("work:subtitle", userSource.getSubtitle());        
     }
 
     @Test(expected = MissingGroupableExternalIDException.class)
@@ -1506,8 +1581,7 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
 
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
@@ -1534,7 +1608,6 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", mockContributorsRolesAndSequencesConverter);
 
         togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
 
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
@@ -1559,8 +1632,7 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
 
         Work work = workManager.createWork(orcid, getWork(null), true);
 
@@ -1584,8 +1656,7 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
 
         Work workResult = workManager.createWork(orcid, getWorkWithContributorsMultipleRoles());
 
@@ -1608,8 +1679,7 @@ public class WorkManagerTest extends BaseTest {
     public void testUpdateWorkFromUIAndRemoveOneCreditRole() {
         String orcid = "0000-0000-0000-0004";
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
 
         WorkForm workForm = getWorkWithContributorsMultipleRoles();
 
@@ -1672,26 +1742,25 @@ public class WorkManagerTest extends BaseTest {
             MinimizedWorkEntity work = getBasicMinimizedWork();
             work.setDisplayIndex(l);
             work.setId(l);
-            work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[]}");
-            ;
+            work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[]}");            
             minWorks.add(work);
         }
         return minWorks;
     }
 
     private MinimizedWorkEntity getBasicMinimizedWork() throws IllegalAccessException {
-        Date date = DateUtils.convertToDate("2018-01-01T10:15:20");
+        Date date = new Date();
         MinimizedWorkEntity work = new MinimizedWorkEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(work, date);
         work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         work.setDescription("work:description");
         work.setJournalTitle("work:journalTitle");
-        work.setLanguageCode("EN");
+        work.setLanguageCode("en");
         work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
         work.setSubtitle("work:subtitle");
         work.setTitle("work:title");
         work.setTranslatedTitle("work:translatedTitle");
-        work.setTranslatedTitleLanguageCode("ES");
+        work.setTranslatedTitleLanguageCode("es");
         work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
         work.setWorkUrl("work:url");
         return work;

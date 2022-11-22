@@ -4,6 +4,7 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -23,9 +25,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.jaxb.model.common_v2.CreatedDate;
 import org.orcid.jaxb.model.common_v2.Title;
 import org.orcid.jaxb.model.common_v2.Url;
@@ -44,11 +49,18 @@ import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class WorkManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/ClientDetailsEntityData.xml", "/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml");
@@ -59,13 +71,16 @@ public class WorkManagerTest extends BaseTest {
     private String unclaimedOrcid = "0000-0000-0000-0001";
 
     @Mock
-    private SourceManager sourceManager;
+    private SourceManager mockSourceManager;
 
     @Resource
     private WorkManager workManager;
 
     @Resource
     private WorkDao workDao;
+    
+    @Resource(name = "workEntityCacheManager")
+    private WorkEntityCacheManager workEntityCacheManager;
 
     @Value("${org.orcid.core.works.bulk.read.max:100}")
     private Long bulkReadSize;
@@ -77,7 +92,8 @@ public class WorkManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", sourceManager);
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        TargetProxyHelper.injectIntoProxy(workManager, "sourceManager", mockSourceManager);
     }
 
     @AfterClass
@@ -89,7 +105,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testAddWorkToUnclaimedRecordPreserveWorkVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work work = getWork(null);
 
         work = workManager.createWork(unclaimedOrcid, work, true);
@@ -102,7 +117,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testAddWorkToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work work = getWork(null);
 
         work = workManager.createWork(claimedOrcid, work, true);
@@ -116,8 +130,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWork() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-
+        
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
         title1.setTitle(new Title("Work # 1"));
@@ -139,8 +152,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testUpdateWork() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-
+        
         Work work = new Work();
         WorkTitle title1 = new WorkTitle();
         title1.setTitle(new Title("Work # 1"));
@@ -167,7 +179,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testAddMultipleModifiesIndexingStatus() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work w1 = getWork("extId1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
 
@@ -194,7 +205,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -205,7 +215,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
@@ -218,8 +227,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulkAllOK() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-
+        
         WorkBulk bulk = new WorkBulk();
         for (int i = 0; i < 5; i++) {
             Work work = new Work();
@@ -267,8 +275,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorksWithBulk_OneSelfOnePartOf_NoDupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-
+        
         WorkBulk bulk = new WorkBulk();
         // Work # 1
         Work work1 = new Work();
@@ -323,8 +330,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCreateWorkWithBulk_TwoSelf_DupError() {
         String orcid = "0000-0000-0000-0003";
         Long time = System.currentTimeMillis();
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-
+        
         WorkBulk bulk = new WorkBulk();
         // Work # 1
         Work work1 = new Work();
@@ -370,16 +376,169 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(updatedBulk.getBulk().get(1) instanceof OrcidError);
         assertEquals(Integer.valueOf(9021), ((OrcidError) updatedBulk.getBulk().get(1)).getErrorCode());
         assertEquals(
-                "409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code ${putCode}. If you are trying to edit the item, please use PUT instead of POST.",
+                "409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code " + ((Work) updatedBulk.getBulk().get(0)).getPutCode() + ". If you are trying to edit the item, please use PUT instead of POST.",
                 ((OrcidError) updatedBulk.getBulk().get(1)).getDeveloperMessage());
 
         workManager.removeWorks(orcid, Arrays.asList(((Work) updatedBulk.getBulk().get(0)).getPutCode()));
     }
+    
+    @Test
+    public void testCreateWorksWithBulk_OneSelfExisting_OnePartOfNew_NoDupError() throws IllegalAccessException {        
+        String orcid = "0000-0000-0000-0003";
+        
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        
+        MinimizedWorkEntity work = getBasicMinimizedWork();
+        work.setDisplayIndex(1L);
+        work.setId(10000L);
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
+        work.setClientSourceId(CLIENT_1_ID);        
+        
+        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
+        // no work where user is source
+        List<MinimizedWorkEntity> works = new ArrayList<>();
+        works.add(work);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
 
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID partOfExtId1 = new ExternalID();
+        partOfExtId1.setRelationship(Relationship.PART_OF);
+        partOfExtId1.setType("isbn");
+        partOfExtId1.setValue("1234");
+        ExternalID selfExtId1 = new ExternalID();
+        selfExtId1.setRelationship(Relationship.SELF);
+        selfExtId1.setType("doi");
+        selfExtId1.setValue("1234");
+        
+        extIds1.getExternalIdentifier().add(partOfExtId1);
+        extIds1.getExternalIdentifier().add(selfExtId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+
+        //Verify the work doesnt have source yet
+        assertNull(work1.getSource());
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+                
+        //To verify the work was created, verify it have a source
+        assertEquals(1, newBulk.getBulk().size());
+        assertEquals(CLIENT_1_ID, ((Work) newBulk.getBulk().get(0)).getSource().retrieveSourcePath());
+        
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", workEntityCacheManager);
+    }
+    
+    @Test
+    public void testCreateWorksWithBulk_OnePartOfExisting_OneSelfNew_NoDupError() throws IllegalAccessException {
+        String orcid = "0000-0000-0000-0003";
+        
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        
+        MinimizedWorkEntity work = getBasicMinimizedWork();
+        work.setDisplayIndex(1L);
+        work.setId(10000L);
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"PART_OF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
+        work.setClientSourceId(CLIENT_1_ID);        
+        
+        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
+        // no work where user is source
+        List<MinimizedWorkEntity> works = new ArrayList<>();
+        works.add(work);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
+
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID selfExtId1 = new ExternalID();
+        selfExtId1.setRelationship(Relationship.SELF);
+        selfExtId1.setType("isbn");
+        selfExtId1.setValue("1234");
+        
+        extIds1.getExternalIdentifier().add(selfExtId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+
+        //Verify the work doesnt have source yet
+        assertNull(work1.getSource());
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+                
+        //To verify the work was created, verify it have a source
+        assertEquals(1, newBulk.getBulk().size());
+        assertEquals(CLIENT_1_ID, ((Work) newBulk.getBulk().get(0)).getSource().retrieveSourcePath());
+        
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", workEntityCacheManager);
+    }
+    
+    @Test
+    public void testCreateWorksWithBulk_OneSelfExisting_OneSelfNew_DupError() throws IllegalAccessException {
+        String orcid = "0000-0000-0000-0003";
+        
+        WorkDao mockDao = Mockito.mock(WorkDao.class);
+        ReflectionTestUtils.setField(workManager, "workDao", mockDao);
+        
+        MinimizedWorkEntity work = getBasicMinimizedWork();
+        work.setDisplayIndex(1L);
+        work.setId(10000L);
+        work.setExternalIdentifiersJson("{\"workExternalIdentifier\":[{\"relationship\":\"SELF\", \"workExternalIdentifierType\":\"ISBN\",\"workExternalIdentifierId\":{\"content\":\"1234\"}}]}");
+        work.setClientSourceId(CLIENT_1_ID);        
+        
+        WorkEntityCacheManager cacheManagerMock = Mockito.mock(WorkEntityCacheManager.class);
+        // no work where user is source
+        List<MinimizedWorkEntity> works = new ArrayList<>();
+        works.add(work);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
+
+        WorkBulk bulk = new WorkBulk();
+        // Work # 1
+        Work work1 = new Work();
+        WorkTitle title1 = new WorkTitle();
+        title1.setTitle(new Title("Work # 1"));
+        work1.setWorkTitle(title1);
+        ExternalIDs extIds1 = new ExternalIDs();
+        ExternalID selfExtId1 = new ExternalID();
+        selfExtId1.setRelationship(Relationship.SELF);
+        selfExtId1.setType("isbn");
+        selfExtId1.setValue("1234");
+        
+        extIds1.getExternalIdentifier().add(selfExtId1);
+        work1.setWorkExternalIdentifiers(extIds1);
+        work1.setWorkType(WorkType.BOOK);
+        bulk.getBulk().add(work1);
+
+        WorkBulk newBulk = workManager.createWorks(orcid, bulk);
+                
+        //Verify it returns a dup error
+        assertEquals(1, newBulk.getBulk().size());
+        OrcidError error = (OrcidError) newBulk.getBulk().get(0);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9021), error.getErrorCode());
+        assertEquals("409 Conflict: You have already added this activity (matched by external identifiers), please see element with put-code 10000. If you are trying to edit the item, please use PUT instead of POST.", error.getDeveloperMessage());
+        
+        ReflectionTestUtils.setField(workManager, "workDao", workDao);
+        ReflectionTestUtils.setField(workManager, "workEntityCacheManager", workEntityCacheManager);
+    }
+    
     @Test
     public void testCreateWorksWithBulkSomeOKSomeErrors() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
 
         // Lets send a bulk of 6 works
         WorkBulk bulk = new WorkBulk();
@@ -480,7 +639,6 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testCreateWorksWithBulkAllErrors() {
         String orcid = "0000-0000-0000-0003";
-        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
 
         // Set up data:
         // Create one work with a DOI doi-1 so we can create a duplicate
@@ -1010,4 +1168,22 @@ public class WorkManagerTest extends BaseTest {
         return work;
     }
 
+    private MinimizedWorkEntity getBasicMinimizedWork() throws IllegalAccessException {
+        Date date = new Date();
+        MinimizedWorkEntity work = new MinimizedWorkEntity();
+        DateFieldsOnBaseEntityUtils.setDateFields(work, date);
+        work.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
+        work.setDescription("work:description");
+        work.setJournalTitle("work:journalTitle");
+        work.setLanguageCode("en");
+        work.setPublicationDate(new PublicationDateEntity(2000, 1, 1));
+        work.setSubtitle("work:subtitle");
+        work.setTitle("work:title");
+        work.setTranslatedTitle("work:translatedTitle");
+        work.setTranslatedTitleLanguageCode("es");
+        work.setWorkType(org.orcid.jaxb.model.record_v2.WorkType.ARTISTIC_PERFORMANCE.name());
+        work.setWorkUrl("work:url");
+        return work;
+    }
+    
 }

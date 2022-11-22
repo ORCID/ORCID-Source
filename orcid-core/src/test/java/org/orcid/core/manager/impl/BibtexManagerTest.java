@@ -11,6 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.BibtexManager;
@@ -23,9 +24,13 @@ import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.springframework.test.context.ContextConfiguration;
 
-public class BibtexManagerTest extends BaseTest{
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+public class BibtexManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml");
 
