@@ -239,5 +239,43 @@ public class OrgGrouping implements Serializable {
             }
         }
     }
+    
+    public void ungroupObsoleteRorForIndexing(OrgDisambiguatedDao orgDisambiguatedDao) {
+        int popularityOfGroup = 0;
+        OrgDisambiguatedEntity rorOrgEntity = null;
+        // if the group has a ROR mark the other not ROR organization as part of
+        // group
+        if (orgGroup.getRorOrg() != null) {
+            OrgDisambiguatedEntity orgEntity;
+            for (OrgDisambiguated org : orgGroup.getOrgs().values()) {
+                orgEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(org.getSourceId(), org.getSourceType());
+                if (orgEntity != null) {
+                    if (OrganizationStatus.DEPRECATED.name().equals(orgEntity.getStatus()) || OrganizationStatus.OBSOLETE.name().equals(orgEntity.getStatus())
+                          ) {
+                        orgEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        if (!orgEntity.getSourceType().equalsIgnoreCase(OrgDisambiguatedSourceType.ROR.name())) {
+                            orgEntity.setStatus(null);
+                            if (orgEntity.getPopularity().intValue() > popularityOfGroup) {
+                                popularityOfGroup = orgEntity.getPopularity();
+                            }
+                            orgDisambiguatedManager.updateOrgDisambiguated(orgEntity);
+                        } else {
+                            rorOrgEntity = orgEntity;
+                        }
+
+                    }
+                }
+            }
+
+            // update ROR
+            if (rorOrgEntity != null) {
+                // check Popularity
+                if (popularityOfGroup > rorOrgEntity.getPopularity().intValue()) {
+                    rorOrgEntity.setPopularity(popularityOfGroup);
+                }
+                orgDisambiguatedManager.updateOrgDisambiguated(rorOrgEntity);
+            }
+        }
+    }
 
 }
