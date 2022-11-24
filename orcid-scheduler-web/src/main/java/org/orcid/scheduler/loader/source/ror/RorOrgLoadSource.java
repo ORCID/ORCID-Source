@@ -197,7 +197,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 } else if ("redirected".equals(status)) {
                     String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
                     deprecateOrg(sourceId, primaryId);
-                } else if ("withdrawn".equals(status)) {
+                } else if ("withdrawn".equals(status) || "obsolete".equals(status)) {
                     obsoleteOrg(sourceId);
                 } else {
                     LOGGER.error("Illegal status '" + status + "' for institute " + sourceId);
