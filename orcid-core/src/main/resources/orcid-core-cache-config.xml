@@ -199,12 +199,13 @@
     </bean>
     
     <!-- TODO: Remove this, are all deprecated SF caches -->
+    <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImplLegacy" />
     <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="sales-force-members-list" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.MembersListCacheEntryFactory" />
@@ -216,7 +217,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.MemberCacheEntryFactory" />
@@ -228,7 +229,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="true" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.MemberDetailsCacheEntryFactory" />
@@ -240,7 +241,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ConsortiaListCacheEntryFactory" />
@@ -252,7 +253,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ConsortiumCacheEntryFactory" />
@@ -264,7 +265,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ContactsCacheEntryFactory" />
@@ -276,7 +277,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.ContactsForAuthenticationCacheEntryFactory" />
@@ -288,7 +289,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
         <property name="copyValues" value="false" />
         <property name="cacheLoaderWriter">
             <bean class="org.orcid.core.salesforce.cache.SalesForceConsortiumLeadIdsCacheEntryFactory" />
@@ -300,6 +301,6 @@
 		<property name="cacheManager" ref="coreCacheManager" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.sf.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.sf.maxMegaBytesInMemory:1}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:1}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.sf.maxMegaBytesOnDisk:2}" />
 	</bean>
 </beans>

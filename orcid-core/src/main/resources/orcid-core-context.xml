@@ -12,7 +12,13 @@
         
 
 	<import resource="classpath*:orcid-persistence-context.xml" />
+	
+	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
+	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
+	
 	<import resource="classpath*:orcid-core-cache-config.xml" />
+	
+	
 	<!-- Commenting out whilst the auditing is still being discussed -->
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
@@ -321,9 +327,7 @@
 		<property name="workDao" ref="workDaoReadOnly" />
 	</bean>	
 	
-	<bean id="profileEntityCacheManager" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl">
-		<property name="profileEntityManager" ref="profileEntityManager" />
-	</bean>
+	<bean id="profileEntityCacheManager" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl" />		
 	
 	<bean id="profileEntityGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="profileEntityCache" />
@@ -335,10 +339,8 @@
         <property name="profileEntityManager" ref="profileEntityManager" />
     </bean>
 	
-	<bean id="profileEntityCacheManagerReadOnly" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl">
-		<property name="profileEntityManager" ref="profileEntityManagerReadOnly" />
-	</bean>
-	
+	<bean id="profileEntityCacheManagerReadOnly" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl" />
+		
 	<bean id="groupIdRecordManager" class="org.orcid.core.manager.impl.GroupIdRecordManagerImpl">
 		<property name="groupIdRecordDao" ref="groupIdRecordDao" />
 	</bean>
@@ -756,13 +758,9 @@
 	
 	<bean id="orcidSecurityManager" class="org.orcid.core.manager.impl.OrcidSecurityManagerImpl" />			
 
-	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
-
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
     
     <bean id="salesForceAdapter" class="org.orcid.core.salesforce.adapter.SalesForceAdapter" />
-    
-    <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImplLegacy" />
     
     <bean id="salesForceManagerLegacy" class="org.orcid.core.manager.impl.SalesForceManagerImplLegacy">
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
@@ -1238,9 +1236,7 @@
 		<constructor-arg ref="workContributorRoleConverter" />
 	</bean>
 
-	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>	
-
-	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
+	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>		
 
 	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />
 
