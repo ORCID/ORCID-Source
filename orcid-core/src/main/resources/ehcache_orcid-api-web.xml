@@ -63,7 +63,7 @@
     
     <ehcache:cache alias="orgs" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:heap unit="entries">20000</ehcache:heap>
+        <ehcache:heap unit="entries">5000</ehcache:heap>
     </ehcache:cache>
     
     <ehcache:cache alias="fundings" uses-template="activitiesTemplate" />
@@ -201,29 +201,29 @@
        
     <ehcache:cache alias="delegates-by-giver" uses-template="defaultTemplate">
         <ehcache:resources>
-            <ehcache:heap unit="entries">10000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="delegates-by-receiver" uses-template="defaultTemplate">
         <ehcache:resources>
-            <ehcache:heap unit="entries">10000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="sales-force-connection" uses-template="defaultTemplate">
          <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>
-            <ehcache:heap unit="entries">2000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     
     <ehcache:cache alias="custom-email" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:heap unit="entries">2000</ehcache:heap>
+        <ehcache:heap unit="entries">500</ehcache:heap>
     </ehcache:cache>
     
     <ehcache:cache-template name="defaultTemplate">
@@ -242,8 +242,8 @@
             <ehcache:tti unit="minutes">15</ehcache:tti>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:heap unit="entries">4500</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">128</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache-template>
     
@@ -253,8 +253,8 @@
             <ehcache:tti unit="minutes">15</ehcache:tti>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:heap unit="entries">4500</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+            <ehcache:heap unit="entries">500</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">16</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache-template>
 
