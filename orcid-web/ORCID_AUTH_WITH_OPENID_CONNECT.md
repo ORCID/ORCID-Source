@@ -30,13 +30,13 @@ Note that the 'openid' scope does not start with a '/' like the other ORCID API 
 For example, this browser request will return a code as usual:
 
 ```
-    https://sandbox.orcid.org/oauth/authorize?client_id=[client-id]&response_type=code&scope=openid&redirect_uri=[redirect]
+    https://orcid.org/oauth/authorize?client_id=[client-id]&response_type=code&scope=openid&redirect_uri=[redirect]
 ```
 
 The code is exchanged for a token:
 
 ```
-    curl -i -L -H "Accept: application/json" --data "client_id=[client-id]&client_secret=[client-secret]&grant_type=authorization_code&code=[YOUR_CODE]&redirect_uri=[redirect]" "https://sandbox.orcid.org/oauth/token"
+    curl -i -L -H "Accept: application/json" --data "client_id=[client-id]&client_secret=[client-secret]&grant_type=authorization_code&code=[YOUR_CODE]&redirect_uri=[redirect]" "https://orcid.org/oauth/token"
 ```
 
 And the token response now contains an id_token property:
@@ -48,7 +48,7 @@ And the token response now contains an id_token property:
 The user info page can be requested in the same way as a regular API request:
 
 ```
-    curl -i -L -H "Accept: application/json" -H "Authorization: Bearer aa4629f3-b0a2-4edd-b77a-398d7afe3c90" 'https://sandbox.orcid.org/oauth/userinfo'
+    curl -i -L -H "Accept: application/json" -H "Authorization: Bearer aa4629f3-b0a2-4edd-b77a-398d7afe3c90" 'https://orcid.org/oauth/userinfo'
 ```
 
 And will respond with a json document like this:
@@ -57,7 +57,7 @@ And will respond with a json document like this:
     {"sub":"0000-0002-2601-8132","name":"Credit Name","family_name":"Jones","given_name":"Tom"}
 ```
 
-The public key required to check the signature can be found at [https://sandbox.orcid.org/oauth/jwks](https://sandbox.orcid.org/oauth/jwks) and looks something like this:
+The public key required to check the signature can be found at [https://orcid.org/oauth/jwks](https://orcid.org/oauth/jwks) and looks something like this:
 
 ```
     {"kty":"RSA","e":"AQAB","use":"sig","kid":"OpenIDTestKey1","alg":"RS256","n":"qCtxWP2HppC8PBEXUh6b5RPECAzQS01khDwbxCSndO-YtS1MYpNlmtUgdtoAEoIP9TFMqXOsltKmGFioy0CeWLi53M-iX-Ygjd3zSQAbr0BU0-86somdbIlFxuvGA8v6AC7MNlICTwbGExCufL_hivrzF1XVqi5zIovM1LA8k2bP4BKMEjNwhGBGJ0E9KcQYv65foZr9K0C6YYJDFE6YqsHP_czvbI1ij7MfDvN5cwmHRGMGOyzDCmT_SmjoZAZ4vSXbl2wI5txIj70RLLSK4oahktb-09c0lDVYpCno7LqsLR8E3DuTUniYwYMHlXeBor_G7sJw2a}
@@ -105,11 +105,11 @@ ORCID now supports the following behaviour during authorization requests that in
 ORCID now supports several ancillary OpenID connect endpoints:
 
 *   **Discovery endpoint** : This contains details about the server and can be used by some implementations to auto-configure authentication.
-[https://sandbox.orcid.org/.well-known/openid-configuration](https://sandbox.orcid.org/.well-known/openid-configuration)
+[https://orcid.org/.well-known/openid-configuration](https://orcid.org/.well-known/openid-configuration)
 *   **JWTS endpoint** : This exposes our public signing key.  There is an example shown above.
-[https://sandbox.orcid.org/oauth/jwks](https://sandbox.orcid.org/oauth/jwks)
+[https://orcid.org/oauth/jwks](https://orcid.org/oauth/jwks)
 *   **User info endpoint** : This exposes information about the logged in user.  It requires authentication and is protected by the 'openid' scope.  There is an example shown above.**
-**[https://sandbox.orcid.org/oauth/userinfo](https://sandbox.orcid.org/oauth/userinfo)
+**[https://orcid.org/oauth/userinfo](https://orcid.org/oauth/userinfo)
 
 ## **Example implementations** 
 
