@@ -19,7 +19,6 @@ import org.orcid.core.orgs.extId.normalizer.OrgDisambiguatedExternalIdNormalizer
 import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
-import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -29,7 +28,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.pojo.grouping.OrgGroup;
-import org.orcid.core.solr.OrgDisambiguatedSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
