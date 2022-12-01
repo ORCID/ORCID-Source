@@ -1,7 +1,10 @@
-package org.orcid.utils.listener;
+package org.orcid.core.utils.listener;
 
 import java.util.Date;
 import java.util.Map;
+
+import org.orcid.core.utils.listener.BaseMessage;
+import org.orcid.core.utils.listener.MessageConstants;
 
 import com.google.common.collect.ImmutableMap;
 

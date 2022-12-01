@@ -1,4 +1,4 @@
-package org.orcid.utils.listener;
+package org.orcid.core.utils.listener;
 
 /**
 * TODO: Once the jersey migration is over, this could be moved back to the orcid-utils package so it could be reused form the orcid-persistence package

@@ -1,4 +1,4 @@
-package org.orcid.core.solr;
+package org.orcid.core.utils.solr.entities;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,9 +6,10 @@ import java.util.List;
 import org.apache.solr.client.solrj.beans.Field;
 
 /**
- * TODO: Once the jersey migration is over, this should go back to the orcid-utils package so it could be reused form the orcid-persistence package 
+ * 
+ * @author Will Simpson
+ * 
  */
-@Deprecated
 public class OrgDisambiguatedSolrDocument implements Serializable {
 
     private static final long serialVersionUID = -3668075852578170180L;
