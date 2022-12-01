@@ -1,4 +1,4 @@
-package org.orcid.utils.solr.entities;
+package org.orcid.core.utils.solr.entities;
 
 import java.io.Serializable;
 import java.util.List;

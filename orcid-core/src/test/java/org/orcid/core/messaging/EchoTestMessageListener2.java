@@ -3,7 +3,7 @@ package org.orcid.core.messaging;
 import javax.annotation.Resource;
 
 import org.orcid.core.messaging.JmsMessageSender;
-import org.orcid.utils.listener.MessageConstants;
+import org.orcid.core.utils.listener.MessageConstants;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 
