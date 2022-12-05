@@ -170,7 +170,7 @@ public class RorOrgLoadSourceTest {
         verify(orgDisambiguatedExternalIdentifierDao, never()).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(orgDisambiguatedManager, times(4)).updateOrgDisambiguated(captor.capture());
+        verify(orgDisambiguatedManager, times(3)).updateOrgDisambiguated(captor.capture());
 
         int deprecated = 0;
         int obsolete = 0;
@@ -183,7 +183,7 @@ public class RorOrgLoadSourceTest {
             }
         }
         assertEquals(2L, deprecated);
-        assertEquals(2L, obsolete);
+        assertEquals(1L, obsolete);
 
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
     }
@@ -377,7 +377,7 @@ public class RorOrgLoadSourceTest {
         verify(orgDisambiguatedExternalIdentifierDao, times(0)).persist(any(OrgDisambiguatedExternalIdentifierEntity.class));
 
         ArgumentCaptor<OrgDisambiguatedEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedEntity.class);
-        verify(orgDisambiguatedManager, times(4)).updateOrgDisambiguated(captor.capture());
+        verify(orgDisambiguatedManager, times(3)).updateOrgDisambiguated(captor.capture());
 
         int obsoleteCount = 0;
         int deprecatedCount = 0;
@@ -404,7 +404,7 @@ public class RorOrgLoadSourceTest {
             }
         }
         assertEquals(2, deprecatedCount);
-        assertEquals(2, obsoleteCount);
+        assertEquals(1, obsoleteCount);
     }
 
     @Test

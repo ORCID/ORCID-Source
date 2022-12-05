@@ -158,7 +158,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             rootNode.forEach(institute -> {
                 String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
                 String status = institute.get("status").isNull() ? null : institute.get("status").asText();
-                if ("active".equals(status)) {
+                if ("active".equalsIgnoreCase(status) || "inactive".equalsIgnoreCase(status)) {
                     String name = institute.get("name").isNull() ? null : institute.get("name").asText();
                     StringJoiner sj = new StringJoiner(",");
                     String orgType = null;
@@ -197,7 +197,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 } else if ("redirected".equals(status)) {
                     String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
                     deprecateOrg(sourceId, primaryId);
-                } else if ("obsolete".equals(status)) {
+                } else if ("withdrawn".equals(status) || "obsolete".equals(status)) {
                     obsoleteOrg(sourceId);
                 } else {
                     LOGGER.error("Illegal status '" + status + "' for institute " + sourceId);
@@ -432,6 +432,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 existingEntity.setStatus(OrganizationStatus.OBSOLETE.name());
                 existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                 orgDisambiguatedManager.updateOrgDisambiguated(existingEntity);
+                new OrgGrouping(existingEntity, orgDisambiguatedManager).ungroupObsoleteRorForIndexing(orgDisambiguatedDao);
             }
         } else {
             OrgDisambiguatedEntity obsoletedEntity = new OrgDisambiguatedEntity();
@@ -441,6 +442,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             // We don't need to index it
             obsoletedEntity.setIndexingStatus(IndexingStatus.DONE);
             orgDisambiguatedManager.createOrgDisambiguated(obsoletedEntity);
+            new OrgGrouping(obsoletedEntity, orgDisambiguatedManager).ungroupObsoleteRorForIndexing(orgDisambiguatedDao);
         }
     }
 
