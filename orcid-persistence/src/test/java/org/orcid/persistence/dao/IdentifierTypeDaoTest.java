@@ -22,13 +22,12 @@ import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext
 public class IdentifierTypeDaoTest extends DBUnitTest{
 
     @Resource
