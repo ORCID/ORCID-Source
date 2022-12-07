@@ -22,7 +22,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.dbunit.dataset.DataSetException;
 import org.joda.time.LocalDateTime;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -119,7 +118,7 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testInsert() throws DataSetException {
+    public void testInsert() {
         String newOrcid = "4444-1111-6666-4441";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
@@ -144,7 +143,7 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testInsertWithPrimaryInstitutions() throws DataSetException {
+    public void testInsertWithPrimaryInstitutions() {
         String newOrcid = "4444-1111-6666-4442";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
@@ -168,7 +167,7 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testInsertWithInstitutionDepartments() throws DataSetException {
+    public void testInsertWithInstitutionDepartments() {
         String newOrcid = "4444-1111-6666-4443";
         ProfileEntity profile = new ProfileEntity();
         profile.setId(newOrcid);
