@@ -551,18 +551,6 @@ public class WorksController extends BaseWorkspaceController {
         validateWork(workForm);
         if (workForm.getErrors().size() == 0) {
             removeEmptyExternalIdentifiers(workForm);
-            if (isRecordHolderNotInContributors(workForm)) {
-                if (Boolean.TRUE.equals(isBibtex)) {
-                    // For now, if the request comes from bibtex, we just need
-                    // to ignore the record owner, we can't validate if it is
-                    // already in one of the provided contributors
-                } else {
-                    LOGGER.error("Record owner is not in contributors list, orcid id: " + getCurrentUserOrcid());
-                    List<String> errors = workForm.getErrors();
-                    errors.add(getMessage("web.orcid.record_holder_not_contributor.exception"));
-                    return workForm;
-                }
-            }
             if (workForm.getPutCode() != null)
                 updateWork(workForm);
             else
@@ -617,16 +605,6 @@ public class WorksController extends BaseWorkspaceController {
         } else {
             workManager.updateWork(userOrcid, updatedWork, false);
         }
-    }
-
-    private boolean isRecordHolderNotInContributors(WorkForm work) {
-        if (work.getContributorsGroupedByOrcid() != null && !work.getContributorsGroupedByOrcid().isEmpty()) {
-            String userOrcid = getEffectiveUserOrcid();
-            Optional<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid().stream().filter(contributorsRolesAndSequences ->
-                    contributorsRolesAndSequences.getContributorOrcid() != null && userOrcid.equals(contributorsRolesAndSequences.getContributorOrcid().getPath())).findFirst();
-            return contributors.isEmpty();
-        }
-        return false;
     }
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
