@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -17,19 +18,23 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.cli.anonymize.AnonymizeText;
 import org.orcid.core.cli.anonymize.UnzipFile;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.persistence.dao.WorkDao;
 
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.togglz.core.context.ContextClassLoaderFeatureManagerProvider;
@@ -68,6 +73,15 @@ public class AnonymizeWorksFromGetMyData {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
+    
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
 
     public static void main(String[] args) throws IOException {
         AnonymizeWorksFromGetMyData anonymizeFromGetMyData = new AnonymizeWorksFromGetMyData();
@@ -268,6 +282,15 @@ public class AnonymizeWorksFromGetMyData {
                 workEntity.setClientSourceId(clientId);
             } else {
                 workEntity.setSourceId(orcid);
+            }
+            if (anonymizedWork.getWorkContributors() != null && anonymizedWork.getWorkContributors().getContributor() != null && anonymizedWork.getWorkContributors().getContributor().size() > 0) {
+                List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(anonymizedWork.getWorkContributors().getContributor(), maxContributorsForUI);
+                if (topContributors.size() > 0) {
+                    workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
+                }
+            } else {
+                workEntity.setContributorsJson("{\"contributor\":[]}");
+                workEntity.setTopContributorsJson("[]");
             }
             workEntity.setVisibility(orig.getVisibility().value());
             DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, false);
