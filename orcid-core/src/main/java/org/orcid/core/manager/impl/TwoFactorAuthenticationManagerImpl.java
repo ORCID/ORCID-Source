@@ -52,12 +52,13 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             throw new UserAlreadyUsing2FAException();
         }
         // generate secret but don't switch on using2FA - user may abort process
-        String secret = encryptionManager.encryptForInternalUse(Base32.random());
+        String base32Random = Base32.random();
+        String secret = encryptionManager.encryptForInternalUse(base32Random);
         profileDao.update2FASecret(orcid, secret);
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         //generatate URL for QR code per https://github.com/google/google-authenticator/wiki/Key-Uri-Format
         //do not URL encode - authenticator app throws error
-        return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, email.getEmail(), secret, APP_NAME);
+        return String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", APP_NAME, email.getEmail(), base32Random, APP_NAME);
     }
 
     @Override
