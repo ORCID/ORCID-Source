@@ -147,9 +147,6 @@ public enum Features implements Feature {
     @Label("ID token 24 hours lifespan")
     ID_TOKEN_24_HOURS_LIFESPAN,
     
-    @Label("Send the 2FA Disabled Email")
-    TWO_FA_DEACTIVATE_EMAIL, 
-    
     @Label("Promote a client from public client to be a member")
     UPGRADE_PUBLIC_CLIENT, 
     

@@ -12,9 +12,12 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.persistence.dao.GenericDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +26,6 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     private static final Logger LOG = LoggerFactory.getLogger(TwoFactorAuthenticationManagerImpl.class);
 
     private static final String APP_NAME = "orcid.org";
-    
-    @Resource(name = "profileEntityManagerV3")
-    ProfileEntityManager profileEntityManagerV3;
     
     @Resource
     private EncryptionManager encryptionManager;
@@ -38,6 +38,12 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     
     @Resource
     private BackupCodeManager backupCodeManager;
+    
+    @Resource
+    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @Override
     public String getQRCode(String orcid) {
@@ -46,8 +52,8 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             throw new UserAlreadyUsing2FAException();
         }
         // generate secret but don't switch on using2FA - user may abort process
-        String secret = Base32.random();
-        profileEntityManagerV3.update2FASecret(orcid, encryptionManager.encryptForInternalUse(secret));
+        String secret = encryptionManager.encryptForInternalUse(Base32.random());
+        profileDao.update2FASecret(orcid, secret);
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         //generatate URL for QR code per https://github.com/google/google-authenticator/wiki/Key-Uri-Format
         //do not URL encode - authenticator app throws error
@@ -55,16 +61,31 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
-    public void enable2FA(String orcid) {
-        profileEntityManagerV3.enable2FA(orcid);
+    public List<String> enable2FA(String orcid) {
+        LOG.info("2FA enabled for %s", orcid);
+        profileDao.enable2FA(orcid);
+        List<String> codes = backupCodeManager.createBackupCodes(orcid);
+        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_ENABLED));
+        return codes;
     }
 
     @Override
     public void disable2FA(String orcid) {
-        profileEntityManagerV3.disable2FA(orcid);
+        LOG.warn("2FA disabled for %s", orcid);
+        profileDao.disable2FA(orcid);
         backupCodeManager.removeUnusedBackupCodes(orcid);
+        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED));
     }
 
+    @Override
+    public void adminDisable2FA(String orcid, String adminOrcidId) {
+        String message = String.format("Admin %s have disabled 2FA for %s", adminOrcidId, orcid);
+        LOG.warn(message);
+        profileDao.disable2FA(orcid);
+        backupCodeManager.removeUnusedBackupCodes(orcid);
+        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_ADMIN, message));
+    }
+    
     @Override
     public boolean userUsing2FA(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
@@ -97,12 +118,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
             return false;
         }
     }
-
-    @Override
-    public List<String> getBackupCodes(String orcid) {
-        return backupCodeManager.createBackupCodes(orcid);
-    }
-
+    
     @Override
     public String getSecret(String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);

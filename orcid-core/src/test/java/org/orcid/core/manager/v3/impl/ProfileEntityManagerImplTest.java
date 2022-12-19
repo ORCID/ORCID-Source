@@ -369,13 +369,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(0, applications.size());
     }
     
-    public void testDisable2FA() {
-        ProfileDao profileDao = Mockito.mock(ProfileDao.class);
-        Mockito.doNothing().when(profileDao).disable2FA(Mockito.eq("some-orcid"));
-        profileEntityManager.disable2FA("some-orcid");
-        Mockito.verify(profileDao).disable2FA(Mockito.eq("some-orcid"));
-    }
-    
     @Transactional
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
