@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import net.glxn.qrgen.QRCode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = { "/2FA" })
@@ -36,6 +38,9 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     @Resource
     private BackupCodeManager backupCodeManager;
+    
+    @Resource 
+    private RecordEmailSender recordEmailSender;
 
     @RequestMapping("/status.json")
     public @ResponseBody TwoFactorAuthStatus get2FAStatus() {
@@ -56,7 +61,9 @@ public class TwoFactorAuthenticationController extends BaseController {
 
     @RequestMapping(value = "/disable.json", method = RequestMethod.POST)
     public @ResponseBody TwoFactorAuthStatus disable2FA() {
-        twoFactorAuthenticationManager.disable2FA(getCurrentUserOrcid());
+        String orcid = getCurrentUserOrcid();
+        twoFactorAuthenticationManager.disable2FA(orcid);
+        recordEmailSender.send2FADisabledEmail(orcid);
         return get2FAStatus();
     }
 
@@ -79,11 +86,12 @@ public class TwoFactorAuthenticationController extends BaseController {
     
     @RequestMapping(value = "/register.json", method = RequestMethod.POST)
     public @ResponseBody TwoFactorAuthRegistration validateVerificationCode(@RequestBody TwoFactorAuthRegistration registration) {
-        boolean valid = twoFactorAuthenticationManager.verificationCodeIsValid(registration.getVerificationCode(), getCurrentUserOrcid());
+        String orcid = getCurrentUserOrcid();
+        boolean valid = twoFactorAuthenticationManager.verificationCodeIsValid(registration.getVerificationCode(), orcid);
         registration.setValid(valid);
         if (valid) {
-            twoFactorAuthenticationManager.enable2FA(getCurrentUserOrcid());
-            registration.setBackupCodes(twoFactorAuthenticationManager.getBackupCodes(getCurrentUserOrcid()));
+            List<String> backupCodes = twoFactorAuthenticationManager.enable2FA(orcid);
+            registration.setBackupCodes(backupCodes);
         }
         return registration;
     }

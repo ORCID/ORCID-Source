@@ -18,7 +18,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
@@ -133,9 +132,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
-
-    @Resource
-    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
 
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
@@ -623,23 +619,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getLastLogin(orcid);
     }
 
-    @Override
-    public void disable2FA(String orcid) {
-        LOGGER.info("v3 disabling 2FA for " + orcid);
-        profileDao.disable2FA(orcid);        
-    }
-
-    @Override
-    public void enable2FA(String orcid) {
-        profileDao.enable2FA(orcid);
-    }
-
-    @Override
-    public void update2FASecret(String orcid, String secret) {
-        profileDao.update2FASecret(orcid, secret);
-    }
-    
-    
     public void startSigninLock(String orcid) {
         profileDao.startSigninLock(orcid);
     }

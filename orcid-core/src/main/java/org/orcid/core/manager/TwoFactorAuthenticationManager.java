@@ -9,14 +9,14 @@ public interface TwoFactorAuthenticationManager {
     String getQRCode(String orcid);
 
     void disable2FA(String orcid);
+    
+    void adminDisable2FA(String orcid, String adminOrcidId);
 
     boolean userUsing2FA(String orcid);
 
-    void enable2FA(String orcid);
+    List<String> enable2FA(String orcid);
     
     boolean verificationCodeIsValid(String code, String orcid);
-
-    List<String> getBackupCodes(String orcid);
 
     String getSecret(String orcid);
 

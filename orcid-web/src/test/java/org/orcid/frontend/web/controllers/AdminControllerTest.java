@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +45,6 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -144,12 +142,6 @@ public class AdminControllerTest extends BaseControllerTest {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Mock
-    private TwoFactorAuthenticationManager mockTwoFactorAuthenticationManager;
-    
-    @Resource
-    TwoFactorAuthenticationManager twoFactorAuthenticationManager;
-    
-    @Mock
     private RecordEmailSender mockRecordEmailSender;
     
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
@@ -183,8 +175,6 @@ public class AdminControllerTest extends BaseControllerTest {
         TargetProxyHelper.injectIntoProxy(adminController, "orcidSecurityManager", mockOrcidSecurityManager);
         when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
         
-        TargetProxyHelper.injectIntoProxy(profileEntityManager, "twoFactorAuthenticationManager", mockTwoFactorAuthenticationManager);
-        doNothing().when(mockTwoFactorAuthenticationManager).disable2FA(Mockito.anyString());
     }
 
     @AfterClass
@@ -198,8 +188,6 @@ public class AdminControllerTest extends BaseControllerTest {
         TargetProxyHelper.injectIntoProxy(adminController, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", emailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(adminController, "emailManager", emailManager);
-
-        
     }
 
     @Override

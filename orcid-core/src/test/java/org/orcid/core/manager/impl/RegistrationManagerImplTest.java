@@ -110,10 +110,6 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockV3NotificationManager);
         doNothing().when(mockV3NotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());               
         
-        TargetProxyHelper.injectIntoProxy(profileEntityManager, "twoFactorAuthenticationManager", mockTwoFactorAuthenticationManager);
-        doNothing().when(mockTwoFactorAuthenticationManager).disable2FA(Mockito.anyString());
-       
-        
         TargetProxyHelper.injectIntoProxy(profileEntityManager, "profileHistoryEventManager", mockProfileHistoryEventManager);
         Mockito.doNothing().when(mockProfileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
     }

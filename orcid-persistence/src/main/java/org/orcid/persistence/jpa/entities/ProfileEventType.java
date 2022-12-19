@@ -34,4 +34,7 @@ public enum ProfileEventType {
     
     // 2019 Visibility settings quarterly notification
     EMAIL_VIS_2019_SENT, EMAIL_VIS_2019_SKIPPED, EMAIL_VIS_2019_FAILED,
+
+    // 2FA enable/disable events
+    PROFILE_2FA_ENABLED, PROFILE_2FA_DISABLED, PROFILE_2FA_DISABLED_BY_ADMIN;
 }

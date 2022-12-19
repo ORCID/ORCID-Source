@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
@@ -86,6 +87,9 @@ public class AdminController extends BaseController {
     
     @Resource 
     private RecordEmailSender recordEmailSender;
+    
+    @Resource
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -1037,10 +1041,8 @@ public class AdminController extends BaseController {
                     ProfileEntity entity = profileEntityCacheManager.retrieve(orcidId);
 
                     if (entity.getUsing2FA()) {
-                        profileEntityManager.disable2FA(orcidId);
-                        if (Features.TWO_FA_DEACTIVATE_EMAIL.isActive()) {
-                            recordEmailSender.send2FADisabledEmail(orcidId);
-                        }
+                        twoFactorAuthenticationManager.adminDisable2FA(orcidId, getCurrentUserOrcid());
+                        recordEmailSender.send2FADisabledEmail(orcidId);                        
                         disabledIds.add(emailOrOrcid);
                     } else {
                         without2FAs.add(emailOrOrcid);
