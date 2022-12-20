@@ -10,8 +10,7 @@
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
     <import resource="orcid-core-context.xml"/>
-    <import resource="statistics-core-context.xml"/>
-    
+        
     <context:component-scan base-package="org.orcid.api.common, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
@@ -21,7 +20,7 @@
         <property name="version" value="Latest" />
         <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
-        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.publicV3.server, org.orcid.api.t1.stats,org.orcid.api.identifiers"/>
+        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.publicV3.server, org.orcid.api.identifiers"/>
         <property name="scan" value="true"/>
         <property name="prettyPrint" value="true"/>        
     </bean>
@@ -111,12 +110,6 @@
     </bean>
     <bean id="publicV3ApiServiceImplV3_0" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0">
         <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRelease"/>
-    </bean>
-    
-    <!--  Statistics API -->
-    <bean id="statsApiServiceDelegator" class="org.orcid.api.t1.stats.delegator.impl.StatsApiServiceDelegatorImpl" />
-    <bean id="statsApiServiceImplV2_0_rc1" class="org.orcid.api.t1.stats.StatsApiServiceImplV2_0_rc1">
-        <property name="serviceDelegator" ref="statsApiServiceDelegator"/>
     </bean>
     
     <!--  Identifier API -->
