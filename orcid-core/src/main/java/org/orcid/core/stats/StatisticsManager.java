@@ -1,4 +1,4 @@
-package org.orcid.scheduler.cron.stats;
+package org.orcid.core.stats;
 
 public interface StatisticsManager {
     

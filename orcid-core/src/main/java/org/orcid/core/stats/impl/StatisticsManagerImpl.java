@@ -1,13 +1,13 @@
-package org.orcid.scheduler.cron.stats.impl;
+package org.orcid.core.stats.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.persistence.dao.StatisticsGeneratorDao;
-import org.orcid.scheduler.cron.stats.StatisticsManager;
 import org.orcid.statistics.dao.StatisticsDao;
 import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
 import org.orcid.statistics.jpa.entities.StatisticValuesEntity;

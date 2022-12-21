@@ -19,10 +19,10 @@ public class StatisticsDaoImpl implements StatisticsDao {
 
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsDaoImpl.class);
     
-    protected EntityManager statisticsEntityManager;
+    protected EntityManager entityManager;
 
-    public void setStatisticsEntityManager(EntityManager statisticsEntityManager) {
-        this.statisticsEntityManager = statisticsEntityManager;
+    public void setentityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
     
     /**
@@ -35,7 +35,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     public StatisticKeyEntity createKey() {
         StatisticKeyEntity key = new StatisticKeyEntity();
         key.setGenerationDate(new Date());
-        statisticsEntityManager.persist(key);
+        entityManager.persist(key);
         return key;
     }
 
@@ -47,7 +47,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Override    
     public StatisticKeyEntity getLatestKey() {
         try {
-            return (StatisticKeyEntity) statisticsEntityManager
+            return (StatisticKeyEntity) entityManager
                     .createNativeQuery("SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
                             StatisticKeyEntity.class)
                     .getSingleResult();
@@ -65,7 +65,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Cacheable(value = "statistics-key", key = "#id")
     public StatisticKeyEntity getKey(Long id) {
         try {
-            return (StatisticKeyEntity) statisticsEntityManager
+            return (StatisticKeyEntity) entityManager
                     .createNativeQuery("SELECT * FROM statistic_key WHERE id=:id",
                             StatisticKeyEntity.class).setParameter("id", id)
                     .getSingleResult();
@@ -88,7 +88,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     @Override
     @Transactional
     public StatisticValuesEntity persist(StatisticValuesEntity statistic) {
-        statisticsEntityManager.persist(statistic);
+        entityManager.persist(statistic);
         return statistic;
     }
 
@@ -100,7 +100,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
      */
     @Override
     public List<StatisticValuesEntity> getStatistic(long id) {
-        TypedQuery<StatisticValuesEntity> query = statisticsEntityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
+        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id", StatisticValuesEntity.class);
         query.setParameter("id", id);
         List<StatisticValuesEntity> results = null;
         try {
@@ -122,7 +122,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
      */
     @Override
     public StatisticValuesEntity getStatistic(long id, String name) {
-        TypedQuery<StatisticValuesEntity> query = statisticsEntityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND statisticName = :name",
+        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE key.id = :id AND statisticName = :name",
                 StatisticValuesEntity.class);
         query.setParameter("id", id);
         query.setParameter("name", name);
@@ -140,7 +140,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
      */
     @Override
     public List<StatisticValuesEntity> getStatistic(String name) {
-        TypedQuery<StatisticValuesEntity> query = statisticsEntityManager.createQuery("FROM StatisticValuesEntity WHERE statisticName = :name", StatisticValuesEntity.class);
+        TypedQuery<StatisticValuesEntity> query = entityManager.createQuery("FROM StatisticValuesEntity WHERE statisticName = :name", StatisticValuesEntity.class);
         query.setParameter("name", name);
         List<StatisticValuesEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;

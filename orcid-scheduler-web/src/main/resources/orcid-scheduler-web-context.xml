@@ -31,6 +31,6 @@
 		<task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />		
 	</task:scheduled-tasks>
 
-	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:15}"/>
+	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:20}"/>
 
 </beans>

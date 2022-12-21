@@ -15,10 +15,15 @@ public class StatisticsGeneratorDaoImpl implements StatisticsGeneratorDao {
         this.entityManager = entityManager;
     }
 
-    public long getLiveIds() {
+    @Override
+    public long calculateLiveIds() {
         Query query = entityManager.createNativeQuery("select count(*) from profile where profile_deactivation_date is null and record_locked = false");
         BigInteger numberOfLiveIds = (BigInteger) query.getSingleResult();
         return numberOfLiveIds.longValue();
     }
     
+    @Override
+    public long getLatestLiveIds() {
+        
+    }
 }

@@ -469,4 +469,14 @@
     <bean id="spamDaoReadOnly" class="org.orcid.persistence.dao.impl.SpamDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
+    
+    <!-- Statistics -->
+    <bean id="statisticsDao" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
+        <property name="entityManager" ref="entityManager" />
+    </bean>
+	
+    <bean id="statisticsDaoReadOnly" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>    
+    
 </beans>

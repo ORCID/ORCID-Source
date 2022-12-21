@@ -90,6 +90,6 @@
 
     <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
 
-	<bean id="statisticsManager" class="org.orcid.scheduler.cron.stats.impl.StatisticsManagerImpl"/>
+	<bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
 
 </beans>
