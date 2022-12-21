@@ -1090,12 +1090,16 @@ public class AdminController extends BaseController {
                 ProfileEntity group = profileEntityCacheManager.retrieve(data.getGroupId());
                 if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
                     data.setGroupIdNotFound(true);
-                } else if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
-                    data.setGroupIdDeactivated(true);
+                } else { 
+                    if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
+                        data.setGroupIdDeactivated(true);
+                    } else {                    
+                        ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+                        data.setTargetClientType(clientType.name());
+                    }
+                    
                 }
 
-                ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
-                data.setTargetClientType(clientType.name());
             } catch (IllegalArgumentException e) {
                 // invalid group id
                 data.setGroupIdNotFound(true);
