@@ -7,12 +7,12 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.StatisticsGeneratorManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;
-import org.orcid.persistence.dao.StatisticsGeneratorDao;
+import org.orcid.persistence.dao.StatisticsDao;
 
 public class StatisticsGeneratorManagerImpl implements StatisticsGeneratorManager {
 
     @Resource
-    private StatisticsGeneratorDao statisticsGeneratorDao;
+    private StatisticsDao statisticsGeneratorDao;
 
     @Override
     public Map<String, Long> generateStatistics() {        

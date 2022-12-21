@@ -7,8 +7,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;
-import org.orcid.persistence.dao.StatisticsGeneratorDao;
-import org.orcid.statistics.dao.StatisticsDao;
+import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
 import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.slf4j.Logger;
@@ -25,7 +24,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
     private TransactionTemplate statisticsTransactionTemplate;
     
     @Resource
-    private StatisticsGeneratorDao statisticsGeneratorDao;
+    private StatisticsDao statisticsGeneratorDao;
     
     @Resource
     StatisticsDao statisticsDao;
@@ -41,7 +40,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
     
     private Map<String, Long> getLatestStatistics() {        
         Map<String, Long> statistics = new HashMap<String, Long>();        
-        statistics.put(StatisticsEnum.KEY_LIVE_IDS.value(), statisticsGeneratorDao.getLiveIds());        
+        statistics.put(StatisticsEnum.KEY_LIVE_IDS.value(), statisticsGeneratorDao.calculateLiveIds());        
         return statistics;        
     }
     

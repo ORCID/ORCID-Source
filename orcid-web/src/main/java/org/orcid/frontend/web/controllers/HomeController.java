@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.StatusManager;
-import org.orcid.core.manager.impl.StatisticsCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -80,9 +79,6 @@ public class HomeController extends BaseController {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Resource
-    private StatisticsCacheManager statisticsCacheManager;
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
