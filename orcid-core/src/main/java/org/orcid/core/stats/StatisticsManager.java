@@ -9,4 +9,9 @@ public interface StatisticsManager {
      *          List of statistics to store
      * */
     public void generateStatistics();
+        
+    /**
+     * Fetch the number of live ids 
+     * */
+    public long getLiveIds();
 }

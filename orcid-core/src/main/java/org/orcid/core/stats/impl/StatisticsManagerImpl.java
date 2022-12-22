@@ -8,10 +8,10 @@ import javax.annotation.Resource;
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.statistics.jpa.entities.StatisticKeyEntity;
 import org.orcid.statistics.jpa.entities.StatisticValuesEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -24,11 +24,8 @@ public class StatisticsManagerImpl implements StatisticsManager {
     private TransactionTemplate statisticsTransactionTemplate;
     
     @Resource
-    private StatisticsDao statisticsGeneratorDao;
+    private StatisticsDao statisticsDao;
     
-    @Resource
-    StatisticsDao statisticsDao;
-
     @Override
     public void generateStatistics() {
         LOG.info("Generating latests statistics");
@@ -40,7 +37,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
     
     private Map<String, Long> getLatestStatistics() {        
         Map<String, Long> statistics = new HashMap<String, Long>();        
-        statistics.put(StatisticsEnum.KEY_LIVE_IDS.value(), statisticsGeneratorDao.calculateLiveIds());        
+        statistics.put(StatisticsEnum.KEY_LIVE_IDS.value(), statisticsDao.calculateLiveIds());        
         return statistics;        
     }
     
@@ -55,13 +52,19 @@ public class StatisticsManagerImpl implements StatisticsManager {
         statisticsTransactionTemplate.execute(new TransactionCallbackWithoutResult() {            
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                StatisticKeyEntity key = statisticsDao.createKey();        
+                Long keyId = statisticsDao.createKey();        
                 // Store statistics on database
                 for (Map.Entry<String, Long> entry : statistics.entrySet()) {            
-                    StatisticValuesEntity newStat = new StatisticValuesEntity(key, entry.getKey(), entry.getValue());
+                    StatisticValuesEntity newStat = new StatisticValuesEntity(keyId, entry.getKey(), entry.getValue());
                     statisticsDao.persist(newStat);
                 }                
             }
         });                       
+    }
+
+    @Override
+    @Cacheable(value = "delegates-by-receiver", key = "#receiverOrcid.concat('-').concat(#lastModified)")
+    public long getLiveIds(Locale locale) {
+        return statisticsDao.getLatestLiveIds();
     }
 }
