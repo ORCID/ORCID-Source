@@ -175,9 +175,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             try {
                 result.setWorkType(WorkType.fromValue(json.getString("type")));
             } catch (IllegalArgumentException e) {
-                if ("dissertation".equals(json.getString("type")) || "thesis".equals(json.getString("type"))) {
-                    result.setWorkType(WorkType.DISSERTATION_THESIS);
-                }
+
             }
         }
         if (result.getWorkType() == null && json.has("subtype")) {
