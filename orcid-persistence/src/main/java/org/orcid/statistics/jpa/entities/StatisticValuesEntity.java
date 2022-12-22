@@ -21,7 +21,7 @@ public class StatisticValuesEntity implements Serializable {
     private static final long serialVersionUID = -3187757614988914339L;
     
     private Long id;
-    private StatisticKeyEntity key;
+    private Long statisticKeyId;
     private String statisticName;
     private long statisticValue;
     
@@ -29,8 +29,8 @@ public class StatisticValuesEntity implements Serializable {
         
     }
     
-    public StatisticValuesEntity(StatisticKeyEntity key, String statisticName, long statisticValue){
-        this.key = key;
+    public StatisticValuesEntity(Long statisticKeyId, String statisticName, long statisticValue){
+        this.statisticKeyId = statisticKeyId;
         this.statisticName = statisticName;
         this.statisticValue = statisticValue;
     }
@@ -47,10 +47,9 @@ public class StatisticValuesEntity implements Serializable {
         this.id = id;
     }
         
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.LAZY)
-    @JoinColumn(name = "key_id", nullable = false)
-    public StatisticKeyEntity getKey(){
-        return key;
+    @Column(name = "key_id", nullable = false)
+    public Long getStatisticKeyId(){
+        return statisticKeyId;
     }
     
     @Column(name = "statistic_name")
@@ -63,8 +62,8 @@ public class StatisticValuesEntity implements Serializable {
         return statisticValue;
     }
     
-    public void setKey(StatisticKeyEntity key){
-        this.key = key;
+    public void setStatisticKeyId(Long statisticKeyId){
+        this.statisticKeyId = statisticKeyId;
     }
     
     public void setStatisticName(String name){
@@ -93,11 +92,11 @@ public class StatisticValuesEntity implements Serializable {
         if(!this.id.equals(otherEntity.getId()))
             return false;
         
-        if(this.key == null){
-            if(otherEntity.getKey() != null)
+        if(this.statisticKeyId == null){
+            if(otherEntity.getStatisticKeyId() != null)
                 return false;
         }
         
-        return this.key.equals(otherEntity.getKey());       
+        return this.statisticKeyId.equals(otherEntity.getStatisticKeyId());       
     }
 }

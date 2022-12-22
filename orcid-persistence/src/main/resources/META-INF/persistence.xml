@@ -83,8 +83,7 @@
 		
 		<!-- Invalid record data changes -->
 		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>
-		
-		
+				
 		<class>org.orcid.persistence.jpa.entities.BackupCodeEntity</class>
 		<class>org.orcid.persistence.jpa.entities.ProfileHistoryEventEntity</class>
 		<class>org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity</class>
@@ -93,6 +92,9 @@
 		<class>org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity</class>
 		<class>org.orcid.persistence.jpa.entities.OrgImportLogEntity</class>		
 				
+		<!-- Statistics -->
+		<class>org.orcid.statistics.jpa.entities.StatisticValuesEntity</class>
+		<class>org.orcid.statistics.jpa.entities.StatisticKeyEntity</class>
 		
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
@@ -104,11 +106,5 @@
 <!-- 	    </properties> -->
 	    
 	</persistence-unit>
-	
-	<persistence-unit name="statistics" transaction-type="RESOURCE_LOCAL">
-		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<class>org.orcid.statistics.jpa.entities.StatisticValuesEntity</class>
-		<class>org.orcid.statistics.jpa.entities.StatisticKeyEntity</class>		
-	</persistence-unit>
-
+		
 </persistence>
