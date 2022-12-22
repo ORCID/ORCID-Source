@@ -164,7 +164,7 @@
             <ehcache:tti unit="minutes">360</ehcache:tti>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:heap unit="entries">10</ehcache:heap>
+            <ehcache:heap unit="entries">25</ehcache:heap>
             <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
