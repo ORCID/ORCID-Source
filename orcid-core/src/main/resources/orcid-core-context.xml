@@ -1237,6 +1237,6 @@
 
 	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>		
 
-	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />
+	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />	
 
 </beans>

@@ -18,18 +18,18 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.core.utils.UTF8Control;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.UTF8Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,10 +75,10 @@ public class HomeController extends BaseController {
     private ProfileEntityManager profileEntityManager;
     
     @Resource
-    private StatusManager statusManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private StatisticsManager statisticsManager;
     
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
@@ -238,7 +238,7 @@ public class HomeController extends BaseController {
         configDetails.setMessage("ABOUT_URI", aboutUri);
         configDetails.setMessage("GA_TRACKING_ID", googleAnalyticsTrackingId);
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
-        configDetails.setMessage("LIVE_IDS", statisticsCacheManager.retrieveLiveIds(localeManager.getLocale()));   
+        configDetails.setMessage("LIVE_IDS", statisticsManager.getFormattedLiveIds(localeManager.getLocale()));   
         configDetails.setMessage("SEARCH_BASE", getSearchBaseUrl());
         // Add features
         for(Features f : Features.values()) {

@@ -1,5 +1,7 @@
 package org.orcid.core.stats;
 
+import java.util.Locale;
+
 public interface StatisticsManager {
     
     /**
@@ -13,5 +15,5 @@ public interface StatisticsManager {
     /**
      * Fetch the number of live ids 
      * */
-    public long getLiveIds();
+    public String getFormattedLiveIds(Locale locale);
 }

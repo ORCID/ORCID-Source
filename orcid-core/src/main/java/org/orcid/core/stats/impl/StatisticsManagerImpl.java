@@ -1,6 +1,8 @@
 package org.orcid.core.stats.impl;
 
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -63,8 +65,10 @@ public class StatisticsManagerImpl implements StatisticsManager {
     }
 
     @Override
-    @Cacheable(value = "delegates-by-receiver", key = "#receiverOrcid.concat('-').concat(#lastModified)")
-    public long getLiveIds(Locale locale) {
-        return statisticsDao.getLatestLiveIds();
+    @Cacheable(value = "live-ids", key = "#locale")
+    public String getFormattedLiveIds(Locale locale) {
+        Long liveIds = statisticsDao.getLatestLiveIds();
+        NumberFormat nf = NumberFormat.getInstance(locale);
+        return nf.format(liveIds);
     }
 }
