@@ -175,7 +175,9 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             try {
                 result.setWorkType(WorkType.fromValue(json.getString("type")));
             } catch (IllegalArgumentException e) {
-
+                if ("dissertation".equals(json.getString("type")) || "thesis".equals(json.getString("type"))) {
+                    result.setWorkType(WorkType.DISSERTATION_THESIS);
+                }
             }
         }
         if (result.getWorkType() == null && json.has("subtype")) {
@@ -188,19 +190,11 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
 
         WorkTitle workTitle = new WorkTitle();
         if (json.has("title")) {
-            workTitle.setTitle(new Title(json.getString("title")));
+            workTitle.setTitle(new Title(removeSquareBrackets(json.getString("title"))));
         }
 
         if (json.has("subtitle")) {
-            String subtitleText = json.getString("subtitle");
-            if (subtitleText.startsWith("[") && subtitleText.endsWith("]")) {
-                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
-            }
-            
-            if (subtitleText.startsWith("\"") && subtitleText.endsWith("\"")) {
-                subtitleText = subtitleText.substring(1, subtitleText.length() - 1);
-            }
-            workTitle.setSubtitle(new Subtitle(subtitleText));
+            workTitle.setSubtitle(new Subtitle(removeSquareBrackets(json.getString("subtitle"))));
         }
 
         result.setWorkTitle(workTitle);
@@ -271,21 +265,19 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
 
         if (json.has("abstract")) {
-            String description = json.getString("abstract");
-            result.setShortDescription(description);
+            result.setShortDescription(removeSquareBrackets(json.getString("abstract")));
         }
         
         if (result.getWorkType() == WorkType.BOOK) {
             if (json.has("publisher")) {
-                result.setJournalTitle(new Title(json.getString("publisher")));
+                result.setJournalTitle(new Title(removeSquareBrackets(json.getString("publisher"))));
             }
-        }
-        else if (json.has("journal-title")) {            
-            result.setJournalTitle(new Title(json.getString("journal-title")));
+        } else if (json.has("journal-title")) {
+            result.setJournalTitle(new Title(removeSquareBrackets(json.getString("journal-title"))));
         } else if (json.has("container-title")) {
-            result.setJournalTitle(new Title(json.getString("container-title")));
+            result.setJournalTitle(new Title(removeSquareBrackets(json.getString("container-title"))));
         } else if (json.has("container-title-short")) {
-            result.setJournalTitle(new Title(json.getString("container-title-short")));
+            result.setJournalTitle(new Title(removeSquareBrackets(json.getString("container-title-short"))));
         }
 
         JSONObject publicationDateJson = null;
@@ -323,34 +315,36 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         if (result.getPublicationDate() == null && json.has("issued")) {
             JSONObject issued = (JSONObject) json.get("issued");
             JSONArray dateParts = issued.getJSONArray("date-parts");
-            JSONArray date = dateParts.getJSONArray(0);
-            
-            if (date != null) {
-                int year = 0;
-                int month = 0;
-                int day = 0;
-                if (date.length() > 0 && !JSONObject.NULL.equals(date.get(0))) {
-                    year = date.getInt(0);
-                }
-                if (date.length() > 1 && !JSONObject.NULL.equals(date.get(1))) {
-                    month = date.getInt(1);
-                }
-                if (date.length() > 2 && !JSONObject.NULL.equals(date.get(2))) {
-                    day = date.getInt(2);
-                }
-                
-                if (year != 0) {
-                    PublicationDate publicationDate = new PublicationDate();
-                    publicationDate.setYear(new Year(year));
-                    if (month != 0) {
-                        publicationDate.setMonth(new Month(month));
+            try {
+                JSONArray date = dateParts.getJSONArray(0);
+
+                if (date != null) {
+                    int year = 0;
+                    int month = 0;
+                    int day = 0;
+                    if (date.length() > 0 && !JSONObject.NULL.equals(date.get(0))) {
+                        year = date.getInt(0);
                     }
-                    if (day != 0) {
-                        publicationDate.setDay(new Day(day));
+                    if (date.length() > 1 && !JSONObject.NULL.equals(date.get(1))) {
+                        month = date.getInt(1);
                     }
-                    result.setPublicationDate(publicationDate);
+                    if (date.length() > 2 && !JSONObject.NULL.equals(date.get(2))) {
+                        day = date.getInt(2);
+                    }
+
+                    if (year != 0) {
+                        PublicationDate publicationDate = new PublicationDate();
+                        publicationDate.setYear(new Year(year));
+                        if (month != 0) {
+                            publicationDate.setMonth(new Month(month));
+                        }
+                        if (day != 0) {
+                            publicationDate.setDay(new Day(day));
+                        }
+                        result.setPublicationDate(publicationDate);
+                    }
                 }
-            }           
+            } catch (JSONException ignored) { }
         }
 
         if (json.has("author") && Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED.isActive() ) {
@@ -423,5 +417,16 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
         }
         return null;
         
+    }
+
+    private String removeSquareBrackets(String text) {
+        if (text.startsWith("[") && text.endsWith("]")) {
+            text = text.substring(1, text.length() - 1);
+        }
+
+        if (text.startsWith("\"") && text.endsWith("\"")) {
+            text = text.substring(1, text.length() - 1);
+        }
+        return text;
     }
 }
