@@ -456,11 +456,7 @@
         <property name="encryptor" ref="internalEncryptor" />
     </bean>
     
-    <bean id="statisticsGeneratorDao" class="org.orcid.persistence.dao.impl.StatisticsGeneratorDaoImpl">
-		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>	
-	
-	<util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
+    <util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
 	<bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
 	<bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
 	
@@ -471,12 +467,8 @@
     </bean>
     
     <!-- Statistics -->
-    <bean id="statisticsDao" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
+    <bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
         <property name="entityManager" ref="entityManager" />
-    </bean>
-	
-    <bean id="statisticsDaoReadOnly" class="org.orcid.statistics.dao.impl.StatisticsDaoImpl">
-        <property name="entityManager" ref="entityManagerReadOnly" />
-    </bean>    
+    </bean>     
     
 </beans>

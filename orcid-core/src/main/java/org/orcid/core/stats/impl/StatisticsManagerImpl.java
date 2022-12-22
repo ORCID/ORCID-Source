@@ -1,9 +1,7 @@
 package org.orcid.core.stats.impl;
 
 import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -21,47 +19,25 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class StatisticsManagerImpl implements StatisticsManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsManagerImpl.class);
-    
+
     @Resource
-    private TransactionTemplate statisticsTransactionTemplate;
-    
+    private TransactionTemplate transactionTemplate;
+
     @Resource
     private StatisticsDao statisticsDao;
-    
+
     @Override
     public void generateStatistics() {
-        LOG.info("Generating latests statistics");
-        Map<String, Long> stats = getLatestStatistics();
-        LOG.info("Saving latests statistics");
-        saveStatistics(stats);
-        LOG.info("Stats successfully processed");
-    }
-    
-    private Map<String, Long> getLatestStatistics() {        
-        Map<String, Long> statistics = new HashMap<String, Long>();        
-        statistics.put(StatisticsEnum.KEY_LIVE_IDS.value(), statisticsDao.calculateLiveIds());        
-        return statistics;        
-    }
-    
-    /**
-     * Save a set of statistics to the database
-     * 
-     * @param statistics
-     *          List of statistics to store
-     * */
-    
-    private void saveStatistics(Map<String, Long> statistics) {        
-        statisticsTransactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                Long keyId = statisticsDao.createKey();        
-                // Store statistics on database
-                for (Map.Entry<String, Long> entry : statistics.entrySet()) {            
-                    StatisticValuesEntity newStat = new StatisticValuesEntity(keyId, entry.getKey(), entry.getValue());
-                    statisticsDao.persist(newStat);
-                }                
+                LOG.info("Generating latests statistics");
+                Long liveIds = statisticsDao.calculateLiveIds();
+                Long keyId = statisticsDao.createKey();
+                statisticsDao.persist(new StatisticValuesEntity(keyId, StatisticsEnum.KEY_LIVE_IDS.value(), liveIds));
+                LOG.info("Stats successfully processed");
             }
-        });                       
+        });
     }
 
     @Override
