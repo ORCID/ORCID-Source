@@ -592,7 +592,10 @@
                         </div>
                         <div class="alert alert-success" *ngIf="moveClient.alreadyMember !== undefined && !moveClient.alreadyMember">
                             <@spring.message "admin.convert_client.is_not_already_member"/>
-                        </div>	            
+                        </div>	   
+                        <div class="alert alert-success" *ngIf="!moveClient.clientNotFound && !moveClient.clientDeactivated">
+                            <@spring.message "admin.convert_client.is_not_active"/>
+                        </div>	           
                     </div>
                 <div class="form-group">
                     <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>
