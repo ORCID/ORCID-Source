@@ -10,12 +10,6 @@ import org.w3c.dom.ls.LSResourceResolver;
  */
 public class OrcidResourceResolver implements LSResourceResolver {
 
-    private LSResourceResolver defaultResourceResolver;
-
-    public OrcidResourceResolver(LSResourceResolver defaultResourceResolver) {
-        this.defaultResourceResolver = defaultResourceResolver;
-    }
-
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
         OrcidLsInput lsInput = new OrcidLsInput(publicId, systemId, baseURI);
