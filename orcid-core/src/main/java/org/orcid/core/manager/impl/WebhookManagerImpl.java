@@ -1,6 +1,8 @@
 package org.orcid.core.manager.impl;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,16 +16,14 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.util.EntityUtils;
 import org.orcid.core.manager.WebhookManager;
+import org.orcid.core.utils.http.HttpRequestUtils;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -34,9 +34,6 @@ public class WebhookManagerImpl implements WebhookManager {
     private int numberOfWebhookThreads;
     private int retryDelayMinutes;
     private int maxPerRun;
-
-    @Resource
-    private HttpClient httpClient;
 
     @Resource
     private WebhookDao webhookDao;
@@ -52,8 +49,13 @@ public class WebhookManagerImpl implements WebhookManager {
     private Object mainWebhooksLock = new Object();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebhookManagerImpl.class);
-    private static final int WEBHOOKS_BATCH_SIZE = 1000;
+    
+    @Value("${org.orcid.scheduler.webhooks.batchSize:5000}")
+    private int webhooksBatchSize;
 
+    @Resource
+    private HttpRequestUtils httpRequestUtils;
+    
     public void setMaxJobsPerClient(int maxJobs) {
         this.maxJobsPerClient = maxJobs;
     }
@@ -68,10 +70,6 @@ public class WebhookManagerImpl implements WebhookManager {
 
     public void setMaxPerRun(int maxPerRun) {
         this.maxPerRun = maxPerRun;
-    }
-
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 
     public void setWebhookDao(WebhookDao webhookDao) {
@@ -106,7 +104,7 @@ public class WebhookManagerImpl implements WebhookManager {
             mapOfpreviousBatch = WebhookEntity.mapById(webhooks);
             // Get chunk of webhooks to process for records that changed before
             // start time
-            webhooks = webhookDaoReadOnly.findWebhooksReadyToProcess(startTime, retryDelayMinutes, WEBHOOKS_BATCH_SIZE);
+            webhooks = webhookDaoReadOnly.findWebhooksReadyToProcess(startTime, retryDelayMinutes, webhooksBatchSize);
             // Log the chunk size
             LOGGER.info("Found batch of {} webhooks to process", webhooks.size());
             int executedCountAtStartOfChunk = executedCount;
@@ -148,7 +146,7 @@ public class WebhookManagerImpl implements WebhookManager {
         // The queue size is half the batch size, to make sure the thread pool
         // has a chance to do some stuff before we go back to the DB for more,
         return new ThreadPoolExecutor(numberOfWebhookThreads, numberOfWebhookThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(
-                WEBHOOKS_BATCH_SIZE / 2), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
+                webhooksBatchSize / 2), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     private void processWebhookInTransaction(final WebhookEntity webhook) {
@@ -179,15 +177,16 @@ public class WebhookManagerImpl implements WebhookManager {
             int statusCode = doPost(uri);
             if (statusCode >= 200 && statusCode < 300) {
                 LOGGER.debug("Webhook {} for Client: {} With ORCID: {} has been processed", new Object[] { webhook.getUri(), clientId, orcid });
-                webhook.setLastSent(new Date());
-                webhook.setFailedAttemptCount(0);
+                webhookDao.markAsSent(orcid, uri);                
             } else {
                 LOGGER.warn("Webhook {} for Client: {} With ORCID: {} could not be processed because of response status code: {}", new Object[] { webhook.getUri(),
                         clientId, orcid, statusCode });
-                webhook.setLastFailed(new Date());
-                webhook.setFailedAttemptCount(webhook.getFailedAttemptCount() + 1);
-            }
-            webhookDao.merge(webhook);
+                webhookDao.markAsFailed(orcid, uri);
+            }            
+        } catch(Exception e) {
+            LOGGER.warn("Exception processing webhook '{}' for '{}'", new Object[] { webhook.getUri(),
+                    clientId, orcid });
+            webhookDao.markAsFailed(orcid, uri);
         } finally {
             decreaseWebhook(clientId);
         }
@@ -241,27 +240,19 @@ public class WebhookManagerImpl implements WebhookManager {
      *            the URL where the post request will be sent
      * @return httpResponse the response from the URL after executing the
      *         request
+     * @throws URISyntaxException 
+     * @throws InterruptedException 
      * */
     private int doPost(String url) {
         if (!url.toLowerCase().startsWith("http")) {
             url = "http://" + url;
         }
-        HttpResponse response = null;
         try {
-            HttpPost httpPost = new HttpPost(url);
-            response = httpClient.execute(httpPost);
-            return response.getStatusLine().getStatusCode();
-        } catch (IllegalStateException | IOException e) {
-            LOGGER.error(String.format("Error processing webhook %s", url), e);
-        } finally {
-            if (response != null && response.getEntity() != null) {
-                try {
-                    EntityUtils.consume(response.getEntity());
-                } catch (IOException e) {
-                    LOGGER.error(String.format("Unable to release connection for webhook %s", url), e);
-                }
-            }
-        }
+            HttpResponse<String> response = httpRequestUtils.doPost(url);
+            return response.statusCode();
+        } catch (IOException | InterruptedException | URISyntaxException e) {
+            LOGGER.error(String.format("Error processing webhook %s", url));
+        } 
         return 0;
     }
 

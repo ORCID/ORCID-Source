@@ -15,4 +15,7 @@ public interface WebhookDao extends GenericDao<WebhookEntity, WebhookEntityPk> {
 
     long countWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes);
 
+    boolean markAsSent(String orcid, String uri);
+    
+    boolean markAsFailed(String orcid, String uri);
 }

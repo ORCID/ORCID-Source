@@ -89,12 +89,7 @@ public class MembersListController extends BaseController {
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> retrieveCommunityTypes() {
         return generateCommunityTypeMap();
-    }
-
-    @RequestMapping(value = "/members/badges.json", method = RequestMethod.GET)
-    public @ResponseBody Map<String, Badge> retrieveBadges() {
-        return salesForceManagerLegacy.retrieveBadgesMap();
-    }
+    }    
 
     @RequestMapping("/consortia")
     public ModelAndView consortiaList() {

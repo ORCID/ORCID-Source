@@ -1,5 +1,18 @@
 package org.orcid.api.common;
 
+import static org.orcid.core.api.OrcidApiConstants.AFFILIATIONS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.BIO_PATH;
+import static org.orcid.core.api.OrcidApiConstants.EXTERNAL_IDENTIFIER_PATH;
+import static org.orcid.core.api.OrcidApiConstants.FUNDING_PATH;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_DELETE_PATH;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_POST_PATH;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
+import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
+import static org.orcid.core.api.OrcidApiConstants.WEBHOOKS_PATH;
+import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
@@ -9,10 +22,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.orcid.api.common.OrcidApiService;
 import org.orcid.jaxb.model.message.OrcidMessage;
-
-import static org.orcid.core.api.OrcidApiConstants.*;
 
 /**
  * @author Declan Newman (declan) Date: 07/03/2012
