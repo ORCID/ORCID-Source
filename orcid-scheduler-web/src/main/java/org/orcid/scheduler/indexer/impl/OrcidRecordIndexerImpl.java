@@ -11,7 +11,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.listener.LastModifiedMessage;
-import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -20,8 +19,6 @@ import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
@@ -75,8 +72,6 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     
     @Resource
     private SlackManager slackManager;
-    
-    private int claimReminderAfterDays = 8;
     
     protected int claimWaitPeriodDays = 10;
     
@@ -139,7 +134,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                     lastSlackNotification = new Date();
                 }                
             }
-            LOG.info("processing batch of " + orcidsForIndexing.size());
+            LOG.info(status.name() + " - processing batch of " + orcidsForIndexing.size());
 
             for (String orcid : orcidsForIndexing) {
                 Date last = profileLastModifiedDaoReadOnly.retrieveLastModifiedDate(orcid);
@@ -171,7 +166,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                     LOG.error("Exception updating indexing status for record " + orcid, e);
                     // Send a slack notification every 'slackIntervalMinutes' minutes
                     if(lastSlackNotification == null || System.currentTimeMillis() > (lastSlackNotification.getTime() + (slackIntervalMinutes * 60 * 1000))) {
-                        String message = String.format("Unable to update indexing status for record: %s, this causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/orcid-devops/wiki/Troubleshooting#indexing-status", orcid);                
+                        String message = "Unable to update indexing status for record: " + orcid + ", error: " + e.getMessage() + "\nThis causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/orcid-devops/wiki/Troubleshooting#indexing-status";
                         slackManager.sendSystemAlert(message);
                         lastSlackNotification = new Date();
                     }                
