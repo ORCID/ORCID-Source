@@ -1067,6 +1067,8 @@ public class AdminController extends BaseController {
         data.setGroupIdDeactivated(false);
         data.setClientNotFound(false);
         data.setAlreadyMember(false);
+        data.setClientDeactivated(false);
+
 
 
         isAdmin(serverRequest, response);
@@ -1078,6 +1080,9 @@ public class AdminController extends BaseController {
             ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(data.getClientId());
             if (!ClientType.PUBLIC_CLIENT.name().equals(clientDetailsEntity.getClientType())) {
                 data.setAlreadyMember(true);
+            }
+            if (clientDetailsEntity.getDeactivatedDate() != null) {
+                data.setClientDeactivated(true);
             }
         }
 
@@ -1144,7 +1149,7 @@ public class AdminController extends BaseController {
         }
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
-        if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound()) {
+        if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound() || data.isClientDeactivated()) {
             data.setError("Invalid data");
             data.setSuccess(false);
             return data;
