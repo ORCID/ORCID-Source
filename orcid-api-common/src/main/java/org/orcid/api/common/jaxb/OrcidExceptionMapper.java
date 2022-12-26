@@ -15,6 +15,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException;
+import org.jbibtex.TokenMgrError;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
@@ -30,6 +32,7 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
+import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidNotificationException;
@@ -123,6 +126,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof OrcidDuplicatedElementException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidNotificationException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidNoBioException) {
+            logShortError(t, clientId);
+        } else if (t instanceof RemoteSolrException) {
+            logShortError(t, clientId);
+        } else if (t instanceof WebApplicationException) {
+            logShortError(t, clientId);
+        } else if (t instanceof TokenMgrError) {
             logShortError(t, clientId);
         } else {
             LOGGER.error("An exception has occured processing request from client " + clientId, t);

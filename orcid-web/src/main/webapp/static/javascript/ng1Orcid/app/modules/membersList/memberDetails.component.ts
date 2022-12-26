@@ -58,18 +58,6 @@ export class MemberDetailsComponent {
         );
     }
     
-    getBadges(): void {
-        this.membersListService.getBadges()
-            .subscribe(data => {
-                this.badges = data;
-                this.updateAwardedBadges();
-            },
-            error => {
-                //console.log('getBadges error', error);
-            } 
-        );
-    }
-    
     getCurrentMemberDetails(): void {
         var memberSlug = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
         var memberSlugStripped = memberSlug.replace(/<[^>]+>/g, '').trim();
@@ -111,7 +99,6 @@ export class MemberDetailsComponent {
     ngOnInit(): void {
         this.badgesDisabled = this.featuresService.isFeatureEnabled('DISABLE_BADGES');
         this.getCommunityTypes();
-        this.getBadges();
         this.getCurrentMemberDetails();   
     }
 
