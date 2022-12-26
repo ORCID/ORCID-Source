@@ -537,7 +537,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     private SchemaFactory createSchemaFactory() {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        schemaFactory.setResourceResolver(new OrcidResourceResolver(schemaFactory.getResourceResolver()));
+        schemaFactory.setResourceResolver(new OrcidResourceResolver());
         return schemaFactory;
     }
 
