@@ -27,7 +27,7 @@ import org.orcid.pojo.ProfileDeprecationRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 public class AdminManagerImpl implements AdminManager {
-    public static final String AUTHORIZE_DELEGATION_ACTION = "/manage/authorize-delegates";
+    public static final String AUTHORIZE_DELEGATION_ACTION = "/account/authorize-delegates";
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;        
