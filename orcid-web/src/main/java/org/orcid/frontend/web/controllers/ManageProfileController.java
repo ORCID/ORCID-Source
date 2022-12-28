@@ -79,7 +79,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  * @author Declan Newman (declan) Date: 22/02/2012
  */
 @Controller("manageProfileController")
-@RequestMapping(value = { "/account", "/manage" })
+@RequestMapping(value = { "/account" })
 public class ManageProfileController extends BaseWorkspaceController {
 
     private static final String IS_SELF = "isSelf";
@@ -973,15 +973,15 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);                    
                     givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);
-                    return new ModelAndView("redirect:/manage?delegate=" + trustedOrcid);
+                    return new ModelAndView("redirect:/account?delegate=" + trustedOrcid);
                 } else {
-                    return new ModelAndView("redirect:/manage?wrongToken=true");
+                    return new ModelAndView("redirect:/account?wrongToken=true");
                 }
             } else {
-                return new ModelAndView("redirect:/manage?invalidToken=true");
+                return new ModelAndView("redirect:/account?invalidToken=true");
             }
         } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
-            return new ModelAndView("redirect:/manage?invalidToken=true");
+            return new ModelAndView("redirect:/account?invalidToken=true");
         }
     }
     
