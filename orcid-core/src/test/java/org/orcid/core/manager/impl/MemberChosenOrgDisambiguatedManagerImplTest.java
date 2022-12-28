@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.salesforce.model.OrgId;
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
@@ -22,9 +21,6 @@ public class MemberChosenOrgDisambiguatedManagerImplTest {
     private MemberChosenOrgDisambiguatedDao mockMemberChosenOrgDisambiguatedDao;
     
     @Mock
-    private SalesForceManagerLegacy mockSalesForceManager;
-    
-    @Mock
     private OrgDisambiguatedDao mockOrgDisambiguatedDao;
 
     @InjectMocks
@@ -34,7 +30,6 @@ public class MemberChosenOrgDisambiguatedManagerImplTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         Mockito.when(mockMemberChosenOrgDisambiguatedDao.getAll()).thenReturn(getExistingChosenMemberChosenOrgDisambiguatedEntityList());
-        Mockito.when(mockSalesForceManager.retrieveAllOrgIds()).thenReturn(getUpdatedChosenOrgIdList());
         
         Mockito.when(mockMemberChosenOrgDisambiguatedDao.merge(Mockito.any(MemberChosenOrgDisambiguatedEntity.class))).thenReturn(null);
         Mockito.when(mockOrgDisambiguatedDao.merge(Mockito.any(OrgDisambiguatedEntity.class))).thenReturn(null);   
