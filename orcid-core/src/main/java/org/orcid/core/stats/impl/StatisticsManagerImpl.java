@@ -43,7 +43,12 @@ public class StatisticsManagerImpl implements StatisticsManager {
     @Override
     @Cacheable(value = "live-ids", key = "#locale")
     public String getFormattedLiveIds(Locale locale) {
-        Long liveIds = statisticsDao.getLatestLiveIds();
+        Long liveIds = 0L;
+        try {
+            liveIds = statisticsDao.getLatestLiveIds();        
+        } catch(Exception e) {
+            LOG.error("Unable to fetch latest live ids, returning 0 instead", e);
+        }
         NumberFormat nf = NumberFormat.getInstance(locale);
         return nf.format(liveIds);
     }
