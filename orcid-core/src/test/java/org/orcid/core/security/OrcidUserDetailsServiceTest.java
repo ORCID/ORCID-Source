@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidSecurityManager;
-import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common_v2.OrcidType;
@@ -47,9 +46,6 @@ public class OrcidUserDetailsServiceTest {
     @Mock
     private OrcidSecurityManager securityMgr;
 
-    @Mock
-    private SalesForceManagerLegacy salesForceManager;
-
     private static final String ORCID = "0000-0000-0000-0000";
     private static final String EMAIL = "email@test.orcid.org";
 
@@ -62,7 +58,6 @@ public class OrcidUserDetailsServiceTest {
         TargetProxyHelper.injectIntoProxy(service, "profileDao", profileDao);
         TargetProxyHelper.injectIntoProxy(service, "emailDao", emailDao);
         TargetProxyHelper.injectIntoProxy(service, "securityMgr", securityMgr);
-        TargetProxyHelper.injectIntoProxy(service, "salesForceManager", salesForceManager);
         TargetProxyHelper.injectIntoProxy(service, "emailManagerReadOnly", emailManagerReadOnly);
         
         when(profileDao.find(anyString())).thenReturn(null);
