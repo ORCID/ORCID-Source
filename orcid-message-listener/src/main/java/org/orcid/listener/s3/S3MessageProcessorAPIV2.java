@@ -15,6 +15,15 @@ import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_v2.Educations;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_v2.Employments;
+import org.orcid.jaxb.model.record.summary_v2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_v2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_v2.Fundings;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
+import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
+import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Activity;
 import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Record;
@@ -116,55 +125,25 @@ public class S3MessageProcessorAPIV2 {
 
         if (retryList.contains(ActivityType.EMPLOYMENTS)) {
             if(!processEmployments(orcid, as.getEmployments(), existingActivities.get(ActivityType.EMPLOYMENTS))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.EMPLOYMENTS);
+                api20RecordStatusManager.setActivityFail(orcid, ActivityType.EMPLOYMENTS);
             }
         }
 
         if (retryList.contains(ActivityType.FUNDINGS)) {
             if(!processFundings(orcid, as.getFundings(), existingActivities.get(ActivityType.FUNDINGS))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.FUNDINGS);
-            }
-        }
-
-        if (retryList.contains(ActivityType.INVITED_POSITIONS)) {
-            if(!processInvitedPositions(orcid, as.getInvitedPositions(), existingActivities.get(ActivityType.INVITED_POSITIONS))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.INVITED_POSITIONS);
-            }
-        }
-
-        if (retryList.contains(ActivityType.MEMBERSHIP)) {
-            if(!processMemberships(orcid, as.getMemberships(), existingActivities.get(ActivityType.MEMBERSHIP))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.MEMBERSHIP);
+                api20RecordStatusManager.setActivityFail(orcid, ActivityType.FUNDINGS);
             }
         }
 
         if (retryList.contains(ActivityType.PEER_REVIEWS)) {
             if(!processPeerReviews(orcid, as.getPeerReviews(), existingActivities.get(ActivityType.PEER_REVIEWS))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.PEER_REVIEWS);
-            }
-        }
-
-        if (retryList.contains(ActivityType.QUALIFICATIONS)) {
-            if(!processQualifications(orcid, as.getQualifications(), existingActivities.get(ActivityType.QUALIFICATIONS))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.QUALIFICATIONS);
-            }
-        }
-
-        if (retryList.contains(ActivityType.RESEARCH_RESOURCES)) {
-            if(!processResearchResources(orcid, as.getResearchResources(), existingActivities.get(ActivityType.RESEARCH_RESOURCES))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.RESEARCH_RESOURCES);
-            }
-        }
-
-        if (retryList.contains(ActivityType.SERVICES)) {
-            if(!processServices(orcid, as.getServices(), existingActivities.get(ActivityType.SERVICES))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.SERVICES);
+                api20RecordStatusManager.setActivityFail(orcid, ActivityType.PEER_REVIEWS);
             }
         }
 
         if (retryList.contains(ActivityType.WORKS)) {
             if(!processWorks(orcid, as.getWorks(), existingActivities.get(ActivityType.WORKS))) {
-                api30RecordStatusManager.setActivityFail(orcid, ActivityType.WORKS);
+                api20RecordStatusManager.setActivityFail(orcid, ActivityType.WORKS);
             }
         }
     }
@@ -179,7 +158,7 @@ public class S3MessageProcessorAPIV2 {
             // Index only if it is claimed
             if (record.getHistory() != null && record.getHistory().getClaimed() != null) {
                 if (record.getHistory().getClaimed() == true) {
-                    s3Manager.uploadV3RecordSummary(orcid, record);
+                    s3Manager.uploadV2RecordSummary(orcid, record);
                 } else {
                     LOG.warn(orcid + " is unclaimed, so, it will not be indexed");
                 }
@@ -231,28 +210,7 @@ public class S3MessageProcessorAPIV2 {
         } else if (record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == false) {
             LOG.warn(record.getOrcidIdentifier().getPath() + " is unclaimed, so, his activities would not be indexed");
         }
-    }
-
-    private boolean processDistinctions(String orcid, Distinctions distinctions, Map<String, S3ObjectSummary> existingElements) {
-        try {
-            LOG.info("Processing Distinctions for record " + orcid);
-            if (distinctions != null && !distinctions.retrieveGroups().isEmpty()) {
-                List<DistinctionSummary> all = new ArrayList<DistinctionSummary>();
-                distinctions.retrieveGroups().forEach(g -> {
-                    all.addAll(g.getActivities());
-                });
-                if(!processActivities(orcid, all, existingElements, ActivityType.DISTINCTIONS)) {
-                    return false;
-                }
-            } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
-            }
-        } catch (Exception e) {
-            LOG.info("Unable to process Distinctions for record " + orcid, e);
-            return false;
-        }
-        return true;
-    }
+    }   
 
     private boolean processEducations(String orcid, Educations educations, Map<String, S3ObjectSummary> existingElements) {
         try {
@@ -324,8 +282,8 @@ public class S3MessageProcessorAPIV2 {
             if (peerReviewsElement != null && !peerReviewsElement.getPeerReviewGroup().isEmpty()) {
                 List<PeerReviewSummary> peerReviews = new ArrayList<PeerReviewSummary>();
                 for (PeerReviewGroup g : peerReviewsElement.getPeerReviewGroup()) {
-                    for (PeerReviewDuplicateGroup dg : g.getPeerReviewGroup()) {
-                        peerReviews.addAll(dg.getPeerReviewSummary());
+                    for (PeerReviewSummary ps : g.getPeerReviewSummary()) {
+                        peerReviews.add(ps);
                     }
                 }
                 if(!processActivities(orcid, peerReviews, existingElements, ActivityType.PEER_REVIEWS)) {
