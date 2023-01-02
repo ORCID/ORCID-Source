@@ -30,6 +30,7 @@ public class SalesforceManagerImpl implements SalesforceManager {
     @Resource
     private SalesforceMicroserviceClient client;
 
+    @Override
     public List<Member> retrieveMembers() {
         List<Member> members = new ArrayList<Member>();
 

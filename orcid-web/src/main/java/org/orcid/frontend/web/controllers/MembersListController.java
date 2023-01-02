@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.ehcache.Cache;
 import org.orcid.core.manager.SalesforceManager;
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.core.salesforce.model.Member;
@@ -26,9 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class MembersListController extends BaseController {
-
-    @Resource(name = "salesForceConsortiumLeadIdsCache")
-    private Cache<String, List<String>> salesForceConsortiumLeadIdsCache;
     
     @Resource
     private SalesforceManager salesforceManager;
