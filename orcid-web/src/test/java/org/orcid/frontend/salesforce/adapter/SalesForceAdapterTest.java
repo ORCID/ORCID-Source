@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -12,8 +13,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
-import org.orcid.frontend.salesforce.adapter.SalesForceAdapter;
-import org.orcid.frontend.salesforce.adapter.SalesForceMapperFacadeFactory;
 import org.orcid.frontend.salesforce.model.Achievement;
 import org.orcid.frontend.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.model.Integration;
@@ -38,7 +37,7 @@ public class SalesForceAdapterTest {
 
     @Test
     public void testCreateMemberFromSalesForceRecord() throws IOException, JSONException {
-        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_members_list.json"));
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/frontend/salesforce/salesforce_members_list.json"), Charset.defaultCharset());
         JSONObject inputObject = new JSONObject(inputString);
         JSONArray records = inputObject.getJSONArray("records");
         Member member = salesForceAdapter.createMemberFromSalesForceRecord(records.getJSONObject(0));
@@ -58,7 +57,7 @@ public class SalesForceAdapterTest {
 
     @Test
     public void testCreateMemberFromSalesForceRecordWithNullValues() throws IOException, JSONException {
-        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_members_list.json"));
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/frontend/salesforce/salesforce_members_list.json"), Charset.defaultCharset());
         JSONObject inputObject = new JSONObject(inputString);
         JSONArray records = inputObject.getJSONArray("records");
         JSONObject record = records.getJSONObject(1);
@@ -79,7 +78,7 @@ public class SalesForceAdapterTest {
 
     @Test
     public void testCreateMembersListFromJson() throws IOException, JSONException {
-        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_members_list.json"));
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/frontend/salesforce/salesforce_members_list.json"), Charset.defaultCharset());
         JSONObject inputObject = new JSONObject(inputString);
         List<Member> membersList = salesForceAdapter.createMembersListFromJson(inputObject);
         assertEquals(4, membersList.size());
@@ -100,7 +99,7 @@ public class SalesForceAdapterTest {
     
     @Test
     public void testCreateIntegrationsListFromJson() throws IOException, JSONException {
-        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/core/salesforce/salesforce_integrations_list.json"));
+        String inputString = IOUtils.toString(getClass().getResourceAsStream("/org/orcid/frontend/salesforce/salesforce_integrations_list.json"), Charset.defaultCharset());
         JSONObject inputObject = new JSONObject(inputString);
         
         List<Integration> membersList = salesForceAdapter.createIntegrationsListFromJson(inputObject);
