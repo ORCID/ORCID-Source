@@ -1,4 +1,4 @@
-package org.orcid.core.salesforce.model;
+package org.orcid.frontend.salesforce.model;
 
 import java.io.IOException;
 

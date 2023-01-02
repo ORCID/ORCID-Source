@@ -1,4 +1,4 @@
-package org.orcid.core.salesforce.adapter;
+package org.orcid.frontend.salesforce.adapter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,17 +7,14 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.core.salesforce.model.Achievement;
-import org.orcid.core.salesforce.model.Badge;
-import org.orcid.core.salesforce.model.CommunityType;
-import org.orcid.core.salesforce.model.Contact;
-import org.orcid.core.salesforce.model.ContactRole;
-import org.orcid.core.salesforce.model.ContactRoleType;
-import org.orcid.core.salesforce.model.Integration;
-import org.orcid.core.salesforce.model.Member;
-import org.orcid.core.salesforce.model.Opportunity;
-import org.orcid.core.salesforce.model.OpportunityContactRole;
-import org.orcid.core.salesforce.model.OrgId;
+import org.orcid.frontend.salesforce.model.Achievement;
+import org.orcid.frontend.salesforce.model.CommunityType;
+import org.orcid.frontend.salesforce.model.Contact;
+import org.orcid.frontend.salesforce.model.ContactRole;
+import org.orcid.frontend.salesforce.model.ContactRoleType;
+import org.orcid.frontend.salesforce.model.Integration;
+import org.orcid.frontend.salesforce.model.Member;
+import org.orcid.frontend.salesforce.model.Opportunity;
 import org.springframework.beans.factory.FactoryBean;
 
 import ma.glasnost.orika.CustomConverter;
@@ -65,10 +62,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         registerOpportunityMap(mapperFactory);
         registerContactMap(mapperFactory);
         registerContactRoleMap(mapperFactory);
-        registerOpportunityContactRoleMap(mapperFactory);
-        registerOrgIdMap(mapperFactory);
         registerIntegrationMap(mapperFactory);
-        registerBadgesMap(mapperFactory);
         return mapperFactory.getMapperFacade();
     }
 
@@ -183,28 +177,6 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("roleType", "Member_Org_Role__c");
         classMap.register();
     }
-
-    private void registerOpportunityContactRoleMap(MapperFactory mapperFactory) {
-        ClassMapBuilder<OpportunityContactRole, JSONObject> classMap = mapperFactory.classMap(OpportunityContactRole.class, JSONObject.class).mapNulls(false)
-                .mapNullsInReverse(false);
-        classMap.field("id", "Id");
-        classMap.field("opportunityId", "OpportunityId");
-        classMap.field("contactId", "ContactId");
-        classMap.field("roleType", "Role");
-        classMap.register();
-    }
-    
-    private void registerOrgIdMap(MapperFactory mapperFactory) {
-        ClassMapBuilder<OrgId, JSONObject> classMap = mapperFactory.classMap(OrgId.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
-        classMap.field("id", "Id");
-        classMap.field("orgIdValue", "Name");
-        classMap.field("orgIdType", "Identifier_Type__c");
-        classMap.field("inactive", "Inactive__c");
-        classMap.field("primaryIdForType", "Primary_ID_for_type__c");
-        classMap.field("accountId", "Organization__c");
-        classMap.field("notes", "Notes__c");
-        classMap.register();
-    }
     
     private void registerIntegrationMap(MapperFactory mapperFactory) {
         ClassMapBuilder<Integration, JSONObject> classMap = mapperFactory.classMap(Integration.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
@@ -237,17 +209,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
             }
         });
         classMap.register();
-    }
-
-    private void registerBadgesMap(MapperFactory mapperFactory) {
-        ClassMapBuilder<Badge, JSONObject> classMap = mapperFactory.classMap(Badge.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
-        classMap.field("id", "Id");
-        classMap.field("name", "Name");
-        classMap.field("publicDescription", "Public_Description__c");
-        classMap.field("index", "Badge_Index__c");
-        classMap.field("indexAndName", "Badge_Index_Name__c");
-        classMap.register();
-    }
+    }    
 
     private static class JSONPropertyResolver extends IntrospectorPropertyResolver {
         protected Property getProperty(java.lang.reflect.Type type, String expr, boolean isNestedLookup, Property owner) throws MappingException {

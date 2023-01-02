@@ -1,4 +1,4 @@
-package org.orcid.core.salesforce.dao;
+package org.orcid.frontend.salesforce.client;
 
 import java.io.IOException;
 

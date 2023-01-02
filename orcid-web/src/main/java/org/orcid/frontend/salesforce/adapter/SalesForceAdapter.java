@@ -1,4 +1,4 @@
-package org.orcid.core.salesforce.adapter;
+package org.orcid.frontend.salesforce.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,9 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.core.salesforce.model.Integration;
-import org.orcid.core.salesforce.model.Member;
-import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.frontend.salesforce.model.Integration;
+import org.orcid.frontend.salesforce.model.Member;
+import org.orcid.frontend.salesforce.model.Opportunity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

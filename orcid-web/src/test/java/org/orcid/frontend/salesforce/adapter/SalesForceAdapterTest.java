@@ -1,4 +1,4 @@
-package org.orcid.core.salesforce.adapter;
+package org.orcid.frontend.salesforce.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,10 +12,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
-import org.orcid.core.salesforce.model.Achievement;
-import org.orcid.core.salesforce.model.CommunityType;
-import org.orcid.core.salesforce.model.Integration;
-import org.orcid.core.salesforce.model.Member;
+import org.orcid.frontend.salesforce.adapter.SalesForceAdapter;
+import org.orcid.frontend.salesforce.adapter.SalesForceMapperFacadeFactory;
+import org.orcid.frontend.salesforce.model.Achievement;
+import org.orcid.frontend.salesforce.model.CommunityType;
+import org.orcid.frontend.salesforce.model.Integration;
+import org.orcid.frontend.salesforce.model.Member;
 
 /**
  * 

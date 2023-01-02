@@ -1,4 +1,4 @@
-package org.orcid.core.manager.impl;
+package org.orcid.frontend.salesforce.manager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,15 +10,14 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.core.manager.SalesforceManager;
-import org.orcid.core.salesforce.adapter.SalesForceAdapter;
-import org.orcid.core.salesforce.dao.SalesforceMicroserviceClient;
-import org.orcid.core.salesforce.model.Integration;
-import org.orcid.core.salesforce.model.Member;
-import org.orcid.core.salesforce.model.MemberDetails;
-import org.orcid.core.salesforce.model.Opportunity;
-import org.orcid.core.salesforce.model.SlugUtils;
-import org.orcid.core.salesforce.model.SubMember;
+import org.orcid.frontend.salesforce.adapter.SalesForceAdapter;
+import org.orcid.frontend.salesforce.client.SalesforceMicroserviceClient;
+import org.orcid.frontend.salesforce.model.Integration;
+import org.orcid.frontend.salesforce.model.Member;
+import org.orcid.frontend.salesforce.model.MemberDetails;
+import org.orcid.frontend.salesforce.model.Opportunity;
+import org.orcid.frontend.salesforce.model.SlugUtils;
+import org.orcid.frontend.salesforce.model.SubMember;
 import org.springframework.stereotype.Component;
 
 @Component

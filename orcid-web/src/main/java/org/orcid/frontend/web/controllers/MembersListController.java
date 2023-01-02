@@ -6,10 +6,10 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.SalesforceManager;
-import org.orcid.core.salesforce.model.CommunityType;
-import org.orcid.core.salesforce.model.Member;
-import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.frontend.salesforce.manager.SalesforceManager;
+import org.orcid.frontend.salesforce.model.CommunityType;
+import org.orcid.frontend.salesforce.model.Member;
+import org.orcid.frontend.salesforce.model.MemberDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

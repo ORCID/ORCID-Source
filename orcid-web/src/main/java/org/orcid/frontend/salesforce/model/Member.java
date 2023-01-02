@@ -1,10 +1,10 @@
-package org.orcid.core.salesforce.model;
+package org.orcid.frontend.salesforce.model;
 
 import java.io.Serializable;
 import java.net.URL;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.salesforce.adapter.SalesForceAdapter;
+import org.orcid.frontend.salesforce.adapter.SalesForceAdapter;
 
 /**
  * 
