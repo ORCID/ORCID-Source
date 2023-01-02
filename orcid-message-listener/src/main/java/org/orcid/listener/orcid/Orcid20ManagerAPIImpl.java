@@ -3,7 +3,6 @@ package org.orcid.listener.orcid;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -28,10 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
 import jakarta.ws.rs.core.MediaType;
 
 @Component
@@ -45,24 +40,6 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
     protected final String baseUri;
     protected final String accessToken;
 
-    //loads on read.
-    private final LoadingCache<BaseMessage, RecordContainer> v2ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(100).build(
-            new CacheLoader<BaseMessage, RecordContainer>() {
-                public RecordContainer load(BaseMessage message){
-                    RecordContainer container = new RecordContainer();
-                    String url = baseUri + message.getOrcid() + "/record";
-                    JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Record.class, OrcidError.class);
-                    if (response.getStatus() != 200) {
-                        container.status = response.getStatus();
-                        container.error = response.getError();
-                        return container;
-                    }
-                    container.status = 200;
-                    container.record = response.getEntity();
-                    return container;
-                }
-              });
-    
     @Autowired
     public Orcid20ManagerAPIImpl(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri,
             @Value("${org.orcid.message-listener.api.read_public_access_token}") String accessToken) throws URISyntaxException {
@@ -71,24 +48,25 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
         this.accessToken = accessToken;
     }
 
-    /**uses the loading cache to fetch records.  blocks concurrent requests for same message until first has returned.
-     * 
+    /**
+     * Fetch public record data
      */
     @Override
     public Record fetchPublicRecord(BaseMessage message) throws LockedRecordException, DeprecatedRecordException, ExecutionException {
-        RecordContainer container = v2ThreadSharedCache.get(message);
-        if (container.status != 200) {
-            switch (container.status) {
+        String url = baseUri + message.getOrcid() + "/record";
+        JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Record.class, OrcidError.class);
+        if (response.getStatus() != 200) {
+            switch (response.getStatus()) {
             case 301:
-                throw new DeprecatedRecordException(container.error);
+                throw new DeprecatedRecordException(response.getError());
             case 409:
-                throw new LockedRecordException(container.error);
+                throw new LockedRecordException(response.getError());
             default:
-                LOG.error("Unable to fetch public record " + message.getOrcid() + " on API 2.0 HTTP error code: " + container.status);
-                throw new RuntimeException("Failed : HTTP error code : " + container.status);
+                LOG.error("Unable to fetch public record " + message.getOrcid() + " on API 2.0 HTTP error code: " + response.getStatus());
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }
-        return container.record;
+        return response.getEntity();
     }
     
     /* (non-Javadoc)
@@ -195,9 +173,4 @@ public class Orcid20ManagerAPIImpl implements Orcid20Manager {
         return response.getEntity();
     }
     
-    private final class RecordContainer {
-        public Record record;
-        public int status;
-        public OrcidError error;
-    }      
 }
