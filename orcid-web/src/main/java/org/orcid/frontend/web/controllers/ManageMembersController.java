@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -11,20 +10,16 @@ import javax.annotation.Resource;
 
 import org.orcid.core.exception.ClientAlreadyActiveException;
 import org.orcid.core.exception.ClientAlreadyDeactivatedException;
-import org.orcid.core.manager.SalesForceManagerLegacy;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
-import org.orcid.core.salesforce.model.Contact;
-import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.pojo.ClientActivationRequest;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
-import org.orcid.pojo.ajaxForm.MemberDetailsForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
@@ -63,9 +58,6 @@ public class ManageMembersController extends BaseController {
     @Resource
     private ClientsController groupAdministratorController;
     
-    @Resource
-    private SalesForceManagerLegacy salesForceManager;
-
     @RequestMapping
     public ModelAndView getManageMembersPage() {
         return new ModelAndView("/admin/manage_members");        
@@ -225,25 +217,6 @@ public class ManageMembersController extends BaseController {
         rUri.setActType(Text.valueOf(""));
         rUri.setGeoArea(Text.valueOf(""));
         return rUri;
-    }
-    
-    @RequestMapping(value = "/find-consortium.json", method = RequestMethod.GET)
-    public @ResponseBody MemberDetailsForm findConsortium(@RequestParam("id") String id) {
-        MemberDetails memberDetails = salesForceManager.retrieveFreshDetails(id);
-        MemberDetailsForm consortiumForm = MemberDetailsForm.fromMemberDetails(memberDetails);
-        List<Contact> contactsList = salesForceManager.retrieveFreshContactsByAccountId(id);
-        salesForceManager.addOrcidsToContacts(contactsList);
-        salesForceManager.addAccessInfoToContacts(contactsList, memberDetails.getMember().getId());
-        consortiumForm.setContactsList(contactsList);
-        consortiumForm.setRoleMap(generateSalesForceRoleMap());
-        return consortiumForm;
-    }
-    
-    @RequestMapping(value = "/update-consortium.json", method = RequestMethod.POST)
-    public @ResponseBody MemberDetailsForm updateConsortium(@RequestBody MemberDetailsForm consortium) {
-        consortium.setErrors(new ArrayList<String>());
-        salesForceManager.enableAccess(consortium.getAccountId(), consortium.getContactsList());
-        return consortium;
     }
     
     @RequestMapping(value = "/deactivate-client.json", method = RequestMethod.POST)

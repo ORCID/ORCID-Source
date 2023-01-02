@@ -22,7 +22,7 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors, org.orcid.core.salesforce" />
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -749,8 +749,6 @@
 	
 	<bean id="orgDisambiguatedManager" class="org.orcid.core.manager.impl.OrgDisambiguatedManagerImpl" />
 	
-	<bean id="memberChosenOrgDisambiguatedManager" class="org.orcid.core.manager.impl.MemberChosenOrgDisambiguatedManagerImpl" />
-	
 	<bean id="sourceManager" class="org.orcid.core.manager.impl.SourceManagerImpl" />
 	
 	<bean id="adminManager" class="org.orcid.core.manager.impl.AdminManagerImpl" />	
@@ -759,21 +757,7 @@
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
     
-    <bean id="salesForceAdapter" class="org.orcid.core.salesforce.adapter.SalesForceAdapter" />
-    
-    <bean id="salesForceManagerLegacy" class="org.orcid.core.manager.impl.SalesForceManagerImplLegacy">
-        <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
-    </bean>
-    
-    <bean id="salesForceConnectionEntityCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
-        <property name="cache" ref="salesForceConnectionCache" />
-        <property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
-        <property name="retriever">
-            <bean class="org.orcid.core.cache.impl.SalesForceConnectionEntityRetriever" />
-        </property>
-    </bean>
-
-	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
+    <bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 	
 	<bean id="userConnectionManager" class="org.orcid.core.manager.impl.UserConnectionManagerImpl" />
     
@@ -979,9 +963,6 @@
         <property name="mapperFacade" ref="clientMapperFacade" />
     </bean>
 
-    <bean id="salesForceMapperFacadeFactory" class="org.orcid.core.salesforce.adapter.SalesForceMapperFacadeFactory" />
-    <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
-           
     <bean id="invalidRecordDataChangeMapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getInvalidRecordDataChangeMapperFacade"/>
 	<bean id="jpaJaxbInvalidRecordDataChangeAdapter" class="org.orcid.core.adapter.impl.JpaJaxbInvalidRecordDataChangeAdapterImpl">
         <property name="mapperFacade" ref="invalidRecordDataChangeMapperFacade" />

@@ -40,7 +40,6 @@ import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.salesforce.model.ContactRoleType;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.utils.ReleaseNameUtils;
@@ -667,14 +666,6 @@ public class BaseController {
         if (termsOfUser.getValue() != true) {
             setError(termsOfUser, "validations.acceptTermsAndConditions");
         }
-    }
-    
-    protected Map<String, String> generateSalesForceRoleMap() {
-        Map<String, String> roleMap = new HashMap<>();
-        for(ContactRoleType roleType : ContactRoleType.values()){
-            roleMap.put(roleType.name(), getMessage(buildInternationalizationKey(ContactRoleType.class, roleType.name())));
-        }
-        return roleMap;
     }
     
     @ModelAttribute("FEATURE")
