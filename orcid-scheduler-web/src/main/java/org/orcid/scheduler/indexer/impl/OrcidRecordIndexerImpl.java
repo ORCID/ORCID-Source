@@ -6,9 +6,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.listener.LastModifiedMessage;
 import org.orcid.persistence.dao.ProfileDao;
@@ -19,7 +16,6 @@ import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
@@ -55,20 +51,8 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Resource
     private ProfileLastModifiedDao profileLastModifiedDaoReadOnly;
     
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
-    
-    @Resource
-    private TransactionTemplate transactionTemplate;
-    
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
-    
-    @Resource(name = "emailManagerReadOnlyV3")
-    private EmailManagerReadOnly emailManagerReadOnly;
     
     @Resource
     private SlackManager slackManager;
@@ -92,12 +76,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue() {
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX);
-    }
-
-    @Override
-    public void processProfilesWithFailedFlagAndAddToMessageQueue() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED);
-    }
+    }    
     
     @Override
     public void reindexRecordsOnSolr() {
@@ -105,8 +84,8 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     }
     
     @Override
-    public void reindexV3RecordsOnS3() {
-        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.S3_V3_REINDEX);
+    public void reindexRecordsOnS3() {
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.S3_UPDATE);
     }    
     
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
@@ -114,11 +93,11 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         List<String> orcidsForIndexing = new ArrayList<>();
         boolean connectionIssue = false;
         String solrQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSolrQueueName : updateSolrQueueName);
-        String v2Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV2RecordQueueName : updateV2RecordQueueName);;
+        String v2Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV2RecordQueueName : updateV2RecordQueueName);
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {            
             try {
-                if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_V3_REINDEX.equals(status)) {
+                if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_UPDATE.equals(status)) {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
                 } else {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, indexingDelay);
@@ -140,73 +119,41 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                 LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
                 
                 if(IndexingStatus.SOLR_UPDATE.equals(status)) {
-                    connectionIssue = indexSolr(mess, solrQueue, status);
-                } else if(IndexingStatus.S3_V3_REINDEX.equals(orcid)) {
-                    connectionIssue = indexV3Record(mess, v3Queue, status);
-                } else if(IndexingStatus.DUMP_UPDATE.equals(status)) {
-                    connectionIssue = indexSummaries(mess, v2SummaryQueue, status);
+                    connectionIssue = index(mess, solrQueue);
+                } else if(IndexingStatus.S3_UPDATE.equals(orcid)) {
+                    connectionIssue = index(mess, v3Queue);                
                     if(!connectionIssue)
-                        connectionIssue = indexActivities(mess, v2ActivitiesQueue, status);
-                    if(!connectionIssue)
-                        connectionIssue = indexV3Record(mess, v3Queue, status);
+                        connectionIssue = index(mess, v2Queue);
                 } else {
-                    connectionIssue = indexSolr(mess, solrQueue, status);
+                    connectionIssue = index(mess, solrQueue);
                     if(!connectionIssue)
-                        connectionIssue = indexSummaries(mess, v2SummaryQueue, status);
+                        connectionIssue = index(mess, v3Queue);
                     if(!connectionIssue)
-                        connectionIssue = indexActivities(mess, v2ActivitiesQueue, status);
-                    if(!connectionIssue)
-                        connectionIssue = indexV3Record(mess, v3Queue, status);
+                        connectionIssue = index(mess, v2Queue);
                 }                
                 
-                try {
-                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
-                } catch(Exception e) {
-                    LOG.error("Exception updating indexing status for record " + orcid, e);
-                    // Send a slack notification every 'slackIntervalMinutes' minutes
-                    if(lastSlackNotification == null || System.currentTimeMillis() > (lastSlackNotification.getTime() + (slackIntervalMinutes * 60 * 1000))) {
-                        String message = "Unable to update indexing status for record: " + orcid + ", error: " + e.getMessage() + "\nThis causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/orcid-devops/wiki/Troubleshooting#indexing-status";
-                        slackManager.sendSystemAlert(message);
-                        lastSlackNotification = new Date();
-                    }                
+                if(!connectionIssue) {
+                    try {
+                        profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                    } catch(Exception e) {
+                        LOG.error("Exception updating indexing status for record " + orcid, e);
+                        // Send a slack notification every 'slackIntervalMinutes' minutes
+                        if(lastSlackNotification == null || System.currentTimeMillis() > (lastSlackNotification.getTime() + (slackIntervalMinutes * 60 * 1000))) {
+                            String message = "Unable to update indexing status for record: " + orcid + ", error: " + e.getMessage() + "\nThis causes that SOLR and S3 might be falling behind. For troubleshooting please refere to https://github.com/ORCID/orcid-devops/wiki/Troubleshooting#indexing-status";
+                            slackManager.sendSystemAlert(message);
+                            lastSlackNotification = new Date();
+                        }                
+                    }
                 }
             }
         } while (!connectionIssue && !orcidsForIndexing.isEmpty());
     }
     
-    private boolean indexSolr(LastModifiedMessage mess, String solrQueue, IndexingStatus status) {        
-        // Send message to solr queue
-        if (!messaging.send(mess, solrQueue)) {
-            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + solrQueue);                    
+    private boolean index(LastModifiedMessage mess, String queue) {
+        if (!messaging.send(mess, queue)) {
+            LOG.warn("ABORTED - couldnt send messages to queue ' " + queue + "'");                    
             return true;
         }
         return false;
-    }
-    
-    private boolean indexSummaries(LastModifiedMessage mess, String summaryQueue, IndexingStatus status) {
-        // Send message to summary queue
-        if (!messaging.send(mess, summaryQueue)) {            
-            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + summaryQueue);                    
-            return true;
-        }
-        return false;
-    }
-    
-    private boolean indexActivities(LastModifiedMessage mess, String activitiesQueue, IndexingStatus status) {
-        // Send message to activities queue
-        if (!messaging.send(mess, activitiesQueue)) {
-            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + activitiesQueue);                    
-            return true;
-        }
-        return false;
-    }
-    
-    private boolean indexV3Record(LastModifiedMessage mess, String queueName, IndexingStatus status) {
-        // Send message to activities queue
-        if (!messaging.send(mess, queueName)) {
-            LOG.warn("ABORTED processing profiles with " + status.name() + " flag. sending to " + queueName);                    
-            return true;
-        }
-        return false;
-    }
+    }        
 }
