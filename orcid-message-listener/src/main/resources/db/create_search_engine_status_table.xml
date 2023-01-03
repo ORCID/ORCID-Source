@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE_TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="search_engine_record_status"/>
+            </not>            
+		</preConditions>
+		<createTable tableName="search_engine_record_status">
+            <column name="orcid" type="VARCHAR(19)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="search_engine_record_status_pkey" />
+			</column>						
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="solr_status" type="tinyint" />
+			<column name="solr_last_indexed" type="TIMESTAMP WITH TIME ZONE" />								
+        </createTable>		
+	</changeSet>		
+	
+	<changeSet id="ADD-RECORD-INDEX" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="search_engine_record_status_solr_index" tableName="search_engine_record_status" />
+			</not>
+		</preConditions>		
+		<sql>CREATE INDEX search_engine_record_status_orcid_index ON search_engine_record_status(orcid);</sql>
+		<sql>CREATE INDEX search_engine_record_status_solr_index ON search_engine_record_status(solr_status);</sql>
+	</changeSet>
+</databaseChangeLog>

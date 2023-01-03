@@ -15,8 +15,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
-import org.orcid.listener.persistence.managers.RecordStatusManager;
-import org.orcid.listener.persistence.util.AvailableBroker;
+import org.orcid.listener.persistence.managers.SearchEngineRecordStatusManager;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.RetryMessage;
@@ -41,7 +40,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
     private SolrIndexUpdater solrUpdater;
     
     @Resource
-    private RecordStatusManager recordStatusManager;
+    private SearchEngineRecordStatusManager manager;
 
     private OrcidRecordToSolrDocument recordConv;
 
@@ -75,7 +74,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
             // Remove deactivated records from SOLR index
             if (record.getHistory() != null && record.getHistory().getDeactivationDate() != null && record.getHistory().getDeactivationDate().getValue() != null) {
                 solrUpdater.processInvalidRecord(orcid);
-                recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+                manager.setSolrOk(orcid);
                 return;
             }        
             
@@ -93,19 +92,19 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
             }            
             
             solrUpdater.persist(recordConv.convert(record, researchResourcesList));
-            recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+            manager.setSolrOk(orcid);
         } catch(LockedRecordException lre) {
             LOG.error("Record " + orcid + " is locked");
             solrUpdater.processInvalidRecord(orcid);
-            recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+            manager.setSolrOk(orcid);
         } catch(DeprecatedRecordException dre) {
             LOG.error("Record " + orcid + " is deprecated");
             solrUpdater.processInvalidRecord(orcid);
-            recordStatusManager.markAsSent(orcid, AvailableBroker.SOLR);
+            manager.setSolrOk(orcid);
         } catch (Exception e){
             LOG.error("Unable to fetch record " + orcid + " for SOLR");
             LOG.error(e.getMessage(), e);
-            recordStatusManager.markAsFailed(orcid, AvailableBroker.SOLR);
+            manager.setSolrFail(orcid);
         }
     }
 }

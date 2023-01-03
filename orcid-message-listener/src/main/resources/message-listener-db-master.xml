@@ -23,5 +23,6 @@
     <include file="/db/reset_record_status_tables.xml" />
     <include file="/db/create_api_3_0_status_table.xml" />
     <include file="/db/create_api_2_0_status_table.xml" />
+    <include file="/db/create_search_engine_status_table.xml" />
         
 </databaseChangeLog>

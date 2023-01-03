@@ -35,7 +35,7 @@
 	<changeSet id="ADD-RECORD-INDEX" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<indexExists indexName="api_3_0_record_status" tableName="api_3_0_works_status_index" />
+				<indexExists indexName="api_2_0_works_status_index" tableName="api_2_0_record_status" />
 			</not>
 		</preConditions>		
 		<sql>CREATE INDEX api_2_0_summary_status_index ON api_2_0_record_status(summary_status);</sql>
