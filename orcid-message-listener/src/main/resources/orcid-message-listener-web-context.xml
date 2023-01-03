@@ -29,7 +29,7 @@
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
+		<property name="brokerURL" value="${org.orcid.messaging.brokerURL}" />
 		<property name="trustedPackages">
 			<list>
 				<value>java.lang</value>
@@ -77,16 +77,16 @@
 	<!-- listener container (routing info) -->
 	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
 		<!-- Solr indexing -->
-		<jms:listener ref="reindexSOLRListener" destination="${org.orcid.messaging.reindex.solr}" concurrency="${org.orcid.messaging.reindex.solr.concurrency:1}" />
-		<jms:listener ref="updateSOLRListener" destination="${org.orcid.messaging.updated.solr}" concurrency="${org.orcid.messaging.updated.solr.concurrency:1}" />
+		<jms:listener ref="reindexSOLRListener" destination="${org.orcid.messaging.reindex.solr:reindexSOLR}" concurrency="${org.orcid.messaging.reindex.solr.concurrency:1}" />
+		<jms:listener ref="updateSOLRListener" destination="${org.orcid.messaging.updated.solr:updateSOLR}" concurrency="${org.orcid.messaging.updated.solr.concurrency:1}" />
 				
 		<!-- V2 summaries and activities indexing -->
-		<jms:listener ref="updateV2Listener" destination="${org.orcid.messaging.updated.v2}" concurrency="${org.orcid.messaging.update.v2.concurrency:1}" />	
-		<jms:listener ref="reindexV2Listener" destination="${org.orcid.messaging.reindex.v2}" concurrency="${org.orcid.messaging.reindex.v2.concurrency:1}" />	
+		<jms:listener ref="updateV2Listener" destination="${org.orcid.messaging.updated.v2:updateV2Record}" concurrency="${org.orcid.messaging.update.v2.concurrency:1}" />	
+		<jms:listener ref="reindexV2Listener" destination="${org.orcid.messaging.reindex.v2:reindexV2Record}" concurrency="${org.orcid.messaging.reindex.v2.concurrency:1}" />	
 		
 		<!-- V3 summaries and activities indexing -->						
-		<jms:listener ref="updateV3Listener" destination="${org.orcid.messaging.updated.v3}" concurrency="${org.orcid.messaging.update.v3.concurrency:1}" />	
-		<jms:listener ref="reindexV3Listener" destination="${org.orcid.messaging.reindex.v3}" concurrency="${org.orcid.messaging.reindex.v3.concurrency:1}" />
+		<jms:listener ref="updateV3Listener" destination="${org.orcid.messaging.updated.v3:updateV3Record}" concurrency="${org.orcid.messaging.update.v3.concurrency:1}" />	
+		<jms:listener ref="reindexV3Listener" destination="${org.orcid.messaging.reindex.v3:reindexV3Record}" concurrency="${org.orcid.messaging.reindex.v3.concurrency:1}" />
 		
 		<!-- Orgs indexing -->
 		<jms:listener ref="indexDisambiguatedOrgsListener" destination="${org.orcid.messaging.index.disambiguated_orgs}" concurrency="${org.orcid.messaging.index.disambiguated_orgs.concurrency:1}" />	

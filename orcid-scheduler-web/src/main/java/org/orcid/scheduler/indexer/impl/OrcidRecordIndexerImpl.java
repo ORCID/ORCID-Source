@@ -28,24 +28,24 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     @Value("${org.orcid.persistence.messaging.indexing.batch.size:100}")
     private int INDEXING_BATCH_SIZE;
 
-    @Value("${org.orcid.persistence.messaging.updated.solr}")
-    private String updateSolrQueueName;
-    @Value("${org.orcid.persistence.messaging.updated.summary}")
-    private String updateSummaryQueueName;
-    @Value("${org.orcid.persistence.messaging.updated.activity}")
-    private String updateActivitiesQueueName;
-    @Value("${org.orcid.persistence.messaging.reindex.solr}")
-    private String reindexSolrQueueName;
-    @Value("${org.orcid.persistence.messaging.reindex.summary}")
-    private String reindexSummaryQueueName;
-    @Value("${org.orcid.persistence.messaging.reindex.activity}")
-    private String reindexActivitiesQueueName;
     @Value("${org.orcid.persistence.indexing.delay:5}")
     private Integer indexingDelay;
-    @Value("${org.orcid.persistence.messaging.updated.v3:updateV3Record}")
+    
+    @Value("${org.orcid.messaging.updated.solr:updateSOLR}")
+    private String updateSolrQueueName;
+    @Value("${org.orcid.messaging.reindex.solr:reindexSOLR}")
+    private String reindexSolrQueueName;
+    
+    @Value("${org.orcid.messaging.updated.v2:updateV2Record}")
+    private String updateV2RecordQueueName;
+    @Value("${org.orcid.messaging.reindex.v2:reindexV2Record}")
+    private String reindexV2RecordQueueName;
+    
+    @Value("${org.orcid.messaging.updated.v3:updateV3Record}")
     private String updateV3RecordQueueName;
-    @Value("${org.orcid.persistence.messaging.reindex.v3:reindexV3Record}")
+    @Value("${org.orcid.messaging.reindex.v3:reindexV3Record}")
     private String reindexV3RecordQueueName;
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -114,8 +114,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         List<String> orcidsForIndexing = new ArrayList<>();
         boolean connectionIssue = false;
         String solrQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSolrQueueName : updateSolrQueueName);
-        String v2SummaryQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSummaryQueueName : updateSummaryQueueName);
-        String v2ActivitiesQueue = (IndexingStatus.REINDEX.equals(status) ? reindexActivitiesQueueName : updateActivitiesQueueName);
+        String v2Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV2RecordQueueName : updateV2RecordQueueName);;
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
         do {            
             try {

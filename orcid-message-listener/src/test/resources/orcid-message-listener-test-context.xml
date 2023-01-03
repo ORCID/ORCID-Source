@@ -30,7 +30,7 @@
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<property name="brokerURL" value="${org.orcid.persistence.messaging.brokerURL}" />
+		<property name="brokerURL" value="${org.orcid.messaging.brokerURL}" />
 	</bean>
 	
 	<!-- message processors -->
