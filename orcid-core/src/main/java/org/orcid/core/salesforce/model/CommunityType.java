@@ -1,4 +1,4 @@
-package org.orcid.frontend.salesforce.model;
+package org.orcid.core.salesforce.model;
 
 /**
  * 

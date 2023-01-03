@@ -6,8 +6,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.manager.SalesforceManager;
-import org.orcid.frontend.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.model.Member;
 import org.orcid.frontend.salesforce.model.MemberDetails;
 import org.springframework.stereotype.Controller;

@@ -13,8 +13,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.model.Achievement;
-import org.orcid.frontend.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.model.Integration;
 import org.orcid.frontend.salesforce.model.Member;
 
