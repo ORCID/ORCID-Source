@@ -11,7 +11,6 @@
 	<task:scheduled-tasks scheduler="scheduler">   
 		<task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
 		<task:scheduled ref="statisticsManager" method="generateStatistics" cron="${org.orcid.scheduler.web.generateStats:0 0 0 * * FRI}"/>
-		<task:scheduled ref="memberChosenOrgDisambiguatedManager" method="refreshMemberChosenOrgs" cron="${org.orcid.scheduler.web.processMemberChosenOrgs:15 15 0-2 * * *}"/>
 		<task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
 		<task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>		       
 		<task:scheduled ref="cleanOldClientKeysCronJob" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />        
