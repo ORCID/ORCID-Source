@@ -469,7 +469,7 @@ public class S3MessageProcessorAPIV3Test {
         // Add one education more
         Record r = getRecord();
         DistinctionSummary s2 = new DistinctionSummary();
-        s2.setPutCode(1L);
+        s2.setPutCode(0L);
         s2.setLastModifiedDate(new LastModifiedDate(now));
         AffiliationGroup<DistinctionSummary> group = new AffiliationGroup<DistinctionSummary>();
         group.getActivities().add(s2);
@@ -491,7 +491,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.DISTINCTIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.DISTINCTIONS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.DISTINCTIONS)), any(Date.class), any());        
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -542,7 +542,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.DISTINCTIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.DISTINCTIONS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.DISTINCTIONS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -658,7 +658,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.EDUCATIONS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -774,7 +774,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.EMPLOYMENTS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -890,7 +890,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.FUNDINGS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.FUNDINGS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1004,7 +1004,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.INVITED_POSITIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.INVITED_POSITIONS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.INVITED_POSITIONS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1118,7 +1118,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.MEMBERSHIP), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.MEMBERSHIP), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.MEMBERSHIP)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1234,7 +1234,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.PEER_REVIEWS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1348,7 +1348,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.QUALIFICATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.QUALIFICATIONS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.QUALIFICATIONS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1462,7 +1462,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.RESEARCH_RESOURCES), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.RESEARCH_RESOURCES), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.RESEARCH_RESOURCES)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1576,7 +1576,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.SERVICES), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.SERVICES), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.SERVICES)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1690,7 +1690,7 @@ public class S3MessageProcessorAPIV3Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.WORKS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), not(eq(ActivityType.WORKS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
@@ -1730,17 +1730,17 @@ public class S3MessageProcessorAPIV3Test {
     
     private void verifyUploadIsCalledForSummaryAndActivities() throws AmazonServiceException, JsonProcessingException, AmazonClientException, JAXBException {
         verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.DISTINCTIONS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.INVITED_POSITIONS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.MEMBERSHIP), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.QUALIFICATIONS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.RESEARCH_RESOURCES), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.SERVICES), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.DISTINCTIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.INVITED_POSITIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.MEMBERSHIP), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.QUALIFICATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.RESEARCH_RESOURCES), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.SERVICES), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV3Activity(eq(orcid), eq("0"), eq(ActivityType.WORKS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(any(), any(), any());
     }
 

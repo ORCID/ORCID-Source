@@ -898,11 +898,11 @@ public class S3MessageProcessorAPIV2Test {
     
     private void verifyUploadIsCalledForSummaryAndActivities() throws AmazonServiceException, JsonProcessingException, AmazonClientException, JAXBException {
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("0"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("0"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("0"), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("0"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("0"), eq(ActivityType.WORKS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(any(), any(), any());
     }
 
