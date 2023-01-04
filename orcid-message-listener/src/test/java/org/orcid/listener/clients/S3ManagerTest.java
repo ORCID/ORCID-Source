@@ -28,6 +28,7 @@ import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3Manager;
 import org.orcid.listener.s3.S3MessagingService;
 import org.orcid.utils.jersey.marshaller.ORCIDMarshaller;
+import org.springframework.util.SerializationUtils;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
@@ -97,7 +98,9 @@ public class S3ManagerTest {
         Work w = new Work();
         w.setLastModifiedDate(lmd);
 
-        s3.uploadV2Activity(orcid, "1234", w);
+        byte []  wba = SerializationUtils.serialize(w);
+        
+        s3.uploadV2Activity(orcid, "1234", ActivityType.WORKS, now, wba);
         verify(s3MessagingService, times(1)).sendV2Item(eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),
                 eq(now), eq(true));
         verify(s3MessagingService, times(0)).sendV3Item(eq("0000-0000-0000-0000"), eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),
@@ -113,7 +116,9 @@ public class S3ManagerTest {
         org.orcid.jaxb.model.v3.release.record.Work w = new org.orcid.jaxb.model.v3.release.record.Work();
         w.setLastModifiedDate(lmd);
 
-        s3.uploadV3Activity(orcid, "1234", w);
+        byte []  wba = SerializationUtils.serialize(w);
+        
+        s3.uploadV2Activity(orcid, "1234", ActivityType.WORKS, now, wba);
         verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),
                 eq(now), eq(true));
         verify(s3MessagingService, times(1)).sendV3Item(eq("0000-0000-0000-0000"), eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),

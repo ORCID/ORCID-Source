@@ -35,8 +35,7 @@
 	
 	<!-- message processors -->
 	<bean id="solrMessageProcessor" class="org.orcid.listener.solr.SolrMessageProcessor"/>
-	<bean id="s3ActivitiesConsumer" class="org.orcid.listener.s3.S3ActivitiesConsumer"/>
-	<bean id="s3SummaryConsumer" class="org.orcid.listener.s3.S3SummaryConsumer"/>
+	<bean id="s3V2RecordConsumer" class="org.orcid.listener.s3.S3V2RecordConsumer"/>
 	<bean id="s3V3RecordConsumer" class="org.orcid.listener.s3.S3V3RecordConsumer"/>	
 		
 	<!-- message listeners -->
@@ -48,23 +47,15 @@
 		<constructor-arg ref="solrMessageProcessor" />
     </bean>
 
-    <bean id="reindexSummaryListener" class="org.orcid.listener.BaseListener">
-        <constructor-arg ref="s3SummaryConsumer" />
+    <bean id="updateV2Listener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="s3V2RecordConsumer" />
     </bean>
     
-    <bean id="updateSummaryListener" class="org.orcid.listener.BaseListener">
-		<constructor-arg ref="s3SummaryConsumer" />
-    </bean>
-    
-    <bean id="reindexActivitiesListener" class="org.orcid.listener.BaseListener">
-        <constructor-arg ref="s3ActivitiesConsumer" />
-    </bean>
-    
-    <bean id="updateActivitiesListener" class="org.orcid.listener.BaseListener">
-		<constructor-arg ref="s3ActivitiesConsumer" />
+    <bean id="reindexV2Listener" class="org.orcid.listener.BaseListener">
+        <constructor-arg ref="s3V2RecordConsumer" />
     </bean>
 
-	<bean id="updateV3Listener" class="org.orcid.listener.BaseListener">
+    <bean id="updateV3Listener" class="org.orcid.listener.BaseListener">
         <constructor-arg ref="s3V3RecordConsumer" />
     </bean>
     
@@ -74,14 +65,17 @@
 
 	<!-- listener container (routing info) -->
 	<jms:listener-container connection-factory="jmsConnectionFactory" acknowledge="transacted" destination-type="queue">
-		<jms:listener ref="reindexSOLRListener" destination="${org.orcid.persistence.messaging.reindex.solr}" concurrency="${org.orcid.persistence.messaging.reindex.solr.concurrency}" />
-		<jms:listener ref="updateSOLRListener" destination="${org.orcid.persistence.messaging.updated.solr}" concurrency="${org.orcid.persistence.messaging.updated.solr.concurrency}" />
-		<jms:listener ref="reindexSummaryListener" destination="${org.orcid.persistence.messaging.reindex.summary}" concurrency="${org.orcid.persistence.messaging.reindex.summary.concurrency}" />
-		<jms:listener ref="updateSummaryListener" destination="${org.orcid.persistence.messaging.updated.summary}" concurrency="${org.orcid.persistence.messaging.updated.summary.concurrency}" />
-		<jms:listener ref="reindexActivitiesListener" destination="${org.orcid.persistence.messaging.reindex.activity}" concurrency="${org.orcid.persistence.messaging.reindex.activity.concurrency}" />
-		<jms:listener ref="updateActivitiesListener" destination="${org.orcid.persistence.messaging.updated.activity}" concurrency="${org.orcid.persistence.messaging.updated.activity.concurrency}" />
-		<jms:listener ref="updateV3Listener" destination="${org.orcid.persistence.messaging.updated.v3}" concurrency="${org.orcid.persistence.messaging.update.v3.concurrency}" />	
-		<jms:listener ref="reindexV3Listener" destination="${org.orcid.persistence.messaging.reindex.v3}" concurrency="${org.orcid.persistence.messaging.reindex.v3.concurrency}" />
+		<!-- Solr indexing -->
+		<jms:listener ref="reindexSOLRListener" destination="${org.orcid.messaging.reindex.solr:reindexSOLR}" concurrency="${org.orcid.messaging.reindex.solr.concurrency:1}" />
+		<jms:listener ref="updateSOLRListener" destination="${org.orcid.messaging.updated.solr:updateSOLR}" concurrency="${org.orcid.messaging.updated.solr.concurrency:1}" />
+				
+		<!-- V2 summaries and activities indexing -->
+		<jms:listener ref="updateV2Listener" destination="${org.orcid.messaging.updated.v2:updateV2Record}" concurrency="${org.orcid.messaging.update.v2.concurrency:1}" />	
+		<jms:listener ref="reindexV2Listener" destination="${org.orcid.messaging.reindex.v2:reindexV2Record}" concurrency="${org.orcid.messaging.reindex.v2.concurrency:1}" />	
+		
+		<!-- V3 summaries and activities indexing -->						
+		<jms:listener ref="updateV3Listener" destination="${org.orcid.messaging.updated.v3:updateV3Record}" concurrency="${org.orcid.messaging.update.v3.concurrency:1}" />	
+		<jms:listener ref="reindexV3Listener" destination="${org.orcid.messaging.reindex.v3:reindexV3Record}" concurrency="${org.orcid.messaging.reindex.v3.concurrency:1}" />
 	</jms:listener-container>
 	
 	<!-- Jersey client -->

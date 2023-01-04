@@ -62,6 +62,7 @@
     <bean id="reindexV2Listener" class="org.orcid.listener.BaseListener">
         <constructor-arg ref="s3V2RecordConsumer" />
     </bean>
+    
 	<bean id="updateV3Listener" class="org.orcid.listener.BaseListener">
         <constructor-arg ref="s3V3RecordConsumer" />
     </bean>

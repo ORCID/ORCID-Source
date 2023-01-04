@@ -9,7 +9,9 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.listener.persistence.entities.Api20RecordStatusEntity;
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
+import org.orcid.listener.persistence.managers.Api20RecordStatusManager;
 import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3MessageProcessorAPIV3;
@@ -45,32 +47,25 @@ public class ResendV2FailedMessages {
     private String webhookUrl;
     
     @Resource
-    private Api30RecordStatusManager api30RecordStatusManager;
+    private Api20RecordStatusManager api20RecordStatusManager;
     
     @Resource
     S3MessageProcessorAPIV3 proc;
     
-    @Scheduled(cron = "${org.orcid.cron.v3.reindex-failed:0 0 7,13 * * *}")
+    @Scheduled(cron = "${org.orcid.cron.v3.reindex-failed:0 0 4,11 * * *}")
     public void resendFailedElements() {
-        LOGGER.info("Processing failed elements for V3.0");
+        LOGGER.info("Processing failed elements for V2.0");
         List<ActivityType> retryList = new ArrayList<ActivityType>();
         // Get elements that failed
-        List<Api30RecordStatusEntity> failedElements = api30RecordStatusManager.getFailedElements(BATCH_SIZE);
-        List<Api30RecordStatusEntity> elementsToNotify = new ArrayList<Api30RecordStatusEntity>();
+        List<Api20RecordStatusEntity> failedElements = api20RecordStatusManager.getFailedElements(BATCH_SIZE);
+        List<Api20RecordStatusEntity> elementsToNotify = new ArrayList<Api20RecordStatusEntity>();
         
-        for (Api30RecordStatusEntity element : failedElements) {
+        for (Api20RecordStatusEntity element : failedElements) {
             boolean summaryFailed = false;
             
             if(element.getSummaryStatus() > 0) {
                 summaryFailed = true;
                 if(element.getSummaryStatus() > maxFailuresBeforeNotify) {
-                    elementsToNotify.add(element);
-                }
-            }
-            
-            if(element.getDistinctionsStatus() > 0) {
-                retryList.add(ActivityType.DISTINCTIONS);
-                if(element.getDistinctionsStatus() > maxFailuresBeforeNotify) {
                     elementsToNotify.add(element);
                 }
             }
@@ -96,44 +91,9 @@ public class ResendV2FailedMessages {
                 }
             }
             
-            if(element.getInvitedPositionsStatus() > 0) {
-                retryList.add(ActivityType.INVITED_POSITIONS);
-                if(element.getInvitedPositionsStatus() > maxFailuresBeforeNotify) {
-                    elementsToNotify.add(element);
-                }
-            }
-            
-            if(element.getMembershipStatus() > 0) {
-                retryList.add(ActivityType.MEMBERSHIP);
-                if(element.getMembershipStatus() > maxFailuresBeforeNotify) {
-                    elementsToNotify.add(element);
-                }
-            }
-            
             if(element.getPeerReviewsStatus() > 0) {
                 retryList.add(ActivityType.PEER_REVIEWS);
                 if(element.getPeerReviewsStatus() > maxFailuresBeforeNotify) {
-                    elementsToNotify.add(element);
-                }
-            }
-            
-            if(element.getQualificationsStatus() > 0) {
-                retryList.add(ActivityType.QUALIFICATIONS);
-                if(element.getQualificationsStatus() > maxFailuresBeforeNotify) {
-                    elementsToNotify.add(element);
-                }
-            }
-            
-            if(element.getResearchResourcesStatus() > 0) {
-                retryList.add(ActivityType.RESEARCH_RESOURCES);
-                if(element.getResearchResourcesStatus() > maxFailuresBeforeNotify) {
-                    elementsToNotify.add(element);
-                }
-            }
-            
-            if(element.getServicesStatus() > 0) {
-                retryList.add(ActivityType.SERVICES);
-                if(element.getServicesStatus() > maxFailuresBeforeNotify) {
                     elementsToNotify.add(element);
                 }
             }
@@ -156,22 +116,17 @@ public class ResendV2FailedMessages {
         }
     }
     
-    private String buildAlertMessage(List<Api30RecordStatusEntity> elements) {
+    private String buildAlertMessage(List<Api20RecordStatusEntity> elements) {
         StringBuilder sb = new StringBuilder("The following records failed to be processed in the message listener: ");
         sb.append(System.lineSeparator() + System.lineSeparator());
 
-        for (Api30RecordStatusEntity element : elements) {
+        int counter = 0;
+        for (Api20RecordStatusEntity element : elements) {            
             sb.append("*ORCID: '").append(element.getId()).append("':* ");
 
             if(element.getSummaryStatus() > 0) {
                 sb.append(" (3.0 Summary: ");
                 sb.append(element.getSummaryStatus());
-                sb.append(" failures)");
-            }
-            
-            if(element.getDistinctionsStatus() > 0) {
-                sb.append(" (3.0 Distinctions: ");
-                sb.append(element.getDistinctionsStatus());
                 sb.append(" failures)");
             }
             
@@ -193,39 +148,9 @@ public class ResendV2FailedMessages {
                 sb.append(" failures)");
             }
             
-            if(element.getInvitedPositionsStatus() > 0) {
-                sb.append(" (3.0 Invited Positions: ");
-                sb.append(element.getInvitedPositionsStatus());
-                sb.append(" failures)");
-            }
-            
-            if(element.getMembershipStatus() > 0) {
-                sb.append(" (3.0 Memberships: ");
-                sb.append(element.getMembershipStatus());
-                sb.append(" failures)");
-            }
-            
             if(element.getPeerReviewsStatus() > 0) {
                 sb.append(" (3.0 Peer Reviews: ");
                 sb.append(element.getPeerReviewsStatus());
-                sb.append(" failures)");
-            }
-            
-            if(element.getQualificationsStatus() > 0) {
-                sb.append(" (3.0 Qualifications: ");
-                sb.append(element.getQualificationsStatus());
-                sb.append(" failures)");
-            }
-            
-            if(element.getResearchResourcesStatus() > 0) {
-                sb.append(" (3.0 Research Resources: ");
-                sb.append(element.getResearchResourcesStatus());
-                sb.append(" failures)");
-            }
-            
-            if(element.getServicesStatus() > 0) {
-                sb.append(" (3.0 Services: ");
-                sb.append(element.getServicesStatus());
                 sb.append(" failures)");
             }
             
@@ -236,6 +161,12 @@ public class ResendV2FailedMessages {
             }
             
             sb.append(System.lineSeparator());
+            
+            // Notify only the first 10 failures
+            counter += 1;
+            if(counter == 10) {
+                break;
+            }
         }
 
         return sb.toString();
