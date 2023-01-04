@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.error_v2.OrcidError;
@@ -44,8 +45,6 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
-import org.orcid.jaxb.model.record_v2.Activity;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;
@@ -63,9 +62,11 @@ import org.orcid.listener.s3.S3Manager;
 import org.orcid.listener.s3.S3MessageProcessorAPIV2;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.util.SerializationUtils;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -97,7 +98,7 @@ public class S3MessageProcessorAPIV2Test {
     private Api20RecordStatusManager mock_api20RecordStatusManager;
 
     @Before
-    public void before() throws LockedRecordException, DeprecatedRecordException, ExecutionException {
+    public void before() throws LockedRecordException, DeprecatedRecordException, ExecutionException, IOException, InterruptedException {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(processor, "isV3IndexerEnabled", true);
         TargetProxyHelper.injectIntoProxy(processor, "orcid20ApiClient", mock_orcid20ApiClient);
@@ -107,11 +108,11 @@ public class S3MessageProcessorAPIV2Test {
         // Setup mocks
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getEmptyMapOfActivities());
-        when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EDUCATION))).thenReturn(getEducation());
-        when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(0L), eq(AffiliationType.EMPLOYMENT))).thenReturn(getEmployment());
-        when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(0L))).thenReturn(getFunding());
-        when(mock_orcid20ApiClient.fetchPeerReview(eq(orcid), eq(0L))).thenReturn(getPeerReview());
-        when(mock_orcid20ApiClient.fetchWork(eq(orcid), eq(0L))).thenReturn(getWork());
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(0L), eq("education"))).thenReturn(getEducation());
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(0L), eq("employment"))).thenReturn(getEmployment());
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(0L), eq("funding"))).thenReturn(getFunding());
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(0L), eq("peer-review"))).thenReturn(getPeerReview());
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(0L), eq("work"))).thenReturn(getWork());
     }
 
     @Test
@@ -145,7 +146,7 @@ public class S3MessageProcessorAPIV2Test {
     @Test
     public void recordSummary_AmazonClientExceptionTest() throws Exception {
         doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2RecordSummary(eq(orcid), any(Record.class));
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(Activity.class));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
         try {
             process(orcid);
         } catch (Exception e) {
@@ -163,7 +164,7 @@ public class S3MessageProcessorAPIV2Test {
     @Test
     public void recordSummary_JAXBExceptionTest() throws Exception {
         doThrow(new JAXBException("error")).when(mock_s3Manager).uploadV2RecordSummary(eq(orcid), any(Record.class));
-        doThrow(new JAXBException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(Activity.class));
+        doThrow(new JAXBException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
         try {
             process(orcid);
         } catch (Exception e) {
@@ -197,7 +198,7 @@ public class S3MessageProcessorAPIV2Test {
 
     @Test
     public void activities_EducationsFailTest() throws Exception {
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getEducation()));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
 
         try {
             process(orcid);
@@ -217,7 +218,7 @@ public class S3MessageProcessorAPIV2Test {
 
     @Test
     public void activities_EmploymentsFailTest() throws Exception {
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getEmployment()));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
 
         try {
             process(orcid);
@@ -237,7 +238,7 @@ public class S3MessageProcessorAPIV2Test {
 
     @Test
     public void activities_FundingsFailTest() throws Exception {
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getFunding()));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
 
         try {
             process(orcid);
@@ -257,7 +258,7 @@ public class S3MessageProcessorAPIV2Test {
 
     @Test
     public void activities_PeerReviewsFailTest() throws Exception {
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getPeerReview()));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
 
         try {
             process(orcid);
@@ -277,7 +278,7 @@ public class S3MessageProcessorAPIV2Test {
 
     @Test
     public void activities_WorksFailTest() throws Exception {
-        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), eq(String.valueOf(0L)), eq((Activity) getWork()));
+        doThrow(new AmazonClientException("error")).when(mock_s3Manager).uploadV2Activity(eq(orcid), any(String.class), any(ActivityType.class), any(Date.class), any());
 
         try {
             process(orcid);
@@ -308,11 +309,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(), any(), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -333,9 +330,11 @@ public class S3MessageProcessorAPIV2Test {
         e2.setPutCode(1L);
         e2.setLastModifiedDate(new LastModifiedDate(now));
 
+        byte [] e2ba = SerializationUtils.serialize(e2);
+        
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-        when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(1L), eq(AffiliationType.EDUCATION))).thenReturn(e2);
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(1L), eq("education"))).thenReturn(e2ba);
 
         try {
             process(orcid);
@@ -344,11 +343,11 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS), any(Date.class), eq(e2ba));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), eq(ActivityType.WORKS), any(Date.class), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -371,12 +370,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
         verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), not(eq("1")), any(), any(Date.class), any());        
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -402,12 +397,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
-        verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.EDUCATIONS)), any(Date.class), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -433,12 +424,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
         verify(mock_s3Manager, times(1)).clearV2ActivitiesByType(eq(orcid), eq(ActivityType.EDUCATIONS));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());        
         verify(mock_s3Manager, times(0)).uploadV2OrcidError(any(), any());      
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -459,9 +446,11 @@ public class S3MessageProcessorAPIV2Test {
         e2.setPutCode(1L);
         e2.setLastModifiedDate(new LastModifiedDate(now));
 
+        byte [] e2ba = SerializationUtils.serialize(e2);
+        
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-        when(mock_orcid20ApiClient.fetchAffiliation(eq(orcid), eq(1L), eq(AffiliationType.EMPLOYMENT))).thenReturn(e2);
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(1L), eq("employment"))).thenReturn(e2ba);
 
         try {
             process(orcid);
@@ -470,11 +459,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.EMPLOYMENTS)), any(Date.class), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -497,11 +483,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS));
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -528,11 +510,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.EMPLOYMENTS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -559,11 +538,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).clearV2ActivitiesByType(eq(orcid), eq(ActivityType.EMPLOYMENTS));
         verify(mock_s3Manager, times(0)).uploadV2OrcidError(any(), any());      
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -587,9 +562,11 @@ public class S3MessageProcessorAPIV2Test {
         e2.setPutCode(1L);
         e2.setLastModifiedDate(new LastModifiedDate(now));
 
+        byte [] e2ba = SerializationUtils.serialize(e2);
+        
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-        when(mock_orcid20ApiClient.fetchFunding(eq(orcid), eq(1L))).thenReturn(e2);
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(1L), eq("funding"))).thenReturn(e2ba);
 
         try {
             process(orcid);
@@ -598,11 +575,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.FUNDINGS)), any(Date.class), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -625,11 +599,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS));
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -656,11 +626,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.FUNDINGS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -687,11 +654,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).clearV2ActivitiesByType(eq(orcid), eq(ActivityType.FUNDINGS));
         verify(mock_s3Manager, times(0)).uploadV2OrcidError(any(), any());      
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -715,9 +678,11 @@ public class S3MessageProcessorAPIV2Test {
         e2.setPutCode(1L);
         e2.setLastModifiedDate(new LastModifiedDate(now));
 
+        byte [] e2ba = SerializationUtils.serialize(e2);
+        
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-        when(mock_orcid20ApiClient.fetchPeerReview(eq(orcid), eq(1L))).thenReturn(e2);
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(1L), eq("peer-review"))).thenReturn(e2ba);
 
         try {
             process(orcid);
@@ -726,11 +691,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.PEER_REVIEWS)), any(Date.class), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -753,11 +715,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS));
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -784,11 +742,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.PEER_REVIEWS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -815,11 +770,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).clearV2ActivitiesByType(eq(orcid), eq(ActivityType.PEER_REVIEWS));
         verify(mock_s3Manager, times(0)).uploadV2OrcidError(any(), any());      
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -843,9 +794,11 @@ public class S3MessageProcessorAPIV2Test {
         e2.setPutCode(1L);
         e2.setLastModifiedDate(new LastModifiedDate(now));
 
+        byte [] e2ba = SerializationUtils.serialize(e2);
+        
         when(mock_orcid20ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-        when(mock_orcid20ApiClient.fetchWork(eq(orcid), eq(1L))).thenReturn(e2);
+        when(mock_orcid20ApiClient.fetchActivity(eq(orcid), eq(1L), eq("work"))).thenReturn(e2ba);
 
         try {
             process(orcid);
@@ -854,11 +807,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.WORKS)), any(Date.class), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
         verify(mock_api20RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
@@ -881,11 +831,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS));
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -912,11 +858,8 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS), any(Date.class), any());
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), not(eq(ActivityType.WORKS)), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(eq(orcid), any(), any());
         verifyErrorAndClearWasntCalled();
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -943,11 +886,7 @@ public class S3MessageProcessorAPIV2Test {
         }
 
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(0)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(0)).uploadV2Activity(any(), any(), any(), any(Date.class), any());
         verify(mock_s3Manager, times(1)).clearV2ActivitiesByType(eq(orcid), eq(ActivityType.WORKS));
         verify(mock_s3Manager, times(0)).uploadV2OrcidError(any(), any());      
         final ArgumentCaptor<ArrayList<ActivityType>> captor = ArgumentCaptor.forClass(ArrayList.class);
@@ -959,11 +898,11 @@ public class S3MessageProcessorAPIV2Test {
     
     private void verifyUploadIsCalledForSummaryAndActivities() throws AmazonServiceException, JsonProcessingException, AmazonClientException, JAXBException {
         verify(mock_s3Manager, times(1)).uploadV2RecordSummary(eq(orcid), any());
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Education.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Employment.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Funding.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(PeerReview.class));
-        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), any(), any(Work.class));
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).uploadV2Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS), any(Date.class), any());
         verify(mock_s3Manager, times(0)).removeV3Activity(any(), any(), any());
     }
 
@@ -1039,39 +978,39 @@ public class S3MessageProcessorAPIV2Test {
         return g;
     }
 
-    private Education getEducation() {
+    private byte [] getEducation() {
         Education e = new Education();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(now));
-        return e;
+        return SerializationUtils.serialize(e);
     }
 
-    private Employment getEmployment() {
+    private byte [] getEmployment() {
         Employment e = new Employment();
         e.setPutCode(0L);
         e.setLastModifiedDate(new LastModifiedDate(now));
-        return e;
+        return SerializationUtils.serialize(e);
     }
 
-    private Funding getFunding() {
+    private byte [] getFunding() {
         Funding f = new Funding();
         f.setPutCode(0L);
         f.setLastModifiedDate(new LastModifiedDate(now));
-        return f;
+        return SerializationUtils.serialize(f);
     }
 
-    private PeerReview getPeerReview() {
+    private byte [] getPeerReview() {
         PeerReview p = new PeerReview();
         p.setPutCode(0L);
         p.setLastModifiedDate(new LastModifiedDate(now));
-        return p;
+        return SerializationUtils.serialize(p);
     }
 
-    private Work getWork() {
+    private byte [] getWork() {
         Work w = new Work();
         w.setPutCode(0L);
         w.setLastModifiedDate(new LastModifiedDate(now));
-        return w;
+        return SerializationUtils.serialize(w);
     }
 
     private Map<ActivityType, Map<String, S3ObjectSummary>> getEmptyMapOfActivities() {
