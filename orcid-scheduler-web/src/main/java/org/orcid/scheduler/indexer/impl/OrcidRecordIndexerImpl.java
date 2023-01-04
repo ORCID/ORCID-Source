@@ -115,6 +115,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
             LOG.info(status.name() + " - processing batch of " + orcidsForIndexing.size());
 
             for (String orcid : orcidsForIndexing) {
+                // TODO: Why do we need this? We should be able to fetch orcid + last_modified in the previous query
                 Date last = profileLastModifiedDaoReadOnly.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
                 
