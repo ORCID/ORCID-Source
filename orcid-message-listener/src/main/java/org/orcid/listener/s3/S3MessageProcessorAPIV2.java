@@ -1,5 +1,6 @@
 package org.orcid.listener.s3;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
@@ -25,7 +25,6 @@ import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.Activity;
-import org.orcid.jaxb.model.record_v2.AffiliationType;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
@@ -33,6 +32,7 @@ import org.orcid.listener.orcid.Orcid20Manager;
 import org.orcid.listener.persistence.managers.Api20RecordStatusManager;
 import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
@@ -43,7 +43,6 @@ import org.springframework.stereotype.Component;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Core logic for listeners
@@ -338,45 +337,46 @@ public class S3MessageProcessorAPIV2 {
         return false;
     }
 
-    private void processActivity(String orcid, Activity x, Map<String, S3ObjectSummary> existingElements, ActivityType type)
-            throws AmazonClientException, AmazonServiceException, JsonProcessingException, JAXBException {
-        String putCodeString = String.valueOf(x.getPutCode());
-        Activity activity = null;
-        if (existingElements.containsKey(putCodeString)) {
-            S3ObjectSummary existingObject = existingElements.get(putCodeString);
-            Date elementLastModified = DateUtils.convertToDate(x.getLastModifiedDate().getValue());
+    private void processActivity(String orcid, Activity activityFromSummary, Map<String, S3ObjectSummary> existingElements, ActivityType type)
+            throws AmazonClientException, AmazonServiceException, JAXBException, IOException, InterruptedException {
+        Long summaryPutCode = activityFromSummary.getPutCode();
+        String summaryPutCodeString = String.valueOf(summaryPutCode);
+        Date summaryLastModified = DateUtils.convertToDate(activityFromSummary.getLastModifiedDate().getValue());
+        byte [] activity = null;
+        if (existingElements.containsKey(summaryPutCodeString)) {
+            S3ObjectSummary existingObject = existingElements.get(summaryPutCodeString);
             Date s3LastModified = existingObject.getLastModified();
-            if (elementLastModified.after(s3LastModified)) {
-                activity = fetchActivity(orcid, x.getPutCode(), type);
+            if (summaryLastModified.after(s3LastModified)) {
+                activity = fetchActivity(orcid, summaryPutCode, type);
             }
             // Remove it from the existingElements list since it was
             // already processed
-            existingElements.remove(putCodeString);
+            existingElements.remove(summaryPutCodeString);
         } else {
-            activity = fetchActivity(orcid, x.getPutCode(), type);
+            activity = fetchActivity(orcid, summaryPutCode, type);
         }
 
         if (activity != null) {
             // Upload it to S3
-            s3Manager.uploadV2Activity(orcid, putCodeString, activity);
+            s3Manager.uploadV2Activity(orcid, summaryPutCodeString, type, summaryLastModified, activity);
             // Remove it from the existingElements list means that the
             // elements was already processed
-            existingElements.remove(putCodeString);
+            existingElements.remove(summaryPutCodeString);
         }
     }
 
-    private Activity fetchActivity(String orcid, Long putCode, ActivityType type) {
+    private byte [] fetchActivity(String orcid, Long putCode, ActivityType type) throws IOException, InterruptedException {
         switch (type) {
         case EDUCATIONS:
-            return orcid20ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EDUCATION);
+            return orcid20ApiClient.fetchActivity(orcid, putCode, "education");
         case EMPLOYMENTS:
-            return orcid20ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EMPLOYMENT);
+            return orcid20ApiClient.fetchActivity(orcid, putCode, "employment");
         case FUNDINGS:
-            return orcid20ApiClient.fetchFunding(orcid, putCode);
+            return orcid20ApiClient.fetchActivity(orcid, putCode, "funding");
         case PEER_REVIEWS:
-            return orcid20ApiClient.fetchPeerReview(orcid, putCode);
+            return orcid20ApiClient.fetchActivity(orcid, putCode, "peer-review");
         case WORKS:
-            return orcid20ApiClient.fetchWork(orcid, putCode);
+            return orcid20ApiClient.fetchActivity(orcid, putCode, "work");
         default:
             throw new IllegalArgumentException("Invalid type! Imposible: " + type);
         }

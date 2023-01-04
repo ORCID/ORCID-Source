@@ -78,20 +78,16 @@ public class S3Manager {
         s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, false);
     }
 
-    public void uploadV2Activity(String orcid, String putCode, org.orcid.jaxb.model.record_v2.Activity activity) throws JAXBException, JsonProcessingException,AmazonClientException, AmazonServiceException {
-        Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
+    public void uploadV2Activity(String orcid, String putCode, ActivityType activityType, Date lastModified, byte [] activity) throws JAXBException, JsonProcessingException,AmazonClientException, AmazonServiceException {
         // Upload XML
-        String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
-        byte[] xmlElement = marshaller.toXML(activity);
-        s3MessagingService.sendV2Item(xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
+        String xmlElementName = getElementName(orcid, putCode, activityType);
+        s3MessagingService.sendV2Item(xmlElementName, activity, MediaType.APPLICATION_XML, lastModified, true);
     }
 
-    public void uploadV3Activity(String orcid, String putCode, org.orcid.jaxb.model.v3.release.record.Activity activity) throws JAXBException, JsonProcessingException, AmazonClientException, AmazonServiceException {
-        Date lastModified = DateUtils.convertToDate(activity.getLastModifiedDate().getValue());
+    public void uploadV3Activity(String orcid, String putCode, ActivityType activityType, Date lastModified, byte [] activity) throws JAXBException, JsonProcessingException, AmazonClientException, AmazonServiceException {
         // Upload XML
-        String xmlElementName = getElementName(orcid, putCode, ActivityType.inferFromActivity(activity));
-        byte[] xmlElement = marshaller.toXML(activity);
-        s3MessagingService.sendV3Item(orcid, xmlElementName, xmlElement, MediaType.APPLICATION_XML, lastModified, true);
+        String xmlElementName = getElementName(orcid, putCode, activityType);
+        s3MessagingService.sendV3Item(orcid, xmlElementName, activity, MediaType.APPLICATION_XML, lastModified, true);
     }
 
     public void uploadV2OrcidError(String orcid, org.orcid.jaxb.model.error_v2.OrcidError error) throws JAXBException, JsonProcessingException, AmazonClientException, AmazonServiceException {

@@ -1,5 +1,6 @@
 package org.orcid.listener.s3;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,10 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Activity;
-import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
@@ -47,6 +46,7 @@ import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
+import org.orcid.utils.DateUtils;
 import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
@@ -57,7 +57,6 @@ import org.springframework.stereotype.Component;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Core logic for listeners
@@ -530,57 +529,58 @@ public class S3MessageProcessorAPIV3 {
         return false;
     }
 
-    private void processActivity(String orcid, Activity x, Map<String, S3ObjectSummary> existingElements, ActivityType type)
-            throws AmazonClientException, AmazonServiceException, JsonProcessingException, JAXBException {
-        String putCodeString = String.valueOf(x.getPutCode());
-        Activity activity = null;
-        if (existingElements.containsKey(putCodeString)) {
-            S3ObjectSummary existingObject = existingElements.get(putCodeString);
-            Date elementLastModified = DateUtils.convertToDate(x.getLastModifiedDate().getValue());
+    private void processActivity(String orcid, Activity activityFromSummary, Map<String, S3ObjectSummary> existingElements, ActivityType type)
+            throws AmazonClientException, AmazonServiceException, JAXBException, IOException, InterruptedException {
+        Long summaryPutCode = activityFromSummary.getPutCode();
+        String summaryPutCodeString = String.valueOf(summaryPutCode);
+        Date summaryLastModified = DateUtils.convertToDate(activityFromSummary.getLastModifiedDate().getValue());
+        byte [] activity = null;
+        if (existingElements.containsKey(summaryPutCodeString)) {
+            S3ObjectSummary existingObject = existingElements.get(summaryPutCodeString);            
             Date s3LastModified = existingObject.getLastModified();
-            if (elementLastModified.after(s3LastModified)) {
-                activity = fetchActivity(orcid, x.getPutCode(), type);
+            if (summaryLastModified.after(s3LastModified)) {
+                activity = fetchActivity(orcid, summaryPutCode, type);
             }
             // Remove it from the existingElements list since it was
             // already processed
-            existingElements.remove(putCodeString);
+            existingElements.remove(summaryPutCodeString);
         } else {
-            activity = fetchActivity(orcid, x.getPutCode(), type);
+            activity = fetchActivity(orcid, summaryPutCode, type);
         }
 
         if (activity != null) {
             // Upload it to S3
-            s3Manager.uploadV3Activity(orcid, putCodeString, activity);
+            s3Manager.uploadV3Activity(orcid, summaryPutCodeString, type, summaryLastModified, activity);
             // Remove it from the existingElements list means that the
             // elements was already processed
-            existingElements.remove(putCodeString);
+            existingElements.remove(summaryPutCodeString);
         }
     }
 
-    private Activity fetchActivity(String orcid, Long putCode, ActivityType type) {
+    private byte[] fetchActivity(String orcid, Long putCode, ActivityType type) throws IOException, InterruptedException {
         switch (type) {
         case DISTINCTIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.DISTINCTION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "distinction");
         case EDUCATIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EDUCATION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "education");
         case EMPLOYMENTS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EMPLOYMENT);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "employment");
         case FUNDINGS:
-            return orcid30ApiClient.fetchFunding(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "funding");
         case INVITED_POSITIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.INVITED_POSITION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "invited-position");
         case MEMBERSHIP:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.MEMBERSHIP);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "membership");
         case PEER_REVIEWS:
-            return orcid30ApiClient.fetchPeerReview(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "peer-review");
         case QUALIFICATIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.QUALIFICATION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "qualification");
         case RESEARCH_RESOURCES:
-            return orcid30ApiClient.fetchResearchResource(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "research-resource");
         case SERVICES:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.SERVICE);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "service");
         case WORKS:
-            return orcid30ApiClient.fetchWork(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "work");
         default:
             throw new IllegalArgumentException("Invalid type! Imposible: " + type);
         }
