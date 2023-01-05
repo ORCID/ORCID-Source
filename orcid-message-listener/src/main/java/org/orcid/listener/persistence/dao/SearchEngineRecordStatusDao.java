@@ -56,7 +56,7 @@ public class SearchEngineRecordStatusDao {
     
     @Transactional
     public boolean setSolrOk(String orcid) throws IllegalArgumentException {        
-        Query query = entityManager.createNativeQuery("UPDATE search_engine_record_status SET solr_status = 0, summary_last_indexed = now() WHERE orcid = :orcid", SearchEngineRecordStatusEntity.class);
+        Query query = entityManager.createNativeQuery("UPDATE search_engine_record_status SET solr_status = 0, solr_last_indexed = now() WHERE orcid = :orcid", SearchEngineRecordStatusEntity.class);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
