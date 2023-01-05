@@ -14,7 +14,6 @@ import org.orcid.listener.persistence.managers.SearchEngineRecordStatusManager;
 import org.orcid.listener.solr.SolrMessageProcessor;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
-import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,8 +63,7 @@ public class ResendSolrFailedMessages {
                 }
             }
                                     
-            RetryMessage message = new RetryMessage(element.getId(), null);
-            proc.accept(message);
+            proc.accept(element.getId());
         }
 
         // Send summary

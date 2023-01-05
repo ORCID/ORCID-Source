@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutionException;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
-import org.orcid.utils.listener.BaseMessage;
 
 public interface Orcid20Manager {
 
@@ -19,7 +18,7 @@ public interface Orcid20Manager {
      * @return Record
      * @throws ExecutionException 
      */
-    Record fetchPublicRecord(BaseMessage message) throws LockedRecordException, DeprecatedRecordException, ExecutionException;
+    Record fetchPublicRecord(String orcid) throws LockedRecordException, DeprecatedRecordException, ExecutionException;
 
     public byte[] fetchActivity(String orcid, Long putCode, String endpoint) throws IOException, InterruptedException;     
 }

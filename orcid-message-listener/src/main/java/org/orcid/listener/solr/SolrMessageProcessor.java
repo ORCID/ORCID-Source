@@ -16,9 +16,7 @@ import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.SearchEngineRecordStatusManager;
-import org.orcid.utils.listener.BaseMessage;
 import org.orcid.utils.listener.LastModifiedMessage;
-import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
 
     Logger LOG = LoggerFactory.getLogger(SolrMessageProcessor.class);
 
-    @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
+    @Value("${org.orcid.messaging.solr_indexing.enabled}")
     private boolean isSolrIndexingEnabled;
     
     @Resource
@@ -46,7 +44,7 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
 
     @Autowired
     public SolrMessageProcessor(
-            @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}") boolean isSolrIndexingEnabled, 
+            @Value("${org.orcid.messaging.solr_indexing.enabled}") boolean isSolrIndexingEnabled, 
             @Value("${org.orcid.core.indexPublicProfile}") boolean indexPublicProfile) throws JAXBException{
         this.isSolrIndexingEnabled = isSolrIndexingEnabled;
         recordConv = new OrcidRecordToSolrDocument(indexPublicProfile);
@@ -54,22 +52,21 @@ public class SolrMessageProcessor implements Consumer<LastModifiedMessage> {
     
     @Override
     public void accept(LastModifiedMessage t) {
-        updateSolrIndex(t);
+        updateSolrIndex(t.getOrcid());
     }
     
-    public void accept(RetryMessage m) {
-        updateSolrIndex(m);
+    public void accept(String orcid) {
+        updateSolrIndex(orcid);
     }
-
-    private void updateSolrIndex(BaseMessage message) {
-        String orcid = message.getOrcid();
+ 
+    private void updateSolrIndex(String orcid) {
         LOG.info("Updating using Record " + orcid + " in SOLR index");
         if(!isSolrIndexingEnabled) {
             LOG.info("Solr indexing is disabled");
             return;
         }
         try{
-            Record record = orcid30ApiClient.fetchPublicRecord(message); 
+            Record record = orcid30ApiClient.fetchPublicRecord(orcid); 
             
             // Remove deactivated records from SOLR index
             if (record.getHistory() != null && record.getHistory().getDeactivationDate() != null && record.getHistory().getDeactivationDate().getValue() != null) {

@@ -15,7 +15,6 @@ import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.http.OrcidAPIClient;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
-import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +49,8 @@ public class Orcid20ManagerImpl implements Orcid20Manager {
      * Fetch public record data
      */
     @Override
-    public Record fetchPublicRecord(BaseMessage message) throws LockedRecordException, DeprecatedRecordException, ExecutionException {
-        String url = baseUri + message.getOrcid() + "/record";
+    public Record fetchPublicRecord(String orcid) throws LockedRecordException, DeprecatedRecordException, ExecutionException {
+        String url = baseUri + orcid + "/record";
         JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE, accessToken, Map.of("User-Agent","orcid/message-listener"), Record.class, OrcidError.class);
         if (response.getStatus() != 200) {
             switch (response.getStatus()) {
@@ -60,7 +59,7 @@ public class Orcid20ManagerImpl implements Orcid20Manager {
             case 409:
                 throw new LockedRecordException(response.getError());
             default:
-                LOG.error("Unable to fetch public record " + message.getOrcid() + " on API 2.0 HTTP error code: " + response.getStatus());
+                LOG.error("Unable to fetch public record " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
         }

@@ -18,7 +18,6 @@ import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.listener.http.OrcidAPIClient;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
-import org.orcid.utils.listener.BaseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +43,11 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     private OrcidAPIClient orcidAPIClient;
 
     // loads on read.
-    private final LoadingCache<BaseMessage, RecordContainer> v3ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(100)
-            .build(new CacheLoader<BaseMessage, RecordContainer>() {
-                public RecordContainer load(BaseMessage message) {
+    private final LoadingCache<String, RecordContainer> v3ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(100)
+            .build(new CacheLoader<String, RecordContainer>() {
+                public RecordContainer load(String orcid) {
                     RecordContainer container = new RecordContainer();
-                    String url = baseUri + message.getOrcid() + "/record";
+                    String url = baseUri + orcid + "/record";
                     JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE,
                             accessToken, Map.of("User-Agent", "orcid/message-listener"), Record.class, OrcidError.class);
                     if (response.getStatus() != 200) {
@@ -76,8 +75,8 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
      * 
      */
     @Override
-    public Record fetchPublicRecord(BaseMessage message) throws DeprecatedRecordException, LockedRecordException, ExecutionException {
-        RecordContainer container = v3ThreadSharedCache.get(message);
+    public Record fetchPublicRecord(String orcid) throws DeprecatedRecordException, LockedRecordException, ExecutionException {
+        RecordContainer container = v3ThreadSharedCache.get(orcid);
         if (container.status != 200) {
             switch (container.status) {
             case 301:
@@ -85,7 +84,7 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
             case 409:
                 throw new LockedRecordException(container.error);
             default:
-                LOG.error("Unable to fetch public record " + message.getOrcid() + " on API 3.0 HTTP error code: " + container.status);
+                LOG.error("Unable to fetch public record " + orcid + " on API 3.0 HTTP error code: " + container.status);
                 throw new RuntimeException("Failed : HTTP error code : " + container.status);
             }
         }

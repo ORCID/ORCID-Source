@@ -1750,13 +1750,7 @@ public class S3MessageProcessorAPIV3Test {
     }
 
     private void process(String orcid) throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
-        String date = String.valueOf(System.currentTimeMillis());
-        map.put(MessageConstants.ORCID.value, orcid);
-        map.put(MessageConstants.DATE.value, date);
-        map.put(MessageConstants.TYPE.value, MessageConstants.TYPE_LAST_UPDATED.value);
-        LastModifiedMessage message = new LastModifiedMessage(map);
-        processor.update(message);
+        processor.update(orcid);
     }
 
     private Record getRecord() {

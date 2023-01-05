@@ -15,7 +15,6 @@ import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3MessageProcessorAPIV3;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
-import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,8 +102,7 @@ public class ResendV2FailedMessages {
                 }
             }
             
-            RetryMessage message = new RetryMessage(element.getId(), summaryFailed);
-            proc.retry(message, summaryFailed, retryList);
+            proc.retry(element.getId(), summaryFailed, retryList);
         }
 
         // Send summary

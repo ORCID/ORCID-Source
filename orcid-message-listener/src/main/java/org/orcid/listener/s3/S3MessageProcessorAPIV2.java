@@ -33,8 +33,6 @@ import org.orcid.listener.persistence.managers.Api20RecordStatusManager;
 import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.utils.DateUtils;
-import org.orcid.utils.listener.BaseMessage;
-import org.orcid.utils.listener.RetryMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,8 +56,8 @@ public class S3MessageProcessorAPIV2 {
 
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV2.class);
 
-    @Value("${org.orcid.message-listener.index.v3:false}")
-    private boolean isV3IndexerEnabled;
+    @Value("${org.orcid.messaging.v2_indexing.enabled:false}")
+    private boolean isV2IndexerEnabled;
     
     @Resource
     private Orcid20Manager orcid20ApiClient;
@@ -68,14 +66,13 @@ public class S3MessageProcessorAPIV2 {
     @Resource
     private Api20RecordStatusManager api20RecordStatusManager;
 
-    public void update(BaseMessage message) {
-        String orcid = message.getOrcid();
+    public void update(String orcid) {
         Boolean isSummaryOk = false;
         List<ActivityType> failedElements = new ArrayList<ActivityType>();
-        if (isV3IndexerEnabled) {
+        if (isV2IndexerEnabled) {
             Record record = null;
             try {
-                record = fetchPublicRecordAndClearIfNeeded(message);
+                record = fetchPublicRecordAndClearIfNeeded(orcid);
             } catch (Exception e) {
                 LOG.error("Unable to fetch public record for " + orcid, e);
                 api20RecordStatusManager.allFailed(orcid);
@@ -89,15 +86,13 @@ public class S3MessageProcessorAPIV2 {
         }
     }
 
-    public void retry(RetryMessage message, Boolean retrySummary, List<ActivityType> retryList) {
-        if(!isV3IndexerEnabled) {
+    public void retry(String orcid, Boolean retrySummary, List<ActivityType> retryList) {
+        if(!isV2IndexerEnabled) {
             return;
         }
-        String orcid = message.getOrcid();
-        
         Record record = null;
         try {
-            record = fetchPublicRecordAndClearIfNeeded(message);
+            record = fetchPublicRecordAndClearIfNeeded(orcid);
         } catch (Exception e) {
             LOG.error("Unable to fetch public record for " + orcid, e);
             api20RecordStatusManager.allFailed(orcid);
@@ -148,7 +143,7 @@ public class S3MessageProcessorAPIV2 {
     }
 
     private boolean updateSummary(Record record) {
-        if (record == null || !isV3IndexerEnabled) {
+        if (record == null || !isV2IndexerEnabled) {
             return false;
         }
         String orcid = record.getOrcidIdentifier().getPath();
@@ -180,7 +175,7 @@ public class S3MessageProcessorAPIV2 {
      * 
      */
     private void updateActivities(Record record, List<ActivityType> failedElements) {
-        if (record == null || !isV3IndexerEnabled) {
+        if (record == null || !isV2IndexerEnabled) {
             return;
         }
 
@@ -395,10 +390,9 @@ public class S3MessageProcessorAPIV2 {
      *             be cleared in S3 or, when the record ca't be fetched from the
      *             ORCID API
      */
-    private Record fetchPublicRecordAndClearIfNeeded(BaseMessage message) throws AmazonClientException, AmazonServiceException, Exception {
-        String orcid = message.getOrcid();
+    private Record fetchPublicRecordAndClearIfNeeded(String orcid) throws AmazonClientException, AmazonServiceException, Exception {
         try {
-            return orcid20ApiClient.fetchPublicRecord(message);
+            return orcid20ApiClient.fetchPublicRecord(orcid);
         } catch (LockedRecordException | DeprecatedRecordException e) {
             // Remove all activities from this record
             s3Manager.clearV2Activities(orcid);

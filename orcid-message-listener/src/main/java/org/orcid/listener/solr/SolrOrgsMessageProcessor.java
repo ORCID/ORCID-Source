@@ -29,7 +29,7 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
 
     private static final Integer MAX_RETRY_COUNT = 3;
 
-    @Value("${org.orcid.persistence.messaging.solr_org_indexing.enabled:true}")
+    @Value("${org.orcid.messaging.solr_org_indexing.enabled:true}")
     private boolean isSolrOrgsIndexingEnabled;
 
     @Resource
