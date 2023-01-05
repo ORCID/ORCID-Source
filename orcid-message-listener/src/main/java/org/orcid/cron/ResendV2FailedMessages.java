@@ -10,9 +10,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.listener.persistence.entities.Api20RecordStatusEntity;
-import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
 import org.orcid.listener.persistence.managers.Api20RecordStatusManager;
-import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.util.ActivityType;
 import org.orcid.listener.s3.S3MessageProcessorAPIV3;
 import org.orcid.utils.jersey.JerseyClientHelper;
@@ -50,9 +48,9 @@ public class ResendV2FailedMessages {
     private Api20RecordStatusManager api20RecordStatusManager;
     
     @Resource
-    S3MessageProcessorAPIV3 proc;
+    private S3MessageProcessorAPIV3 proc;
     
-    @Scheduled(cron = "${org.orcid.cron.v3.reindex-failed:0 0 4,11 * * *}")
+    @Scheduled(cron = "${org.orcid.cron.v2.reindex-failed:0 0 4,11 * * *}")
     public void resendFailedElements() {
         LOGGER.info("Processing failed elements for V2.0");
         List<ActivityType> retryList = new ArrayList<ActivityType>();
