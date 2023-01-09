@@ -9,7 +9,7 @@
        		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
 
     <import resource="classpath*:orcid-core-context.xml"/>
-    <import resource="classpath*:statistics-core-context.xml"/>
+    <import resource="classpath*:statistics-persistence-context.xml" />
 
     <context:component-scan
 		base-package="org.orcid.scheduler.loader" />
@@ -89,5 +89,7 @@
     <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
 
     <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
+
+	<bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
 
 </beans>

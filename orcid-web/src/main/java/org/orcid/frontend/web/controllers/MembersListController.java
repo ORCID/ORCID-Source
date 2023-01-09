@@ -1,22 +1,15 @@
 package org.orcid.frontend.web.controllers;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.ehcache.Cache;
-import org.orcid.core.manager.SalesForceManagerLegacy;
-import org.orcid.core.manager.SalesforceManager;
-import org.orcid.core.salesforce.model.Badge;
 import org.orcid.core.salesforce.model.CommunityType;
-import org.orcid.core.salesforce.model.Member;
-import org.orcid.core.salesforce.model.MemberDetails;
-import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.frontend.salesforce.manager.SalesforceManager;
+import org.orcid.frontend.salesforce.model.Member;
+import org.orcid.frontend.salesforce.model.MemberDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,12 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class MembersListController extends BaseController {
-
-    @Resource(name = "salesForceManagerLegacy")
-    private SalesForceManagerLegacy salesForceManagerLegacy;
-    
-    @Resource(name = "salesForceConsortiumLeadIdsCache")
-    private Cache<String, List<String>> salesForceConsortiumLeadIdsCache;
     
     @Resource
     private SalesforceManager salesforceManager;
@@ -61,40 +48,19 @@ public class MembersListController extends BaseController {
     }
 
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
-    public @ResponseBody List<Member> retrieveMembers() {
-        List<Member> members = new ArrayList<>();
-        if (Features.SALESFORCE_MICROSERVICE.isActive()) {
-            members = salesforceManager.retrieveMembers();
-        } else {
-            List<String> consortiumLeadIds = salesForceConsortiumLeadIdsCache.get("");
-            List<Member> allMembers = salesForceManagerLegacy.retrieveMembers();
-
-            members = allMembers.stream().filter(e -> ((!consortiumLeadIds.contains(e.getRecordTypeId())
-                    || (consortiumLeadIds.contains(e.getRecordTypeId()) && Boolean.TRUE.equals(e.getIsConsortiaMember()))))).collect(Collectors.toList());
-        }
-        return members;
+    public @ResponseBody List<Member> retrieveMembers() {        
+        return salesforceManager.retrieveMembers();
     }
 
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
-    public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
-        MemberDetails details;
-        if (Features.SALESFORCE_MICROSERVICE.isActive()) {
-            details = salesforceManager.retrieveMemberDetails(memberSlug);
-        } else {
-            details = salesForceManagerLegacy.retrieveDetailsBySlug(memberSlug, true);
-        }
-        return details;
+    public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {        
+        return salesforceManager.retrieveMemberDetails(memberSlug);
     }
 
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> retrieveCommunityTypes() {
         return generateCommunityTypeMap();
-    }
-
-    @RequestMapping(value = "/members/badges.json", method = RequestMethod.GET)
-    public @ResponseBody Map<String, Badge> retrieveBadges() {
-        return salesForceManagerLegacy.retrieveBadgesMap();
-    }
+    }    
 
     @RequestMapping("/consortia")
     public ModelAndView consortiaList() {
@@ -106,14 +72,8 @@ public class MembersListController extends BaseController {
     }
 
     @RequestMapping(value = "/consortia/consortia.json", method = RequestMethod.GET)
-    public @ResponseBody List<Member> retrieveConsortia() {
-        List<Member> consortiaListMembers;
-        if (Features.SALESFORCE_MICROSERVICE.isActive()) {
-            consortiaListMembers = salesforceManager.retrieveConsortiaList();            
-        } else {
-            consortiaListMembers = salesForceManagerLegacy.retrieveConsortia();    
-        }
-        return consortiaListMembers;
+    public @ResponseBody List<Member> retrieveConsortia() {        
+        return salesforceManager.retrieveConsortiaList();
     }
 
     protected Map<String, String> generateCommunityTypeMap() {

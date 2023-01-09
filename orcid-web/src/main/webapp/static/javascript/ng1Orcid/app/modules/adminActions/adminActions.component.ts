@@ -724,7 +724,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         );
     };
 
-    processClientMove(): void {        
+    processClientMove(): void {      
         this.adminActionsService.validateClientConversion(this.moveClient)
         .pipe(    
             takeUntil(this.ngUnsubscribe)
@@ -732,7 +732,7 @@ export class AdminActionsComponent implements AfterViewInit, OnDestroy, OnInit {
         .subscribe(
             data => {
                 this.moveClient = data;
-                if (!this.moveClient.clientNotFound && !this.moveClient.groupIdNotFound && !this.moveClient.groupIdDeactivated && this.moveClient.alreadyMember) {
+                if (!this.moveClient.clientNotFound && !this.moveClient.groupIdNotFound && !this.moveClient.groupIdDeactivated && !this.moveClient.clientDeactivated && this.moveClient.alreadyMember) {
                     this.modalService.notifyOther({convertClient:this.moveClient});
                     this.modalService.notifyOther({
                         action: "open",

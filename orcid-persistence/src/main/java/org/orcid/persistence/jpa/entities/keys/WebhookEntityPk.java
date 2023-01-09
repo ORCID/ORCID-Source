@@ -2,8 +2,6 @@ package org.orcid.persistence.jpa.entities.keys;
 
 import java.io.Serializable;
 
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-
 /**
  * @author Will Simpson
  */

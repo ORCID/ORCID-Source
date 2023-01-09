@@ -83,11 +83,6 @@
         <ehcache:heap unit="entries">2000</ehcache:heap>
     </ehcache:cache>
     
-    <ehcache:cache alias="statistics" uses-template="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:heap unit="entries">100</ehcache:heap>
-    </ehcache:cache>
-    
     <ehcache:cache alias="staticContent" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:heap unit="entries">100</ehcache:heap>
@@ -163,14 +158,14 @@
         </ehcache:resources>
     </ehcache:cache>
     
-    <ehcache:cache alias="statistics-key" uses-template="defaultTemplate">
+    <ehcache:cache alias="live-ids" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:expiry>
-            <ehcache:tti unit="minutes">30</ehcache:tti>
+            <ehcache:tti unit="minutes">360</ehcache:tti>
         </ehcache:expiry>
         <ehcache:resources>
-            <ehcache:heap unit="entries">1000</ehcache:heap>
-            <ehcache:disk unit="MB" persistent="false">8</ehcache:disk>
+            <ehcache:heap unit="entries">25</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">2</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
     

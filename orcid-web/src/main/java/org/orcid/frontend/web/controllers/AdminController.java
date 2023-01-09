@@ -1063,45 +1063,54 @@ public class AdminController extends BaseController {
         if (!Features.UPGRADE_PUBLIC_CLIENT.isActive() && !Features.MOVE_CLIENT.isActive()) {
             throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
         }
+        data.setGroupIdNotFound(false);
+        data.setGroupIdDeactivated(false);
+        data.setClientNotFound(false);
+        data.setAlreadyMember(false);
+        data.setClientDeactivated(false);
+
+
 
         isAdmin(serverRequest, response);
         if (PojoUtil.isEmpty(data.getClientId()) || !clientDetailsManager.exists(data.getClientId())) {
             data.setClientNotFound(true);
-            return data;
         }
-        data.setClientNotFound(false);
 
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(data.getClientId());
-        if (!ClientType.PUBLIC_CLIENT.name().equals(clientDetailsEntity.getClientType())) {
-            data.setAlreadyMember(true);
-            return data;
+        if (!data.isClientNotFound()) {
+            ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(data.getClientId());
+            if (!ClientType.PUBLIC_CLIENT.name().equals(clientDetailsEntity.getClientType())) {
+                data.setAlreadyMember(true);
+            }
+            if (clientDetailsEntity.getDeactivatedDate() != null) {
+                data.setClientDeactivated(true);
+            }
         }
-        data.setAlreadyMember(false);
 
         if (PojoUtil.isEmpty(data.getGroupId())) {
             data.setGroupIdNotFound(true);
-            return data;
         }
 
-        try {
-            ProfileEntity group = profileEntityCacheManager.retrieve(data.getGroupId());
-            if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
+        if (!data.isGroupIdNotFound()) {
+            try {
+                ProfileEntity group = profileEntityCacheManager.retrieve(data.getGroupId());
+                if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
+                    data.setGroupIdNotFound(true);
+                } else { 
+                    if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
+                        data.setGroupIdDeactivated(true);
+                    } else {                    
+                        ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
+                        data.setTargetClientType(clientType.name());
+                    }
+                    
+                }
+
+            } catch (IllegalArgumentException e) {
+                // invalid group id
                 data.setGroupIdNotFound(true);
-                return data;
-            } else if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
-                data.setGroupIdDeactivated(true);
-                return data;
             }
-
-            ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
-            data.setTargetClientType(clientType.name());
-        } catch (IllegalArgumentException e) {
-            // invalid group id
-            data.setGroupIdNotFound(true);
-            return data;
         }
-        data.setGroupIdNotFound(false);
-        data.setGroupIdDeactivated(false);
+
 
         return data;
     }
@@ -1140,7 +1149,7 @@ public class AdminController extends BaseController {
         }
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
-        if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound()) {
+        if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound() || data.isClientDeactivated()) {
             data.setError("Invalid data");
             data.setSuccess(false);
             return data;

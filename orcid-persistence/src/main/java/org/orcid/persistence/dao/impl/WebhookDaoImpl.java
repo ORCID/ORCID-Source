@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.WebhookDao;
@@ -37,6 +38,22 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
         query.setParameter("retryDelayMinutes", retryDelayMinutes);
         query.setParameter("maxAttemptCount", maxAttemptCount);
         return query.getSingleResult().longValue();
+    }
+
+    @Override
+    public boolean markAsSent(String orcid, String uri) {
+        Query query = entityManager.createNativeQuery("UPDATE webhook SET last_sent=now(), failed_attempt_count=0 where orcid = :orcid and uri = :uri");
+        query.setParameter("orcid", orcid);
+        query.setParameter("uri", uri);
+        return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public boolean markAsFailed(String orcid, String uri) {
+        Query query = entityManager.createNativeQuery("UPDATE webhook SET last_failed=now(), failed_attempt_count=(failed_attempt_count + 1) where orcid = :orcid and uri = :uri");
+        query.setParameter("orcid", orcid);
+        query.setParameter("uri", uri);
+        return query.executeUpdate() > 0;
     }
 
 }

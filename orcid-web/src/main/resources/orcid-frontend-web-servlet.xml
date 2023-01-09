@@ -113,4 +113,11 @@
 
     <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
 
+    <bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
+    
+    <!-- Salesforce -->
+    <bean id="salesForceAdapter" class="org.orcid.frontend.salesforce.adapter.SalesForceAdapter" />
+    <bean id="salesForceMapperFacadeFactory" class="org.orcid.frontend.salesforce.adapter.SalesForceMapperFacadeFactory" />
+    <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
+    
 </beans>
