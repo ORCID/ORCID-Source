@@ -71,7 +71,7 @@ public class S3MessageProcessorAPIV3 {
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV3.class);
 
     @Value("${org.orcid.messaging.v3_indexing.enabled:false}")
-    private boolean isV3IndexerEnabled;
+    private boolean isV3IndexingEnabled;
     
     @Resource
     private Orcid30Manager orcid30ApiClient;
@@ -83,7 +83,7 @@ public class S3MessageProcessorAPIV3 {
     public void update(String orcid) {
         Boolean isSummaryOk = false;
         List<ActivityType> failedElements = new ArrayList<ActivityType>();
-        if (isV3IndexerEnabled) {
+        if (isV3IndexingEnabled) {
             Record record = null;
             try {
                 record = fetchPublicRecordAndClearIfNeeded(orcid);
@@ -101,7 +101,7 @@ public class S3MessageProcessorAPIV3 {
     }
 
     public void retry(String orcid, Boolean retrySummary, List<ActivityType> retryList) {
-        if(!isV3IndexerEnabled) {
+        if(!isV3IndexingEnabled) {
             return;
         }
         Record record = null;
@@ -192,7 +192,7 @@ public class S3MessageProcessorAPIV3 {
     }
 
     private boolean updateSummary(Record record) {
-        if (record == null || !isV3IndexerEnabled) {
+        if (record == null || !isV3IndexingEnabled) {
             return false;
         }
         String orcid = record.getOrcidIdentifier().getPath();
@@ -224,7 +224,7 @@ public class S3MessageProcessorAPIV3 {
      * 
      */
     private void updateActivities(Record record, List<ActivityType> failedElements) {
-        if (record == null || !isV3IndexerEnabled) {
+        if (record == null || !isV3IndexingEnabled) {
             return;
         }
 

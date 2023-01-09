@@ -83,8 +83,6 @@ import org.orcid.listener.s3.S3MessageProcessorAPIV3;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
-import org.orcid.utils.listener.LastModifiedMessage;
-import org.orcid.utils.listener.MessageConstants;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SerializationUtils;
 
@@ -120,7 +118,7 @@ public class S3MessageProcessorAPIV3Test {
     @Before
     public void before() throws LockedRecordException, DeprecatedRecordException, ExecutionException, IOException, InterruptedException {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(processor, "isV3IndexerEnabled", true);
+        TargetProxyHelper.injectIntoProxy(processor, "isV3IndexingEnabled", true);
         TargetProxyHelper.injectIntoProxy(processor, "orcid30ApiClient", mock_orcid30ApiClient);
         TargetProxyHelper.injectIntoProxy(processor, "api30RecordStatusManager", mock_api30RecordStatusManager);
         TargetProxyHelper.injectIntoProxy(processor, "s3Manager", mock_s3Manager);

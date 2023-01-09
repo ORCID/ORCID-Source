@@ -139,11 +139,11 @@ public class Api20RecordStatusDaoTest {
         lastIndexedDate = e.getLastModified();
         
         assertEquals(Integer.valueOf(1), e.getWorksStatus());
-        assertEquals(Integer.valueOf(5), e.getPeerReviewsStatus());
-        assertEquals(Integer.valueOf(8), e.getFundingsStatus());
-        assertEquals(Integer.valueOf(9), e.getEmploymentsStatus());
-        assertEquals(Integer.valueOf(10), e.getEducationsStatus());
-        assertEquals(Integer.valueOf(11), e.getSummaryStatus());
+        assertEquals(Integer.valueOf(2), e.getPeerReviewsStatus());
+        assertEquals(Integer.valueOf(3), e.getFundingsStatus());
+        assertEquals(Integer.valueOf(4), e.getEmploymentsStatus());
+        assertEquals(Integer.valueOf(5), e.getEducationsStatus());
+        assertEquals(Integer.valueOf(5), e.getSummaryStatus());
         
         assertNotNull(e.getEducationsLastIndexed());
         assertNotNull(e.getEmploymentsLastIndexed());

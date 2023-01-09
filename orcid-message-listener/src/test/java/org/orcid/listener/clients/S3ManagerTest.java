@@ -118,7 +118,7 @@ public class S3ManagerTest {
 
         byte []  wba = SerializationUtils.serialize(w);
         
-        s3.uploadV2Activity(orcid, "1234", ActivityType.WORKS, now, wba);
+        s3.uploadV3Activity(orcid, "1234", ActivityType.WORKS, now, wba);
         verify(s3MessagingService, times(0)).sendV2Item(eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),
                 eq(now), eq(true));
         verify(s3MessagingService, times(1)).sendV3Item(eq("0000-0000-0000-0000"), eq("000/0000-0000-0000-0000/works/0000-0000-0000-0000_works_1234.xml"), any(byte[].class), eq(MediaType.APPLICATION_XML),

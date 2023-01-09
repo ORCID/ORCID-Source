@@ -57,7 +57,7 @@ public class S3MessageProcessorAPIV2 {
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV2.class);
 
     @Value("${org.orcid.messaging.v2_indexing.enabled:false}")
-    private boolean isV2IndexerEnabled;
+    private boolean isV2IndexingEnabled;
     
     @Resource
     private Orcid20Manager orcid20ApiClient;
@@ -69,7 +69,7 @@ public class S3MessageProcessorAPIV2 {
     public void update(String orcid) {
         Boolean isSummaryOk = false;
         List<ActivityType> failedElements = new ArrayList<ActivityType>();
-        if (isV2IndexerEnabled) {
+        if (isV2IndexingEnabled) {
             Record record = null;
             try {
                 record = fetchPublicRecordAndClearIfNeeded(orcid);
@@ -87,7 +87,7 @@ public class S3MessageProcessorAPIV2 {
     }
 
     public void retry(String orcid, Boolean retrySummary, List<ActivityType> retryList) {
-        if(!isV2IndexerEnabled) {
+        if(!isV2IndexingEnabled) {
             return;
         }
         Record record = null;
@@ -109,7 +109,7 @@ public class S3MessageProcessorAPIV2 {
         }
         
         ActivitiesSummary as = record.getActivitiesSummary();
-        Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V3);
+        Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V2);
         
         if (retryList.contains(ActivityType.EDUCATIONS)) {
             if(!processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS))) {
@@ -143,7 +143,7 @@ public class S3MessageProcessorAPIV2 {
     }
 
     private boolean updateSummary(Record record) {
-        if (record == null || !isV2IndexerEnabled) {
+        if (record == null || !isV2IndexingEnabled) {
             return false;
         }
         String orcid = record.getOrcidIdentifier().getPath();
@@ -175,7 +175,7 @@ public class S3MessageProcessorAPIV2 {
      * 
      */
     private void updateActivities(Record record, List<ActivityType> failedElements) {
-        if (record == null || !isV2IndexerEnabled) {
+        if (record == null || !isV2IndexingEnabled) {
             return;
         }
 
@@ -184,7 +184,7 @@ public class S3MessageProcessorAPIV2 {
         if (record != null && record.getHistory() != null && record.getHistory().getClaimed() != null && record.getHistory().getClaimed() == true) {
             if (record.getActivitiesSummary() != null) {
                 ActivitiesSummary as = record.getActivitiesSummary();
-                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V3);
+                Map<ActivityType, Map<String, S3ObjectSummary>> existingActivities = s3Manager.searchActivities(orcid, APIVersion.V2);
                 if (!processEducations(orcid, as.getEducations(), existingActivities.get(ActivityType.EDUCATIONS))) {
                     failedElements.add(ActivityType.EDUCATIONS);
                 }
@@ -218,7 +218,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
+                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Educations for record " + orcid, e);
@@ -239,7 +239,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Employments for record " + orcid, e);
@@ -261,7 +261,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.FUNDINGS);
+                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.FUNDINGS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Fundings for record " + orcid, e);
@@ -284,7 +284,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Peer Reviews for record " + orcid, e);
@@ -305,7 +305,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.WORKS);
+                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.WORKS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Works for record " + orcid, e);
