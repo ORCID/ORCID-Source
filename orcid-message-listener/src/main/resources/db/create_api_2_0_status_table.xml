@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE_TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="api_2_0_record_status"/>
+            </not>            
+		</preConditions>
+		<createTable tableName="api_2_0_record_status">
+            <column name="orcid" type="VARCHAR(19)">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="api_2_0_record_status_pkey" />
+			</column>						
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="summary_status" type="tinyint" />
+			<column name="summary_last_indexed" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="educations_status" type="tinyint" />
+			<column name="educations_last_indexed" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="employments_status" type="tinyint" />
+			<column name="employments_last_indexed" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="fundings_status" type="tinyint" />
+			<column name="fundings_last_indexed" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="peer_reviews_status" type="tinyint" />
+			<column name="peer_reviews_last_indexed" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="works_status" type="tinyint" />
+        	<column name="works_last_indexed" type="TIMESTAMP WITH TIME ZONE" />			
+        </createTable>		
+	</changeSet>		
+	
+	<changeSet id="ADD-RECORD-INDEX" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="api_2_0_works_status_index" tableName="api_2_0_record_status" />
+			</not>
+		</preConditions>		
+		<sql>CREATE INDEX api_2_0_summary_status_index ON api_2_0_record_status(summary_status);</sql>
+		<sql>CREATE INDEX api_2_0_educations_status_index ON api_2_0_record_status(educations_status);</sql>
+		<sql>CREATE INDEX api_2_0_employments_status_index ON api_2_0_record_status(employments_status);</sql>
+		<sql>CREATE INDEX api_2_0_fundings_status_index ON api_2_0_record_status(fundings_status);</sql>
+		<sql>CREATE INDEX api_2_0_peer_reviews_status_index ON api_2_0_record_status(peer_reviews_status);</sql>
+		<sql>CREATE INDEX api_2_0_works_status_index ON api_2_0_record_status(works_status);</sql>
+	</changeSet>
+</databaseChangeLog>

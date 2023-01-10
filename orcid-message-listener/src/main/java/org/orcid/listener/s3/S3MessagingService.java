@@ -21,7 +21,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 
 @Component
 public class S3MessagingService {
@@ -105,9 +104,9 @@ public class S3MessagingService {
         metadata.setContentLength(elementContent.length);
         metadata.setLastModified(lastModified);
         if(isActivity) {
-            s3.putObject(new PutObjectRequest(this.v2ActivitiesBucketName, elementName, is, metadata));            
+            s3.putObject(this.v2ActivitiesBucketName, elementName, is, metadata);            
         } else {
-            s3.putObject(new PutObjectRequest(this.v2SummariesBucketName, elementName, is, metadata));
+            s3.putObject(this.v2SummariesBucketName, elementName, is, metadata);
         }
         return true;
     }
@@ -119,9 +118,9 @@ public class S3MessagingService {
         metadata.setContentLength(elementContent.length);
         metadata.setLastModified(lastModified);
         if(isActivity) {
-            s3.putObject(new PutObjectRequest(this.getV3ActivitiesBucketName(orcid), elementName, is, metadata));            
+            s3.putObject(this.getV3ActivitiesBucketName(orcid), elementName, is, metadata);            
         } else {
-            s3.putObject(new PutObjectRequest(this.v3SummariesBucketName, elementName, is, metadata));
+            s3.putObject(this.v3SummariesBucketName, elementName, is, metadata);
         }
         return true;
     }
