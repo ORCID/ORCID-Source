@@ -43,30 +43,32 @@ public class Orcid30ManagerImpl implements Orcid30Manager {
     private OrcidAPIClient orcidAPIClient;
 
     // loads on read.
-    private final LoadingCache<String, RecordContainer> v3ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).maximumSize(100)
-            .build(new CacheLoader<String, RecordContainer>() {
-                public RecordContainer load(String orcid) {
-                    RecordContainer container = new RecordContainer();
-                    String url = baseUri + orcid + "/record";
-                    JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE,
-                            accessToken, Map.of("User-Agent", "orcid/message-listener"), Record.class, OrcidError.class);
-                    if (response.getStatus() != 200) {
-                        container.status = response.getStatus();
-                        container.error = response.getError();
-                        return container;
-                    }
-                    container.status = 200;
-                    container.record = response.getEntity();
-                    return container;
-                }
-            });
+    private final LoadingCache<String, RecordContainer> v3ThreadSharedCache;
 
     @Autowired
     public Orcid30ManagerImpl(@Value("${org.orcid.message-listener.api30BaseURI}") String baseUri,
-            @Value("${org.orcid.message-listener.api.read_public_access_token}") String accessToken) throws URISyntaxException {
+            @Value("${org.orcid.message-listener.api.read_public_access_token}") String accessToken,
+            @Value("${org.orcid.message-listener.api.v3.cacheEviction:300}") Integer cacheEvictionSeconds) throws URISyntaxException {
         LOG.info("Creating Orcid30APIClient with baseUri = " + baseUri);
         this.baseUri = baseUri.endsWith("/") ? baseUri : baseUri + '/';
         this.accessToken = accessToken;
+        v3ThreadSharedCache = CacheBuilder.newBuilder().expireAfterAccess(cacheEvictionSeconds, TimeUnit.SECONDS).maximumSize(100)
+                .build(new CacheLoader<String, RecordContainer>() {
+                    public RecordContainer load(String orcid) {
+                        RecordContainer container = new RecordContainer();
+                        String url = baseUri + orcid + "/record";
+                        JerseyClientResponse<Record, OrcidError> response = jerseyClientHelper.executeGetRequestWithCustomHeaders(url, MediaType.APPLICATION_XML_TYPE,
+                                accessToken, Map.of("User-Agent", "orcid/message-listener"), Record.class, OrcidError.class);
+                        if (response.getStatus() != 200) {
+                            container.status = response.getStatus();
+                            container.error = response.getError();
+                            return container;
+                        }
+                        container.status = 200;
+                        container.record = response.getEntity();
+                        return container;
+                    }
+                });
     }
 
     /**
