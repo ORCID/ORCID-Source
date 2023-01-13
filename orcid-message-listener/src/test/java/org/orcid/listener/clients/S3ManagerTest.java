@@ -158,8 +158,8 @@ public class S3ManagerTest {
         
         s3.clearV2ActivitiesByType("0000-0000-0000-0000", ActivityType.DISTINCTIONS);
         
-        verify(s3MessagingService, times(1)).removeV2Activity(eq("0000-0000-0000-0000/work/1.xml"));
-        verify(s3MessagingService, times(1)).removeV2Activity(eq("0000-0000-0000-0000/work/2.xml"));
+        verify(s3MessagingService, times(1)).safelyRemoveV2Activity(eq("0000-0000-0000-0000/work/1.xml"));
+        verify(s3MessagingService, times(1)).safelyRemoveV2Activity(eq("0000-0000-0000-0000/work/2.xml"));
     }
     
     @Test
@@ -175,7 +175,7 @@ public class S3ManagerTest {
         
         s3.clearV3ActivitiesByType("0000-0000-0000-0000", ActivityType.DISTINCTIONS);
         
-        verify(s3MessagingService, times(1)).removeV3Activity(eq("0000-0000-0000-0000"), eq("0000-0000-0000-0000/work/1.xml"));
-        verify(s3MessagingService, times(1)).removeV3Activity(eq("0000-0000-0000-0000"), eq("0000-0000-0000-0000/work/2.xml"));
+        verify(s3MessagingService, times(1)).safelyRemoveV3Activity(eq("0000-0000-0000-0000"), eq("0000-0000-0000-0000/work/1.xml"));
+        verify(s3MessagingService, times(1)).safelyRemoveV3Activity(eq("0000-0000-0000-0000"), eq("0000-0000-0000-0000/work/2.xml"));
     }
 }

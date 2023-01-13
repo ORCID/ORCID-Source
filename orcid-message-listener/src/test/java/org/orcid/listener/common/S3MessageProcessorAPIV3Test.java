@@ -142,6 +142,7 @@ public class S3MessageProcessorAPIV3Test {
     @Test
     public void v30RecordDeprecatedExceptionTest() throws Exception {
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenThrow(new DeprecatedRecordException(new OrcidError()));
+        when(mock_s3Manager.clearV3Activities(any())).thenReturn(true);
         process(orcid);
         verify(mock_s3Manager, times(1)).clearV3Activities(eq(orcid));
         verify(mock_s3Manager, times(1)).uploadV3OrcidError(eq(orcid), any(OrcidError.class));
@@ -156,6 +157,7 @@ public class S3MessageProcessorAPIV3Test {
     @Test
     public void v30RecordLockedExceptionTest() throws Exception {
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenThrow(new LockedRecordException(new OrcidError()));
+        when(mock_s3Manager.clearV3Activities(any())).thenReturn(true);
         process(orcid);
         verify(mock_s3Manager, times(1)).clearV3Activities(eq(orcid));
         verify(mock_s3Manager, times(1)).uploadV3OrcidError(eq(orcid), any(OrcidError.class));
@@ -505,6 +507,7 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.DISTINCTIONS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.DISTINCTIONS))).thenReturn(true);
 
         try {
             process(orcid);
@@ -520,7 +523,33 @@ public class S3MessageProcessorAPIV3Test {
         verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captor.capture());
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
-        assertTrue(argument.isEmpty());
+        assertTrue(argument.isEmpty());                
+    }
+    
+    @Test
+    public void removeDistinctionsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.DISTINCTIONS));
+        // Remove fails
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.DISTINCTIONS))).thenReturn(false);
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.DISTINCTIONS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.DISTINCTIONS, argumentOnFail.get(0));
     }
     
     @Test
@@ -560,7 +589,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getDistinctions().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.DISTINCTIONS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -621,7 +651,7 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.EDUCATIONS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS))).thenReturn(true);
         try {
             process(orcid);
         } catch (Exception e) {
@@ -637,6 +667,31 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeEducationsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.EDUCATIONS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS))).thenReturn(false);
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EDUCATIONS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.EDUCATIONS, argumentOnFail.get(0));
     }
     
     @Test
@@ -676,7 +731,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getEducations().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.EDUCATIONS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -737,7 +793,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.EMPLOYMENTS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -753,6 +810,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeEmploymentsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.EMPLOYMENTS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.EMPLOYMENTS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.EMPLOYMENTS, argumentOnFail.get(0));
     }
     
     @Test
@@ -792,7 +875,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getEmployments().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.EMPLOYMENTS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -853,7 +937,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.FUNDINGS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -869,6 +954,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeFundingsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.FUNDINGS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.FUNDINGS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.FUNDINGS, argumentOnFail.get(0));
     }
     
     @Test
@@ -908,7 +1019,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getFundings().getFundingGroup().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.FUNDINGS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -967,7 +1079,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.INVITED_POSITIONS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.INVITED_POSITIONS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -983,6 +1096,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeInvitedPositionsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.INVITED_POSITIONS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.INVITED_POSITIONS))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.INVITED_POSITIONS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.INVITED_POSITIONS, argumentOnFail.get(0));
     }
     
     @Test
@@ -1022,7 +1161,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getInvitedPositions().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.INVITED_POSITIONS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1081,7 +1221,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.MEMBERSHIP));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.MEMBERSHIP))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1097,6 +1238,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeMembershipsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.MEMBERSHIP));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.MEMBERSHIP))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.MEMBERSHIP));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.MEMBERSHIP, argumentOnFail.get(0));
     }
     
     @Test
@@ -1136,7 +1303,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getMemberships().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.MEMBERSHIP))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1197,7 +1365,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.PEER_REVIEWS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1213,6 +1382,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removePeerReviewsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.PEER_REVIEWS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.PEER_REVIEWS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.PEER_REVIEWS, argumentOnFail.get(0));
     }
     
     @Test
@@ -1252,7 +1447,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getPeerReviews().getPeerReviewGroup().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.PEER_REVIEWS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1311,7 +1507,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.QUALIFICATIONS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.QUALIFICATIONS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1327,6 +1524,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeQualificationsFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.QUALIFICATIONS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.QUALIFICATIONS))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.QUALIFICATIONS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.QUALIFICATIONS, argumentOnFail.get(0));
     }
     
     @Test
@@ -1366,7 +1589,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getQualifications().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.QUALIFICATIONS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1425,6 +1649,7 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.RESEARCH_RESOURCES));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.RESEARCH_RESOURCES))).thenReturn(true);
 
         try {
             process(orcid);
@@ -1441,6 +1666,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeResearchResourcesFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.RESEARCH_RESOURCES));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.RESEARCH_RESOURCES))).thenReturn(false);
+
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.RESEARCH_RESOURCES));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.RESEARCH_RESOURCES, argumentOnFail.get(0));
     }
     
     @Test
@@ -1480,7 +1731,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getResearchResources().getResearchResourceGroup().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.RESEARCH_RESOURCES))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1539,7 +1791,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.SERVICES));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.SERVICES))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1555,6 +1808,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeServicesFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.SERVICES));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.SERVICES))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.SERVICES));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.SERVICES, argumentOnFail.get(0));
     }
     
     @Test
@@ -1594,7 +1873,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getServices().retrieveGroups().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.SERVICES))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1653,7 +1933,8 @@ public class S3MessageProcessorAPIV3Test {
         // Remove one
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.WORKS));
-
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {
@@ -1669,6 +1950,32 @@ public class S3MessageProcessorAPIV3Test {
         final ArrayList<ActivityType> argument = captor.getValue();
         assertNotNull(argument);
         assertTrue(argument.isEmpty());
+    }
+    
+    @Test
+    public void removeWorksFailTest() throws LockedRecordException, DeprecatedRecordException, ExecutionException, AmazonServiceException, JsonProcessingException,
+            AmazonClientException, JAXBException {
+        // Remove one
+        when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(getRecord());
+        when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities_AddOneExtraOfType(ActivityType.WORKS));
+        when(mock_s3Manager.removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS))).thenReturn(false);
+        
+        try {
+            process(orcid);
+        } catch (Exception e) {
+            fail();
+        }
+
+        verify(mock_s3Manager, times(1)).uploadV3RecordSummary(eq(orcid), any());
+        verify(mock_s3Manager, times(0)).uploadV3Activity(any(), any(), any(), any(Date.class), any());
+        verify(mock_s3Manager, times(1)).removeV3Activity(eq(orcid), eq("1"), eq(ActivityType.WORKS));
+        verifyErrorAndClearWasntCalled();
+        final ArgumentCaptor<ArrayList<ActivityType>> captorOnFail = ArgumentCaptor.forClass(ArrayList.class);
+        verify(mock_api30RecordStatusManager, times(1)).save(eq(orcid), eq(true), captorOnFail.capture());
+        final ArrayList<ActivityType> argumentOnFail = captorOnFail.getValue();
+        assertNotNull(argumentOnFail);
+        assertEquals(1, argumentOnFail.size());
+        assertEquals(ActivityType.WORKS, argumentOnFail.get(0));
     }
     
     @Test
@@ -1708,7 +2015,8 @@ public class S3MessageProcessorAPIV3Test {
         r.getActivitiesSummary().getWorks().getWorkGroup().clear();
         when(mock_orcid30ApiClient.fetchPublicRecord(any())).thenReturn(r);
         when(mock_s3Manager.searchActivities(eq(orcid), eq(APIVersion.V3))).thenReturn(getMapOfActivities());
-
+        when(mock_s3Manager.clearV3ActivitiesByType(eq(orcid), eq(ActivityType.WORKS))).thenReturn(true);
+        
         try {
             process(orcid);
         } catch (Exception e) {

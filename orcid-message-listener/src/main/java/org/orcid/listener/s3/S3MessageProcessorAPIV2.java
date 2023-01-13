@@ -218,7 +218,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EDUCATIONS);
+                return s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Educations for record " + orcid, e);
@@ -239,7 +239,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+                return s3Manager.clearV2ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Employments for record " + orcid, e);
@@ -261,7 +261,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.FUNDINGS);
+                return s3Manager.clearV2ActivitiesByType(orcid, ActivityType.FUNDINGS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Fundings for record " + orcid, e);
@@ -284,7 +284,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+                return s3Manager.clearV2ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Peer Reviews for record " + orcid, e);
@@ -305,7 +305,7 @@ public class S3MessageProcessorAPIV2 {
                     return false;
                 }
             } else {
-                s3Manager.clearV2ActivitiesByType(orcid, ActivityType.WORKS);
+                return s3Manager.clearV2ActivitiesByType(orcid, ActivityType.WORKS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Works for record " + orcid, e);
@@ -321,11 +321,17 @@ public class S3MessageProcessorAPIV2 {
             }
             // Remove from S3 all element that still exists on the
             // existingEducations map
+            boolean anyFailed = false;
             for (String putCode : existingElements.keySet()) {
-                s3Manager.removeV3Activity(orcid, putCode, type);
+                boolean removed = s3Manager.removeV2Activity(orcid, putCode, type);
+                if(!removed) {
+                    // If any element failed to be removed, alert
+                    anyFailed = true;
+                }
             }
 
-            return true;
+            // If nothing failed, then all activities were properly removed
+            return !anyFailed;
         } catch (Exception e) {
             LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid, e);
         }
@@ -395,7 +401,7 @@ public class S3MessageProcessorAPIV2 {
             return orcid20ApiClient.fetchPublicRecord(orcid);
         } catch (LockedRecordException | DeprecatedRecordException e) {
             // Remove all activities from this record
-            s3Manager.clearV2Activities(orcid);
+            boolean allCleared = s3Manager.clearV2Activities(orcid);
             // Remove the summary
             OrcidError error = null;
             if (e instanceof LockedRecordException) {
@@ -413,7 +419,13 @@ public class S3MessageProcessorAPIV2 {
                 LOG.error("Record " + orcid + " is locked or deprecated, however, S3 couldn't be updated", e1);
                 throw new Exception(e1);
             }
-            api20RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
+            if(allCleared) {
+                api20RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
+            } else {
+                // Mark all activities as failed so we try to clear everything again
+                api20RecordStatusManager.save(orcid, true, List.of(ActivityType.EDUCATIONS, ActivityType.EMPLOYMENTS, ActivityType.FUNDINGS, ActivityType.PEER_REVIEWS, ActivityType.WORKS));
+            }
+            
             return null;
         } catch (Exception e) {
             throw new Exception(e);

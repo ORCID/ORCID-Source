@@ -177,46 +177,117 @@ public class S3Manager {
         return activitiesOnS3;
     }
 
-    public void removeV2Activity(String orcid, String putCode, ActivityType type) throws AmazonClientException, AmazonServiceException {
+    /**
+     * 
+     * V2
+     * 
+     * */
+    public boolean removeV2Activity(String orcid, String putCode, ActivityType type) throws AmazonClientException, AmazonServiceException {
         // Delete the XML activity file
-        s3MessagingService.removeV2Activity(getElementName(orcid, putCode, type));
+        return s3MessagingService.safelyRemoveV2Activity(getElementName(orcid, putCode, type));
     }
 
-    public void removeV3Activity(String orcid, String putCode, ActivityType type) throws AmazonClientException, AmazonServiceException {
-        // Delete the XML activity file
-        s3MessagingService.removeV3Activity(orcid, getElementName(orcid, putCode, type));
-    }
-
-    public void clearV2Activities(String orcid) throws AmazonClientException, AmazonServiceException {
+    public boolean clearV2Activities(String orcid) throws AmazonClientException, AmazonServiceException {
         String prefix = orcid.substring(16) + "/" + orcid;
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV2ActivitiesBucketName()).withPrefix(prefix)
                 .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
+        boolean anyFailed = false;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeV2Activity(elementName);
+                boolean removed = s3MessagingService.safelyRemoveV2Activity(elementName);
+                if(!removed) {
+                    anyFailed = true;
+                }
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
+        // If nothing failed, then all activities were properly removed
+        return !anyFailed;
     }
 
-    public void clearV3Activities(String orcid) throws AmazonClientException, AmazonServiceException {
+    public boolean clearV2ActivitiesByType(String orcid, ActivityType type) throws AmazonClientException, AmazonServiceException {
+        String prefix = buildPrefix(orcid, type);
+        
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV2ActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
+
+        ListObjectsV2Result objects;
+        boolean anyFailed = false;
+        do {
+            objects = s3MessagingService.listObjects(req);
+            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+                String elementName = objectSummary.getKey();
+                boolean removed = s3MessagingService.safelyRemoveV2Activity(elementName);
+                if(!removed) {
+                    anyFailed = true;
+                }
+            }
+            req.setContinuationToken(objects.getNextContinuationToken());
+        } while (objects.isTruncated());
+        // If nothing failed, then all activities were properly removed
+        return !anyFailed;
+    }
+    
+    /**
+     * 
+     * V3
+     * 
+     * */
+    public boolean removeV3Activity(String orcid, String putCode, ActivityType type) throws AmazonClientException, AmazonServiceException {
+        // Delete the XML activity file
+        return s3MessagingService.safelyRemoveV3Activity(orcid, getElementName(orcid, putCode, type));
+    }
+
+    public boolean clearV3Activities(String orcid) throws AmazonClientException, AmazonServiceException {
         String prefix = orcid.substring(16) + "/" + orcid;
         final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName(orcid)).withPrefix(prefix)
                 .withMaxKeys(maxElements);
         ListObjectsV2Result objects;
+        boolean anyFailed = false;
         do {
             objects = s3MessagingService.listObjects(req);
             for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
                 String elementName = objectSummary.getKey();
-                s3MessagingService.removeV3Activity(orcid, elementName);
+                boolean removed = s3MessagingService.safelyRemoveV3Activity(orcid, elementName);
+                if(!removed) {
+                    anyFailed = true;
+                }
             }
             req.setContinuationToken(objects.getNextContinuationToken());
         } while (objects.isTruncated());
+        // If nothing failed, then all activities were properly removed
+        return !anyFailed;
     }
+    
+    public boolean clearV3ActivitiesByType(String orcid, ActivityType type) throws AmazonClientException, AmazonServiceException {
+        String prefix = buildPrefix(orcid, type);
+        
+        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName(orcid)).withPrefix(prefix).withMaxKeys(maxElements);
 
+        ListObjectsV2Result objects;
+        boolean anyFailed = false;
+        do {
+            objects = s3MessagingService.listObjects(req);
+            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
+                String elementName = objectSummary.getKey();
+                boolean removed = s3MessagingService.safelyRemoveV3Activity(orcid, elementName);
+                if(!removed) {
+                    anyFailed = true;
+                }
+            }
+            req.setContinuationToken(objects.getNextContinuationToken());
+        } while (objects.isTruncated());
+        // If nothing failed, then all activities were properly removed
+        return !anyFailed;
+    }        
+    
+    /**
+     * 
+     * Shared
+     * 
+     * */        
     private String getElementName(String orcid) {
         return orcid.substring(16) + "/" + orcid + ".xml";
     }
@@ -236,37 +307,5 @@ public class S3Manager {
     private String buildPrefix(String orcid, ActivityType type) {
         return orcid.substring(16) + "/" + orcid + "/" + type.getValue();
     }
-
-    public void clearV2ActivitiesByType(String orcid, ActivityType type) throws AmazonClientException, AmazonServiceException {
-        String prefix = buildPrefix(orcid, type);
-        
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV2ActivitiesBucketName()).withPrefix(prefix).withMaxKeys(maxElements);
-
-        ListObjectsV2Result objects;
-        do {
-            objects = s3MessagingService.listObjects(req);
-            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
-                String elementName = objectSummary.getKey();
-                s3MessagingService.removeV2Activity(elementName);
-            }
-            req.setContinuationToken(objects.getNextContinuationToken());
-        } while (objects.isTruncated());
-    }
-
-    public void clearV3ActivitiesByType(String orcid, ActivityType type) throws AmazonClientException, AmazonServiceException {
-        String prefix = buildPrefix(orcid, type);
-        
-        ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(s3MessagingService.getV3ActivitiesBucketName(orcid)).withPrefix(prefix).withMaxKeys(maxElements);
-
-        ListObjectsV2Result objects;
-        do {
-            objects = s3MessagingService.listObjects(req);
-            for (S3ObjectSummary objectSummary : objects.getObjectSummaries()) {
-                String elementName = objectSummary.getKey();
-                s3MessagingService.removeV3Activity(orcid, elementName);
-            }
-            req.setContinuationToken(objects.getNextContinuationToken());
-        } while (objects.isTruncated());
-    }
-    
+       
 }

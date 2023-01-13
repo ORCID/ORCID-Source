@@ -285,7 +285,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Distinctions for record " + orcid, e);
@@ -306,7 +306,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Educations for record " + orcid, e);
@@ -327,7 +327,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Employments for record " + orcid, e);
@@ -348,7 +348,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.INVITED_POSITIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.INVITED_POSITIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Invited Positions for record " + orcid, e);
@@ -369,7 +369,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.MEMBERSHIP);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.MEMBERSHIP);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Memberships for record " + orcid, e);
@@ -390,7 +390,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.QUALIFICATIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.QUALIFICATIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Qualifications for record " + orcid, e);
@@ -411,7 +411,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.SERVICES);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.SERVICES);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Services for record " + orcid, e);
@@ -432,7 +432,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.FUNDINGS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.FUNDINGS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Fundings for record " + orcid, e);
@@ -455,7 +455,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Peer Reviews for record " + orcid, e);
@@ -476,7 +476,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.RESEARCH_RESOURCES);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.RESEARCH_RESOURCES);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Research Resources for record " + orcid, e);
@@ -497,7 +497,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.WORKS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.WORKS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Works for record " + orcid, e);
@@ -511,13 +511,19 @@ public class S3MessageProcessorAPIV3 {
             for (Activity x : activities) {
                 processActivity(orcid, x, existingElements, type);
             }
+            
             // Remove from S3 all element that still exists on the
             // existingEducations map
+            boolean anyFailed = false;
             for (String putCode : existingElements.keySet()) {
-                s3Manager.removeV3Activity(orcid, putCode, type);
+                boolean removed = s3Manager.removeV3Activity(orcid, putCode, type);
+                if(!removed) {
+                    anyFailed = true;
+                }
             }
 
-            return true;
+            // If nothing failed, then all activities were properly removed
+            return !anyFailed;
         } catch (Exception e) {
             LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid, e);
         }
@@ -599,7 +605,7 @@ public class S3MessageProcessorAPIV3 {
             return orcid30ApiClient.fetchPublicRecord(orcid);
         } catch (LockedRecordException | DeprecatedRecordException e) {
             // Remove all activities from this record
-            s3Manager.clearV3Activities(orcid);
+            boolean allCleared = s3Manager.clearV3Activities(orcid);
             // Remove the summary
             OrcidError error = null;
             if (e instanceof LockedRecordException) {
@@ -617,7 +623,13 @@ public class S3MessageProcessorAPIV3 {
                 LOG.error("Record " + orcid + " is locked or deprecated, however, S3 couldn't be updated", e1);
                 throw new Exception(e1);
             }
-            api30RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
+            if(allCleared) {
+                api30RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
+            } else {
+                // Mark all activities as failed so we try to clear everything again
+                api30RecordStatusManager.save(orcid, true, List.of(ActivityType.DISTINCTIONS, ActivityType.EDUCATIONS, ActivityType.EMPLOYMENTS, ActivityType.FUNDINGS, ActivityType.INVITED_POSITIONS,
+                        ActivityType.MEMBERSHIP, ActivityType.PEER_REVIEWS, ActivityType.PEER_REVIEWS, ActivityType.QUALIFICATIONS, ActivityType.RESEARCH_RESOURCES, ActivityType.SERVICES, ActivityType.WORKS));
+            }
             return null;
         } catch (Exception e) {
             throw new Exception(e);
