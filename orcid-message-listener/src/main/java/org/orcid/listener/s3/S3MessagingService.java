@@ -3,6 +3,7 @@ package org.orcid.listener.s3;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -125,12 +127,89 @@ public class S3MessagingService {
         return true;
     }
     
+    public boolean safelyRemoveV2Activity(String elementName) {
+        return safelyRemoveV2Activity(elementName, true);
+    }
     
-    public void removeV2Activity(String elementName) throws AmazonClientException, AmazonServiceException {
+    public boolean safelyRemoveV3Activity(String orcid, String elementName) {
+        return safelyRemoveV3Activity(orcid, elementName, true);
+    }
+    
+    private boolean safelyRemoveV2Activity(String elementName, boolean retry) {
+        try {
+            removeV2Activity(elementName);
+            return true;
+        } catch (Exception e) {
+            if(retry) {
+                // If the element failed to be deleted, it might be because it doesn't exists anymore
+                boolean elementExists = doesV2ActivityExists(elementName);
+                if(elementExists) {
+                    // If the element still exists, wait 10 secs and try one more time
+                    try {
+                        TimeUnit.SECONDS.sleep(10);
+                    } catch(Exception x) {
+                        //Do nothing              
+                    }
+                    boolean wasRemoved = safelyRemoveV2Activity(elementName, false);
+                    if(!wasRemoved) {
+                        LOG.error("Unable to remove element " + elementName);
+                    }
+                    return wasRemoved;
+                } else {
+                    // If the element does not exists, then this is fine 
+                    return true;
+                }
+            } else {
+                LOG.error("Unable to remove element " + elementName);
+                return false;
+            }
+        } 
+    }
+    
+    private boolean safelyRemoveV3Activity(String orcid, String elementName, boolean retry) {
+        try {
+            removeV3Activity(orcid, elementName);
+            return true;
+        } catch (Exception e) {
+            // If the element failed to be deleted, it might be because it doesn't exists anymore
+            if(retry) {
+                boolean elementExists = doesV3ActivityExists(orcid, elementName);
+                if(elementExists) {
+                    // If the element still exists, wait 10 secs and try one more time
+                    try {
+                        TimeUnit.SECONDS.sleep(10);
+                    } catch(Exception x) {
+                        //Do nothing                    
+                    }
+                    boolean wasRemoved = safelyRemoveV3Activity(orcid, elementName, false);
+                    if(!wasRemoved) {
+                        LOG.error("Unable to remove element " + elementName);
+                    }
+                    return wasRemoved;
+                } else {
+                    // If the element does not exists, then this is fine 
+                    return true;
+                }
+            } else {
+                LOG.error("Unable to remove element " + elementName);
+                return false;
+            }            
+        }         
+    }
+    
+    private void removeV2Activity(String elementName) throws AmazonClientException, AmazonServiceException {
         s3.deleteObject(this.v2ActivitiesBucketName, elementName);        
     }
     
-    public void removeV3Activity(String orcid, String elementName) throws AmazonClientException, AmazonServiceException {
+    private void removeV3Activity(String orcid, String elementName) throws AmazonClientException, AmazonServiceException {
         s3.deleteObject(this.getV3ActivitiesBucketName(orcid), elementName);        
     }
+    
+    private boolean doesV2ActivityExists(String elementName) throws AmazonServiceException, SdkClientException {
+        return s3.doesObjectExist(this.v2ActivitiesBucketName, elementName);
+    }
+    
+    private boolean doesV3ActivityExists(String orcid, String elementName) throws AmazonServiceException, SdkClientException {
+        return s3.doesObjectExist(this.getV3ActivitiesBucketName(orcid), elementName);
+    }        
 }
