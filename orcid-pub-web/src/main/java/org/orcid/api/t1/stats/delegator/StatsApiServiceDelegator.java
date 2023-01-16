@@ -1,6 +1,6 @@
 package org.orcid.api.t1.stats.delegator;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.core.utils.statistics.StatisticsEnum;
 

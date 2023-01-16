@@ -2,7 +2,7 @@ package org.orcid.internal.server.delegator;
 
 import java.util.Set;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 /**
  * @author Angel Montenegro

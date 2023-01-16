@@ -2,7 +2,7 @@ package org.orcid.internal.server;
 
 import io.swagger.annotations.Api;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 /**
  * 

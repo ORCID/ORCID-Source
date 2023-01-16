@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.annotation.AfterReturning;

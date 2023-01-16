@@ -1,6 +1,6 @@
 package org.orcid.api.t1.stats;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import org.orcid.core.api.OrcidApiConstants;
 

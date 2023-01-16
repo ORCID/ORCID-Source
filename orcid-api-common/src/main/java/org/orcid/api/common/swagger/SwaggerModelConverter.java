@@ -17,10 +17,10 @@ import org.orcid.jaxb.model.record_v2.CitationType;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JavaType;
 
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.Model;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.oas.models.Model;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
 

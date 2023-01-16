@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

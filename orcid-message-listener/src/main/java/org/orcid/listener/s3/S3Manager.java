@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 
 import org.orcid.listener.persistence.util.APIVersion;

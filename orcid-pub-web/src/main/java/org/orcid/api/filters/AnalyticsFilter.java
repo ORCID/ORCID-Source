@@ -1,8 +1,8 @@
 package org.orcid.api.filters;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.api.common.analytics.AnalyticsProcess;
 import org.orcid.api.common.analytics.client.AnalyticsClient;
@@ -18,10 +18,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
+//import com.sun.jersey.api.core.InjectParam;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.ContainerResponseContext;
 
 @Provider
 @Component

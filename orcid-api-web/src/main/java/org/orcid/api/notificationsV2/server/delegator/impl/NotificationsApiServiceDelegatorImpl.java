@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.notificationsV2.server.delegator.NotificationsApiServiceDelegator;

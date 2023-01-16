@@ -28,8 +28,9 @@ the software.
         <spring.version>5.3.20</spring.version>
         <security.version>5.6.2</security.version>
         <liquibase.version>4.9.1</liquibase.version>
-        <jersey.version>1.19.1</jersey.version>
-        <swagger.version>1.5.16</swagger.version>
+        <jersey.version>3.1.0</jersey.version>
+        <jackson.version>2.14.1</jackson.version>
+        <swagger.version>2.2.7</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -557,9 +558,10 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- http://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
+            
+            <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server -->
             <dependency>
-                <groupId>com.sun.jersey</groupId>
+                <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-server</artifactId>
             <version>${jersey.version}</version>
             </dependency>
@@ -601,10 +603,11 @@ the software.
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
+            	<groupId>org.glassfish.jersey.core</groupId>
+            	<artifactId>jersey-client</artifactId>
+            	<version>3.0.4</version>
+        	</dependency>
+        	
 
             <!-- Web -->
             <dependency>
@@ -619,22 +622,38 @@ the software.
                 <version>4.0.1</version>
                 <scope>compile</scope>
             </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>2.10.1</version>
-            </dependency>
+                    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-base</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>        
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>        
+        </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.9.5</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.10.0</version>
-            </dependency>            
-            <dependency>
+                <version>${jackson.version}</version>
+            </dependency>           
+            <!--  dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-core</artifactId>
                 <version>${jersey.version}</version>
@@ -651,7 +670,7 @@ the software.
                 <artifactId>jersey-bundle</artifactId>
                 <version>${jersey.version}</version>
                 <scope>compile</scope>
-            </dependency>
+            </dependency -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -910,14 +929,19 @@ the software.
             </dependency>
             <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
             <dependency>
-               <groupId>io.swagger</groupId>
-               <artifactId>swagger-jaxrs</artifactId>
-               <version>${swagger.version}</version>
-            </dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-jaxrs2</artifactId>
+			<version>${swagger.version}</version>
+		</dependency>
+		<!--  dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger.version}</version>
+		</dependency-->
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.12</version>
+               <version>3.1.0</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

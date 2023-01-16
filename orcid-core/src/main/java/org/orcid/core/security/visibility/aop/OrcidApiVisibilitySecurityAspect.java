@@ -8,7 +8,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 /**
  * @author Declan Newman (declan) Date: 16/03/2012

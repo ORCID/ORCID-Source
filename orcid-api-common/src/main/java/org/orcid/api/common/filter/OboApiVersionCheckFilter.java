@@ -2,7 +2,7 @@ package org.orcid.api.common.filter;
 
 import java.util.regex.Matcher;
 
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OboNotValidForApiVersionException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -13,18 +13,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
+//import com.sun.jersey.api.core.InjectParam;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 
 @Provider
 public class OboApiVersionCheckFilter implements ContainerRequestFilter {
 
-    @InjectParam("orcidOauth2TokenDetailServiceImpl")
+    //@InjectParam("orcidOauth2TokenDetailServiceImpl")
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
     
     @Override
-    public ContainerRequest filter(ContainerRequest request) {
+    public void filter(ContainerRequestContext  request) {
         String version = getApiVersion(request);
         boolean oboRequest = isOboRequest();
         
@@ -33,7 +33,7 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
             throw new OboNotValidForApiVersionException();
         }
         
-        return request;
+        return;
     }
 
     private boolean isOboRequest() {
@@ -51,8 +51,8 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
         return false;
     }
 
-    private String getApiVersion(ContainerRequest request) {
-        String path = request.getPath();
+    private String getApiVersion(ContainerRequestContext request) {
+        String path = request.getUriInfo().getPath();
         Matcher matcher = ApiVersionCheckFilter.VERSION_PATTERN.matcher(path);
         if (matcher.lookingAt()) {
             return matcher.group(1);

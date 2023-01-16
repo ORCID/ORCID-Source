@@ -2,7 +2,7 @@ package org.orcid.frontend.oauth2;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;

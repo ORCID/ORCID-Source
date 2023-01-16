@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.junit.Test;
 import org.orcid.api.common.analytics.APIEndpointParser;

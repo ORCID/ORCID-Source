@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.helper.Utils;
 import org.junit.AfterClass;

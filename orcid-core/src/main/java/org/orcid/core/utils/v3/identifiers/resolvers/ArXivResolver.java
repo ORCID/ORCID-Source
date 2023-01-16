@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Stack;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;

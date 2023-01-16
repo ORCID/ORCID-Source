@@ -4,7 +4,7 @@ import java.security.AccessControlException;
 import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -17,8 +17,9 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+
 
 @Provider
 public class TokenTargetFilter implements ContainerRequestFilter {
@@ -27,15 +28,15 @@ public class TokenTargetFilter implements ContainerRequestFilter {
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Override
-    public ContainerRequest filter(ContainerRequest request) {
-        Matcher m = OrcidStringUtils.orcidPattern.matcher(request.getPath());
+    public void filter(ContainerRequestContext request) {
+        Matcher m = OrcidStringUtils.orcidPattern.matcher(request.getUriInfo().getPath());
         if (m.find()) {
             validateTargetRecord(m.group(), request);
         }
-        return request;
+        return;
     }
 
-    private void validateTargetRecord(String targetOrcid, ContainerRequest request) {
+    private void validateTargetRecord(String targetOrcid, ContainerRequestContext request) {
         // Verify if it is the owner of the token
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {

@@ -7,11 +7,11 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.api.common.filter.ApiVersionFilter;
@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.jaxrs.cfg.Annotations;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.cfg.Annotations;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 /**
  * @author Will Simpson
@@ -32,7 +32,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 @Provider
 @Consumes({ MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_JSON })
-public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
+public class OrcidJacksonJaxbJsonProvider extends JacksonJsonProvider {
 
     private JSONInputValidator jsonInputValidator = new JSONInputValidator();
 
@@ -42,7 +42,7 @@ public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
     }
 
     public OrcidJacksonJaxbJsonProvider(Annotations... annotationsToUse) {
-        super(annotationsToUse);
+        super(null, annotationsToUse);
         configureAll();
     }
 

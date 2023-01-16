@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;

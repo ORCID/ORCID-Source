@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;

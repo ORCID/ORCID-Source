@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;

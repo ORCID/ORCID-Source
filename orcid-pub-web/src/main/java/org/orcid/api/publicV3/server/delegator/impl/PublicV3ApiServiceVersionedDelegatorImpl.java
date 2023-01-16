@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.exception.DeactivatedException;

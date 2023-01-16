@@ -2,9 +2,9 @@ package org.orcid.api.common.analytics;
 
 import java.util.List;
 
-import javax.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.PathSegment;
 
-import com.sun.jersey.spi.container.ContainerRequest;
+import jakarta.ws.rs.container.ContainerRequestContext;
 
 public class APIEndpointParser {
 
@@ -28,12 +28,12 @@ public class APIEndpointParser {
 
     private String category;
 
-    public APIEndpointParser(ContainerRequest request) {
+    public APIEndpointParser(ContainerRequestContext request) {
         parse(request);
     }
 
-    private void parse(ContainerRequest request) {
-        List<PathSegment> path = request.getPathSegments(true);
+    private void parse(ContainerRequestContext request) {
+        List<PathSegment> path = request.getUriInfo().getPathSegments(true);
         int categoryIndex = 2;
         if (path.get(0).toString().matches(API_VERSION_REGEX)) {
             // found api version

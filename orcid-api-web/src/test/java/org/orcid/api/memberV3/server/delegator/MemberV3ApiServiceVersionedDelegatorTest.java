@@ -14,7 +14,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.apache.commons.lang.time.DateUtils;

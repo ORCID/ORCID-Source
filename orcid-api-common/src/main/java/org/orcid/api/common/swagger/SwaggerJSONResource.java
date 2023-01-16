@@ -6,23 +6,23 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Cookie;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.orcid.core.api.OrcidApiConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.ApiOperation;
+/*import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
 import io.swagger.config.ScannerFactory;
@@ -31,10 +31,15 @@ import io.swagger.converter.ModelConverters;
 import io.swagger.core.filter.SpecFilter;
 import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.jaxrs.Reader;
-import io.swagger.jaxrs.config.ReaderConfigUtils;
-import io.swagger.jaxrs.listing.SwaggerSerializers;
+import io.swagger.v3.jaxrs2ReaderConfigUtils;
+import io.swagger.v3.jaxrs2.SwaggerSerializers;
 import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
+import io.swagger.util.Yaml;*/
+
+
+import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.models.SwaggerParseResult;
+import io.swagger.v3.oas.models.OpenAPI;
 
 /** Adapted version of APIListingResource that works with our spring-jersey based server.  
  * It removes the need for a ServletContext when initialising, but is otherwise unchanged.
@@ -85,7 +90,7 @@ public class SwaggerJSONResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(OrcidApiConstants.SWAGGER_FILE)
-    @ApiOperation(value = "The swagger definition in JSON", hidden = true)
+    @Operation(description = "The swagger definition in JSON", hidden = true)
     public Response getListingJson(
             @Context Application app,
             @Context HttpHeaders headers,
@@ -113,7 +118,7 @@ public class SwaggerJSONResource {
     @GET
     @Produces("application/yaml")
     @Path(OrcidApiConstants.SWAGGER_FILE_YAML)
-    @ApiOperation(value = "The swagger definition in YAML", hidden = true)
+    @Operation(description = "The swagger definition in YAML", hidden = true)
     public Response getListingYaml(
             @Context Application app,
             @Context HttpHeaders headers,

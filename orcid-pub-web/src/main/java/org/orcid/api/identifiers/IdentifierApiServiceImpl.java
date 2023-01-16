@@ -1,11 +1,11 @@
 package org.orcid.api.identifiers;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
@@ -14,7 +14,7 @@ import org.orcid.jaxb.model.message.ScopeConstants;
 import com.sun.jersey.api.provider.jaxb.XmlHeader;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -39,7 +39,7 @@ public class IdentifierApiServiceImpl {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     @Path("")
-    @ApiOperation(value = "Fetch identifier type map. Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
+    @Operation(description = "Fetch identifier type map. Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "")})
     @XmlHeader(xmllocation)
     public Response viewIdentifierTypes(@ApiParam() @QueryParam("locale") String locale) {

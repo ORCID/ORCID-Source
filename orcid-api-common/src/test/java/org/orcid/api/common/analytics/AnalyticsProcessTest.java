@@ -7,8 +7,8 @@ import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 
 import org.junit.Before;
 import org.junit.Test;

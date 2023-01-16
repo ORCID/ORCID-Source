@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.AfterClass;

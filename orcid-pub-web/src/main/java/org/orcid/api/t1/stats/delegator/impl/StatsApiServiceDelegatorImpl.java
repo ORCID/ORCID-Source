@@ -1,8 +1,8 @@
 package org.orcid.api.t1.stats.delegator.impl;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.orcid.api.common.writer.stats.StatsTimelineList;
 import org.orcid.api.t1.stats.delegator.StatsApiServiceDelegator;
