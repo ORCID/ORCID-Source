@@ -106,6 +106,8 @@ public class AnonymizeWorksFromGetMyData {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
         jpaJaxbWorkAdapter = (JpaJaxbWorkAdapter) context.getBean("jpaJaxbWorkAdapterV3");
+        contributorUtils = (ContributorUtils) context.getBean("contributorUtilsV3");
+        contributorsRolesAndSequencesConverter=context.getBean(ContributorsRolesAndSequencesConverter.class);
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
@@ -284,6 +286,9 @@ public class AnonymizeWorksFromGetMyData {
                 workEntity.setSourceId(orcid);
             }
             if (anonymizedWork.getWorkContributors() != null && anonymizedWork.getWorkContributors().getContributor() != null && anonymizedWork.getWorkContributors().getContributor().size() > 0) {
+                if(maxContributorsForUI == 0) {
+                    maxContributorsForUI = 50;
+                }
                 List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(anonymizedWork.getWorkContributors().getContributor(), maxContributorsForUI);
                 if (topContributors.size() > 0) {
                     workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));
