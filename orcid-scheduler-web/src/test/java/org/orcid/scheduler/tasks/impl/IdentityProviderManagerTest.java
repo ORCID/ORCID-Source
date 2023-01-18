@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  *
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
 public class IdentityProviderManagerTest {
 
     private IdentityProviderLoaderImpl identityProviderLoaderImpl = new IdentityProviderLoaderImpl();

@@ -9,6 +9,11 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
+    <context:property-placeholder location="\${org.orcid.config.file.db}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="\${org.orcid.config.file.common}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="\${org.orcid.config.file.api.common}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="\${org.orcid.config.file.api.public}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+
     <import resource="orcid-core-context.xml"/>
         
     <context:component-scan base-package="org.orcid.api.common, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
