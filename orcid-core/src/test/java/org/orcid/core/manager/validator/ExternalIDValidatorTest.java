@@ -24,11 +24,6 @@ public class ExternalIDValidatorTest{
     @Resource
     private ExternalIDValidator validator;
     
-    @Before
-    public void before() {
-        validator.setRequireRelationshipOnExternalIdentifier(false);
-    }
-    
     @Test
     public void testValidateWorkOrPeerReview(){
         //call for ExternalID and ExternalIDs
@@ -99,8 +94,7 @@ public class ExternalIDValidatorTest{
     }
 
     @Test(expected = ActivityIdentifierValidationException.class)
-    public void testEmptyRelationshipOnSingleExternalId_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
+    public void testEmptyRelationshipOnSingleExternalId() {
         ExternalID id1 = new ExternalID();
         id1.setType("doi");
         id1.setValue("value1");
@@ -112,23 +106,9 @@ public class ExternalIDValidatorTest{
         validator.validateWorkOrPeerReview(id1);
         fail("no exception thrown for invalid type");        
     }
-    
-    @Test
-    public void testEmptyRelationshipOnSingleExternalId_flagOff() {
-        ExternalID id1 = new ExternalID();
-        id1.setType("doi");
-        id1.setValue("value1");
-        id1.setUrl(new Url("http://value1.com"));
-        validator.validateWorkOrPeerReview(id1);
-                
-        //empty relationship        
-        id1.setRelationship(null);
-        validator.validateWorkOrPeerReview(id1);               
-    }
-    
+        
     @Test(expected = ActivityIdentifierValidationException.class)
-    public void testEmptyRelationshipOnExternalIds_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
+    public void testEmptyRelationshipOnExternalIds() {
         ExternalIDs extIds = new ExternalIDs();
         
         ExternalID id1 = new ExternalID();
@@ -158,37 +138,7 @@ public class ExternalIDValidatorTest{
     }
     
     @Test
-    public void testEmptyRelationshipOnExternalIds_flagOff() {        
-        ExternalIDs extIds = new ExternalIDs();
-        
-        ExternalID id1 = new ExternalID();
-        id1.setRelationship(Relationship.SELF);
-        id1.setType("doi");
-        id1.setValue("value1");
-        id1.setUrl(new Url("http://value1.com"));
-                
-        ExternalID id2 = new ExternalID();
-        id2.setRelationship(null);
-        id2.setType("doi");
-        id2.setValue("value1");
-        id2.setUrl(new Url("http://value1.com"));
-        
-        ExternalID id3 = new ExternalID();
-        id3.setRelationship(Relationship.SELF);
-        id3.setType("doi");
-        id3.setValue("value1");
-        id3.setUrl(new Url("http://value1.com"));
-        
-        extIds.getExternalIdentifier().add(id1);
-        extIds.getExternalIdentifier().add(id2);
-        extIds.getExternalIdentifier().add(id3);
-        
-        validator.validateWorkOrPeerReview(extIds);
-    }
-    
-    @Test
-    public void testValidExtIdsWorksFine_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
+    public void testValidExtIdsWorksFine() {
         ExternalIDs extIds = new ExternalIDs();
         
         ExternalID id1 = new ExternalID();
@@ -205,35 +155,6 @@ public class ExternalIDValidatorTest{
         
         ExternalID id3 = new ExternalID();
         id3.setRelationship(Relationship.SELF);
-        id3.setType("doi");
-        id3.setValue("value1");
-        id3.setUrl(new Url("http://value1.com"));
-        
-        extIds.getExternalIdentifier().add(id1);
-        extIds.getExternalIdentifier().add(id2);
-        extIds.getExternalIdentifier().add(id3);
-        
-        validator.validateWorkOrPeerReview(extIds);
-    }
-    
-    @Test
-    public void testValidExtIdsWorksFine_flagOff() {
-        ExternalIDs extIds = new ExternalIDs();
-        
-        ExternalID id1 = new ExternalID();
-        id1.setRelationship(null);
-        id1.setType("doi");
-        id1.setValue("value1");
-        id1.setUrl(new Url("http://value1.com"));
-                
-        ExternalID id2 = new ExternalID();
-        id2.setRelationship(null);
-        id2.setType("doi");
-        id2.setValue("value1");
-        id2.setUrl(new Url("http://value1.com"));
-        
-        ExternalID id3 = new ExternalID();
-        id3.setRelationship(null);
         id3.setType("doi");
         id3.setValue("value1");
         id3.setUrl(new Url("http://value1.com"));
@@ -288,8 +209,7 @@ public class ExternalIDValidatorTest{
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
-    public void testEmptyRelationshipOnFundingExternalIds_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
+    public void testEmptyRelationshipOnFundingExternalIds() {        
         ExternalID id1 = new ExternalID();
         id1.setRelationship(null);
         id1.setType("grant_number");
@@ -301,18 +221,6 @@ public class ExternalIDValidatorTest{
         fail("no exception thrown for invalid type");
     }
 
-    @Test
-    public void testEmptyRelationshipOnFundingExternalIds_flagOff() {
-        ExternalID id1 = new ExternalID();
-        id1.setRelationship(null);
-        id1.setType("grant_number");
-        id1.setValue("value1");
-        id1.setUrl(new Url("http://value1.com"));
-        ExternalIDs ids = new ExternalIDs();
-        ids.getExternalIdentifier().add(id1);        
-        validator.validateFunding(ids);
-    }
-    
     @Test
     public void testValidateNotificationItems(){
         Item i = new Item();
@@ -353,9 +261,7 @@ public class ExternalIDValidatorTest{
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
-    public void testEmptyRelationshipOnNotificationItemExternalIds_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
-        
+    public void testEmptyRelationshipOnNotificationItemExternalIds() {
         Item i = new Item();
         Item i2 = new Item();
         Items items = new Items();  
@@ -378,30 +284,5 @@ public class ExternalIDValidatorTest{
         //both valid
         validator.validateNotificationItems(items);
         fail("no exception thrown for invalid type");
-    }
-    
-    @Test
-    public void testEmptyRelationshipOnNotificationItemExternalIds_flagOff() {        
-        Item i = new Item();
-        Item i2 = new Item();
-        Items items = new Items();  
-        ExternalID id1 = new ExternalID();
-        id1.setRelationship(Relationship.SELF);
-        id1.setType("doi");
-        id1.setValue("value1");
-        id1.setUrl(new Url("http://value1.com"));
-        ExternalID id2 = new ExternalID();
-        id2.setRelationship(null);
-        id2.setType("source-work-id");
-        id2.setValue("value2");
-        id2.setUrl(new Url("http://value1.com"));  
-        
-        i.setExternalIdentifier(id1);
-        i2.setExternalIdentifier(id2);
-        items.getItems().add(i);
-        items.getItems().add(i2);
-        
-        //both valid
-        validator.validateNotificationItems(items);
-    }
+    }        
 }

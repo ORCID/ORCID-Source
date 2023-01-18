@@ -7,7 +7,6 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
-import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.VisibilityType;
 import org.orcid.jaxb.model.record_v2.Address;
@@ -92,7 +91,7 @@ public class PersonValidator {
         validateAndFixVisibility(otherName, createFlag, isApiRequest, originalVisibility);
     }
     
-    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility, boolean requireRelationshipOnExternalIdentifier) {
+    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         //Validate common name not empty
         if(PojoUtil.isEmpty(externalIdentifier.getType())) {
             String message = "Common name field must not be empty";
@@ -120,12 +119,10 @@ public class PersonValidator {
         }
         
         //Validate relationship
-        if(requireRelationshipOnExternalIdentifier) {
-            if(externalIdentifier.getRelationship() == null || !Relationship.SELF.equals(externalIdentifier.getRelationship())) {
-                String message = "Relationship field should be self for person identifiers";
-                LOGGER.error(message);
-                throw new OrcidValidationException(message);
-            }
+        if(externalIdentifier.getRelationship() == null || !Relationship.SELF.equals(externalIdentifier.getRelationship())) {
+            String message = "Relationship field should be self for person identifiers";
+            LOGGER.error(message);
+            throw new OrcidValidationException(message);
         }
         
         //Validate url not empty        

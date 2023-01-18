@@ -24,11 +24,6 @@ public class ExternalIDValidatorTest{
     @Resource(name = "externalIDValidatorV3")
     private ExternalIDValidator validator;
     
-    @Before
-    public void before() {
-        validator.setRequireRelationshipOnExternalIdentifier(false);
-    }
-    
     @Test
     public void testValidateWorkOrPeerReview(){
         //call for ExternalID and ExternalIDs
@@ -162,7 +157,6 @@ public class ExternalIDValidatorTest{
 
     @Test(expected = ActivityIdentifierValidationException.class)
     public void testEmptyRelationshipOnSingleExternalId_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
         ExternalID id1 = new ExternalID();
         id1.setType("doi");
         id1.setValue("value1");
@@ -190,7 +184,6 @@ public class ExternalIDValidatorTest{
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void testEmptyRelationshipOnExternalIds_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
         ExternalIDs extIds = new ExternalIDs();
         
         ExternalID id1 = new ExternalID();
@@ -250,7 +243,6 @@ public class ExternalIDValidatorTest{
     
     @Test
     public void testValidExtIdsWorksFine_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
         ExternalIDs extIds = new ExternalIDs();
         
         ExternalID id1 = new ExternalID();
@@ -351,7 +343,6 @@ public class ExternalIDValidatorTest{
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void testEmptyRelationshipOnFundingExternalIds_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
         ExternalID id1 = new ExternalID();
         id1.setRelationship(null);
         id1.setType("grant_number");
@@ -416,8 +407,6 @@ public class ExternalIDValidatorTest{
     
     @Test(expected = ActivityIdentifierValidationException.class)
     public void testEmptyRelationshipOnNotificationItemExternalIds_flagOn() {
-        validator.setRequireRelationshipOnExternalIdentifier(true);
-        
         Item i = new Item();
         Item i2 = new Item();
         Items items = new Items();  
