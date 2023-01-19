@@ -35,7 +35,7 @@ public class DBUnitTest {
 
     private static final String PERSISTENCE_CONTEXT = "classpath:test-orcid-persistence-context.xml";
 
-    private static final String CORE_CONTEXT = "classpath:orcid-core-context.xml";
+    private static final String CORE_CONTEXT = "classpath:test-orcid-core-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",

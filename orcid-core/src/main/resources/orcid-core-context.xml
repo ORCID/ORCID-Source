@@ -16,7 +16,6 @@
          build, but other properties are escaped from Maven build replacement by preceding
          with \ and so are handled by Spring. -->
 	<context:property-placeholder location="\${org.orcid.config.file.core}" ignore-resource-not-found="true" ignore-unresolvable="true" />
-	<context:property-placeholder location="${org.orcid.config.file.core.test}" ignore-resource-not-found="true" ignore-unresolvable="true" />        	
 	
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />

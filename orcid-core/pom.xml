@@ -14,7 +14,6 @@
     </parent>
 
     <properties>
-        <org.orcid.config.file.core.test>classpath:test-core.properties</org.orcid.config.file.core.test>
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
 
