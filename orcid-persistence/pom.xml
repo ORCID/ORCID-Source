@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <org.orcid.config.file.db>classpath:db.properties</org.orcid.config.file.db>
+        <org.orcid.config.file.db.test>classpath:test-db.properties</org.orcid.config.file.db.test>
         <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 
@@ -223,21 +223,6 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <id>staging</id>
-            <properties>
-                <org.orcid.config.file.db>classpath:db.properties</org.orcid.config.file.db>
-            </properties>
-        </profile>
-        <profile>
-            <id>production</id>
-            <properties>
-                <org.orcid.config.file.db>classpath:db.properties</org.orcid.config.file.db>
-            </properties>
-        </profile>
-    </profiles>
+    </dependencies>    
 
 </project>
