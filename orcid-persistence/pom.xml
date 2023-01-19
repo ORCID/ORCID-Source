@@ -22,8 +22,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>**/orcid-persistence-context.xml</include>
-                    <include>**/statistics-persistence-context.xml</include>
+                    <include>**/orcid-persistence-context.xml</include>                    
                 </includes>
             </resource>
             <resource>
@@ -36,8 +35,7 @@
                     <include>**/*.txt</include>
                 </includes>
                 <excludes>
-                    <exclude>**/orcid-persistence-context.xml</exclude>
-                    <exclude>**/statistics-persistence-context.xml</exclude>
+                    <exclude>**/orcid-persistence-context.xml</exclude>                    
                 </excludes>
             </resource>
         </resources>
