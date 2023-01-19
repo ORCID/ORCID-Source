@@ -19,9 +19,7 @@
 	
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
-	
 	<import resource="classpath*:orcid-core-cache-config.xml" />
-	
 	
 	<!-- Commenting out whilst the auditing is still being discussed -->
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->

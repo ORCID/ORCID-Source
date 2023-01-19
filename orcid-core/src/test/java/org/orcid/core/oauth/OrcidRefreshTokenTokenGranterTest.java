@@ -36,7 +36,7 @@ import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml" })
 public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
