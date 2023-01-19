@@ -33,7 +33,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @Ignore
 public class DBUnitTest {
 
-    private static final String PERSISTENCE_CONTEXT = "classpath:orcid-persistence-context.xml";
+    private static final String PERSISTENCE_CONTEXT = "classpath:test-orcid-persistence-context.xml";
 
     private static final String CORE_CONTEXT = "classpath:orcid-core-context.xml";
 

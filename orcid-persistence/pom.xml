@@ -12,7 +12,6 @@
     </parent>
 
     <properties>
-        <org.orcid.config.file.db.test>classpath:test-db.properties</org.orcid.config.file.db.test>
         <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 

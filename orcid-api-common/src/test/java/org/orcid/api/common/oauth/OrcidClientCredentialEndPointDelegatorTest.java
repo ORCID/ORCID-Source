@@ -46,7 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml", "classpath:orcid-persistence-context.xml"})
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml", "classpath:test-orcid-persistence-context.xml"})
 public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";

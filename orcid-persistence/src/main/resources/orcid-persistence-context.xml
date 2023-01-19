@@ -25,8 +25,6 @@
          build, but other properties are escaped from Maven build replacement by preceding
          with \ and so are handled by Spring. -->
     <context:property-placeholder location="\${org.orcid.config.file.db}" ignore-resource-not-found="true" ignore-unresolvable="true" />
-    <context:property-placeholder location="${org.orcid.config.file.db.test}" ignore-resource-not-found="true" ignore-unresolvable="true" />
-
 
     <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>

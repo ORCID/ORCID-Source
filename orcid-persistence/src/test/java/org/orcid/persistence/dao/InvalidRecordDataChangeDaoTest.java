@@ -26,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class InvalidRecordDataChangeDaoTest extends DBUnitTest {
 
     @Resource
