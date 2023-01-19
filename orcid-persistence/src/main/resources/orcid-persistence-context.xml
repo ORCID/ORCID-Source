@@ -13,7 +13,7 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
          http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd" >
-
+        
     <tx:annotation-driven />
     
     <context:component-scan
@@ -21,11 +21,12 @@
 		
     <aop:aspectj-autoproxy />
 
-    <!-- ${org.orcid.persistence.properties} gets replaced during the Maven
+    <!-- ${org.orcid.config.file.db} gets replaced during the Maven
          build, but other properties are escaped from Maven build replacement by preceding
          with \ and so are handled by Spring. -->
+    <context:property-placeholder location="\${org.orcid.config.file.db}" ignore-unresolvable="true" />
 
-	<bean id="applicationContextProvder"
+    <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
 	<!-- Profile last modified aspect -->

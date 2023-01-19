@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
+        <org.orcid.config.file.db>classpath:db.properties</org.orcid.config.file.db>
         <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 
@@ -229,13 +229,13 @@
         <profile>
             <id>staging</id>
             <properties>
-                <org.orcid.persistence.properties>staging-persistence.properties</org.orcid.persistence.properties>
+                <org.orcid.config.file.db>classpath:db.properties</org.orcid.config.file.db>
             </properties>
         </profile>
         <profile>
             <id>production</id>
             <properties>
-                <org.orcid.persistence.properties>production-persistence.properties</org.orcid.persistence.properties>
+                <org.orcid.config.file.db>classpath:db.properties</org.orcid.config.file.db>
             </properties>
         </profile>
     </profiles>
