@@ -4,9 +4,7 @@
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
-                
-    <import resource="classpath*:orcid-core-context.xml"/>
-        
+                            
 	<!-- As we have a Jersey endpoint, we need to create an extension to the 
 		Spring MVC, so we use a delegator -->
 	<bean id="orcidClientCredentialEndPointDelegator"
