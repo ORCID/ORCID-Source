@@ -22,8 +22,9 @@
         <property name="prettyPrint" value="true"/>        
     </bean>
     
-    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
-    <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
+    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>
+    <!-- TODOSWAGGER -->   
+    <!--  bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/ -->
      
     <!--  Notifications -->
     <bean id="notificationsApiServiceDelegator" class="org.orcid.api.notificationsV2.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />

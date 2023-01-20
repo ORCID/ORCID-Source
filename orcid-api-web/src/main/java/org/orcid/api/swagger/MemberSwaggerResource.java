@@ -1,9 +1,12 @@
 package org.orcid.api.swagger;
 
+//TODOSWAGGER
+/*
 import io.swagger.annotations.Api;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.util.Json;
+*/
 
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -17,14 +20,15 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
+
 /**
  * Resource that serves swagger.json
  * 
  * @author tom
  *
  */
-@Path(OrcidApiConstants.SWAGGER_PATH)
-@Api(OrcidApiConstants.SWAGGER_PATH)
+//@Path(OrcidApiConstants.SWAGGER_PATH)
+//@Api(OrcidApiConstants.SWAGGER_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 public class MemberSwaggerResource extends SwaggerJSONResource {
 
@@ -37,11 +41,11 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
     /**
      * Scan the classes and add in the OAuth information
      * 
-     */
+     
     @Override
     protected synchronized Swagger scan(Application app) {
         // tell swagger to pick up our jaxb annotations
-        Json.mapper().registerModule(new JaxbAnnotationModule());
+      /*  Json.mapper().registerModule(new JaxbAnnotationModule());
         Swagger s = super.scan(app);
 
         OAuth2Definition oauth = new OAuth2Definition();
@@ -61,5 +65,5 @@ public class MemberSwaggerResource extends SwaggerJSONResource {
 
         return s;
     }
-
+*/
 }

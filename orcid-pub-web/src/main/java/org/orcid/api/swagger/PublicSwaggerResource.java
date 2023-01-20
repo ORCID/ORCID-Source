@@ -12,10 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
+//TODOSWAGGER
+/*
 import io.swagger.annotations.Api;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.util.Json;
+*/
 
 /**
  * Resource that serves swagger.json
@@ -24,7 +27,7 @@ import io.swagger.util.Json;
  *
  */
 @Path(OrcidApiConstants.SWAGGER_PATH)
-@Api(OrcidApiConstants.SWAGGER_PATH)
+//@Api(OrcidApiConstants.SWAGGER_PATH)
 @Produces(MediaType.APPLICATION_JSON)
 public class PublicSwaggerResource extends SwaggerJSONResource {
     @Value("${org.orcid.swagger.tokenendpoint}")
@@ -34,7 +37,7 @@ public class PublicSwaggerResource extends SwaggerJSONResource {
      * Scan the classes and add in the OAuth information
      * 
      */
-    @Override
+    /*@Override
     protected synchronized Swagger scan(Application app) {
         // tell swagger to pick up our jaxb annotations
         Json.mapper().registerModule(new JaxbAnnotationModule());
@@ -46,5 +49,5 @@ public class PublicSwaggerResource extends SwaggerJSONResource {
         s.securityDefinition("orcid_two_legs", oauthTwoLegs);
 
         return s;
-    }
+    }*/
 }

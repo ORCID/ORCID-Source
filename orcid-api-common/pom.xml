@@ -110,9 +110,14 @@
         
         <!-- https://mvnrepository.com/artifact/jakarta.xml.bind/jakarta.xml.bind-api -->
         <dependency>
+    		<groupId>com.sun.activation</groupId>
+    		<artifactId>jakarta.activation</artifactId>
+    		<version>2.0.1</version>
+		</dependency>
+        <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.3</version>
+            <version>3.0.1</version>
         </dependency>
         
         <dependency>
@@ -158,11 +163,6 @@
 			<artifactId>swagger-models</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
-		<dependency>
-		  <groupId>io.swagger.parser.v3</groupId>
-		  <artifactId>swagger-parser</artifactId>
-		  <version>${swagger.version}</version>
-		</dependency>
 
         <!-- citeproc support -->
         <dependency>
@@ -196,8 +196,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>false</inherited>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         

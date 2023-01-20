@@ -17,12 +17,15 @@ import org.orcid.jaxb.model.record_v2.CitationType;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JavaType;
 
+//TODOSWAGGER
+/**
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.oas.models.Model;
 import io.swagger.models.properties.Property;
 import io.swagger.util.Json;
+**/
 
 /**
  * Manipulates models for serialization into Swagger Schema
@@ -30,11 +33,11 @@ import io.swagger.util.Json;
  * @author tom
  *
  */
-public class SwaggerModelConverter implements ModelConverter {
+public class SwaggerModelConverter { //implements ModelConverter {
 
     /**
      * Does nothing but pass through the chain
-     */
+     
     @Override
     public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (chain.hasNext()) {
@@ -43,11 +46,12 @@ public class SwaggerModelConverter implements ModelConverter {
             return null;
         }
     }
+    */
 
     /**
      * Replace Visibility entities with our own more limited and better ordered
      * version
-     */
+    
     @Override
     public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
         JavaType _type = Json.mapper().constructType(type);
@@ -78,7 +82,7 @@ public class SwaggerModelConverter implements ModelConverter {
         } else {
             return null;
         }
-    }
+    } */
 
     /**
      * Abridged Visibility XML enumeration for swagger use
@@ -133,7 +137,7 @@ public class SwaggerModelConverter implements ModelConverter {
     public class Citation implements Serializable {
         private static final long serialVersionUID = 1L;
         @XmlElement(name = "citation-type", required = true, namespace = "http://www.orcid.org/ns/work")
-        @ApiModelProperty(dataType = "string", allowableValues = "formatted-unspecified, bibtex, formatted-apa, formatted-harvard, formatted-ieee, formatted-mla, formatted-vancouver, formatted-chicago, ris")
+       // @ApiModelProperty(dataType = "string", allowableValues = "formatted-unspecified, bibtex, formatted-apa, formatted-harvard, formatted-ieee, formatted-mla, formatted-vancouver, formatted-chicago, ris")
         protected CitationType citationType;
         @XmlElement(name = "citation-value", required = true, namespace = "http://www.orcid.org/ns/work")
         protected String citation;
@@ -145,6 +149,7 @@ public class SwaggerModelConverter implements ModelConverter {
             this.citation = citation;
             this.citationType = citationType;
         }
+        
 
         /**
          * Gets the value of the workCitationType property.

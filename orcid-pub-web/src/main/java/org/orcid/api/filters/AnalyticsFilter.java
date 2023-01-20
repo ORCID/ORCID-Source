@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.ext.Provider;
 
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ContainerResponse;
 import org.orcid.api.common.analytics.AnalyticsProcess;
 import org.orcid.api.common.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -30,19 +32,19 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsFilter.class);
     
-    @InjectParam("orcidSecurityManager")
+    //@InjectParam("orcidSecurityManager")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @InjectParam("analyticsClient")
+    //@InjectParam("analyticsClient")
     private AnalyticsClient analyticsClient;
 
-    @InjectParam("clientDetailsEntityCacheManager")
+    //@InjectParam("clientDetailsEntityCacheManager")
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    @InjectParam("profileEntityCacheManager")
+    //@InjectParam("profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @InjectParam("apiAnalyticsTaskExecutor")
+    //@InjectParam("apiAnalyticsTaskExecutor")
     private ThreadPoolTaskExecutor apiAnalyticsTaskExecutor;
     
     @Context
@@ -52,15 +54,15 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
     private boolean enablePublicAPIAnalytics;
     
     @Override
-    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
+    public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         if (enablePublicAPIAnalytics) {
             AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
             apiAnalyticsTaskExecutor.execute(analyticsProcess);
         }
-        return response;
+        return;
     }
     
-    private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
+    private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
         AnalyticsProcess process = new AnalyticsProcess();
         process.setRequest(request);
         process.setResponse(response);

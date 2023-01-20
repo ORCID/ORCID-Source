@@ -36,10 +36,13 @@ import io.swagger.v3.jaxrs2.SwaggerSerializers;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;*/
 
-
+/**
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import io.swagger.v3.oas.models.OpenAPI;
+*/
+
+//TODOSWAGGER
 
 /** Adapted version of APIListingResource that works with our spring-jersey based server.  
  * It removes the need for a ServletContext when initialising, but is otherwise unchanged.
@@ -54,7 +57,7 @@ public class SwaggerJSONResource {
     @Context
     ServletContext context;
 
-    protected synchronized Swagger scan(Application app) {
+    /*protected synchronized Swagger scan(Application app) {
         Swagger swagger = null;
         Scanner scanner = ScannerFactory.getScanner();
         ModelConverters.getInstance().addConverter(new SwaggerModelConverter());
@@ -189,6 +192,6 @@ public class SwaggerJSONResource {
             }
         }
         return output;
-    }
+    }*/
     
 }
