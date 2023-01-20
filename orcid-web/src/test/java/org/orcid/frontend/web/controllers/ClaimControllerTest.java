@@ -48,7 +48,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml"})
 public class ClaimControllerTest {
 
     @Resource

@@ -8,10 +8,12 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/security/oauth2 https://raw.githubusercontent.com/spring-attic/spring-security-oauth/main/spring-security-oauth2/src/main/resources/org/springframework/security/oauth2/spring-security-oauth2-2.0.xsd">
 
-	<context:component-scan base-package="org.orcid"/>
-	<context:annotation-config />
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
 	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
+	
+	<context:component-scan base-package="org.orcid"/>
+	<context:annotation-config />
+	
 	<sec:global-method-security pre-post-annotations="enabled" />
 	
 	<bean id="orcidOauthRedirectResolver" class="org.orcid.core.oauth.security.OrcidOauthRedirectResolver" />

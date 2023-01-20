@@ -12,7 +12,6 @@
         ignore-resource-not-found="true" 
         ignore-unresolvable="true" />
 
-	<!-- import  resource="classpath*:orcid-persistence-context.xml"/>  -->
 	<import  resource="classpath*:orcid-core-context.xml"/>  
 
 </beans>

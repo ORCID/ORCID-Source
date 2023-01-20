@@ -21,7 +21,6 @@
 	<tx:annotation-driven />
 
     <import resource="classpath*:orcid-frontend-security.xml"/>
-    <import resource="classpath*:orcid-solr-config.xml"/>
     
     <context:component-scan base-package="org.orcid"/>
     <mvc:annotation-driven ignore-default-model-on-redirect="true" />
