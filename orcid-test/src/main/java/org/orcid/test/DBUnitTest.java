@@ -35,11 +35,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @Ignore
 public class DBUnitTest {
 
-    private static final String API_COMMON_CONTEXT = "classpath:test-orcid-api-common-context.xml";
-    
     private static final String PERSISTENCE_CONTEXT = "classpath:test-orcid-persistence-context.xml";
 
     private static final String CORE_CONTEXT = "classpath:test-orcid-core-context.xml";
+    
+    private static final String API_COMMON_CONTEXT = "classpath:test-orcid-api-common-context.xml";
+    
+    private static final String UI_CONTEXT = "classpath:test-frontend-web-servlet.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
@@ -55,7 +57,6 @@ public class DBUnitTest {
         try {
             context = new ClassPathXmlApplicationContext(CORE_CONTEXT);
         } catch (Exception e) {
-            System.out.println("Unable to load context from " + CORE_CONTEXT);
             last = e;
         }
         
@@ -63,7 +64,6 @@ public class DBUnitTest {
             try {
                 context = new ClassPathXmlApplicationContext(PERSISTENCE_CONTEXT);
             } catch (Exception e) {
-                System.out.println("Unable to load context from " + PERSISTENCE_CONTEXT);
                 last = e;
             }    
         }
@@ -72,12 +72,21 @@ public class DBUnitTest {
             try {
                 context = new ClassPathXmlApplicationContext(API_COMMON_CONTEXT);
             } catch (Exception e) {
-                System.out.println("Unable to load context from " + API_COMMON_CONTEXT);
                 last = e;
             }    
         }
         
         if(context == null) {
+            try {
+                context = new ClassPathXmlApplicationContext(UI_CONTEXT);
+            } catch (Exception e) {
+                last = e;
+            }
+        }
+        
+        if(context == null) {
+            System.out.println("Unable to load context");
+            
             if(last != null) {
                 last.printStackTrace();
             } 
