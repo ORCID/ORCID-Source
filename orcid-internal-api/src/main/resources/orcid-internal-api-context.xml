@@ -10,7 +10,15 @@
     <context:property-placeholder location="\${org.orcid.config.file.api.common}" ignore-resource-not-found="true" ignore-unresolvable="true" />
     <context:property-placeholder location="\${org.orcid.config.file.api.internal}" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
+	<!-- TODO: LOOK AT IMPORTS HERE!!!! -->
+	<!-- TODO: LOOK AT IMPORTS HERE!!!! -->
+	<!-- TODO: LOOK AT IMPORTS HERE!!!! -->
+	<!-- TODO: LOOK AT IMPORTS HERE!!!! -->
     <import resource="classpath*:orcid-core-context.xml"/>
+    <!-- TODO: LOOK AT IMPORTS HERE!!!! -->
+    <!-- TODO: LOOK AT IMPORTS HERE!!!! -->
+    <!-- TODO: LOOK AT IMPORTS HERE!!!! -->
+    <!-- TODO: LOOK AT IMPORTS HERE!!!! -->
 
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
