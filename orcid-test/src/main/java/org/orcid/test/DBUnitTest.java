@@ -35,17 +35,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @Ignore
 public class DBUnitTest {
 
-    private static final String PERSISTENCE_CONTEXT = "classpath:test-orcid-persistence-context.xml";
-
-    private static final String CORE_CONTEXT = "classpath:test-orcid-core-context.xml";
-    
-    private static final String API_COMMON_CONTEXT = "classpath:test-orcid-api-common-context.xml";
-    
-    private static final String UI_CONTEXT = "classpath:test-frontend-db-context.xml";
-    
-    private static final String PUB_CONTEXT = "classpath:test-public-api-db-context.xml";
-    
-    private static final String MEMBER_API_CONTEXT = "classpath:test-member-api-db-context.xml";
+    private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
@@ -57,59 +47,10 @@ public class DBUnitTest {
     private static ApplicationContext context;
 
     static {        
-        Exception last = null;
         try {
-            context = new ClassPathXmlApplicationContext(CORE_CONTEXT);
+            context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
         } catch (Exception e) {
-            last = e;
-        }
-        
-        if(context == null) {
-            try {
-                context = new ClassPathXmlApplicationContext(PERSISTENCE_CONTEXT);
-            } catch (Exception e) {
-                last = e;
-            }    
-        }
-        
-        if(context == null) {
-            try {
-                context = new ClassPathXmlApplicationContext(API_COMMON_CONTEXT);
-            } catch (Exception e) {
-                last = e;
-            }    
-        }
-        
-        if(context == null) {
-            try {
-                context = new ClassPathXmlApplicationContext(UI_CONTEXT);
-            } catch (Exception e) {
-                last = e;
-            }
-        }
-        
-        if(context == null) {
-            try {
-                context = new ClassPathXmlApplicationContext(PUB_CONTEXT);
-            } catch (Exception e) {
-                last = e;
-            }
-        }
-        
-        if(context == null) {
-            try {
-                context = new ClassPathXmlApplicationContext(MEMBER_API_CONTEXT);
-            } catch (Exception e) {
-                last = e;
-            }
-        }        
-        
-        if(context == null) {
-            System.out.println("Unable to load context");
-            
-            if(last != null) {
-                last.printStackTrace();
-            } 
+            e.printStackTrace();
             fail();
         }
     }

@@ -16,7 +16,7 @@
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
-    <context:property-placeholder location="\${org.orcid.config.file.ui}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+    <context:property-placeholder location="\${org.orcid.config.files}" ignore-resource-not-found="true" ignore-unresolvable="true" />
 	
 	<import resource="classpath*:orcid-core-context.xml" />
     <import resource="classpath*:orcid-frontend-security.xml" />
