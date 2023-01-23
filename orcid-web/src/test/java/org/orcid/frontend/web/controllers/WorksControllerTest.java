@@ -367,11 +367,13 @@ public class WorksControllerTest extends BaseControllerTest {
         ActivityExternalIdentifier wei1 = new ActivityExternalIdentifier();
         wei1.setExternalIdentifierId(Text.valueOf("1"));
         wei1.setExternalIdentifierType(Text.valueOf("doi"));
+        wei1.setRelationship(Text.valueOf("self"));
         work.getWorkExternalIdentifiers().add(wei1);
 
         ActivityExternalIdentifier wei2 = new ActivityExternalIdentifier();
         wei2.setExternalIdentifierId(Text.valueOf("2"));
         wei2.setExternalIdentifierType(Text.valueOf("arxiv"));
+        wei2.setRelationship(Text.valueOf("self"));
         work.getWorkExternalIdentifiers().add(wei2);
 
         work.getPublicationDate().setDay("2");

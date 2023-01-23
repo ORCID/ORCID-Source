@@ -112,6 +112,16 @@ public class ClientsControllerTest extends BaseControllerTest {
     @Test
     public void testInvalidWebsite() {
         Client client = controller.getEmptyClient();
+        
+        // check empty website causes an issue
+        client = controller.getEmptyClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a valid name"));
+        client.setShortDescription(Text.valueOf("This is a valid description"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(1, client.getErrors().size());
+        
         client.setRedirectUris(new ArrayList<RedirectUri>());
         client.setDisplayName(Text.valueOf("This is a valid name"));
         client.setShortDescription(Text.valueOf("This is a valid description"));
@@ -120,29 +130,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         assertNotNull(client);
         assertEquals(1, client.getErrors().size());
         assertEquals(controller.getMessage("common.invalid_url"), client.getErrors().get(0));
-        
-        // test website validation when switched off
-        ReflectionTestUtils.setField(controller, "validateWebsites", false);
-        
-        client = controller.getEmptyClient();
-        client.setRedirectUris(new ArrayList<RedirectUri>());
-        client.setDisplayName(Text.valueOf("This is a valid name"));
-        client.setShortDescription(Text.valueOf("This is a valid description"));
-        client.setWebsite(Text.valueOf("invalid"));
-        client = controller.createClient(client);
-        assertNotNull(client);
-        assertEquals(0, client.getErrors().size());
-        
-        // check empty website still causes an issue
-        client = controller.getEmptyClient();
-        client.setRedirectUris(new ArrayList<RedirectUri>());
-        client.setDisplayName(Text.valueOf("This is a valid name"));
-        client.setShortDescription(Text.valueOf("This is a valid description"));
-        client = controller.createClient(client);
-        assertNotNull(client);
-        assertEquals(1, client.getErrors().size());
-        
-        ReflectionTestUtils.setField(controller, "validateWebsites", true);
     }
 
     @Test
