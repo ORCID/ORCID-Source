@@ -77,7 +77,7 @@ import jakarta.ws.rs.core.UriInfo;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.Education;

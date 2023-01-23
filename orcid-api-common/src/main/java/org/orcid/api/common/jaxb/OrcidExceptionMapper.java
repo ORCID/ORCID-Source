@@ -138,20 +138,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             switch (apiVersion) {
             case OrcidCoreExceptionMapper.V2:
             	return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2);
-            case OrcidCoreExceptionMapper.V2_RC1:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC1);
-            case OrcidCoreExceptionMapper.V2_RC2:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC2);
-            case OrcidCoreExceptionMapper.V2_RC3:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC3);
-            case OrcidCoreExceptionMapper.V2_RC4:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_RC4);
             case OrcidCoreExceptionMapper.V2_1:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V2_1);
-            case OrcidCoreExceptionMapper.V3_RC1:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_RC1);
-            case OrcidCoreExceptionMapper.V3_RC2:
-                return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3_RC2);
             case OrcidCoreExceptionMapper.V3:
                 return newStyleErrorResponse(t, OrcidCoreExceptionMapper.V3);
             }
@@ -307,20 +295,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private Response getOrcidErrorResponse(Object orcidError, Throwable t) {
         int statusCode = 0;
-        if (org.orcid.jaxb.model.error_rc1.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.error_rc1.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.error_rc2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.error_rc2.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.error_rc3.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.error_rc3.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.error_rc4.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.error_rc4.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+        if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
         	statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.v3.rc1.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.v3.rc1.error.OrcidError) orcidError).getResponseCode();
-        } else if (org.orcid.jaxb.model.v3.rc2.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-            statusCode = ((org.orcid.jaxb.model.v3.rc2.error.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
             statusCode = ((org.orcid.jaxb.model.v3.release.error.OrcidError) orcidError).getResponseCode();
         }

@@ -105,22 +105,10 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
                 try {
                     schemaValidator.validate(bulkElement);
                 } catch (WebApplicationException e) {
-                    if (org.orcid.jaxb.model.record_rc3.Work.class.isAssignableFrom(bulkElement.getClass())) {
-                        org.orcid.jaxb.model.error_rc3.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2Rc3(9001, 400, e);
-                        workBulk.getBulk().remove(i);
-                        errors.put(i, error);
-                        workBulk.getBulk().add(i, error);
-                    } else if (org.orcid.jaxb.model.record_rc4.Work.class.isAssignableFrom(bulkElement.getClass())) {
-                        org.orcid.jaxb.model.error_rc4.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2Rc4(9001, 400, e);
-                        workBulk.getBulk().remove(i);
-                        errors.put(i, error);
-                        workBulk.getBulk().add(i, error);
-                    } else {
                         org.orcid.jaxb.model.error_v2.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2(9001, 400, e);
                         workBulk.getBulk().remove(i);
                         errors.put(i, error);
                         workBulk.getBulk().add(i, error);
-                    }
                 }
             }
         }

@@ -30,7 +30,7 @@ import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.record_v2.Education;
 import org.orcid.jaxb.model.record_v2.Employment;
 import org.orcid.jaxb.model.record_v2.Funding;

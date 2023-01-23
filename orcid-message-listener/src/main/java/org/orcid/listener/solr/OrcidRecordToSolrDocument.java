@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.record.Email;

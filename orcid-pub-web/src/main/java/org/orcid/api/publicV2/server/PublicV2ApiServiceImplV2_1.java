@@ -56,7 +56,7 @@ import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
-import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.record.summary_v2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_v2.EducationSummary;
