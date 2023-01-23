@@ -128,7 +128,7 @@
 	<peer_review 
 		id="6"
 		orcid="4444-4444-4444-4447"
-		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#2&quot;}}]}"
+		external_identifiers_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;relationship&quot;:&quot;self&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#2&quot;}}]}"
 		org_id="4"
 		peer_review_role="REVIEWER"
 		peer_review_type="REVIEW"
@@ -138,7 +138,7 @@
 		url="http://peer_review.com/3"
 		visibility="PUBLIC"
 		group_id="issn:0000-0003"
-		subject_external_identifiers_json="{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;peer-review:subject-external-identifier-id#3&quot;}}"
+		subject_external_identifiers_json="{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;relationship&quot;:&quot;self&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;peer-review:subject-external-identifier-id#3&quot;}}"
 		subject_name="Peer Review # 3"
 		subject_type="ARTISTIC_PERFORMANCE"
 		subject_translated_name="Peer Review # 3 translated name"
