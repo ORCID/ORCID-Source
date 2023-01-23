@@ -44,6 +44,8 @@ public class DBUnitTest {
     private static final String UI_CONTEXT = "classpath:test-frontend-db-context.xml";
     
     private static final String PUB_CONTEXT = "classpath:test-public-api-db-context.xml";
+    
+    private static final String MEMBER_API_CONTEXT = "classpath:test-member-api-db-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
@@ -93,6 +95,14 @@ public class DBUnitTest {
                 last = e;
             }
         }
+        
+        if(context == null) {
+            try {
+                context = new ClassPathXmlApplicationContext(MEMBER_API_CONTEXT);
+            } catch (Exception e) {
+                last = e;
+            }
+        }        
         
         if(context == null) {
             System.out.println("Unable to load context");

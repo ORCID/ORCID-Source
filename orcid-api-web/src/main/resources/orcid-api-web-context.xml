@@ -11,6 +11,7 @@
     <context:property-placeholder location="\${org.orcid.config.file.api.members}" ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <import resource="classpath*:orcid-core-context.xml"/>
+    <import resource="classpath*:orcid-api-security-context.xml"/>
 
     <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />

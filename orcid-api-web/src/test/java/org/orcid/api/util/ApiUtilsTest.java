@@ -24,7 +24,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
 public class ApiUtilsTest {
 
     @Resource(name = "apiUtils")
