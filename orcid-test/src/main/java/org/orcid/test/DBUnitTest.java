@@ -36,6 +36,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 public class DBUnitTest {
 
     private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
+    private static final String TEST_CORE_CONTEXT = "classpath:test-core-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
@@ -48,11 +49,16 @@ public class DBUnitTest {
 
     static {        
         try {
-            context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
+            context = new ClassPathXmlApplicationContext(TEST_CORE_CONTEXT);
         } catch (Exception e) {
-            e.printStackTrace();
-            fail();
+            try {
+                context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                fail();
+            }
         }
+                
     }
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {

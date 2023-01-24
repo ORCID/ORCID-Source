@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.test.TargetProxyHelper;
 
-public class BibtexManagerTest extends BaseTest{
+public class BibtexManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml");
 
