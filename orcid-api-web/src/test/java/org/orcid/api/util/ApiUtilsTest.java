@@ -64,7 +64,7 @@ public class ApiUtilsTest {
 
         response = apiUtils.buildApiResponse(null, "group-id-record", "5", "apiError.creategroupidrecord_response.exception");
         location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/group-id-record/5", location);
+        assertEquals("https://localhost:8443/orcid-api-web/group-id-record/5", location);
 
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0", RequestAttributes.SCOPE_REQUEST);
