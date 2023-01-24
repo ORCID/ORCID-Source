@@ -57,8 +57,7 @@ public class DBUnitTest {
                 e2.printStackTrace();
                 fail();
             }
-        }
-                
+        }                      
     }
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {
