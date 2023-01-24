@@ -72,10 +72,10 @@ public class ApiUtilsTest {
 
         response = apiUtils.buildApiResponse("0000-0000-0000-0000", "peer-review", "01", "apiError.createpeerreview_response.exception");
         location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/v2.0/0000-0000-0000-0000/peer-review/01", location);
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/0000-0000-0000-0000/peer-review/01", location);
 
         response = apiUtils.buildApiResponse(null, "group-id-record", "01", "apiError.creategroupidrecord_response.exception");
         location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/v2.0/group-id-record/01", location);
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/group-id-record/01", location);
     }
 }
