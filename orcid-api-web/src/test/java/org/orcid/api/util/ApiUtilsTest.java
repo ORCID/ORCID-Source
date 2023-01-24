@@ -60,7 +60,7 @@ public class ApiUtilsTest {
     public void testBuildApiResponse() {
         Response response = apiUtils.buildApiResponse("0000-0001-2345-6789", "work", "122345", "apiError.creatework_response.exception");
         String location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/0000-0001-2345-6789/work/122345", location);
+        assertEquals("https://localhost:8443/orcid-api-web/0000-0001-2345-6789/work/122345", location);
 
         response = apiUtils.buildApiResponse(null, "group-id-record", "5", "apiError.creategroupidrecord_response.exception");
         location = getLocationFromResponse(response);
