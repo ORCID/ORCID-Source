@@ -49,8 +49,7 @@
     <!-- Tell Spring where to find the context file -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>
-            classpath*:/orcid-core-context.xml            
+        <param-value>            
             classpath*:/orcid-frontend-web-servlet.xml
         </param-value>
     </context-param>

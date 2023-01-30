@@ -31,8 +31,7 @@
         <sec:custom-filter ref="orcidResourceServerFilter" before="PRE_AUTH_FILTER" />
         <sec:access-denied-handler ref="orcidOauthAuthenticationEntryPoint" />
         <sec:expression-handler ref="oauthWebExpressionHandler" />
-    </sec:http>    
-	
+    </sec:http>	
 
 	<!-- A simple authentication manager that will attempt to authenticate the client using the X.509 cert -->
     <sec:authentication-manager id="x509AuthenticationManager">
@@ -83,7 +82,6 @@
         <property name="authenticationEntryPoint" ref="orcidOauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>
-
         
     <bean id="orcidOauthAuthenticationEntryPoint" class="org.orcid.api.common.exception.OrcidOAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID Internal API" />
