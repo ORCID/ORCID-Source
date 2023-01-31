@@ -1,5 +1,6 @@
 package org.orcid.listener.s3;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,10 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Activity;
-import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
@@ -47,8 +46,7 @@ import org.orcid.listener.orcid.Orcid30Manager;
 import org.orcid.listener.persistence.managers.Api30RecordStatusManager;
 import org.orcid.listener.persistence.util.APIVersion;
 import org.orcid.listener.persistence.util.ActivityType;
-import org.orcid.utils.listener.BaseMessage;
-import org.orcid.utils.listener.RetryMessage;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +55,6 @@ import org.springframework.stereotype.Component;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Core logic for listeners
@@ -73,8 +70,8 @@ public class S3MessageProcessorAPIV3 {
 
     Logger LOG = LoggerFactory.getLogger(S3MessageProcessorAPIV3.class);
 
-    @Value("${org.orcid.message-listener.index.v3:false}")
-    private boolean isV3IndexerEnabled;
+    @Value("${org.orcid.messaging.v3_indexing.enabled:false}")
+    private boolean isV3IndexingEnabled;
     
     @Resource
     private Orcid30Manager orcid30ApiClient;
@@ -83,14 +80,13 @@ public class S3MessageProcessorAPIV3 {
     @Resource
     private Api30RecordStatusManager api30RecordStatusManager;
 
-    public void update(BaseMessage message) {
-        String orcid = message.getOrcid();
+    public void update(String orcid) {
         Boolean isSummaryOk = false;
         List<ActivityType> failedElements = new ArrayList<ActivityType>();
-        if (isV3IndexerEnabled) {
+        if (isV3IndexingEnabled) {
             Record record = null;
             try {
-                record = fetchPublicRecordAndClearIfNeeded(message);
+                record = fetchPublicRecordAndClearIfNeeded(orcid);
             } catch (Exception e) {
                 LOG.error("Unable to fetch public record for " + orcid, e);
                 api30RecordStatusManager.allFailed(orcid);
@@ -104,15 +100,13 @@ public class S3MessageProcessorAPIV3 {
         }
     }
 
-    public void retry(RetryMessage message, Boolean retrySummary, List<ActivityType> retryList) {
-        if(!isV3IndexerEnabled) {
+    public void retry(String orcid, Boolean retrySummary, List<ActivityType> retryList) {
+        if(!isV3IndexingEnabled) {
             return;
         }
-        String orcid = message.getOrcid();
-        
         Record record = null;
         try {
-            record = fetchPublicRecordAndClearIfNeeded(message);
+            record = fetchPublicRecordAndClearIfNeeded(orcid);
         } catch (Exception e) {
             LOG.error("Unable to fetch public record for " + orcid, e);
             api30RecordStatusManager.allFailed(orcid);
@@ -198,7 +192,7 @@ public class S3MessageProcessorAPIV3 {
     }
 
     private boolean updateSummary(Record record) {
-        if (record == null || !isV3IndexerEnabled) {
+        if (record == null || !isV3IndexingEnabled) {
             return false;
         }
         String orcid = record.getOrcidIdentifier().getPath();
@@ -230,7 +224,7 @@ public class S3MessageProcessorAPIV3 {
      * 
      */
     private void updateActivities(Record record, List<ActivityType> failedElements) {
-        if (record == null || !isV3IndexerEnabled) {
+        if (record == null || !isV3IndexingEnabled) {
             return;
         }
 
@@ -291,7 +285,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.DISTINCTIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Distinctions for record " + orcid, e);
@@ -312,7 +306,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EDUCATIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Educations for record " + orcid, e);
@@ -333,7 +327,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.EMPLOYMENTS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Employments for record " + orcid, e);
@@ -354,7 +348,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.INVITED_POSITIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.INVITED_POSITIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Invited Positions for record " + orcid, e);
@@ -375,7 +369,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.MEMBERSHIP);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.MEMBERSHIP);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Memberships for record " + orcid, e);
@@ -396,7 +390,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.QUALIFICATIONS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.QUALIFICATIONS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Qualifications for record " + orcid, e);
@@ -417,7 +411,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.SERVICES);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.SERVICES);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Services for record " + orcid, e);
@@ -438,7 +432,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.FUNDINGS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.FUNDINGS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Fundings for record " + orcid, e);
@@ -461,7 +455,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.PEER_REVIEWS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Peer Reviews for record " + orcid, e);
@@ -482,7 +476,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.RESEARCH_RESOURCES);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.RESEARCH_RESOURCES);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Research Resources for record " + orcid, e);
@@ -503,7 +497,7 @@ public class S3MessageProcessorAPIV3 {
                     return false;
                 }
             } else {
-                s3Manager.clearV3ActivitiesByType(orcid, ActivityType.WORKS);
+                return s3Manager.clearV3ActivitiesByType(orcid, ActivityType.WORKS);
             }
         } catch (Exception e) {
             LOG.info("Unable to process Works for record " + orcid, e);
@@ -517,70 +511,77 @@ public class S3MessageProcessorAPIV3 {
             for (Activity x : activities) {
                 processActivity(orcid, x, existingElements, type);
             }
+            
             // Remove from S3 all element that still exists on the
             // existingEducations map
+            boolean anyFailed = false;
             for (String putCode : existingElements.keySet()) {
-                s3Manager.removeV3Activity(orcid, putCode, type);
+                boolean removed = s3Manager.removeV3Activity(orcid, putCode, type);
+                if(!removed) {
+                    anyFailed = true;
+                }
             }
 
-            return true;
+            // If nothing failed, then all activities were properly removed
+            return !anyFailed;
         } catch (Exception e) {
             LOG.error("Unable to fetch activities " + type.getValue() + " for orcid " + orcid, e);
         }
         return false;
     }
 
-    private void processActivity(String orcid, Activity x, Map<String, S3ObjectSummary> existingElements, ActivityType type)
-            throws AmazonClientException, AmazonServiceException, JsonProcessingException, JAXBException {
-        String putCodeString = String.valueOf(x.getPutCode());
-        Activity activity = null;
-        if (existingElements.containsKey(putCodeString)) {
-            S3ObjectSummary existingObject = existingElements.get(putCodeString);
-            Date elementLastModified = DateUtils.convertToDate(x.getLastModifiedDate().getValue());
+    private void processActivity(String orcid, Activity activityFromSummary, Map<String, S3ObjectSummary> existingElements, ActivityType type)
+            throws AmazonClientException, AmazonServiceException, JAXBException, IOException, InterruptedException {
+        Long summaryPutCode = activityFromSummary.getPutCode();
+        String summaryPutCodeString = String.valueOf(summaryPutCode);
+        Date summaryLastModified = DateUtils.convertToDate(activityFromSummary.getLastModifiedDate().getValue());
+        byte [] activity = null;
+        if (existingElements.containsKey(summaryPutCodeString)) {
+            S3ObjectSummary existingObject = existingElements.get(summaryPutCodeString);            
             Date s3LastModified = existingObject.getLastModified();
-            if (elementLastModified.after(s3LastModified)) {
-                activity = fetchActivity(orcid, x.getPutCode(), type);
+            if (summaryLastModified.after(s3LastModified)) {
+                activity = fetchActivity(orcid, summaryPutCode, type);
             }
             // Remove it from the existingElements list since it was
             // already processed
-            existingElements.remove(putCodeString);
+            existingElements.remove(summaryPutCodeString);
         } else {
-            activity = fetchActivity(orcid, x.getPutCode(), type);
+            activity = fetchActivity(orcid, summaryPutCode, type);
         }
 
         if (activity != null) {
             // Upload it to S3
-            s3Manager.uploadV3Activity(orcid, putCodeString, activity);
+            s3Manager.uploadV3Activity(orcid, summaryPutCodeString, type, summaryLastModified, activity);
             // Remove it from the existingElements list means that the
             // elements was already processed
-            existingElements.remove(putCodeString);
+            existingElements.remove(summaryPutCodeString);
         }
     }
 
-    private Activity fetchActivity(String orcid, Long putCode, ActivityType type) {
+    private byte[] fetchActivity(String orcid, Long putCode, ActivityType type) throws IOException, InterruptedException {
         switch (type) {
         case DISTINCTIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.DISTINCTION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "distinction");
         case EDUCATIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EDUCATION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "education");
         case EMPLOYMENTS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.EMPLOYMENT);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "employment");
         case FUNDINGS:
-            return orcid30ApiClient.fetchFunding(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "funding");
         case INVITED_POSITIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.INVITED_POSITION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "invited-position");
         case MEMBERSHIP:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.MEMBERSHIP);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "membership");
         case PEER_REVIEWS:
-            return orcid30ApiClient.fetchPeerReview(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "peer-review");
         case QUALIFICATIONS:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.QUALIFICATION);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "qualification");
         case RESEARCH_RESOURCES:
-            return orcid30ApiClient.fetchResearchResource(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "research-resource");
         case SERVICES:
-            return orcid30ApiClient.fetchAffiliation(orcid, putCode, AffiliationType.SERVICE);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "service");
         case WORKS:
-            return orcid30ApiClient.fetchWork(orcid, putCode);
+            return orcid30ApiClient.fetchActivity(orcid, putCode, "work");
         default:
             throw new IllegalArgumentException("Invalid type! Imposible: " + type);
         }
@@ -599,13 +600,12 @@ public class S3MessageProcessorAPIV3 {
      *             be cleared in S3 or, when the record ca't be fetched from the
      *             ORCID API
      */
-    private Record fetchPublicRecordAndClearIfNeeded(BaseMessage message) throws AmazonClientException, AmazonServiceException, Exception {
-        String orcid = message.getOrcid();
+    private Record fetchPublicRecordAndClearIfNeeded(String orcid) throws AmazonClientException, AmazonServiceException, Exception {
         try {
-            return orcid30ApiClient.fetchPublicRecord(message);
+            return orcid30ApiClient.fetchPublicRecord(orcid);
         } catch (LockedRecordException | DeprecatedRecordException e) {
             // Remove all activities from this record
-            s3Manager.clearV3Activities(orcid);
+            boolean allCleared = s3Manager.clearV3Activities(orcid);
             // Remove the summary
             OrcidError error = null;
             if (e instanceof LockedRecordException) {
@@ -623,7 +623,13 @@ public class S3MessageProcessorAPIV3 {
                 LOG.error("Record " + orcid + " is locked or deprecated, however, S3 couldn't be updated", e1);
                 throw new Exception(e1);
             }
-            api30RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
+            if(allCleared) {
+                api30RecordStatusManager.save(orcid, true, new ArrayList<ActivityType>());
+            } else {
+                // Mark all activities as failed so we try to clear everything again
+                api30RecordStatusManager.save(orcid, true, List.of(ActivityType.DISTINCTIONS, ActivityType.EDUCATIONS, ActivityType.EMPLOYMENTS, ActivityType.FUNDINGS, ActivityType.INVITED_POSITIONS,
+                        ActivityType.MEMBERSHIP, ActivityType.PEER_REVIEWS, ActivityType.PEER_REVIEWS, ActivityType.QUALIFICATIONS, ActivityType.RESEARCH_RESOURCES, ActivityType.SERVICES, ActivityType.WORKS));
+            }
             return null;
         } catch (Exception e) {
             throw new Exception(e);

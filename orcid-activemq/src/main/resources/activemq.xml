@@ -29,10 +29,10 @@
 		</transportConnectors>
 
 		<destinations>
-			<queue physicalName="${org.orcid.persistence.messaging.reindex.solr}"
-				name="${org.orcid.persistence.messaging.reindex.solr}" />
-			<queue physicalName="${org.orcid.persistence.messaging.updated.solr}"
-				name="${org.orcid.persistence.messaging.updated.solr}" />
+			<queue physicalName="${org.orcid.messaging.reindex.solr}"
+				name="${org.orcid.messaging.reindex.solr}" />
+			<queue physicalName="${org.orcid.messaging.updated.solr}"
+				name="${org.orcid.messaging.updated.solr}" />
 		</destinations>
 		
 		<plugins>

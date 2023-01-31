@@ -94,6 +94,8 @@ public class AnonymizeWorksFromCSV {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         workDao = (WorkDao) context.getBean("workDao");
         jpaJaxbWorkAdapter = (JpaJaxbWorkAdapter) context.getBean("jpaJaxbWorkAdapterV3");
+        contributorUtils = (ContributorUtils) context.getBean("contributorUtilsV3");
+        contributorsRolesAndSequencesConverter=context.getBean(ContributorsRolesAndSequencesConverter.class);
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
@@ -131,7 +133,6 @@ public class AnonymizeWorksFromCSV {
     private void anonymizeWorks() throws Exception {
         ArrayList<WorkPojoFromCsv> worksFromCsv = getAllWorks();
         Work work;
-
         // delete all existent works for orcid provided
         workDao.removeWorks(orcid);
 
@@ -151,6 +152,9 @@ public class AnonymizeWorksFromCSV {
             }
             workEntity.setVisibility(work.getVisibility().name());
             if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null && work.getWorkContributors().getContributor().size() > 0) {
+                if(maxContributorsForUI == 0) {
+                    maxContributorsForUI = 50;
+                }
                 List<ContributorsRolesAndSequences> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
                 if (topContributors.size() > 0) {
                     workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverter.convertTo(topContributors, null));

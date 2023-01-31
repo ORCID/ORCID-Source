@@ -241,9 +241,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     private List<Item> createItemList(OrgAffiliationRelationEntity orgAffiliationEntity, ActionType type) {
         Item item = new Item();
         item.setItemName(orgAffiliationEntity.getOrg().getName());
-        item.setItemType(AffiliationType.EDUCATION.value().equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
+        item.setItemType(AffiliationType.EDUCATION.name().equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
-        item.setItemType(ItemType.WORK);
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
         additionalInfo.put("department", orgAffiliationEntity.getDepartment());
         additionalInfo.put("org_name", orgAffiliationEntity.getOrg().getName());

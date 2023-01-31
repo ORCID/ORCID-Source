@@ -19,5 +19,5 @@ Set some indexing status to PENDING or modify a record via the UI and see what h
 Testing SOLR
 ============
 update message-listener.properties
-	org.orcid.persistence.messaging.solr_indexing.enabled=true
+	org.orcid.messaging.solr_indexing.enabled=true
 Set some indexing status to PENDING or modify something in the UI the and see what happens

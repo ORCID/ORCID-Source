@@ -16,10 +16,10 @@ public class S3V3RecordConsumer implements Consumer<LastModifiedMessage> {
 
     @Override
     public void accept(LastModifiedMessage message) {
-        proc.update(message);
+        proc.update(message.getOrcid());
     }
 
     public void accept(RetryMessage message) {
-        proc.update(message);
+        proc.update(message.getOrcid());
     }
 }
