@@ -41,6 +41,7 @@ the software.
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
+		<togglz.version>3.3.3</togglz.version>
     </properties>
 
     <modules>    
@@ -931,6 +932,44 @@ the software.
                 <artifactId>aws-java-sdk-s3</artifactId>
                 <version>${aws.version}</version>
             </dependency>
+		<!-- Togglz -->
+		<dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-core</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-web</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-security</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-console</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-testing</artifactId>
+            <version>${togglz.version}</version>
+            <scope>test</scope>
+        </dependency>		
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-junit</artifactId>
+            <version>${togglz.version}</version>
+            <scope>test</scope>
+        </dependency>
         </dependencies>
     </dependencyManagement>
 

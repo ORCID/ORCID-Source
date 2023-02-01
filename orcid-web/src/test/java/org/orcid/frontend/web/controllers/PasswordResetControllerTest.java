@@ -116,7 +116,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "recordEmailSender", mockRecordEmailSender);        
         
         // Disable all features by default
-        togglzRule.disableAll();
+        TogglzRule.allDisabled(Features.class);
     }
     
     @Test

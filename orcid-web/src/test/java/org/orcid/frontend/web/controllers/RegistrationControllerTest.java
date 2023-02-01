@@ -180,7 +180,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());
         
         // Disable all features by default
-        togglzRule.disableAll();
+        TogglzRule.allDisabled(Features.class);
     }
     
     @Test
