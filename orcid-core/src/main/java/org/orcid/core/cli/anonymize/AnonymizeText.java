@@ -42,6 +42,9 @@ public class AnonymizeText {
     private static final String KEY_CONTRIBUTOR_ROLE = "contributorRole";
 
     private static final HashMap<String, ExternalID> extIdsAnonymized = new HashMap<String, ExternalID>();
+    private static final HashMap<String, String> contributorNamesAnonymized = new HashMap<String, String>();
+    private static final HashMap<String, String> contributorOrcidsAnonymized = new HashMap<String, String>();
+    private static final HashMap<String, String> contributorEmailsAnonymized = new HashMap<String, String>();
     private static final String KEY_SEPARATOR_EXT_ID = "::";
 
     public String anonymizeString(String s) {
@@ -224,8 +227,11 @@ public class AnonymizeText {
             }
 
             if (origContributorOrcid.has(KEY_PATH) && !origContributorOrcid.isNull(KEY_PATH)) {
+                if(!contributorOrcidsAnonymized.containsKey(origContributorOrcid.get(KEY_PATH))) {
+                    contributorOrcidsAnonymized.put(origContributorOrcid.getString(KEY_PATH), anonymizeString(origContributorOrcid.getString(KEY_PATH)));
+                }
 
-                contributorOrcid.setPath(anonymizeString(origContributorOrcid.getString(KEY_PATH)));
+                contributorOrcid.setPath(contributorOrcidsAnonymized.get(origContributorOrcid.getString(KEY_PATH)));
 
             }
 
@@ -242,7 +248,11 @@ public class AnonymizeText {
         if (original.has(KEY_CONTRIBUTOR_EMAIL)) {
             if (!original.isNull(KEY_CONTRIBUTOR_EMAIL)) {
                 org.orcid.jaxb.model.v3.release.common.ContributorEmail email = new org.orcid.jaxb.model.v3.release.common.ContributorEmail();
-                email.setValue(anonymizeString(original.getString(KEY_CONTRIBUTOR_EMAIL)));
+                if(!contributorEmailsAnonymized.containsKey(original.getString(KEY_CONTRIBUTOR_EMAIL))) {
+                    
+                    contributorEmailsAnonymized.put(original.getString(KEY_CONTRIBUTOR_EMAIL), anonymizeString(original.getString(KEY_CONTRIBUTOR_EMAIL)));
+                }
+                email.setValue(contributorEmailsAnonymized.get(original.getString(KEY_CONTRIBUTOR_EMAIL)));
                 newContributor.setContributorEmail(email);
             }
         }
@@ -253,7 +263,11 @@ public class AnonymizeText {
                 if (creditNameObj.has(KEY_CONTENT)) {
 
                     org.orcid.jaxb.model.v3.release.common.CreditName creditName = new org.orcid.jaxb.model.v3.release.common.CreditName();
-                    creditName.setContent(anonymizeString(creditNameObj.getString(KEY_CONTENT)));
+                    if(!contributorNamesAnonymized.containsKey(creditNameObj.getString(KEY_CONTENT))) {
+                        contributorNamesAnonymized.put(creditNameObj.getString(KEY_CONTENT), anonymizeString(creditNameObj.getString(KEY_CONTENT)));
+                    }
+                    
+                    creditName.setContent(contributorNamesAnonymized.get(creditNameObj.getString(KEY_CONTENT))); 
                     newContributor.setCreditName(creditName);
                 }
             }
@@ -302,8 +316,12 @@ public class AnonymizeText {
             }
 
             if (!PojoUtil.isEmpty(original.getContributorOrcid().getPath())) {
+                if(!contributorOrcidsAnonymized.containsKey(original.getContributorOrcid().getPath())) {
+                    
+                    contributorOrcidsAnonymized.put(original.getContributorOrcid().getPath(), anonymizeString(original.getContributorOrcid().getPath()));
+                }
 
-                contributorOrcid.setPath(anonymizeString(original.getContributorOrcid().getPath()));
+                contributorOrcid.setPath(contributorOrcidsAnonymized.get(original.getContributorOrcid().getPath()));
 
             }
 
@@ -320,14 +338,22 @@ public class AnonymizeText {
         if (original.getContributorEmail() != null && !PojoUtil.isEmpty(original.getContributorEmail().getValue())) {
 
             org.orcid.jaxb.model.v3.release.common.ContributorEmail email = new org.orcid.jaxb.model.v3.release.common.ContributorEmail();
-            email.setValue(anonymizeString(original.getContributorEmail().getValue()));
+            if(!contributorEmailsAnonymized.containsKey(original.getContributorEmail().getValue())) {
+                
+                contributorEmailsAnonymized.put(original.getContributorEmail().getValue(), anonymizeString(original.getContributorEmail().getValue()));
+            }
+            email.setValue(contributorEmailsAnonymized.get(original.getContributorEmail().getValue()));
             newContributor.setContributorEmail(email);
 
         }
 
         if (original.getCreditName() != null && !PojoUtil.isEmpty(original.getCreditName().getContent())) {
             org.orcid.jaxb.model.v3.release.common.CreditName creditName = new org.orcid.jaxb.model.v3.release.common.CreditName();
-            creditName.setContent(anonymizeString(original.getCreditName().getContent()));
+            if(!contributorNamesAnonymized.containsKey(original.getCreditName().getContent())) {
+                
+                contributorNamesAnonymized.put(original.getCreditName().getContent(), anonymizeString(original.getCreditName().getContent()));
+            }
+            creditName.setContent(contributorNamesAnonymized.get(original.getCreditName().getContent()));
             newContributor.setCreditName(creditName);
 
         }
