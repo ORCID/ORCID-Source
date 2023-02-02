@@ -30,7 +30,7 @@
             <div class="member" *ngFor="let member of membersList">
                 <hr class="no-margin-top" />
                 	<div class="col-md-12 col-sm-12 col-xs-12">
-                    	<h2 ><a [href]="getMemberPageUrl(member.slug)" target="member.publicDisplayName">{{member.publicDisplayName}}</a></h2>
+                    	<h2 ><a [href]="getMemberPageUrl(member.id)" target="member.publicDisplayName">{{member.publicDisplayName}}</a></h2>
                     	<p><span *ngIf="communityTypes[member.researchCommunity]">{{communityTypes[member.researchCommunity]}}</span><span *ngIf="communityTypes[member.researchCommunity]&&member.country"> | </span>{{member.country}}</p>
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-12">

@@ -19,7 +19,7 @@ export class MembersListService {
     private communityTypesUrl: string;
     private membersListUrl: string;
     private consortiaListUrl: string;
-    private memberDetailsBySlugUrl: string;    
+    private memberDetailsByIdUrl: string;    
     
     constructor( private http: HttpClient ){
         this.headers = new HttpHeaders(
@@ -31,7 +31,7 @@ export class MembersListService {
         this.communityTypesUrl = getBaseUri() + '/members/communityTypes.json';
         this.membersListUrl = getBaseUri() + '/members/members.json';
         this.consortiaListUrl = getBaseUri() + '/consortia/consortia.json';
-        this.memberDetailsBySlugUrl = getBaseUri() + '/members/detailsBySlug.json?memberSlug=';        
+        this.memberDetailsByIdUrl = getBaseUri() + '/members/details.json?memberId=';        
     }
     
     getCommunityTypes(): Observable<any> {
@@ -46,8 +46,8 @@ export class MembersListService {
         return this.http.get(this.consortiaListUrl);
     }
     
-    getMemberDetailsBySlug(slug: string): Observable<any> {
-        const url = `${this.memberDetailsBySlugUrl}${slug}`;
+    getMemberDetailsById(memberId: string): Observable<any> {
+        const url = `${this.memberDetailsByIdUrl}${memberId}`;
         return this.http.get(url);
     }
     

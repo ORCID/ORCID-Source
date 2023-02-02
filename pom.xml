@@ -674,12 +674,7 @@ the software.
                 <artifactId>jersey-apache-client4</artifactId>
                 <version>${jersey.version}</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.github.slugify</groupId>
-                <artifactId>slugify</artifactId>
-                <version>2.1.5</version>
-            </dependency>
+            </dependency>            
 
             <!-- Database -->
             <dependency>

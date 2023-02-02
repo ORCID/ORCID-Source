@@ -26,7 +26,7 @@
 	            <div class="col-md-12 col-sm-12 col-xs-12" *ngIf="currentMemberDetails.parentOrgName">              
 	                <h3><@orcid.msg 'member_details.consortium_parent'/></h3>
 	                <p> 
-	                    <span *ngIf="currentMemberDetails.parentOrgName"><a [href]="getMemberPageUrl(currentMemberDetails.parentOrgSlug)">{{currentMemberDetails.parentOrgName}}</a></span>
+	                    <span *ngIf="currentMemberDetails.parentOrgName"><a [href]="getMemberPageUrl(currentMemberDetails.parentId)">{{currentMemberDetails.parentOrgName}}</a></span>
 	                    <span *ngIf="!currentMemberDetails.parentOrgName"><@orcid.msg 'member_details.none'/></span>
 	                </p>
 	                <hr />
@@ -153,7 +153,7 @@
 	                    <th><@orcid.msg 'member_details.member_name'/></th>
 	                </tr>
 	                <tr *ngFor="let subMember of currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
-	                    <td><a [href]="getMemberPageUrl(subMember.slug)">{{subMember.opportunity.accountName}}</a></td>
+	                    <td><a [href]="getMemberPageUrl(subMember.accountId)">{{subMember.opportunity.accountName}}</a></td>
 	                </tr>
 	            </table>
 	            <div *ngIf="!currentMemberDetails.subMembers.length"> 
