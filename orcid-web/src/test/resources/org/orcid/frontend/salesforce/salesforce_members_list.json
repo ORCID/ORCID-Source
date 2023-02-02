@@ -10,6 +10,7 @@
     "Name" : "Org 2 Consortium Member",
     "Website" : "http://org2.edu",
     "BillingCountry" : "New Zealand",
+    "Public_Display_Name__c": "Org 2 Consortium Member Public name",
     "Opportunities" : {
       "totalSize" : 1,
       "done" : true,

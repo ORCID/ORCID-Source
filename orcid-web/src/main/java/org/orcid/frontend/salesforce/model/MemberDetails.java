@@ -14,7 +14,7 @@ public class MemberDetails implements Serializable {
 
     private Member member;
     private String parentOrgName;
-    private String parentOrgSlug;
+    private String parentId;
     private List<Integration> integrations;
     private List<Contact> contacts;
     private List<SubMember> subMembers;
@@ -35,12 +35,12 @@ public class MemberDetails implements Serializable {
         this.parentOrgName = parentOrgName;
     }
 
-    public String getParentOrgSlug() {
-        return parentOrgSlug;
+    public String getParentId() {
+        return parentId;
     }
 
-    public void setParentOrgSlug(String parentOrgSlug) {
-        this.parentOrgSlug = parentOrgSlug;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public List<Integration> getIntegrations() {

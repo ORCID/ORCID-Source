@@ -59,9 +59,9 @@ export class MemberDetailsComponent {
     }
     
     getCurrentMemberDetails(): void {
-        var memberSlug = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
-        var memberSlugStripped = memberSlug.replace(/<[^>]+>/g, '').trim();
-        this.membersListService.getMemberDetailsBySlug(memberSlugStripped)
+        var memberId = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+        var memberIdStripped = memberId.replace(/<[^>]+>/g, '').trim();
+        this.membersListService.getMemberDetailsById(memberIdStripped)
             .subscribe(data => {
                 this.showMemberDetailsLoader = false;
                 this.currentMemberDetails = data;
@@ -92,8 +92,8 @@ export class MemberDetailsComponent {
         }
     }
     
-    getMemberPageUrl(slug: string): string {
-        return getBaseUri() + '/members/' + slug;
+    getMemberPageUrl(memberId: string): string {
+        return getBaseUri() + '/members/' + memberId;
     }
     
     ngOnInit(): void {

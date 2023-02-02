@@ -169,11 +169,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.slugify</groupId>
-            <artifactId>slugify</artifactId>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
