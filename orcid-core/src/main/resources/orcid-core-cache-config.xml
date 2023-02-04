@@ -25,8 +25,8 @@
 		<property name="cacheName" value="recent-orcid" />
 		<property name="cacheManager" ref="coreCacheManager" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.recent_orcid.timeToIdleSeconds:86400}" />
-		<property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesInMemory:1000}" />		
-		<property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesOnDisk:2000}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesInMemory:16}" />		
+		<property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesOnDisk:32}" />
 	</bean>
 	
 	<bean id="profileEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
