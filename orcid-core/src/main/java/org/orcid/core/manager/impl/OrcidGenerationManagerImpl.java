@@ -9,6 +9,7 @@ import org.ehcache.Cache;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.togglz.Features;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
     @Resource(name = "recentOrcidCache")
     private Cache<String, String> recentOrcidCache;
 
+    private final long ORCID_IDS_V2_RANGE_SIZE = (ORCID_BASE_V2_MAX - ORCID_BASE_V2_MIN + 1);
+    
     @Override
     public String createNewOrcid() {
         String orcid = getNextOrcid();
@@ -51,8 +54,12 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
 
     private long getRandomNumber() {
         Random random = new Random();
-        // XXX Need to test edge cases
-        return (long) (ORCID_BASE_MIN + (random.nextDouble() * (ORCID_BASE_MAX - ORCID_BASE_MIN + 1)));
+        // Is the new range of IDs enabled?
+        if(Features.ENABLE_NEW_IDS.isActive()) {
+            return (long) (ORCID_BASE_V2_MIN + (random.nextDouble() * ORCID_IDS_V2_RANGE_SIZE));
+        } else {
+            return (long) (ORCID_BASE_MIN + (random.nextDouble() * (ORCID_BASE_MAX - ORCID_BASE_MIN + 1)));
+        }        
     }
 
     private String formatOrcid(String orcid) {
