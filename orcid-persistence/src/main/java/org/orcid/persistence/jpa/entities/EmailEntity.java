@@ -6,10 +6,7 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -17,13 +14,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "email")
-public class EmailEntity extends SourceAwareEntity<String> implements ProfileAware {
+public class EmailEntity extends SourceAwareEntity<String> implements OrcidAware {
 
     private static final long serialVersionUID = 1;
 
     private String email;
     private String emailHash;
-    private ProfileEntity profile;
+    private String orcid;
     private Boolean primary;
     private Boolean current;
     private Boolean verified;
@@ -49,14 +46,13 @@ public class EmailEntity extends SourceAwareEntity<String> implements ProfileAwa
         this.email = email;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "is_primary")

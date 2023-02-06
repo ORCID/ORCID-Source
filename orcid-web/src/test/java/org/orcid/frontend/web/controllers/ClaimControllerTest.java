@@ -10,8 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +29,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -150,24 +147,14 @@ public class ClaimControllerTest {
     private ProfileEntity getProfileEntityToTestClaimResend(boolean claimed) {
         ProfileEntity entity = new ProfileEntity();
         entity.setId("0000-0000-0000-000X");
-        entity.setClaimed(claimed);
-        Set<EmailEntity> emails = new HashSet<EmailEntity>();
-        EmailEntity email = new EmailEntity();
-        email.setEmail("billie@holiday.com");
-        email.setPrimary(true);
-        entity.setEmails(emails);
+        entity.setClaimed(claimed);        
         return entity;
     }
 
     private ProfileEntity getProfileEntityToTestClam(boolean claimed) {
         ProfileEntity entity = new ProfileEntity();
         entity.setId("0000-0000-0000-0001");
-        entity.setClaimed(claimed);
-        Set<EmailEntity> emails = new HashSet<EmailEntity>();
-        EmailEntity email = new EmailEntity();
-        email.setEmail("public_0000-0000-0000-0001@test.orcid.org");
-        email.setPrimary(true);
-        entity.setEmails(emails);
+        entity.setClaimed(claimed);        
         return entity;
     }
 }

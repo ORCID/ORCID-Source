@@ -15,7 +15,6 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -306,28 +305,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
                 }
                 profileEntity.setGivenPermissionTo(filtered);
             }
-        }
-    }
-
-    @Override
-    @Transactional
-    @UpdateProfileLastModifiedAndIndexingStatus
-    public void removeChildrenWithGeneratedIds(ProfileEntity profileEntity) {
-        String orcid = profileEntity.getId();
-        removeChildren(orcid, profileEntity.getResearcherUrls(), "user.id");
-        removeChildren(orcid, profileEntity.getOtherNames());
-        removeChildren(orcid, profileEntity.getGivenPermissionTo(), "giver");
-    }
-
-    private void removeChildren(String orcid, Collection<? extends BaseEntity<?>> entities) {
-        removeChildren(orcid, entities, "profile.id");
-    }
-
-    private void removeChildren(String orcid, Collection<? extends BaseEntity<?>> entities, String orcidPath) {
-        if (entities != null && !entities.isEmpty()) {
-            entityManager.createQuery("delete from " + entities.iterator().next().getClass().getName() + " where " + orcidPath + " = :orcid").setParameter("orcid", orcid)
-                    .executeUpdate();
-            entities.clear();
         }
     }
 

@@ -61,9 +61,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean orcidExists(String orcid);
 
-    void remove(String giverOrcid, String receiverOrcid);
-
-    void removeChildrenWithGeneratedIds(ProfileEntity profileEntity);
+    void remove(String giverOrcid, String receiverOrcid);    
 
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);
 
