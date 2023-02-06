@@ -24,7 +24,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class CleanOldClientKeysCronJobTest extends DBUnitTest {
 
     @InjectMocks

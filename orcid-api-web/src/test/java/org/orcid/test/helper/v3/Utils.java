@@ -293,6 +293,7 @@ public class Utils {
         newExtId.setValue("new-reference");
         newExtId.setUrl(new Url("http://newUrl.com"));
         newExtId.setVisibility(Visibility.LIMITED);
+        newExtId.setRelationship(Relationship.SELF);
         return newExtId;
     }
 

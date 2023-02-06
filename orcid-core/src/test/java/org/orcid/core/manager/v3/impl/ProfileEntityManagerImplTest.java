@@ -61,7 +61,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author: Declan Newman (declan) Date: 10/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String CLIENT_ID_2 = "APP-5555555555555556";

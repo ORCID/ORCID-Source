@@ -37,7 +37,7 @@ import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class InstitutionalSignInManagerTest {
 
     private final String userOrcid = "0000-0000-0000-0001";

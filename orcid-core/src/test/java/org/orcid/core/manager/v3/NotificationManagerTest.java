@@ -96,7 +96,7 @@ public class NotificationManagerTest extends DBUnitTest {
     private GenericDao<ProfileEventEntity, Long> profileEventDao;
 
     @Mock
-    private SourceManager sourceManager;
+    private SourceManager mockSourceManager;
 
     @Mock
     private NotificationDao mockNotificationDao;
@@ -160,6 +160,9 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
+    
+    @Resource(name = "sourceManagerV3")
+    private SourceManager sourceManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -177,7 +180,7 @@ public class NotificationManagerTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(notificationManager, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDaoReadOnly", mockProfileDaoReadOnly);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", mockEmailEventDao);
@@ -198,6 +201,11 @@ public class NotificationManagerTest extends DBUnitTest {
     }
 
     @After
+    public void after() {
+        resetMocks();
+        TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
+    }
+    
     public void resetMocks() {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", emailManager);
@@ -212,7 +220,7 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);        
     }
 
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
@@ -224,8 +232,8 @@ public class NotificationManagerTest extends DBUnitTest {
         resetMocks();
 
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
+        when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(mockSourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         String testOrcid = "0000-0000-0000-0003";
 
         for (AvailableLocales locale : AvailableLocales.values()) {
@@ -259,8 +267,8 @@ public class NotificationManagerTest extends DBUnitTest {
         profile.setEmails(emails);
 
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
+        when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(mockSourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationCustomEntity());
 
         Email email = new Email();
@@ -300,8 +308,8 @@ public class NotificationManagerTest extends DBUnitTest {
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         resetMocks();
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
-        when(sourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
+        when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
+        when(mockSourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");
 
         notificationManager.sendDelegationRequestEmail("0000-0000-0000-0003", "0000-0000-0000-0003", "http://test.orcid.org");
     }

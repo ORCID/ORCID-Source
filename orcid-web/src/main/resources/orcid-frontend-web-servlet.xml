@@ -16,14 +16,12 @@
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
-	<tx:annotation-driven />
-
-    <context:property-placeholder location="${org.orcid.config.file:}"
-                                  ignore-resource-not-found="true" ignore-unresolvable="true" />
-
-    <import resource="classpath*:orcid-frontend-security.xml"/>
-    <import resource="classpath*:orcid-solr-config.xml"/>
+    <context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+	
+	<import resource="classpath*:orcid-core-context.xml" />
+    <import resource="classpath*:orcid-frontend-security.xml" />
     
+    <tx:annotation-driven />
     <context:component-scan base-package="org.orcid"/>
     <mvc:annotation-driven ignore-default-model-on-redirect="true" />
 	<task:annotation-driven />
@@ -118,6 +116,5 @@
     <!-- Salesforce -->
     <bean id="salesForceAdapter" class="org.orcid.frontend.salesforce.adapter.SalesForceAdapter" />
     <bean id="salesForceMapperFacadeFactory" class="org.orcid.frontend.salesforce.adapter.SalesForceMapperFacadeFactory" />
-    <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>
-    
+    <bean id="salesForceMemberMapperFacade" factory-bean="&amp;salesForceMapperFacadeFactory" factory-method="getMemberMapperFacade"/>        	  
 </beans>

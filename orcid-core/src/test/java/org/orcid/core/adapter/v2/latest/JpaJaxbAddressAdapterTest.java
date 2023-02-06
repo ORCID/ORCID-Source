@@ -16,14 +16,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -32,7 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     private final Date now = new Date();
     

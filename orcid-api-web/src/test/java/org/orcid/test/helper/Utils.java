@@ -261,6 +261,7 @@ public class Utils {
         newExtId.setType("new-common-name");
         newExtId.setValue("new-reference");
         newExtId.setUrl(new Url("http://newUrl.com"));
+        newExtId.setRelationship(Relationship.SELF);
         newExtId.setVisibility(Visibility.LIMITED);
         return newExtId;
     }

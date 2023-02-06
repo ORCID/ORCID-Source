@@ -47,7 +47,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbMembershipAdapterV3")

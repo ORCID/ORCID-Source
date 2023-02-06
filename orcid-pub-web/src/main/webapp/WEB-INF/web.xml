@@ -35,8 +35,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath:/orcid-t1-web-context.xml
-            classpath:/orcid-t1-security-context.xml
+            classpath:/orcid-t1-web-context.xml            
         </param-value>
     </context-param>
     

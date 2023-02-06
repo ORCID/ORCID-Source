@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;

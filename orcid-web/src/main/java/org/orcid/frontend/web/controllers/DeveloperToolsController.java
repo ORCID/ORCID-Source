@@ -57,9 +57,6 @@ public class DeveloperToolsController extends BaseWorkspaceController {
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
     
-    @Value("${org.orcid.web.validation.members.websites:true}")
-    private boolean validateWebsites;
-    
     @RequestMapping
     public ModelAndView manageDeveloperTools() {
         ModelAndView mav = new ModelAndView("developer_tools");     
@@ -195,7 +192,7 @@ public class DeveloperToolsController extends BaseWorkspaceController {
         }
         if (PojoUtil.isEmpty(client.getWebsite())) {
             client.getWebsite().setErrors(Arrays.asList(getMessage("manage.developer_tools.website_not_empty")));
-        } else if (validateWebsites) {
+        } else {
             validateUrl(client.getWebsite(), "manage.developer_tools.invalid_website");
         }
         copyErrors(client.getWebsite(), client);

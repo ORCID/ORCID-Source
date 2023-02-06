@@ -6,17 +6,10 @@
 	                    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 
 	<context:property-placeholder
-		file-encoding="UTF-8" location="classpath:staging-orcid-api-client.properties"
-		ignore-unresolvable="true" />
+        location="classpath:/properties/test-api-common.properties,classpath:/properties/test-core.properties,classpath:/properties/test-db.properties"
+        ignore-resource-not-found="true" 
+        ignore-unresolvable="true" />
 
-	<bean id="keyStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
-		<property name="location" value="${org.orcid.t2.client.keyStoreLocation}" />
-		<property name="password" value="${org.orcid.t2.client.keyStorePass}" />
-	</bean>
-
-	<bean id="trustStore" class="org.orcid.api.t2.integration.KeyStoreFactoryBean">
-		<property name="location" value="${org.orcid.t2.client.trustStoreLocation}" />
-		<property name="password" value="${org.orcid.t2.client.trustStorePass}" />
-	</bean>
-
+	<import  resource="classpath*:orcid-api-web-context.xml"/>
+	
 </beans>

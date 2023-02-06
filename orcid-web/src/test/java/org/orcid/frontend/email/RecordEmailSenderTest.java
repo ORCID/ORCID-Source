@@ -44,7 +44,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 public class RecordEmailSenderTest {
 
     @Mock

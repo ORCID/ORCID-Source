@@ -9,7 +9,6 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.junit.Test;
-import org.orcid.api.common.analytics.APIEndpointParser;
 
 import com.sun.jersey.core.header.InBoundHeaders;
 import com.sun.jersey.server.impl.application.WebApplicationImpl;

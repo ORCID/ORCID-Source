@@ -26,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class AddressDaoTest extends DBUnitTest {
     private static String USER_ORCID = "0000-0000-0000-0003";
     private static String OTHER_USER_ORCID = "0000-0000-0000-0001";
