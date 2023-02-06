@@ -47,6 +47,8 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -56,7 +58,6 @@ import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.BackupCodeDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -432,15 +433,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         // Update the visibility for every bio element to the visibility
         // selected by the user
         // Update the bio
-        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility
-                .fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        Visibility defaultVisibility = claim.getActivitiesVisibilityDefault().getVisibility();
         
         // Update address
-        if (profile.getAddresses() != null) {
-            for (AddressEntity a : profile.getAddresses()) {
-                a.setVisibility(defaultVisibility.name());
-            }
-        }
+        Addresses addresses = addressManager.getAddresses(orcid);
+        for(Address address: addresses.getAddress()) {
+            address.setVisibility(defaultVisibility);
+            addressManager.updateAddress(orcid, address.getPutCode(), address, false);
+        }        
 
         // Update the keywords
         if (profile.getKeywords() != null) {

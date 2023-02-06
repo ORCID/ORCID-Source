@@ -110,7 +110,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Set<GivenPermissionToEntity> givenPermissionTo;
     private Set<GivenPermissionByEntity> givenPermissionBy;
     private SortedSet<ProfileFundingEntity> profileFunding;
-    private Set<AddressEntity> addresses;
     private SortedSet<PeerReviewEntity> peerReviews;
     private String locale = DEFAULT_LOCALE;
     
@@ -541,15 +540,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      * */
     public void setPeerReviews(SortedSet<PeerReviewEntity> peerReviews) {
         this.peerReviews = peerReviews;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public Set<AddressEntity> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(Set<AddressEntity> addresses) {
-        this.addresses = addresses;
     }
 
     /**

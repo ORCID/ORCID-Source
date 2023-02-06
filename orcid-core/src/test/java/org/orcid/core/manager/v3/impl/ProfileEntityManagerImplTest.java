@@ -24,6 +24,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -33,6 +34,9 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -96,6 +100,9 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
+    @Resource(name = "addressManagerV3")
+    private AddressManager addressManager;
     
     @Mock
     private EmailFrequencyManager emailFrequencyManager;
@@ -225,10 +232,11 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertTrue(profileEntityManager.claimProfileAndUpdatePreferences("0000-0000-0000-0001", "public_0000-0000-0000-0001@test.orcid.org", AvailableLocales.EN, claim));
         ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
         assertNotNull(profile);
-        assertNotNull(profile.getAddresses());
-        assertEquals(3, profile.getAddresses().size());
-        for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), a.getVisibility());
+        
+        Addresses addresses = addressManager.getAddresses("0000-0000-0000-0001");
+        assertEquals(3, addresses.getAddress().size());
+        for(Address a : addresses.getAddress()) {
+            assertEquals(Visibility.PRIVATE, a.getVisibility());
         }
         
         assertNotNull(profile.getExternalIdentifiers());
