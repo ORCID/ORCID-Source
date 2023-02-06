@@ -3,8 +3,6 @@ package org.orcid.persistence.jpa.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -67,24 +65,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private String orcid;
     private String orcidType;
     private String groupType;
-    private SortedSet<OtherNameEntity> otherNames;
-    private SortedSet<ResearcherUrlEntity> researcherUrls;
-    private SortedSet<ProfileKeywordEntity> keywords;
-    private Set<ExternalIdentifierEntity> externalIdentifiers;
-    private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
-    private Set<EmailEntity> emails;
-    private SortedSet<ResearchResourceEntity> researchResources;
-
+    
     // Security fields
     private String encryptedPassword;
-    private String encryptedVerificationCode;
     private Date accountExpiry;
     private Boolean recordLocked = Boolean.FALSE;
     private String reasonLocked;
     private String reasonLockedDescription;
     private Date recordLockedDate;
-    private String recordLockingAdmin;
-    private Date credentialsExpiry;
+    private String recordLockingAdmin;    
     private Boolean enabled = Boolean.TRUE;
     private String referredBy;
     private Date lastLogin;
@@ -109,8 +98,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private Collection<OrcidGrantedAuthority> authorities;
     private Set<GivenPermissionToEntity> givenPermissionTo;
     private Set<GivenPermissionByEntity> givenPermissionBy;
-    private SortedSet<ProfileFundingEntity> profileFunding;
-    private SortedSet<PeerReviewEntity> peerReviews;
     private String locale = DEFAULT_LOCALE;
     
     private SortedSet<ClientDetailsEntity> clients;
@@ -391,105 +378,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         this.isSelectableSponsor = isSelectableSponsor;
     }
 
-    /**
-     * @return the otherNames
-     */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<OtherNameEntity> getOtherNames() {
-        return otherNames;
-    }
-
-    /**
-     * @param otherNames
-     *            the otherNames to set
-     */
-    public void setOtherNames(SortedSet<OtherNameEntity> otherNames) {
-        this.otherNames = otherNames;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<ProfileKeywordEntity> getKeywords() {
-        return keywords;
-    }
-
-    public void setKeywords(SortedSet<ProfileKeywordEntity> keywords) {
-        this.keywords = keywords;
-    }
-
-    /**
-     * @return the affiliations
-     */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<OrgAffiliationRelationEntity> getOrgAffiliationRelations() {
-        return orgAffiliationRelations;
-    }
-
-    /**
-     * @param affiliations
-     *            the affiliations to set
-     */
-    public void setOrgAffiliationRelations(SortedSet<OrgAffiliationRelationEntity> affiliations) {
-        this.orgAffiliationRelations = affiliations;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    public Set<EmailEntity> getEmails() {
-        return emails;
-    }
-
-    @Transient
-    public EmailEntity getPrimaryEmail() {
-        if (emails == null) {
-            return null;
-        }
-        for (EmailEntity email : emails) {
-            if (Boolean.TRUE.equals(email.getPrimary())) {
-                return email;
-            }
-        }
-        return null;
-    }
-
-    public void setPrimaryEmail(EmailEntity primaryEmail) {
-        if (emails == null) {
-            emails = new HashSet<>();
-        }
-        Iterator<EmailEntity> emailIterator = emails.iterator();
-        while (emailIterator.hasNext()) {
-            EmailEntity emailEntity = emailIterator.next();
-            if (Boolean.TRUE.equals(emailEntity.getPrimary())) {
-                emailIterator.remove();
-            }
-        }
-        primaryEmail.setPrimary(true);
-        primaryEmail.setProfile(this);
-        emails.add(primaryEmail);
-    }
-
-    public void setEmails(Set<EmailEntity> emails) {
-        this.emails = emails;
-    }
-
-    /**
-     * @return the externalIdentifiers
-     */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "owner", orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
-    public Set<ExternalIdentifierEntity> getExternalIdentifiers() {
-        return externalIdentifiers;
-    }
-
-    /**
-     * @param externalIdentifiers
-     *            the externalIdentifiers to set
-     */
-    public void setExternalIdentifiers(Set<ExternalIdentifierEntity> externalIdentifiers) {
-        this.externalIdentifiers = externalIdentifiers;
-    }
-
     @OneToMany(mappedBy = "giver", cascade = CascadeType.ALL)
     public Set<GivenPermissionToEntity> getGivenPermissionTo() {
         return givenPermissionTo;
@@ -506,57 +394,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setGivenPermissionBy(Set<GivenPermissionByEntity> givenPermissionBy) {
         this.givenPermissionBy = givenPermissionBy;
-    }
-
-    /**
-     * @return the grants
-     */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = ProfileFundingEntityDisplayIndexComparatorDesc.class)
-    public SortedSet<ProfileFundingEntity> getProfileFunding() {
-        return profileFunding;
-    }
-
-    /**
-     * @param grants
-     *            the grants to set
-     */
-    public void setProfileFunding(SortedSet<ProfileFundingEntity> funding) {
-        this.profileFunding = funding;
-    }
-
-    /**
-     * @return the peer reviews
-     * */
-    @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Sort(type = SortType.COMPARATOR, comparator = PeerReviewEntityDisplayIndexComparatorDesc.class)
-    public SortedSet<PeerReviewEntity> getPeerReviews() {
-        return peerReviews;
-    }
-
-    /**
-     * @param peerReviews
-     *            the peer reviews set
-     * */
-    public void setPeerReviews(SortedSet<PeerReviewEntity> peerReviews) {
-        this.peerReviews = peerReviews;
-    }
-
-    /**
-     * @return the researcherUrls
-     */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<ResearcherUrlEntity> getResearcherUrls() {
-        return researcherUrls;
-    }
-
-    /**
-     * @param researcherUrls
-     *            the researcherUrls to set
-     */
-    public void setResearcherUrls(SortedSet<ResearcherUrlEntity> researcherUrls) {
-        this.researcherUrls = researcherUrls;
     }
 
     @Column(name = "encrypted_password")
@@ -654,14 +491,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      */
     public void setAccountExpiry(Date accountExpiry) {
         this.accountExpiry = accountExpiry;
-    }
-
-    /**
-     * @param credentialsExpiry
-     *            the credentialsExpiry to set
-     */
-    public void setCredentialsExpiry(Date credentialsExpiry) {
-        this.credentialsExpiry = credentialsExpiry;
     }
 
     @Transient
@@ -877,23 +706,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
-    }
-    
-    /**
-     * @return the peer reviews
-     * */
-    @OneToMany(mappedBy = PROFILE, cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)//TODO: ?  this seems like it might need a display id comparator.
-    public SortedSet<ResearchResourceEntity> getResearchResource() {
-        return researchResources;
-    }
-
-    /**
-     * @param peerReviews
-     *            the peer reviews set
-     * */
-    public void setResearchResource(SortedSet<ResearchResourceEntity> researchResources) {
-        this.researchResources = researchResources;
     }
     
     /*************** SIGNIN LOCK COLUMNS ***************
