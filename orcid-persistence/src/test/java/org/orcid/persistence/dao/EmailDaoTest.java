@@ -153,7 +153,7 @@ public class EmailDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         EmailEntity e = new EmailEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setEmail("testEmail@test.orcid.org");
         e.setId("HASHED_EMAIL");
         e.setVisibility("PUBLIC");

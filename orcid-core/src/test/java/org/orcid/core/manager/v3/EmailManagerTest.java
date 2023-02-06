@@ -35,6 +35,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.EncryptionManager;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -44,7 +45,6 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -214,7 +214,7 @@ public class EmailManagerTest extends BaseTest {
         email.setPrimary(false);
         email.setVisibility(Visibility.PUBLIC);
         
-        emailManager.addEmail(new MockHttpServletRequest(), ORCID, email);
+        emailManager.addEmail(ORCID, email);
         
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(emailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
@@ -240,7 +240,7 @@ public class EmailManagerTest extends BaseTest {
         EmailEntity e = new EmailEntity();
         e.setEmail(email);
         e.setId(hash);
-        e.setProfile(new ProfileEntity("0000-0000-0000-0003"));
+        e.setOrcid("0000-0000-0000-0003");
         TargetProxyHelper.injectIntoProxy(emailManager, "emailDao", mockEmailDao);
         
         // Test merging
@@ -253,7 +253,7 @@ public class EmailManagerTest extends BaseTest {
         EmailEntity merged = captor.getValue();
         assertNotNull(merged);
         assertFalse(merged.getPrimary());
-        assertEquals(orcid, merged.getProfile().getId());
+        assertEquals(orcid, merged.getOrcid());
         assertEquals(email, merged.getEmail());
         assertEquals(hash, merged.getId());
         assertEquals(Visibility.PUBLIC.name(), merged.getVisibility());
@@ -364,7 +364,7 @@ public class EmailManagerTest extends BaseTest {
             email.setPrimary(false);
             email.setVisibility(Visibility.PUBLIC);
             
-            emailManager.addEmail(new MockHttpServletRequest(), ORCID, email);
+            emailManager.addEmail(ORCID, email);
             
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
             Mockito.verify(mockEmailDao).addEmail(eq(ORCID), eq(filteredEmailAddress), captor.capture(), eq(Visibility.PUBLIC.name()), eq(ORCID), isNull());
@@ -419,7 +419,7 @@ public class EmailManagerTest extends BaseTest {
         primaryEmailEntity.setVerified(Boolean.TRUE);
         primaryEmailEntity.setVisibility("PRIVATE");
         primaryEmailEntity.setId("some-email-hash");
-        primaryEmailEntity.setProfile(new ProfileEntity(ORCID));
+        primaryEmailEntity.setOrcid(ORCID);
         
         Mockito.when(mockEmailDao.find(Mockito.anyString())).thenReturn(primaryEmailEntity);
         

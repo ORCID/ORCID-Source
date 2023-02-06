@@ -551,7 +551,7 @@ public class AdminController extends BaseController {
                 emailEntity.setPrimary(false);
                 emailEntity.setVerified(false);
                 emailEntity.setVisibility(Visibility.PRIVATE);
-                emailManager.addEmail(serverRequest, orcid, emailEntity, true);
+                emailManager.addEmail(orcid, emailEntity);
             } catch (NoResultException nre) {
                 // Don't do nothing, the email doesn't exists
                 LOGGER.error("Couldnt add email address to " + orcid);

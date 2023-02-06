@@ -566,7 +566,7 @@ public class AdminControllerTest extends BaseControllerTest {
         email.setPrimary(false);
         email.setVerified(false);
         email.setVisibility(Visibility.PUBLIC);
-        emailManager.addEmail(request, "4444-4444-4444-4499", email);
+        emailManager.addEmail("4444-4444-4444-4499", email);
 
         // Verify the email
         adminController.adminVerifyEmail(request, response, "not-verified@email.com");
