@@ -15,8 +15,6 @@
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
         http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
-
-    <context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
 	
 	<import resource="classpath*:orcid-core-context.xml" />
     <import resource="classpath*:orcid-frontend-security.xml" />
@@ -99,14 +97,12 @@
     
     <bean id="thirdPartyLinkManager" class="org.orcid.frontend.web.util.ThirdPartyLinkManager" />
     
-    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager">
-		<constructor-arg value="${com.mailgun.apiKey:XXXX}"/>
-    </bean>
+    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
     
     <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />
 
     <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
-        <constructor-arg value="${org.orcid.message-listener.development_mode:false}"/>
+        <constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
     </bean>
 
     <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />

@@ -10,8 +10,6 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
                 
-	<context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
-	
 	<import resource="classpath*:orcid-persistence-context.xml" />
 	
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
