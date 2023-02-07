@@ -1135,8 +1135,8 @@
     </bean>
     
     <bean id="namespacedRandomCodeGenerator" class="org.orcid.core.oauth.service.NamespacedRandomCodeGenerator">
-	   <constructor-arg value="${org.orcid.core.node}" />
-	   <constructor-arg value="${org.orcid.core.numberOfNodes}" />
+	   <constructor-arg value="${org.orcid.core.node:1}" />
+	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
 	</bean>
 	
 	<bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
@@ -1157,7 +1157,7 @@
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <!-- lets use an embedded broker for now (easier to test!) -->
         <property name="brokerURL"
-            value="${org.orcid.messaging.brokerURL:tcp://127.0.0.1:61616?jms.useAsyncSend=true}" />
+            value="${org.orcid.messaging.brokerURL:vm://localhost?broker.persistent=false}" />
         <property name="redeliveryPolicy" ref="redeliveryPolicy" />
         <property name="trustAllPackages" value="true"/>
     </bean>

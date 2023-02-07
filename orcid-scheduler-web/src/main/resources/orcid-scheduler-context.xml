@@ -32,7 +32,8 @@
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesReindexIndexingDelaySeconds:90}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:900}000"/> 
         <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:900}000"/> 
-        <task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>-               <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
+        <task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
+        <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:20}"/>
