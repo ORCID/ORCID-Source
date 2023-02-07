@@ -15,8 +15,6 @@
     
     <import resource="classpath*:orcid-scheduler-context.xml"/>
     
-    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager">
-		<constructor-arg value="${com.mailgun.apiKey:XXXX}"/>
-	</bean>
+    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
 		
 </beans>

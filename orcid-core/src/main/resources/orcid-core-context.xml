@@ -10,8 +10,6 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
                 
-	<context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
-	
 	<import resource="classpath*:orcid-persistence-context.xml" />
 	
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
@@ -1137,8 +1135,8 @@
     </bean>
     
     <bean id="namespacedRandomCodeGenerator" class="org.orcid.core.oauth.service.NamespacedRandomCodeGenerator">
-	   <constructor-arg value="${org.orcid.core.node:1}" />
-	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
+	   <constructor-arg value="${org.orcid.core.node}" />
+	   <constructor-arg value="${org.orcid.core.numberOfNodes}" />
 	</bean>
 	
 	<bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
@@ -1159,7 +1157,7 @@
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <!-- lets use an embedded broker for now (easier to test!) -->
         <property name="brokerURL"
-            value="${org.orcid.messaging.brokerURL:vm://localhost?broker.persistent=false}" />
+            value="${org.orcid.messaging.brokerURL:tcp://127.0.0.1:61616?jms.useAsyncSend=true}" />
         <property name="redeliveryPolicy" ref="redeliveryPolicy" />
         <property name="trustAllPackages" value="true"/>
     </bean>
