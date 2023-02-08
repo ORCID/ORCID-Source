@@ -13,23 +13,23 @@ public class OrcidGrantedAuthorityPk implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private String profileEntity;
+    private String orcid;
     private String authority;
 
     public OrcidGrantedAuthorityPk() {
     }
 
-    public OrcidGrantedAuthorityPk(String profileEntity, String authority) {
-        this.profileEntity = profileEntity;
+    public OrcidGrantedAuthorityPk(String orcid, String authority) {
+        this.orcid = orcid;
         this.authority = authority;
     }
 
-    public String getProfileEntity() {
-        return profileEntity;
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfileEntity(String profileEntity) {
-        this.profileEntity = profileEntity;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     public String getAuthority() {
@@ -51,7 +51,7 @@ public class OrcidGrantedAuthorityPk implements Serializable {
 
         if (!authority.equals(that.authority))
             return false;
-        if (!profileEntity.equals(that.profileEntity))
+        if (!orcid.equals(that.orcid))
             return false;
 
         return true;
@@ -59,7 +59,7 @@ public class OrcidGrantedAuthorityPk implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = profileEntity.hashCode();
+        int result = orcid.hashCode();
         result = 31 * result + authority.hashCode();
         return result;
     }

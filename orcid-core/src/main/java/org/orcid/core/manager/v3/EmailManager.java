@@ -24,15 +24,7 @@ public interface EmailManager extends EmailManagerReadOnly {
      * the orcid-web project until we finish migrating the jersey libs, so, the
      * calling function should know that the primary email have changed
      */
-    Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email);
-    
-    /**
-     * TODO: Returns a map with the old primary email and the new primary email
-     * when the primary email is verified, this because the email sender is on
-     * the orcid-web project until we finish migrating the jersey libs, so, the
-     * calling function should know that the primary email have changed
-     */
-    Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email, boolean isAdminAction);
+    Map<String, String> addEmail(String orcid, Email email);
     
     void removeEmail(String orcid, String email);        
     

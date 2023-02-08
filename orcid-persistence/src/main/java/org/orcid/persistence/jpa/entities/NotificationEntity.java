@@ -5,14 +5,11 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SequenceGenerator;
@@ -57,7 +54,7 @@ import javax.persistence.Table;
         " );", resultClass = NotificationEntity.class
     )})
 // @formatter:on
-abstract public class NotificationEntity extends SourceAwareEntity<Long> implements ProfileAware {
+abstract public class NotificationEntity extends SourceAwareEntity<Long> implements OrcidAware {
 
     public static final String FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS = "findOrcidsWithUnsentNotifications";
     
@@ -68,7 +65,7 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private ProfileEntity profile;
+    private String orcid;
     private String notificationType;
     private String notificationSubject;
     private String notificationIntro;
@@ -92,15 +89,13 @@ abstract public class NotificationEntity extends SourceAwareEntity<Long> impleme
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    @Override
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "notification_type", insertable = false, updatable = false)

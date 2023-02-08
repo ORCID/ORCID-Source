@@ -85,7 +85,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
 
             if (deleteMe) {
                 try {
-                    researcherUrlDao.deleteResearcherUrl(existingEntity.getProfile().getId(), existingEntity.getId());
+                    researcherUrlDao.deleteResearcherUrl(existingEntity.getOrcid(), existingEntity.getId());
                 } catch (Exception e) {
                     throw new ApplicationException("Unable to delete researcher url " + existingEntity.getId(), e);
                 }
@@ -111,7 +111,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
                     ResearcherUrlEntity newResearcherUrl = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
                     ProfileEntity profile = new ProfileEntity(orcid);
-                    newResearcherUrl.setUser(profile);
+                    newResearcherUrl.setOrcid(orcid);
 
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newResearcherUrl);
 
@@ -177,7 +177,7 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
 
         ResearcherUrlEntity newEntity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setUser(profile);
+        newEntity.setOrcid(orcid);
 
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 

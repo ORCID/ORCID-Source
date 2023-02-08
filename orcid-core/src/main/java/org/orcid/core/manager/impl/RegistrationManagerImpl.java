@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.constants.SendEmailFrequency;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -65,6 +67,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
 
+    @Resource
+    private EmailDao emailDao;
+    
     @Resource
     private ProfileEntityManager profileEntityManager;
 
@@ -195,6 +200,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * @return the new record
      * @throws NoSuchAlgorithmException 
      */
+    @Transactional
     private String createMinimalProfile(Registration registration, boolean usedCaptcha, Locale locale, String ip) {
         Date now = new Date();
         String orcid = orcidGenerationManager.createNewOrcid();
@@ -222,26 +228,36 @@ public class RegistrationManagerImpl implements RegistrationManager {
         newRecord.setActivitiesVisibilityDefault(registration.getActivitiesVisibilityDefault().getVisibility().name());
 
         // Encrypt the password
-        newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));
+        newRecord.setEncryptedPassword(encryptionManager.hashForInternalUse(registration.getPassword().getValue()));        
+       
+        // Set authority
+        OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
+        authority.setOrcid(orcid);
+        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
+        authorities.add(authority);
+        newRecord.setAuthorities(authorities);
 
+        profileDao.persist(newRecord);
+        profileDao.flush();
+        
         // Set primary email
-        EmailEntity emailEntity = new EmailEntity();
+        EmailEntity primaryEmailEntity = new EmailEntity();
         
         Map<String, String> emailKeys = emailManager.getEmailKeys(registration.getEmail().getValue());
         String email = emailKeys.get(EmailManager.FILTERED_EMAIL);
         String hash = emailKeys.get(EmailManager.HASH);
         
-        emailEntity.setEmail(email);
-        emailEntity.setId(hash);
-        emailEntity.setProfile(newRecord);
-        emailEntity.setPrimary(true);
-        emailEntity.setCurrent(true);
-        emailEntity.setVerified(false);
+        primaryEmailEntity.setEmail(email);
+        primaryEmailEntity.setId(hash);
+        primaryEmailEntity.setOrcid(orcid);
+        primaryEmailEntity.setPrimary(true);
+        primaryEmailEntity.setCurrent(true);
+        primaryEmailEntity.setVerified(false);
         // Email is private by default
-        emailEntity.setVisibility(Visibility.PRIVATE.name());
-        emailEntity.setSourceId(orcid);
-        Set<EmailEntity> emails = new HashSet<>();
-        emails.add(emailEntity);
+        primaryEmailEntity.setVisibility(Visibility.PRIVATE.name());
+        primaryEmailEntity.setSourceId(orcid);        
+        emailDao.persist(primaryEmailEntity);
         
         // Set additional emails
         for(Text emailAdditional : registration.getEmailsAdditional()) {
@@ -253,30 +269,16 @@ public class RegistrationManagerImpl implements RegistrationManager {
                 EmailEntity emailAdditionalEntity = new EmailEntity();
                 emailAdditionalEntity.setEmail(aEmail);
                 emailAdditionalEntity.setId(aHash);
-                emailAdditionalEntity.setProfile(newRecord);
+                emailAdditionalEntity.setOrcid(orcid);
                 emailAdditionalEntity.setPrimary(false);
                 emailAdditionalEntity.setCurrent(true);
                 emailAdditionalEntity.setVerified(false);
                 // Email is private by default
                 emailAdditionalEntity.setVisibility(Visibility.PRIVATE.name());
                 emailAdditionalEntity.setSourceId(orcid);
-                emails.add(emailAdditionalEntity);
+                emailDao.persist(emailAdditionalEntity);
             }
         }
-       
-        //Add all emails to record
-        newRecord.setEmails(emails);
-
-        // Set authority
-        OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
-        authority.setProfileEntity(newRecord);
-        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
-        Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
-        authorities.add(authority);
-        newRecord.setAuthorities(authorities);
-
-        profileDao.persist(newRecord);
-        profileDao.flush();
         
         // Save the record name
         Name name = new Name();

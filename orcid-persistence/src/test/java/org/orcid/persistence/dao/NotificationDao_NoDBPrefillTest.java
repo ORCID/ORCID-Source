@@ -61,7 +61,6 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
     @Test
     public void testFindRecordsWithUnsentNotifications() {
         String orcid = "0000-0000-0000-0003";
-        ProfileEntity profile = new ProfileEntity(orcid);
         emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.NEVER);
         emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.NEVER);
         emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.NEVER);        
@@ -73,7 +72,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         emailFrequencyDao.updateSendAdministrativeChangeNotifications(orcid, SendEmailFrequency.NEVER);
 
         NotificationEntity n = new NotificationAdministrativeEntity();
-        n.setProfile(profile);
+        n.setOrcid(orcid);
         n.setNotificationType("ADMINISTRATIVE");
         notificationDao.persist(n);
 
@@ -99,7 +98,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         emailFrequencyDao.updateSendChangeNotifications(orcid, SendEmailFrequency.NEVER);
 
         n = new NotificationAmendedEntity();
-        n.setProfile(profile);
+        n.setOrcid(orcid);
         n.setNotificationType("AMENDED");
         notificationDao.persist(n);
 
@@ -125,7 +124,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.NEVER);
 
         n = new NotificationInstitutionalConnectionEntity();
-        n.setProfile(profile);
+        n.setOrcid(orcid);
         n.setNotificationType("INSTITUTIONAL_CONNECTION");
         notificationDao.persist(n);
 
@@ -151,7 +150,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         emailFrequencyDao.updateSendMemberUpdateRequests(orcid, SendEmailFrequency.NEVER);
 
         n = new NotificationAddItemsEntity();
-        n.setProfile(profile);
+        n.setOrcid(orcid);
         n.setNotificationType("PERMISSION");
         notificationDao.persist(n);
 
@@ -181,7 +180,6 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
     @Test
     public void testServiceAnnouncementNotifications() {
         String orcid = "0000-0000-0000-0003";
-        ProfileEntity profile = new ProfileEntity(orcid);
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);     
 
         List<NotificationEntity> recordsWithNotificationsToSend = notificationDao.findUnsentServiceAnnouncements(100);
@@ -189,13 +187,13 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
 
         // Add one Service Announcement and one Tip
         NotificationEntity sa = new NotificationServiceAnnouncementEntity();
-        sa.setProfile(profile);
+        sa.setOrcid(orcid);
         sa.setNotificationType("SERVICE_ANNOUNCEMENT");
         sa.setSendable(true);
         notificationDao.persist(sa);
         
         NotificationEntity tip = new NotificationTipEntity();
-        tip.setProfile(profile);
+        tip.setOrcid(orcid);
         tip.setNotificationType("TIP");
         tip.setSendable(true);
         notificationDao.persist(tip);
@@ -224,7 +222,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         assertEquals(0, recordsWithNotificationsToSend.size());  
         
         NotificationEntity sa2 = new NotificationServiceAnnouncementEntity();
-        sa2.setProfile(profile);
+        sa2.setOrcid(orcid);
         sa2.setNotificationType("SERVICE_ANNOUNCEMENT");
         sa2.setSendable(true);
         notificationDao.persist(sa2);
@@ -251,7 +249,6 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
     @Test
     public void testTipsNotifications() {
         String orcid = "0000-0000-0000-0003";
-        ProfileEntity profile = new ProfileEntity(orcid);
         emailFrequencyDao.updateSendQuarterlyTips(orcid, false);     
 
         List<NotificationEntity> recordsWithNotificationsToSend = notificationDao.findUnsentTips(100);
@@ -259,7 +256,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
 
         // Add one one Tip
         NotificationEntity tip = new NotificationTipEntity();
-        tip.setProfile(profile);
+        tip.setOrcid(orcid);
         tip.setNotificationType("TIP");
         tip.setSendable(true);
         notificationDao.persist(tip);
@@ -287,7 +284,7 @@ public class NotificationDao_NoDBPrefillTest extends DBUnitTest {
         assertEquals(0, recordsWithNotificationsToSend.size());  
         
         NotificationEntity tip2 = new NotificationTipEntity();
-        tip2.setProfile(profile);
+        tip2.setOrcid(orcid);
         tip2.setNotificationType("TIP");
         tip2.setSendable(true);
         notificationDao.persist(tip2);

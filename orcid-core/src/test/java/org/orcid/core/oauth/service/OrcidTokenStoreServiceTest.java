@@ -266,7 +266,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);        
-        token.setProfile(new ProfileEntity(userOrcid));
+        token.setOrcid(userOrcid);
         token.setScope(scope);
         token.setTokenDisabled(disabled);
         token.setTokenValue(tokenValue);        

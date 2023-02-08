@@ -336,10 +336,10 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
                 }
                 token.setRefreshToken(rt);
             }
-            ProfileEntity profile = detail.getProfile();                        
-            if (profile != null) {
+            String orcid = detail.getOrcid();
+            if (orcid != null) {
                 Map<String, Object> additionalInfo = new HashMap<String, Object>();
-                additionalInfo.put(OrcidOauth2Constants.ORCID, profile.getId());
+                additionalInfo.put(OrcidOauth2Constants.ORCID, orcid);
                 additionalInfo.put(OrcidOauth2Constants.PERSISTENT, detail.isPersistent());
                 additionalInfo.put(OrcidOauth2Constants.DATE_CREATED, detail.getDateCreated());
                 additionalInfo.put(OrcidOauth2Constants.TOKEN_VERSION, detail.getVersion());
@@ -377,8 +377,9 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
                 resourceIds.add(details.getResourceId());
                 request.setResourceIds(resourceIds);
                 request.setApproved(details.isApproved());
-                ProfileEntity profile = details.getProfile();
-                if (profile != null) {
+                String orcid = details.getOrcid();
+                if (orcid != null) {
+                    ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                     authentication = new OrcidOauth2UserAuthentication(profile, details.isApproved());
                 }
             }
@@ -417,8 +418,7 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
             Object principal = authentication.getPrincipal();
             if (principal instanceof ProfileEntity) {
                 ProfileEntity profileEntity = (ProfileEntity) authentication.getPrincipal();
-                profileEntity = profileEntityCacheManager.retrieve(profileEntity.getId());
-                detail.setProfile(profileEntity);
+                detail.setOrcid(profileEntity.getId());
             }
         }
 

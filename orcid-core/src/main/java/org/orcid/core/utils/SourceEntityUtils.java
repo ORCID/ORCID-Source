@@ -14,7 +14,6 @@ import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -106,13 +105,11 @@ public class SourceEntityUtils {
         if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
 
-            if (Features.USER_OBO.isActive() && (e instanceof ProfileAware || e instanceof OrcidAware)) {
+            if (Features.USER_OBO.isActive() && e instanceof OrcidAware) {
                 ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
                 if (clientSource.isUserOBOEnabled()) {
                     String orcidId = null;
-                    if (e instanceof ProfileAware) {
-                        orcidId = ((ProfileAware) e).getProfile().getId();
-                    } else {
+                    if (e instanceof OrcidAware) {                        
                         orcidId = ((OrcidAware) e).getOrcid();
                     }
                     source.setAssertionOriginOrcid(new SourceOrcid(orcidId));

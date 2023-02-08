@@ -77,7 +77,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
 
         OtherNameEntity newEntity = jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setProfile(profile);
+        newEntity.setOrcid(orcid);
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
@@ -159,8 +159,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     // Add the new ones
                     OtherNameEntity newOtherName = jpaJaxbOtherNameAdapter.toOtherNameEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
-                    ProfileEntity profile = new ProfileEntity(orcid);
-                    newOtherName.setProfile(profile);
+                    newOtherName.setOrcid(orcid);
                     // Set the source
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newOtherName);
                     newOtherName.setVisibility(updatedOrNew.getVisibility().name());

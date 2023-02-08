@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
@@ -24,11 +23,11 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "research_resource")
-public class ResearchResourceEntity extends SourceAwareEntity<Long> implements Comparable<ResearchResourceEntity>, ProfileAware, DisplayIndexInterface {
+public class ResearchResourceEntity extends SourceAwareEntity<Long> implements Comparable<ResearchResourceEntity>, OrcidAware, DisplayIndexInterface {
     
     private static final long serialVersionUID = 1L;
     private Long id;
-    private ProfileEntity profile;
+    private String orcid;
     private StartDateEntity startDate;
     private EndDateEntity endDate;
     private String visibility;    
@@ -56,15 +55,13 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
         this.id = id;
     }
 
-    @Override
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
     
     @Column(name = "title", nullable = false)

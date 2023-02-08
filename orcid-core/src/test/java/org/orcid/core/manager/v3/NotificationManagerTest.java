@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -68,7 +66,6 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
@@ -258,14 +255,7 @@ public class NotificationManagerTest extends DBUnitTest {
         String delegateOrcid = "0000-0000-0000-0002";
 
         ProfileEntity profile = new ProfileEntity();
-        EmailEntity emailEntity = new EmailEntity();
-        emailEntity.setEmail("test@email.com");
-        emailEntity.setPrimary(true);
-        emailEntity.setCurrent(true);
-        Set<EmailEntity> emails = new HashSet<EmailEntity>();
-        emails.add(emailEntity);
-        profile.setEmails(emails);
-
+        
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
         when(mockSourceManager.retrieveActiveSourceId()).thenReturn("APP-5555555555555555");

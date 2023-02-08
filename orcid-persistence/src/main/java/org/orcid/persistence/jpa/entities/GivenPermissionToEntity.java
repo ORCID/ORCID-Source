@@ -18,7 +18,7 @@ import javax.persistence.Transient;
  */
 @Table(name = "given_permission_to")
 @Entity
-public class GivenPermissionToEntity extends BaseEntity<Long> implements ProfileAware {
+public class GivenPermissionToEntity extends BaseEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,11 +66,4 @@ public class GivenPermissionToEntity extends BaseEntity<Long> implements Profile
     public void setApprovalDate(Date approvalDate) {
         this.approvalDate = approvalDate;
     }
-    
-    @Override
-    @Transient
-    public ProfileEntity getProfile(){
-        return new ProfileEntity(giver);
-    }
-
 }

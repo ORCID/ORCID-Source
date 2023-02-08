@@ -173,7 +173,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setId(Long.valueOf(1));
         entity.setKeywordName("keyword-1");
-        entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
+        entity.setOrcid("0000-0000-0000-0000");
         entity.setClientSourceId(CLIENT_SOURCE_ID);
         entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         return entity;

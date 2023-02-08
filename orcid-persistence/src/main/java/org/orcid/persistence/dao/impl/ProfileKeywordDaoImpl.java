@@ -30,7 +30,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ProfileKeywordEntity> getProfileKeywords(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id = :orcid order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -44,7 +44,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @SuppressWarnings("unchecked")
     public List<ProfileKeywordEntity> getProfileKeywords(String orcid, String visibility) {
-        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE orcid=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();
@@ -60,7 +60,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(String orcid, String keyword) {
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE profile.id = :orcid AND keywordName = :keyword");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE orcid = :orcid AND keywordName = :keyword");
         query.setParameter("orcid", orcid);
         query.setParameter("keyword", keyword);
         return query.executeUpdate() > 0 ? true : false;
@@ -88,7 +88,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
 
     @Override
     public ProfileKeywordEntity getProfileKeyword(String orcid, Long putCode) {
-        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid and id=:id");
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE orcid=:orcid and id=:id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", putCode);
         return (ProfileKeywordEntity) query.getSingleResult();

@@ -13,11 +13,11 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailMessage;
-import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailFrequencyDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -53,6 +53,8 @@ public class SendMarch2019Newsletter {
     
     private EmailQueueProducer emailQueueProducer;
     
+    private ProfileDao profileDao;
+    
     private static final Logger LOG = LoggerFactory.getLogger(SendMarch2019Newsletter.class);
     
     @SuppressWarnings("resource")
@@ -66,6 +68,7 @@ public class SendMarch2019Newsletter {
         templateManager = (TemplateManager) context.getBean("templateManager");
         messages = (MessageSource) context.getBean("messageSource");
         emailQueueProducer = (EmailQueueProducer) context.getBean("emailQueueProducer");
+        profileDao = (ProfileDao) context.getBean("profileDao");
     }
     
     private void send() {
@@ -85,7 +88,7 @@ public class SendMarch2019Newsletter {
             EmailMessage emailMessage = getEmailMessage(email);
             EmailTrickleItem item = new EmailTrickleItem();
             item.setEmailMessage(emailMessage);
-            item.setOrcid(email.getProfile().getId());
+            item.setOrcid(email.getOrcid());
             item.setSuccessType(ProfileEventType.MARCH_2019_SENT);
             item.setSkippedType(ProfileEventType.MARCH_2019_SKIPPED);
             item.setFailureType(ProfileEventType.MARCH_2019_FAILED);
@@ -96,15 +99,15 @@ public class SendMarch2019Newsletter {
     }
     
     private EmailMessage getEmailMessage(EmailEntity email) {
-        Locale locale = getUserLocaleFromProfileEntity(email.getProfile());
-        String emailName = recordNameManager.deriveEmailFriendlyName(email.getProfile().getId());
+        Locale locale = getUserLocaleFromProfileEntity(profileDao.find(email.getOrcid()));
+        String emailName = recordNameManager.deriveEmailFriendlyName(email.getOrcid());
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
         params.put("baseUri", orcidUrlManager.getBaseUrl());
-        params.put("unsubscribeLink", getUnsubscribeLink(email.getProfile().getId()));        
+        params.put("unsubscribeLink", getUnsubscribeLink(email.getOrcid()));        
         
         String subject = messages.getMessage("email.march_2019.subject", null, locale);
         String bodyText = templateManager.processTemplate("march_2019.ftl", params, locale);

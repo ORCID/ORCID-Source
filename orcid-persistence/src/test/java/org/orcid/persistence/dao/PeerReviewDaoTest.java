@@ -85,7 +85,7 @@ public class PeerReviewDaoTest extends DBUnitTest {
         OrgEntity o = new OrgEntity();
         o.setId(2L);
         PeerReviewEntity e = new PeerReviewEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setRole("ROLE");
         e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#5&quot;}}]}");

@@ -5,11 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.orcid.persistence.constants.SiteConstants;
 
@@ -20,14 +17,14 @@ import org.orcid.persistence.constants.SiteConstants;
  */
 @Entity
 @Table(name = "researcher_url")
-public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware, DisplayIndexInterface {
+public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comparable<ResearcherUrlEntity>, OrcidAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -632507196189018770L;
 
     private Long id;
     private String url;
     private String urlName;
-    private ProfileEntity user;    
+    private String orcid;    
     private String visibility;
     private Long displayIndex;
 
@@ -65,29 +62,15 @@ public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comp
         this.urlName = urlName;
     }
 
-    /**
-     * @return the user
-     */
-    @ManyToOne
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getUser() {
-        return user;
+    @Column(name = "orcid", nullable = false, updatable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    @Transient
-    @Override
-    public ProfileEntity getProfile() {
-        return user;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
-
-    /**
-     * @param user
-     *            the user to set
-     */
-    public void setUser(ProfileEntity user) {
-        this.user = user;
-    }    
-
+    
     @Column
     public String getVisibility() {
         return visibility;

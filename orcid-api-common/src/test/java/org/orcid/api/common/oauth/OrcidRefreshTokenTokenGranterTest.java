@@ -26,7 +26,6 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidRefreshTokenTokenGranter;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -70,7 +69,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setProfile(new ProfileEntity(userOrcid));
+        token.setOrcid(userOrcid);
         token.setScope(scopes);
         token.setTokenDisabled(false);
         token.setTokenExpiration(expirationDate);

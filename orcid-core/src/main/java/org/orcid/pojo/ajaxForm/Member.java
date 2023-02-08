@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class Member implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,21 +26,7 @@ public class Member implements ErrorsInterface, Serializable {
     @Override
     public void setErrors(List<String> errors) {
         this.errors = errors;
-    }
-
-    public static Member fromProfileEntity(ProfileEntity profile, String creditName){
-    	Member group = new Member();
-    	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getEmail()));
-    	
-    	group.setGroupName(Text.valueOf(creditName));
-    	
-    	group.setGroupOrcid(Text.valueOf(profile.getId()));
-    	MemberType memberType = MemberType.valueOf(profile.getGroupType());
-    	group.setType(Text.valueOf(memberType.value()));
-
-    	group.setSalesforceId(Text.valueOf(profile.getSalesforeId()));
-    	return group;
-    }
+    }    
     
     public OrcidClientGroup toOrcidClientGroup() {
         OrcidClientGroup orcidClientGroup = new OrcidClientGroup();

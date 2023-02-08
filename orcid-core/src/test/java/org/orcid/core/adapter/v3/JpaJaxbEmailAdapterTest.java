@@ -162,7 +162,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         result.setEmail("email@test.orcid.org");
         result.setCurrent(true);
         result.setPrimary(true);
-        result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
+        result.setOrcid("0000-0000-0000-0000");
         result.setVerified(true);
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
         result.setClientSourceId(CLIENT_SOURCE_ID);

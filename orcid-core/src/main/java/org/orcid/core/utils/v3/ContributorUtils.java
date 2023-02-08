@@ -1,6 +1,14 @@
 package org.orcid.core.utils.v3;
 
-import com.google.common.collect.Iterables;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;
 import org.orcid.core.contributors.roles.credit.CreditRole;
@@ -22,7 +30,6 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
@@ -31,14 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.google.common.collect.Iterables;
 
 public class ContributorUtils {
     
@@ -381,9 +381,7 @@ public class ContributorUtils {
                 WorkEntity e = workDao.getWork(orcid, putCode);
 
                 String orcidId = null;
-                if (e instanceof ProfileAware) {
-                    orcidId = ((ProfileAware) e).getProfile().getId();
-                } else {
+                if (e instanceof OrcidAware) {                    
                     orcidId = ((OrcidAware) e).getOrcid();
                 }
                 assertionOriginOrcid = orcidId;

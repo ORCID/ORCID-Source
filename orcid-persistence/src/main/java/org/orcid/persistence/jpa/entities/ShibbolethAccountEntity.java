@@ -2,12 +2,9 @@ package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -20,12 +17,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "shibboleth_account")
-public class ShibbolethAccountEntity extends BaseEntity<Long> implements ProfileAware {
+public class ShibbolethAccountEntity extends BaseEntity<Long> implements OrcidAware {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private ProfileEntity profile;
+    private String orcid;
     private String remoteUser;
     private String shibIdentityProvider;
 
@@ -43,14 +40,13 @@ public class ShibbolethAccountEntity extends BaseEntity<Long> implements Profile
 
     @Override
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = true)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false, updatable = false, insertable = true)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "remote_user")

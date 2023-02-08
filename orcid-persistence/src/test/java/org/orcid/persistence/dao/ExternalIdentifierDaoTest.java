@@ -172,7 +172,7 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         ExternalIdentifierEntity e = new ExternalIdentifierEntity();
-        e.setOwner(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PUBLIC");
         e.setExternalIdReference("ext-id-0001");
         

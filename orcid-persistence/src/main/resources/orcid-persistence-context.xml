@@ -242,8 +242,6 @@
 	<bean id="orgDisambiguatedExternalIdentifierDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedExternalIdentifierDaoImpl" />
                 
 	<bean id="customEmailDao" class="org.orcid.persistence.dao.impl.CustomEmailDaoImpl" />	
-
-	<bean id="orcidSocialDao" class="org.orcid.persistence.dao.impl.OrcidSocialDaoImpl" />
 	
 	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
 	

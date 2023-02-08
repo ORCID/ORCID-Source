@@ -72,7 +72,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
 
         OtherNameEntity newEntity = jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setProfile(profile);
+        newEntity.setOrcid(orcid);
         
         // Set the source
         if (sourceEntity.getSourceProfile() != null) {
@@ -163,8 +163,7 @@ public class OtherNameManagerImpl extends OtherNameManagerReadOnlyImpl implement
                     // Add the new ones
                     OtherNameEntity newOtherName = jpaJaxbOtherNameAdapter.toOtherNameEntity(updatedOrNew);
                     SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-                    ProfileEntity profile = new ProfileEntity(orcid);
-                    newOtherName.setProfile(profile);
+                    newOtherName.setOrcid(orcid);
                     // Set the source
                     if (sourceEntity.getSourceProfile() != null) {
                         newOtherName.setSourceId(sourceEntity.getSourceProfile().getId());

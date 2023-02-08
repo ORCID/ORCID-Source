@@ -61,9 +61,10 @@ public class GivenPermissionToManagerImpl implements GivenPermissionToManager {
                     notificationManager.sendNotificationToAddedDelegate(userOrcid, delegateOrcid);
                     notificationManager.sendNotificationToUserGrantingPermission(userOrcid, delegateOrcid);
 
-                    // Update last modified on delegate's profile so that the
-                    // granting user is visible to them immediately
+                    // Update last modified on both records so the
+                    // permission is visible to them immediately
                     profileEntityManager.updateLastModifed(delegateOrcid);
+                    profileEntityManager.updateLastModifed(userOrcid);
                 }
             });
         }

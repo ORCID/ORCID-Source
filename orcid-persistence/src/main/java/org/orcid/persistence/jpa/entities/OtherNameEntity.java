@@ -22,13 +22,13 @@ import javax.persistence.Table;
  **/
 @Entity
 @Table(name = "other_name")
-public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware, DisplayIndexInterface {
+public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparable<OtherNameEntity>, OrcidAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3227122865862310024L;
 
     private Long id;
     private String displayName;
-    private ProfileEntity profile;    
+    private String orcid;    
     private String visibility;
     private Long displayIndex;
 
@@ -67,21 +67,13 @@ public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparab
         this.displayName = displayName;
     }
 
-    /**
-     * @return the profile
-     */
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false, updatable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    /**
-     * @param profile
-     *            the profile to set
-     */
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
     
     @Column

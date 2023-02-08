@@ -200,7 +200,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         }
 
         try {
-            String idTok = openIDConnectTokenEnhancer.buildIdToken(existing, detail.getProfile().getId(), tokenRequest.getClientId(),
+            String idTok = openIDConnectTokenEnhancer.buildIdToken(existing, detail.getOrcid(), tokenRequest.getClientId(),
                     tokenRequest.getRequestParameters().get(OrcidOauth2Constants.NONCE));
             return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.idToken(idTok));
         } catch (JOSEException e) {

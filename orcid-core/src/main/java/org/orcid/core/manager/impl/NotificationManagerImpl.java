@@ -219,12 +219,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         if (notification.getPutCode() != null) {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
-        NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (profile == null) {
-            throw OrcidNotFoundException.newInstance(orcid);
-        }
-        notificationEntity.setProfile(profile);
+        NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);        
+        notificationEntity.setOrcid(orcid);
 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -366,7 +362,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
         NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter
                 .toNotificationEntity(notification);
-        notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        notificationEntity.setOrcid(userOrcid);
         notificationEntity.setClientSourceId(clientId);
         notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
         notificationDao.persist(notificationEntity);
@@ -451,7 +447,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             LOGGER.info("Got batch of {} old notifications to delete", notificationsToDelete.size());
             for (NotificationEntity notification : notificationsToDelete) {
                 LOGGER.info("About to delete old notification: id={}, orcid={}, dateCreated={}",
-                        new Object[] { notification.getId(), notification.getProfile().getId(), notification.getDateCreated() });
+                        new Object[] { notification.getId(), notification.getOrcid(), notification.getDateCreated() });
                 removeNotification(notification.getId());
             }
         } while (!notificationsToDelete.isEmpty());

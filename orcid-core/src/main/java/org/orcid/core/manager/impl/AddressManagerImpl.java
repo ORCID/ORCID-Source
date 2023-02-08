@@ -97,7 +97,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
 
         AddressEntity newEntity = adapter.toAddressEntity(address);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setUser(profile);
+        newEntity.setOrcid(orcid);
         
         if (sourceEntity.getSourceProfile() != null) {
             newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
@@ -189,8 +189,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                     // Add the new ones
                     AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
                     SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-                    ProfileEntity profile = new ProfileEntity(orcid);
-                    newAddress.setUser(profile);                    
+                    newAddress.setOrcid(orcid);                    
 
                     // Set the source id
                     if (sourceEntity.getSourceProfile() != null) {

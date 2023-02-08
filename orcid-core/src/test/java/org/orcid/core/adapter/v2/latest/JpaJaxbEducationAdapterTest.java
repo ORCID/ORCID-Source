@@ -166,7 +166,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
         result.setOrg(orgEntity);
-        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setOrcid("0000-0001-0002-0003");
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
         result.setVisibility(Visibility.PRIVATE.name());   

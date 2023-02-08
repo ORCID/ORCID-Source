@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
  */
 @Entity
 @Table(name = "client_details")
-public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, ProfileAware, Serializable {
+public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -185,14 +185,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setGroupProfileId(String groupProfileId) {
         this.groupProfileId = groupProfileId;
     }
-
-    @Override
-    @Transient
-    public ProfileEntity getProfile() {        
-        return new ProfileEntity(this.getGroupProfileId());
-    }
-
-    // Below are the overriden ClientDetails methods
 
     /**
      * The client id. This is a transient field (hence no setter). This is

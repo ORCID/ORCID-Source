@@ -135,8 +135,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.affiliation_groups.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesInMemory:16}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesOnDisk:128}" />
-        <property name="copyValues" value="false" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesOnDisk:128}" />        
     </bean>
     
     <bean id="groupedWorksCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
