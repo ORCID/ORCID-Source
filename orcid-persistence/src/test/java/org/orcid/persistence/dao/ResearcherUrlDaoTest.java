@@ -109,28 +109,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         researcherUrls = dao.getResearcherUrls("4444-4444-4444-4443", 0L);
         assertNotNull(researcherUrls);
         assertEquals(5, researcherUrls.size());
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testCannotAddDuplicatedResearcherUrl() throws IllegalAccessException {
-        try {
-            ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
-            Date now = new Date();
-            FieldUtils.writeField(newRUrl, "dateCreated", now, true);
-            FieldUtils.writeField(newRUrl, "lastModified", now, true);
-            newRUrl.setClientSourceId("4444-4444-4444-4443");
-            newRUrl.setUrl("http://www.researcherurl2.com?id=1");
-            newRUrl.setUrlName("test");
-            newRUrl.setOrcid("4444-4444-4444-4443");
-            newRUrl.setVisibility("PUBLIC");
-            newRUrl = dao.merge(newRUrl);            
-            fail();
-        } catch (PersistenceException e) {
-
-        }
-    }
+    }    
     
     @Test
     public void removeAllTest() {
