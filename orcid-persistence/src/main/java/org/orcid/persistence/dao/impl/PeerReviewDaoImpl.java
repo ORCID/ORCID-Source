@@ -22,7 +22,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
 
     @Override
     public PeerReviewEntity getPeerReview(String userOrcid, Long peerReviewId) {
-        Query query = entityManager.createQuery("from PeerReviewEntity where profile.id=:userOrcid and id=:peerReviewId");
+        Query query = entityManager.createQuery("from PeerReviewEntity where orcid=:userOrcid and id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("peerReviewId", Long.valueOf(peerReviewId));
         return (PeerReviewEntity) query.getSingleResult();
@@ -32,7 +32,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removePeerReview(String userOrcid, Long peerReviewId) {
-        Query query = entityManager.createQuery("delete from PeerReviewEntity where profile.id=:userOrcid and id=:peerReviewId");
+        Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid=:userOrcid and id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("peerReviewId", peerReviewId);
         return query.executeUpdate() > 0 ? true : false;
@@ -41,7 +41,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Override
     @Cacheable(value = "peer-reviews", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<PeerReviewEntity> getByUser(String userOrcid, long lastModified) {
-        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where profile.id=:userOrcid order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
+        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where orcid=:userOrcid order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
     }
@@ -62,7 +62,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
 
     @Override
     public List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId) {
-        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where profile.id=:orcid and groupId=:groupId order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
+        TypedQuery<PeerReviewEntity> query = entityManager.createQuery("from PeerReviewEntity where orcid=:orcid and groupId=:groupId order by completionDate.year desc, completionDate.month desc, completionDate.day desc", PeerReviewEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("groupId", groupId);
         return query.getResultList();
@@ -83,7 +83,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, String visibility) {
         Query query = entityManager
-                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where id in (:peerReviewIds) and  profile.id=:orcid");
+                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where id in (:peerReviewIds) and  orcid=:orcid");
         query.setParameter("peerReviewIds", peerReviewIds);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);

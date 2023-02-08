@@ -125,8 +125,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
             newRUrl.setUrlName("test");
             newRUrl.setOrcid("4444-4444-4444-4443");
             newRUrl.setVisibility("PUBLIC");
-            newRUrl = dao.merge(newRUrl);
-            assertNotNull(newRUrl);
+            newRUrl = dao.merge(newRUrl);            
             fail();
         } catch (PersistenceException e) {
 

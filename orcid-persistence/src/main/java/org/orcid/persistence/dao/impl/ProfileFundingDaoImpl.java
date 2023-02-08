@@ -31,7 +31,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     public ProfileFundingEntity getProfileFunding(String userOrcid, Long profileFundingId) {
-        Query query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
+        Query query = entityManager.createQuery("from ProfileFundingEntity where orcid=:userOrcid and id=:profileFundingId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("profileFundingId", profileFundingId);
         return (ProfileFundingEntity) query.getSingleResult();
@@ -51,7 +51,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeProfileFunding(String userOrcid, Long profileFundingId) {
-        Query query = entityManager.createQuery("delete from ProfileFundingEntity where profile.id=:userOrcid and id=:profileFundingId");
+        Query query = entityManager.createQuery("delete from ProfileFundingEntity where orcid=:userOrcid and id=:profileFundingId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("profileFundingId", profileFundingId);
         return query.executeUpdate() > 0 ? true : false;
@@ -75,7 +75,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateProfileFundingVisibility(String clientOrcid, Long profileFundingId, String visibility) {
-        Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id=:profileFundingId");
+        Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where orcid=:clientOrcid and id=:profileFundingId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("profileFundingId", profileFundingId);
         query.setParameter("visibility", visibility);
@@ -100,7 +100,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateProfileFundingVisibilities(String clientOrcid, ArrayList<Long> profileFundingIds, String visibility) {
-        Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where profile.id=:clientOrcid and id in (:profileFundingIds)");
+        Query query = entityManager.createQuery("update ProfileFundingEntity set visibility=:visibility where orcid=:clientOrcid and id in (:profileFundingIds)");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("profileFundingIds", profileFundingIds);
         query.setParameter("visibility", visibility);
@@ -137,7 +137,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
      * */
     @Override
     public ProfileFundingEntity getProfileFundingEntity(String orgId, String clientOrcid) {
-        Query query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:clientOrcid and org.id=:orgId");
+        Query query = entityManager.createQuery("from ProfileFundingEntity where orcid=:clientOrcid and org.id=:orgId");
         query.setParameter("clientOrcid", clientOrcid);
         query.setParameter("orgId", Long.valueOf(orgId));
         return (ProfileFundingEntity) query.getSingleResult();
@@ -246,7 +246,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @Override
     @Cacheable(value = "fundings", key = "#userOrcid.concat('-').concat(#lastModified)")
     public List<ProfileFundingEntity> getByUser(String userOrcid, long lastModified) {
-        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid order by displayIndex desc, dateCreated asc", ProfileFundingEntity.class);
+        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where orcid=:userOrcid order by displayIndex desc, dateCreated asc", ProfileFundingEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
     }

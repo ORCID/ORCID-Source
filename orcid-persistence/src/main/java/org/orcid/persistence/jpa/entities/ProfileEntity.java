@@ -388,7 +388,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
      * @return the authorities, sorted by natural key (never <code>null</code>)
      */
     @Override
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profileEntity")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orcid")
     public Collection<OrcidGrantedAuthority> getAuthorities() {
         return authorities;
     }

@@ -27,7 +27,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @Override
     public AddressEntity getAddress(String orcid, Long putCode) {
-        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and id = :id");
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", putCode);
         return (AddressEntity) query.getSingleResult();
@@ -45,7 +45,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Override
     @Cacheable(value = "dao-address", key = "#orcid.concat('-').concat(#lastModified)")
     public List<AddressEntity> getAddresses(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -59,7 +59,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @SuppressWarnings("unchecked")
     @Override
     public List<AddressEntity> getAddresses(String orcid, String visibility) {
-        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE orcid = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();
@@ -69,7 +69,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteAddress(String orcid, Long putCode) {
-        Query query = entityManager.createQuery("DELETE FROM AddressEntity WHERE id=:id and user.id = :orcid");
+        Query query = entityManager.createQuery("DELETE FROM AddressEntity WHERE id=:id and orcid = :orcid");
         query.setParameter("id", putCode);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
