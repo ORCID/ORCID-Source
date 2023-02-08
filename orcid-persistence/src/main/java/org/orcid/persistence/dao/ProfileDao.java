@@ -61,8 +61,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean orcidExists(String orcid);
 
-    void remove(String giverOrcid, String receiverOrcid);    
-
     boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid);
 
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
@@ -94,9 +92,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean isProfileDeprecated(String orcid);
 
     void changeEncryptedPassword(String orcid, String encryptedPassword);
-
-    void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 

@@ -3,8 +3,6 @@ package org.orcid.persistence.jpa.entities;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
-import java.util.SortedSet;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -20,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -41,8 +37,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     private static final long serialVersionUID = 7215593667128405456L;
 
-    private static final String PROFILE = "profile";
-    
     public static final String USER_DRIVEN_DEPRECATION = "USER_DRIVEN";
     
     public static final String ADMIN_DEPRECATION = "ADMIN";
@@ -96,14 +90,9 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     private SourceEntity source;
     private Boolean isSelectableSponsor;
     private Collection<OrcidGrantedAuthority> authorities;
-    private Set<GivenPermissionToEntity> givenPermissionTo;
-    private Set<GivenPermissionByEntity> givenPermissionBy;
     private String locale = DEFAULT_LOCALE;
     
-    private SortedSet<ClientDetailsEntity> clients;
-    private SortedSet<OrcidOauth2TokenDetail> tokenDetails;
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
-    private Set<ProfileEventEntity> profileEvents;
     private boolean enableDeveloperTools;
     private Date developerToolsEnabledDate;
     
@@ -376,25 +365,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setIsSelectableSponsor(Boolean isSelectableSponsor) {
         this.isSelectableSponsor = isSelectableSponsor;
-    }
-
-    @OneToMany(mappedBy = "giver", cascade = CascadeType.ALL)
-    public Set<GivenPermissionToEntity> getGivenPermissionTo() {
-        return givenPermissionTo;
-    }
-
-    public void setGivenPermissionTo(Set<GivenPermissionToEntity> givenPermissionTo) {
-        this.givenPermissionTo = givenPermissionTo;
-    }
-
-    @OneToMany(mappedBy = "receiver", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE, CascadeType.MERGE })
-    public Set<GivenPermissionByEntity> getGivenPermissionBy() {
-        return givenPermissionBy;
-    }
-
-    public void setGivenPermissionBy(Set<GivenPermissionByEntity> givenPermissionBy) {
-        this.givenPermissionBy = givenPermissionBy;
-    }
+    }    
 
     @Column(name = "encrypted_password")
     public String getEncryptedPassword() {
@@ -498,20 +469,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
         return enabled != null ? enabled : Boolean.TRUE;
     }
 
-    public void setClients(SortedSet<ClientDetailsEntity> clients) {
-        this.clients = clients;
-    }
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
-    @Sort(type = SortType.NATURAL)
-    public SortedSet<OrcidOauth2TokenDetail> getTokenDetails() {
-        return tokenDetails;
-    }
-
-    public void setTokenDetails(SortedSet<OrcidOauth2TokenDetail> tokenDetails) {
-        this.tokenDetails = tokenDetails;
-    }
-
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "indexing_status")
@@ -522,16 +479,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     public void setIndexingStatus(IndexingStatus indexingStatus) {
         this.indexingStatus = indexingStatus;
     }
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "orcid")
-    public Set<ProfileEventEntity> getProfileEvents() {
-        return profileEvents;
-    }
-
-    public void setProfileEvents(Set<ProfileEventEntity> profileEvents) {
-        this.profileEvents = profileEvents;
-    }
-
+   
     @Basic
     @Column(name = "enable_developer_tools")
     public Boolean getEnableDeveloperTools() {

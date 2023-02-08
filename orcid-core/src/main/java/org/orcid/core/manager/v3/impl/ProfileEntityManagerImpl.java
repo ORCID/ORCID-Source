@@ -188,11 +188,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
-        return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
-    }
-
-    @Override
     public String findByCreditName(String creditName) {
         Name name = recordNameManagerV3.findByCreditName(creditName);
         if (name == null) {

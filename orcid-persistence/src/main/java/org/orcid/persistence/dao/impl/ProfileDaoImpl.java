@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -15,7 +13,6 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -293,25 +290,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    public void remove(String giverOrcid, String receiverOrcid) {
-        ProfileEntity profileEntity = find(giverOrcid);
-        if (profileEntity != null) {
-            if (profileEntity.getGivenPermissionTo() != null) {
-                Set<GivenPermissionToEntity> filtered = new HashSet<GivenPermissionToEntity>();
-                for (GivenPermissionToEntity givenPermissionToEntity : profileEntity.getGivenPermissionTo()) {
-                    if (!receiverOrcid.equals(givenPermissionToEntity.getReceiver())) {
-                        filtered.add(givenPermissionToEntity);
-                    }
-                }
-                profileEntity.setGivenPermissionTo(filtered);
-            }
-        }
-    }
-
-    @Override
     public boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid) {
         TypedQuery<Long> query = entityManager
-                .createQuery("select count(gpt.id) from GivenPermissionToEntity gpt where gpt.giver = :giverOrcid and gpt.receiver.id = :receiverOrcid", Long.class);
+                .createQuery("select count(gpt.id) from GivenPermissionToEntity gpt where gpt.giver = :giverOrcid and gpt.receiver = :receiverOrcid", Long.class);
         query.setParameter("giverOrcid", giverOrcid);
         query.setParameter("receiverOrcid", receiverOrcid);
         Long result = query.getSingleResult();
@@ -452,23 +433,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query updateQuery = entityManager.createQuery("update ProfileEntity set encryptedPassword = :encryptedPassword where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("encryptedPassword", encryptedPassword);
-        updateQuery.executeUpdate();
-    }
-
-    @Override
-    @Transactional
-    public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
-            boolean sendMemberUpdateRequests, String activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
-        Query updateQuery = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
-        updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
-        updateQuery.setParameter("sendOrcidNews", sendOrcidNews);
-        updateQuery.setParameter("sendMemberUpdateRequests", sendMemberUpdateRequests);
-        updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
-        updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
-        updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
         updateQuery.executeUpdate();
     }
 

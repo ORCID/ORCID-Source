@@ -184,8 +184,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(ProfileEntity.USER_DRIVEN_DEPRECATION, profileEntityToDeprecate.getDeprecatedMethod());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
         assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-        assertEquals(0, profileEntityToDeprecate.getGivenPermissionBy().size());
-        assertEquals(0, profileEntityToDeprecate.getGivenPermissionTo().size());
         assertFalse(profileEntityToDeprecate.getUsing2FA());
         assertNull(profileEntityToDeprecate.getSecretFor2FA());
         assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
@@ -219,8 +217,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
         ProfileEntity deactivated = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
         assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-        assertEquals(0, deactivated.getGivenPermissionBy().size());
-        assertEquals(0, deactivated.getGivenPermissionTo().size());
         assertFalse(deactivated.getUsing2FA());
         assertNull(deactivated.getSecretFor2FA());
         assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
@@ -280,7 +276,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(orcid);
         assertEquals(3, rUrls.getResearcherUrls().size());
         for(ResearcherUrl r : rUrls.getResearcherUrls()) {
-            assertEquals(Visibility.PRIVATE.name(), r.getVisibility());
+            assertEquals(Visibility.PRIVATE, r.getVisibility());
         }
         
         Biography bio = biographyManager.getBiography("0000-0000-0000-0001");

@@ -16,10 +16,8 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -45,7 +43,6 @@ import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.core.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -60,9 +57,7 @@ import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AddEmail;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.DeprecateProfile;
@@ -180,31 +175,6 @@ public class ManageProfileControllerTest {
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 ProfileEntity entity = new ProfileEntity();
                 entity.setId(invocation.getArgument(0));
-                Set<GivenPermissionToEntity> givenPermissionTo = new HashSet<GivenPermissionToEntity>();
-
-                for(int i = 0; i < 2; i++) {
-                    GivenPermissionToEntity e1 = new GivenPermissionToEntity();
-                    DateFieldsOnBaseEntityUtils.setDateFields(e1, new Date());
-                    e1.setId(Long.valueOf(i));
-                    Date now = new Date();
-                    e1.setApprovalDate(now);                    
-                    e1.setGiver(invocation.getArgument(0));
-                    String receiver = null;
-                    RecordNameEntity recordName = new RecordNameEntity();
-                    recordName.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
-                    if (i == 0) {
-                        receiver = "0000-0000-0000-0004";
-                        recordName.setCreditName("Credit Name");
-                    } else {
-                        receiver = "0000-0000-0000-0005";
-                        recordName.setFamilyName("Family Name");
-                        recordName.setGivenNames("Given Names");
-                    }
-                    e1.setReceiver(receiver);
-                    givenPermissionTo.add(e1);
-                }
-                
-                entity.setGivenPermissionTo(givenPermissionTo);
                 entity.setEncryptedPassword("password");
                 return entity;
             }

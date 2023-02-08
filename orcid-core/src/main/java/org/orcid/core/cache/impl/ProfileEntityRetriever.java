@@ -42,13 +42,7 @@ public class ProfileEntityRetriever implements Retriever<OrcidString, ProfileEnt
         String orcid = key.getOrcid();
         ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         if (profile == null)
-            throw new IllegalArgumentException("Invalid orcid " + orcid);
-        if (profile.getGivenPermissionBy() != null) {
-            profile.getGivenPermissionBy().size();
-        }
-        if (profile.getGivenPermissionTo() != null) {
-            profile.getGivenPermissionTo().size();
-        }
+            throw new IllegalArgumentException("Invalid orcid " + orcid);       
         return profile;
     }
 

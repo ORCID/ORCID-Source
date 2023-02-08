@@ -54,7 +54,6 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
     private IndexingStatus indexingStatus = IndexingStatus.PENDING;
     private Integer popularity = 0;
     private Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers;
-    private Set<OrgEntity> orgs;
     private MemberChosenOrgDisambiguatedEntity memberChosenOrgDisambiguatedEntity;
 
     @Override
@@ -191,15 +190,6 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
 
     public void setExternalIdentifiers(Set<OrgDisambiguatedExternalIdentifierEntity> externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
-    }
-
-    @OneToMany(mappedBy = "orgDisambiguated")
-    public Set<OrgEntity> getOrgs() {
-        return orgs;
-    }
-
-    public void setOrgs(Set<OrgEntity> orgs) {
-        this.orgs = orgs;
     }
 
     @Column(name = "org_type")
