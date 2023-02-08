@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Stop sending notification if work has not been updated")
+    STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED,
+
     @Label("Move client from a member to another member")
     MOVE_CLIENT,
 

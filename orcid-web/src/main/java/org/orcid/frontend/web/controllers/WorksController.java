@@ -599,11 +599,15 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         Work updatedWork = workForm.toWork();
-        // Edit work
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            workManager.updateWork(userOrcid, workForm);
+        Work work = workManager.getWork(userOrcid, updatedWork.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
+
+        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
+            if (!workSaved.compare(workForm)) {
+                updateWork(userOrcid, workForm, updatedWork);
+            }
         } else {
-            workManager.updateWork(userOrcid, updatedWork, false);
+           updateWork(userOrcid, workForm, updatedWork);
         }
     }
 
@@ -1060,5 +1064,13 @@ public class WorksController extends BaseWorkspaceController {
         initializeFields (workForm);
         validateWork(workForm);
         return workForm;
+    }
+
+    private void updateWork(String userOrcid, WorkForm workForm, Work updatedWork) {
+        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
+            workManager.updateWork(userOrcid, workForm);
+        } else {
+            workManager.updateWork(userOrcid, updatedWork, false);
+        }
     }
 }
