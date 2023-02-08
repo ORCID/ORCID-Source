@@ -19,7 +19,6 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             classpath:/orcid-api-web-context.xml
-            classpath:/orcid-api-security-context.xml
         </param-value>
     </context-param>
     

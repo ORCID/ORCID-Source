@@ -28,7 +28,6 @@ import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -57,10 +56,7 @@ public class ClientsController extends BaseWorkspaceController {
     private ClientManager clientManager;
 
     @Resource(name = "clientManagerReadOnlyV3")
-    private ClientManagerReadOnly clientManagerReadOnly;
-    
-    @Value("${org.orcid.web.validation.members.websites:true}")
-    private boolean validateWebsites;
+    private ClientManagerReadOnly clientManagerReadOnly;    
 
     @RequestMapping
     public ModelAndView manageClients() {
@@ -107,7 +103,7 @@ public class ClientsController extends BaseWorkspaceController {
         client.getWebsite().setErrors(new ArrayList<String>());
         if (PojoUtil.isEmpty(client.getWebsite())) {
             setError(client.getWebsite(), "manage.developer_tools.group.error.website.empty");
-        } else if (validateWebsites) {
+        } else {
             validateUrl(client.getWebsite(), "common.invalid_url");
         }
 

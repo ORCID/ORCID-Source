@@ -54,7 +54,7 @@ import org.togglz.junit.TogglzRule;
  * @author Will Simpson
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
     @Resource

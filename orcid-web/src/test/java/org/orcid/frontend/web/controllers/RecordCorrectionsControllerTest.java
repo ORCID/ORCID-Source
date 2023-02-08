@@ -29,7 +29,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 public class RecordCorrectionsControllerTest extends DBUnitTest {
 
     @Resource

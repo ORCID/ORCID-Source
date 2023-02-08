@@ -45,6 +45,7 @@ import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common.PeerReviewSubjectType;
 import org.orcid.jaxb.model.common.PeerReviewType;
+import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.Role;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -85,7 +86,7 @@ import org.orcid.test.helper.v3.Utils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
 public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
@@ -586,7 +587,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         PeerReview peerReview1 = new PeerReview();
         ExternalIDs weis1 = new ExternalIDs();
         ExternalID wei1 = new ExternalID();
-        wei1.setRelationship(null);
+        wei1.setRelationship(Relationship.SELF);
         wei1.setValue("same_but_different_type");
         wei1.setType(WorkExternalIdentifierType.DOI.value());
         weis1.getExternalIdentifier().add(wei1);
@@ -610,7 +611,7 @@ public class MemberV3ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         PeerReview peerReview2 = new PeerReview();
         ExternalIDs weis2 = new ExternalIDs();
         ExternalID wei2 = new ExternalID();
-        wei2.setRelationship(null);
+        wei2.setRelationship(Relationship.SELF);
         wei2.setValue("same_but_different_type"); // Same value
         wei2.setType(WorkExternalIdentifierType.ARXIV.value()); // But different
                                                                 // type

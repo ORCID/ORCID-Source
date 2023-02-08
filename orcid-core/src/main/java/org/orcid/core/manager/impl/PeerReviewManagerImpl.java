@@ -141,6 +141,8 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         String existingSourceId = existingEntity.getSourceId();
         String existingClientSourceId = existingEntity.getClientSourceId();
 
+        orcidSecurityManager.checkSource(existingEntity);
+        
         // If request comes from the API perform validations
         if (isApiRequest) {
             activityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, Visibility.valueOf(originalVisibility));
@@ -156,9 +158,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             // check vocab of external identifiers
             externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
-        }
-
-        orcidSecurityManager.checkSource(existingEntity);        
+        }             
         
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, existingEntity);        
         existingEntity.setVisibility(originalVisibility);

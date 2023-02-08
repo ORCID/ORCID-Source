@@ -58,7 +58,7 @@ import com.google.common.collect.Lists;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class FundingsControllerTest extends BaseControllerTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",

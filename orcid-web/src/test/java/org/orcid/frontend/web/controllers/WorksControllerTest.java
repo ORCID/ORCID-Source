@@ -60,7 +60,7 @@ import org.togglz.junit.TogglzRule;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 public class WorksControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
@@ -367,11 +367,13 @@ public class WorksControllerTest extends BaseControllerTest {
         ActivityExternalIdentifier wei1 = new ActivityExternalIdentifier();
         wei1.setExternalIdentifierId(Text.valueOf("1"));
         wei1.setExternalIdentifierType(Text.valueOf("doi"));
+        wei1.setRelationship(Text.valueOf("self"));
         work.getWorkExternalIdentifiers().add(wei1);
 
         ActivityExternalIdentifier wei2 = new ActivityExternalIdentifier();
         wei2.setExternalIdentifierId(Text.valueOf("2"));
         wei2.setExternalIdentifierType(Text.valueOf("arxiv"));
+        wei2.setRelationship(Text.valueOf("self"));
         work.getWorkExternalIdentifiers().add(wei2);
 
         work.getPublicationDate().setDay("2");

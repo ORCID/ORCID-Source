@@ -16,7 +16,7 @@ public class InitDb {
     public static void main(String[] args) {
         String configFilePath = System.getProperty(CONFIG_FILE_KEY);
         if (StringUtils.isBlank(configFilePath)) {
-            System.setProperty(CONFIG_FILE_KEY, "classpath:staging-persistence.properties");
+            System.setProperty(CONFIG_FILE_KEY, "classpath:db.properties");
         }
         // Just bootstrap the context to get the liquibase stuff to run
         new ClassPathXmlApplicationContext("orcid-persistence-context.xml");

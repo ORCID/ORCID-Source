@@ -57,7 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan) Date: 20/04/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Resource(name = "orcidTokenStore")

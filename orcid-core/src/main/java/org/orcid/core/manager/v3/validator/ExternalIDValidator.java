@@ -20,14 +20,7 @@ public class ExternalIDValidator {
     @Resource
     IdentifierTypeManager identifierTypeManager;
 
-    @Value("${org.orcid.core.validations.requireRelationship:false}")
-    private boolean requireRelationshipOnExternalIdentifier;
-    
     public ExternalIDValidator() {
-    }
-
-    public void setRequireRelationshipOnExternalIdentifier(boolean requireRelationshipOnExternalIdentifier) {
-        this.requireRelationshipOnExternalIdentifier = requireRelationshipOnExternalIdentifier;
     }
 
     public void validateWorkOrPeerReview(ExternalID id) {
@@ -44,11 +37,9 @@ public class ExternalIDValidator {
             errors.add("value");
         }
         
-        if(requireRelationshipOnExternalIdentifier) {
-            if(id.getRelationship() == null) {
-                errors.add("relationship");
-            }
-        }
+        if(id.getRelationship() == null) {
+            errors.add("relationship");
+        }        
         
         checkAndThrow(errors);
     }
@@ -68,10 +59,8 @@ public class ExternalIDValidator {
                 errors.add("value");
             }
             
-            if(requireRelationshipOnExternalIdentifier) {
-                if(id.getRelationship() == null) {
-                    errors.add("relationship");
-                }
+            if(id.getRelationship() == null) {
+                errors.add("relationship");
             }
             
             if(Relationship.VERSION_OF.equals(id.getRelationship())) {
@@ -104,10 +93,8 @@ public class ExternalIDValidator {
                 errors.add("value");
             }
             
-            if(requireRelationshipOnExternalIdentifier) {
-                if(id.getRelationship() == null) {
-                    errors.add("relationship");
-                }
+            if(id.getRelationship() == null) {
+                errors.add("relationship");
             }
             
             if(Relationship.SELF.equals(id.getRelationship())) {
@@ -135,10 +122,8 @@ public class ExternalIDValidator {
                 errors.add("value");
             }
             
-            if(requireRelationshipOnExternalIdentifier) {
-                if(id.getRelationship() == null) {
-                    errors.add("relationship");
-                }
+            if(id.getRelationship() == null) {
+                errors.add("relationship");            
             }
         }                
         
@@ -160,12 +145,10 @@ public class ExternalIDValidator {
                 if(PojoUtil.isEmpty(extId.getValue())) {
                     errors.add("value");
                 }
-                
-                if(requireRelationshipOnExternalIdentifier) {
-                    if(extId.getRelationship() == null) {
-                        errors.add("relationship");
-                    }
-                }
+                                
+                if(extId.getRelationship() == null) {
+                    errors.add("relationship");
+                }                
             }
         }
         checkAndThrow(errors);

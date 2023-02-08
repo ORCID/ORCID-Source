@@ -38,7 +38,7 @@
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
-            classpath*:/orcid-scheduler-web-context.xml
+            classpath*:/orcid-scheduler-context.xml
         </param-value>
     </context-param>
     

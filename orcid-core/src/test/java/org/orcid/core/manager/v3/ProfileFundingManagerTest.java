@@ -26,7 +26,6 @@ import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -82,9 +81,6 @@ public class ProfileFundingManagerTest extends BaseTest {
     private ProfileFundingDao profileFundingDao;
     
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
-    @Resource
     private ClientDetailsManager clientDetailsManager;
     
     @Resource
@@ -117,7 +113,6 @@ public class ProfileFundingManagerTest extends BaseTest {
         
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
         
         Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
@@ -130,7 +125,6 @@ public class ProfileFundingManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(profileFundingManager, "sourceManager", sourceManager);
         
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }

@@ -65,9 +65,6 @@ public class ResearcherUrlManagerTest extends BaseTest {
     private ResearcherUrlManager researcherUrlManager;
     
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
-    @Resource
     private SourceNameCacheManager sourceNameCacheManager;
     
     @Resource
@@ -103,7 +100,6 @@ public class ResearcherUrlManagerTest extends BaseTest {
         
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
         
         Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
@@ -116,7 +112,6 @@ public class ResearcherUrlManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(researcherUrlManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager);  
         
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }

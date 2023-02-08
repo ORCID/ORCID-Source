@@ -50,7 +50,6 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Angel Montenegro
  * 
  */
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class WorkFormTest {
 
     private DatatypeFactory datatypeFactory = null;
