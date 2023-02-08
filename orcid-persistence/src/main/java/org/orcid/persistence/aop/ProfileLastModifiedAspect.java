@@ -9,7 +9,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.util.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -69,19 +68,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             }
         }
         this.updateLastModifiedDate(orcid);
-    }
-
-    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(profileAware, ..)")
-    public void updateProfileLastModified(JoinPoint joinPoint, ProfileAware profileAware) {
-        if (!enabled) {
-            return;
-        }
-        ProfileEntity profile = profileAware.getProfile();
-        if (profile != null) {
-            String orcid = profile.getId();
-            updateProfileLastModified(joinPoint, orcid);
-        }
-    }
+    }    
 
     @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED + " && args(orcidAware, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, OrcidAware orcidAware) {
@@ -105,18 +92,6 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             }
         }
         this.updateLastModifiedDateAndIndexingStatus(orcid);
-    }
-
-    @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(profileAware, ..)")
-    public void updateProfileLastModifiedAndIndexingStatus(JoinPoint joinPoint, ProfileAware profileAware) {
-        if (!enabled) {
-            return;
-        }
-        ProfileEntity profile = profileAware.getProfile();
-        if (profile != null) {
-            String orcid = profile.getId();
-            updateProfileLastModifiedAndIndexingStatus(joinPoint, orcid);
-        }
     }
 
     @AfterReturning(UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS + " && args(orcidAware, ..)")

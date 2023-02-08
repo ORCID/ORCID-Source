@@ -40,6 +40,7 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
@@ -122,6 +123,9 @@ public class ManageProfileControllerTest {
     
     @Mock
     private RecordEmailSender mockRecordEmailSender;    
+    
+    @Mock(name="profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly mockProfileEntityManagerReadOnly;
 
     @Before
     public void initMocks() throws Exception {
@@ -142,6 +146,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "recordNameManagerReadOnlyV3", mockRecordNameManagerReadOnlyV3);
         TargetProxyHelper.injectIntoProxy(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
         TargetProxyHelper.injectIntoProxy(controller, "recordEmailSender", mockRecordEmailSender);
+        TargetProxyHelper.injectIntoProxy(controller, "profileEntityManagerReadOnly", mockProfileEntityManagerReadOnly);
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -246,6 +251,16 @@ public class ManageProfileControllerTest {
             }
             
         });
+        
+        ProfileEntity u1 = new ProfileEntity(USER_ORCID);
+        u1.setEncryptedPassword("password");
+        
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(USER_ORCID))).thenReturn(u1); 
+        
+        ProfileEntity u2 = new ProfileEntity(DEPRECATED_USER_ORCID);
+        u2.setEncryptedPassword("password");        
+        
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(u2); 
     }
 
     private void mocksForDeprecatedAccounts() {
@@ -275,6 +290,12 @@ public class ManageProfileControllerTest {
                 return email;
             }
         });
+        
+        ProfileEntity p = new ProfileEntity(DEPRECATED_USER_ORCID);
+        p.setEncryptedPassword("password");
+        p.setDeprecatedDate(new Date());
+        
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(p);     
     }
 
     private void mocksForDeactivatedAccounts() {
@@ -304,6 +325,12 @@ public class ManageProfileControllerTest {
                 return email;
             }
         });
+        
+        ProfileEntity p = new ProfileEntity(DEPRECATED_USER_ORCID);
+        p.setEncryptedPassword("password");
+        p.setDeactivationDate(new Date());
+        
+        when(mockProfileEntityManagerReadOnly.findByOrcid(eq(DEPRECATED_USER_ORCID))).thenReturn(p); 
     }
 
     @Test
@@ -438,7 +465,6 @@ public class ManageProfileControllerTest {
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
-
     }
 
     @Test

@@ -214,7 +214,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNull(token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
         
-        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(token.getProfile().getId(), "USER_REVOKED");
+        orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(token.getOrcid(), "USER_REVOKED");
         
         token = orcidOauth2TokenDetailDao.find(token.getId());
         assertTrue(token.getTokenDisabled());
@@ -252,7 +252,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNull(token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
         
-        orcidOauth2TokenDetailDao.disableAccessTokenById(token.getId(), token.getProfile().getId());
+        orcidOauth2TokenDetailDao.disableAccessTokenById(token.getId(), token.getOrcid());
         
         token = orcidOauth2TokenDetailDao.find(token.getId());
         assertTrue(token.getTokenDisabled());
@@ -288,7 +288,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertNull(token.getRevokeReason());
         assertEquals("/read-limited", token.getScope());
         
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(token.getProfile().getId(), token.getClientDetailsId());
+        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(token.getOrcid(), token.getClientDetailsId());
         
         token = orcidOauth2TokenDetailDao.find(token.getId());
         assertTrue(token.getTokenDisabled());
@@ -352,7 +352,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         Date initialRevokationDate = token.getRevocationDate();
         
         // Revoke it again by user
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(token.getProfile().getId(), token.getClientDetailsId());
+        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(token.getOrcid(), token.getClientDetailsId());
         token = orcidOauth2TokenDetailDao.find(token.getId());
         assertTrue(token.getTokenDisabled());
         assertNotNull(token.getRevocationDate());
@@ -369,7 +369,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertEquals("097843f6f740d94d5825f3684e0d4c7b", token.getAuthenticationKey());
         assertEquals("abcdef", token.getAuthorizationCode());
         assertEquals("APP-5555555555555555", token.getClientDetailsId());
-        assertEquals("0000-0000-0000-0001", token.getProfile().getId());
+        assertEquals("0000-0000-0000-0001", token.getOrcid());
         assertEquals("http://www.google.com/", token.getRedirectUri());
         assertEquals("/activities-update", token.getScope());
         assertEquals(expirationDate, token.getTokenExpiration());        
@@ -385,7 +385,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         assertEquals("097843f6f740d94d5825f3684e0d4c6e", token.getAuthenticationKey());
         assertEquals("uvwxy", token.getAuthorizationCode());
         assertEquals("APP-5555555555555555", token.getClientDetailsId());
-        assertEquals("0000-0000-0000-0001", token.getProfile().getId());
+        assertEquals("0000-0000-0000-0001", token.getOrcid());
         assertEquals("http://www.google.com/", token.getRedirectUri());
         assertEquals("/read-limited", token.getScope());
         assertEquals(expirationDate, token.getTokenExpiration());                       
@@ -398,7 +398,7 @@ public class OrcidOauth2TokenDetailDaoTest extends DBUnitTest {
         token.setAuthenticationKey("authentication-key-" + tokenValue);
         token.setAuthorizationCode("authorization-code-" + tokenValue);
         token.setClientDetailsId("APP-5555555555555558");
-        token.setProfile(new ProfileEntity("0000-0000-0000-0007"));
+        token.setOrcid("0000-0000-0000-0007");
         token.setPersistent(true);
         token.setRedirectUri("http://orcid.org/" + tokenValue);
         token.setRefreshTokenExpiration(expirationDate);

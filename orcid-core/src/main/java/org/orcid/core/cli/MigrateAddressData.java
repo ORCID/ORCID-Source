@@ -1,15 +1,12 @@
 package org.orcid.core.cli;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -59,7 +56,7 @@ public class MigrateAddressData {
                             visibility = Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value());
                         }
                         AddressEntity address = new AddressEntity();
-                        address.setUser(new ProfileEntity(orcid));
+                        address.setOrcid(orcid);
                         address.setIso2Country(countryCode);
                         address.setSourceId(orcid);
                         address.setVisibility(visibility.name());

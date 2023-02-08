@@ -23,16 +23,15 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -141,9 +140,7 @@ public class JpaJaxbResearcherUrlAdapterTest extends MockSourceNameCache {
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(userOBOClient);
         
         ResearcherUrlEntity entity = getResearcherUrlEntity();
-        ProfileEntity profileEntity = new ProfileEntity();
-        profileEntity.setId("orcid");
-        entity.setUser(profileEntity);
+        entity.setOrcid("orcid");
         
         ResearcherUrl r = jpaJaxbResearcherUrlAdapter.toResearcherUrl(entity);
         //General info

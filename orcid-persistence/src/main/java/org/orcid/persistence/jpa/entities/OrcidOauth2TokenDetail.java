@@ -1,26 +1,23 @@
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Date;
 
 /**
  * @author Declan Newman (declan) Date: 16/04/2012
  */
 @Entity
 @Table(name = "oauth2_token_detail")
-public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileAware, Comparable<OrcidOauth2TokenDetail> {
+public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements OrcidAware, Comparable<OrcidOauth2TokenDetail> {
 
     /**
      * 
@@ -31,7 +28,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
 
     private String tokenValue;
     private String clientDetailsId;
-    private ProfileEntity profile;    
+    private String orcid;    
     private boolean approved = false;
     private String resourceId;
     private String redirectUri;
@@ -78,14 +75,13 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
         this.tokenValue = tokenValue;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_orcid")
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "user_orcid")
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     

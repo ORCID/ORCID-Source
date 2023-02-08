@@ -85,7 +85,7 @@ public class OrgAffiliationRelationDaoTest extends DBUnitTest {
         OrgEntity o = new OrgEntity();
         o.setId(2L);
         OrgAffiliationRelationEntity e = new OrgAffiliationRelationEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setAffiliationType("EDUCATION"); 
         e.setOrg(o);

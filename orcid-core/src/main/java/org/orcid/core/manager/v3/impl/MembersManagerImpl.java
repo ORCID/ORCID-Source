@@ -133,7 +133,7 @@ public class MembersManagerImpl implements MembersManager {
                 
                 // Set authority
                 OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
-                authority.setProfileEntity(newRecord);
+                authority.setOrcid(orcid);
                 authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
                 Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
                 authorities.add(authority);

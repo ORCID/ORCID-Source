@@ -162,7 +162,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
             entity.setSubject(subject);
             entity.setNotificationType(NotificationType.SERVICE_ANNOUNCEMENT.name());
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
-            entity.setProfile(new ProfileEntity(orcid));
+            entity.setOrcid(orcid);
             entity.setSendable(true);
             notificationDao.persist(entity);
             profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.GDPR_EMAIL_FREQUENCY_UPDATES_2018_NOTIFICATION_CREATED));

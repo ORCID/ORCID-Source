@@ -1,7 +1,6 @@
 package org.orcid.persistence.jpa.entities;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -11,16 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import java.util.Set;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  * @author Declan Newman (declan) Date: 23/04/2012
  */
 @Entity
 @Table(name = "oauth2_authoriziation_code_detail")
-public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> implements ProfileAware {
+public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> implements OrcidAware {
 
     /**
      * 
@@ -40,7 +39,7 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
     private long version;
 
     // Authentication attributes
-    private ProfileEntity profileEntity;
+    private String orcid;
     private String sessionId;
     private Boolean authenticated;
     
@@ -97,20 +96,13 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
         this.authorities = authorities;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "orcid")
-    public ProfileEntity getProfileEntity() {
-        return profileEntity;
+    @Column(name = "orcid")
+    public String getOrcid() {
+        return orcid;
     }
 
-    @Override
-    @Transient
-    public ProfileEntity getProfile() {
-        return profileEntity;
-    }
-
-    public void setProfileEntity(ProfileEntity profileEntity) {
-        this.profileEntity = profileEntity;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "session_id", length = 155)

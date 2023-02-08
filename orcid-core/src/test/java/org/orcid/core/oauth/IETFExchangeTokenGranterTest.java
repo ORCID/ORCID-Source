@@ -127,7 +127,7 @@ public class IETFExchangeTokenGranterTest {
 
         OrcidGrantedAuthority oga = new OrcidGrantedAuthority();
         oga.setAuthority("ROLE_USER");
-        oga.setProfileEntity(profile);
+        oga.setOrcid(ORCID);
         when(profileDaoMock.getGrantedAuthoritiesForProfile(eq(ORCID))).thenReturn(List.of(oga));
 
         // Active token

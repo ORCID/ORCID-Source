@@ -489,7 +489,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
         result.setCompletionDate(new CompletionDateEntity(2015, 1, 1));
         result.setExternalIdentifiersJson(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
-        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setOrcid("0000-0001-0002-0003");
         result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER.name());
         result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION.name());
         result.setUrl("peer-review:url");

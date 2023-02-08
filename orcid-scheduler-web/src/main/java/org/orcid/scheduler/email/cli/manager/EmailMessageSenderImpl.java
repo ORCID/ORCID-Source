@@ -381,7 +381,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
     
     private void processServiceAnnouncementOrTipNotification(NotificationEntity n, String fromAddress) {
-        String orcid = n.getProfile().getId();
+        String orcid = n.getOrcid();
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
         if (primaryEmail == null) {
             LOGGER.info("No primary email for orcid: " + orcid);

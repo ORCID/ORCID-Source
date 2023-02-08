@@ -85,7 +85,7 @@ public class ProfileFundingDaoTest extends DBUnitTest {
         OrgEntity o = new OrgEntity();
         o.setId(2L);
         ProfileFundingEntity e = new ProfileFundingEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setTitle("TITLE");
         e.setType("TYPE");

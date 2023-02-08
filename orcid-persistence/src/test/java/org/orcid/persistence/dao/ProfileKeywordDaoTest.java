@@ -56,7 +56,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setKeywordName("this is my keyword");
-        entity.setProfile(new ProfileEntity("4444-4444-4444-4443"));
+        entity.setOrcid("4444-4444-4444-4443");
         entity.setSourceId("4444-4444-4444-4443");
         entity.setVisibility("PUBLIC");        
         
@@ -106,7 +106,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         ProfileKeywordEntity e = new ProfileKeywordEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setKeywordName("KEYWORD");
         

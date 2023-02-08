@@ -66,7 +66,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
 
         ExternalIdentifierEntity newEntity = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setOwner(profile);        
+        newEntity.setOrcid(orcid);        
 
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 

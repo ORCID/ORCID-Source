@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
@@ -74,7 +73,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(2,e1.get(0).getEndDate().getDay().intValue());
         assertEquals(Date.parse("2010/07/02 15:31"),e1.get(0).getDateCreated().getTime());
         assertEquals(Date.parse("2010/07/02 15:31"),e1.get(0).getLastModified().getTime());
-        assertEquals("4444-4444-4444-4446",e1.get(0).getProfile().getUsername());
+        assertEquals("4444-4444-4444-4446",e1.get(0).getOrcid());
         assertEquals("4444-4444-4444-4442",e1.get(0).getSourceId());
         assertEquals(2,e1.get(0).getHosts().size());
         
@@ -114,7 +113,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         e.setEndDate(ee);
         e.setClientSourceId("4444-4444-4444-4442");
         e.setExternalIdentifiersJson("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}");
-        e.setProfile(pDao.find(USER_ORCID));
+        e.setOrcid(USER_ORCID);
         
         dao.persist(e);
         e.setVisibility("PUBLIC");
@@ -148,7 +147,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
         assertEquals(cal.get(Calendar.YEAR), dateCreated.get(Calendar.YEAR));
         assertEquals(cal.get(Calendar.DAY_OF_YEAR), dateCreated.get(Calendar.DAY_OF_YEAR));
         
-        assertEquals(USER_ORCID,e1.get(2).getProfile().getUsername());
+        assertEquals(USER_ORCID,e1.get(2).getOrcid());
         assertEquals("4444-4444-4444-4442",e1.get(2).getClientSourceId());
         assertEquals("{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;work:external-identifier-id#1&quot;}}]}",e.getExternalIdentifiersJson());
         
@@ -192,7 +191,7 @@ public class ResearchResourceDaoTest extends DBUnitTest{
     @Test
     public void persistTest() {
         ResearchResourceEntity e = new ResearchResourceEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setTitle("TITLE");
         e.setProposalType("PROPOSAL_TYPE");

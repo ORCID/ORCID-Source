@@ -232,7 +232,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
        
         // Set authority
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
-        authority.setProfileEntity(newRecord);
+        authority.setOrcid(orcid);
         authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);

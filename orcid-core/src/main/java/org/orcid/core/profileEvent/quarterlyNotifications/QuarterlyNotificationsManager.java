@@ -154,7 +154,7 @@ public abstract class QuarterlyNotificationsManager {
             entity.setBodyText(text);
             entity.setNotificationType(NotificationType.TIP.name());
             entity.setNotificationFamily(NOTIFICATION_FAMILY);
-            entity.setProfile(new ProfileEntity(orcid));
+            entity.setOrcid(orcid);
             entity.setSendable(true);
             
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {            

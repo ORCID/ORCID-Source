@@ -15,7 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -52,8 +51,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
         assertEquals(Long.valueOf(1), address.getId());
-        assertNotNull(address.getUser());
-        assertEquals("4444-4444-4444-4442", address.getUser().getId());
+        assertEquals("4444-4444-4444-4442", address.getOrcid());
         assertEquals("US", address.getIso2Country());        
 
         address = dao.getAddress("4444-4444-4444-4447", 2L);
@@ -61,8 +59,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
         assertEquals(Long.valueOf(2), address.getId());
-        assertNotNull(address.getUser());
-        assertEquals("4444-4444-4444-4447", address.getUser().getId());
+        assertEquals("4444-4444-4444-4447", address.getOrcid());
         assertEquals("US", address.getIso2Country());
 
         address = dao.getAddress("4444-4444-4444-4447", 3L);
@@ -70,8 +67,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
         assertEquals(Long.valueOf(3), address.getId());
-        assertNotNull(address.getUser());
-        assertEquals("4444-4444-4444-4447", address.getUser().getId());
+        assertEquals("4444-4444-4444-4447", address.getOrcid());
         assertEquals("CR", address.getIso2Country());       
     }
     
@@ -118,7 +114,7 @@ public class AddressDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         AddressEntity e = new AddressEntity();
-        e.setUser(new ProfileEntity("0000-0000-0000-0002"));
+        e.setOrcid("0000-0000-0000-0002");
         e.setVisibility("PUBLIC");
         dao.persist(e);
         assertNotNull(e.getId());

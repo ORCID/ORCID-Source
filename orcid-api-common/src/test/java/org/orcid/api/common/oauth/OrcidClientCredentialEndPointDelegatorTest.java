@@ -98,7 +98,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         authorizationCode.setScopes(new HashSet<String>(Arrays.asList(scopes)));
         authorizationCode.setClientDetailsEntity(new ClientDetailsEntity(clientId));
         authorizationCode.setPersistent(persistent);
-        authorizationCode.setProfileEntity(new ProfileEntity(USER_ORCID));
+        authorizationCode.setOrcid(USER_ORCID);
         authorizationCode.setRedirectUri(redirectUri);
         authorizationCode.setResourceIds(new HashSet<String>(Arrays.asList("orcid")));
         authorizationCode.setAuthenticated(true);

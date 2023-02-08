@@ -184,7 +184,7 @@ public class NotificationController extends BaseController {
         Long id = Long.valueOf(idString);
         ActionableNotificationEntity notification = (ActionableNotificationEntity) notificationManager.findActionableNotificationEntity(id);
         String redirectUrl = notification.getAuthorizationUrl();
-        String notificationOrcid = notification.getProfile().getId();
+        String notificationOrcid = notification.getOrcid();
         OrcidProfileUserDetails user = getCurrentUser();
         if (user != null) {
             // The user is logged in

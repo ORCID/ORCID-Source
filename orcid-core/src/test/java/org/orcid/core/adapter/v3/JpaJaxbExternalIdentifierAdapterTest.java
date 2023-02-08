@@ -200,10 +200,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
         entity.setId(123L);
         entity.setClientSourceId(CLIENT_SOURCE_ID);
         entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
-
-        ProfileEntity profile = new ProfileEntity();
-        profile.setId("orcid");
-        entity.setOwner(profile);
+        entity.setOrcid("orcid");
 
         return entity;
     }

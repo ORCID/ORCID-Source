@@ -76,7 +76,8 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         }
 
         ResearchResourceEntity researchResourceEntity = jpaJaxbResearchResourceAdapter.toEntity(rr);
-
+        researchResourceEntity.setOrcid(orcid);
+        
         List<OrgEntity> updatedOrganizations = orgManager.getOrgEntities(rr.getProposal().getHosts());
         researchResourceEntity.setHosts(updatedOrganizations);
         // set the orgs and parent for the items
@@ -90,8 +91,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, researchResourceEntity);
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        researchResourceEntity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingPrivacy(researchResourceEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(researchResourceEntity, isApiRequest);
         rrDao.persist(researchResourceEntity);

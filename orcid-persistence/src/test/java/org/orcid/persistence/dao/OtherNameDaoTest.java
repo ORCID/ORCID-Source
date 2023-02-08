@@ -79,7 +79,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         
         OtherNameEntity entity = new OtherNameEntity();
         entity.setDisplayName("The other name");
-        entity.setProfile(new ProfileEntity("4444-4444-4444-4441"));
+        entity.setOrcid("4444-4444-4444-4441");
         entity.setSourceId("4444-4444-4444-4441");
         entity.setVisibility("PUBLIC");
         dao.persist(entity);
@@ -150,7 +150,7 @@ public class OtherNameDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         OtherNameEntity e = new OtherNameEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PUBLIC");
         e.setDisplayName("OTHER_NAME");
         
