@@ -3,11 +3,13 @@ package org.orcid.core.manager;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -24,22 +26,34 @@ import javax.xml.datatype.DatatypeFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.CreatedDate;
+import org.orcid.jaxb.model.common_v2.Day;
+import org.orcid.jaxb.model.common_v2.FuzzyDate;
+import org.orcid.jaxb.model.common_v2.Iso3166Country;
+import org.orcid.jaxb.model.common_v2.Month;
+import org.orcid.jaxb.model.common_v2.PublicationDate;
+import org.orcid.jaxb.model.common_v2.Subtitle;
 import org.orcid.jaxb.model.common_v2.Title;
+import org.orcid.jaxb.model.common_v2.TranslatedTitle;
 import org.orcid.jaxb.model.common_v2.Url;
 import org.orcid.jaxb.model.common_v2.Visibility;
+import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Relationship;
@@ -47,17 +61,20 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.togglz.junit.TogglzRule;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
@@ -84,6 +101,12 @@ public class WorkManagerTest extends BaseTest {
 
     @Value("${org.orcid.core.works.bulk.read.max:100}")
     private Long bulkReadSize;
+
+    @Value("${org.orcid.core.work.contributors.ui.max:50}")
+    private int maxContributorsForUI;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -1105,6 +1128,56 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(found3);
     }
 
+    @Test
+    public void testCompareWorksDifferentContent() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+        workToUpdate.setWorkType(WorkType.DISSERTATION);
+        workToUpdate.setWorkCitation(new Citation("(Author, 2023a) Or (Author, 2023b)", CitationType.FORMATTED_UNSPECIFIED));
+
+        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workForm));
+
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksSameContent() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        Work workSaved = workManager.createWork(claimedOrcid, work, true);
+        work.setPutCode(workSaved.getPutCode());
+
+        assertTrue(WorkForm.valueOf(work, maxContributorsForUI).compare(WorkForm.valueOf(workSaved, maxContributorsForUI)));
+
+        workManager.updateWork(claimedOrcid, workSaved, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(1)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
     private WorkSummary getWorkSummary(String titleValue, String extIdValue, Visibility visibility) throws DatatypeConfigurationException {
         return getWorkSummary(titleValue, extIdValue, visibility, "0");
     }
@@ -1151,18 +1224,7 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkTitle(title);
         work.setWorkType(WorkType.BOOK);
 
-        ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("doi");
-        extId.setUrl(new Url("http://orcid.org"));
-        if (extIdValue == null) {
-            extId.setValue("ext-id-value");
-        } else {
-            extId.setValue("ext-id-value-" + extIdValue);
-        }
-        extIds.getExternalIdentifier().add(extId);
-        work.setWorkExternalIdentifiers(extIds);
+        work.setWorkExternalIdentifiers(getExternalIdentifiers(extIdValue));
 
         work.setVisibility(Visibility.PUBLIC);
         return work;
@@ -1185,5 +1247,37 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkUrl("work:url");
         return work;
     }
-    
+
+    private void fillWork(Work work) {
+        work.setCountry(new Country(Iso3166Country.US));
+        work.setJournalTitle(new Title("journal-title"));
+        work.setLanguageCode("en");
+        work.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(1), new Day(1))));
+        work.setShortDescription("short-description");
+        work.setUrl(new Url("http://test.orcid.org"));
+        work.setVisibility(Visibility.LIMITED);
+        work.setWorkCitation(new Citation("citation", CitationType.FORMATTED_HARVARD));
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("title"));
+        title.setSubtitle(new Subtitle("subtitle"));
+        title.setTranslatedTitle(new TranslatedTitle("translated title", "en"));
+        work.setWorkTitle(title);
+        work.setWorkExternalIdentifiers(getExternalIdentifiers(null));
+        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+    }
+
+    private ExternalIDs getExternalIdentifiers(String extIdValue) {
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://orcid.org"));
+        if (extIdValue == null) {
+            extId.setValue("ext-id-value");
+        } else {
+            extId.setValue("ext-id-value-" + extIdValue);
+        }
+        extIds.getExternalIdentifier().add(extId);
+        return extIds;
+    }
 }

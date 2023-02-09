@@ -83,6 +83,20 @@ public class Date implements ErrorsInterface, Required, Serializable, Comparable
         return newDate;
     }
 
+    public static Date valueOf(org.orcid.jaxb.model.common_v2.CreatedDate date) {
+        Date newDate = new Date();
+        if (date != null && date.getValue() != null)
+            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
+        return newDate;
+    }
+
+    public static Date valueOf(org.orcid.jaxb.model.common_v2.LastModifiedDate date) {
+        Date newDate = new Date();
+        if (date != null && date.getValue() != null)
+            return Date.valueOf(date.getValue().toGregorianCalendar().getTime());
+        return newDate;
+    }
+
     public java.util.Date toJavaDate() {
         Calendar gc = toCalendar();
         return gc.getTime();

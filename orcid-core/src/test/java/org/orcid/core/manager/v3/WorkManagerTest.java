@@ -1723,52 +1723,65 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void testCompareWorksDifferentContent() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
-
-        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
-        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
 
         Work workToUpdate = new Work();
         fillWork(workToUpdate);
         workToUpdate.setPutCode(work.getPutCode());
+        workToUpdate.setWorkType(WorkType.DISSERTATION_THESIS);
+        workToUpdate.setWorkCitation(new Citation("(Author, 2023a) Or (Author, 2023b)", CitationType.FORMATTED_APA));
+
         WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
-        workForm.setWorkType(Text.valueOf("dissertation-thesis)"));
-        workForm.setCitation(new org.orcid.pojo.ajaxForm.Citation( "(Author, 2023a) Or (Author, 2023b)", "formatted-apa"));
 
         assertFalse(workSaved.compare(workForm));
+
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     @Test
     public void testCompareWorksSameContent() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
         Work work = new Work();
         fillWork(work);
-        work = workManager.createWork(claimedOrcid, work, true);
+        Work workSaved = workManager.createWork(claimedOrcid, work, true);
+        work.setPutCode(workSaved.getPutCode());
 
-        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
-        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
-
-        Work workToUpdate = new Work();
-        fillWork(workToUpdate);
-        workToUpdate.setPutCode(work.getPutCode());
-        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
-
-        assertTrue(workSaved.compare(workForm));
+        assertTrue(WorkForm.valueOf(work, maxContributorsForUI).compare(WorkForm.valueOf(workSaved, maxContributorsForUI)));
+        
+        workManager.updateWork(claimedOrcid, workSaved, true);
+        
+        Mockito.verify(mockNotificationManager, Mockito.times(1)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     @Test
     public void testCompareWorksNullAndEmptyValues() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
-
-        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
-        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
 
         Work workToUpdate = new Work();
         fillWork(workToUpdate);
@@ -1777,15 +1790,24 @@ public class WorkManagerTest extends BaseTest {
         workToUpdate.setShortDescription("");
         workToUpdate.setJournalTitle(new Title(""));
         workToUpdate.setVisibility(null);
-        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
 
-        assertFalse(workSaved.compare(workForm));
+        assertFalse(workSaved.compare(workFormToUpdate));
+
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     @Test
     public void testCompareWorksPublicationDate() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1797,23 +1819,28 @@ public class WorkManagerTest extends BaseTest {
         fillWork(workToUpdate);
         workToUpdate.setPutCode(work.getPutCode());
         workToUpdate.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2023), new Month(3), new Day(3))));
-        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
 
-        assertFalse(workSaved.compare(workForm));
+        assertFalse(workSaved.compare(workFormToUpdate));
 
-        workToUpdate = new Work();
-        fillWork(workToUpdate);
-        workToUpdate.setPutCode(work.getPutCode());
-        workToUpdate.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(1), new Day(1))));
-        workForm = WorkForm.valueOf(workToUpdate, 50);
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
 
-        assertTrue(workSaved.compare(workForm));
+        assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        workManager.updateWork(claimedOrcid, workUpdated, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     @Test
     public void testCompareWorksContributors() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1831,27 +1858,30 @@ public class WorkManagerTest extends BaseTest {
 
         workToUpdate.setWorkContributors(contributors);
 
-        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
 
-        assertFalse(workSaved.compare(workForm));
+        assertFalse(workSaved.compare(workFormToUpdate));
 
-        workToUpdate = new Work();
-        fillWork(workToUpdate);
-        workToUpdate.setPutCode(work.getPutCode());
-        workToUpdate.setWorkContributors(getContributors());
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
 
-        workForm = WorkForm.valueOf(workToUpdate, 50);
+        assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
 
-        assertTrue(workSaved.compare(workForm));
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     @Test
     public void testCompareWorksContributorsGroupedByOrcidId() {
-        WorkForm workForm = getWorkWithContributorsMultipleRoles();
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
         togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+
+        WorkForm workForm = getWorkWithContributorsMultipleRoles();
 
         Work work = workManager.createWork(claimedOrcid, workForm);
 
@@ -1868,44 +1898,51 @@ public class WorkManagerTest extends BaseTest {
 
         assertFalse(workSaved.compare(workFormToUpdate));
 
-        workFormToUpdate = getWorkWithContributorsMultipleRoles();
-        workFormToUpdate.setPutCode(Text.valueOf(workSaved.getPutCode().getValue()));
+        Work workUpdated = workManager.updateWork(claimedOrcid, workFormToUpdate);
+        WorkExtended workExtendedUpdated = workManager.getWorkExtended(claimedOrcid, workUpdated.getPutCode());
 
-        assertTrue(workSaved.compare(workFormToUpdate));
+        assertTrue(WorkForm.valueOf(workExtendedUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        work = workManager.updateWork(claimedOrcid, workFormToUpdate);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     @Test
     public void testCompareWorksExternalIdentifiers() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
 
-        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
-        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
 
         Work workToUpdate = new Work();
         fillWork(workToUpdate);
         workToUpdate.setPutCode(work.getPutCode());
 
         ExternalIDs externalIDs = getExternalIDs();
-        externalIDs.getExternalIdentifier().get(0).setRelationship(Relationship.PART_OF);
+        externalIDs.getExternalIdentifier().get(0).setValue("value2");
 
         workToUpdate.setWorkExternalIdentifiers(externalIDs);
 
-        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
 
-        assertFalse(workSaved.compare(workForm));
+        workToUpdate = workManager.updateWork(claimedOrcid, workToUpdate, true);
 
-        workToUpdate = new Work();
-        fillWork(workToUpdate);
-        workToUpdate.setPutCode(work.getPutCode());
-        workToUpdate.setWorkExternalIdentifiers(getExternalIDs());
+        assertFalse(workSaved.compare(workFormToUpdate));
 
-        workForm = WorkForm.valueOf(workToUpdate, 50);
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
 
-        assertTrue(workSaved.compare(workForm));
+        assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }

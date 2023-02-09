@@ -129,8 +129,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
-import org.orcid.pojo.ajaxForm.WorkForm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -271,9 +269,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Resource
     private OrcidUrlManager orcidUrlManager;
-
-    @Value("${org.orcid.core.work.contributors.ui.max:50}")
-    private int maxContributorsForUI;
     
     public Boolean getFilterVersionOfIdentifiers() {
         return filterVersionOfIdentifiers;
@@ -393,20 +388,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             throw new MismatchedPutCodeException(addParmsMismatchedPutCode(putCode, work.getPutCode()));                                     
         }
         clearSource(work);
-        Work w = work;
-
-        WorkForm newWorkForm = WorkForm.valueOf(work, maxContributorsForUI);
-        Work workSaved = workManager.getWork(orcid, putCode);
-        WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
-
-        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
-            if (!workFormSaved.compare(newWorkForm)) {
-                w = updateWork(orcid, work);
-            }
-        } else {
-            w = updateWork(orcid, work);
-        }
-
+        Work w = workManager.updateWork(orcid, work, true);
+        sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
 
@@ -1582,12 +1565,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         params.put("bodyPutCode", String.valueOf(bodyPutCode));
         params.put("clientName", SourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
         return params;
-    }
-
-    private Work updateWork(String orcid, Work work) {
-        Work w = workManager.updateWork(orcid, work, true);
-        sourceUtils.setSourceName(w);
-        return w;
     }
 
 }
