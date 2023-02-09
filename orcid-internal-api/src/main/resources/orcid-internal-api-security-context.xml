@@ -98,4 +98,10 @@
         </constructor-arg>
     </bean>    
     
+    <!-- Internal endpoint delegator that will allow creating internal tokens such as /orcid-internal and /orcid-internal/person/last_modified -->
+    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
+        <property name="tokenGranter" ref="tokenGranter"/>
+        <property name="clientDetailsService" ref="clientDetailsManager"/>        
+    </bean> 
+    
 </beans>
