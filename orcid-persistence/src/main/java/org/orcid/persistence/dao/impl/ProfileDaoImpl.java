@@ -677,7 +677,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @SuppressWarnings("unchecked")
     @Override
     public List<OrcidGrantedAuthority> getGrantedAuthoritiesForProfile(String orcid) {
-        Query query = entityManager.createQuery("from OrcidGrantedAuthority where profileEntity.id = :orcid");
+        Query query = entityManager.createQuery("from OrcidGrantedAuthority where orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
