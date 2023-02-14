@@ -17,6 +17,15 @@
 	<!-- enable swagger -->
 	<sec:http pattern="/static/**" security="none" create-session="stateless" />
 	
+	<!--  swagger role 
+	<security:intercept-url pattern="/swagger*/**" access="ROLE_DEVELOPER"/>
+	<security:intercept-url pattern="/v3/api-docs" access="ROLE_DEVELOPER"/>
+	-->
+	<sec:http pattern="/v3/api-docs/**" security="none"/>
+	<sec:http pattern="/**/index.html" security="none" create-session="stateless"/>
+	<sec:http pattern="/**/**/index.html" security="none" create-session="stateless"/>
+	<sec:http pattern="/swagger-ui.html" security="none" create-session="stateless"/>
+	<sec:http pattern="/**/swagger-ui/**" security="none"/>
 	<sec:http pattern="/v2**/" security="none"/>
 	<sec:http pattern="/v2**/o2c.html" security="none"/>
 	<sec:http pattern="/v3**/" security="none"/>
@@ -142,8 +151,5 @@
     </bean>        
     
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
-    
-    <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
-    <bean id="disable30RCApiFilter" class="org.orcid.api.common.filter.Disable30RCApiFilter" />
         
 </beans>

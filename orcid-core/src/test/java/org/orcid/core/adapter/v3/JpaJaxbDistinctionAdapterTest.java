@@ -308,7 +308,7 @@ public class JpaJaxbDistinctionAdapterTest extends MockSourceNameCache {
     private Distinction getDistinction() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Distinction.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/distinction-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/distinction-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Distinction) unmarshaller.unmarshal(inputStream);
     }

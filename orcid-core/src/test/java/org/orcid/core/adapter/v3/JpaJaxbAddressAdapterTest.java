@@ -155,7 +155,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     private Address getAddress() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Address.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/address-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/address-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Address) unmarshaller.unmarshal(inputStream);
     }

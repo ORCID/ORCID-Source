@@ -895,7 +895,7 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @Consumes(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
     /*@ApiOperation( nickname="editAddressV21", value = "Edit an address", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })*/
     public Response editAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, Address address) {
         return serviceDelegator.updateAddress(orcid, getPutCode(putCode), address);
     }
@@ -904,7 +904,7 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(ADDRESS + PUTCODE)
     /*@ApiOperation( nickname="deleteAddressV21", value = "Delete an address", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })*/
     public Response deleteAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.deleteAddress(orcid, getPutCode(putCode));
     }
@@ -914,7 +914,7 @@ public class MemberV2ApiServiceImplV2_1 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSON)
     /*@ApiOperation( nickname="viewPersonV21", response = Person.class, value = "Fetch person details", authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })*/
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
     }

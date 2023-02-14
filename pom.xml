@@ -30,7 +30,7 @@ the software.
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.0</jersey.version>
         <jackson.version>2.14.1</jackson.version>
-        <swagger.version>2.2.7</swagger.version>
+        <swagger.version>2.2.8</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -598,14 +598,9 @@ the software.
             </dependency>
 
             <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-apache-client</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
             	<groupId>org.glassfish.jersey.core</groupId>
             	<artifactId>jersey-client</artifactId>
-            	<version>3.0.4</version>
+            	<version>${jersey.version}</version>
         	</dependency>
         	
 
@@ -692,7 +687,7 @@ the software.
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-apache-client4</artifactId>
                 <version>${jersey.version}</version>
-                <scope>compile</scope>
+                <!--  scope>compile</scope -->
             </dependency>
             <dependency>
                 <groupId>com.github.slugify</groupId>
@@ -927,17 +922,23 @@ the software.
                 <artifactId>guava</artifactId>
                 <version>31.1-jre</version>
             </dependency>
-            <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+           <!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui --> 
             <dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-jaxrs2</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
+			    <groupId>org.springdoc</groupId>
+			    <artifactId>springdoc-openapi-ui</artifactId>
+			    <version>1.6.14</version>
+			</dependency>
+        <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
+            <dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-jaxrs2</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
 		<!--  dependency>
 			<groupId>io.swagger.core.v3</groupId>
 			<artifactId>swagger-annotations</artifactId>
 			<version>${swagger.version}</version>
-		</dependency-->
+		</dependency -->
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>

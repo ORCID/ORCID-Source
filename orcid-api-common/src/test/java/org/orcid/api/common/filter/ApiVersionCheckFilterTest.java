@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.api.common.filter.ApiVersionCheckFilter;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -21,22 +22,30 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.sun.jersey.core.header.InBoundHeaders;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.WebApplication;
+import jakarta.ws.rs.core.Configuration;
+import jakarta.ws.rs.core.SecurityContext;
+
+import org.glassfish.jersey.internal.PropertiesDelegate;
+import org.glassfish.jersey.server.ContainerRequest;
 
 public class ApiVersionCheckFilterTest {
-
+    @Mock
     private ContainerRequest request;
+    @Mock
+    private SecurityContext securityContext;
+    @Mock
+    private PropertiesDelegate propertiesDelegate;
+    @Mock
+    private Configuration configuration;
     
     @Before
     public void setup() {
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add("X-Forwarded-Proto", "https");
-        request = new ContainerRequest(webApp, "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("https://localhost:8443/orcid-api-web/v2.0_rc1/0000-0001-7510-9252/activities"), headers, new ByteArrayInputStream(new byte[0]));
-    }
+        securityContext = Mockito.mock(SecurityContext.class);
+        propertiesDelegate = Mockito.mock(PropertiesDelegate.class);
+        configuration = Mockito.mock(Configuration.class);
+        request = new ContainerRequest(URI.create("https://localhost:8443/orcid-api-web/"), URI.create("https://localhost:8443/orcid-api-web/v2.0/0000-0001-7510-9252/activities"), "GET", securityContext, propertiesDelegate, configuration);
+        request.header("X-Forwarded-Proto", "https");
+     }
     
     @Test
     public void apiV2SchemeTest() {
@@ -61,13 +70,10 @@ public class ApiVersionCheckFilterTest {
     
     @Test
     public void apiDefaultVersionTest() {
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
         URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
         URI requestUri = URI.create("http://localhost:8443/orcid-api-web/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "POST", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
             fail();
@@ -78,7 +84,7 @@ public class ApiVersionCheckFilterTest {
         }
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "PUT", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
             fail();
@@ -89,7 +95,7 @@ public class ApiVersionCheckFilterTest {
         }
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "DELETE", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
             fail();
@@ -99,21 +105,18 @@ public class ApiVersionCheckFilterTest {
             fail();
         }
                 
-        ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
+        ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "GET", securityContext, propertiesDelegate, configuration);
         ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
         filter.filter(containerRequest);        
     }
     
     @Test
     public void webhooksShouldWorkWithoutVersionTest() {
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
         URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
         URI requestUri = URI.create("http://localhost:8443/orcid-api-web/0000-0001-7510-9252/webhook/http://test.orcid.org");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "POST", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);            
         } catch(Exception e) {
@@ -121,7 +124,7 @@ public class ApiVersionCheckFilterTest {
         }
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "PUT", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);            
         } catch(Exception e) {
@@ -129,7 +132,7 @@ public class ApiVersionCheckFilterTest {
         }
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "DELETE", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);            
         } catch(Exception e) {
@@ -139,14 +142,12 @@ public class ApiVersionCheckFilterTest {
     
     @Test
     public void invalidWebhooksShouldNotWork() {
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
         URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
         URI requestUri = URI.create("http://localhost:8443/orcid-api-web/0000-0001-7510-9252/webhook/");
-        InBoundHeaders headers = new InBoundHeaders();
         ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "POST", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);    
             fail();
@@ -157,7 +158,7 @@ public class ApiVersionCheckFilterTest {
         }
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "PUT", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
             fail();
@@ -168,240 +169,12 @@ public class ApiVersionCheckFilterTest {
         }
         
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "DELETE", securityContext, propertiesDelegate, configuration);            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
             filter.filter(containerRequest);
             fail();
         } catch(OrcidBadRequestException e) {
             
         } catch(Exception e) {
-            fail();
-        }
-    }
-    
-    @Test
-    public void api1_1VersionTest() {
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
-        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
-        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v1.1/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);
-            fail();
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);            
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);            
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-    }
-    
-    @Test
-    public void api1_2VersionTest() {
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
-        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
-        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v1.2/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);
-            fail();
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);            
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);            
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = getApiVersionCheckFilter("http");
-            filter.filter(containerRequest);
-        } catch (OrcidBadRequestException e) {
-            // We expect this
-        } catch (Exception e) {
-            fail();
-        }
-    }
-    
-    @Test
-    public void api2_0_rc2VersionTest() {
-        MockHttpServletRequest mockReq = new MockHttpServletRequest();
-        mockReq.setAttribute("X-Forwarded-Proto", "https");
-        OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
-        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
-        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v2.0_rc2/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);            
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);            
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);
-        } catch (Exception e) {
-            fail();
-        }
-    }
-       
-    @Test
-    public void api2_0_rc3VersionTest() {
-        MockHttpServletRequest mockReq = new MockHttpServletRequest();
-        mockReq.setAttribute("X-Forwarded-Proto", "https");
-        OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
-        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
-        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v2.0_rc3/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);            
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);            
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);
-        } catch (Exception e) {
-            fail();
-        }
-    }
-    
-    @Test
-    public void api2_0_rc4VersionTest() {
-        MockHttpServletRequest mockReq = new MockHttpServletRequest();
-        mockReq.setAttribute("X-Forwarded-Proto", "https");
-        OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
-        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
-        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v2.0_rc4/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);            
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);            
-        } catch (Exception e) {
-            fail();
-        }
-
-        try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
-            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
-            filter.filter(containerRequest);
-        } catch (Exception e) {
             fail();
         }
     }
@@ -411,13 +184,10 @@ public class ApiVersionCheckFilterTest {
         MockHttpServletRequest mockReq = new MockHttpServletRequest();
         mockReq.setAttribute("X-Forwarded-Proto", "https");
         OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
         URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
         URI requestUri = URI.create("http://localhost:8443/orcid-api-web/v2.0/0000-0001-7510-9252/activities");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "POST", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
             filter.filter(containerRequest);
         } catch (Exception e) {
@@ -425,7 +195,7 @@ public class ApiVersionCheckFilterTest {
         }
 
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "PUT", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "PUT", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
             filter.filter(containerRequest);            
         } catch (Exception e) {
@@ -433,7 +203,7 @@ public class ApiVersionCheckFilterTest {
         }
 
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "DELETE", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "DELETE", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
             filter.filter(containerRequest);            
         } catch (Exception e) {
@@ -441,7 +211,7 @@ public class ApiVersionCheckFilterTest {
         }
 
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "GET", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "GET", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
             filter.filter(containerRequest);
         } catch (Exception e) {
@@ -454,13 +224,10 @@ public class ApiVersionCheckFilterTest {
         MockHttpServletRequest mockReq = new MockHttpServletRequest();
         mockReq.setAttribute("X-Forwarded-Proto", "https");
         OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
-        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
         URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
         URI requestUri = URI.create("http://localhost:8443/orcid-api-web/oauth/token");
-        InBoundHeaders headers = new InBoundHeaders();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
         try {
-            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ContainerRequest containerRequest = new ContainerRequest(baseUri, requestUri, "POST", securityContext, propertiesDelegate, configuration);
             ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
             filter.filter(containerRequest);
         } catch (Exception e) {

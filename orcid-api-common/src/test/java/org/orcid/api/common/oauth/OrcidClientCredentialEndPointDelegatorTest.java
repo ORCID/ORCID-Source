@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.annotation.Resource;
+
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 
@@ -43,7 +45,6 @@ import org.springframework.security.oauth2.common.exceptions.InvalidScopeExcepti
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml", "classpath:orcid-persistence-context.xml"})
@@ -111,7 +112,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
         OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true,
                 "/activities/update");
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "authorization_code");
@@ -131,7 +132,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
     @Test
     public void generateClientCredentialsAccessTokenTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "client_credentials");
@@ -152,7 +153,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
     @Test(expected = InvalidScopeException.class)
     public void generateClientCredentialsAccessTokenWithInvalidTokenTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE);
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "client_credentials");
@@ -168,7 +169,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
         OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true,
                 "/activities/update");
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "authorization_code");
@@ -184,7 +185,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         assertTrue(!PojoUtil.isEmpty(token.getRefreshToken().getValue()));
 
         // Generate the refresh token
-        MultivaluedMap<String, String> refreshTokenformParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> refreshTokenformParams = new MultivaluedHashMap<String, String>();
         refreshTokenformParams.add("client_id", CLIENT_ID_1);
         refreshTokenformParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         refreshTokenformParams.add("grant_type", "refresh_token");
@@ -218,7 +219,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
         OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", false,
                 "/activities/update");
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "authorization_code");
@@ -234,7 +235,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         assertTrue(!PojoUtil.isEmpty(token.getRefreshToken().getValue()));
 
         // Generate the refresh token that expires after parent token
-        MultivaluedMap<String, String> refreshTokenformParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> refreshTokenformParams = new MultivaluedHashMap<String, String>();
         refreshTokenformParams.add("client_id", CLIENT_ID_1);
         refreshTokenformParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         refreshTokenformParams.add("grant_type", "refresh_token");
@@ -249,7 +250,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         }
 
         // Try again with a valid expiration value
-        refreshTokenformParams = new MultivaluedMapImpl();
+        refreshTokenformParams = new MultivaluedHashMap<String, String>();
         refreshTokenformParams.add("client_id", CLIENT_ID_1);
         refreshTokenformParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         refreshTokenformParams.add("grant_type", "refresh_token");

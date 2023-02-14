@@ -314,9 +314,9 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         Marshaller m = context.createMarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/employment-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/employment-3.0.xml";
         if (full) {
-            name = "/record_3.0_rc1/samples/read_samples/employment-full-3.0_rc1.xml";
+            name = "/record_3.0/samples/read_samples/employment-full-3.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         Employment e = (Employment) unmarshaller.unmarshal(inputStream);

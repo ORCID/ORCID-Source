@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
+import jakarta.inject.Inject;
 //import com.sun.jersey.api.core.InjectParam;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -20,7 +21,7 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 @Provider
 public class OboApiVersionCheckFilter implements ContainerRequestFilter {
 
-    //@InjectParam("orcidOauth2TokenDetailServiceImpl")
+    @Inject
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
     
     @Override

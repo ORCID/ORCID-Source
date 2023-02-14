@@ -5,7 +5,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.api.common.analytics.AnalyticsProcess;
-import org.orcid.api.common.analytics.AnalyticsData;
 import org.orcid.api.common.analytics.client.AnalyticsClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -19,9 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-//import com.sun.jersey.api.core.InjectParam;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 
@@ -31,19 +29,19 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsFilter.class);
     
-    //@InjectParam("orcidSecurityManager")
+    @Inject
     private OrcidSecurityManager orcidSecurityManager;
 
-    //@InjectParam("analyticsClient")
+    @Inject
     private AnalyticsClient analyticsClient;
 
-    //@InjectParam("clientDetailsEntityCacheManager")
+    @Inject
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    //@InjectParam("profileEntityCacheManager")
+    @Inject
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    //@InjectParam("apiAnalyticsTaskExecutor")
+    @Inject
     private ThreadPoolTaskExecutor apiAnalyticsTaskExecutor;
     
     @Context
@@ -63,6 +61,7 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
     
     private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
         AnalyticsProcess process = new AnalyticsProcess();
+       
         process.setRequest(request);
         process.setResponse(response);
         process.setAnalyticsClient(analyticsClient);

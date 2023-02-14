@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import jakarta.inject.Inject;
 //import com.sun.jersey.api.core.InjectParam;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -32,19 +33,19 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsFilter.class);
     
-    //@InjectParam("orcidSecurityManager")
+    @Inject
     private OrcidSecurityManager orcidSecurityManager;
 
-    //@InjectParam("analyticsClient")
+    @Inject
     private AnalyticsClient analyticsClient;
 
-    //@InjectParam("clientDetailsEntityCacheManager")
+    @Inject
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    //@InjectParam("profileEntityCacheManager")
+    @Inject
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    //@InjectParam("apiAnalyticsTaskExecutor")
+    @Inject
     private ThreadPoolTaskExecutor apiAnalyticsTaskExecutor;
     
     @Context

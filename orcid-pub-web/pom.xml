@@ -54,16 +54,22 @@
             <artifactId>orcid-api-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.bundles/jaxrs-ri -->
+		<dependency>
+		    <groupId>org.glassfish.jersey.bundles</groupId>
+		    <artifactId>jaxrs-ri</artifactId>
+		    <version>${jersey.version}</version>
+		</dependency>
 
         <!-- External dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
-        <dependency>
+        <!--  dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-        </dependency>
+        </dependency -->
 
         <dependency>
             <groupId>com.google.guava</groupId>

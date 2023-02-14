@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.client.ClientRequestFilter;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.ext.Provider;
@@ -23,7 +24,7 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 @Provider
 public class ApiVersionCheckFilter implements ContainerRequestFilter {
 
-    //@InjectParam("localeManager")
+    @Inject
     private LocaleManager localeManager;
     
     @Context private HttpServletRequest httpRequest;
@@ -46,6 +47,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     
     @Override
     public void filter(ContainerRequestContext request) {
+        System.out.println("Version check: " + request.getUriInfo().getPath());
         String path = request.getUriInfo().getPath();
         String method = request.getMethod() == null ? null : request.getMethod().toUpperCase();
         Matcher matcher = VERSION_PATTERN.matcher(path);        

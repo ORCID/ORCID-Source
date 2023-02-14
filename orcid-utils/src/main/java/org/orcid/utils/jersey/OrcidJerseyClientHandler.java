@@ -18,7 +18,7 @@ import org.orcid.utils.jersey.unmarshaller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -31,7 +31,7 @@ public class OrcidJerseyClientHandler {
         Client client;
         ClientBuilder builder = ClientBuilder.newBuilder();
         //Always register the json provider
-        builder.register(JacksonJaxbJsonProvider.class)
+        builder.register(JacksonJsonProvider.class)
         // And the DOM provider
         .register(W3CDocumentBodyReader.class);
         for(Class<?> c : bodyReaders) {
@@ -48,7 +48,7 @@ public class OrcidJerseyClientHandler {
     public static Client create(boolean isDevelopmentMode, Map<String, Object> properties) {
         Client client;
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(JacksonJaxbJsonProvider.class)
+        builder.register(JacksonJsonProvider.class)
         .register(V2ActivitiesSummaryBodyReader.class)
         .register(V2EducationBodyReader.class)
         .register(V2EmploymentBodyReader.class)

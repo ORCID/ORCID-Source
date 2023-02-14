@@ -306,7 +306,7 @@ public class JpaJaxbMembershipAdapterTest extends MockSourceNameCache {
     private Membership getMembership() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Membership.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/membership-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/membership-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Membership) unmarshaller.unmarshal(inputStream);
     }

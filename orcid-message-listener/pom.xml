@@ -116,16 +116,12 @@
         </dependency>   
                 <!-- javax.xml -->
 	<!-- javax.xml -->
-    <dependency>
+    <!--  dependency>
     <groupId>jakarta.xml.bind</groupId>
     <artifactId>jakarta.xml.bind-api</artifactId>
     <version>2.3.3</version>
-</dependency>
-<dependency>
-<groupId>com.sun.xml.bind</groupId>
-<artifactId>jaxb-impl</artifactId>
-<version>2.3.6</version>
-</dependency>
+</dependency -->
+
 <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
