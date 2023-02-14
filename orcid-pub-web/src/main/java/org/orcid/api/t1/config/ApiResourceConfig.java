@@ -1,4 +1,6 @@
-package org.orcid.api.config;
+package org.orcid.api.t1.config;
+
+import java.util.Set;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -10,4 +12,6 @@ public class ApiResourceConfig extends ResourceConfig {
         packages("org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common");
         //property(null, cachedClasses)
     }
+    
+
 }

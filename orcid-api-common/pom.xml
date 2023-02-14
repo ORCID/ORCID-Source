@@ -84,11 +84,11 @@
             <artifactId>jersey-server</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-        <dependency>
+        <!--   dependency>
 		    <groupId>jakarta.servlet</groupId>
 		    <artifactId>jakarta.servlet-api</artifactId>
 		    <version>5.0.0</version>
-		</dependency>
+		</dependency -->
 		<!-- https://mvnrepository.com/artifact/jakarta.inject/jakarta.inject-api -->
 		<dependency>
 		    <groupId>jakarta.inject</groupId>
