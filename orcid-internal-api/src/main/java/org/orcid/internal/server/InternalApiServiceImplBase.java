@@ -24,7 +24,7 @@ import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.swagger.annotations.ApiOperation;
+//import io.swagger.annotations.ApiOperation;
 
 /**
  * 
@@ -47,7 +47,7 @@ public abstract class InternalApiServiceImplBase {
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
-    @ApiOperation(value = "Check the server status", hidden = true)
+    //@ApiOperation(value = "Check the server status", hidden = true)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }

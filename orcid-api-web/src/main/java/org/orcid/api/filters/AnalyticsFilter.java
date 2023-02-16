@@ -1,5 +1,6 @@
 package org.orcid.api.filters;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
@@ -18,10 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.ContainerResponseContext;
 
 @Provider
 @Component
@@ -29,19 +30,19 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsFilter.class);
     
-    @InjectParam("orcidSecurityManager")
+    @Inject
     private OrcidSecurityManager orcidSecurityManager;
 
-    @InjectParam("analyticsClient")
+    @Inject
     private AnalyticsClient analyticsClient;
 
-    @InjectParam("clientDetailsEntityCacheManager")
+    @Inject
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    @InjectParam("profileEntityCacheManager")
+    @Inject
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @InjectParam("apiAnalyticsTaskExecutor")
+    @Inject
     private ThreadPoolTaskExecutor apiAnalyticsTaskExecutor;
     
     @Context
@@ -51,18 +52,19 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
     private boolean enableMemberAPIAnalytics;
     
     @Override
-    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
+    public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         if (enableMemberAPIAnalytics) {
             AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
             apiAnalyticsTaskExecutor.execute(analyticsProcess);
         }
-        return response;
+        return;
     }
     
-    private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
+    private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
         AnalyticsProcess process = new AnalyticsProcess();
-        process.setRequest(request);
-        process.setResponse(response);
+       
+        //process.setRequest(request);
+        //process.setResponse(response);
         process.setAnalyticsClient(analyticsClient);
         process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
         process.setClientDetailsId(orcidSecurityManager.getClientIdFromAPIRequest());

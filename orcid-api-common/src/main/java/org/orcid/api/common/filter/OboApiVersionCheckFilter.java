@@ -2,29 +2,31 @@ package org.orcid.api.common.filter;
 
 import java.util.regex.Matcher;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OboNotValidForApiVersionException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 @Provider
 public class OboApiVersionCheckFilter implements ContainerRequestFilter {
 
-    @InjectParam("orcidOauth2TokenDetailServiceImpl")
+    @Autowired
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
     
     @Override
-    public ContainerRequest filter(ContainerRequest request) {
+    public void filter(ContainerRequestContext request) {
         String version = getApiVersion(request);
         boolean oboRequest = isOboRequest();
         
@@ -33,7 +35,7 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
             throw new OboNotValidForApiVersionException();
         }
         
-        return request;
+        return;
     }
 
     private boolean isOboRequest() {
@@ -51,8 +53,8 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
         return false;
     }
 
-    private String getApiVersion(ContainerRequest request) {
-        String path = request.getPath();
+    private String getApiVersion(ContainerRequestContext request) {
+        String path = request.getUriInfo().getPath();
         Matcher matcher = ApiVersionCheckFilter.VERSION_PATTERN.matcher(path);
         if (matcher.lookingAt()) {
             return matcher.group(1);

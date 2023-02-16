@@ -22,7 +22,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.swagger.annotations.ApiOperation;
+/*import io.swagger.annotations.ApiOperation;
 import io.swagger.config.FilterFactory;
 import io.swagger.config.Scanner;
 import io.swagger.config.ScannerFactory;
@@ -34,7 +34,7 @@ import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
+import io.swagger.util.Yaml;*/
 
 /** Adapted version of APIListingResource that works with our spring-jersey based server.  
  * It removes the need for a ServletContext when initialising, but is otherwise unchanged.
@@ -49,7 +49,7 @@ public class SwaggerJSONResource {
     @Context
     ServletContext context;
 
-    protected synchronized Swagger scan(Application app) {
+   /* protected synchronized Swagger scan(Application app) {
         Swagger swagger = null;
         Scanner scanner = ScannerFactory.getScanner();
         ModelConverters.getInstance().addConverter(new SwaggerModelConverter());
@@ -185,5 +185,5 @@ public class SwaggerJSONResource {
         }
         return output;
     }
-    
+    */
 }

@@ -13,7 +13,7 @@
     <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
      
-    <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
+    <!-- bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
         <property name="title" value="ORCID Member"/>
         <property name="version" value="Latest" />
         <property name="host" value="#{ orcidUrlManager.apiHostWithPort }" />
@@ -21,9 +21,9 @@
         <property name="resourcePackage" value="org.orcid.api"/>
         <property name="scan" value="true"/>
         <property name="prettyPrint" value="true"/>        
-    </bean>
+    </bean -->
     
-    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
+    <!-- bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/-->    
     <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
      
     <!--  Notifications -->

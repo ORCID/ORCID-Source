@@ -2,6 +2,7 @@ package org.orcid.api.common.analytics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.annotation.Resource;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +28,16 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import javax.ws.rs.core.SecurityContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.sun.jersey.core.header.InBoundHeaders;
-import com.sun.jersey.server.impl.application.WebApplicationImpl;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
+
+import org.glassfish.jersey.internal.PropertiesDelegate;
+import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
+import org.glassfish.jersey.message.internal.OutboundMessageContext;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ContainerResponse;
+
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-common-context.xml" })
@@ -51,10 +57,22 @@ public class AnalyticsProcessTest {
 
     private String hashedOrcid;
 
+    private String BASE_LOCAL_URL = "https://localhost:8443/orcid-api-web/";
+    
+    @Mock
+    private SecurityContext securityContext;
+    @Mock
+    private PropertiesDelegate propertiesDelegate;
+    @Mock
+    private OutboundMessageContext msgContext;
+
     @Before
     public void setUp() throws NoSuchAlgorithmException {
         MockitoAnnotations.initMocks(this);
         hashedOrcid = encryptionManager.sha256Hash("1234-4321-1234-4321");
+        securityContext = Mockito.mock(SecurityContext.class,RETURNS_DEEP_STUBS);
+        propertiesDelegate = Mockito.mock(PropertiesDelegate.class,RETURNS_DEEP_STUBS);
+        msgContext = Mockito.mock(OutboundMessageContext.class,RETURNS_DEEP_STUBS);
     }
 
     @Test
@@ -677,129 +695,111 @@ public class AnalyticsProcessTest {
         return profileEntity;
     }
 
+   
     private ContainerResponse getResponse(ContainerRequest request) {
-        ContainerResponse response = new ContainerResponse(new WebApplicationImpl(), request, null);
-        response.setStatus(200);
+        ContainerResponse response = new ContainerResponse(request, new OutboundJaxrsResponse(Response.Status.OK, msgContext));
         return response;
     }
     
     private ContainerRequest getRequestWithHttpScheme() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, "application/xml");
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
 
     private ContainerRequest getRequest() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, "application/xml");
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getRequestWithNoCategory() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/xml");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321"), headers, null);
-    }
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, "application/xml");
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;    }
     
     private ContainerRequest getRequestWithNoContentType() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
-    }
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
+     }
     
     private ContainerRequest getGetRequestWithXmlAcceptHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.ACCEPT, "application/xml");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.ACCEPT, "application/xml");
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getGetRequestWithJsonAcceptHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.ACCEPT, "application/json");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.ACCEPT, "application/json");
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getGetRequestWithXmlContentTypeHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.ACCEPT, OrcidApiConstants.VND_ORCID_XML);
-        headers.add(HttpHeaders.CONTENT_TYPE, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.ACCEPT, OrcidApiConstants.VND_ORCID_XML);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getGetRequestWithJsonContentTypeHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.ORCID_JSON);
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.ACCEPT, OrcidApiConstants.ORCID_JSON);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getPostRequestWithXmlContentTypeHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.ORCID_XML);
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.ORCID_XML);
+        request.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getPostRequestWithJsonContentTypeHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, "application/json");
+        request.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getPostRequestWithUnknownContentTypeHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "something/weird");
-        headers.add(HttpHeaders.ACCEPT, "application/xml");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "POST", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"POST", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, "something/weird");
+        request.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getGetRequestWithUnknownAcceptHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.VND_ORCID_JSON);
-        headers.add(HttpHeaders.ACCEPT, "something/weird");
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.VND_ORCID_JSON);
+        request.header(HttpHeaders.ACCEPT, "something/weird");
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
     }
     
     private ContainerRequest getGetRequestWithRdfXmlAcceptHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.JSON_LD);
-        headers.add(HttpHeaders.ACCEPT, OrcidApiConstants.APPLICATION_RDFXML);
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
-    }
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, OrcidApiConstants.JSON_LD);
+        request.header(HttpHeaders.ACCEPT, OrcidApiConstants.APPLICATION_RDFXML);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;    
+   }
     
     private ContainerRequest getGetRequestWithJsonLdAcceptHeader() {
-        InBoundHeaders headers = new InBoundHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-        headers.add(HttpHeaders.ACCEPT, OrcidApiConstants.JSON_LD);
-        headers.add(HttpHeaders.USER_AGENT, "blah");
-        return new ContainerRequest(new WebApplicationImpl(), "GET", URI.create("https://localhost:8443/orcid-api-web/"),
-                URI.create("http://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"), headers, null);
-    }
-    
-    
-
+        ContainerRequest  request = new ContainerRequest(URI.create(BASE_LOCAL_URL), URI.create("https://localhost:8443/orcid-api-web/v2.0/1234-4321-1234-4321/works"),"GET", securityContext, propertiesDelegate);
+        request.header(HttpHeaders.CONTENT_TYPE, "application/json");
+        request.header(HttpHeaders.ACCEPT, OrcidApiConstants.JSON_LD);
+        request.header(HttpHeaders.USER_AGENT, "blah");
+        return request;
+   }
 }

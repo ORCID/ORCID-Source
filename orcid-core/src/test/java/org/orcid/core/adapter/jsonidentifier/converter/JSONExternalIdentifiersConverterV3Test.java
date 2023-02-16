@@ -67,7 +67,7 @@ public class JSONExternalIdentifiersConverterV3Test {
     private Education getEducation() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/education-full-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/education-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);
     }
