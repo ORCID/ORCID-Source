@@ -357,6 +357,15 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
             if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+                SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                String client = null;
+                if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
+                    client = sourceEntity.getSourceProfile().getId();
+                }
+                if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
+                    client = sourceEntity.getSourceClient().getClientName();
+                }
+                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
                 return workSaved;
             }
         }

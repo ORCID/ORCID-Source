@@ -365,6 +365,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
             if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
                 return workSaved;
             }
         }
@@ -556,6 +557,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
             if (workFormSaved.compare(workForm)) {
+                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
                 return workSaved;
             }
         }
@@ -643,4 +645,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return contributorsRolesAndSequencesConverter.convertTo(work.getContributorsGroupedByOrcid(), null);
     }
 
+    private String getSourceName(Source activeSource) {
+        String client = null;
+        if (activeSource.getSourceName() != null && activeSource.getSourceName().getContent() != null) {
+            client = activeSource.getSourceName().getContent();
+        }
+        return client;
+    }
 }
