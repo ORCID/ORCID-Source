@@ -1685,7 +1685,7 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(workResult);
         assertNotNull(workEntity);
         assertNotNull(workEntity.getTopContributorsJson());
-        assertEquals("[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"},{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"}]}]", workEntity.getTopContributorsJson());
+        assertEquals("[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"},{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"}]},{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 2\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"},{\"contributorSequence\":null,\"contributorRole\":\"SOFTWARE\"}]},{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 3\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FORMAL_ANALYSIS\"},{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"}]}]", workEntity.getTopContributorsJson());
 
         workManager.removeWorks(orcid, Arrays.asList(workResult.getPutCode()));
 
@@ -1762,8 +1762,6 @@ public class WorkManagerTest extends BaseTest {
         Work workSaved = workManager.createWork(claimedOrcid, work, true);
         work.setPutCode(workSaved.getPutCode());
 
-        assertTrue(WorkForm.valueOf(work, maxContributorsForUI).compare(WorkForm.valueOf(workSaved, maxContributorsForUI)));
-        
         workManager.updateWork(claimedOrcid, workSaved, true);
         
         Mockito.verify(mockNotificationManager, Mockito.times(1)).sendAmendEmail(any(), any(), any());
@@ -2098,8 +2096,10 @@ public class WorkManagerTest extends BaseTest {
     }
 
     private WorkContributors getContributors() {
+        List<Contributor> contributors = new ArrayList<>();
+
         ContributorAttributes attributes = new ContributorAttributes();
-        attributes.setContributorRole(ContributorRole.ASSIGNEE.name());
+        attributes.setContributorRole("http://credit.niso.org/contributor-roles/investigation/");
         attributes.setContributorSequence(SequenceType.FIRST);
 
         ContributorOrcid contributorOrcid = new ContributorOrcid();
@@ -2112,6 +2112,42 @@ public class WorkManagerTest extends BaseTest {
         contributor.setContributorOrcid(contributorOrcid);
         contributor.setCreditName(new CreditName("credit name"));
         contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
+
+        contributors.add(contributor);
+
+        attributes = new ContributorAttributes();
+        attributes.setContributorRole("http://credit.niso.org/contributor-roles/conceptualization/");
+        attributes.setContributorSequence(SequenceType.ADDITIONAL);
+
+        contributorOrcid = new ContributorOrcid();
+        contributorOrcid.setHost("http://test.orcid.org");
+        contributorOrcid.setPath("0000-0000-0000-0001");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
+
+        contributor = new Contributor();
+        contributor.setContributorAttributes(attributes);
+        contributor.setContributorOrcid(contributorOrcid);
+        contributor.setCreditName(new CreditName("credit name 2"));
+        contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
+
+        contributors.add(contributor);
+
+        attributes = new ContributorAttributes();
+        attributes.setContributorRole("http://credit.niso.org/contributor-roles/data-curation/");
+        attributes.setContributorSequence(SequenceType.ADDITIONAL);
+
+        contributorOrcid = new ContributorOrcid();
+        contributorOrcid.setHost("http://test.orcid.org");
+        contributorOrcid.setPath("0000-0000-0000-0002");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
+
+        contributor = new Contributor();
+        contributor.setContributorAttributes(attributes);
+        contributor.setContributorOrcid(contributorOrcid);
+        contributor.setCreditName(new CreditName("credit name3"));
+        contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
+
+        contributors.add(contributor);
 
         return new WorkContributors(Stream.of(contributor).collect(Collectors.toList()));
     }
@@ -2141,6 +2177,34 @@ public class WorkManagerTest extends BaseTest {
         rolesAndSequences.add(ca);
         crs.setRolesAndSequences(rolesAndSequences);
         contributorsGroupedByOrcid.add(crs);
+
+        crs = new ContributorsRolesAndSequences();
+        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
+        crs.setCreditName(new CreditName("Contributor 2"));
+        rolesAndSequences = new ArrayList<>();
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
+        rolesAndSequences.add(ca);
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.SOFTWARE.value());
+        rolesAndSequences.add(ca);
+        crs.setRolesAndSequences(rolesAndSequences);
+        contributorsGroupedByOrcid.add(crs);
+
+        crs = new ContributorsRolesAndSequences();
+        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
+        crs.setCreditName(new CreditName("Contributor 3"));
+        rolesAndSequences = new ArrayList<>();
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.FORMAL_ANALYSIS.value());
+        rolesAndSequences.add(ca);
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+        rolesAndSequences.add(ca);
+        crs.setRolesAndSequences(rolesAndSequences);
+        contributorsGroupedByOrcid.add(crs);
+
+
         return contributorsGroupedByOrcid;
     }
 

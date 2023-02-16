@@ -178,5 +178,30 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
         } else if (!externalIdentifierType.equals(other.externalIdentifierType))
             return false;
         return true;
-    }          
+    }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ActivityExternalIdentifier other = (ActivityExternalIdentifier) obj;
+
+        if (!WorkForm.compareTexts(externalIdentifierType, other.getExternalIdentifierType(), false)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(externalIdentifierId, other.getExternalIdentifierId(), false)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(url, other.getUrl(), true)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(relationship, other.getRelationship(), false)) {
+            return false;
+        }
+
+        return true;
+    }
 }

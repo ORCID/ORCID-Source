@@ -58,7 +58,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {
-                contributor.getContributorAttributes();
                 if (contributor.getContributorAttributes().getContributorRole() != null) {
                     try {
                         CreditRole cr = CreditRole.fromValue(contributor.getContributorAttributes().getContributorRole());
@@ -86,7 +85,6 @@ public class Contributor implements ErrorsInterface, Serializable {
         Contributor c = new Contributor();
         if (contributor != null) {
             if (contributor.getContributorAttributes() != null) {
-                contributor.getContributorAttributes();
                 if (contributor.getContributorAttributes().getContributorRole() != null) {
                     try {
                         CreditRole cr = CreditRole.fromValue(contributor.getContributorAttributes().getContributorRole());
@@ -255,5 +253,30 @@ public class Contributor implements ErrorsInterface, Serializable {
         } else if (!uri.equals(other.uri))
             return false;
         return true;
-    }    
+    }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Contributor other = (Contributor) obj;
+
+        if (!WorkForm.compareTexts(creditName, other.getCreditName(), false)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(orcid, other.getOrcid(), false)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(contributorRole, other.getContributorRole(), true)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(contributorSequence, other.getContributorSequence(), true)) {
+            return false;
+        }
+
+        return true;
+    }
 }
