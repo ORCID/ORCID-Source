@@ -49,14 +49,12 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter{
     @Override
     public void filter(ContainerRequestContext request) {
         String path = request.getUriInfo().getPath();
-        System.out.println("Path in API version check filter");
         String method = request.getMethod() == null ? null : request.getMethod().toUpperCase();
         Matcher matcher = VERSION_PATTERN.matcher(path);        
         String version = null;
         if (matcher.lookingAt()) {
             version = matcher.group(1);
         }
-        System.out.println("Version is: " + version);
         if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
             if(!RequestMethod.GET.name().equals(method)) {
                 Object params[] = {method};
