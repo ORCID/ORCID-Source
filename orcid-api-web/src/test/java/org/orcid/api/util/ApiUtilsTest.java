@@ -24,7 +24,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
 public class ApiUtilsTest {
 
     @Resource(name = "apiUtils")
@@ -60,11 +60,11 @@ public class ApiUtilsTest {
     public void testBuildApiResponse() {
         Response response = apiUtils.buildApiResponse("0000-0001-2345-6789", "work", "122345", "apiError.creatework_response.exception");
         String location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/0000-0001-2345-6789/work/122345", location);
+        assertEquals("https://localhost:8443/orcid-api-web/0000-0001-2345-6789/work/122345", location);
 
         response = apiUtils.buildApiResponse(null, "group-id-record", "5", "apiError.creategroupidrecord_response.exception");
         location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/group-id-record/5", location);
+        assertEquals("https://localhost:8443/orcid-api-web/group-id-record/5", location);
 
         RequestAttributes attrs = new ServletRequestAttributes(new MockHttpServletRequest());
         attrs.setAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, "2.0", RequestAttributes.SCOPE_REQUEST);
@@ -72,10 +72,10 @@ public class ApiUtilsTest {
 
         response = apiUtils.buildApiResponse("0000-0000-0000-0000", "peer-review", "01", "apiError.createpeerreview_response.exception");
         location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/v2.0/0000-0000-0000-0000/peer-review/01", location);
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/0000-0000-0000-0000/peer-review/01", location);
 
         response = apiUtils.buildApiResponse(null, "group-id-record", "01", "apiError.creategroupidrecord_response.exception");
         location = getLocationFromResponse(response);
-        assertEquals("http://localhost:8080/orcid-api-web/v2.0/group-id-record/01", location);
+        assertEquals("https://localhost:8443/orcid-api-web/v2.0/group-id-record/01", location);
     }
 }

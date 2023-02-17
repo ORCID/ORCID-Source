@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -46,7 +45,7 @@ import org.springframework.test.context.ContextConfiguration;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml", "classpath:orcid-persistence-context.xml"})
+@ContextConfiguration(locations = { "classpath:test-orcid-api-common-context.xml"})
 public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
@@ -98,7 +97,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         authorizationCode.setScopes(new HashSet<String>(Arrays.asList(scopes)));
         authorizationCode.setClientDetailsEntity(new ClientDetailsEntity(clientId));
         authorizationCode.setPersistent(persistent);
-        authorizationCode.setProfileEntity(new ProfileEntity(USER_ORCID));
+        authorizationCode.setOrcid(USER_ORCID);
         authorizationCode.setRedirectUri(redirectUri);
         authorizationCode.setResourceIds(new HashSet<String>(Arrays.asList("orcid")));
         authorizationCode.setAuthenticated(true);

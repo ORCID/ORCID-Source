@@ -37,7 +37,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 @Transactional
 public class NotificationDaoTest extends DBUnitTest {
 
@@ -250,7 +250,7 @@ public class NotificationDaoTest extends DBUnitTest {
         entity.setNotificationIntro("intro");
         entity.setNotificationSubject("subject");
         entity.setNotificationType(NOTIFICATION_TYPE_AMENDED);
-        entity.setProfile(new ProfileEntity(orcid));
+        entity.setOrcid(orcid);
         if (sentDate != null) {
             entity.setSentDate(sentDate);
         }
@@ -294,7 +294,7 @@ public class NotificationDaoTest extends DBUnitTest {
             newEntity.setNotificationIntro("Intro");
             newEntity.setNotificationSubject("Subject");
             newEntity.setNotificationType(NOTIFICATION_TYPE_AMENDED);
-            newEntity.setProfile(new ProfileEntity("0000-0000-0000-0004"));
+            newEntity.setOrcid("0000-0000-0000-0004");
             newEntity.setSendable(true);
             notificationDao.persist(newEntity);
 
@@ -580,7 +580,7 @@ public class NotificationDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         NotificationEntity e = new NotificationAmendedEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0003")); 
+        e.setOrcid("0000-0000-0000-0003"); 
         e.setNotificationFamily("FAMILY");
         e.setNotificationIntro("INTRO");
         e.setNotificationSubject("SUBJECT");

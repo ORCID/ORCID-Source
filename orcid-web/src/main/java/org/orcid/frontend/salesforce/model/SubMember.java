@@ -12,7 +12,7 @@ public class SubMember implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String parentAccountId;
-    private String slug;
+    private String accountId;
     private Opportunity opportunity;
     private Contact mainContact;
 
@@ -24,12 +24,12 @@ public class SubMember implements Serializable {
         this.parentAccountId = parentAccountId;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setSlug(String slug) {
-        this.slug = slug;
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public Opportunity getOpportunity() {
@@ -50,7 +50,7 @@ public class SubMember implements Serializable {
 
     @Override
     public String toString() {
-        return "SalesForceSubMember [slug=" + slug + ", opportunity=" + opportunity + ", mainContact=" + mainContact + "]";
+        return "SalesForceSubMember [accountId=" + accountId + ", opportunity=" + opportunity + ", mainContact=" + mainContact + "]";
     }
 
 }

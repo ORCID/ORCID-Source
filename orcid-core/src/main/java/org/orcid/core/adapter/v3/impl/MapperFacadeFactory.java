@@ -450,8 +450,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addV3DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
         otherNameClassMap.field("putCode", "id");
-        otherNameClassMap.field("content", "displayName");
-        otherNameClassMap.field("path", "profile.orcid");
+        otherNameClassMap.field("content", "displayName");        
         otherNameClassMap.fieldBToA("displayIndex", "displayIndex");
         otherNameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         otherNameClassMap.byDefault();

@@ -10,6 +10,7 @@ import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.manager.SalesforceManager;
 import org.orcid.frontend.salesforce.model.Member;
 import org.orcid.frontend.salesforce.model.MemberDetails;
+import org.orcid.frontend.salesforce.model.SlugUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,8 +39,13 @@ public class MembersListController extends BaseController {
         return mav;
     }
 
-    @RequestMapping("/members/{memberSlug}")
-    public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
+    @RequestMapping("/members/{memberId}")
+    public ModelAndView memberPage(@PathVariable("memberId") String memberId) {
+        // Does it have slug on it? then redirect to the page with just the ID
+        if(SlugUtils.containsSlug(memberId)) {
+            String sanitizedId = SlugUtils.extractIdFromSlug(memberId);
+            return new ModelAndView("redirect:/members/" + sanitizedId);
+        }
         ModelAndView mav = new ModelAndView("member-page");
         if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
             mav.addObject("noIndex", true);
@@ -52,9 +58,9 @@ public class MembersListController extends BaseController {
         return salesforceManager.retrieveMembers();
     }
 
-    @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
-    public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {        
-        return salesforceManager.retrieveMemberDetails(memberSlug);
+    @RequestMapping(value = "/members/details.json", method = RequestMethod.GET)
+    public @ResponseBody MemberDetails retrieveDetailsById(@RequestParam("memberId") String memberId) {        
+        return salesforceManager.retrieveMemberDetails(memberId);
     }
 
     @RequestMapping(value = "/members/communityTypes.json", method = RequestMethod.GET)

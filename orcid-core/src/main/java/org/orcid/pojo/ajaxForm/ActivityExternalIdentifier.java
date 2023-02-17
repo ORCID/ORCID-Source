@@ -65,7 +65,23 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
         return wi;
 
     }
-    
+
+    public static ActivityExternalIdentifier valueOf(org.orcid.jaxb.model.record_v2.ExternalID externalIdentifier) {
+        ActivityExternalIdentifier wi = new ActivityExternalIdentifier();
+        if (externalIdentifier != null) {
+            if (externalIdentifier.getValue() != null)
+                wi.setExternalIdentifierId(Text.valueOf(externalIdentifier.getValue()));
+            if (externalIdentifier.getType() != null)
+                wi.setExternalIdentifierType(Text.valueOf(externalIdentifier.getType()));
+            if(externalIdentifier.getRelationship() != null)
+                wi.setRelationship(Text.valueOf(externalIdentifier.getRelationship().value()));
+            if(externalIdentifier.getUrl() != null)
+                wi.setUrl(Text.valueOf(externalIdentifier.getUrl().getValue()));
+        }
+        return wi;
+
+    }
+
     public ExternalID toExternalIdentifier() {
         ExternalID we = new ExternalID();
         if (!PojoUtil.isEmpty(this.getExternalIdentifierId())) 
@@ -162,5 +178,30 @@ public class ActivityExternalIdentifier implements ErrorsInterface, Serializable
         } else if (!externalIdentifierType.equals(other.externalIdentifierType))
             return false;
         return true;
-    }          
+    }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ActivityExternalIdentifier other = (ActivityExternalIdentifier) obj;
+
+        if (!WorkForm.compareTexts(externalIdentifierType, other.getExternalIdentifierType(), false)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(externalIdentifierId, other.getExternalIdentifierId(), false)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(url, other.getUrl(), true)) {
+            return false;
+        }
+        if (!WorkForm.compareTexts(relationship, other.getRelationship(), false)) {
+            return false;
+        }
+
+        return true;
+    }
 }

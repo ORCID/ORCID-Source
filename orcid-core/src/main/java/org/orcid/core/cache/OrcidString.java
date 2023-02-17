@@ -18,6 +18,8 @@ package org.orcid.core.cache;
 
 import java.io.Serializable;
 
+import javax.mail.MethodNotSupportedException;
+
 import org.orcid.persistence.jpa.entities.OrcidAware;
 
 /**
@@ -41,6 +43,11 @@ public class OrcidString implements OrcidAware, Serializable {
     @Override
     public String getOrcid() {
         return orcid;
+    }
+    
+    @Override
+    public void setOrcid(String orcid) {
+        throw new RuntimeException("Use the constructor insted");
     }
 
     @Override

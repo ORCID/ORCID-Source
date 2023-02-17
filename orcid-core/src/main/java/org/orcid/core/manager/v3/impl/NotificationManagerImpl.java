@@ -422,11 +422,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
         NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (profile == null) {
-            throw OrcidNotFoundException.newInstance(orcid);
-        }
-        notificationEntity.setProfile(profile);
+        notificationEntity.setOrcid(orcid);
 
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
 
@@ -575,11 +571,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
         NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter
                 .toNotificationEntity(notification);
-        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
-        if (profile == null) {
-            throw OrcidNotFoundException.newInstance(userOrcid);
-        }
-        notificationEntity.setProfile(profile);
+        notificationEntity.setOrcid(userOrcid);
         //notificationEntity.setProfile(new ProfileEntity(userOrcid));
         notificationEntity.setClientSourceId(clientId);
         notificationDao.persist(notificationEntity);   
@@ -596,7 +588,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
         NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter
                 .toNotificationEntity(notification);
-        notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        notificationEntity.setOrcid(userOrcid);
         notificationEntity.setClientSourceId(clientId);
         notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
         notificationDao.persist(notificationEntity);        

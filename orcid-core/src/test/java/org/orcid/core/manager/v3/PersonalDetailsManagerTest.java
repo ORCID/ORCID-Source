@@ -49,9 +49,6 @@ public class PersonalDetailsManagerTest extends BaseTest {
     PersonalDetailsManager personalDetailsManager;
     
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
-    @Resource
     private SourceNameCacheManager sourceNameCacheManager;
     
     @Resource
@@ -81,7 +78,6 @@ public class PersonalDetailsManagerTest extends BaseTest {
     public void setUp() {
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
         
         Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
@@ -91,7 +87,6 @@ public class PersonalDetailsManagerTest extends BaseTest {
     
     @After
     public void tearDown() {
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }

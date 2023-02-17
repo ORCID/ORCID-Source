@@ -24,9 +24,11 @@
 	<bean id="recentOrcidCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="recent-orcid" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.recent_orcid.timeToIdleSeconds:86400}" />
-		<property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesInMemory:4}" />		
-		<property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesOnDisk:8}" />
+		<!-- Equivalent to 3 weeks -->
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.recent_orcid.timeToIdleSeconds:1900800}" />
+		<!-- Enough to store 1M ids -->
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesInMemory:128}" />		
+		<property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.recent_orcid.maxMegaBytesOnDisk:256}" />
 	</bean>
 	
 	<bean id="profileEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -133,8 +135,7 @@
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="timeToIdleSeconds" value="${org.orcid.core.cache.affiliation_groups.timeToIdleSeconds:300}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesInMemory:16}" />
-        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesOnDisk:128}" />
-        <property name="copyValues" value="false" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.affiliation_groups.maxMegaBytesOnDisk:128}" />        
     </bean>
     
     <bean id="groupedWorksCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">

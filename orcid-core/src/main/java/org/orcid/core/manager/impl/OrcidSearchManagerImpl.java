@@ -10,16 +10,12 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.solr.OrcidSolrProfileClient;
+import org.orcid.core.solr.OrcidSolrResults;
 import org.orcid.jaxb.model.common_v2.OrcidIdentifier;
 import org.orcid.jaxb.model.search_v2.Result;
 import org.orcid.jaxb.model.search_v2.Search;
-import org.orcid.core.solr.OrcidSolrResults;
-import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidSearchManagerImpl implements OrcidSearchManager {
-
-    @Value("${org.orcid.core.public_caching_source:SOLR}")
-    private String cachingSource;
 
     @Resource
     private RecordManagerReadOnly recordManagerReadOnly;

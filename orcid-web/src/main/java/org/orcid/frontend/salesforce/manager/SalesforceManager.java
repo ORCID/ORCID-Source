@@ -8,7 +8,7 @@ import org.orcid.frontend.salesforce.model.MemberDetails;
 public interface SalesforceManager {
 	List<Member> retrieveMembers();
 
-	MemberDetails retrieveMemberDetails(String memberSlug);
+	MemberDetails retrieveMemberDetails(String memberId);
 	
 	List<Member> retrieveConsortiaList();
 }

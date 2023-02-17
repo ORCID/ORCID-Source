@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -24,7 +23,6 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -32,7 +30,6 @@ import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
@@ -56,9 +53,6 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Resource(name = "externalIdentifierManagerV3")
     private ExternalIdentifierManager externalIdentifierManager;
-    
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;

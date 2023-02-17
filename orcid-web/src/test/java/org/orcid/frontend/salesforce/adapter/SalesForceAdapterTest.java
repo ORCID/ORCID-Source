@@ -43,7 +43,7 @@ public class SalesForceAdapterTest {
         Member member = salesForceAdapter.createMemberFromSalesForceRecord(records.getJSONObject(0));
         assertEquals("001J000001pZwWXIA0", member.getId());
         assertEquals("Org 2 Consortium Member", member.getName());
-        assertEquals("001J000001pZwWXIA0-org-2-consortium-member", member.getSlug());
+        assertEquals("Org 2 Consortium Member Public name", member.getPublicDisplayName());
         assertEquals("http://org2.edu", member.getWebsiteUrl().toString());
         assertEquals(CommunityType.RESEARCH_INSTITUTE, member.getResearchCommunity());
         assertEquals("New Zealand", member.getCountry());
@@ -85,7 +85,7 @@ public class SalesForceAdapterTest {
         Member member = membersList.get(0);
         assertEquals("001J000001pZwWXIA0", member.getId());
         assertEquals("Org 2 Consortium Member", member.getName());
-        assertEquals("001J000001pZwWXIA0-org-2-consortium-member", member.getSlug());
+        assertEquals("Org 2 Consortium Member Public name", member.getPublicDisplayName());
         assertEquals("http://org2.edu", member.getWebsiteUrl().toString());
         assertEquals(CommunityType.RESEARCH_INSTITUTE, member.getResearchCommunity());
         assertEquals("New Zealand", member.getCountry());

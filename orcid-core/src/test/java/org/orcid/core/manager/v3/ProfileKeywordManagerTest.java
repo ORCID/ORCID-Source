@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -31,7 +30,6 @@ import org.orcid.jaxb.model.v3.release.record.Keyword;
 import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ProfileKeywordManagerTest extends BaseTest {
@@ -43,13 +41,19 @@ public class ProfileKeywordManagerTest extends BaseTest {
     private String unclaimedOrcid = "0000-0000-0000-0001";
 
     @Mock
-    private SourceManager sourceManager;
-
-    @Resource(name = "profileKeywordManagerV3")
-    private ProfileKeywordManager profileKeywordManager;
+    private SourceManager mockSourceManager;
     
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    @Mock
+    private ClientDetailsManager mockClientDetailsManager;
+    
+    @Mock
+    private RecordNameDao mockRecordNameDao;
+    
+    @Mock
+    private RecordNameManagerReadOnly mockRecordNameManager;
+
+    @Resource(name = "sourceManagerV3")
+    private SourceManager sourceManager;
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
@@ -61,18 +65,11 @@ public class ProfileKeywordManagerTest extends BaseTest {
     private RecordNameDao recordNameDao;
     
     @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManager;
-    
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-    
-    @Mock
-    private RecordNameDao mockRecordNameDao;
-    
-    @Mock
-    private RecordNameManagerReadOnly mockRecordNameManager;
+    private RecordNameManagerReadOnly recordNameManager;        
 
-
+    @Resource(name = "profileKeywordManagerV3")
+    private ProfileKeywordManager profileKeywordManager;   
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -80,21 +77,19 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        TargetProxyHelper.injectIntoProxy(profileKeywordManager, "sourceManager", sourceManager); 
-        
-        // by default return client details entity with user obo disabled
-        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
-        
-        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
+        ReflectionTestUtils.setField(profileKeywordManager, "sourceManager", mockSourceManager); 
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", mockRecordNameDao);
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", mockRecordNameManager);
+        
+        // by default return client details entity with user obo disabled
+        Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());                
+        Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
+        Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");        
     }
 
     @After
     public void tearDown() {
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
+        ReflectionTestUtils.setField(profileKeywordManager, "sourceManager", sourceManager); 
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }
@@ -108,7 +103,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Test
     public void testAddKeywordToUnclaimedRecordPreserveKeywordVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
 
         keyword = profileKeywordManager.createKeyword(unclaimedOrcid, keyword, true);
@@ -120,7 +115,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Test
     public void testAddKeywordToClaimedRecordPreserveUserDefaultVisibility() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
 
         keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
@@ -132,7 +127,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
 
     @Test
     public void displayIndexIsSetTo_1_FromUI() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromUI1");
         
@@ -145,7 +140,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     
     @Test
     public void displayIndexIsSetTo_0_FromAPI() {
-        when(sourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromAPI1");        
         

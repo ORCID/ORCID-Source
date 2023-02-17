@@ -30,7 +30,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getOtherNames(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -44,7 +44,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @SuppressWarnings("unchecked")
     public List<OtherNameEntity> getOtherNames(String orcid, String visibility) {
-        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();
@@ -98,7 +98,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
 
     @Override
     public OtherNameEntity getOtherName(String orcid, Long putCode) {
-        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid and id=:id");
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE orcid=:orcid and id=:id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", putCode);
         return (OtherNameEntity) query.getSingleResult();

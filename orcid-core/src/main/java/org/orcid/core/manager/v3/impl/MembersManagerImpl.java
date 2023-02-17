@@ -24,15 +24,18 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.client.Client;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientScopeDao;
+import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
@@ -44,7 +47,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -93,6 +95,9 @@ public class MembersManagerImpl implements MembersManager {
     
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
+    
+    @Resource
+    private EmailDao emailDao;
 
     @Override
     public Member createMember(Member member) throws IllegalArgumentException {
@@ -126,6 +131,17 @@ public class MembersManagerImpl implements MembersManager {
                 newRecord.setSubmissionDate(now);
                 newRecord.setUsedRecaptchaOnRegistration(false);
                 
+                // Set authority
+                OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
+                authority.setOrcid(orcid);
+                authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+                Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
+                authorities.add(authority);
+                newRecord.setAuthorities(authorities);
+
+                profileDao.persist(newRecord);
+                profileDao.flush();         
+                
                 // Set primary email
                 EmailEntity emailEntity = new EmailEntity();
                 
@@ -133,7 +149,7 @@ public class MembersManagerImpl implements MembersManager {
                 
                 emailEntity.setEmail(emailKeys.get(EmailManager.FILTERED_EMAIL));
                 emailEntity.setId(emailKeys.get(EmailManager.HASH));
-                emailEntity.setProfile(newRecord);
+                emailEntity.setOrcid(newRecord.getId());
                 emailEntity.setPrimary(true);
                 emailEntity.setCurrent(true);
                 emailEntity.setVerified(true);
@@ -142,22 +158,8 @@ public class MembersManagerImpl implements MembersManager {
                 
                 SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
                 String sourceId = sourceEntity.getSourceProfile().getId();
-                emailEntity.setSourceId(sourceId);
-                Set<EmailEntity> emails = new HashSet<>();
-                emails.add(emailEntity);
-                // Add all emails to record
-                newRecord.setEmails(emails);
-
-                // Set authority
-                OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
-                authority.setProfileEntity(newRecord);
-                authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
-                Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
-                authorities.add(authority);
-                newRecord.setAuthorities(authorities);
-
-                profileDao.persist(newRecord);
-                profileDao.flush();         
+                emailEntity.setSourceId(sourceId);                
+                emailDao.persist(emailEntity);
                 
                 // Set the name
                 Name name = new Name();
@@ -181,7 +183,7 @@ public class MembersManagerImpl implements MembersManager {
         String salesForceId = member.getSalesforceId() == null ? null : member.getSalesforceId().getValue();
         MemberType memberType = MemberType.fromValue(member.getType().getValue());
         Map<String, String> emailKeys = emailManager.getEmailKeys(member.getEmail().getValue());
-        String email = emailKeys.get(EmailManager.FILTERED_EMAIL);
+        String newEmail = emailKeys.get(EmailManager.FILTERED_EMAIL);
         String hash = emailKeys.get(EmailManager.HASH);
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -203,23 +205,27 @@ public class MembersManagerImpl implements MembersManager {
                     memberEntity.setGroupType(memberType.name());
                     memberChangedType = true;
                 }
-
-                EmailEntity primaryEmail = memberEntity.getPrimaryEmail();
-                if (!email.equals(primaryEmail.getEmail())) {
-                    if (emailManager.emailExists(email)) {
+                profileDao.merge(memberEntity);
+                
+                // Update primary email if needed
+                Email currentPrimaryEmail = emailManager.findPrimaryEmail(memberId);
+                if (!newEmail.equals(currentPrimaryEmail.getEmail())) {
+                    if (emailManager.emailExists(newEmail)) {
                         throw new IllegalArgumentException("Email already exists");
-                    }                    
+                    }
+                    // Create new primary email 
                     EmailEntity newPrimaryEmail = new EmailEntity();
+                    newPrimaryEmail.setOrcid(memberId);
                     newPrimaryEmail.setCurrent(true);
-                    newPrimaryEmail.setEmail(email);
+                    newPrimaryEmail.setEmail(newEmail);
                     newPrimaryEmail.setId(hash);
                     newPrimaryEmail.setPrimary(true);
                     newPrimaryEmail.setVerified(true);
                     newPrimaryEmail.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());
-                    memberEntity.setPrimaryEmail(newPrimaryEmail);
-                }
-
-                profileDao.merge(memberEntity);
+                    emailDao.persist(newPrimaryEmail);
+                    // Remove old primary email
+                    emailDao.removeEmail(memberId, currentPrimaryEmail.getEmail());
+                }                
 
                 if (memberChangedType) {
                     updateClientTypeDueMemberTypeUpdate(memberId, memberType);
@@ -259,7 +265,14 @@ public class MembersManagerImpl implements MembersManager {
                 if (groupType != null) {
                     ProfileEntity memberProfile = profileDao.find(orcid);
                     Name recordName = recordNameManager.getRecordName(orcid);
-                    member = Member.fromProfileEntity(memberProfile, ((recordName == null || recordName.getCreditName() == null) ? null : recordName.getCreditName().getContent()));
+                    member = new Member();
+                    member.setGroupOrcid(Text.valueOf(orcid));
+                    member.setSalesforceId(Text.valueOf(memberProfile.getSalesforeId()));
+                    String creditName = (recordName == null || recordName.getCreditName() == null) ? null : recordName.getCreditName().getContent();
+                    member.setGroupName(Text.valueOf(creditName));                                        
+                    MemberType memberType = MemberType.valueOf(memberProfile.getGroupType());
+                    member.setType(Text.valueOf(memberType.value()));
+                    member.setEmail(Text.valueOf(emailManager.findPrimaryEmail(orcid).getEmail()));
                     Set<Client> clients = clientManagerReadOnly.getClients(orcid);
                     List<org.orcid.pojo.ajaxForm.Client> clientsList = new ArrayList<org.orcid.pojo.ajaxForm.Client>();
                     clients.forEach(c -> {

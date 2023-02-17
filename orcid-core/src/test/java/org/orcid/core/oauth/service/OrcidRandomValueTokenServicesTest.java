@@ -32,7 +32,6 @@ import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.togglz.Features;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -55,7 +54,7 @@ import org.togglz.junit.TogglzRule;
  * @author Will Simpson
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
 
     @Resource
@@ -566,7 +565,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         token.setApproved(true);
         token.setAuthenticationKey("authentication-key");
         token.setClientDetailsId("4444-4444-4444-4441");        
-        token.setProfile(new ProfileEntity("4444-4444-4444-4442"));
+        token.setOrcid("4444-4444-4444-4442");
         token.setResourceId("orcid");
         token.setScope(scope);
         token.setTokenValue(tokenValue);

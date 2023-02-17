@@ -48,7 +48,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId) {
-        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where profile.id=:userOrcid and id=:orgAffiliationRelationId");
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid=:userOrcid and id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         return query.executeUpdate() > 0 ? true : false;
@@ -75,7 +75,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility) {
         Query query = entityManager.createQuery(
-                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id=:orgAffiliationRelationId");
+                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where orcid=:userOrcid and id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         query.setParameter("visibility", visibility);
@@ -103,7 +103,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
         Query query = entityManager.createQuery(
-                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id in (:orgAffiliationRelationIds)");
+                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where orcid=:userOrcid and id in (:orgAffiliationRelationIds)");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationIds", orgAffiliationRelationIds);
         query.setParameter("visibility", visibility);
@@ -125,7 +125,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Override
     @Transactional
     public OrgAffiliationRelationEntity getOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId) {
-        Query query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and id=:orgAffiliationRelationId");
+        Query query = entityManager.createQuery("from OrgAffiliationRelationEntity where orcid=:userOrcid and id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         return (OrgAffiliationRelationEntity) query.getSingleResult();
@@ -253,7 +253,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Override
     public List<OrgAffiliationRelationEntity> getByUserAndType(String userOrcid, String type) {
         TypedQuery<OrgAffiliationRelationEntity> query = entityManager
-                .createQuery("from OrgAffiliationRelationEntity where profile.id=:userOrcid and affiliationType=:affiliationType", OrgAffiliationRelationEntity.class);
+                .createQuery("from OrgAffiliationRelationEntity where orcid=:userOrcid and affiliationType=:affiliationType", OrgAffiliationRelationEntity.class);
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("affiliationType", type);
         return query.getResultList();
@@ -268,7 +268,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      */
     @Override
     public List<OrgAffiliationRelationEntity> getByUser(String orcid) {
-        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:orcid order by dateCreated asc",
+        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where orcid=:orcid order by dateCreated asc",
                 OrgAffiliationRelationEntity.class);
         query.setParameter("orcid", orcid);
         return query.getResultList();

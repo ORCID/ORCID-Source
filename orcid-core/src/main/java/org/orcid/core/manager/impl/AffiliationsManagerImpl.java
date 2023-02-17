@@ -61,7 +61,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateEducation(education, sourceEntity, true, isApiRequest, null);
         OrgAffiliationRelationEntity educationEntity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education);
-
+        educationEntity.setOrcid(orcid);
+        
         // Updates the give organization with the latest organization from
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
@@ -76,8 +77,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             educationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }        
                         
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        educationEntity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(AffiliationType.EDUCATION.name());
         orgAffiliationRelationDao.persist(educationEntity);
@@ -141,7 +141,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         activityValidator.validateEmployment(employment, sourceEntity, true, isApiRequest, null);
         OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
-
+        employmentEntity.setOrcid(orcid);
+        
         // Updates the give organization with the latest organization from
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
@@ -156,8 +157,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             employmentEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }
         
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        employmentEntity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(AffiliationType.EMPLOYMENT.name());
         orgAffiliationRelationDao.persist(employmentEntity);

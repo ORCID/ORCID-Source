@@ -21,13 +21,13 @@ import org.orcid.persistence.util.OrcidStringUtils;
  */
 @Entity
 @Table(name = "org_affiliation_relation")
-public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, ProfileAware, DisplayIndexInterface {
+public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, OrcidAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 
     private Long id;
     private OrgEntity org;
-    private ProfileEntity profile;
+    private String orcid;
     private String affiliationType;
     private String title;
     private String department;
@@ -60,15 +60,13 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
         this.org = org;
     }
 
-    @Override
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = true)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false, updatable = false, insertable = true)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "org_affiliation_relation_role", length = 200)

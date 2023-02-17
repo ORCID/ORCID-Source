@@ -3,6 +3,7 @@ package org.orcid.persistence.jpa.entities;
 import org.orcid.persistence.jpa.entities.keys.OrcidGrantedAuthorityPk;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -24,27 +25,22 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "granted_authority")
 @IdClass(OrcidGrantedAuthorityPk.class)
-public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> implements GrantedAuthority, ProfileAware {
+public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> implements GrantedAuthority, OrcidAware {
 
     private static final long serialVersionUID = 2301981481864446645L;
 
-    private ProfileEntity profileEntity;
+    private String orcid;
     private String authority;
 
-    @Id
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false, updatable = false, insertable = false)
-    public ProfileEntity getProfileEntity() {
-        return profileEntity;
+    @Id    
+    @Column(name = "orcid", nullable = false, updatable = false, insertable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    @Transient
-    public ProfileEntity getProfile() {
-        return profileEntity;
-    }
-
-    public void setProfileEntity(ProfileEntity profileEntity) {
-        this.profileEntity = profileEntity;
+    @Override
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Override
@@ -60,6 +56,6 @@ public class OrcidGrantedAuthority extends BaseEntity<OrcidGrantedAuthorityPk> i
     @Transient
     public OrcidGrantedAuthorityPk getId() {
         return null;
-    }
+    }    
 
 }

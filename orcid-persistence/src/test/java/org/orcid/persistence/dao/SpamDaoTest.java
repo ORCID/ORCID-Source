@@ -24,7 +24,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:orcid-persistence-context.xml"})
+@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:test-orcid-persistence-context.xml"})
 public class SpamDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4497";

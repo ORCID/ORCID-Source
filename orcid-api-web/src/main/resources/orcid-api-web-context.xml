@@ -8,6 +8,7 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
     <import resource="classpath*:orcid-core-context.xml"/>
+    <import resource="classpath*:orcid-api-security-context.xml"/>
 
     <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />

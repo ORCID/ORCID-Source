@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -30,12 +31,14 @@ public class MigrateFundingAmountToANumericValue {
     private static final Logger LOGGER = LoggerFactory.getLogger(MigrateFundingAmountToANumericValue.class);
     private ProfileFundingDao profileFundingDao;
     private TransactionTemplate transactionTemplate;
+    private ProfileDao profileDao;
     
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         profileFundingDao = (ProfileFundingDao) context.getBean("profileFundingDao");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
+        profileDao = (ProfileDao) context.getBean("profileDao");
     }
     
     public void execute() {
@@ -49,7 +52,7 @@ public class MigrateFundingAmountToANumericValue {
                     //So, lets leave this empty just in case we need a rollback later
                     String amount = "";
                     String currencyCode = entity.getCurrencyCode();
-                    ProfileEntity profile = entity.getProfile();
+                    ProfileEntity profile = profileDao.find(entity.getOrcid());
                     Locale locale = getLocaleFromProfile(profile);
                     String fixedAmount = fixAmount(amount);
                     try {
@@ -58,7 +61,7 @@ public class MigrateFundingAmountToANumericValue {
                         entity.setNumericAmount(bigDecimal);
                         profileFundingDao.merge(entity);
                     } catch (Exception e) {
-                        LOGGER.error("Exception migrating: " + entity.getProfile().getId() + ", " + amount + " = " + fixedAmount);                        
+                        LOGGER.error("Exception migrating: " + entity.getOrcid() + ", " + amount + " = " + fixedAmount);                        
                     }
                 }
             }

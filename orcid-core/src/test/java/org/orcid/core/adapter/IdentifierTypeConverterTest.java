@@ -6,14 +6,13 @@ import static org.junit.Assert.assertNull;
 import java.util.Date;
 
 import org.junit.Test;
-import org.orcid.core.BaseTest;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 
-public class IdentifierTypeConverterTest extends BaseTest {
+public class IdentifierTypeConverterTest {
 
     @Test
     public void testFromPojo(){

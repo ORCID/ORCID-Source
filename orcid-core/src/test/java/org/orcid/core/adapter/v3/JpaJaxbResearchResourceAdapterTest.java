@@ -24,6 +24,8 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
@@ -31,13 +33,10 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
 import org.orcid.persistence.jpa.entities.ResearchResourceItemEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -47,7 +46,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbResearchResourceAdapterV3")
@@ -300,7 +299,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
         rre.setTitle("title");
         rre.setTranslatedTitle("translatedTitle");
         rre.setTranslatedTitleLanguageCode("en");
-        rre.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        rre.setOrcid("0000-0001-0002-0003");
         rre.setDisplayIndex(1l);
         rre.setClientSourceId(CLIENT_SOURCE_ID);
         rre.setUrl("http://blah.com");

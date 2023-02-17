@@ -19,6 +19,7 @@ import org.orcid.core.orgs.extId.normalizer.OrgDisambiguatedExternalIdNormalizer
 import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.core.togglz.Features;
+import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -50,6 +51,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
 
+    @Resource
+    private OrgDao orgDao;
+    
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
@@ -142,7 +146,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
         Set<String> orgNames = new HashSet<>();
         orgNames.add(entity.getName());
-        Set<OrgEntity> orgs = entity.getOrgs();
+        
+        List<OrgEntity> orgs = orgDao.findByOrgDisambiguatedId(entity.getId());
         if (orgs != null) {
             for (OrgEntity org : orgs) {
                 orgNames.add(org.getName());

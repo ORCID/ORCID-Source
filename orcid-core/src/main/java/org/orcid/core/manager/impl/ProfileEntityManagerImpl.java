@@ -1,6 +1,5 @@
 package org.orcid.core.manager.impl;
 
-import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
@@ -8,45 +7,19 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.AddressManager;
-import org.orcid.core.manager.AffiliationsManager;
-import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
-import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OtherNameManager;
-import org.orcid.core.manager.PeerReviewManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordNameManager;
-import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
-import org.orcid.jaxb.model.record_v2.Biography;
 import org.orcid.jaxb.model.record_v2.Name;
-import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -55,76 +28,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
 
     @Resource
-    private AffiliationsManager affiliationsManager;
-
-    @Resource
-    private ProfileFundingManager fundingManager;
-
-    @Resource
-    private PeerReviewManager peerReviewManager;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
-    @Resource
-    private WorkManager workManager;
-
-    @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource
-    private AddressManager addressManager;
-
-    @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
-
-    @Resource
-    private ProfileKeywordManager profileKeywordManager;
-
-    @Resource
-    private OtherNameManager otherNameManager;
-
-    @Resource
-    private ResearcherUrlManager researcherUrlManager;
-    
     @Resource(name = "emailManagerV3")
     private EmailManager emailManagerV3;
 
     @Resource
-    private OtherNameManager otherNamesManager;
-
-    @Resource
-    private BiographyManager biographyManager;
-
-    @Resource
-    private UserConnectionDao userConnectionDao;
-
-    @Resource
-    private NotificationManager notificationManager;
-
-    @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
-
-    @Resource
-    private LocaleManager localeManager;
 
     @Resource
     private RecordNameManager recordNameManager;
     
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
-    
-    @Resource
-    private TransactionTemplate transactionTemplate;
-    
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -234,78 +150,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         String publicName = recordNameManagerReadOnly.fetchDisplayablePublicName(orcid);
         return PojoUtil.isEmpty(publicName) ? StringUtils.EMPTY : publicName;
     }
-
-    @Override
-    @Transactional
-    public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
-        // Verify the email
-        boolean emailVerified = emailManagerV3.verifySetCurrentAndPrimary(orcid, email);
-        if (!emailVerified) {
-            throw new InvalidParameterException("Unable to claim and verify email: " + email + " for user: " + orcid);
-        }
-
-        // Update the profile entity fields
-        ProfileEntity profile = profileDao.find(orcid);
-        profile.setIndexingStatus(IndexingStatus.REINDEX);
-        profile.setClaimed(true);
-        profile.setCompletedDate(new Date());
-        if (locale != null) {
-            profile.setLocale(locale.name());
-        }
-        if (claim != null) {
-            profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility().name());
-        }
-
-        // Update the visibility for every bio element to the visibility
-        // selected by the user
-        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility
-                .fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
-        // Update address
-        if (profile.getAddresses() != null) {
-            for (AddressEntity a : profile.getAddresses()) {
-                a.setVisibility(defaultVisibility.name());
-            }
-        }
-
-        // Update the keywords
-        if (profile.getKeywords() != null) {
-            for (ProfileKeywordEntity k : profile.getKeywords()) {
-                k.setVisibility(defaultVisibility.name());
-            }
-        }
-
-        // Update the other names
-        if (profile.getOtherNames() != null) {
-            for (OtherNameEntity o : profile.getOtherNames()) {
-                o.setVisibility(defaultVisibility.name());
-            }
-        }
-
-        // Update the researcher urls
-        if (profile.getResearcherUrls() != null) {
-            for (ResearcherUrlEntity r : profile.getResearcherUrls()) {
-                r.setVisibility(defaultVisibility.name());
-            }
-        }
-
-        // Update the external identifiers
-        if (profile.getExternalIdentifiers() != null) {
-            for (ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-                e.setVisibility(defaultVisibility.name());
-            }
-        }
-        profileDao.merge(profile);
-        profileDao.flush();
-        
-        // Update the biography
-        if (biographyManager.exists(orcid)) {
-            Biography bio = biographyManager.getBiography(orcid);
-            bio.setVisibility(defaultVisibility);
-            biographyManager.updateBiography(orcid, bio);
-        }        
-        
-        return true;
-    }    
 
     @Override
     public void updateLocale(String orcid, Locale locale) {

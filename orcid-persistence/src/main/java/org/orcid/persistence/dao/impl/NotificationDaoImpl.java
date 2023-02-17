@@ -64,7 +64,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<NotificationEntity> findNotificationAlertsByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery(
-                "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.profile.id = :orcid and n.clientSourceId = r.clientDetailsEntity.id and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
+                "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.orcid = :orcid and n.clientSourceId = r.clientDetailsEntity.id and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
                 NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setMaxResults(3);
@@ -163,7 +163,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public boolean deleteNotificationsForRecord(String orcid, int batchSize) {
-        TypedQuery<Long> idsQuery = entityManager.createQuery("SELECT id from NotificationEntity where profile.id = :orcid", Long.class);
+        TypedQuery<Long> idsQuery = entityManager.createQuery("SELECT id from NotificationEntity where orcid = :orcid", Long.class);
         idsQuery.setParameter("orcid", orcid);
         idsQuery.setMaxResults(batchSize);
         List<Long> ids = idsQuery.getResultList();

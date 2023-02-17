@@ -80,7 +80,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
      * */
     @Override
     public ResearcherUrlEntity getResearcherUrl(String orcid, Long id) {
-        TypedQuery<ResearcherUrlEntity> query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE id = :id AND user.id = :orcid", ResearcherUrlEntity.class);
+        TypedQuery<ResearcherUrlEntity> query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE id = :id AND orcid = :orcid", ResearcherUrlEntity.class);
         query.setParameter("id", id);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();

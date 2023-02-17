@@ -67,7 +67,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
 public class PublicAPISecurityManagerV3Test {
 
     @Resource

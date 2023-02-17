@@ -64,6 +64,7 @@ import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.jaxb.model.record_v2.PeerReviewType;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Role;
 import org.orcid.jaxb.model.record_v2.Work;
@@ -77,7 +78,7 @@ import org.orcid.test.helper.Utils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-api-web-context.xml", "classpath:orcid-api-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
 public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
@@ -568,6 +569,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         wei1.setRelationship(null);
         wei1.setValue("same_but_different_type");
         wei1.setType(WorkExternalIdentifierType.DOI.value());
+        wei1.setRelationship(Relationship.SELF);
         weis1.getExternalIdentifier().add(wei1);
         peerReview1.setExternalIdentifiers(weis1);
         peerReview1.setGroupId("issn:0000-0003");
@@ -593,6 +595,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
         wei2.setValue("same_but_different_type"); // Same value
         wei2.setType(WorkExternalIdentifierType.ARXIV.value()); // But different
                                                                 // type
+        wei2.setRelationship(Relationship.SELF);
         weis2.getExternalIdentifier().add(wei2);
         peerReview2.setExternalIdentifiers(weis2);
         peerReview2.setGroupId("issn:0000-0003");

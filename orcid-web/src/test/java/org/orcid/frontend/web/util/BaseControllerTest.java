@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,8 +15,6 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -74,19 +69,6 @@ public class BaseControllerTest extends DBUnitTest {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);
         return auth;
-    }
-
-    protected static OrcidProfile getOrcidProfile() {
-        try {
-            JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(BaseControllerTest.class.getResourceAsStream(
-
-                    "/orcid-internal-full-message-latest.xml"));
-            return orcidMessage.getOrcidProfile();
-        } catch (JAXBException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @SuppressWarnings({ "unchecked" })

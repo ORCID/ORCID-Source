@@ -43,7 +43,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbAddressAdapterV3")
@@ -166,7 +166,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
         DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setId(Long.valueOf(1));
         result.setIso2Country(org.orcid.jaxb.model.common_v2.Iso3166Country.US.name());
-        result.setUser(new ProfileEntity("0000-0000-0000-0000"));
+        result.setOrcid("0000-0000-0000-0000");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         result.setClientSourceId(CLIENT_SOURCE_ID);
         return result;

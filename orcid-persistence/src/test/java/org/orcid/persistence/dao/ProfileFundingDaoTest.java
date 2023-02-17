@@ -22,7 +22,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class ProfileFundingDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4443";
@@ -85,7 +85,7 @@ public class ProfileFundingDaoTest extends DBUnitTest {
         OrgEntity o = new OrgEntity();
         o.setId(2L);
         ProfileFundingEntity e = new ProfileFundingEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setTitle("TITLE");
         e.setType("TYPE");

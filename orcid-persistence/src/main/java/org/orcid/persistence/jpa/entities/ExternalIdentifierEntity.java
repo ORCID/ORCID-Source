@@ -19,14 +19,14 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "external_identifier")
-public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements Comparable<ExternalIdentifierEntity>, ProfileAware, DisplayIndexInterface {
+public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements Comparable<ExternalIdentifierEntity>, OrcidAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 
     private String externalIdReference;
     private String externalIdCommonName;
     private String externalIdUrl;
-    private ProfileEntity owner;    
+    private String orcid;    
     private Long id;
     private String visibility;
     private Long displayIndex;
@@ -64,24 +64,17 @@ public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements
     /**
      * @return the owner
      */    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getOwner() {
-        return owner;
-    }
-
-    @Override
-    @Transient
-    public ProfileEntity getProfile() {
-        return owner;
+    @Column(name = "orcid", nullable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
     /**
      * @param owner
      *            the owner to set
      */
-    public void setOwner(ProfileEntity owner) {
-        this.owner = owner;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "external_id_url", length = 300)

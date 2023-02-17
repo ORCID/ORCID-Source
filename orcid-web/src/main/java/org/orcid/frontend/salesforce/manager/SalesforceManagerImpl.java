@@ -16,7 +16,6 @@ import org.orcid.frontend.salesforce.model.Integration;
 import org.orcid.frontend.salesforce.model.Member;
 import org.orcid.frontend.salesforce.model.MemberDetails;
 import org.orcid.frontend.salesforce.model.Opportunity;
-import org.orcid.frontend.salesforce.model.SlugUtils;
 import org.orcid.frontend.salesforce.model.SubMember;
 import org.springframework.stereotype.Component;
 
@@ -49,10 +48,10 @@ public class SalesforceManagerImpl implements SalesforceManager {
     }
 
     @Override
-    public MemberDetails retrieveMemberDetails(String memberSlug) {
-        MemberDetails details = new MemberDetails();
+    public MemberDetails retrieveMemberDetails(String memberId) {
+        MemberDetails details = new MemberDetails();                
         try {
-            String memberDetailsString = client.retrieveMemberDetails(SlugUtils.extractIdFromSlug(memberSlug));
+            String memberDetailsString = client.retrieveMemberDetails(memberId);
             JSONObject memberDetailsJsonObject = new JSONObject(memberDetailsString);
 
             // Set parent org name
@@ -61,9 +60,9 @@ public class SalesforceManagerImpl implements SalesforceManager {
 
             if (memberDetailsJsonObject.has("member")) {
                 JSONObject memberJsonObject = memberDetailsJsonObject.getJSONObject("member");
-                // Set parent slug
+                // Set parent id
                 String consortiumLeadId = memberJsonObject.has("Consortium_Lead__c") ? memberJsonObject.getString("Consortium_Lead__c") : null;
-                details.setParentOrgSlug(SlugUtils.createSlug(consortiumLeadId, parentOrgName));
+                details.setParentId(consortiumLeadId);
                 // Set member details
                 Member member = salesForceAdapter.createMemberFromSalesForceRecord(memberJsonObject);
                 details.setMember(member);
@@ -89,7 +88,7 @@ public class SalesforceManagerImpl implements SalesforceManager {
                     List<SubMember> subMembers = opportunityList.stream().map(o -> {
                         SubMember subMember = new SubMember();
                         subMember.setOpportunity(o);
-                        subMember.setSlug(SlugUtils.createSlug(o.getTargetAccountId(), o.getAccountName()));
+                        subMember.setAccountId(o.getTargetAccountId());
                         return subMember;
                     }).collect(Collectors.toList());
                     details.setSubMembers(subMembers);

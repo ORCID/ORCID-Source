@@ -57,7 +57,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
 public class RinggoldOrgLoadSourceTest {
 
     @Mock

@@ -24,9 +24,12 @@ import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.message.Locale;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -68,6 +71,9 @@ public class SendBadOrgsEmail {
     private OrcidUrlManager orcidUrlManager;
     private MailGunManager mailGunManager;
     private RecordNameManager recordNameManager;
+    private OrgAffiliationRelationDao orgAffiliationRelationDao;
+    private ProfileFundingDao profileFundingDao;  
+    private EmailManager emailManager;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
@@ -174,6 +180,9 @@ public class SendBadOrgsEmail {
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         mailGunManager = (MailGunManager) context.getBean("mailGunManager");
         recordNameManager = (RecordNameManager) context.getBean("recordNameManager");
+        orgAffiliationRelationDao = (OrgAffiliationRelationDao) context.getBean("orgAffiliationRelationDao");
+        profileFundingDao = (ProfileFundingDao) context.getBean("profileFundingDao");
+        emailManager = (EmailManager) context.getBean("emailManagerV3");
     }
 
     private String createOrgDescription(OrgEntity org, Locale locale) {
@@ -192,8 +201,7 @@ public class SendBadOrgsEmail {
     }
 
     private List<OrgAffiliationRelationEntity> processAffs(ProfileEntity profile, final Locale locale, Set<String> orgDescriptions) {
-        List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
-                .collect(Collectors.toList());
+        List<OrgAffiliationRelationEntity> badAffs = orgAffiliationRelationDao.getByUser(profile.getId()).stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated())).collect(Collectors.toList());                
         badAffs.forEach(a -> {
             String orgDescription = createOrgDescription(a.getOrg(), locale);
             orgDescriptions.add(orgDescription);
@@ -207,7 +215,7 @@ public class SendBadOrgsEmail {
     }
 
     private List<ProfileFundingEntity> processFundings(ProfileEntity profile, final Locale locale, Set<String> orgDescriptions) {
-        List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated())).collect(Collectors.toList());
+        List<ProfileFundingEntity> badFundings = profileFundingDao.getByUser(profile.getId(), System.currentTimeMillis()).stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated())).collect(Collectors.toList());
         badFundings.forEach(a -> {
             String orgDescription = createOrgDescription(a.getOrg(), locale);
             orgDescriptions.add(orgDescription);
@@ -311,7 +319,7 @@ public class SendBadOrgsEmail {
             // Update the profile for re-index and cache refresh
             profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
             // Send the email
-            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getEmail(), SUBJECT, body, html);
+            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, emailManager.findPrimaryEmail(profile.getId()).getEmail(), SUBJECT, body, html);
             if (!mailSent) {
                 throw new RuntimeException("Failed to send email, orcid=" + profile.getId());
             }

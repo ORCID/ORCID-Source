@@ -45,8 +45,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     String retrivePublicDisplayName(String orcid);
     
-    boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim);
-    
     void updateLastModifed(String orcid);
 
     void updateLocale(String orcid, Locale locale);

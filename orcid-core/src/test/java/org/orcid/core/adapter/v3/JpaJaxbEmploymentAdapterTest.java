@@ -51,7 +51,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbEmploymentAdapterV3")
@@ -351,7 +351,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
         result.setOrg(orgEntity);
-        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setOrcid("0000-0001-0002-0003");
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());

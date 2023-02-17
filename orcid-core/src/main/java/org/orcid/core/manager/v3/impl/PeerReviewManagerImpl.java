@@ -109,15 +109,15 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
 
         PeerReviewEntity entity = jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview);
-
+        entity.setOrcid(orcid);
+        
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         entity.setOrg(updatedOrganization);
 
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        entity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingPrivacy(entity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
 

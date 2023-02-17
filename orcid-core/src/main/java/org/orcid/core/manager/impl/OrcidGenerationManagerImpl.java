@@ -9,6 +9,7 @@ import org.ehcache.Cache;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.orcid.core.manager.OrcidGenerationManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.togglz.Features;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +26,15 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
     @Resource(name = "recentOrcidCache")
     private Cache<String, String> recentOrcidCache;
 
+    private final long ORCID_IDS_V2_RANGE_SIZE = (ORCID_BASE_V2_MAX - ORCID_BASE_V2_MIN + 1);
+    
     @Override
     public String createNewOrcid() {
         String orcid = getNextOrcid();
         while (isInRecentOrcidCache(orcid) || profileEntityManager.orcidExists(orcid)) {
             orcid = getNextOrcid();
         }
+        
         recentOrcidCache.put(orcid, orcid);
         return orcid;
     }
@@ -51,8 +55,18 @@ public class OrcidGenerationManagerImpl implements OrcidGenerationManager {
 
     private long getRandomNumber() {
         Random random = new Random();
-        // XXX Need to test edge cases
-        return (long) (ORCID_BASE_MIN + (random.nextDouble() * (ORCID_BASE_MAX - ORCID_BASE_MIN + 1)));
+        // Is the new range of IDs enabled?
+        if(Features.ENABLE_NEW_IDS.isActive()) {
+            long randomLong = (long) (ORCID_BASE_V2_MIN + (random.nextDouble() * ORCID_IDS_V2_RANGE_SIZE)); 
+            // Verify random is between valid range
+            while(randomLong < ORCID_BASE_V2_MIN || randomLong > ORCID_BASE_V2_MAX) {
+                randomLong = (long) (ORCID_BASE_V2_MIN + (random.nextDouble() * ORCID_IDS_V2_RANGE_SIZE)); 
+            }
+            
+            return randomLong;
+        } else {
+            return (long) (ORCID_BASE_MIN + (random.nextDouble() * (ORCID_BASE_MAX - ORCID_BASE_MIN + 1)));
+        }        
     }
 
     private String formatOrcid(String orcid) {

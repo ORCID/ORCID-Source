@@ -7,5 +7,7 @@ package org.orcid.persistence.jpa.entities;
 public interface OrcidAware {
 
     String getOrcid();
+    
+    void setOrcid(String orcid);
 
 }

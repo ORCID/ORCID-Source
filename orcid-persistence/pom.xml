@@ -12,7 +12,6 @@
     </parent>
 
     <properties>
-        <org.orcid.persistence.properties>test-persistence.properties</org.orcid.persistence.properties>
         <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 
@@ -23,8 +22,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>**/orcid-persistence-context.xml</include>
-                    <include>**/statistics-persistence-context.xml</include>
+                    <include>**/orcid-persistence-context.xml</include>                    
                 </includes>
             </resource>
             <resource>
@@ -37,8 +35,7 @@
                     <include>**/*.txt</include>
                 </includes>
                 <excludes>
-                    <exclude>**/orcid-persistence-context.xml</exclude>
-                    <exclude>**/statistics-persistence-context.xml</exclude>
+                    <exclude>**/orcid-persistence-context.xml</exclude>                    
                 </excludes>
             </resource>
         </resources>
@@ -223,21 +220,6 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <id>staging</id>
-            <properties>
-                <org.orcid.persistence.properties>staging-persistence.properties</org.orcid.persistence.properties>
-            </properties>
-        </profile>
-        <profile>
-            <id>production</id>
-            <properties>
-                <org.orcid.persistence.properties>production-persistence.properties</org.orcid.persistence.properties>
-            </properties>
-        </profile>
-    </profiles>
+    </dependencies>    
 
 </project>

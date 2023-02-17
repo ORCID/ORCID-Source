@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Stop sending notification if work has not been updated")
+    STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED,
+
     @Label("Move client from a member to another member")
     MOVE_CLIENT,
 
@@ -163,7 +166,10 @@ public enum Features implements Feature {
     ENABLE_ACCOUNT_LOCKOUT,
     
     @Label("Do not lock the account on the UI when the lockout threshold is exceeded")
-    ACCOUNT_LOCKOUT_SIMULATION;
+    ACCOUNT_LOCKOUT_SIMULATION,
+    
+    @Label("Enable the new 100M ID's range")
+    ENABLE_NEW_IDS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

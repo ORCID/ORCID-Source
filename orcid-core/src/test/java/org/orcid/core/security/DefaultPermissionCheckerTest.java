@@ -39,7 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan) Date: 27/04/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class DefaultPermissionCheckerTest extends DBUnitTest {
 
     @Resource(name = "defaultPermissionChecker")

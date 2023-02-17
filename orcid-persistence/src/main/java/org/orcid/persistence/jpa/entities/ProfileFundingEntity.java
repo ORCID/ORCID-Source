@@ -25,13 +25,13 @@ import org.orcid.persistence.util.OrcidStringUtils;
 
 @Entity
 @Table(name = "profile_funding")
-public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, DisplayIndexInterface {
+public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Comparable<ProfileFundingEntity>, OrcidAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
     private Long id;
     private OrgEntity org;
-    private ProfileEntity profile;
+    private String orcid;
     private String title;
     private String translatedTitle;
     private String translatedTitleLanguageCode;
@@ -70,15 +70,13 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
         this.org = org;
     }
 
-    @Override
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Column(name = "title", nullable = false)
