@@ -83,8 +83,6 @@ public class Disable20RCApiFilterTest {
             }
             
         });
-        // Disable all features by default
-        togglzRule.disableAll();
     }
     
     @Test

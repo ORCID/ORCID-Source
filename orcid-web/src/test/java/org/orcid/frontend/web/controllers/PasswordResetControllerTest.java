@@ -114,9 +114,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "recordEmailSender", mockRecordEmailSender);        
-        
-        // Disable all features by default
-        TogglzRule.allDisabled(Features.class);
     }
     
     @Test
