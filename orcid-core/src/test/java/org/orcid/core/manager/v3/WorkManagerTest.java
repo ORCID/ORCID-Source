@@ -1816,7 +1816,13 @@ public class WorkManagerTest extends BaseTest {
         Work workToUpdate = new Work();
         fillWork(workToUpdate);
         workToUpdate.setPutCode(work.getPutCode());
-        workToUpdate.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2023), new Month(3), new Day(3))));
+        workToUpdate.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(1), new Day(2))));
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("title"));
+        title.setSubtitle(new Subtitle("subtitle"));
+        title.setTranslatedTitle(new TranslatedTitle("titulo traducido", "es"));
+        workToUpdate.setWorkTitle(title);
+        workToUpdate.setWorkCitation(new Citation("citation", CitationType.FORMATTED_IEEE));
         WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
 
         assertFalse(workSaved.compare(workFormToUpdate));

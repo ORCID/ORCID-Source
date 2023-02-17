@@ -1259,7 +1259,10 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 if (citation == null && other.citation.getCitation() != null && StringUtils.isNotBlank(other.citation.getCitation().getValue())) {
                     return false;
                 }
-            } else if (citation.getCitation() != null && other.citation.getCitation() != null && !compareTexts(citation.getCitation(), other.citation.getCitation(), false))
+            } else if (
+                    citation.getCitation() != null && other.citation.getCitation() != null && !compareTexts(citation.getCitation(), other.citation.getCitation(), false) ||
+                    citation.getCitationType() != null && other.citation.getCitationType() != null && !compareTexts(citation.getCitationType(), other.citation.getCitationType(), false)
+            )
                 return false;
         }
         if (!isEachObjectNull(translatedTitle, other.translatedTitle)) {
@@ -1267,7 +1270,10 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 if (translatedTitle == null && StringUtils.isNotBlank(other.translatedTitle.getContent())) {
                     return false;
                 }
-            } else if (other.translatedTitle.getContent() != null && !translatedTitle.getContent().equals(other.translatedTitle.getContent()))
+            } else if (
+                    other.translatedTitle.getContent() != null && !translatedTitle.getContent().equals(other.translatedTitle.getContent()) ||
+                    other.translatedTitle.getLanguageCode() != null && !translatedTitle.getLanguageCode().equals(other.translatedTitle.getLanguageCode())
+            )
                 return false;
         }
         if (!isEachObjectNull(publicationDate, other.publicationDate)) {
@@ -1275,8 +1281,8 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 if (publicationDate == null && StringUtils.isNotBlank(other.publicationDate.getYear()))
                     return false;
             } else if (
-                    !compareStrings(publicationDate.getYear(), other.publicationDate.getYear()) &&
-                    !compareStrings(publicationDate.getMonth(), other.publicationDate.getMonth()) &&
+                    !compareStrings(publicationDate.getYear(), other.publicationDate.getYear()) ||
+                    !compareStrings(publicationDate.getMonth(), other.publicationDate.getMonth()) ||
                     !compareStrings(publicationDate.getDay(), other.publicationDate.getDay())
             )
                 return false;
