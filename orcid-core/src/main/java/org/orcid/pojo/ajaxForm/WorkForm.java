@@ -1256,14 +1256,24 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
         if (!isEachObjectNull(citation, other.citation)) {
             if (isAnyObjectNotNull(citation, other.citation)) {
-                return false;
-            } else if (citation.getCitation() != null && other.citation.getCitation() != null && !compareTexts(citation.getCitation(), other.citation.getCitation(), false))
+                if (citation == null && other.citation.getCitation() != null && StringUtils.isNotBlank(other.citation.getCitation().getValue())) {
+                    return false;
+                }
+            } else if (
+                    citation.getCitation() != null && other.citation.getCitation() != null && !compareTexts(citation.getCitation(), other.citation.getCitation(), false) ||
+                    citation.getCitationType() != null && other.citation.getCitationType() != null && !compareTexts(citation.getCitationType(), other.citation.getCitationType(), false)
+            )
                 return false;
         }
         if (!isEachObjectNull(translatedTitle, other.translatedTitle)) {
             if (isAnyObjectNotNull(translatedTitle, other.translatedTitle)) {
-                return false;
-            } else if (other.translatedTitle.getContent() != null && !translatedTitle.getContent().equals(other.translatedTitle.getContent()))
+                if (translatedTitle == null && StringUtils.isNotBlank(other.translatedTitle.getContent())) {
+                    return false;
+                }
+            } else if (
+                    other.translatedTitle.getContent() != null && !translatedTitle.getContent().equals(other.translatedTitle.getContent()) ||
+                    other.translatedTitle.getLanguageCode() != null && !translatedTitle.getLanguageCode().equals(other.translatedTitle.getLanguageCode())
+            )
                 return false;
         }
         if (!isEachObjectNull(publicationDate, other.publicationDate)) {
@@ -1271,8 +1281,8 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 if (publicationDate == null && StringUtils.isNotBlank(other.publicationDate.getYear()))
                     return false;
             } else if (
-                    !compareStrings(publicationDate.getYear(), other.publicationDate.getYear()) &&
-                    !compareStrings(publicationDate.getMonth(), other.publicationDate.getMonth()) &&
+                    !compareStrings(publicationDate.getYear(), other.publicationDate.getYear()) ||
+                    !compareStrings(publicationDate.getMonth(), other.publicationDate.getMonth()) ||
                     !compareStrings(publicationDate.getDay(), other.publicationDate.getDay())
             )
                 return false;
@@ -1308,121 +1318,39 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         if (isEachObjectNull(a, b)) {
             return false;
         }
-        AtomicBoolean isDifferent = new AtomicBoolean(false);
-        a.forEach(activityA -> b.forEach(activityB -> {
-            if (!compareTexts(activityA.getExternalIdentifierType(), activityB.getExternalIdentifierType(), false)) {
-                isDifferent.set(true);
-                return;
+        for (int i = 0; i < a.size() ; i++) {
+            if (!a.get(i).compare(b.get(i))) {
+                return true;
             }
-            if (!compareTexts(activityA.getExternalIdentifierId(), activityB.getExternalIdentifierId(), false)) {
-                isDifferent.set(true);
-                return;
-            }
-            if (!compareTexts(activityA.getUrl(), activityB.getUrl(), true)) {
-                isDifferent.set(true);
-                return;
-            }
-            if (!compareTexts(activityA.getRelationship(), activityB.getRelationship(), false)) {
-                isDifferent.set(true);
-                return;
-            }
-        }));
-        return isDifferent.get();
+        }
+        return false;
     }
 
     private boolean compareContributors(List<Contributor> a, List<Contributor> b) {
         if (isEachObjectNull(a, b)) {
             return false;
         }
-        AtomicBoolean isDifferent = new AtomicBoolean(false);
-        a.forEach(contributorA -> b.forEach(contributorB -> {
-            if (!compareTexts(contributorA.getCreditName(), contributorB.getCreditName(), false)) {
-                isDifferent.set(true);
-                return;
+        for (int i = 0; i < a.size() ; i++) {
+            if (!a.get(i).compare(b.get(i))) {
+                return true;
             }
-            if (!compareTexts(contributorA.getOrcid(), contributorB.getOrcid(), false)) {
-                isDifferent.set(true);
-                return;
-            }
-            if (!compareTexts(contributorA.getContributorRole(), contributorB.getContributorRole(), true)) {
-                isDifferent.set(true);
-                return;
-            }
-            if (!compareTexts(contributorA.getContributorSequence(), contributorB.getContributorSequence(), true)) {
-                isDifferent.set(true);
-                return;
-            }
-        }));
-        return isDifferent.get();
+        }
+        return false;
     }
 
     private boolean compareContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> a, List<ContributorsRolesAndSequences> b) {
         if (isEachObjectNull(a, b)) {
             return false;
         }
-        AtomicBoolean isDifferent = new AtomicBoolean(false);
-        a.forEach(contributorA -> b.forEach(contributorB -> {
-            if (contributorA.getCreditName() != null && contributorB.getCreditName() != null) {
-                if (!contributorA.getCreditName().getContent().equals(contributorB.getCreditName().getContent())) {
-                    isDifferent.set(true);
-                    return;
-                }
-            } else if (isAnyObjectNotNull(contributorA.getCreditName(), contributorB.getCreditName())) {
-                isDifferent.set(true);
-                return;
+        for (int i = 0; i < a.size() ; i++) {
+            if (!a.get(i).compare(b.get(i))) {
+                return true;
             }
-
-
-            if (contributorA.getContributorOrcid() != null && contributorB.getContributorOrcid() != null) {
-                if (
-                        !isEachObjectNull(contributorA.getContributorOrcid().getUri(), contributorB.getContributorOrcid().getUri()) &&
-                        contributorA.getContributorOrcid().getUri().equalsIgnoreCase(contributorB.getContributorOrcid().getUri())
-                ) {
-                    isDifferent.set(true);
-                    return;
-                }
-            } else if (isAnyObjectNotNull(contributorA.getContributorOrcid(), contributorB.getContributorOrcid())) {
-                isDifferent.set(true);
-                return;
-            }
-
-            if (contributorA.getRolesAndSequences() != null && contributorB.getRolesAndSequences() != null) {
-                if (contributorA.getRolesAndSequences().size() != contributorB.getRolesAndSequences().size()) {
-                    isDifferent.set(true);
-                    return;
-                }
-                contributorA.getRolesAndSequences().forEach(rolesA -> contributorB.getRolesAndSequences().forEach(rolesB -> {
-                    if (rolesA.getContributorRole() != null && rolesB.getContributorRole() != null) {
-                        if (compareStrings(rolesA.getContributorRole(), rolesB.getContributorRole())) {
-                            isDifferent.set(true);
-                            return;
-                        }
-                    }
-                    if (isAnyObjectNotNull(rolesA.getContributorRole(), rolesB.getContributorRole())) {
-                        isDifferent.set(true);
-                        return;
-                    }
-                    if (rolesA.getContributorSequence() != null && rolesB.getContributorSequence() != null) {
-                        if (rolesA.getContributorSequence().equals(rolesB.getContributorSequence())) {
-                            isDifferent.set(true);
-                            return;
-                        }
-                    }
-                    if (isAnyObjectNotNull(rolesA.getContributorSequence(), rolesB.getContributorSequence())) {
-                        isDifferent.set(true);
-                        return;
-                    }
-                }));
-
-            } else if (isAnyObjectNotNull(contributorA.getRolesAndSequences(), contributorB.getRolesAndSequences())) {
-                isDifferent.set(true);
-                return;
-            }
-        }));
-        return isDifferent.get();
+        }
+        return false;
     }
 
-    private boolean compareTexts(Text a, Text b, boolean ignoreCase) {
+    public static boolean compareTexts(Text a, Text b, boolean ignoreCase) {
         if (isEachObjectNull(a, b)) {
             return true;
         } else if (isAnyObjectNotNull(a, b)) {
@@ -1446,7 +1374,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         return true;
     }
 
-    private boolean compareStrings(String a, String b) {
+    public static boolean compareStrings(String a, String b) {
         if (isEachObjectNull(a, b)) {
             return true;
         } else if (isAnyObjectNotNull(a, b)) {
@@ -1457,11 +1385,11 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         } else return a.equalsIgnoreCase(b);
     }
 
-    private boolean isEachObjectNull(Object a, Object b) {
+    public static boolean isEachObjectNull(Object a, Object b) {
         return a == null && b == null;
     }
 
-    private boolean isAnyObjectNotNull(Object a, Object b) {
+    public static boolean isAnyObjectNotNull(Object a, Object b) {
         if (a == null && b != null || a != null && b == null) {
             return true;
         }
