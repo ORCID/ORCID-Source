@@ -68,6 +68,11 @@
 		    <groupId>org.glassfish.jersey.media</groupId>
 		    <artifactId>jersey-media-json-jackson</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId> 
+            <version>${jersey.version}</version>     
+        </dependency>
         <!-- Jersey client -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>

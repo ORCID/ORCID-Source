@@ -12,7 +12,7 @@
     <import resource="classpath*:orcid-core-context.xml"/>
     <import resource="classpath*:orcid-t1-security-context.xml"/>
         
-    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
+    <context:component-scan base-package="org.orcid.api.config, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
 

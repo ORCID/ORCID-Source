@@ -83,9 +83,7 @@
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
-        <plugins>
-        
-        
+        <plugins>                
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -107,33 +105,5 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
-    <profiles>
-        <!-- QA fullstack deployments -->
-        <profile>
-            <id>env-qa-fullstack</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>qa-fullstack</value>
-                </property>
-            </activation>
-            <properties>
-                <tomcat.manager.url>http://pub.qa-fullstack.orcid.org:8080/manager/text</tomcat.manager.url>
-            </properties>
-        </profile>
-        <!-- QA 1 deployments -->
-        <profile>
-            <id>env-qa-1</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>qa-1</value>
-                </property>
-            </activation>
-            <properties>
-                <tomcat.manager.url>http://pub.qa-1.orcid.org:8080/manager/text</tomcat.manager.url>
-            </properties>
-        </profile>
-    </profiles>
+    </build>   
 </project>
