@@ -56,11 +56,7 @@
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorV2_1"/>
     </bean>
     
-    <bean id="publicV3ApiServiceDelegator" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />
-    
-    <bean id="publicV3ApiServiceImplV3_0" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0">
-        <property name="serviceDelegator" ref="publicV3ApiServiceDelegator"/>
-    </bean>
+    <bean id="publicV3ApiServiceDelegator" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />      
     
     <!--  Identifier API -->
     <bean id="identifierApiServiceDelegator" class="org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl" />

@@ -39,7 +39,7 @@ public class ApiVersionFilter extends OncePerRequestFilter {
     }
 
     private String checkVersion(HttpServletRequest httpRequest) {
-        String path = httpRequest.getServletPath();
+        String path = httpRequest.getPathInfo();
         Matcher matcher = VERSION_PATTERN.matcher(path);
         String version = null;
         if (matcher.lookingAt()) {
@@ -50,7 +50,7 @@ public class ApiVersionFilter extends OncePerRequestFilter {
     }
 
     private void checkSection(HttpServletRequest httpRequest, String version) {
-        String path = httpRequest.getServletPath();
+        String path = httpRequest.getPathInfo();
         Matcher notifcationsMatcher = NOTIFICATIONS_PATTERN.matcher(path);
         ApiSection section = ApiSection.V1;
         if (notifcationsMatcher.find()) {

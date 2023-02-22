@@ -47,7 +47,14 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String path = httpRequest.getServletPath();
+        System.out.println("1 " + httpRequest.getContextPath());
+        System.out.println("2 " + httpRequest.getPathInfo());
+        System.out.println("3 " + httpRequest.getPathTranslated());
+        System.out.println("4 " + httpRequest.getQueryString());
+        System.out.println("5 " + httpRequest.getRequestURI());
+        System.out.println("6 " + httpRequest.getRequestURL());
+        System.out.println("7 " + httpRequest.getServletPath());        
+        String path = httpRequest.getPathInfo();
         if (IGNORE_LIST.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
         } else if (webhookPattern.matcher(path).matches()) {

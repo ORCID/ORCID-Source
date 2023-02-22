@@ -77,7 +77,6 @@ import javax.ws.rs.core.UriInfo;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.Education;
@@ -89,36 +88,9 @@ import org.orcid.jaxb.model.v3.release.record.OtherName;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.Record;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Educations;
-import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
-import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Services;
-import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 
 //import io.swagger.v3.oas.annotations.Operation;
@@ -141,27 +113,22 @@ import io.swagger.annotations.ExternalDocs;
 @Path("/v3.0")
 public class PublicV3ApiServiceImplV3_0 {
 
+  @Resource(name = "publicV3ApiServiceDelegator")
   protected PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator;
 
   @Resource
   protected SwaggerUIBuilder swaggerUIBuilder;
   
   @Context
-  private HttpServletRequest httpRequest;
-
-  public void setServiceDelegator(
-          PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator) {
-      this.serviceDelegator = serviceDelegator;
-  }
-
+  private HttpServletRequest httpRequest;  
+  
   /**
    * Serves the Swagger UI HTML page
    * 
    * @return a 200 response containing the HTML
    */
   @GET
-  @Produces(value = { MediaType.TEXT_HTML })
-  @Path("/")
+  @Produces(value = { MediaType.TEXT_HTML })  
  //@ApiOperation( nickname="viewSwaggerv3", value = "Fetch the HTML swagger UI interface", hidden = true)
   public Response viewSwagger() {
       return swaggerUIBuilder.build();

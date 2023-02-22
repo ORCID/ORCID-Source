@@ -132,25 +132,13 @@
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
             <version>2.1.0</version>
-        </dependency> 
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>3.1.0</version>
         </dependency>                 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>2.3.6</version>
             <scope>runtime</scope>
-        </dependency> 
-        
-		<!-- https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
-		<dependency>
-		    <groupId>jakarta.ws.rs</groupId>
-		    <artifactId>jakarta.ws.rs-api</artifactId>
-		    <version>3.1.0</version>
-		</dependency>
+        </dependency>        		
         
         <!-- https://mvnrepository.com/artifact/org.codehaus.jettison/jettison -->
         <dependency>
