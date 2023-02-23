@@ -91,6 +91,7 @@ import org.orcid.jaxb.model.v3.release.record.Qualification;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
+import org.springframework.stereotype.Component;
 
 
 //import io.swagger.v3.oas.annotations.Operation;
@@ -110,10 +111,11 @@ import io.swagger.annotations.ExternalDocs;
 * 
 */
 //@Api("Development Public API v3.0")
+@Component
 @Path("/v3.0")
 public class PublicV3ApiServiceImplV3_0 {
-
-  @Resource(name = "publicV3ApiServiceDelegator")
+  
+  @Resource(name="publicV3ApiServiceDelegator")  
   protected PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator;
 
   @Resource

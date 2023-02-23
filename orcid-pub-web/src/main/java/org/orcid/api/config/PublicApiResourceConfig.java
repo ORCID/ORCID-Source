@@ -9,7 +9,6 @@ import org.orcid.api.filters.AnalyticsFilter;
 import org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @ApplicationPath("/*")
 public class PublicApiResourceConfig extends ResourceConfig {
     
@@ -20,7 +19,7 @@ public class PublicApiResourceConfig extends ResourceConfig {
         packages("org.orcid.api.publicV3.server");
         //registerClasses(ApiVersionCheckFilter.class);
         //registerClasses(AnalyticsFilter.class);
-        register(PublicV3ApiServiceImplV3_0.class);
+        //register(PublicV3ApiServiceImplV3_0.class);
         property(ServerProperties.WADL_FEATURE_DISABLE, true);
     }
 

@@ -12,7 +12,7 @@
     <import resource="classpath*:orcid-core-context.xml"/>
     <import resource="classpath*:orcid-t1-security-context.xml"/>
         
-    <context:component-scan base-package="org.orcid.api.config, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
+    <context:component-scan base-package="org.orcid.api.publicV3.server,org.orcid.api.config, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
 
@@ -57,7 +57,9 @@
     </bean>
     
     <bean id="publicV3ApiServiceDelegator" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />      
-    
+        
+    <bean id="publicV3ApiServiceImplV3_0" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0" />
+        
     <!--  Identifier API -->
     <bean id="identifierApiServiceDelegator" class="org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl" />
     <bean id="identifierApiServiceImpl" class="org.orcid.api.identifiers.IdentifierApiServiceImpl">
