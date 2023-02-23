@@ -107,7 +107,11 @@ public class AnonymizeText {
         ExternalID wExtId = new ExternalID();
         if (extIdKey != null) {
             if (extIdsAnonymized.get(extIdKey) != null) {
-                return extIdsAnonymized.get(extIdKey);
+                wExtId = extIdsAnonymized.get(extIdKey);
+                if (original.has(KEY_RELATIONSHIP)) {
+                    wExtId.setRelationship(Relationship.valueOf(original.getString(KEY_RELATIONSHIP)));
+                }
+                return wExtId;
             }
         }
         if (workIdentifierType != null) {
@@ -154,7 +158,11 @@ public class AnonymizeText {
         ExternalID wExtId = new ExternalID();
         if (extIdKey != null) {
             if (extIdsAnonymized.get(extIdKey) != null) {
-                return extIdsAnonymized.get(extIdKey);
+                wExtId = extIdsAnonymized.get(extIdKey);
+                if (original.getRelationship() != null) {
+                    wExtId.setRelationship(original.getRelationship());
+                }
+                return wExtId;
             }
         }
 
