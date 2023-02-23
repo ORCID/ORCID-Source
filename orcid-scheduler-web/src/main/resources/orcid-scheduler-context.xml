@@ -110,5 +110,7 @@
     <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
 
 	<bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
+	
+	<bean id="orgLoadManager"  class="org.orcid.scheduler.loader.manager.impl.OrgLoadManagerImpl"/>
 
 </beans>
