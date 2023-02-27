@@ -138,6 +138,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.Services;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
+import org.springframework.stereotype.Component;
 
 import io.swagger.v3.oas.annotations.Operation;
 //TODOSWAGGER
@@ -151,6 +152,7 @@ import io.swagger.annotations.ExternalDocs;
 import io.swagger.annotations.ResponseHeader;*/
 
 //@Api("Development Member API v3.0")
+@Component
 @Path("/v3.0")
 public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
 
