@@ -28,7 +28,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.MediaType;
 
 @Component
 public class Orcid30ManagerImpl implements Orcid30Manager {

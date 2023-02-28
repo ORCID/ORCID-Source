@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
 
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.MediaType;
 
 public class PublicProfileValidator {
 

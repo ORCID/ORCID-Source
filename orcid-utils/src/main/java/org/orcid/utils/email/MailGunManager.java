@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
 
 @Component
 public class MailGunManager {

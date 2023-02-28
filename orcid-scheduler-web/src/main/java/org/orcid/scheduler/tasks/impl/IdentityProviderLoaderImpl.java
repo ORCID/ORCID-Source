@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.MediaType;
 
 public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
 
