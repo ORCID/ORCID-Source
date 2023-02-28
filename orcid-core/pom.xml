@@ -316,8 +316,7 @@
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
 		<dependency>
 		    <groupId>javax.ws.rs</groupId>
-		    <artifactId>javax.ws.rs-api</artifactId>
-		    <version>2.1</version>
+		    <artifactId>javax.ws.rs-api</artifactId>		    
 		</dependency>
         
     </dependencies>
