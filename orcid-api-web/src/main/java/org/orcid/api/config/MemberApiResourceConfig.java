@@ -12,7 +12,7 @@ public class MemberApiResourceConfig extends ResourceConfig {
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("MemberApiResourceConfig");
         System.out.println("---------------------------------------------------------------------------------");
-        packages("org.orcid.api.memberV3.server");
+        packages("org.orcid.api.memberV3.server;org.orcid.api.memberV2.server");
         property(ServerProperties.WADL_FEATURE_DISABLE, true);
     }
 

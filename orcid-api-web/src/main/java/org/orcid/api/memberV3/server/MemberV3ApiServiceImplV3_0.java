@@ -210,7 +210,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
-    /*@ApiOperation( nickname="viewStatusTextv3", value = "Check the server status", hidden = true)
+    /*@ApiOperation( nickname="viewStatusTextv3", value = "Check the server status", hidden = true)*/
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }
@@ -229,7 +229,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(ACTIVITIES)
     /*@ApiOperation( nickname="viewActivitiesv3", value = "Fetch all activities", response = ActivitiesSummary.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })*/
-    /*@ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0/activities-2.0.xsd")
+    /*@ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0/activities-2.0.xsd")*/
     public Response viewActivities(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewActivities(orcid);
     }

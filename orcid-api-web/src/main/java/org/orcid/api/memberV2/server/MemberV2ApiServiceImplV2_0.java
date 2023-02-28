@@ -105,6 +105,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 //TODOSWAGGER
 import io.swagger.v3.oas.annotations.Operation;
@@ -122,6 +123,7 @@ import io.swagger.annotations.ResponseHeader;*/
  * 
  */
 //@Api("Member API v2.0")
+@Component
 @Path("/v2.0")
 public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
 

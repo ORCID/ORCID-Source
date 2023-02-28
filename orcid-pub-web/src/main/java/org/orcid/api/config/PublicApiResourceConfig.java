@@ -16,7 +16,7 @@ public class PublicApiResourceConfig extends ResourceConfig {
         System.out.println("---------------------------------------------------------------------------------");
         System.out.println("PublicApiResourceConfig");
         System.out.println("---------------------------------------------------------------------------------");
-        packages("org.orcid.api.publicV3.server");
+        packages("org.orcid.api.publicV3.server;org.orcid.api.publicV2.server");
         //registerClasses(ApiVersionCheckFilter.class);
         //registerClasses(AnalyticsFilter.class);
         //register(PublicV3ApiServiceImplV3_0.class);
