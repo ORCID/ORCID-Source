@@ -325,7 +325,7 @@ public class AnalyticsProcessTest {
         AnalyticsData data = captor.getValue();
         assertNotNull(data);
         assertEquals("POST", data.getMethod());
-        assertEquals("record", data.getCategory());
+        assertEquals("works", data.getCategory());
         assertEquals("Public API v2.0", data.getApiVersion());
         assertEquals("Unknown", data.getClientDetailsString());
         assertEquals("37.14.150.0", data.getIpAddress());
