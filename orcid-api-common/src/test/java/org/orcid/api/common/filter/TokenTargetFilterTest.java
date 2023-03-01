@@ -3,6 +3,7 @@ package org.orcid.api.common.filter;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 import java.io.Serializable;
 import java.security.AccessControlException;
@@ -48,7 +49,7 @@ public class TokenTargetFilterTest {
     @Test
     public void tokenUsedOnTheRightUserTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
-        ContainerRequest request = Mockito.mock(ContainerRequest.class);
+        ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
         Mockito.when(request.getUriInfo().getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID1);
         TokenTargetFilter filter = new TokenTargetFilter();
         filter.filter(request);
@@ -57,7 +58,7 @@ public class TokenTargetFilterTest {
     @Test(expected = AccessControlException.class)
     public void tokenUsedOnTheWrongUser12ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
-        ContainerRequest request = Mockito.mock(ContainerRequest.class);
+        ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
         Mockito.when(request.getUriInfo().getPath()).thenReturn("http://api.test.orcid.org/v1.2/" + ORCID2);        
 
         RequestAttributes sra = Mockito.mock(RequestAttributes.class);
@@ -72,7 +73,7 @@ public class TokenTargetFilterTest {
     @Test(expected = OrcidUnauthorizedException.class)
     public void tokenUsedOnTheWrongUser20ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);        
-        ContainerRequest request = Mockito.mock(ContainerRequest.class);
+        ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
         Mockito.when(request.getUriInfo().getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID2);        
                 
         RequestAttributes sra = Mockito.mock(RequestAttributes.class);
@@ -86,7 +87,7 @@ public class TokenTargetFilterTest {
     
     @Test
     public void filterInvokedOnNoOrcidEndpointTest() {        
-        ContainerRequest request = Mockito.mock(ContainerRequest.class);
+        ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
         Mockito.when(request.getUriInfo().getPath()).thenReturn("http://api.test.orcid.org/oauth/token");
         TokenTargetFilter filter = new TokenTargetFilter();
         filter.filter(request);        
@@ -95,7 +96,7 @@ public class TokenTargetFilterTest {
     @Test
     public void readPublicTokenTest() {
         setUpSecurityContext(null, CLIENT_ID, ScopePathType.READ_PUBLIC);
-        ContainerRequest request = Mockito.mock(ContainerRequest.class);
+        ContainerRequest request = Mockito.mock(ContainerRequest.class, RETURNS_DEEP_STUBS);
         Mockito.when(request.getUriInfo().getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID2);
         TokenTargetFilter filter = new TokenTargetFilter();
         filter.filter(request);       
