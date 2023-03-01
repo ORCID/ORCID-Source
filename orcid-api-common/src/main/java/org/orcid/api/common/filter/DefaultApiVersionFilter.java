@@ -23,7 +23,7 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
-    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/", "/search/", "/oauth/token", OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/", "/static/");
+    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/", "/search/", "/oauth/token", OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/", "/static/", "/openapi.json");
 
     private static final String WEBHOOK_PATH_REGEX = "^/" + OrcidStringUtils.ORCID_STRING + "/webhook/.+";
 

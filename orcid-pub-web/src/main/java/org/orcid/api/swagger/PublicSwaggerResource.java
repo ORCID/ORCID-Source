@@ -24,9 +24,9 @@ import io.swagger.util.Json;*/
  * @author tom
  *
  */
-@Path(OrcidApiConstants.SWAGGER_PATH)
+//@Path(OrcidApiConstants.SWAGGER_PATH)
 //@Api(OrcidApiConstants.SWAGGER_PATH)
-@Produces(MediaType.APPLICATION_JSON)
+//@Produces(MediaType.APPLICATION_JSON)
 public class PublicSwaggerResource extends SwaggerJSONResource {
     @Value("${org.orcid.swagger.tokenendpoint}")
     private String tokenEndPoint;

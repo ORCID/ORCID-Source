@@ -119,8 +119,10 @@ public class PublicV2ApiServiceImplV2_1 {
 
     protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
+    /*
     @Resource
     protected SwaggerUIBuilder swaggerUIBuilder;
+     */
 
     public void setServiceDelegator(
             PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
@@ -132,13 +134,15 @@ public class PublicV2ApiServiceImplV2_1 {
      * 
      * @return a 200 response containing the HTML
      */
+    /*
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path("/")
-    @Operation( nickname="viewSwaggerV21",  value = "Fetch the HTML swagger UI interface", hidden = true)
+    //@Operation( nickname="viewSwaggerV21",  value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
         return swaggerUIBuilder.build();
     }
+    */
 
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })

@@ -99,31 +99,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-//import io.swagger.v3.oas.annotations.Operation;
-//TODOSWAGGER
-/*
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.ExternalDocs;
-*/
-
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-//@Api("Public API v2.0")
 @Component
 @Path("/v2.0")
 public class PublicV2ApiServiceImplV2_0 {
 
     protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
-    @Resource
-    protected SwaggerUIBuilder swaggerUIBuilder;
+    //@Resource
+    //protected SwaggerUIBuilder swaggerUIBuilder;
 
     public void setServiceDelegator(
             PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
@@ -135,6 +123,7 @@ public class PublicV2ApiServiceImplV2_0 {
      * 
      * @return a 200 response containing the HTML
      */
+    /*
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path("/")
@@ -142,6 +131,7 @@ public class PublicV2ApiServiceImplV2_0 {
     public Response viewSwagger() {
         return swaggerUIBuilder.build();
     }
+    */
 
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
