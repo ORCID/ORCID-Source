@@ -94,6 +94,8 @@ import org.orcid.jaxb.model.search_v2.Search;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 //import io.swagger.v3.oas.annotations.Operation;
 //TODOSWAGGER
 /*
@@ -133,7 +135,7 @@ public class PublicV2ApiServiceImplV2_1 {
     @GET
     @Produces(value = { MediaType.TEXT_HTML })
     @Path("/")
-    //@ApiOperation( nickname="viewSwaggerV21",  value = "Fetch the HTML swagger UI interface", hidden = true)
+    @Operation( nickname="viewSwaggerV21",  value = "Fetch the HTML swagger UI interface", hidden = true)
     public Response viewSwagger() {
         return swaggerUIBuilder.build();
     }

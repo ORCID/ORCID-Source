@@ -49,7 +49,8 @@ public class SwaggerJSONResource {
     @Context
     ServletContext context;
 
-   /* protected synchronized Swagger scan(Application app) {
+    /*
+   protected synchronized Swagger scan(Application app) {
         Swagger swagger = null;
         Scanner scanner = ScannerFactory.getScanner();
         ModelConverters.getInstance().addConverter(new SwaggerModelConverter());
@@ -185,5 +186,5 @@ public class SwaggerJSONResource {
         }
         return output;
     }
-    */
+ */   
 }
