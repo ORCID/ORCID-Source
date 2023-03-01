@@ -30,7 +30,7 @@ the software.
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>2.27</jersey.version>
         <jackson.version>2.13.1</jackson.version>
-        <swagger.version>1.5.16</swagger.version>
+        <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -907,8 +907,13 @@ the software.
             </dependency>
             <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
             <dependency>
-               <groupId>io.swagger</groupId>
-               <artifactId>swagger-jaxrs</artifactId>
+               <groupId>io.swagger.core.v3</groupId>
+               <artifactId>swagger-jaxrs2</artifactId>
+               <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+               <groupId>io.swagger.core.v3</groupId>
+               <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
                <version>${swagger.version}</version>
             </dependency>
             <dependency>

@@ -32,7 +32,6 @@
 
     <dependencies>
         <!-- Internal dependencies -->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-core</artifactId>
@@ -135,12 +134,7 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-cmds</artifactId>
-        </dependency>
-        <!--  dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jersey-jaxrs</artifactId>
-            <version>${swagger.version}</version>
-        </dependency -->
+        </dependency>        
 
         <!-- citeproc support -->
         <dependency>
@@ -149,8 +143,18 @@
             <version>0.6</version>
         </dependency>
 
+        <!-- Swagger dependencies -->
+        <dependency>
+               <groupId>io.swagger.core.v3</groupId>
+               <artifactId>swagger-jaxrs2</artifactId>
+               <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+               <groupId>io.swagger.core.v3</groupId>
+               <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+               <version>${swagger.version}</version>
+            </dependency>
         <!-- Test dependencies -->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-test</artifactId>

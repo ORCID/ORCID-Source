@@ -17,13 +17,11 @@ import org.orcid.jaxb.model.record_v2.CitationType;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JavaType;
 
-/*
-import io.swagger.annotations.ApiModelProperty;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContext;
-import io.swagger.models.Model;
-import io.swagger.models.properties.Property;
-import io.swagger.util.Json;*/
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Manipulates models for serialization into Swagger Schema
@@ -31,45 +29,35 @@ import io.swagger.util.Json;*/
  * @author tom
  *
  */
-public class SwaggerModelConverter { // implements ModelConverter {
+public class SwaggerModelConverter implements ModelConverter {
 
+    
     /**
      * Does nothing but pass through the chain
      */
-    /*@Override
-    public Model resolve(Type type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+    @Override
+    public io.swagger.v3.oas.models.media.Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
         if (chain.hasNext()) {
             return chain.next().resolve(type, context, chain);
         } else {
             return null;
         }
-    }*/
+    }
 
     /**
      * Replace Visibility entities with our own more limited and better ordered
      * version
      */
-    /*@Override
+    @Override
     public Property resolveProperty(Type type, ModelConverterContext context, Annotation[] annotations, Iterator<ModelConverter> chain) {
         JavaType _type = Json.mapper().constructType(type);
         if (_type != null) {
             Class<?> cls = _type.getRawClass();
-            if (    org.orcid.jaxb.model.common_rc1.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.common_rc2.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.common_rc3.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.common_rc4.Visibility.class.isAssignableFrom(cls) || 
-                    org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.rc1.common.Visibility.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.rc2.common.Visibility.class.isAssignableFrom(cls) ||
+            if ( org.orcid.jaxb.model.common_v2.Visibility.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.v3.release.common.Visibility.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Visibility.class, null);
-            } else if (    org.orcid.jaxb.model.record_rc1.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.record_rc2.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.record_rc3.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.record_rc4.Citation.class.isAssignableFrom(cls) || 
+            } else if (     
                     org.orcid.jaxb.model.record_v2.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.rc1.record.Citation.class.isAssignableFrom(cls) ||
-                    org.orcid.jaxb.model.v3.rc2.record.Citation.class.isAssignableFrom(cls) ||
                     org.orcid.jaxb.model.v3.release.record.Citation.class.isAssignableFrom(cls)) {
                 return context.resolveProperty(Citation.class, null);
             }            
@@ -79,7 +67,7 @@ public class SwaggerModelConverter { // implements ModelConverter {
         } else {
             return null;
         }
-    }*/
+    }
 
     /**
      * Abridged Visibility XML enumeration for swagger use
@@ -134,7 +122,7 @@ public class SwaggerModelConverter { // implements ModelConverter {
     public class Citation implements Serializable {
         private static final long serialVersionUID = 1L;
         @XmlElement(name = "citation-type", required = true, namespace = "http://www.orcid.org/ns/work")
-       // @ApiModelProperty(dataType = "string", allowableValues = "formatted-unspecified, bibtex, formatted-apa, formatted-harvard, formatted-ieee, formatted-mla, formatted-vancouver, formatted-chicago, ris")
+        @Schema(type = "string", allowableValues = "formatted-unspecified, bibtex, formatted-apa, formatted-harvard, formatted-ieee, formatted-mla, formatted-vancouver, formatted-chicago, ris")
         protected CitationType citationType;
         @XmlElement(name = "citation-value", required = true, namespace = "http://www.orcid.org/ns/work")
         protected String citation;
@@ -212,6 +200,6 @@ public class SwaggerModelConverter { // implements ModelConverter {
             result = 31 * result + (citation != null ? citation.hashCode() : 0);
             return result;
         }
-    }
+    }    
 
 }

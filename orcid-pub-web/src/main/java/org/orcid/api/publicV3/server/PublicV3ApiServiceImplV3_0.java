@@ -93,7 +93,6 @@ import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.springframework.stereotype.Component;
 
-
 //import io.swagger.v3.oas.annotations.Operation;
 //TODOSWAGGER
 /*
