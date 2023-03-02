@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.net.util.Base64;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
 //import io.swagger.annotations.ApiOperation;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Angel Montenegro
  * 
  */
+@Component
 public abstract class InternalApiServiceImplBase {
     private InternalApiServiceDelegator serviceDelegator;
 
