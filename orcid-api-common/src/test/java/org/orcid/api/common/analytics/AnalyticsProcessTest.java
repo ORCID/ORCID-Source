@@ -7,14 +7,18 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
+import org.glassfish.jersey.internal.PropertiesDelegate;
+import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
+import org.glassfish.jersey.message.internal.OutboundMessageContext;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ContainerResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,19 +31,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import javax.ws.rs.core.SecurityContext;
-import org.springframework.test.context.ContextConfiguration;
 
-
-import org.glassfish.jersey.internal.PropertiesDelegate;
-import org.glassfish.jersey.message.internal.OutboundJaxrsResponse;
-import org.glassfish.jersey.message.internal.OutboundMessageContext;
-import org.glassfish.jersey.server.ContainerRequest;
-import org.glassfish.jersey.server.ContainerResponse;
-
-
-@ContextConfiguration(locations = { "classpath:test-orcid-api-common-context.xml" })
 public class AnalyticsProcessTest {
 
     @Mock
