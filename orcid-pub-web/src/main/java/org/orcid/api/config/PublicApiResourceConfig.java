@@ -13,6 +13,7 @@ public class PublicApiResourceConfig extends ResourceConfig {
         System.out.println("PublicApiResourceConfig");
         System.out.println("---------------------------------------------------------------------------------");
         packages("org.orcid.api.publicV3.server;org.orcid.api.publicV2.server;io.swagger.v3.jaxrs2.integration.resources");
+        property("jersey.config.servlet.filter.staticContentRegex", "/static/.*");
         //registerClasses(ApiVersionCheckFilter.class);
         //registerClasses(AnalyticsFilter.class);
         //register(PublicV3ApiServiceImplV3_0.class);
