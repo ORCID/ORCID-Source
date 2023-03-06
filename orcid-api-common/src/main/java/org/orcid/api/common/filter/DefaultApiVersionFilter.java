@@ -54,7 +54,8 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
         System.out.println("5 " + httpRequest.getRequestURI());
         System.out.println("6 " + httpRequest.getRequestURL());
         System.out.println("7 " + httpRequest.getServletPath());        
-        String path = httpRequest.getPathInfo();
+        String path = httpRequest.getServletPath();
+        
         if (IGNORE_LIST.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
         } else if (webhookPattern.matcher(path).matches()) {
