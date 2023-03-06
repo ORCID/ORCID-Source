@@ -39,7 +39,6 @@ import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.ContainerResponse;
 
 
-@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-common-context.xml" })
 public class AnalyticsProcessTest {
 
@@ -52,7 +51,7 @@ public class AnalyticsProcessTest {
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource
+    @Mock
     private EncryptionManager encryptionManager;
 
     private String hashedOrcid;
