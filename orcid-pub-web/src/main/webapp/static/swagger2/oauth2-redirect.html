@@ -11,6 +11,7 @@
         var sentState = oauth2.state;
         var redirectUrl = oauth2.redirectUrl;
         var isValid, qp, arr;
+        console.log("REDIRECT URL: " + oauth2.redirectUrl);
 
         if (/code|token|error/.test(window.location.hash)) {
             qp = window.location.hash.substring(1);

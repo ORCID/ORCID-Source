@@ -93,6 +93,8 @@ import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.springframework.stereotype.Component;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 //import io.swagger.v3.oas.annotations.Operation;
 //TODOSWAGGER
 /*
@@ -117,10 +119,10 @@ public class PublicV3ApiServiceImplV3_0 {
   @Resource(name="publicV3ApiServiceDelegator")  
   protected PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> serviceDelegator;
 
-  /*
+  
   @Resource
   protected SwaggerUIBuilder swaggerUIBuilder;
-  */
+  
   
   @Context
   private HttpServletRequest httpRequest;  
@@ -130,14 +132,14 @@ public class PublicV3ApiServiceImplV3_0 {
    * 
    * @return a 200 response containing the HTML
    */
-  /*
+ 
   @GET
   @Produces(value = { MediaType.TEXT_HTML })  
- //@ApiOperation( nickname="viewSwaggerv3", value = "Fetch the HTML swagger UI interface", hidden = true)
+  @Operation(description = "Fetch the HTML swagger UI interface", hidden = true)
   public Response viewSwagger() {
       return swaggerUIBuilder.build();
   }
-  */
+  
 
   @GET
   @Produces(value = { MediaType.TEXT_PLAIN })

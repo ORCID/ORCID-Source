@@ -1,6 +1,50 @@
 <!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
+
 <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+
+    <link rel="icon" type="image/png" href="${swaggerBaseUrl}favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="${swaggerBaseUrl}favicon-16x16.png" sizes="16x16" />
+    <style>
+      html
+      {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+
+      *,
+      *:before,
+      *:after
+      {
+        box-sizing: inherit;
+      }
+
+      body
+      {
+        margin:0;
+        background: #fafafa;
+      }
+    </style>
+  </head>
+
+  <body>
+	  <div style="width: 100%; text-align: center;>
+		<div style="padding:20px;padding-top:10px;margin:auto; display: inline-block;">
+			<img src="https://orcid.org/assets/vectors/orcid.logo.svg" alt="ORCID.org">
+		    <hr>
+		    <p style="font-family:arial, helvetica, sans-serif;font-size:15px;color:#494A4C;">
+	  Swagger will be only supported on further notice due to maintenance upgrades. </br> The ORCiD API can be tested using <a href="https://postman.orcid.org/">postman.orcid.org</a>    
+	  </div>
+  </body>
+</html>
+
+
+
+<!-- html lang="en">
   <head>
     <meta charset="UTF-8">
     <title>Swagger UI</title>
@@ -57,4 +101,4 @@
     };
   </script>
   </body>
-</html>
+</html -->
