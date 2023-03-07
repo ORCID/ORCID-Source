@@ -10,7 +10,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
-import org.orcid.api.common.swagger.SwaggerJSONResource;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +25,7 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 @Path(OrcidApiConstants.SWAGGER_PATH)
 //@Api(OrcidApiConstants.SWAGGER_PATH)
 @Produces(MediaType.APPLICATION_JSON)
-public class MemberSwaggerResource extends SwaggerJSONResource {
+public class MemberSwaggerResource {
 
     @Value("${org.orcid.swagger.authendpoint}")
     private String authEndPoint;

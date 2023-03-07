@@ -905,22 +905,7 @@ the software.
                 <artifactId>guava</artifactId>
                 <version>31.1-jre</version>
             </dependency>
-            <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
-            <dependency>
-               <groupId>io.swagger.core.v3</groupId>
-               <artifactId>swagger-jaxrs2</artifactId>
-               <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-               <groupId>io.swagger.core.v3</groupId>
-               <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
-               <version>${swagger.version}</version>
-            </dependency>
-            <dependency>
-               <groupId>io.swagger.core.v3</groupId>
-               <artifactId>swagger-models</artifactId>
-               <version>${swagger.version}</version>
-            </dependency>
+
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>

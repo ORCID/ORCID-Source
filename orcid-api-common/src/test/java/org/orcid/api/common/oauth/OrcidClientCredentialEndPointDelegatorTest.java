@@ -42,6 +42,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidScopeExcepti
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.test.context.ContextConfiguration;
 
+
 import javax.ws.rs.core.MultivaluedHashMap;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -147,10 +148,7 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         
         verify(profileLastModifiedDaoMock, times(0)).updateIndexingStatus(Arrays.asList(USER_ORCID), IndexingStatus.PENDING);
     }
-    
-    /*
-     * TODO: Remove this test, this is already tested here: 
-     * https://github.com/ORCID/ORCID-Source/blob/development/orcid-core/src/test/java/org/orcid/core/oauth/OrcidClientCredentialsCheckerTest.java#L64
+
     @Test(expected = InvalidScopeException.class)
     public void generateClientCredentialsAccessTokenWithInvalidTokenTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE);
@@ -163,7 +161,6 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
         fail();
     }
-    */
 
     @Test
     public void generateRefreshTokenTest() {
@@ -238,7 +235,6 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
         // Generate the refresh token that expires after parent token
         MultivaluedMap<String, String> refreshTokenformParams = new MultivaluedHashMap<String, String>();
-        
         refreshTokenformParams.add("client_id", CLIENT_ID_1);
         refreshTokenformParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         refreshTokenformParams.add("grant_type", "refresh_token");

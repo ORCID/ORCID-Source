@@ -13,5 +13,6 @@
         ignore-unresolvable="true" />
 	
     <import  resource="classpath*:orcid-core-context.xml"/>
+    <import  resource="classpath*:orcid-oauth2-api-common-config.xml"/> 
         
 </beans>

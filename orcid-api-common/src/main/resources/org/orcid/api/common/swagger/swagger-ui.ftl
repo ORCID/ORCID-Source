@@ -37,7 +37,9 @@
 			<img src="https://orcid.org/assets/vectors/orcid.logo.svg" alt="ORCID.org">
 		    <hr>
 		    <p style="font-family:arial, helvetica, sans-serif;font-size:15px;color:#494A4C;">
-	  Swagger will be only supported on further notice due to maintenance upgrades. </br> The ORCiD API can be tested using <a href="https://postman.orcid.org/">postman.orcid.org</a>    
+		    Unfortunately Swagger is not available until further notice due to a maintenance upgrade.</br>
+		    We plan to <a href="https://trello.com/c/1vXyNduO/768-fully-document-api-functions-in-openapi-3x-swagger-and-publish/" target="_blank"> support swagger</a> again in the future. If you have any questions then please contact <a href="mailto:support@orcid.org">support@orcid.org</a>
+	  </br> The ORCiD API can be tested using <a href="https://postman.orcid.org/" target="_blank">postman.orcid.org</a>    
 	  </div>
   </body>
 </html>

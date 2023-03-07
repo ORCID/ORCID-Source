@@ -135,7 +135,7 @@ public class PublicV3ApiServiceImplV3_0 {
  
   @GET
   @Produces(value = { MediaType.TEXT_HTML })  
-  @Operation(description = "Fetch the HTML swagger UI interface", hidden = true)
+  //@Operation(description = "Fetch the HTML swagger UI interface", hidden = true)
   public Response viewSwagger() {
       return swaggerUIBuilder.build();
   }

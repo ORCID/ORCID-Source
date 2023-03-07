@@ -5,7 +5,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
-import org.orcid.api.common.swagger.SwaggerJSONResource;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +26,7 @@ import io.swagger.util.Json;*/
 //@Path(OrcidApiConstants.SWAGGER_PATH)
 //@Api(OrcidApiConstants.SWAGGER_PATH)
 //@Produces(MediaType.APPLICATION_JSON)
-public class PublicSwaggerResource extends SwaggerJSONResource {
+public class PublicSwaggerResource {
     @Value("${org.orcid.swagger.tokenendpoint}")
     private String tokenEndPoint;
 
