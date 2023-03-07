@@ -9,7 +9,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.util.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +117,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (!enabled) {
             return;
         }
-        profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+        try {
+            profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+        } catch(Exception e) {
+            LOGGER.error("Unable to update last modified and indexing status for " + orcid, e);
+        }
+        
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
@@ -132,7 +136,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (!enabled) {
             return;
         }
-        profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
+        try {
+            profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
+        } catch(Exception e) {
+            LOGGER.error("Unable to update last modified for " + orcid, e);
+        }
+        
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
