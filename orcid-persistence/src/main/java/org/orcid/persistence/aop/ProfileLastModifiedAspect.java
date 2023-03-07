@@ -118,7 +118,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (!enabled) {
             return;
         }
-        profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+        try {
+            profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+        } catch(Exception e) {
+            LOGGER.error("Unable to update last modified and indexing status for " + orcid, e);
+        }
+        
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
@@ -132,7 +137,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         if (!enabled) {
             return;
         }
-        profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
+        try {
+            profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
+        } catch(Exception e) {
+            LOGGER.error("Unable to update last modified for " + orcid, e);
+        }
+        
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
