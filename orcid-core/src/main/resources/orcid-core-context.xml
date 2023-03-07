@@ -54,6 +54,13 @@
         <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
 	
+	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker" />
+	
+	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">		
+		<constructor-arg ref="orcidRefreshTokenChecker" />		
+		<constructor-arg ref="tokenServices" />
+	</bean>
+	
 	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
 		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
 		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>

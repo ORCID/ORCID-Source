@@ -4,113 +4,118 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 
-import javax.ws.rs.core.MultivaluedHashMap;
+import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
-import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
-import org.springframework.security.oauth2.provider.AuthorizationRequest;
-import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
-import org.springframework.security.oauth2.provider.TokenGranter;
-import org.springframework.security.oauth2.provider.TokenRequest;
+import org.springframework.test.context.ContextConfiguration;
 
-public class OrcidClientCredentialEndPointDelegatorTest {
+import javax.ws.rs.core.MultivaluedHashMap;
+
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-api-common-context.xml"})
+public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
     private static final String USER_ORCID = "0000-0000-0000-0001";
 
-    private OrcidClientCredentialEndPointDelegatorImpl orcidClientCredentialEndPointDelegator;
+    @Resource
+    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
 
-    @Mock
-    private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDaoMock;
+    @Resource
+    private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
+
+    @Resource
+    private OpenIDConnectKeyService keyManager;
     
     @Mock
-    protected LocaleManager localeManagerMock;  
+    private ProfileLastModifiedDao profileLastModifiedDaoMock;
     
-    @Mock
-    private ProfileLastModifiedDao profileLastModifiedDaoMock;    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
     
-    @Mock
-    private OAuth2RequestFactory oAuth2RequestFactoryMock;
-    
-    @Mock
-    private TokenGranter tokenGranterMock;
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(
+                Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
+    }
     
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        orcidClientCredentialEndPointDelegator = new OrcidClientCredentialEndPointDelegatorImpl();
-        orcidClientCredentialEndPointDelegator.setOAuth2RequestFactory(oAuth2RequestFactoryMock);
-        orcidClientCredentialEndPointDelegator.setTokenGranter(tokenGranterMock);
-        
         TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "profileLastModifiedDao", profileLastModifiedDaoMock);
-        TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "localeManager", localeManagerMock);
-        TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "orcidOauth2AuthoriziationCodeDetailDao", orcidOauth2AuthoriziationCodeDetailDaoMock);
-        
-        when(orcidOauth2AuthoriziationCodeDetailDaoMock.isPersistentToken(eq("code-1"))).thenReturn(true);
-        
-        AuthorizationRequest ar = new AuthorizationRequest(); 
-        when(oAuth2RequestFactoryMock.createAuthorizationRequest(anyMap())).thenReturn(ar);
-        
-        Map<String, Object> additionalInformation = new HashMap<String, Object>();
-        additionalInformation.put(OrcidOauth2Constants.TOKEN_ID, "token-1");
-        additionalInformation.put(OrcidOauth2Constants.TOKEN_ID, 1L);
-        TokenRequest tr = new TokenRequest(null, null, null, null);
-        when(oAuth2RequestFactoryMock.createTokenRequest(any(), anyString())).thenReturn(tr);
-        
-        
-        DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("token-1");
-        token.setAdditionalInformation(additionalInformation);
-        token.setRefreshToken(new DefaultOAuth2RefreshToken("refresh-token-1"));
-        when(tokenGranterMock.grant(any(), any())).thenReturn(token);
+    }
+
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        removeDBUnitData(
+                Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/SubjectEntityData.xml"));
     }
 
     @After
     public void after() {
         SecurityContextHolder.clearContext();
-    }    
+        TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "profileLastModifiedDao", profileLastModifiedDao);
+    }
+
+    private OrcidOauth2AuthoriziationCodeDetail createAuthorizationCode(String value, String clientId, String redirectUri, boolean persistent, String... scopes) {
+        OrcidOauth2AuthoriziationCodeDetail authorizationCode = new OrcidOauth2AuthoriziationCodeDetail();
+        authorizationCode.setId(value);
+        authorizationCode.setApproved(true);
+        authorizationCode.setScopes(new HashSet<String>(Arrays.asList(scopes)));
+        authorizationCode.setClientDetailsEntity(new ClientDetailsEntity(clientId));
+        authorizationCode.setPersistent(persistent);
+        authorizationCode.setOrcid(USER_ORCID);
+        authorizationCode.setRedirectUri(redirectUri);
+        authorizationCode.setResourceIds(new HashSet<String>(Arrays.asList("orcid")));
+        authorizationCode.setAuthenticated(true);
+        orcidOauth2AuthoriziationCodeDetailDao.persist(authorizationCode);
+        return authorizationCode;
+    }
 
     @Test
     public void generateAccessTokenTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
-        //OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true, "/activities/update");
+        OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true,
+                "/activities/update");
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "authorization_code");
         formParams.add("redirect_uri", "http://www.APP-5555555555555555.com/redirect/oauth");
-        formParams.add("code", "code-1");
+        formParams.add("code", authCode.getId());
         Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
         assertNotNull(response);
         assertNotNull(response.getEntity());
@@ -142,7 +147,10 @@ public class OrcidClientCredentialEndPointDelegatorTest {
         
         verify(profileLastModifiedDaoMock, times(0)).updateIndexingStatus(Arrays.asList(USER_ORCID), IndexingStatus.PENDING);
     }
-
+    
+    /*
+     * TODO: Remove this test, this is already tested here: 
+     * https://github.com/ORCID/ORCID-Source/blob/development/orcid-core/src/test/java/org/orcid/core/oauth/OrcidClientCredentialsCheckerTest.java#L64
     @Test(expected = InvalidScopeException.class)
     public void generateClientCredentialsAccessTokenWithInvalidTokenTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE);
@@ -155,18 +163,20 @@ public class OrcidClientCredentialEndPointDelegatorTest {
         orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
         fail();
     }
+    */
 
     @Test
     public void generateRefreshTokenTest() {
         // Generate the access token
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
-        //OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true, "/activities/update");
+        OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true,
+                "/activities/update");
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "authorization_code");
         formParams.add("redirect_uri", "http://www.APP-5555555555555555.com/redirect/oauth");
-        formParams.add("code", "code-1");
+        formParams.add("code", authCode.getId());
         Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
         assertNotNull(response);
         assertNotNull(response.getEntity());
@@ -209,14 +219,14 @@ public class OrcidClientCredentialEndPointDelegatorTest {
     public void generateRefreshTokenThatExpireAfterParentTokenTest() {
         // Generate the access token
         SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
-        //OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", false, "/activities/update");
+        OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", false,
+                "/activities/update");
         MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         formParams.add("client_id", CLIENT_ID_1);
         formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         formParams.add("grant_type", "authorization_code");
         formParams.add("redirect_uri", "http://www.APP-5555555555555555.com/redirect/oauth");
-        formParams.add("code", "code-1");
-        
+        formParams.add("code", authCode.getId());
         Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
         assertNotNull(response);
         assertNotNull(response.getEntity());
@@ -228,6 +238,7 @@ public class OrcidClientCredentialEndPointDelegatorTest {
 
         // Generate the refresh token that expires after parent token
         MultivaluedMap<String, String> refreshTokenformParams = new MultivaluedHashMap<String, String>();
+        
         refreshTokenformParams.add("client_id", CLIENT_ID_1);
         refreshTokenformParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
         refreshTokenformParams.add("grant_type", "refresh_token");
