@@ -124,8 +124,7 @@
         <!-- Togglz testing support -->
         <dependency>
             <groupId>org.togglz</groupId>
-            <artifactId>togglz-core</artifactId>
-            <scope>test</scope>
+            <artifactId>togglz-core</artifactId>            
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
