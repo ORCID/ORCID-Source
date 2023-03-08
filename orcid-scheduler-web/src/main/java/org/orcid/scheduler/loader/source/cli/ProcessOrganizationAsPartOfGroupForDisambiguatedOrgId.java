@@ -43,7 +43,7 @@ public class ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId {
      */
     @SuppressWarnings({ "resource" })
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-beans-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-context.xml");
         orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
         rorOrgSource = (OrgLoadSource) context.getBean("rorOrgDataSource");
         fundrefOrgSource = (OrgLoadSource) context.getBean("fundrefOrgDataSource");

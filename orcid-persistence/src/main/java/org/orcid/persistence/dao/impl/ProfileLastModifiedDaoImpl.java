@@ -9,9 +9,13 @@ import javax.persistence.Query;
 
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
+    
+    @Value("${org.orcid.postgres.query.timeout:30000}")
+    private Integer queryTimeout;
     
     protected EntityManager entityManager;
 
@@ -28,6 +32,8 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = :indexingStatus where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("indexingStatus", indexingStatus);
+        // Sets a timeout for this query
+        updateQuery.setHint("javax.persistence.query.timeout", queryTimeout);
         updateQuery.executeUpdate();
     }
 
@@ -36,6 +42,8 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
     public void updateLastModifiedDateWithoutResult(String orcid) {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);
+        // Sets a timeout for this query
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
     }
 
