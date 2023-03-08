@@ -25,7 +25,7 @@ import io.swagger.annotations.AuthorizationScope;
 */
 
 //@Api("Identifier API")
-@Path("/v{version: 2.0|2.1|3.0|3.0_rc1|3.0_rc2}" + OrcidApiConstants.IDENTIFIER_PATH)
+@Path("/v{version: 2.0|2.1|3.0}" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImpl {
 
   public final String xmllocation = "<?xml-stylesheet type=\"text/xsl\" href=\"../static/identifierTypes.xsl\"?>";
