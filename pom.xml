@@ -41,7 +41,7 @@ the software.
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
-		<togglz.version>3.3.3</togglz.version>
+        <togglz.version>3.3.3</togglz.version>
     </properties>
 
     <modules>    
