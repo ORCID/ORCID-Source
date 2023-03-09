@@ -57,7 +57,11 @@
         
         <dependency>
             <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>		    
+            <artifactId>guava</artifactId>		    
+        </dependency>
+        <dependency>
+           <groupId>org.togglz</groupId>
+           <artifactId>togglz-core</artifactId>        
         </dependency>
 
         <!-- Provided -->
@@ -78,17 +82,13 @@
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
         </dependency>
-	<!-- Togglz testing support -->
-	<dependency>
-        <groupId>org.togglz</groupId>
-        <artifactId>togglz-core</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.togglz</groupId>
-        <artifactId>togglz-junit</artifactId>		
-        <scope>test</scope>
-    </dependency>
+        
+        <!-- Togglz testing support -->	
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-junit</artifactId>		
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
     <build>
