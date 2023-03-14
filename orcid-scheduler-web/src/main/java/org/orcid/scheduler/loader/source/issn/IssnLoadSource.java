@@ -1,4 +1,4 @@
-package org.orcid.core.cli;
+package org.orcid.scheduler.loader.source.issn;
 
 import java.util.Date;
 import java.util.List;
@@ -16,12 +16,13 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LoadIssnData {
+public class IssnLoadSource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LoadIssnData.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IssnLoadSource.class);
 
     private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(\\d{4}-\\d{3}[\\dXx])$");
 
@@ -38,14 +39,22 @@ public class LoadIssnData {
     private IssnValidator issnValidator;
 
     private IssnClient issnClient;
+    
+    @Value("${org.orcid.core.issn.source}")
+    private String issnSource;
+    
+    
+    public void loadIssn() {
+        if (issnSource == null) {
+            throw new RuntimeException("Missing the configuration for ORCID source client details id check your environment config for org.orcid.core.issn.source");
+        }
+        this.init(issnSource);
+        this.updateIssnGroupIdRecords();
+    }
 
     public static void main(String[] args) {
-        if (args.length == 0) {
-            throw new RuntimeException("Missing single arg for ORCID source client details id");
-        }
-        LoadIssnData loadIssnData = new LoadIssnData();
-        loadIssnData.init(args[0]);
-        loadIssnData.updateIssnGroupIdRecords();
+        IssnLoadSource loadIssnData = new IssnLoadSource();
+        loadIssnData.loadIssn();
     }
 
     private void updateIssnGroupIdRecords() {
