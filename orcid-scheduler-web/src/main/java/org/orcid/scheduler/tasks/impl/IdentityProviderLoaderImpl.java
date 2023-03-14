@@ -59,21 +59,12 @@ public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
         XPath xpath = createXPath();
         XPathExpression entityDescriptorXpath = compileXPath(xpath, "//md:EntityDescriptor");
         
-        System.out.println("---------------------------------------------------------------");
-        System.out.println("Start");
         for (String metadataUrl : metadataUrls) {
-            System.out.println("---------------------------------------------------------------");
-            System.out.println("Downloading document for " + metadataUrl);
-            System.out.println("---------------------------------------------------------------");
             Document document = downloadMetadata(metadataUrl);
-            System.out.println("Document is ready ");
             NodeList nodes = evaluateXPathNodeList(entityDescriptorXpath, document);
-            System.out.println("---------------------------------------------------------------");
-            System.out.println("Number of nodes: " + nodes.getLength());
             for (int i = 0; i < nodes.getLength(); i++) {
                 Element element = (Element) nodes.item(i);
                 IdentityProviderEntity incoming = createEntityFromXml(element);
-                System.out.println("Found identity provider: " + incoming.toShortString());
                 LOGGER.info("Found identity provider: {}", incoming.toShortString());
                 saveOrUpdateIdentityProvider(incoming);
             }

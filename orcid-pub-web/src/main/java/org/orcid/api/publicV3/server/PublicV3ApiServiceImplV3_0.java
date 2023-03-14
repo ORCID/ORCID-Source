@@ -419,7 +419,6 @@ public class PublicV3ApiServiceImplV3_0 {
  /*@ApiOperation( nickname="viewRecordv3", value = "Fetch record details", response = Record.class)
   @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/orcid-model/master/src/main/resources/record_2.0/record-3.0.xsd")*/
   public Response viewRecord(@PathParam("orcid") String orcid) {
-      System.out.println("!!!! view record v3 " +  " orcid: " + orcid);
       return serviceDelegator.viewRecord(orcid);
   }
   
