@@ -5,7 +5,7 @@ import org.orcid.core.adapter.jsonidentifier.JSONFundingExternalIdentifiers;
 import org.orcid.core.adapter.jsonidentifier.JSONUrl;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common_v2.Url;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Relationship;

@@ -305,7 +305,7 @@ public class JpaJaxbQualificationAdapterTest extends MockSourceNameCache {
     private Qualification getQualification() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Qualification.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/qualification-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/qualification-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Qualification) unmarshaller.unmarshal(inputStream);
     }

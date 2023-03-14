@@ -1,6 +1,6 @@
 package org.orcid.pojo;
 
-import io.swagger.annotations.ApiModel;
+//import io.swagger.annotations.ApiModel;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivityGroup;
 
@@ -13,7 +13,7 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "workSummary" })
 @XmlRootElement(name = "work-group", namespace = "http://www.orcid.org/ns/activities")
-@ApiModel(value = "WorkGroupExtendedV3_0")
+//@ApiModel(value = "WorkGroupExtendedV3_0")
 public class WorkGroupExtended extends ActivityGroup implements Serializable {
 
     private static final long serialVersionUID = -6172489241759247746L;

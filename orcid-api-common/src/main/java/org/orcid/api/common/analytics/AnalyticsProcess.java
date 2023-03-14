@@ -9,8 +9,8 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.http.HttpMethod;
 
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
+import org.glassfish.jersey.server.ContainerRequest;
+import org.glassfish.jersey.server.ContainerResponse;
 
 public class AnalyticsProcess implements Runnable {
 
@@ -97,7 +97,7 @@ public class AnalyticsProcess implements Runnable {
         analyticsData.setClientId(clientDetailsId != null ? clientDetailsId : ip);
         analyticsData.setMethod(request.getMethod());
         analyticsData.setContentType(getContentType());
-        analyticsData.setUserAgent(request.getHeaderValue(HttpHeaders.USER_AGENT));
+        analyticsData.setUserAgent(request.getHeaderString(HttpHeaders.USER_AGENT));
         analyticsData.setResponseCode(response.getStatus());
         analyticsData.setIpAddress(ip);
         analyticsData.setCategory(parser.getCategory());
@@ -107,7 +107,7 @@ public class AnalyticsProcess implements Runnable {
 
     private String getContentType() {
         if (HttpMethod.GET.name().equals(request.getMethod())) {
-            String accept = request.getHeaderValue(HttpHeaders.ACCEPT);
+            String accept = request.getHeaderString(HttpHeaders.ACCEPT);
             if (accept != null && !accept.isEmpty()) {
                 return accept;
             }
@@ -116,7 +116,7 @@ public class AnalyticsProcess implements Runnable {
         // If accept header not set for GETs content type will be used - see
         // AcceptFilter.
         // For other methods content type will be used anyway
-        String contentType = request.getHeaderValue(HttpHeaders.CONTENT_TYPE);
+        String contentType = request.getHeaderString(HttpHeaders.CONTENT_TYPE);
         if (contentType != null && !contentType.isEmpty()) {
             return contentType;
         }

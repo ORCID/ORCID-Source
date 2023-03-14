@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Controller("oauthGenericCallsController")
 public class OauthGenericCallsController extends OauthControllerBase {
@@ -47,7 +47,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
     public ResponseEntity<?> obtainOauth2TokenPost(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         Enumeration<String> paramNames = request.getParameterNames();
-        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
         while(paramNames.hasMoreElements()) {
             String paramName = paramNames.nextElement();
             formParams.add(paramName, request.getParameter(paramName));

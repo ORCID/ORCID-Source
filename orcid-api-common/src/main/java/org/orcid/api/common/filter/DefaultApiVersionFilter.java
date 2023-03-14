@@ -23,7 +23,7 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
-    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/", "/search/", "/oauth/token", OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/", "/static/");
+    private static final List<String> IGNORE_LIST = Arrays.asList("/resources/", "/search/", "/oauth/token", OrcidApiConstants.EXPERIMENTAL_RDF_V1 + "/", "/static/", "/openapi.json");
 
     private static final String WEBHOOK_PATH_REGEX = "^/" + OrcidStringUtils.ORCID_STRING + "/webhook/.+";
 
@@ -47,7 +47,15 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        System.out.println("1 " + httpRequest.getContextPath());
+        System.out.println("2 " + httpRequest.getPathInfo());
+        System.out.println("3 " + httpRequest.getPathTranslated());
+        System.out.println("4 " + httpRequest.getQueryString());
+        System.out.println("5 " + httpRequest.getRequestURI());
+        System.out.println("6 " + httpRequest.getRequestURL());
+        System.out.println("7 " + httpRequest.getServletPath());        
         String path = httpRequest.getServletPath();
+        
         if (IGNORE_LIST.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
         } else if (webhookPattern.matcher(path).matches()) {

@@ -436,9 +436,9 @@ public class JpaJaxbFundingAdapterTest {
     private Funding getFunding(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/funding-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/funding-3.0.xml";
         if (full) {
-            name = "/record_3.0_rc1/samples/read_samples/funding-full-3.0_rc1.xml";
+            name = "/record_3.0/samples/read_samples/funding-full-3.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Funding) unmarshaller.unmarshal(inputStream);

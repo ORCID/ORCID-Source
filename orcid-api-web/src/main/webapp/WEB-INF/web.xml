@@ -129,54 +129,26 @@
         <url-pattern>*</url-pattern>
     </filter-mapping>
 
-	<filter>
-        <filter-name>disable20RCApiFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>disable20RCApiFilter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>
     
-	<filter>
-        <filter-name>disable30RCApiFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>disable30RCApiFilter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>
-    
-	<filter>
-        <filter-name>jersey</filter-name>
-        <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common</param-value>
-        </init-param>                               
-        <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-            <param-value>org.orcid.api.common.filter.ApiVersionCheckFilter;org.orcid.api.common.filter.TokenTargetFilter;org.orcid.api.common.filter.OboApiVersionCheckFilter</param-value>
-        </init-param>
-        <init-param>
-            <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-            <param-value>org.orcid.api.filters.AnalyticsFilter</param-value>
-        </init-param>
-        <init-param>
-			<param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
-			<param-value>/static/.*</param-value>
-		</init-param>
-        <init-param>
-        	<param-name>com.sun.jersey.config.feature.DisableWADL</param-name>
+    <filter>
+	    <filter-name>jersey</filter-name>
+	    <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
+	    <init-param>
+	        <param-name>jersey.config.server.provider.packages</param-name>
+	        <param-value>org.orcid.api.memberV3.server;org.orcid.api.memberV2.server;io.swagger.v3.jaxrs2.integration.resources</param-value>
+	    </init-param>
+	    <init-param>
+            <param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
+            <param-value>/static/.*</param-value>
+         </init-param>
+		<init-param>
+        	<param-name>jersey.config.server.wadl.disableWadl</param-name>
         	<param-value>true</param-value>
     	</init-param>
-    </filter>		
-
-    <filter-mapping>
+	</filter>
+	<filter-mapping>
         <filter-name>jersey</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>  
 
 </web-app>

@@ -108,18 +108,4 @@
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-    <filter>
-        <filter-name>jersey</filter-name>
-        <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common;com.fasterxml.jackson.jaxrs.json</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>jersey</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
 </web-app>

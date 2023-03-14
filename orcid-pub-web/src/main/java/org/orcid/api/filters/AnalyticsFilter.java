@@ -1,6 +1,11 @@
 package org.orcid.api.filters;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
@@ -14,14 +19,11 @@ import org.orcid.core.utils.OrcidRequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
 
 @Provider
 @Component
@@ -29,19 +31,19 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsFilter.class);
     
-    @InjectParam("orcidSecurityManager")
+    @Autowired //@Inject @Named("orcidSecurityManager")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @InjectParam("analyticsClient")
+    @Autowired //@Inject @Named("analyticsClient")
     private AnalyticsClient analyticsClient;
 
-    @InjectParam("clientDetailsEntityCacheManager")
+    @Autowired //@Inject @Named("clientDetailsEntityCacheManager")
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    @InjectParam("profileEntityCacheManager")
+    @Autowired //@Inject @Named("profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
-    @InjectParam("apiAnalyticsTaskExecutor")
+    @Autowired //@Inject @Named("apiAnalyticsTaskExecutor")
     private ThreadPoolTaskExecutor apiAnalyticsTaskExecutor;
     
     @Context
@@ -51,18 +53,18 @@ public class AnalyticsFilter implements ContainerResponseFilter, InitializingBea
     private boolean enablePublicAPIAnalytics;
     
     @Override
-    public ContainerResponse filter(ContainerRequest request, ContainerResponse response) {
+    public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         if (enablePublicAPIAnalytics) {
             AnalyticsProcess analyticsProcess = getAnalyticsProcess(request, response);
             apiAnalyticsTaskExecutor.execute(analyticsProcess);
         }
-        return response;
+        return ;
     }
     
-    private AnalyticsProcess getAnalyticsProcess(ContainerRequest request, ContainerResponse response) {
+    private AnalyticsProcess getAnalyticsProcess(ContainerRequestContext request, ContainerResponseContext response) {
         AnalyticsProcess process = new AnalyticsProcess();
-        process.setRequest(request);
-        process.setResponse(response);
+        //process.setRequest(request);
+        //process.setResponse(response);
         process.setAnalyticsClient(analyticsClient);
         process.setClientDetailsEntityCacheManager(clientDetailsEntityCacheManager);
         process.setClientDetailsId(orcidSecurityManager.getClientIdFromAPIRequest());

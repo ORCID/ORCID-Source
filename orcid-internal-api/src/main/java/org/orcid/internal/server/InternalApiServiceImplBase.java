@@ -22,15 +22,17 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.net.util.Base64;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import io.swagger.annotations.ApiOperation;
+//import io.swagger.annotations.ApiOperation;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@Component
 public abstract class InternalApiServiceImplBase {
     private InternalApiServiceDelegator serviceDelegator;
 
@@ -47,7 +49,7 @@ public abstract class InternalApiServiceImplBase {
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
-    @ApiOperation(value = "Check the server status", hidden = true)
+    //@ApiOperation(value = "Check the server status", hidden = true)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }

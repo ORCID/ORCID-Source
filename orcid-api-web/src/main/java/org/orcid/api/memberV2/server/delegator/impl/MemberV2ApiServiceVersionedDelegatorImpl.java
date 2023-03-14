@@ -20,8 +20,8 @@ import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 
-public class MemberV2ApiServiceVersionedDelegatorImpl implements
-        MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
+public class MemberV2ApiServiceVersionedDelegatorImpl
+        implements MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
     @Resource
     private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
@@ -33,21 +33,21 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
 
     @Resource
     private V2VersionConverterChain v2_1VersionConverterChain;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-    
+
     private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
-    
+
     @Resource
     private OrcidSearchManager orcidSearchManager;
-    
+
     @Resource
     private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
-    
+
     @Override
     public Response viewStatusText() {
         return memberV2ApiServiceDelegator.viewStatusText();
@@ -58,7 +58,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewRecord(orcid));
     }
-    
+
     @Override
     public Response viewActivities(String orcid) {
         checkProfileStatus(orcid, true);
@@ -70,7 +70,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewWork(orcid, putCode));
     }
-    
+
     @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
@@ -94,41 +94,31 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createWorks(String orcid, Object works) {
         checkProfileStatus(orcid, false);
-        
+
         // validate works object before changing version
         Map<Integer, BulkElement> errors = new HashMap<>();
-        
+
         if (works != null) {
             BulkElementContainer workBulk = (BulkElementContainer) works;
-            for (int i = workBulk.getBulk().size() -1; i >= 0; i--) {
+            for (int i = workBulk.getBulk().size() - 1; i >= 0; i--) {
                 BulkElement bulkElement = workBulk.getBulk().get(i);
                 try {
                     schemaValidator.validate(bulkElement);
                 } catch (WebApplicationException e) {
-                    if (org.orcid.jaxb.model.record_rc3.Work.class.isAssignableFrom(bulkElement.getClass())) {
-                        org.orcid.jaxb.model.error_rc3.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2Rc3(9001, 400, e);
-                        workBulk.getBulk().remove(i);
-                        errors.put(i, error);
-                        workBulk.getBulk().add(i, error);
-                    } else if (org.orcid.jaxb.model.record_rc4.Work.class.isAssignableFrom(bulkElement.getClass())) {
-                        org.orcid.jaxb.model.error_rc4.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2Rc4(9001, 400, e);
-                        workBulk.getBulk().remove(i);
-                        errors.put(i, error);
-                        workBulk.getBulk().add(i, error);
-                    } else {
-                        org.orcid.jaxb.model.error_v2.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2(9001, 400, e);
-                        workBulk.getBulk().remove(i);
-                        errors.put(i, error);
-                        workBulk.getBulk().add(i, error);
-                    }
+
+                    org.orcid.jaxb.model.error_v2.OrcidError error = orcidCoreExceptionMapper.getOrcidErrorV2(9001, 400, e);
+                    workBulk.getBulk().remove(i);
+                    errors.put(i, error);
+                    workBulk.getBulk().add(i, error);
+
                 }
             }
         }
-        
+
         works = processObject(works);
         return memberV2ApiServiceDelegator.createWorks(orcid, works);
     }
-    
+
     @Override
     public Response updateWork(String orcid, Long putCode, Object work) {
         checkProfileStatus(orcid, false);
@@ -154,7 +144,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewFundings(orcid));
     }
-    
+
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid, true);
@@ -188,7 +178,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewEducation(orcid, putCode));
     }
-    
+
     @Override
     public Response viewEducations(String orcid) {
         checkProfileStatus(orcid, true);
@@ -222,7 +212,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewEmployment(orcid, putCode));
     }
-    
+
     @Override
     public Response viewEmployments(String orcid) {
         checkProfileStatus(orcid, true);
@@ -262,7 +252,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewPeerReview(orcid, putCode));
     }
-    
+
     @Override
     public Response viewPeerReviews(String orcid) {
         checkProfileStatus(orcid, true);
@@ -328,7 +318,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response findGroupIdRecordByName(String name) {
         return processReponse(memberV2ApiServiceDelegator.findGroupIdRecordByName(name));
     }
-    
+
     @Override
     public Response findGroupIdRecordByGroupId(String groupId) {
         return processReponse(memberV2ApiServiceDelegator.findGroupIdRecordByGroupId(groupId));
@@ -540,29 +530,29 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid, true);
         return processReponse(memberV2ApiServiceDelegator.viewPerson(orcid));
     }
-    
+
     @Override
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         return processReponse(memberV2ApiServiceDelegator.searchByQuery(solrParams));
     }
-    
+
     @Override
     public Response viewBulkWorks(String orcid, String putCodes) {
         return processReponse(memberV2ApiServiceDelegator.viewBulkWorks(orcid, putCodes));
     }
-    
+
     public Response viewClient(String clientId) {
-       return memberV2ApiServiceDelegator.viewClient(clientId);
+        return memberV2ApiServiceDelegator.viewClient(clientId);
     }
 
     private Response processReponse(Response response) {
-        if(externalVersion.equals("2.1")) {
+        if (externalVersion.equals("2.1")) {
             return upgradeResponse(response);
         } else {
             return downgradeResponse(response);
         }
     }
-    
+
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
         V2Convertible result = null;
@@ -572,7 +562,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         }
         return response;
     }
-    
+
     private Response upgradeResponse(Response response) {
         Object entity = response.getEntity();
         V2Convertible result = null;
@@ -584,13 +574,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     }
 
     private Object processObject(Object object) {
-        if(externalVersion.equals("2.1")) {
+        if (externalVersion.equals("2.1")) {
             return downgradeObject(object);
         } else {
             return upgradeObject(object);
         }
     }
-    
+
     private Object upgradeObject(Object entity) {
         V2Convertible result = null;
         if (entity != null) {
@@ -598,15 +588,15 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         }
         return result.getObjectToConvert();
     }
-    
+
     private Object downgradeObject(Object entity) {
         V2Convertible result = null;
         if (entity != null) {
-            if(externalVersion.equals("2.1")) {
+            if (externalVersion.equals("2.1")) {
                 result = v2_1VersionConverterChain.downgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
             } else {
                 result = v2VersionConverterChain.downgrade(new V2Convertible(entity, externalVersion), MemberV2ApiServiceDelegator.LATEST_V2_VERSION);
-            }            
+            }
         }
         return result.getObjectToConvert();
     }
