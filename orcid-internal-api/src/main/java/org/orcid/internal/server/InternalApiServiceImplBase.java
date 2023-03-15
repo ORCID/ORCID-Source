@@ -22,6 +22,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.net.util.Base64;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,7 +39,7 @@ public class InternalApiServiceImplBase {
     private InternalApiServiceDelegator serviceDelegator;
 
     @Resource
-    private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
+    private InternalClientCredentialEndPointDelegator orcidInternalClientCredentialEndPointDelegator;
     
     public void setServiceDelegator(InternalApiServiceDelegator serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
@@ -64,8 +65,8 @@ public class InternalApiServiceImplBase {
     @Path(OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
+    public Response obtainOauth2TokenPost(@FormParam("client_id") String clientId, @FormParam("scope") String scopeList, @FormParam("grant_type") String grantType) {
+        return orcidInternalClientCredentialEndPointDelegator.obtainOauth2Token(clientId, scopeList, grantType);
     }
     
     @GET
