@@ -16,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
@@ -64,7 +65,11 @@ public class InternalApiServiceImplBase {
     @Path(OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
+    public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, @FormParam("scope") String scope, @FormParam("client_id") String clientId ) {
+        MultivaluedMap<String, String> formParams  = new MultivaluedHashMap<String, String> ();
+        formParams.add("grant_type", grantType);
+        formParams.add("scope", scope);
+        formParams.add("client_id", clientId);
         return orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
     }
     
