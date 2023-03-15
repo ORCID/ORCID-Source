@@ -78,7 +78,6 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
-        System.out.println("about to process disambiguated orgs for indexing");
         List<OrgDisambiguatedEntity> entities = null;
         int startIndex = 0;
         do {
