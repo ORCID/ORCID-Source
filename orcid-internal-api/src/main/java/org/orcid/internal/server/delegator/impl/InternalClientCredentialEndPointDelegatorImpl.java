@@ -26,7 +26,6 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
  * @author Angel Montenegro
  * 
  */
-//@Component
 public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl implements InternalClientCredentialEndPointDelegator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
