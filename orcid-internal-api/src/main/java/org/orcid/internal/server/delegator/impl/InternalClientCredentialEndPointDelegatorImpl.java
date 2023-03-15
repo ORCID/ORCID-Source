@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Angel Montenegro
  * 
  */
+//@Component
 public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
@@ -40,6 +43,9 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
         String clientId = formParams.getFirst("client_id");                             
         String scopeList = formParams.getFirst("scope");
         String grantType = formParams.getFirst("grant_type");
+        System.out.println("grant_type: " + grantType);
+        System.out.println("client_id: " + clientId );
+        System.out.println("scope: " + scopeList );
         
         // Verify it is a client_credentials grant type request
         if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {

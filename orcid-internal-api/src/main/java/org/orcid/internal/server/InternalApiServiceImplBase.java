@@ -33,7 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 
  */
 @Component
-public abstract class InternalApiServiceImplBase {
+@Path("/")
+public class InternalApiServiceImplBase {
     private InternalApiServiceDelegator serviceDelegator;
 
     @Resource
