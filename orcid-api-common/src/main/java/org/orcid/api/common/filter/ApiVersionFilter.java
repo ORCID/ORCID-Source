@@ -34,7 +34,14 @@ public class ApiVersionFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String version = checkVersion(httpRequest);
-        checkSection(httpRequest, version);
+        checkSection(httpRequest, version);   
+        System.out.println("1b " + httpRequest.getContextPath());
+        System.out.println("2b " + httpRequest.getPathInfo());
+        System.out.println("3b " + httpRequest.getPathTranslated());
+        System.out.println("4b " + httpRequest.getQueryString());
+        System.out.println("5b " + httpRequest.getRequestURI());
+        System.out.println("6b " + httpRequest.getRequestURL());
+        System.out.println("7b " + httpRequest.getServletPath()); 
         filterChain.doFilter(request, response);
     }
 
@@ -46,6 +53,7 @@ public class ApiVersionFilter extends OncePerRequestFilter {
             version = matcher.group(1);
             httpRequest.setAttribute(API_VERSION_REQUEST_ATTRIBUTE_NAME, version);
         }
+        System.out.println("check version: " + version);
         return version;
     }
 
@@ -65,6 +73,7 @@ public class ApiVersionFilter extends OncePerRequestFilter {
                 section = ApiSection.WEBHOOKS;
             }
         }
+        System.out.println("check section: " + section);
         httpRequest.setAttribute(API_SECTION_REQUEST_ATTRIBUTE_NAME, section);
     }
 

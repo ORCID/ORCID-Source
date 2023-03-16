@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,6 +11,7 @@ import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +20,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl {
+public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl implements InternalClientCredentialEndPointDelegator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
     
@@ -35,12 +34,7 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
     protected LocaleManager localeManager;
     
     @Override
-    @Transactional
-    public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
-        String clientId = formParams.getFirst("client_id");                             
-        String scopeList = formParams.getFirst("scope");
-        String grantType = formParams.getFirst("grant_type");
-        
+    public Response obtainOauth2Token(String clientId, String scopeList, String grantType) {        
         // Verify it is a client_credentials grant type request
         if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
             Object params[] = {grantType};
