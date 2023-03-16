@@ -22,8 +22,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.net.util.Base64;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
+import org.orcid.core.oauth.OAuthError;
+import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -67,7 +71,12 @@ public class InternalApiServiceImplBase {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("client_id") String clientId, @FormParam("scope") String scopeList, @FormParam("grant_type") String grantType) {
-        return orcidInternalClientCredentialEndPointDelegator.obtainOauth2Token(clientId, scopeList, grantType);
+        try {
+            return orcidInternalClientCredentialEndPointDelegator.obtainOauth2Token(clientId, scopeList, grantType);
+        } catch(Exception e) {
+            OAuthError error = OAuthErrorUtils.getOAuthError(e);
+            return Response.status(error.getResponseStatus()).entity(error.getErrorDescription()).build();
+        }
     }
     
     @GET
