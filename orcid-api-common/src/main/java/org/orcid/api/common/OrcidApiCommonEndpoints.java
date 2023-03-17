@@ -21,8 +21,8 @@ import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.locale.LocaleManager;
 import org.springframework.stereotype.Component;
 
-@Path(OAUTH_TOKEN)
 @Component
+@Path(OAUTH_TOKEN)
 public class OrcidApiCommonEndpoints {
 
     @Context
