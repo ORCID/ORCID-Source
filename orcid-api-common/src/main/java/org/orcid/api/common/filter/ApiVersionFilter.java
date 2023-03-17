@@ -35,13 +35,6 @@ public class ApiVersionFilter extends OncePerRequestFilter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String version = checkVersion(httpRequest);
         checkSection(httpRequest, version);   
-        System.out.println("1b " + httpRequest.getContextPath());
-        System.out.println("2b " + httpRequest.getPathInfo());
-        System.out.println("3b " + httpRequest.getPathTranslated());
-        System.out.println("4b " + httpRequest.getQueryString());
-        System.out.println("5b " + httpRequest.getRequestURI());
-        System.out.println("6b " + httpRequest.getRequestURL());
-        System.out.println("7b " + httpRequest.getServletPath()); 
         filterChain.doFilter(request, response);
     }
 
