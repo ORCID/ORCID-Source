@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.version.ApiSection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -19,6 +21,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 
 public class ApiVersionFilter extends OncePerRequestFilter {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiVersionFilter.class);
 
     public static final String API_VERSION_REQUEST_ATTRIBUTE_NAME = "apiVersion";
 
@@ -46,7 +50,7 @@ public class ApiVersionFilter extends OncePerRequestFilter {
             version = matcher.group(1);
             httpRequest.setAttribute(API_VERSION_REQUEST_ATTRIBUTE_NAME, version);
         }
-        System.out.println("check version: " + version);
+        LOGGER.debug("API VERSION: " + version);
         return version;
     }
 
@@ -66,8 +70,8 @@ public class ApiVersionFilter extends OncePerRequestFilter {
                 section = ApiSection.WEBHOOKS;
             }
         }
-        System.out.println("check section: " + section);
         httpRequest.setAttribute(API_SECTION_REQUEST_ATTRIBUTE_NAME, section);
+        LOGGER.debug("API SECTION: " + section);
     }
 
 }

@@ -39,8 +39,10 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.springframework.stereotype.Component;
 
-@Path(OrcidApiConstants.EXPERIMENTAL_RDF_V1 )
+@Component
+@Path(OrcidApiConstants.EXPERIMENTAL_RDF_V1)
 public class ExperimentalRDFResource {
 
     protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;

@@ -156,7 +156,7 @@
 	    <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
 	    <init-param>
 	        <param-name>jersey.config.server.provider.packages</param-name>
-	        <param-value>org.orcid.api.publicV3.server;org.orcid.api.publicV2.server;org.orcid.api.common</param-value>
+	        <param-value>org.orcid.api.publicV3.server;org.orcid.api.publicV2.server;org.orcid.api.common;org.orcid.api.lod;org.orcid.api.common.writer.rdf</param-value>
 	    </init-param>
 	    <init-param>
             <param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
