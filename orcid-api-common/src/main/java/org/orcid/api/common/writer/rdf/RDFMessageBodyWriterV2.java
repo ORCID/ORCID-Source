@@ -45,9 +45,11 @@ import org.orcid.jaxb.model.record_v2.Person;
 import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 //Record
 @Provider
+@Component
 @Produces({ APPLICATION_RDFXML, TEXT_TURTLE, TEXT_N3, N_TRIPLES })
 public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
     
@@ -441,32 +443,32 @@ public class RDFMessageBodyWriterV2 implements MessageBodyWriter<Record>{
     }
 
     private void describePersonalDetails(Name name, Individual person, OntModel m) {
-        
-        if (name.getCreditName() != null) {
-            // User has provided full name
-            String creditName = name.getCreditName().getContent();
-            person.addProperty(FOAF.name, creditName);
-            person.addLabel(creditName, null);
-        } else if (name.getGivenNames() != null && name.getFamilyName() != null) {
-            //@formatter:off
-            // Naive fallback assuming givenNames ~= first name and familyName ~= lastName
-            // See http://www.w3.org/International/questions/qa-personal-names for further
-            // considerations -- we don't report this as foaf:name as we can't be sure of the ordering.
-            //@formatter:on
-
-            // NOTE: ORCID gui is westernized asking for "First name" and
-            // "Last name" and assuming the above mapping
-            String label = name.getGivenNames().getContent() + " " + name.getFamilyName().getContent();
-            person.addLabel(label, null);
+        if(name != null) {
+            if (name.getCreditName() != null) {
+                // User has provided full name
+                String creditName = name.getCreditName().getContent();
+                person.addProperty(FOAF.name, creditName);
+                person.addLabel(creditName, null);
+            } else if (name.getGivenNames() != null && name.getFamilyName() != null) {
+                //@formatter:off
+                // Naive fallback assuming givenNames ~= first name and familyName ~= lastName
+                // See http://www.w3.org/International/questions/qa-personal-names for further
+                // considerations -- we don't report this as foaf:name as we can't be sure of the ordering.
+                //@formatter:on
+    
+                // NOTE: ORCID gui is westernized asking for "First name" and
+                // "Last name" and assuming the above mapping
+                String label = name.getGivenNames().getContent() + " " + name.getFamilyName().getContent();
+                person.addLabel(label, null);
+            }
+    
+            if (name.getGivenNames() != null) {
+                person.addProperty(FOAF.givenName, name.getGivenNames().getContent());
+            }
+            if (name.getFamilyName() != null) {
+                person.addProperty(FOAF.familyName, name.getFamilyName().getContent());
+            }
         }
-
-        if (name.getGivenNames() != null) {
-            person.addProperty(FOAF.givenName, name.getGivenNames().getContent());
-        }
-        if (name.getFamilyName() != null) {
-            person.addProperty(FOAF.familyName, name.getFamilyName().getContent());
-        }
-
     }
 
     protected OntModel getOntModel() {
