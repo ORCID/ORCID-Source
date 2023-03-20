@@ -3,14 +3,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.6.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
        http://www.springframework.org/schema/security/oauth2 https://raw.githubusercontent.com/spring-attic/spring-security-oauth/main/spring-security-oauth2/src/main/resources/org/springframework/security/oauth2/spring-security-oauth2-2.0.xsd">
 
 	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
 	
     <sec:http pattern="/static/**" security="none" create-session="stateless" />
-
+	
 	<!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
     	<sec:csrf disabled="true"/>
@@ -88,8 +90,5 @@
 
     
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
-    
-    <bean id="disable20RCApiFilter" class="org.orcid.api.common.filter.Disable20RCApiFilter" />
-    <bean id="disable30RCApiFilter" class="org.orcid.api.common.filter.Disable30RCApiFilter" />
     
 </beans>      

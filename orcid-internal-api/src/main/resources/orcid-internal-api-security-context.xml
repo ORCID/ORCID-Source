@@ -24,7 +24,7 @@
 
     <!-- Authentication for internal API -->
     <sec:http use-expressions="true" create-session="stateless">
-    	    <sec:csrf disabled="true"/>
+        <sec:csrf disabled="true"/>
         <sec:anonymous enabled="true" />
         <sec:x509 subject-principal-regex="CN=(.*?)," user-service-ref="x509UserService"/>
         <sec:intercept-url pattern="/**" access="#oauth2.clientHasRole('ROLE_CLIENT') or isAnonymous()"/>
@@ -68,8 +68,6 @@
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
-    <bean id="apiVersionFilter" class="org.orcid.api.common.filter.ApiVersionFilter" />              
-    
     <!-- Add in order for it to be referenced in the filter order -->
     <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
         <property name="filters">
@@ -99,7 +97,7 @@
     </bean>    
     
     <!-- Internal endpoint delegator that will allow creating internal tokens such as /orcid-internal and /orcid-internal/person/last_modified -->
-    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
+    <bean id="orcidInternalClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
         <property name="tokenGranter" ref="tokenGranter"/>
         <property name="clientDetailsService" ref="clientDetailsManager"/>        
     </bean> 

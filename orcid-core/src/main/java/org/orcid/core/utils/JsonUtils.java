@@ -138,22 +138,10 @@ public class JsonUtils {
     
     private static boolean stripNullUnicode(Object o) {
         return (o instanceof org.orcid.jaxb.model.message.FundingContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc1.FundingContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc2.FundingContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc3.FundingContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc4.FundingContributors ||
                 o instanceof org.orcid.jaxb.model.record_v2.FundingContributors ||
-                o instanceof org.orcid.jaxb.model.v3.rc1.record.FundingContributors ||
-                o instanceof org.orcid.jaxb.model.v3.rc2.record.FundingContributors ||
                 o instanceof org.orcid.jaxb.model.v3.release.record.FundingContributors ||
                 o instanceof org.orcid.jaxb.model.message.WorkContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc1.WorkContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc2.WorkContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc3.WorkContributors ||
-                o instanceof org.orcid.jaxb.model.record_rc4.WorkContributors ||
                 o instanceof org.orcid.jaxb.model.record_v2.WorkContributors ||
-                o instanceof org.orcid.jaxb.model.v3.rc1.record.WorkContributors ||
-                o instanceof org.orcid.jaxb.model.v3.rc2.record.WorkContributors ||
                 o instanceof org.orcid.jaxb.model.v3.release.record.WorkContributors);
     }
 }

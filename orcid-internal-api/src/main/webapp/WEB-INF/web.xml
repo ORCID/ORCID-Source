@@ -44,17 +44,7 @@
     <filter-mapping>
         <filter-name>jsonpCallbackFilter</filter-name>
         <url-pattern>*</url-pattern>
-    </filter-mapping>
-    
-    <filter>
-        <filter-name>apiVersionFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>apiVersionFilter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>       
 
     <filter>
         <filter-name>corsFilter</filter-name>
@@ -107,19 +97,22 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
-
+    
     <filter>
-        <filter-name>jersey</filter-name>
-        <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
-        <init-param>
-            <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.orcid.api.t1;org.orcid.api.client;org.orcid.api.common;com.fasterxml.jackson.jaxrs.json</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
+	    <filter-name>jersey</filter-name>
+	    <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
+	    <init-param>
+	        <param-name>jersey.config.server.provider.packages</param-name>
+	        <param-value>org.orcid.internal.server</param-value>
+	    </init-param>
+		<init-param>
+        	<param-name>jersey.config.server.wadl.disableWadl</param-name>
+        	<param-value>true</param-value>
+    	</init-param>
+	</filter>
+	<filter-mapping>
         <filter-name>jersey</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping> 
 
 </web-app>
