@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
 import org.orcid.core.groupIds.issn.IssnValidator;
@@ -16,10 +18,9 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
 
+@Component
 public class IssnLoadSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnLoadSource.class);
@@ -28,33 +29,37 @@ public class IssnLoadSource {
 
     private static final int BATCH_SIZE = 30;
 
+    @Resource
     private GroupIdRecordDao groupIdRecordDao;
 
+    @Resource(name="groupIdRecordDaoReadOnly")
     private GroupIdRecordDao groupIdRecordDaoReadOnly;
     
+    @Resource
     private GenericDao<InvalidIssnGroupIdRecordEntity, Long> invalidIssnGroupIdRecordDao;
 
+    @Resource(name="clientDetailsDaoReadOnly")
+    private ClientDetailsDao clientDetailsDaoReadOnly;
+    
     private ClientDetailsEntity orcidSource;
 
+    @Resource
     private IssnValidator issnValidator;
 
+    @Resource
     private IssnClient issnClient;
     
-    @Value("${org.orcid.core.issn.source}")
-    private String issnSource;
-    
-    
-    public void loadIssn() {
+    public void loadIssn(String issnSource) {
+        
         if (issnSource == null) {
-            throw new RuntimeException("Missing the configuration for ORCID source client details id check your environment config for org.orcid.core.issn.source");
+            throw new RuntimeException("Missing the  ORCID source client details id");
         }
-        this.init(issnSource);
+        orcidSource = clientDetailsDaoReadOnly.find(issnSource);
+        if (orcidSource == null) {
+            throw new RuntimeException("Client details entity not found for id " + issnSource);
+        }
+        LOG.debug("Loading ISSN for ORCID source client details id: " + issnSource);
         this.updateIssnGroupIdRecords();
-    }
-
-    public static void main(String[] args) {
-        IssnLoadSource loadIssnData = new IssnLoadSource();
-        loadIssnData.loadIssn();
     }
 
     private void updateIssnGroupIdRecords() {
@@ -109,22 +114,6 @@ public class IssnLoadSource {
             return matcher.group(1);
         }
         return null;
-    }
-
-    @SuppressWarnings({ "resource", "unchecked" })
-    private void init(String orcidSourceClientDetailsId) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
-        groupIdRecordDaoReadOnly = (GroupIdRecordDao) context.getBean("groupIdRecordDaoReadOnly");
-        groupIdRecordDao = (GroupIdRecordDao) context.getBean("groupIdRecordDao");
-        issnValidator = context.getBean(IssnValidator.class);
-        issnClient = context.getBean(IssnClient.class);
-        invalidIssnGroupIdRecordDao = (GenericDao<InvalidIssnGroupIdRecordEntity, Long>) context.getBean("invalidIssnGroupIdRecordDao");
-
-        ClientDetailsDao clientDetailsDaoReadOnly = (ClientDetailsDao) context.getBean("clientDetailsDaoReadOnly");
-        orcidSource = clientDetailsDaoReadOnly.find(orcidSourceClientDetailsId);
-        if (orcidSource == null) {
-            throw new RuntimeException("Client details entity not found for id " + orcidSourceClientDetailsId);
-        }
     }
 
 }

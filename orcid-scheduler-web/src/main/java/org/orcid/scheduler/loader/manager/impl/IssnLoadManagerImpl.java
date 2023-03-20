@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 public class IssnLoadManagerImpl implements IssnLoadManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IssnLoadManagerImpl.class);
-
+    @Resource
+    private IssnLoadSource  issnLoadSource;
 
     @Resource
     private SlackManager slackManager;
@@ -24,17 +25,21 @@ public class IssnLoadManagerImpl implements IssnLoadManager {
 
     @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
+    
+    @Value("${org.orcid.core.issn.source}")
+    private String issnSource;
 
     
     @Override
     public void loadIssn() {
         try {
-            IssnLoadSource loadIssn = new IssnLoadSource();
-            loadIssn.loadIssn();
-            slackManager.sendAlert("Issn date succesfully updated for client XXXX", slackChannel, slackUser);
+            LOGGER.debug("Load ISSN  for client : " + issnSource);
+            issnLoadSource.loadIssn(issnSource);
+            slackManager.sendAlert("Issn  succesfully updated for client " + issnSource, slackChannel, slackUser);
     
         } catch (Exception ex) {
-            slackManager.sendAlert("Error when running ISSN for client XXX ", slackChannel, slackUser);
+            LOGGER.error("Error when running ISSN for client" + issnSource, ex);
+            slackManager.sendAlert("Error when running ISSN for client " + issnSource, slackChannel, slackUser);
 
         }
     }
