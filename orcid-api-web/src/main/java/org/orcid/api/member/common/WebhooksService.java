@@ -21,8 +21,8 @@ import javax.ws.rs.core.UriInfo;
 import org.orcid.api.member.common.delegator.WebhooksServiceDelegator;
 import org.springframework.stereotype.Component;
 
-@Path(WEBHOOKS_PATH)
 @Component
+@Path(WEBHOOKS_PATH)
 public class WebhooksService {
 
     @Context
