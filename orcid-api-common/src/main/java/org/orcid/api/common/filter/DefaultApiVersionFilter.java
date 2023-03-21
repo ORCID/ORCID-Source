@@ -21,12 +21,12 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class DefaultApiVersionFilter extends OncePerRequestFilter {
@@ -44,11 +44,12 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     private static final String VERSION_2_1 = "2.1";
     private static final String VERSION_2_0 = "2.0";
 
-    private String JSON_RESPONSE;
-    private String XML_RESPONSE;
+    private String V3_JSON_RESPONSE;
+    private String V3_XML_RESPONSE;
     
+    private String V2_JSON_RESPONSE;
+    private String V2_XML_RESPONSE;
     
-
     @Resource
     protected OrcidUrlManager orcidUrlManager;
     
@@ -142,33 +143,49 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     }
     
     private String getXmlResponse(String version) throws JAXBException {
-        if (XML_RESPONSE == null) {
-            OrcidError error = new OrcidError();
-            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage", version));
-            error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage", version));
-            error.setResponseCode(HttpStatus.PERMANENT_REDIRECT_308);
-            error.setErrorCode(9056);
-
-            JAXBContext context = JAXBContext.newInstance(error.getClass());
-            StringWriter writer = new StringWriter();
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(error, writer);
-            this.XML_RESPONSE = writer.toString();
+        if (V2_XML_RESPONSE == null) {
+            this.V2_XML_RESPONSE = buildXMLResponse(VERSION_2_0);
         }
-        return XML_RESPONSE;
+
+        if (V3_XML_RESPONSE == null) {
+            this.V3_XML_RESPONSE = buildXMLResponse(VERSION_3_0);
+        }
+
+        return version.equals(VERSION_2_0) ? V2_XML_RESPONSE : V3_XML_RESPONSE;
+    }
+
+    private String buildXMLResponse(String version) throws JAXBException {
+        OrcidError error = new OrcidError();
+        error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage", version));
+        error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage", version));
+        error.setResponseCode(HttpStatus.PERMANENT_REDIRECT_308);
+        error.setErrorCode(9056);
+
+        JAXBContext context = JAXBContext.newInstance(error.getClass());
+        StringWriter writer = new StringWriter();
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(error, writer);
+        return writer.toString();
     }
 
     private String getJsonResponse(String version) {
-        if (JSON_RESPONSE == null) {
-            OrcidError error = new OrcidError();
-            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage", version));
-            error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage", version));
-            error.setResponseCode(HttpServletResponse.SC_MOVED_PERMANENTLY);
-            error.setErrorCode(9056);
-            JSON_RESPONSE = JsonUtils.convertToJsonString(error);
+        if (V2_JSON_RESPONSE == null) {
+            V2_JSON_RESPONSE = buildJSONRespones(VERSION_2_0);
         }
-        return JSON_RESPONSE;
+
+        if (V3_JSON_RESPONSE == null) {
+            V3_JSON_RESPONSE = buildJSONRespones(VERSION_3_0);
+        }
+        return version.equals(VERSION_2_0) ? V2_JSON_RESPONSE : V3_JSON_RESPONSE;
     }
-    
+
+    private String buildJSONRespones(String version) {
+        OrcidError error = new OrcidError();
+        error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage", VERSION_2_0));
+        error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage", version));
+        error.setResponseCode(HttpServletResponse.SC_MOVED_PERMANENTLY);
+        error.setErrorCode(9056);
+        return JsonUtils.convertToJsonString(error);
+    }
 }
