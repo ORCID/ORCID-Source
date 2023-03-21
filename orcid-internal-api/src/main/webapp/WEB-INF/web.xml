@@ -103,7 +103,7 @@
 	    <filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
 	    <init-param>
 	        <param-name>jersey.config.server.provider.packages</param-name>
-	        <param-value>org.orcid.internal.server</param-value>
+	        <param-value>org.orcid.internal.server;org.orcid.api.common</param-value>
 	    </init-param>
 		<init-param>
         	<param-name>jersey.config.server.wadl.disableWadl</param-name>

@@ -71,20 +71,14 @@ public class InternalApiServiceImplBase {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("client_id") String clientId, @FormParam("scope") String scopeList, @FormParam("grant_type") String grantType) {
-        try {
-            return orcidInternalClientCredentialEndPointDelegator.obtainOauth2Token(clientId, scopeList, grantType);
-        } catch(Exception e) {
-            OAuthError error = OAuthErrorUtils.getOAuthError(e);
-            return Response.status(error.getResponseStatus()).entity(error.getErrorDescription()).build();
-        }
+        return orcidInternalClientCredentialEndPointDelegator.obtainOauth2Token(clientId, scopeList, grantType);        
     }
     
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(INTERNAL_API_PERSON_READ)
     public Response viewPersonDetails(@PathParam("orcid") String orcid) {
-        Response response = serviceDelegator.viewPersonLastModified(orcid); 
-        return response;
+        return serviceDelegator.viewPersonLastModified(orcid);         
     }
     
     /**
@@ -96,16 +90,14 @@ public class InternalApiServiceImplBase {
     @Path(MEMBER_INFO)
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response viewMemberDetails(@RequestParam String member) {
-        Response response = serviceDelegator.viewMemberInfo(member);
-        return response;
+        return serviceDelegator.viewMemberInfo(member);
     }
     
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Path(INTERNAL_API_TOGGLZ_READ)
     public Response viewTogglz() {
-        Response response = serviceDelegator.viewTogglz();
-        return response;
+        return serviceDelegator.viewTogglz();
     }
 
     /**
