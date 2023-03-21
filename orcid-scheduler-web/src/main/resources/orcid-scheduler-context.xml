@@ -34,7 +34,7 @@
         <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:900}000"/> 
         <task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
         <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
-        <task:scheduled ref="issnLoadManager" method="loadIssn" cron="${org.orcid.scheduler.web.loadIssnCronConfig:0 0 0 * * FRI"/>
+        <task:scheduled ref="issnLoadManager" method="loadIssn" cron="${org.orcid.scheduler.web.loadIssnCronConfig:0 0 0 * * FRI}"/>
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:20}"/>

@@ -26,7 +26,6 @@ public class LoadDataForIssnSource {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-context.xml");
         issnLoadManager = (IssnLoadManager) context.getBean("issnLoadManager");
         issnDataSource = (IssnLoadSource) context.getBean("issnDataSource");
-
     }
     
     
