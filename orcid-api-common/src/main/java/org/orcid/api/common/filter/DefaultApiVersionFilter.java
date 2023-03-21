@@ -1,6 +1,7 @@
 package org.orcid.api.common.filter;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,15 +12,21 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.eclipse.jetty.http.HttpStatus;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class DefaultApiVersionFilter extends OncePerRequestFilter {
@@ -36,10 +43,17 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     private static final String VERSION_3_0 = "3.0";
     private static final String VERSION_2_1 = "2.1";
     private static final String VERSION_2_0 = "2.0";
+
+    private String JSON_RESPONSE;
+    private String XML_RESPONSE;
+    
     
 
     @Resource
     protected OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private LocaleManager localeManager;
 
     protected Features feature;
     
@@ -85,21 +99,34 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
             } else {
                 if(!version.equals(VERSION_3_0) && !version.equals(VERSION_2_0) && !version.equals(VERSION_2_1)) {
                     String url;
-                    if(version.startsWith(VERSION_2_0)) {
-                        
+                    if(version.startsWith(VERSION_2_0)) {           
                         url= baseUrl + "/v" + VERSION_2_0 + path.replace("/v", "").substring(version.length());
+                        version = VERSION_2_0;
                     }
-                    else if(version.startsWith(VERSION_2_1)) {
-                        
-                        url= baseUrl + "/v" + VERSION_2_1 + path.replace("/v", "").substring(version.length());                     
+                    else if(version.startsWith(VERSION_2_1)) {                  
+                        url= baseUrl + "/v" + VERSION_2_1 + path.replace("/v", "").substring(version.length());
+                        version = VERSION_2_1;
                     }
                     else {
-                        url = baseUrl + "/v" + VERSION_3_0 + path.replace("/v", "").substring(version.length());                   
+                        url = baseUrl + "/v" + VERSION_3_0 + path.replace("/v", "").substring(version.length());
+                        version = VERSION_3_0;
                     } 
                     
                     String redirectURLEncoded = response.encodeRedirectURL(url);
                     response.setStatus(HttpStatus.PERMANENT_REDIRECT_308); 
                     response.setHeader("Location", redirectURLEncoded);
+                    LOGGER.info("Redirecting request '{}' to '{}'", httpRequest.getServletPath(), redirectURLEncoded);
+                    String accept = request.getHeader("Accept") == null ? "" : request.getHeader("Accept").toLowerCase();
+                    if (accept.contains("json")) {
+                        response.getWriter().println(getJsonResponse(version));
+                    } else {
+                        try {
+                            response.getWriter().println(getXmlResponse(version));
+                        } catch (Exception e) {
+                            LOGGER.error("Unable to generate XML message", e);
+                            response.getWriter().println(localeManager.resolveMessage("apiError.9056.developerMessage", version));
+                        }
+                    }
                 }
                 else {
                     filterChain.doFilter(request, response);
@@ -112,6 +139,36 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
         if (accept == null)
             return false;
         return (accept.contains("n3") || accept.contains("rdf") || accept.contains("n-triples") || accept.contains("turtle"));
+    }
+    
+    private String getXmlResponse(String version) throws JAXBException {
+        if (XML_RESPONSE == null) {
+            OrcidError error = new OrcidError();
+            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage", version));
+            error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage", version));
+            error.setResponseCode(HttpStatus.PERMANENT_REDIRECT_308);
+            error.setErrorCode(9056);
+
+            JAXBContext context = JAXBContext.newInstance(error.getClass());
+            StringWriter writer = new StringWriter();
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.marshal(error, writer);
+            this.XML_RESPONSE = writer.toString();
+        }
+        return XML_RESPONSE;
+    }
+
+    private String getJsonResponse(String version) {
+        if (JSON_RESPONSE == null) {
+            OrcidError error = new OrcidError();
+            error.setDeveloperMessage(localeManager.resolveMessage("apiError.9056.developerMessage", version));
+            error.setUserMessage(localeManager.resolveMessage("apiError.9056.userMessage", version));
+            error.setResponseCode(HttpServletResponse.SC_MOVED_PERMANENTLY);
+            error.setErrorCode(9056);
+            JSON_RESPONSE = JsonUtils.convertToJsonString(error);
+        }
+        return JSON_RESPONSE;
     }
     
 }
