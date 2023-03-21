@@ -46,11 +46,12 @@ public class ApiVersionFilter extends OncePerRequestFilter {
         String path = httpRequest.getServletPath();
         Matcher matcher = VERSION_PATTERN.matcher(path);
         String version = null;
+        
         if (matcher.lookingAt()) {
             version = matcher.group(1);
             httpRequest.setAttribute(API_VERSION_REQUEST_ATTRIBUTE_NAME, version);
         }
-        LOGGER.debug("API VERSION: " + version);
+        LOGGER.debug("API VERSION: " + version +  " for Path: " + path);
         return version;
     }
 
