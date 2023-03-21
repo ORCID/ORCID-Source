@@ -16,10 +16,13 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class DefaultApiVersionFilter extends OncePerRequestFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultApiVersionFilter .class);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("/v(\\d.*?)/");
 
@@ -28,6 +31,11 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
     private static final String WEBHOOK_PATH_REGEX = "^/" + OrcidStringUtils.ORCID_STRING + "/webhook/.+";
 
     public static final Pattern webhookPattern = Pattern.compile(WEBHOOK_PATH_REGEX);
+    
+    private static final String VERSION_3_0 = "3.0";
+    private static final String VERSION_2_1 = "2.1";
+    private static final String VERSION_2_0 = "2.0";
+    
 
     @Resource
     protected OrcidUrlManager orcidUrlManager;
@@ -59,23 +67,35 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
             if (matcher.lookingAt()) {
                 version = matcher.group(1);
             }
-
+            String baseUrl = isPublicApi ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
             if (PojoUtil.isEmpty(version)) {
                 if (isLODButNotJSONLD(request.getHeader("Accept"))) {
                     String redirectUri = orcidUrlManager.getPubBaseUrl() + OrcidApiConstants.EXPERIMENTAL_RDF_V1 + path;
                     response.sendRedirect(redirectUri);
                 } else {
-                    String baseUrl = isPublicApi ? orcidUrlManager.getPubBaseUrl() : orcidUrlManager.getApiBaseUrl();
                     if (feature == null || feature.isActive()) {
-                        String redirectUri = baseUrl + "/v3.0" + path;
+                        String redirectUri = baseUrl + "/v" +VERSION_3_0 + path;
                         response.sendRedirect(redirectUri);
                     } else {
-                        String redirectUri = baseUrl + "/v2.0" + path;
+                        String redirectUri = baseUrl + "/v" + VERSION_2_0 + path;
                         response.sendRedirect(redirectUri);
                     }
                 }
             } else {
-                filterChain.doFilter(request, response);
+                if(!version.equals(VERSION_3_0) && !version.equals(VERSION_2_0) && !version.equals(VERSION_2_1)) {
+                    if(version.startsWith(VERSION_2_0)) {
+                        response.sendRedirect(baseUrl + "/v" + VERSION_2_0 + path.replace("/v", "").substring(version.length()));
+                    }
+                    else if(version.startsWith(VERSION_2_1)) {
+                        response.sendRedirect(baseUrl + "/v" + VERSION_2_1 + path.replace("/v", "").substring(version.length()));
+                    }
+                    else {
+                        response.sendRedirect(baseUrl + "/v" + VERSION_3_0 + path.replace("/v", "").substring(version.length()));
+                    } 
+                }
+                else {
+                    filterChain.doFilter(request, response);
+                }
             }
         }
     }
@@ -85,4 +105,5 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
             return false;
         return (accept.contains("n3") || accept.contains("rdf") || accept.contains("n-triples") || accept.contains("turtle"));
     }
+    
 }
