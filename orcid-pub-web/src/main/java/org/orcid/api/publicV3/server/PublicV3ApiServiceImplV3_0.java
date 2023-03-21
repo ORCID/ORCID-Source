@@ -58,6 +58,7 @@ import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -382,7 +383,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SEARCH_PATH)
   public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
-      Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+      Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
       return jsonQueryResults;
   }
@@ -391,7 +392,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(TEXT_CSV)
   @Path(CSV_SEARCH_PATH)
   public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
-      Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+      Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
       return csvQueryResults;
   }
@@ -400,7 +401,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EXPANDED_SEARCH_PATH)
   public Response expandedSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
-      Map<String, List<String>> solrParams = uriInfo.getQueryParameters();
+      Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);
       return queryResults;
   }
