@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.HttpStatus;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
@@ -83,15 +84,22 @@ public class DefaultApiVersionFilter extends OncePerRequestFilter {
                 }
             } else {
                 if(!version.equals(VERSION_3_0) && !version.equals(VERSION_2_0) && !version.equals(VERSION_2_1)) {
+                    String url;
                     if(version.startsWith(VERSION_2_0)) {
-                        response.sendRedirect(baseUrl + "/v" + VERSION_2_0 + path.replace("/v", "").substring(version.length()));
+                        
+                        url= baseUrl + "/v" + VERSION_2_0 + path.replace("/v", "").substring(version.length());
                     }
                     else if(version.startsWith(VERSION_2_1)) {
-                        response.sendRedirect(baseUrl + "/v" + VERSION_2_1 + path.replace("/v", "").substring(version.length()));
+                        
+                        url= baseUrl + "/v" + VERSION_2_1 + path.replace("/v", "").substring(version.length());                     
                     }
                     else {
-                        response.sendRedirect(baseUrl + "/v" + VERSION_3_0 + path.replace("/v", "").substring(version.length()));
+                        url = baseUrl + "/v" + VERSION_3_0 + path.replace("/v", "").substring(version.length());                   
                     } 
+                    
+                    String redirectURLEncoded = response.encodeRedirectURL(url);
+                    response.setStatus(HttpStatus.PERMANENT_REDIRECT_308); 
+                    response.setHeader("Location", redirectURLEncoded);
                 }
                 else {
                     filterChain.doFilter(request, response);
