@@ -97,9 +97,10 @@
     </bean>    
     
     <!-- Internal endpoint delegator that will allow creating internal tokens such as /orcid-internal and /orcid-internal/person/last_modified -->
-    <bean id="orcidInternalClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
+    <!-- Should overwrite the default OrcidClientCredentialEndPointDelegatorImpl that should be used in the Public and Members API -->
+    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
         <property name="tokenGranter" ref="tokenGranter"/>
         <property name="clientDetailsService" ref="clientDetailsManager"/>        
-    </bean> 
+    </bean>     
     
 </beans>
