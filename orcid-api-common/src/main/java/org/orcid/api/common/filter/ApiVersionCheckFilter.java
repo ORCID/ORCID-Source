@@ -17,6 +17,7 @@ import org.orcid.core.utils.OrcidStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import static org.orcid.core.api.OrcidApiConstants.MEMBER_INFO;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,6 +34,8 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter{
     public static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
     private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
+    
+    private static final String MEMBER_INFO_PATH = "member-info";
     
     public ApiVersionCheckFilter() {
     }
@@ -55,7 +58,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter{
         if (matcher.lookingAt()) {
             version = matcher.group(1);
         }
-        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
+        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !MEMBER_INFO_PATH.equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
             if(!RequestMethod.GET.name().equals(method)) {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    
