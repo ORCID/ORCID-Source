@@ -41,7 +41,6 @@ public class InternalApiServiceImplBase {
     @GET
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
-    //@ApiOperation(value = "Check the server status", hidden = true)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();
     }        
