@@ -185,7 +185,7 @@ public class WebhookManagerImpl implements WebhookManager {
             }            
         } catch(Exception e) {
             LOGGER.warn("Exception processing webhook '{}' for '{}':'{}'. Error: {}", new Object[] { webhook.getUri(),
-                    clientId, orcid, e});
+                    clientId, orcid, e.getMessage()});
             webhookDao.markAsFailed(orcid, uri);
         } finally {
             decreaseWebhook(clientId);
@@ -251,7 +251,7 @@ public class WebhookManagerImpl implements WebhookManager {
             HttpResponse<String> response = httpRequestUtils.doPost(url);
             return response.statusCode();
         } catch (IOException | InterruptedException | URISyntaxException e) {
-            LOGGER.error(String.format("Error processing webhook %s", url), e);
+            LOGGER.error(String.format("Error processing webhook %s", url), e.getMessage());
         } 
         return 0;
     }
