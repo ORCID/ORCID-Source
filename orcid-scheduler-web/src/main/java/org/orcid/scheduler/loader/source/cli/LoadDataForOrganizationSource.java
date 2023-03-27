@@ -1,6 +1,8 @@
 package org.orcid.scheduler.loader.source.cli;
 
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -36,6 +38,7 @@ public class LoadDataForOrganizationSource {
      * 
      */
     @SuppressWarnings({ "resource" })
+    @PostConstruct
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-context.xml");
         orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
