@@ -41,7 +41,7 @@ public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
 
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
     
-    @Value("${org.orcid.core.idpMetadataUrlsSpaceSeparated:http://www.testshib.org/metadata/testshib-providers.xml https://engine.surfconext.nl/authentication/idp/metadata}")
+    @Value("${org.orcid.core.idpMetadataUrlsSpaceSeparated:https://samltest.id/saml/sp https://engine.surfconext.nl/authentication/idp/metadata}")
     private String metadataUrlsString;
     
     @Resource
@@ -60,6 +60,7 @@ public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
         XPathExpression entityDescriptorXpath = compileXPath(xpath, "//md:EntityDescriptor");
         
         for (String metadataUrl : metadataUrls) {
+            LOGGER.info("About to download idp metadata from {}", metadataUrl);
             Document document = downloadMetadata(metadataUrl);
             NodeList nodes = evaluateXPathNodeList(entityDescriptorXpath, document);
             for (int i = 0; i < nodes.getLength(); i++) {
@@ -68,13 +69,12 @@ public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
                 LOGGER.info("Found identity provider: {}", incoming.toShortString());
                 saveOrUpdateIdentityProvider(incoming);
             }
+            LOGGER.info("Succesfully loaded metadata from: {}", metadataUrl);
         }
     }
-    private Document downloadMetadata(String metadataUrl) {
-        LOGGER.info("About to download idp metadata from {}", metadataUrl);
+    private Document downloadMetadata(String metadataUrl) {        
         JerseyClientResponse<Document, String> response = jerseyClientHelper.executeGetRequest(metadataUrl, MediaType.APPLICATION_XML_TYPE, Document.class, String.class);
-        Document document = response.getEntity();
-        return document;
+        return response.getEntity();
     }
 
     private void saveOrUpdateIdentityProvider(IdentityProviderEntity incoming) {
