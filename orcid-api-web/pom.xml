@@ -79,17 +79,12 @@
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
-        
         <!-- Togglz testing support -->	
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-junit</artifactId>		
             <scope>test</scope>
         </dependency>
-
-=======
->>>>>>> development
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
