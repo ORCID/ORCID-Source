@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -35,12 +34,10 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
     protected LocaleManager localeManager;
     
     @Override
-    @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
-        String clientId = formParams.getFirst("client_id");                             
-        String scopeList = formParams.getFirst("scope");
-        String grantType = formParams.getFirst("grant_type");
-        
+        String grantType = formParams.getFirst(OrcidOauth2Constants.GRANT_TYPE);
+        String scopeList = formParams.getFirst(OrcidOauth2Constants.SCOPE_PARAM);
+        String clientId = formParams.getFirst(OrcidOauth2Constants.CLIENT_ID_PARAM);
         // Verify it is a client_credentials grant type request
         if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
             Object params[] = {grantType};

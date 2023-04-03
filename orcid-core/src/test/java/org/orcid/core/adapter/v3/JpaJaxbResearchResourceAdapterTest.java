@@ -286,7 +286,7 @@ public class JpaJaxbResearchResourceAdapterTest extends MockSourceNameCache {
     private ResearchResource getResearchResource() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { ResearchResource.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/research-resource-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/research-resource-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (ResearchResource) unmarshaller.unmarshal(inputStream);
     }

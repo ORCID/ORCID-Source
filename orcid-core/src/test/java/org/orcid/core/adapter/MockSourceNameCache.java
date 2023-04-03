@@ -7,6 +7,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.BaseTest;
+
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Matchers;
@@ -30,7 +32,7 @@ import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
  * @author Angel Montenegro
  * 
  */
-public class MockSourceNameCache {
+public class MockSourceNameCache extends BaseTest {
     protected static String CLIENT_SOURCE_ID = "APP-0000000000000001";
     
     @Resource

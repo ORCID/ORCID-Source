@@ -20,6 +20,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -27,7 +28,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.core.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,18 +44,20 @@ import org.springframework.stereotype.Component;
 @Component("defaultPermissionChecker")
 public class DefaultPermissionChecker implements PermissionChecker {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPermissionChecker.class);
+    
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
-    
+
     @Resource(name = "profileEntityManager")
     private ProfileEntityManager profileEntityManager;
-   
-    	@Resource
-    	private ProfileDao profileDao;
-    
-    	@Value("${org.orcid.core.baseUri}")
-    	private String baseUrl;
-	
+
+    @Resource
+    private ProfileDao profileDao;
+
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
+
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
@@ -120,6 +124,7 @@ public class DefaultPermissionChecker implements PermissionChecker {
      */
     @Override
     public void checkPermissions(Authentication authentication, ScopePathType requiredScope, String orcid) {
+        LOGGER.debug("Checking permissions on token");
         performPermissionChecks(authentication, requiredScope, orcid, null);
     }
 

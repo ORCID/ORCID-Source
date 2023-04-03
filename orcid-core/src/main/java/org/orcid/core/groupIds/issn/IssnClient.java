@@ -19,6 +19,9 @@ public class IssnClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
     
+    private static final String START_OF_STRING="\u0098";
+    private static final String STRING_TERMINATOR = "\u009C";
+    
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
     
@@ -77,7 +80,9 @@ public class IssnClient {
     }
     
     private String cleanText(String text) {
-        return text.replaceAll("\\p{C}", "");
+        return text.replaceAll("\\p{C}", "")
+                .replaceAll(START_OF_STRING,"")
+                .replaceAll(STRING_TERMINATOR, "");
     }
     
 }

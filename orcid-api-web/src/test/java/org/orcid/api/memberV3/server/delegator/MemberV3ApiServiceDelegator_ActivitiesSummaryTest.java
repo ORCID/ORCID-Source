@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -64,7 +65,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)

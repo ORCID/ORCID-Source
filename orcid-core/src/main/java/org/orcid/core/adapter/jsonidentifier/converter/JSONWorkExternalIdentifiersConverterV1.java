@@ -29,18 +29,18 @@ public class JSONWorkExternalIdentifiersConverterV1 {
 
             if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(type)) {
                 if (!workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK)) {
-                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF.value());
+                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.common.Relationship.PART_OF.value());
                 } else {
-                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
+                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF.value());
                 }
             } else if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(type)) {
                 if (workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || workType.equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
-                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF.value());
+                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.common.Relationship.PART_OF.value());
                 } else {
-                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
+                    jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF.value());
                 }
             } else {
-                jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
+                jsonWorkExternalIdentifier.setRelationship(org.orcid.jaxb.model.common.Relationship.SELF.value());
             }
             workExternalIdentifiers.getWorkExternalIdentifier().add(jsonWorkExternalIdentifier);
         }

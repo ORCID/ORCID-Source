@@ -894,7 +894,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         String orcid = getCurrentUserOrcid();
         if (recordNameManager.exists(orcid)) {
-            recordNameManager.updateRecordName(orcid, name);
+            NamesForm names = NamesForm.valueOf(recordNameManager.getRecordName(orcid));
+            if (!names.compare(nf)) {
+                recordNameManager.updateRecordName(orcid, name);
+            }
         } else {
             recordNameManager.createRecordName(orcid, name);
         }
@@ -947,7 +950,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                 }                  
             }else{
                 if (biographyManager.exists(orcid)) {
-                    biographyManager.updateBiography(orcid, bio);
+                    BiographyForm biographyForm = BiographyForm.valueOf(biographyManager.getBiography(orcid));
+                    if (!biographyForm.compare(bf)) {
+                        biographyManager.updateBiography(orcid, bio);
+                    }
                 } else {
                     biographyManager.createBiography(orcid, bio);
                 }                

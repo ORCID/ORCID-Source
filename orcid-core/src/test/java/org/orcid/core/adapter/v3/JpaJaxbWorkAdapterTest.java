@@ -53,7 +53,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
@@ -125,7 +125,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), workEntity.getVisibility());
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
-        assertTrue(PojoUtil.isEmpty(workEntity.getSubtitle()));
+        assertEquals("common:subtitle",workEntity.getSubtitle());
         assertEquals("common:translated-title", workEntity.getTranslatedTitle());
         assertEquals("en", workEntity.getTranslatedTitleLanguageCode());
         assertEquals("work:short-description", workEntity.getDescription());
@@ -458,9 +458,9 @@ public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc2/samples/read_samples/work-3.0_rc2.xml";
+        String name = "/record_3.0/samples/read_samples/work-3.0.xml";
         if (full) {
-            name = "/record_3.0_rc2/samples/read_samples/work-full-3.0_rc2.xml";
+            name = "/record_3.0/samples/read_samples/work-full-3.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);

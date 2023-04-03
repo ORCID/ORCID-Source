@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.MediaType;
 
 public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
 
@@ -41,7 +41,7 @@ public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
 
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
     
-    @Value("${org.orcid.core.idpMetadataUrlsSpaceSeparated:http://www.testshib.org/metadata/testshib-providers.xml https://engine.surfconext.nl/authentication/idp/metadata}")
+    @Value("${org.orcid.core.idpMetadataUrlsSpaceSeparated:https://samltest.id/saml/sp https://engine.surfconext.nl/authentication/idp/metadata}")
     private String metadataUrlsString;
     
     @Resource
@@ -59,31 +59,22 @@ public class IdentityProviderLoaderImpl implements IdentityProviderLoader {
         XPath xpath = createXPath();
         XPathExpression entityDescriptorXpath = compileXPath(xpath, "//md:EntityDescriptor");
         
-        System.out.println("---------------------------------------------------------------");
-        System.out.println("Start");
         for (String metadataUrl : metadataUrls) {
-            System.out.println("---------------------------------------------------------------");
-            System.out.println("Downloading document for " + metadataUrl);
-            System.out.println("---------------------------------------------------------------");
+            LOGGER.info("About to download idp metadata from {}", metadataUrl);
             Document document = downloadMetadata(metadataUrl);
-            System.out.println("Document is ready ");
             NodeList nodes = evaluateXPathNodeList(entityDescriptorXpath, document);
-            System.out.println("---------------------------------------------------------------");
-            System.out.println("Number of nodes: " + nodes.getLength());
             for (int i = 0; i < nodes.getLength(); i++) {
                 Element element = (Element) nodes.item(i);
                 IdentityProviderEntity incoming = createEntityFromXml(element);
-                System.out.println("Found identity provider: " + incoming.toShortString());
                 LOGGER.info("Found identity provider: {}", incoming.toShortString());
                 saveOrUpdateIdentityProvider(incoming);
             }
+            LOGGER.info("Succesfully loaded metadata from: {}", metadataUrl);
         }
     }
-    private Document downloadMetadata(String metadataUrl) {
-        LOGGER.info("About to download idp metadata from {}", metadataUrl);
+    private Document downloadMetadata(String metadataUrl) {        
         JerseyClientResponse<Document, String> response = jerseyClientHelper.executeGetRequest(metadataUrl, MediaType.APPLICATION_XML_TYPE, Document.class, String.class);
-        Document document = response.getEntity();
-        return document;
+        return response.getEntity();
     }
 
     private void saveOrUpdateIdentityProvider(IdentityProviderEntity incoming) {

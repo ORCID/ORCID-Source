@@ -47,10 +47,9 @@
     </bean>
      
     <!--  Internal API -->
+    <bean id="internalApiServiceImplBase" class="org.orcid.internal.server.InternalApiServiceImplBase">
+    	<property name="serviceDelegator" ref="internalApiServiceDelegator"/>
+    </bean> 
     <bean id="internalApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
-    <bean id="internalApiServiceImplV1_0_rc1" class="org.orcid.internal.server.InternalApiServiceImplV1_0_rc1">
-        <property name="serviceDelegator" ref="internalApiServiceDelegator"/>
-    </bean>
-
-
+    
 </beans>

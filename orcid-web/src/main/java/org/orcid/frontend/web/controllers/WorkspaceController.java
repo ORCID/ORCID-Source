@@ -310,8 +310,11 @@ public class WorkspaceController extends BaseWorkspaceController {
                 return onf;   
             }
             
-            OtherNames otherNames = onf.toOtherNames();                
-            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
+            OtherNames otherNames = onf.toOtherNames();
+            OtherNamesForm otherNamesForm = OtherNamesForm.valueOf(otherNameManager.getOtherNames(getCurrentUserOrcid()));
+            if (!otherNamesForm.compare(onf)) {
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);
+            }
         }
 
         return onf;

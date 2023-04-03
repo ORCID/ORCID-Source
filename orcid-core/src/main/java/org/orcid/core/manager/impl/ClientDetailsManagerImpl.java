@@ -49,15 +49,6 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     private ClientDetailsDao clientDetailsDaoReadOnly;
     
     @Resource
-    private ClientSecretDao clientSecretDao;
-
-    @Resource
-    private ClientRedirectDao clientRedirectDao;
-
-    @Resource
-    private EncryptionManager encryptionManager;    
-
-    @Resource
     private AppIdGenerationManager appIdGenerationManager;
     
     @Resource

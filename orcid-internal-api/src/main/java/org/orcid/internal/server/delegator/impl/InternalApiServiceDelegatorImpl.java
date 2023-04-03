@@ -28,12 +28,14 @@ import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.Member;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@Component
 public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelegator {
 
     @Resource(name = "membersManagerV3")
@@ -50,6 +52,7 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
 
     @Override
     public Response viewStatusText() {
+        
         return Response.ok(STATUS_OK_MESSAGE).build();
     }
 
