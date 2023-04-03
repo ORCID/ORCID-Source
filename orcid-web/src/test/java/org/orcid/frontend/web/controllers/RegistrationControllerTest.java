@@ -177,10 +177,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         });
         
         doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString());
-        doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());
-        
-        // Disable all features by default
-        togglzRule.disableAll();
+        doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());        
     }
     
     @Test

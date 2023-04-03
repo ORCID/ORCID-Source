@@ -50,7 +50,11 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
         </dependency>        
-
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-core</artifactId>            
+        </dependency>
+        
         <!-- Provided -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -69,11 +73,10 @@
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Togglz testing support -->
+        <!-- Togglz testing support -->        
         <dependency>
             <groupId>org.togglz</groupId>
-            <artifactId>togglz-junit</artifactId>
-            <version>2.4.1.Final</version>
+            <artifactId>togglz-junit</artifactId>            
             <scope>test</scope>
         </dependency>		
     </dependencies>

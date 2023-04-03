@@ -3,8 +3,11 @@ package org.orcid.core.togglz;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -22,6 +25,8 @@ import org.togglz.core.user.UserProvider;
 @Component
 public class OrcidTogglzConfiguration implements TogglzConfig {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrcidTogglzConfiguration.class);
+    
     @Resource(name = "featuresDataSource")
     private DataSource dataSource;
 
@@ -57,7 +62,7 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
     public UserProvider getUserProvider() {
         return new UserProvider() {
             @Override
-            public FeatureUser getCurrentUser() {
+            public FeatureUser getCurrentUser() {                
                 boolean isAdmin = false;
                 String userOrcid = null;
                 SecurityContext context = SecurityContextHolder.getContext();
@@ -72,6 +77,7 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
                         }
                     }
                 }
+                LOG.debug("Is user {} and admin? {}", userOrcid, isAdmin);
                 return new SimpleFeatureUser(userOrcid, isAdmin);
             }
         };

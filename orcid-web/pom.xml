@@ -16,8 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <main.basedir>${project.parent.basedir}</main.basedir>
-        <togglz.version>2.6.1.Final</togglz.version>
+        <main.basedir>${project.parent.basedir}</main.basedir>        
     </properties>
 
     <dependencies>
@@ -180,34 +179,26 @@
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
-            <version>${togglz.version}</version>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-servlet</artifactId>
-            <version>${togglz.version}</version>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-spring-web</artifactId>
-            <version>${togglz.version}</version>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-spring-security</artifactId>
-            <version>${togglz.version}</version>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-console</artifactId>
-            <version>${togglz.version}</version>
-        </dependency>
-
-        <!-- Togglz testing support -->
+        </dependency>        
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-junit</artifactId>
-            <version>${togglz.version}</version>
             <scope>test</scope>
         </dependency>
 
