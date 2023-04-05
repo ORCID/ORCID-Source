@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
+import org.springframework.stereotype.Component;
 
 
 //import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import io.swagger.annotations.AuthorizationScope;
 */
 
 //@Api("Identifier API")
+@Component
 @Path("/v{version: 2.0|2.1|3.0}" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImpl {
 
