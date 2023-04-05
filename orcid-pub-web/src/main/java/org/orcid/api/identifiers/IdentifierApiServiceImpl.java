@@ -7,6 +7,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.glassfish.jersey.message.XmlHeader;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ScopeConstants;
@@ -44,9 +45,10 @@ public class IdentifierApiServiceImpl {
   @GET
   @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
   @Path("")
+  @XmlHeader(xmllocation)
   /*@Operation(description = "Fetch identifier type map. Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
   @ApiResponses(value = { @ApiResponse(code = 200, message = "")})
-  @XmlHeader(xmllocation)*/
+  */
   //public Response viewIdentifierTypes(@ApiParam() @QueryParam("locale") String locale) {
   public Response viewIdentifierTypes(@QueryParam("locale") String locale) {
       if (locale == null || locale.isEmpty())
