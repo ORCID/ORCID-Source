@@ -18,7 +18,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -79,11 +78,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/OrcidOauth2AuthorisationDetailsData.xml", "/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
                 "/data/SubjectEntityData.xml"));
-    }
-    
-    @Before
-    public void before() {
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
     }
     
     @Test
@@ -183,27 +177,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         RequestContextHolder.setRequestAttributes(attrs);
         String invalidTokenValue = "invalid";
         
-        ///////////////
-        // Togglz off//
-        ///////////////
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-        
-        mockHttpServletRequest.setMethod(RequestMethod.GET.name());
-        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
-        
-        mockHttpServletRequest.setMethod(RequestMethod.POST.name());
-        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
-        
-        mockHttpServletRequest.setMethod(RequestMethod.PUT.name());
-        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
-        
-        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
-        catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
-        ///////////////
-        // Togglz on//
-        ///////////////
-        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-        
         mockHttpServletRequest.setMethod(RequestMethod.GET.name());
         catchInvalidTokenExceptionOnLoadAuthentication(invalidTokenValue, "Invalid access token: invalid");
         
@@ -293,25 +266,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     private void checkAuthenticationFailsOnExpiredTokenWithRequestMethod(MockHttpServletRequest mockHttpServletRequest, RequestMethod rm) {
         mockHttpServletRequest.setMethod(rm.name());        
         
-        ///////////////        
-        // Togglz off//
-        ///////////////
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-        
         OrcidOauth2TokenDetail expiredToken = buildExpiredToken("token-value-" + rm.name());        
-        orcidOauthTokenDetailService.createNew(expiredToken);
-        
-        // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
-        catchInvalidTokenExceptionOnLoadAuthentication("token-value-" + rm.name(), "Access token expired: token-value-" + rm.name());
-                
-        // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
-        catchInvalidTokenExceptionOnLoadAuthentication("token-value-" + rm.name(), "Invalid access token: token-value-" + rm.name());        
-        
-        ///////////////        
-        // Togglz on//
-        ///////////////
-        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
-        // Try again
         expiredToken = buildExpiredToken("token-value-2-" + rm.name());        
         orcidOauthTokenDetailService.createNew(expiredToken);
         
@@ -354,21 +309,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     private void checkAuthenticationFailsOnDisabledTokenWithRequestMethod(MockHttpServletRequest mockHttpServletRequest, RequestMethod rm, RevokeReason revokeReason) {
         mockHttpServletRequest.setMethod(rm.name());        
         
-        ///////////////        
-        // Togglz off//
-        ///////////////
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-        
         OrcidOauth2TokenDetail disabledToken = buildDisabledToken("token-value-" + rm.name() + revokeReason.name(), revokeReason);        
-        orcidOauthTokenDetailService.createNew(disabledToken);
-        
-        catchInvalidTokenExceptionOnLoadAuthentication("token-value-" + rm.name(), "Invalid access token: token-value-" + rm.name());                               
-        
-        ///////////////        
-        // Togglz on//
-        ///////////////
-        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
-        // Try again
         disabledToken = buildDisabledToken("token-value-2-" + rm.name() + revokeReason.name(), revokeReason);        
         orcidOauthTokenDetailService.createNew(disabledToken);
         
@@ -382,11 +323,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
         RequestContextHolder.setRequestAttributes(attrs);
         mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
-        
-        ///////////////        
-        // Togglz on//
-        ///////////////
-        togglzRule.enable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);        
         
         ///////////////////////////////
         // Active tokens should work //
@@ -419,37 +355,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked();       
     }
     
-    @Test
-    public void disabledTokenOnDeleteWithTogglzOffTest() {
-        // Mock request attributes
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        RequestAttributes attrs = new ServletRequestAttributes(mockHttpServletRequest);
-        RequestContextHolder.setRequestAttributes(attrs);
-        mockHttpServletRequest.setMethod(RequestMethod.DELETE.name());
-
-        ///////////////
-        // Togglz off//
-        ///////////////
-        togglzRule.disable(Features.ALLOW_DELETE_WITH_REVOKED_TOKENS);
-
-        //////////////////////////////
-        // USER_REVOKED should fail //
-        //////////////////////////////
-        String tokenValue = "token-value-"+ Math.random() + "-" + RequestMethod.DELETE + RevokeReason.USER_REVOKED;
-        OrcidOauth2TokenDetail userRevokedDisabledToken = buildDisabledToken(tokenValue, RevokeReason.USER_REVOKED);
-        orcidOauthTokenDetailService.createNew(userRevokedDisabledToken);
-
-        catchInvalidTokenExceptionOnLoadAuthentication(tokenValue, "Invalid access token: " + tokenValue);
-        
-        ///////////////////////////////////
-        // All other should fail as well //
-        ///////////////////////////////////
-        disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked();
-    }
-
     private void disabledTokensOnDeleteShouldAllwaysFailIfTheRevokeReasonIsNotUserRevoked() {
-        boolean isTogglzOn = Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive();
-        
         // AUTH_CODE_REUSED should fail
         String tokenValue = "token-value-" + Math.random() + "-" + RequestMethod.DELETE + RevokeReason.AUTH_CODE_REUSED;
         OrcidOauth2TokenDetail disabledToken = buildDisabledToken(tokenValue, RevokeReason.AUTH_CODE_REUSED);        
@@ -459,11 +365,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
             tokenServices.loadAuthentication(tokenValue);
             fail();
         } catch(InvalidTokenException e) {
-            if(isTogglzOn) { 
-                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: AUTH_CODE_REUSED", e.getMessage());
-            } else {
-                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
-            }
+            assertEquals("Invalid access token: " + tokenValue + ", revoke reason: AUTH_CODE_REUSED", e.getMessage());            
         }
         
         // CLIENT_REVOKED should fail
@@ -475,11 +377,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
             tokenServices.loadAuthentication(tokenValue);
             fail();
         } catch(InvalidTokenException e) {
-            if(isTogglzOn) {
-                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: CLIENT_REVOKED", e.getMessage());
-            } else {
-                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
-            }
+            assertEquals("Invalid access token: " + tokenValue + ", revoke reason: CLIENT_REVOKED", e.getMessage());            
         }
         
         // RECORD_DEACTIVATED should fail
@@ -491,11 +389,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
             tokenServices.loadAuthentication(tokenValue);
             fail();
         } catch(InvalidTokenException e) {
-            if(isTogglzOn) {
-                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: RECORD_DEACTIVATED", e.getMessage());
-            } else {
-                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
-            }
+            assertEquals("Invalid access token: " + tokenValue + ", revoke reason: RECORD_DEACTIVATED", e.getMessage());            
         }
         
         // STAFF_REVOKED should fail
@@ -507,11 +401,7 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
             tokenServices.loadAuthentication(tokenValue);
             fail();
         } catch(InvalidTokenException e) {
-            if(isTogglzOn) {
-                assertEquals("Invalid access token: " + tokenValue + ", revoke reason: STAFF_REVOKED", e.getMessage());
-            } else { 
-                assertEquals("Invalid access token: " + tokenValue, e.getMessage());
-            }
+            assertEquals("Invalid access token: " + tokenValue + ", revoke reason: STAFF_REVOKED", e.getMessage());            
         }
     }
     
