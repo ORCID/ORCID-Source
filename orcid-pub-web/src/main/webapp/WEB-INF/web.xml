@@ -97,6 +97,16 @@
 		<filter-name>corsFilter</filter-name>
 		<url-pattern>*</url-pattern>
 	</filter-mapping>
+	
+	<filter>
+		<filter-name>staticContentFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>staticContentFilter</filter-name>		
+		<url-pattern>/static/*</url-pattern>
+	</filter-mapping>
 
     <filter>
         <filter-name>encodingFilter</filter-name>
@@ -158,14 +168,7 @@
 	        <param-name>jersey.config.server.provider.packages</param-name>
 	        <param-value>org.orcid.api.identifiers;org.orcid.api.publicV3.server;org.orcid.api.publicV2.server;org.orcid.api.common;org.orcid.api.lod;org.orcid.api.common.writer.rdf</param-value>
 	    </init-param>
-	    <init-param>
-        	<param-name>jersey.config.servlet.filter.forwardOn404</param-name>
-        	<param-value>true</param-value>
-   		</init-param>
-	    <init-param>
-            <param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
-            <param-value>/static/.*</param-value>
-         </init-param>        
+  
 		<init-param>
         	<param-name>jersey.config.server.wadl.disableWadl</param-name>
         	<param-value>true</param-value>

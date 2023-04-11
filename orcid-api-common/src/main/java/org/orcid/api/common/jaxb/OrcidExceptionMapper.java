@@ -102,6 +102,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
+        t.printStackTrace();
         String clientId = securityManager.getClientIdFromAPIRequest();
         if (t instanceof NotFoundException) {
             logShortError(t, clientId);
