@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -312,6 +313,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             
             OtherNames otherNames = onf.toOtherNames();
             OtherNamesForm otherNamesForm = OtherNamesForm.valueOf(otherNameManager.getOtherNames(getCurrentUserOrcid()));
+            Collections.reverse(otherNamesForm.getOtherNames());
             if (!otherNamesForm.compare(onf)) {
                 otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);
             }
