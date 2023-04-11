@@ -8,6 +8,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.zip.ZipEntry;
@@ -159,41 +160,10 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
                 String status = institute.get("status").isNull() ? null : institute.get("status").asText();
                 if ("active".equalsIgnoreCase(status) || "inactive".equalsIgnoreCase(status)) {
-                    String name = institute.get("name").isNull() ? null : institute.get("name").asText();
-                    StringJoiner sj = new StringJoiner(",");
-                    String orgType = null;
-                    if (!institute.get("types").isNull()) {
-                        ((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
-                        orgType = sj.toString();
-                    }
-                    JsonNode countryNode = institute.get("country").isNull() ? null : (JsonNode) institute.get("country");
-                    Iso3166Country country = null;
-                    if(countryNode != null) {
-                        String countryCode = countryNode.get("country_code").isNull() ? null : countryNode.get("country_code").asText();
-                        country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
-                    }
-                    ArrayNode addresses = institute.get("addresses").isNull() ? null : (ArrayNode) institute.get("addresses");
-                    String city = null;
-                    String region = null;
-                    
-                    if (addresses != null) {
-                        for (JsonNode address : addresses) {
-                            if (addresses.size() == 1 || (address.get("primary") != null && address.get("primary").asBoolean())) {
-                                city = address.get("city").isNull() ? null : address.get("city").asText();
-                                region = address.get("state").isNull() ? null : address.get("state").asText(); 
-                            }
-                        }
-                    }
 
-                    ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
-                    // Use the first URL
-                    String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
 
                     // Creates or updates an institute
-                    OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url, orgType);
-
-                    // Creates external identifiers
-                    processExternalIdentifiers(entity, institute);
+                    OrgDisambiguatedEntity entity = processInstitute(institute);
                 } else if ("redirected".equals(status)) {
                     String primaryId = institute.get("redirect").isNull() ? null : institute.get("redirect").asText();
                     deprecateOrg(sourceId, primaryId);
@@ -212,9 +182,43 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
     }
 
-    private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
+    private OrgDisambiguatedEntity processInstitute(JsonNode institute) {
+        String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
+        String name = institute.get("name").isNull() ? null : institute.get("name").asText();
+        StringJoiner sj = new StringJoiner(",");
+        String orgType = null;
+        if (!institute.get("types").isNull()) {
+            ((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
+            orgType = sj.toString();
+        }
+        JsonNode countryNode = institute.get("country").isNull() ? null : (JsonNode) institute.get("country");
+        Iso3166Country country = null;
+        if(countryNode != null) {
+            String countryCode = countryNode.get("country_code").isNull() ? null : countryNode.get("country_code").asText();
+            country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
+        }
+        ArrayNode addresses = institute.get("addresses").isNull() ? null : (ArrayNode) institute.get("addresses");
+        String city = null;
+        String region = null;
+        
+        if (addresses != null) {
+            for (JsonNode address : addresses) {
+                if (addresses.size() == 1 || (address.get("primary") != null && address.get("primary").asBoolean())) {
+                    city = address.get("city").isNull() ? null : address.get("city").asText();
+                    region = address.get("state").isNull() ? null : address.get("state").asText(); 
+                }
+            }
+        }
+
+        ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
+        // Use the first URL
+        String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
+        
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
+        
+        OrgDisambiguatedEntity updatedEntity = null;
         if (existingBySourceId != null) {
+            processExternalIdentifiers(existingBySourceId, institute);
             if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
                 existingBySourceId.setCity(city);
                 existingBySourceId.setCountry(country.name());
@@ -222,21 +226,24 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 existingBySourceId.setOrgType(orgType);
                 existingBySourceId.setRegion(region);
                 existingBySourceId.setUrl(url);
-                existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
-                try {
-                    // mark group for indexing
-                    new OrgGrouping(existingBySourceId, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+                existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);              
+                
+                updatedEntity= orgDisambiguatedManager.updateOrgDisambiguated(existingBySourceId);
+                //mark group for indexing
+                new OrgGrouping(updatedEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+                return updatedEntity;
+            }
+            //check for external identifiers change and mark for indexing if necessary
+            updatedEntity = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
 
-                } catch (Exception ex) {
-                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
-                }
-                orgDisambiguatedManager.updateOrgDisambiguated(existingBySourceId);
+            if(entityExternalIdentifiersChanged(existingBySourceId, updatedEntity) ) {
+                new OrgGrouping(updatedEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
             }
             return existingBySourceId;
         }
 
         // Create a new disambiguated org
-        OrgDisambiguatedEntity newOrg=createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+        OrgDisambiguatedEntity newOrg=createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url, institute);
         try {
             //mark group for indexing
             new OrgGrouping(newOrg, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
@@ -361,11 +368,27 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
         return false;
     }
+    
+    private boolean entityExternalIdentifiersChanged(OrgDisambiguatedEntity existentEntity, OrgDisambiguatedEntity updatedEntity)
+    {
+        Set<OrgDisambiguatedExternalIdentifierEntity> existentIdentifiers = existentEntity.getExternalIdentifiers();
+        Set<OrgDisambiguatedExternalIdentifierEntity> updatedIdentifiers = updatedEntity.getExternalIdentifiers();
+        if(existentIdentifiers != null && updatedIdentifiers != null) {
+            if(existentIdentifiers.size() != updatedIdentifiers.size()) {
+                return true;
+            }
+            return existentIdentifiers.containsAll(updatedIdentifiers);
+        }
+        if((existentIdentifiers != null && updatedIdentifiers == null) || (existentIdentifiers == null && updatedIdentifiers != null)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Creates a disambiguated ORG in the org_disambiguated table
      */
-    private OrgDisambiguatedEntity createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url) {
+    private OrgDisambiguatedEntity createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url, JsonNode institute) {
         LOGGER.info("Creating disambiguated org {}", name);
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(name);
@@ -376,7 +399,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(sourceId);
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
-        orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
+        OrgDisambiguatedEntity createdEntity = orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
+        processExternalIdentifiers(createdEntity, institute);
         return orgDisambiguatedEntity;
     }
 
