@@ -13,6 +13,10 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V3Convertible;
 import org.orcid.core.version.V3VersionConverterChain;
 
+
+/**
+ * TODO: DELETE ME! We dont need versioned delegator since there are no RCs anymore
+ * */
 public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
     
     private PublicV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> publicV3ApiServiceDelegator;    
@@ -20,13 +24,13 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
     private String externalVersion;
 
     @Resource
-    private V3VersionConverterChain v3VersionConverterChain;
-
-    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;    
+    private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource
+    private V3VersionConverterChain v3VersionConverterChain;
     
     public void setPublicV3ApiServiceDelegator(
             PublicV3ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> publicV3ApiServiceDelegator) {
@@ -378,14 +382,6 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
     }
     
     private Response processReponse(Response response) {
-        if(externalVersion.equals("3.0")) {
-            return upgradeResponse(response);
-        } else {
-            return downgradeResponse(response);
-        }
-    }
-    
-    private Response upgradeResponse(Response response) {
         Object entity = response.getEntity();
         V3Convertible result = null;
         if (entity != null) {
@@ -395,16 +391,6 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
         return response;
     }
     
-    private Response downgradeResponse(Response response) {
-        Object entity = response.getEntity();
-        V3Convertible result = null;
-        if (entity != null) {
-            result = v3VersionConverterChain.downgrade(new V3Convertible(entity, PublicV3ApiServiceDelegator.LATEST_V3_VERSION), externalVersion);
-            return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
-        }
-        return response;
-    }
-
     private void checkProfileStatus(String orcid) {
         try {
             orcidSecurityManager.checkProfile(orcid);

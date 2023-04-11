@@ -42,7 +42,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     
     @Resource
@@ -162,7 +162,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     private Keyword getKeyword() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Keyword.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/keyword-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/keyword-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Keyword) unmarshaller.unmarshal(inputStream); 
     }
@@ -173,7 +173,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
         DateFieldsOnBaseEntityUtils.setDateFields(entity, date);
         entity.setId(Long.valueOf(1));
         entity.setKeywordName("keyword-1");
-        entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
+        entity.setOrcid("0000-0000-0000-0000");
         entity.setClientSourceId(CLIENT_SOURCE_ID);
         entity.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.name());
         return entity;

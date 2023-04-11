@@ -39,14 +39,14 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @Override
     public String findOrcidIdByEmailHash(String emailHash) {
-        TypedQuery<String> query = entityManager.createQuery("select profile.id from EmailEntity where id = :emailHash", String.class);
+        TypedQuery<String> query = entityManager.createQuery("select orcid from EmailEntity where id = :emailHash", String.class);
         query.setParameter("emailHash", emailHash);
         return query.getSingleResult();
     }
 
     @Override
     public String findOrcidByVerifiedEmail(String emailHash) {
-        TypedQuery<String> query = entityManager.createQuery("select profile.id from EmailEntity where id = :emailHash and verified = true", String.class);
+        TypedQuery<String> query = entityManager.createQuery("select orcid from EmailEntity where id = :emailHash and verified = true", String.class);
         query.setParameter("emailHash", emailHash);
         return query.getSingleResult();
     }

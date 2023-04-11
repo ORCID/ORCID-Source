@@ -7,8 +7,9 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 
-    <import resource="classpath*:orcid-core-context.xml"/>
-
+	<import resource="classpath*:orcid-core-context.xml"/>
+	<import resource="classpath*:orcid-internal-api-security-context.xml"/>
+    
     <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
@@ -46,10 +47,9 @@
     </bean>
      
     <!--  Internal API -->
+    <bean id="internalApiServiceImplBase" class="org.orcid.internal.server.InternalApiServiceImplBase">
+    	<property name="serviceDelegator" ref="internalApiServiceDelegator"/>
+    </bean> 
     <bean id="internalApiServiceDelegator" class="org.orcid.internal.server.delegator.impl.InternalApiServiceDelegatorImpl" />
-    <bean id="internalApiServiceImplV1_0_rc1" class="org.orcid.internal.server.InternalApiServiceImplV1_0_rc1">
-        <property name="serviceDelegator" ref="internalApiServiceDelegator"/>
-    </bean>
-
-
+    
 </beans>

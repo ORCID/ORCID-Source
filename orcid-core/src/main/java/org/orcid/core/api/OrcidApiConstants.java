@@ -72,16 +72,16 @@ public class OrcidApiConstants {
     public static final String STATS = "/{type}";
     public static final String STATS_ALL = "/all";
     public static final String ERROR = "/error";
-    public static final String ORCID_XML = "application/orcid+xml; qs=3";
-    public static final String ORCID_JSON = "application/orcid+json; qs=2";
-    public static final String TEXT_TURTLE = "text/turtle; qs=3";
-    public static final String TEXT_N3 = "text/n3; qs=2";
-    public static final String N_TRIPLES = "application/n-triples; qs=3";
-    public static final String JSON_LD = "application/ld+json; qs=2";
-    public static final String APPLICATION_RDFXML = "application/rdf+xml; qs=2";
-    public static final String VND_ORCID_XML = "application/vnd.orcid+xml; qs=5";
-    public static final String VND_ORCID_JSON = "application/vnd.orcid+json; qs=4";
-    public static final String HTML = "text/html; qs=1";
+    public static final String ORCID_XML = "application/orcid+xml; qs=0.3";
+    public static final String ORCID_JSON = "application/orcid+json; qs=0.2";
+    public static final String TEXT_TURTLE = "text/turtle; qs=0.3";
+    public static final String TEXT_N3 = "text/n3; qs=0.2";
+    public static final String N_TRIPLES = "application/n-triples; qs=0.3";
+    public static final String JSON_LD = "application/ld+json; qs=0.2";
+    public static final String APPLICATION_RDFXML = "application/rdf+xml; qs=0.2";
+    public static final String VND_ORCID_XML = "application/vnd.orcid+xml; qs=0.5";
+    public static final String VND_ORCID_JSON = "application/vnd.orcid+json; qs=0.4";
+    public static final String HTML = "text/html; qs=0.1";
     public static final String HTML_UTF = "text/html; charset=UTF-8";
 
     public static final String TEXT_CSV = "text/csv";

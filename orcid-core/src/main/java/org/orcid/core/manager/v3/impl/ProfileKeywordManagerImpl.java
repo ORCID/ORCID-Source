@@ -74,7 +74,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
 
         ProfileKeywordEntity newEntity = adapter.toProfileKeywordEntity(keyword);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setProfile(profile);
+        newEntity.setOrcid(orcid);
 
         // Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
@@ -160,8 +160,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     // Add the new ones
                     ProfileKeywordEntity newKeyword = adapter.toProfileKeywordEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
-                    ProfileEntity profile = new ProfileEntity(orcid);
-                    newKeyword.setProfile(profile);
+                    newKeyword.setOrcid(orcid);
                     // Set the source
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newKeyword);
                     newKeyword.setVisibility(updatedOrNew.getVisibility().name());

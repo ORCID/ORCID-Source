@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class ResearcherUrlDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "0000-0000-0000-0003";
@@ -86,7 +86,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         newRUrl.setClientSourceId("APP-5555555555555555");
         newRUrl.setUrl("www.4443.com");
         newRUrl.setUrlName("test");
-        newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
+        newRUrl.setOrcid("4444-4444-4444-4443");
         newRUrl.setVisibility("PUBLIC");
         newRUrl = dao.merge(newRUrl);
         assertNotNull(newRUrl);
@@ -109,29 +109,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         researcherUrls = dao.getResearcherUrls("4444-4444-4444-4443", 0L);
         assertNotNull(researcherUrls);
         assertEquals(5, researcherUrls.size());
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testCannotAddDuplicatedResearcherUrl() throws IllegalAccessException {
-        try {
-            ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
-            Date now = new Date();
-            FieldUtils.writeField(newRUrl, "dateCreated", now, true);
-            FieldUtils.writeField(newRUrl, "lastModified", now, true);
-            newRUrl.setClientSourceId("4444-4444-4444-4443");
-            newRUrl.setUrl("http://www.researcherurl2.com?id=1");
-            newRUrl.setUrlName("test");
-            newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
-            newRUrl.setVisibility("PUBLIC");
-            newRUrl = dao.merge(newRUrl);
-            assertNotNull(newRUrl);
-            fail();
-        } catch (PersistenceException e) {
-
-        }
-    }
+    }    
     
     @Test
     public void removeAllTest() {
@@ -168,7 +146,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         ResearcherUrlEntity e = new ResearcherUrlEntity();
-        e.setUser(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PUBLIC");
         e.setUrl("https://orcid.org");
         

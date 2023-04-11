@@ -62,13 +62,22 @@
 	      <groupId>org.apache.activemq</groupId>
 	      <artifactId>activemq-spring</artifactId>
 	  	  <version>5.13.3</version>
-	  </dependency>	  	     
+	  </dependency>	  	
+	  
+	  <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
+			<dependency>
+			    <groupId>javax.ws.rs</groupId>
+			    <artifactId>javax.ws.rs-api</artifactId>
+			    <version>2.1</version>
+			</dependency>      
         
 	    <dependency>
 	      <groupId>junit</groupId>
 	      <artifactId>junit</artifactId>
 	      <scope>test</scope>
 	    </dependency>
+	    
+	    
     
 	    <!-- AWS -->
 	    <dependency>

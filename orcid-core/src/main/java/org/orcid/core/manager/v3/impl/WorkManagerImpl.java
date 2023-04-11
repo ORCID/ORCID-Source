@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
+import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -358,6 +359,17 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+
+        Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
+        WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
+
+        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
+            if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+                return workSaved;
+            }
+        }
+
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
         Source activeSource = sourceManager.retrieveActiveSource();
         
@@ -539,6 +551,17 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Work work = workForm.toWork();
 
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+
+        WorkExtended workSaved = jpaJaxbWorkAdapter.toWorkExtended(workEntity);
+        WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
+
+        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
+            if (workFormSaved.compare(workForm)) {
+                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+                return workSaved;
+            }
+        }
+
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
 
         //Save the original source
@@ -622,4 +645,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return contributorsRolesAndSequencesConverter.convertTo(work.getContributorsGroupedByOrcid(), null);
     }
 
+    private String getSourceName(Source activeSource) {
+        String client = null;
+        if (activeSource.getSourceName() != null && activeSource.getSourceName().getContent() != null) {
+            client = activeSource.getSourceName().getContent();
+        }
+        return client;
+    }
 }

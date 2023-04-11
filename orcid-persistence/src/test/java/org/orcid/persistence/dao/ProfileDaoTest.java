@@ -11,11 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -32,12 +28,9 @@ import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
@@ -186,47 +179,6 @@ public class ProfileDaoTest extends DBUnitTest {
         Long count = profileDao.countAll();
         assertEquals(Long.valueOf(23), count);
     }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testInsertWithSubjectsAndKeywords() {
-        String newOrcid = "4444-1111-6666-4444";
-        ProfileEntity profile = new ProfileEntity();
-        profile.setId(newOrcid);
-        Set<SubjectEntity> subjects = new HashSet<SubjectEntity>(2);
-        // profile.setSubjects(subjects);
-        subjects.add(new SubjectEntity("Rhymin"));
-        subjects.add(new SubjectEntity("Stealin"));
-        SortedSet<ProfileKeywordEntity> keywords = new TreeSet<ProfileKeywordEntity>();
-        profile.setKeywords(keywords);
-        
-        ProfileKeywordEntity entity = new ProfileKeywordEntity();
-        entity.setProfile(profile);
-        entity.setKeywordName("Bilocation");        
-        keywords.add(entity);
-        
-        entity = new ProfileKeywordEntity();
-        entity.setProfile(profile);
-        entity.setKeywordName("Humour");        
-        keywords.add(entity);
-        
-        entity = new ProfileKeywordEntity();
-        entity.setProfile(profile);
-        entity.setKeywordName("Ceramics");        
-        keywords.add(entity);
-        
-        profileDao.persist(profile);
-        profileDao.flush();
-
-        profile = profileDao.find(newOrcid);
-
-        assertNotNull(profile);
-        assertEquals(newOrcid, profile.getId());
-        // assertEquals(2, profile.getSubjects().size());
-        assertEquals(3, profile.getKeywords().size());
-    }
-
 
     @Test
     @Rollback(true)

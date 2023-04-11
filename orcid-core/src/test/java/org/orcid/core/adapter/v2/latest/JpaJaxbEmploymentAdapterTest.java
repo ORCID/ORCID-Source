@@ -23,7 +23,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.common_v2.Year;
 import org.orcid.jaxb.model.record.summary_v2.EmploymentSummary;
 import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.v3.rc1.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
@@ -42,7 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
 
     @Resource
@@ -211,7 +211,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
         result.setOrg(orgEntity);
-        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setOrcid("0000-0001-0002-0003");
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("employment:title");
         result.setVisibility(Visibility.PRIVATE.name());   

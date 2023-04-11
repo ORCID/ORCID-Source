@@ -74,7 +74,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.jaxb.model.v3.rc1.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.model.record_correction.RecordCorrection;
 import org.orcid.persistence.dao.WorkDao;
@@ -495,7 +495,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, otherNameClassMap);
         otherNameClassMap.field("putCode", "id");
         otherNameClassMap.field("content", "displayName");
-        otherNameClassMap.field("path", "profile.orcid");
         otherNameClassMap.fieldBToA("displayIndex", "displayIndex");
         otherNameClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
         otherNameClassMap.byDefault();

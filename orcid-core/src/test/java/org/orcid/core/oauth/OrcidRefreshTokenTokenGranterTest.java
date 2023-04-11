@@ -24,7 +24,6 @@ import org.junit.runner.RunWith;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -36,7 +35,7 @@ import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-oauth2-common-config.xml", "classpath*:orcid-oauth2-api-common-config.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
 
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
@@ -68,7 +67,7 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setProfile(new ProfileEntity(userOrcid));
+        token.setOrcid(userOrcid);
         token.setScope(scopes);
         token.setTokenDisabled(false);
         token.setTokenExpiration(expirationDate);

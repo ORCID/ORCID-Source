@@ -8,7 +8,6 @@ package org.orcid.persistence.jpa.entities;
 public interface ActionableNotificationEntity {
 
     String getAuthorizationUrl();
-
-    ProfileEntity getProfile();
-
+    
+    String getOrcid();
 }

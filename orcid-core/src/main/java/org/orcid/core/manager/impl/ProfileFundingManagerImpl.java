@@ -111,7 +111,8 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }
 
         ProfileFundingEntity profileFundingEntity = jpaJaxbFundingAdapter.toProfileFundingEntity(funding);
-
+        profileFundingEntity.setOrcid(orcid);
+        
         // Updates the give organization with the latest organization from
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
@@ -125,8 +126,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
             profileFundingEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        profileFundingEntity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingWorkPrivacy(profileFundingEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);
         profileFundingDao.persist(profileFundingEntity);

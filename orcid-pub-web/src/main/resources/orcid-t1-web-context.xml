@@ -9,24 +9,12 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
-    <import resource="orcid-core-context.xml"/>
+    <import resource="classpath*:orcid-core-context.xml"/>
+    <import resource="classpath*:orcid-t1-security-context.xml"/>
         
-    <context:component-scan base-package="org.orcid.api.common, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
+    <context:component-scan base-package="org.orcid.api.publicV3.server,org.orcid.api.config, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
-
-	<bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
-        <property name="title" value="ORCID Public"/>
-        <property name="version" value="Latest" />
-        <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
-        <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
-        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.publicV3.server, org.orcid.api.identifiers"/>
-        <property name="scan" value="true"/>
-        <property name="prettyPrint" value="true"/>        
-    </bean>
-    
-    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
-    <bean id="apiListingResource" class="org.orcid.api.swagger.PublicSwaggerResource"/>
          
     <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
 	
@@ -39,39 +27,12 @@
     <!--  Public_2 API -->
     <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
     
-    <bean id="publicV2ApiServiceDelegatorRc1" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="2.0_rc1" />
-    </bean>
-    <bean id="publicV2ApiServiceDelegatorRc2" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="2.0_rc2" />
-    </bean>
-    <bean id="publicV2ApiServiceDelegatorRc3" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="2.0_rc3" />
-    </bean>
-    <bean id="publicV2ApiServiceDelegatorRc4" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="2.0_rc4" />
-    </bean>
+
     <bean id="publicV2ApiServiceDelegatorV2" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="2.0" />
     </bean>
     <bean id="publicV2ApiServiceDelegatorV2_1" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="2.1" />
-    </bean>
-    
-    <bean id="publicV2ApiServiceImplV2_0_rc1" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc1">
-        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc1"/>
-    </bean>
-    
-    <bean id="publicV2ApiServiceImplV2_0_rc2" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc2">
-        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc2"/>
-    </bean>    
-    
-    <bean id="publicV2ApiServiceImplV2_0_rc3" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc3">
-        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc3"/>
-    </bean>    
-    
-    <bean id="publicV2ApiServiceImplV2_0_rc4" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0_rc4">
-        <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorRc4"/>
     </bean> 
     
     <bean id="publicV2ApiServiceImplV2_0" class="org.orcid.api.publicV2.server.PublicV2ApiServiceImplV2_0">
@@ -82,36 +43,10 @@
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorV2_1"/>
     </bean>
     
-    <bean id="publicV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl">
-    	<property name="filterVersionOfIdentifiers" value="true" />
-    </bean>
-    
-    <bean id="publicV3ApiServiceDelegator" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />
-    
-    <bean id="publicV3ApiServiceDelegatorRc1" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="3.0_rc1" />
-        <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegatorRc1_FilterVersionOfIdsOnWorks" />
-    </bean>
-    <bean id="publicV3ApiServiceImplV3_0_rc1" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc1">
-        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRc1"/>
-    </bean>
-    
-    <bean id="publicV3ApiServiceDelegatorRc2" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="3.0_rc2" />
-        <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegator" />
-    </bean>
-    <bean id="publicV3ApiServiceImplV3_0_rc2" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0_rc2">
-        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRc2"/>
-    </bean>
-    
-    <bean id="publicV3ApiServiceDelegatorRelease" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceVersionedDelegatorImpl">
-        <property name="externalVersion" value="3.0" />
-        <property name="publicV3ApiServiceDelegator" ref="publicV3ApiServiceDelegator" />
-    </bean>
-    <bean id="publicV3ApiServiceImplV3_0" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0">
-        <property name="serviceDelegator" ref="publicV3ApiServiceDelegatorRelease"/>
-    </bean>
-    
+    <bean id="publicV3ApiServiceDelegator" class="org.orcid.api.publicV3.server.delegator.impl.PublicV3ApiServiceDelegatorImpl" />      
+        
+    <bean id="publicV3ApiServiceImplV3_0" class="org.orcid.api.publicV3.server.PublicV3ApiServiceImplV3_0" />
+        
     <!--  Identifier API -->
     <bean id="identifierApiServiceDelegator" class="org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl" />
     <bean id="identifierApiServiceImpl" class="org.orcid.api.identifiers.IdentifierApiServiceImpl">
@@ -120,14 +55,33 @@
     
     <bean id="experimentalRDFResourceV1" class="org.orcid.api.lod.ExperimentalRDFResource">
         <property name="serviceDelegator" ref="publicV2ApiServiceDelegatorV2_1"/>
-    </bean>
+    </bean>       
     
+    <bean id="analyticsClient" class="org.orcid.api.common.analytics.client.google.UniversalAnalyticsClient" />    
+
+	<!--  OLD SWAGGER
+	<bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
+        <property name="title" value="ORCID Public"/>
+        <property name="version" value="Latest" />
+        <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
+        <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
+        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.publicV3.server, org.orcid.api.identifiers"/>
+        <property name="scan" value="true"/>
+        <property name="prettyPrint" value="true"/>        
+    </bean>
+    <bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/>    
+    <bean id="apiListingResource" class="org.orcid.api.swagger.PublicSwaggerResource"/>
     <bean id="swaggerUIBuilder" class="org.orcid.api.common.swagger.SwaggerUIBuilder">
     	<constructor-arg value="${org.orcid.core.baseUri}" />
     	<constructor-arg value="${org.orcid.core.pubBaseUri}" />
     	<constructor-arg value="false" />
     </bean>
-    
-    <bean id="analyticsClient" class="org.orcid.api.common.analytics.client.google.UniversalAnalyticsClient" />    
+    -->
+    <!-- New Swagger -->
+    <bean id="swaggerUIBuilder" class="org.orcid.api.common.swagger.SwaggerUIBuilder">
+    	<constructor-arg value="${org.orcid.core.baseUri}" />
+    	<constructor-arg value="${org.orcid.core.pubBaseUri}" />
+    	<constructor-arg value="false" />
+    </bean>
     
 </beans>

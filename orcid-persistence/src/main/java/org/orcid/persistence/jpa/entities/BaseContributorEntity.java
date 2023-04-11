@@ -13,10 +13,10 @@ import org.orcid.persistence.util.OrcidStringUtils;
  * @author Declan Newman (declan) Date: 08/08/2012
  */
 @MappedSuperclass
-public abstract class BaseContributorEntity extends BaseEntity<Long> implements Comparable<BaseContributorEntity>, ProfileAware {
+public abstract class BaseContributorEntity extends BaseEntity<Long> implements Comparable<BaseContributorEntity>, OrcidAware {
 
     private static final long serialVersionUID = -371826957062237679L;
-    private ProfileEntity profile;
+    private String orcid;
     private String creditName;
     private String contributorEmail;
     private String sequence;
@@ -58,14 +58,13 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
         this.sequence = sequence;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.REFRESH, CascadeType.DETACH }, optional = true)
-    @JoinColumn(name = "orcid", nullable = true, updatable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = true, updatable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     @Override
@@ -99,7 +98,7 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
         result = prime * result + ((contributorEmail == null) ? 0 : contributorEmail.hashCode());
         result = prime * result + ((contributorRole == null) ? 0 : contributorRole.hashCode());
         result = prime * result + ((creditName == null) ? 0 : creditName.hashCode());
-        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((sequence == null) ? 0 : sequence.hashCode());
         return result;
     }
@@ -125,10 +124,10 @@ public abstract class BaseContributorEntity extends BaseEntity<Long> implements 
                 return false;
         } else if (!creditName.equals(other.creditName))
             return false;
-        if (profile == null) {
-            if (other.profile != null)
+        if (orcid == null) {
+            if (other.orcid != null)
                 return false;
-        } else if (!profile.equals(other.profile))
+        } else if (!orcid.equals(other.orcid))
             return false;
         if (sequence != other.sequence)
             return false;

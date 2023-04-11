@@ -58,7 +58,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 public class ManageMembersControllerTest extends DBUnitTest {
 
     @Resource(name = "membersManagerV3")
@@ -137,11 +137,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
     @Test   
     @Transactional
     public void createMemberProfileWithInvalidEmailsTest() throws Exception {
-        ProfileEntity profile = profileDao.find("5555-5555-5555-0000");
-        assertNotNull(profile);
-        assertNotNull(profile.getPrimaryEmail());
-        String existingEmail = profile.getPrimaryEmail().getEmail();
-        assertNotNull(existingEmail);
+        String existingEmail = "premium_institution@group.com";
+        
         Member group = new Member();
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("basic"));

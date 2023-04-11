@@ -157,10 +157,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             return map;
         } else {
             map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
-             e.getReceiverOrcid().getPath().equals(emailEntity.getProfile().getId())
+             e.getReceiverOrcid().getPath().equals(emailEntity.getOrcid())
             ));
             map.put(FOUND,  Boolean.TRUE);
-            map.put(IS_SELF, emailEntity.getProfile().getId().equals(getCurrentUserOrcid()));
+            map.put(IS_SELF, emailEntity.getOrcid().equals(getCurrentUserOrcid()));
             return map;
         }
     }    
@@ -203,7 +203,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/addDelegateByEmail.json")
     public @ResponseBody ManageDelegate addDelegateByEmail(@RequestBody ManageDelegate addDelegate) {
         EmailEntity emailEntity = emailManager.find(addDelegate.getDelegateEmail());
-        addDelegate.setDelegateToManage(emailEntity.getProfile().getId());
+        addDelegate.setDelegateToManage(emailEntity.getOrcid());
         return addDelegate(addDelegate);
     }
 
@@ -450,7 +450,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getDeprecatingOrcidOrEmail().contains("@")) {
             EmailEntity emailEntity = emailManager.find(orcidIdOrEmail);
             if (emailEntity != null) {
-                return emailEntity.getProfile();
+                return profileEntityManagerReadOnly.findByOrcid(emailEntity.getOrcid());
             }
         } else {
             if (OrcidStringUtils.getOrcidNumber(orcidIdOrEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail))) {
@@ -635,7 +635,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             // clear errors
             email.setErrors(new ArrayList<String>());
             String currentUserOrcid = getCurrentUserOrcid();            
-            Map<String, String> keys = emailManager.addEmail(request, currentUserOrcid, email.toV3Email());
+            Map<String, String> keys = emailManager.addEmail(currentUserOrcid, email.toV3Email());
             if(!keys.isEmpty()) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
                 recordEmailSender.sendEmailAddressChangedNotification(currentUserOrcid, keys.get("new"), keys.get("old"));
@@ -894,7 +894,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         String orcid = getCurrentUserOrcid();
         if (recordNameManager.exists(orcid)) {
-            recordNameManager.updateRecordName(orcid, name);
+            NamesForm names = NamesForm.valueOf(recordNameManager.getRecordName(orcid));
+            if (!names.compare(nf)) {
+                recordNameManager.updateRecordName(orcid, name);
+            }
         } else {
             recordNameManager.createRecordName(orcid, name);
         }
@@ -947,7 +950,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                 }                  
             }else{
                 if (biographyManager.exists(orcid)) {
-                    biographyManager.updateBiography(orcid, bio);
+                    BiographyForm biographyForm = BiographyForm.valueOf(biographyManager.getBiography(orcid));
+                    if (!biographyForm.compare(bf)) {
+                        biographyManager.updateBiography(orcid, bio);
+                    }
                 } else {
                     biographyManager.createBiography(orcid, bio);
                 }                

@@ -1,7 +1,6 @@
 package org.orcid.scheduler.validation;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
 
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.MediaType;
 
 public class PublicProfileValidator {
 
@@ -41,30 +40,26 @@ public class PublicProfileValidator {
     @Resource
     protected ValidatedPublicProfileDao validatedPublicProfileDao;
 
+    @Value("${org.orcid.scheduler.api.profile.validation.baseUrl:https://localhost:8443/orcid-pub-web/v3.0/}")
     private String baseUri;
 
     private Schema schema;
 
+    @Value("${org.orcid.scheduler.api.profile.validation.developmentMode:false}")
     private boolean developmentMode;
 
     @Value("${org.orcid.scheduler.api.profile.validation.maxAgeInDays:90}")
     private int validationMaxAgeInDays;
 
     @Value("${org.orcid.scheduler.api.profile.validation.batchSize:100}")
-    private int batchSize;
-
-    @SuppressWarnings("resource")
-    public PublicProfileValidator(String baseUri, boolean developmentMode) throws URISyntaxException {
-        this.baseUri = baseUri;
-        this.developmentMode = developmentMode;        
-    }
+    private int batchSize;        
 
     public void processValidationCycle() {
         init();
         removeOldRecords();
         validateRecords();
     }
-
+    
     private void init() {
         Source source = new StreamSource(getClass().getResourceAsStream("/record_3.0/record-3.0.xsd"));
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

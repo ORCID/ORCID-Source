@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--suppress SpringSecurityFiltersConfiguredInspection -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jms="http://www.springframework.org/schema/jms"   
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+       		http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
+       		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
+
+    <import resource="classpath*:orcid-core-context.xml"/>
+
+    <context:component-scan
+		base-package="org.orcid.scheduler.loader" />
+
+    <task:scheduled-tasks scheduler="scheduler">   
+        <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
+        <task:scheduled ref="statisticsManager" method="generateStatistics" cron="${org.orcid.scheduler.web.generateStats:0 0 0 * * FRI}"/>
+        <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
+        <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>     
+        <task:scheduled ref="cleanOldClientKeysCronJob" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />            
+        <task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:35 */5 * * * *}" />
+        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/> 
+        <task:scheduled ref="identityProviderLoader" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>        
+        <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
+        <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
+        <task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/> 
+        <task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>          
+        <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
+        <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesReindexIndexingDelaySeconds:90}000"/>
+        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:900}000"/> 
+        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:900}000"/> 
+        <task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
+        <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
+    </task:scheduled-tasks>
+
+	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:20}"/>
+
+    <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
+
+	<!-- JMS Messaging -->
+	<!-- enable the configuration of jms on annotations -->
+	<jms:annotation-driven/>
+	
+	 <!-- so we can listen to queues -->
+    <bean id="jmsListenerContainerFactory"
+        class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+        <property name="errorHandler" ref="emailQueueErrorHandler" />
+        <property name="concurrency" value="1" />
+        
+        <!-- client acknowledge -->
+        <property name="sessionAcknowledgeMode" value="2" />
+    </bean>
+	
+	<bean id="jmsMessageSender" class="org.orcid.core.messaging.JmsMessageSender">
+		<property name="enabled" value="${org.orcid.persistence.messaging.enabled:false}"/>
+	</bean>
+	
+	<bean id="orcidRecordIndexer" class="org.orcid.scheduler.indexer.impl.OrcidRecordIndexerImpl" />
+	
+	<!-- PUBLIC API VALIDATION - the following beans can be removed once we have validated (and fixed) all profiles against public api v3 -->
+	<bean id="publicProfileValidator" class="org.orcid.scheduler.validation.PublicProfileValidator" />	    
+	
+	<bean id="emailQueueListener" class="org.orcid.scheduler.email.trickle.listener.EmailQueueListener" >
+	   <property name="trickleManager" ref="trickleManager" />
+	</bean>
+	
+	<bean id="emailQueueErrorHandler" class="org.orcid.scheduler.email.trickle.EmailTrickleErrorHandler" />
+	
+	<bean id="trickleManager" class="org.orcid.scheduler.email.trickle.manager.impl.TrickleManagerImpl" />	
+
+	<bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
+	
+	<bean id="emailMessageSender" class="org.orcid.scheduler.email.cli.manager.EmailMessageSenderImpl" />
+	
+	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.scheduler.loader.io.FtpsFileDownloader" />
+
+	<bean id="fundrefOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+
+	<bean id="gridOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+    
+	<bean id="rorOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
+	
+    <bean id="rorOrgDataSource" class="org.orcid.scheduler.loader.source.ror.RorOrgLoadSource" />
+    <bean id="fundrefOrgDataSource" class="org.orcid.scheduler.loader.source.fundref.FundrefOrgLoadSource" />
+    <bean id="ringgoldOrgDataSource" class="org.orcid.scheduler.loader.source.ringgold.RinggoldOrgLoadSource" />
+
+    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
+    </bean>
+	
+    <bean id="jerseyClientHelperDevelopmentMode" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg value="true"/>
+    </bean>
+    
+    <bean id="jerseyClientHelperForOrgLoaders" class="org.orcid.utils.jersey.JerseyClientHelper">
+        <constructor-arg>
+        	<list value-type="java.lang.Class">
+        		<value>org.orcid.scheduler.jersey.ZenodoRecordsJsonBodyReader</value>
+        	</list>
+        </constructor-arg>
+    </bean>
+    
+
+    <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
+
+    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
+
+	<bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
+	
+	<bean id="orgLoadManager"  class="org.orcid.scheduler.loader.manager.impl.OrgLoadManagerImpl"/>
+
+</beans>

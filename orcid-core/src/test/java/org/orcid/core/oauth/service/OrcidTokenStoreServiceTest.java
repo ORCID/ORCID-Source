@@ -57,7 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan) Date: 20/04/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Resource(name = "orcidTokenStore")
@@ -266,7 +266,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);        
-        token.setProfile(new ProfileEntity(userOrcid));
+        token.setOrcid(userOrcid);
         token.setScope(scope);
         token.setTokenDisabled(disabled);
         token.setTokenValue(tokenValue);        

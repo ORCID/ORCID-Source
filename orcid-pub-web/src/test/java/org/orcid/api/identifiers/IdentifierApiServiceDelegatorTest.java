@@ -23,7 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
 public class IdentifierApiServiceDelegatorTest {
 
     @Resource
@@ -43,9 +43,9 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes(null).getStatus(), 200);
         Response r = service.viewIdentifierTypes(null);
         @SuppressWarnings("unchecked")
-        GenericEntity<List<IdentifierType>> types = (GenericEntity<List<IdentifierType>>) r.getEntity();
+        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
         Boolean found = false;
-        for (IdentifierType t : types.getEntity()){
+        for (IdentifierType t : types){
             if (t.getName().equals("doi")){
                 assertEquals("doi: Digital object identifier",t.getDescription());
                 found = true;
@@ -59,9 +59,9 @@ public class IdentifierApiServiceDelegatorTest {
         assertEquals(service.viewIdentifierTypes("es").getStatus(), 200);
         Response r = service.viewIdentifierTypes("es");
         @SuppressWarnings("unchecked")
-        GenericEntity<List<IdentifierType>> types = (GenericEntity<List<IdentifierType>>) r.getEntity();
+        List<IdentifierType> types = (List<IdentifierType>) r.getEntity();
         Boolean found = false;
-        for (IdentifierType t : types.getEntity()){
+        for (IdentifierType t : types){
             if (t.getName().equals("doi")){
                 assertEquals("doi: Identificador de objeto digital",t.getDescription());
                 found = true;

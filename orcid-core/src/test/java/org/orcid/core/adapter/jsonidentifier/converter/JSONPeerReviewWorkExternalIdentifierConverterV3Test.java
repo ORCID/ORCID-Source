@@ -45,7 +45,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
     private PeerReview getPeerReview() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/peer-review-full-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/peer-review-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);
     }
@@ -70,7 +70,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV3Test {
         result.setCompletionDate(new CompletionDateEntity(2015, 1, 1));
         result.setExternalIdentifiersJson(
                 "{\"workExternalIdentifier\":[{\"relationship\":\"SELF\",\"url\":{\"value\":\"http://orcid.org\"},\"workExternalIdentifierType\":\"SOURCE_WORK_ID\",\"workExternalIdentifierId\":{\"content\":\"peer-review:external-identifier-id\"}}]}");
-        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setOrcid("0000-0001-0002-0003");
         result.setRole(org.orcid.jaxb.model.record_v2.Role.MEMBER.name());
         result.setType(org.orcid.jaxb.model.record_v2.PeerReviewType.EVALUATION.name());
         result.setUrl("peer-review:url");

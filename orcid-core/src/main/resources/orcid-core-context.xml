@@ -9,14 +9,12 @@
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
-        
+                
 	<import resource="classpath*:orcid-persistence-context.xml" />
 	
 	<bean id="httpRequestUtils" class="org.orcid.core.utils.http.HttpRequestUtils" />
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
-	
 	<import resource="classpath*:orcid-core-cache-config.xml" />
-	
 	
 	<!-- Commenting out whilst the auditing is still being discussed -->
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
@@ -55,6 +53,13 @@
         <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
         <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
+	
+	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker" />
+	
+	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">		
+		<constructor-arg ref="orcidRefreshTokenChecker" />		
+		<constructor-arg ref="tokenServices" />
+	</bean>
 	
 	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
 		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
@@ -779,17 +784,8 @@
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
-	
-	<bean id="v2VersionConverterChain" class="org.orcid.core.version.impl.V2VersionConverterChainImpl">
-	    <property name="converters">
-            <list>
-	            <ref bean="versionConverterV2_0_rc1ToV2_0_rc2" />
-	            <ref bean="versionConverterV2_0_rc2ToV2_0_rc3" />
-	            <ref bean="versionConverterV2_0_rc3ToV2_0_rc4" />
-	            <ref bean="versionConverterV2_0_rc4ToV2_0" />	            
-	        </list>
-	    </property>
-	</bean>
+
+
 	
 	<bean id="v2_1VersionConverterChain" class="org.orcid.core.version.impl.V2_1VersionConverterChainImpl">
 	    <property name="converters">
@@ -799,24 +795,8 @@
 	    </property>
 	</bean>
 	
-	<bean id="v3VersionConverterChain" class="org.orcid.core.version.impl.V3VersionConverterChainImpl">
-        <property name="converters">
-            <list>
-                <ref bean="versionConverterV3_0_rc1ToV3_0_rc2" />
-                <ref bean="versionConverterV3_0_rc2ToV3_0" />
-            </list>
-        </property>
-    </bean>
 	
-    <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
-	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
-	<bean id="versionConverterV2_0_rc3ToV2_0_rc4" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc3ToV2_0_rc4"/>
-	<bean id="versionConverterV2_0_rc4ToV2_0" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc4ToV2_0"/>
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
-
-    <bean id="versionConverterV3_0_rc1ToV3_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc1ToV3_0_rc2"/>
-
-	<bean id="versionConverterV3_0_rc2ToV3_0" class="org.orcid.core.version.impl.VersionConverterImplV3_0_rc2ToV3_0"/>
 
     <!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"

@@ -24,26 +24,37 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.AddressManager;
 import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.ExternalIdentifierManager;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.OtherNameManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
+import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -61,7 +72,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author: Declan Newman (declan) Date: 10/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String CLIENT_ID_2 = "APP-5555555555555556";
@@ -96,6 +107,21 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
     @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
+    @Resource(name = "addressManagerV3")
+    private AddressManager addressManager;
+    
+    @Resource(name = "externalIdentifierManagerV3")
+    private ExternalIdentifierManager externalIdentifierManager;
+
+    @Resource(name = "profileKeywordManagerV3")
+    private ProfileKeywordManager profileKeywordManager;
+
+    @Resource(name = "otherNameManagerV3")
+    private OtherNameManager otherNameManager;
+
+    @Resource(name = "researcherUrlManagerV3")
+    private ResearcherUrlManager researcherUrlManager;
     
     @Mock
     private EmailFrequencyManager emailFrequencyManager;
@@ -158,8 +184,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(ProfileEntity.USER_DRIVEN_DEPRECATION, profileEntityToDeprecate.getDeprecatedMethod());
         assertEquals("4444-4444-4444-4442", profileEntityToDeprecate.getPrimaryRecord().getId());
         assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-        assertEquals(0, profileEntityToDeprecate.getGivenPermissionBy().size());
-        assertEquals(0, profileEntityToDeprecate.getGivenPermissionTo().size());
         assertFalse(profileEntityToDeprecate.getUsing2FA());
         assertNull(profileEntityToDeprecate.getSecretFor2FA());
         assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
@@ -193,8 +217,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
 
         ProfileEntity deactivated = profileEntityCacheManager.retrieve("4444-4444-4444-4441");     
         assertEquals(0, userConnectionDao.findByOrcid("4444-4444-4444-4441").size());
-        assertEquals(0, deactivated.getGivenPermissionBy().size());
-        assertEquals(0, deactivated.getGivenPermissionTo().size());
         assertFalse(deactivated.getUsing2FA());
         assertNull(deactivated.getSecretFor2FA());
         assertEquals(0, notificationManager.findByOrcid("4444-4444-4444-4441", true, 0, 1000).size());
@@ -212,6 +234,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     @Test  
     @Transactional
     public void testClaimChangingVisibility() {
+        String orcid = "0000-0000-0000-0001";
         Claim claim = new Claim();
         claim.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE));
         claim.setPassword(Text.valueOf("passwordTest1"));
@@ -222,36 +245,38 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         claim.setSendOrcidNews(checked);
         claim.setTermsOfUse(checked);
         
-        assertTrue(profileEntityManager.claimProfileAndUpdatePreferences("0000-0000-0000-0001", "public_0000-0000-0000-0001@test.orcid.org", AvailableLocales.EN, claim));
-        ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0001");
+        assertTrue(profileEntityManager.claimProfileAndUpdatePreferences(orcid, "public_0000-0000-0000-0001@test.orcid.org", AvailableLocales.EN, claim));
+        ProfileEntity profile = profileEntityManager.findByOrcid(orcid);
         assertNotNull(profile);
-        assertNotNull(profile.getAddresses());
-        assertEquals(3, profile.getAddresses().size());
-        for(AddressEntity a : profile.getAddresses()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), a.getVisibility());
+        
+        Addresses addresses = addressManager.getAddresses(orcid);
+        assertEquals(3, addresses.getAddress().size());
+        for(Address a : addresses.getAddress()) {
+            assertEquals(Visibility.PRIVATE, a.getVisibility());
         }
         
-        assertNotNull(profile.getExternalIdentifiers());
-        assertEquals(3, profile.getExternalIdentifiers().size());
-        for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), e.getVisibility());
-        }
-        assertNotNull(profile.getKeywords());
-        assertEquals(3, profile.getKeywords().size());
-        for(ProfileKeywordEntity k : profile.getKeywords()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), k.getVisibility());
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid);
+        assertEquals(3, extIds.getExternalIdentifiers().size());
+        for(PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
+            assertEquals(Visibility.PRIVATE, extId.getVisibility());
         }
         
-        assertNotNull(profile.getOtherNames());
-        assertEquals(3, profile.getOtherNames().size());
-        for(OtherNameEntity o : profile.getOtherNames()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), o.getVisibility());
+        Keywords keywords = profileKeywordManager.getKeywords(orcid);
+        assertEquals(3, keywords.getKeywords().size());
+        for(Keyword k : keywords.getKeywords()) {
+            assertEquals(Visibility.PRIVATE, k.getVisibility());
         }
         
-        assertNotNull(profile.getResearcherUrls());
-        assertEquals(3, profile.getResearcherUrls().size());
-        for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
-            assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name(), r.getVisibility());
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
+        assertEquals(3, otherNames.getOtherNames().size());
+        for(OtherName o : otherNames.getOtherNames()) {
+            assertEquals(Visibility.PRIVATE, o.getVisibility());
+        }
+        
+        ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(orcid);
+        assertEquals(3, rUrls.getResearcherUrls().size());
+        for(ResearcherUrl r : rUrls.getResearcherUrls()) {
+            assertEquals(Visibility.PRIVATE, r.getVisibility());
         }
         
         Biography bio = biographyManager.getBiography("0000-0000-0000-0001");
@@ -374,7 +399,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setProfile(new ProfileEntity(userOrcid));
+        token.setOrcid(userOrcid);
         token.setScope(scopes);
         token.setTokenDisabled(disabled);
         token.setTokenExpiration(expirationDate);

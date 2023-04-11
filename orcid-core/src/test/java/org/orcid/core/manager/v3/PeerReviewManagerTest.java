@@ -28,14 +28,11 @@ import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.WrongSourceException;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
-import org.orcid.core.utils.SourceEntityUtils;
-import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.PeerReviewType;
 import org.orcid.jaxb.model.common.Relationship;
@@ -50,7 +47,6 @@ import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
@@ -92,9 +88,6 @@ public class PeerReviewManagerTest extends BaseTest {
     private PeerReviewDao peerReviewDao;
     
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
-    @Resource
     private ClientDetailsManager clientDetailsManager;
     
     @Resource
@@ -133,7 +126,6 @@ public class PeerReviewManagerTest extends BaseTest {
         
         // by default return client details entity with user obo disabled
         Mockito.when(mockClientDetailsManager.findByClientId(Mockito.anyString())).thenReturn(new ClientDetailsEntity());
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", mockClientDetailsManager);
         
         Mockito.when(mockRecordNameDao.exists(Mockito.anyString())).thenReturn(true);
         Mockito.when(mockRecordNameManager.fetchDisplayablePublicName(Mockito.anyString())).thenReturn("test");
@@ -146,7 +138,6 @@ public class PeerReviewManagerTest extends BaseTest {
         TargetProxyHelper.injectIntoProxy(peerReviewManager, "sourceManager", sourceManager);        
         TargetProxyHelper.injectIntoProxy(orcidSecurityManager, "sourceManager", sourceManager); 
         
-        ReflectionTestUtils.setField(clientDetailsEntityCacheManager, "clientDetailsManager", clientDetailsManager);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameDao", recordNameDao);        
         ReflectionTestUtils.setField(sourceNameCacheManager, "recordNameManagerReadOnlyV3", recordNameManager);   
     }

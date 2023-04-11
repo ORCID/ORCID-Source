@@ -1,6 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +99,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
 
         AddressEntity newEntity = adapter.toAddressEntity(address);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        newEntity.setUser(profile);
+        newEntity.setOrcid(orcid);
 
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
@@ -188,11 +187,8 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                     // Add the new ones
                     AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
-                    ProfileEntity profile = new ProfileEntity(orcid);
-                    newAddress.setUser(profile);                    
-
+                    newAddress.setOrcid(orcid);                    
                     SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newAddress);
-
                     newAddress.setVisibility(updatedOrNew.getVisibility().name());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);

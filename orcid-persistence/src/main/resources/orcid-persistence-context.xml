@@ -13,23 +13,17 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
          http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd" >
-
+               
+    <context:property-placeholder location="\${org.orcid.config.file}" ignore-resource-not-found="true" ignore-unresolvable="true" />
+            
     <tx:annotation-driven />
     
     <context:component-scan
 		base-package="org.orcid.persistence.aop" />
 		
-    <aop:aspectj-autoproxy />
+    <aop:aspectj-autoproxy />    
 
-    <!-- ${org.orcid.persistence.properties} gets replaced during the Maven
-         build, but other properties are escaped from Maven build replacement by preceding
-         with \ and so are handled by Spring. -->
-    <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
-    <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
-        ignore-unresolvable="true" />
-    
-
-	<bean id="applicationContextProvder"
+    <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
 	<!-- Profile last modified aspect -->
@@ -248,8 +242,6 @@
 	<bean id="orgDisambiguatedExternalIdentifierDao" class="org.orcid.persistence.dao.impl.OrgDisambiguatedExternalIdentifierDaoImpl" />
                 
 	<bean id="customEmailDao" class="org.orcid.persistence.dao.impl.CustomEmailDaoImpl" />	
-
-	<bean id="orcidSocialDao" class="org.orcid.persistence.dao.impl.OrcidSocialDaoImpl" />
 	
 	<bean id="notificationDao" class="org.orcid.persistence.dao.impl.NotificationDaoImpl" />
 	

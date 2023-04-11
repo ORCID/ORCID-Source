@@ -2,6 +2,8 @@ package org.orcid.utils.email;
 
 import java.util.AbstractMap.SimpleEntry;
 
+import javax.annotation.PostConstruct;
+
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
@@ -9,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import jakarta.ws.rs.core.Form;
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MediaType;
 
 @Component
 public class MailGunManager {
@@ -41,19 +43,23 @@ public class MailGunManager {
 
     @Value("${com.mailgun.testmode:yes}")
     private String testmode;
+    
+    @Value("${com.mailgun.apiKey}")
+    private String apiKey;
 
     @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com)$}")
     private String filter;
     
-    private final JerseyClientHelper jerseyClientHelper;
+    private JerseyClientHelper jerseyClientHelper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailGunManager.class);
 
-    public MailGunManager(String apiKey) {
+    @PostConstruct
+    public void initJerseyClientHelper() {
         // Mailgun username and password 
         SimpleEntry<String, String> auth = new SimpleEntry<String, String>("api", apiKey);
         // Setup our own jersey helper with the mailgun credentials 
-        jerseyClientHelper = new JerseyClientHelper(auth);        
+        jerseyClientHelper = new JerseyClientHelper(auth);    
     }
     
     public boolean sendMarketingEmail(String from, String to, String subject, String text, String html) {

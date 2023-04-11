@@ -51,7 +51,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidRequestExcep
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class RegistrationManagerImplTest extends DBUnitTest {
 
     private static final String CLIENT_ID_AUTODEPRECATE_ENABLED = "APP-5555555555555555";

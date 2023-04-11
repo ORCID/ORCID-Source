@@ -81,8 +81,8 @@ export class MembersListComponent {
         members.sort(function(a, b){ return a.publicDisplayName.localeCompare(b.publicDisplayName); });
     }
     
-    getMemberPageUrl(slug: string) : string {
-        return getBaseUri() + '/members/' + slug;
+    getMemberPageUrl(memberId: string) : string {
+        return getBaseUri() + '/members/' + memberId;
     }
   
     filterSelected() : void {

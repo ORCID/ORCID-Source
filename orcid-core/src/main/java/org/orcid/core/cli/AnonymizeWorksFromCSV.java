@@ -163,9 +163,7 @@ public class AnonymizeWorksFromCSV {
                 workEntity.setContributorsJson("{\"contributor\":[]}");
                 workEntity.setTopContributorsJson("[]");
             }
-            
-            DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, false);
-
+            workEntity.setDisplayIndex(workCsv.getDisplayIndex());
             workDao.persist(workEntity);
             workDao.flush();
         }

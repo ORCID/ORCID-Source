@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 public class ClientsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml");
@@ -113,6 +112,16 @@ public class ClientsControllerTest extends BaseControllerTest {
     @Test
     public void testInvalidWebsite() {
         Client client = controller.getEmptyClient();
+        
+        // check empty website causes an issue
+        client = controller.getEmptyClient();
+        client.setRedirectUris(new ArrayList<RedirectUri>());
+        client.setDisplayName(Text.valueOf("This is a valid name"));
+        client.setShortDescription(Text.valueOf("This is a valid description"));
+        client = controller.createClient(client);
+        assertNotNull(client);
+        assertEquals(1, client.getErrors().size());
+        
         client.setRedirectUris(new ArrayList<RedirectUri>());
         client.setDisplayName(Text.valueOf("This is a valid name"));
         client.setShortDescription(Text.valueOf("This is a valid description"));
@@ -121,29 +130,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         assertNotNull(client);
         assertEquals(1, client.getErrors().size());
         assertEquals(controller.getMessage("common.invalid_url"), client.getErrors().get(0));
-        
-        // test website validation when switched off
-        ReflectionTestUtils.setField(controller, "validateWebsites", false);
-        
-        client = controller.getEmptyClient();
-        client.setRedirectUris(new ArrayList<RedirectUri>());
-        client.setDisplayName(Text.valueOf("This is a valid name"));
-        client.setShortDescription(Text.valueOf("This is a valid description"));
-        client.setWebsite(Text.valueOf("invalid"));
-        client = controller.createClient(client);
-        assertNotNull(client);
-        assertEquals(0, client.getErrors().size());
-        
-        // check empty website still causes an issue
-        client = controller.getEmptyClient();
-        client.setRedirectUris(new ArrayList<RedirectUri>());
-        client.setDisplayName(Text.valueOf("This is a valid name"));
-        client.setShortDescription(Text.valueOf("This is a valid description"));
-        client = controller.createClient(client);
-        assertNotNull(client);
-        assertEquals(1, client.getErrors().size());
-        
-        ReflectionTestUtils.setField(controller, "validateWebsites", true);
     }
 
     @Test

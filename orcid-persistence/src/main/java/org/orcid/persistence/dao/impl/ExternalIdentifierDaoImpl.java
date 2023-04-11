@@ -32,7 +32,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeExternalIdentifier(String orcid, String externalIdReference) {
-        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where owner.id=:orcid and externalIdReference=:externalIdReference");
+        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where orcid=:orcid and externalIdReference=:externalIdReference");
         query.setParameter("orcid", orcid);
         query.setParameter("externalIdReference", externalIdReference);
         return query.executeUpdate() > 0 ? true : false;
@@ -42,7 +42,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Override
     @Cacheable(value = "dao-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -56,7 +56,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @SuppressWarnings("unchecked")
     @Override
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, String visibility) {
-        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();
@@ -64,7 +64,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
 
     @Override
     public ExternalIdentifierEntity getExternalIdentifierEntity(String orcid, Long id) {
-        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and id = :id");
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE orcid = :orcid and id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         return (ExternalIdentifierEntity) query.getSingleResult();
@@ -74,7 +74,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeExternalIdentifier(String orcid, Long id) {
-        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where owner.id=:orcid and id=:id");
+        Query query = entityManager.createQuery("delete from ExternalIdentifierEntity where orcid=:orcid and id=:id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;

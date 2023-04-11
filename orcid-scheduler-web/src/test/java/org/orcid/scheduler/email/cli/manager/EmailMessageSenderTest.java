@@ -60,7 +60,7 @@ import org.togglz.junit.TogglzRule;
  *
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
 public class EmailMessageSenderTest {
 
     @Resource

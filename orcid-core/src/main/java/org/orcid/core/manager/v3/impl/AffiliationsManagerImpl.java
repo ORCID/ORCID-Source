@@ -293,6 +293,8 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
             break;
         }
 
+        entity.setOrcid(orcid);
+        
         // Updates the give organization with the latest organization from
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
@@ -300,8 +302,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
 
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        entity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingWorkPrivacy(entity, profile, isApiRequest);
         entity.setAffiliationType(type.name());
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);

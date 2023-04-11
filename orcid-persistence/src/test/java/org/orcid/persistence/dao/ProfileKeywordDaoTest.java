@@ -21,7 +21,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class ProfileKeywordDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "0000-0000-0000-0003";
@@ -56,7 +56,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setKeywordName("this is my keyword");
-        entity.setProfile(new ProfileEntity("4444-4444-4444-4443"));
+        entity.setOrcid("4444-4444-4444-4443");
         entity.setSourceId("4444-4444-4444-4443");
         entity.setVisibility("PUBLIC");        
         
@@ -106,7 +106,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
     @Test
     public void persistTest() {
         ProfileKeywordEntity e = new ProfileKeywordEntity();
-        e.setProfile(new ProfileEntity("0000-0000-0000-0002")); 
+        e.setOrcid("0000-0000-0000-0002"); 
         e.setVisibility("PRIVATE");
         e.setKeywordName("KEYWORD");
         

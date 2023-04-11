@@ -48,7 +48,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
 
     @Resource(name = "jpaJaxbEducationAdapterV3")
@@ -314,9 +314,9 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
     private Education getEducation(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Education.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_3.0_rc1/samples/read_samples/education-3.0_rc1.xml";
+        String name = "/record_3.0/samples/read_samples/education-3.0.xml";
         if (full) {
-            name = "/record_3.0_rc1/samples/read_samples/education-full-3.0_rc1.xml";
+            name = "/record_3.0/samples/read_samples/education-full-3.0.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Education) unmarshaller.unmarshal(inputStream);
@@ -345,7 +345,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
         result.setEndDate(new EndDateEntity(2020, 2, 2));
         result.setId(123456L);
         result.setOrg(orgEntity);
-        result.setProfile(new ProfileEntity("0000-0001-0002-0003"));
+        result.setOrcid("0000-0001-0002-0003");
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.name());

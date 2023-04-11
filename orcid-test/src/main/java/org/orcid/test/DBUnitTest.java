@@ -1,5 +1,7 @@
 package org.orcid.test;
 
+import static org.junit.Assert.fail;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -33,9 +35,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @Ignore
 public class DBUnitTest {
 
-    private static final String PERSISTENCE_CONTEXT = "classpath:orcid-persistence-context.xml";
-
-    private static final String CORE_CONTEXT = "classpath:orcid-core-context.xml";
+    private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
+    private static final String TEST_CORE_CONTEXT = "classpath:test-core-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
@@ -46,12 +47,17 @@ public class DBUnitTest {
 
     private static ApplicationContext context;
 
-    static {
+    static {        
         try {
-            context = new ClassPathXmlApplicationContext(CORE_CONTEXT);
+            context = new ClassPathXmlApplicationContext(TEST_CORE_CONTEXT);
         } catch (Exception e) {
-            context = new ClassPathXmlApplicationContext(PERSISTENCE_CONTEXT);
-        }
+            try {
+                context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                fail();
+            }
+        }                      
     }
 
     public static void initDBUnitData(List<String> flatXMLDataFiles) throws Exception {

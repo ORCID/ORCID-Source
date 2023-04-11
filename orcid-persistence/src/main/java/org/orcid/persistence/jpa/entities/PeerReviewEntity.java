@@ -18,11 +18,11 @@ import org.orcid.persistence.util.OrcidStringUtils;
 
 @Entity
 @Table(name = "peer_review")
-public class PeerReviewEntity extends SourceAwareEntity<Long> implements Comparable<PeerReviewEntity>, ProfileAware, DisplayIndexInterface {
+public class PeerReviewEntity extends SourceAwareEntity<Long> implements Comparable<PeerReviewEntity>, OrcidAware, DisplayIndexInterface {
     
     private static final long serialVersionUID = -172752706595347541L;
     private Long id;
-    private ProfileEntity profile;
+    private String orcid;
     private String role;
     private OrgEntity org;
     private String externalIdentifiersJson;
@@ -115,15 +115,13 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
         this.id = id;
     }
 
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
     
-    @Override
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
-    @JoinColumn(name = "orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "orcid", nullable = false)
+    public String getOrcid() {
+        return orcid;
     }     
 
     @Column(name = "subject_external_identifiers_json")

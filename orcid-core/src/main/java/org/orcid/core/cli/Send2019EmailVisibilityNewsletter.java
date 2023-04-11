@@ -17,6 +17,7 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailFrequencyDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -51,6 +52,8 @@ public class Send2019EmailVisibilityNewsletter {
     
     private EmailQueueProducer emailQueueProducer;
     
+    private ProfileDao profileDao;
+    
     private static final Logger LOG = LoggerFactory.getLogger(Send2019EmailVisibilityNewsletter.class);
     
     @SuppressWarnings("resource")
@@ -64,6 +67,7 @@ public class Send2019EmailVisibilityNewsletter {
         templateManager = (TemplateManager) context.getBean("templateManager");
         messages = (MessageSource) context.getBean("messageSource");
         emailQueueProducer = (EmailQueueProducer) context.getBean("emailQueueProducer");
+        profileDao = (ProfileDao) context.getBean("profileDao");
     }
     
     private void send() {
@@ -83,7 +87,7 @@ public class Send2019EmailVisibilityNewsletter {
             EmailMessage emailMessage = getEmailMessage(email);
             EmailTrickleItem item = new EmailTrickleItem();
             item.setEmailMessage(emailMessage);
-            item.setOrcid(email.getProfile().getId());
+            item.setOrcid(email.getOrcid());
             item.setSuccessType(ProfileEventType.EMAIL_VIS_2019_SENT);
             item.setSkippedType(ProfileEventType.EMAIL_VIS_2019_SKIPPED);
             item.setFailureType(ProfileEventType.EMAIL_VIS_2019_FAILED);
@@ -94,17 +98,17 @@ public class Send2019EmailVisibilityNewsletter {
     }
     
     private EmailMessage getEmailMessage(EmailEntity email) {
-        Locale locale = getUserLocaleFromProfileEntity(email.getProfile());
-        String orcid = email.getProfile().getId();
+        Locale locale = getUserLocaleFromProfileEntity(profileDao.find(email.getOrcid()));
+        String orcid = email.getOrcid();
         String emailName = recordNameManager.deriveEmailFriendlyName(orcid);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
         params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
-        params.put("orcidId", email.getProfile().getId()); 
+        params.put("orcidId", email.getOrcid()); 
         params.put("baseUri", orcidUrlManager.getBaseUrl());
-        params.put("unsubscribeLink", getUnsubscribeLink(email.getProfile().getId()));        
+        params.put("unsubscribeLink", getUnsubscribeLink(email.getOrcid()));        
         
         String subject = messages.getMessage("email.2019.vis_settings.subject", null, locale);
         String bodyText = templateManager.processTemplate("jul_2019_email_visibility_settings.ftl", params, locale);

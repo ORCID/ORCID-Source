@@ -4,24 +4,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.sun.jersey.api.core.InjectParam;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
 
 @Provider
-public class ApiVersionCheckFilter implements ContainerRequestFilter {
+public class ApiVersionCheckFilter implements ContainerRequestFilter{
 
-    @InjectParam("localeManager")
+    @Autowired
     private LocaleManager localeManager;
     
     @Context private HttpServletRequest httpRequest;
@@ -29,6 +29,8 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     public static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
     private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
+    
+    private static final String MEMBER_INFO_PATH = "member-info";
     
     public ApiVersionCheckFilter() {
     }
@@ -43,16 +45,15 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     }
     
     @Override
-    public ContainerRequest filter(ContainerRequest request) {
-        String path = request.getPath();
+    public void filter(ContainerRequestContext request) {
+        String path = request.getUriInfo().getPath();
         String method = request.getMethod() == null ? null : request.getMethod().toUpperCase();
         Matcher matcher = VERSION_PATTERN.matcher(path);        
         String version = null;
         if (matcher.lookingAt()) {
             version = matcher.group(1);
         }
-        
-        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
+        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !MEMBER_INFO_PATH.equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
             if(!RequestMethod.GET.name().equals(method)) {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    
@@ -67,6 +68,6 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
             }
         }
 
-        return request;
+        return;
     }
 }

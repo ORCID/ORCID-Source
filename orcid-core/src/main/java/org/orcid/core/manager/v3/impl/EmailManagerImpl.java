@@ -135,19 +135,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
      */    
     @Override
     @Transactional
-    public Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email) {
-        return addEmail(request, orcid, email, false);
-    }
-    
-    /**
-     * TODO: Returns true when the primary email is verified, this because the
-     * email sender is on the orcid-web project until we finish migrating the
-     * jersey libs, so, the calling function should know that the primary email
-     * have changed; for now it returns the new and old primary email
-     */
-    @Override
-    @Transactional
-    public Map<String, String> addEmail(HttpServletRequest request, String orcid, Email email, boolean isAdminAction) {
+    public Map<String, String> addEmail(String orcid, Email email) {        
         Map<String, String> keys = new HashMap<String, String>();
         SourceEntity sourceEntity = sourceManager.retrieveActiveSourceEntity();
         String sourceId = sourceEntity.getSourceProfile() == null ? null : sourceEntity.getSourceProfile().getId();
@@ -225,7 +213,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         updatedEntity.setCurrent(originalEntity.getCurrent());
         updatedEntity.setVisibility(originalEntity.getVisibility());
         updatedEntity.setPrimary(originalEntity.getPrimary());
-        updatedEntity.setProfile(originalEntity.getProfile());
+        updatedEntity.setOrcid(originalEntity.getOrcid());
 
         if (originalEntity.getPrimary()) {
             // if primary email changed send notification.
@@ -247,7 +235,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         Map<String, String> emailKeys = getEmailKeys(email);       
         String hash = emailKeys.get(HASH);
         EmailEntity entity = emailDao.find(hash);
-        if(!orcid.equals(entity.getProfile().getId())) {
+        if(!orcid.equals(entity.getOrcid())) {
             throw new IllegalArgumentException("Email with hash {}" + hash + " doesn't belong to " + orcid);
         }
         if(!PojoUtil.isEmpty(entity.getEmail()) && !email.equalsIgnoreCase(entity.getEmail())) {            
@@ -280,7 +268,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             emailDao.addEmail(orcid, emailKeys.get(FILTERED_EMAIL), emailKeys.get(HASH), visibility.name(), orcid, null);
             return true;
         } else {
-            if(orcid.equals(entity.getProfile().getId())) {
+            if(orcid.equals(entity.getOrcid())) {
                 entity.setEmail(emailKeys.get(FILTERED_EMAIL));
                 entity.setPrimary(false);
                 entity.setVerified(false);

@@ -41,7 +41,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     
     @Resource
@@ -165,7 +165,7 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
         DateFieldsOnBaseEntityUtils.setDateFields(result, date);
         result.setId(Long.valueOf(1));
         result.setDisplayName("display-name");
-        result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
+        result.setOrcid("0000-0000-0000-0000");
         result.setVisibility(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name());
         result.setClientSourceId(CLIENT_SOURCE_ID);
         return result;

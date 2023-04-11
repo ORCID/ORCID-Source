@@ -28,8 +28,9 @@ the software.
         <spring.version>5.3.20</spring.version>
         <security.version>5.6.2</security.version>
         <liquibase.version>4.9.1</liquibase.version>
-        <jersey.version>1.19.1</jersey.version>
-        <swagger.version>1.5.16</swagger.version>
+        <jersey.version>2.27</jersey.version>
+        <jackson.version>2.13.1</jackson.version>
+        <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,7 +67,6 @@ the software.
     </organization>
 
     <url>http://orcid.org</url>    
-
     <!-- End -->
 
     <build>
@@ -557,8 +557,21 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
+            
+            <!-- Jersey Server -->
+ <dependency>
+    <groupId>org.glassfish.jersey.containers</groupId>
+    <artifactId>jersey-container-servlet</artifactId>
+    <version>${jersey.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.media</groupId>
+    <artifactId>jersey-media-json-jackson</artifactId>
+    <version>${jersey.version}</version>
+</dependency>
+
             <!-- http://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
-            <dependency>
+            <!-- dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-server</artifactId>
             <version>${jersey.version}</version>
@@ -604,7 +617,7 @@ the software.
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-client</artifactId>
                 <version>${jersey.version}</version>
-            </dependency>
+            </dependency -->
 
             <!-- Web -->
             <dependency>
@@ -622,36 +635,18 @@ the software.
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.10.1</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.9.5</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.10.0</version>
+                <version>${jackson.version}</version>
             </dependency>            
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-core</artifactId>
-                <version>${jersey.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>${jersey.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-bundle</artifactId>
-                <version>${jersey.version}</version>
-                <scope>compile</scope>
-            </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
@@ -674,12 +669,14 @@ the software.
                 <artifactId>jersey-apache-client4</artifactId>
                 <version>${jersey.version}</version>
                 <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.github.slugify</groupId>
-                <artifactId>slugify</artifactId>
-                <version>2.1.5</version>
-            </dependency>
+            </dependency>   
+            
+            <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
+			<dependency>
+			    <groupId>javax.ws.rs</groupId>
+			    <artifactId>javax.ws.rs-api</artifactId>
+			    <version>2.1</version>
+			</dependency>                    
 
             <!-- Database -->
             <dependency>
@@ -908,16 +905,11 @@ the software.
                 <artifactId>guava</artifactId>
                 <version>31.1-jre</version>
             </dependency>
-            <!-- http://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
-            <dependency>
-               <groupId>io.swagger</groupId>
-               <artifactId>swagger-jaxrs</artifactId>
-               <version>${swagger.version}</version>
-            </dependency>
+
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.0.12</version>
+               <version>3.1.0</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

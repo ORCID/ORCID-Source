@@ -89,7 +89,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
                     new Object[] { code });
             return null;
         } 
-        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(detail.getClientDetailsEntity().getId(), detail.getScopes(), detail.getProfileEntity().getId());         
+        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(detail.getClientDetailsEntity().getId(), detail.getScopes(), detail.getOrcid());         
         LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
                     authInfo.getUserOrcid() });
         
@@ -101,7 +101,8 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     }        
 
     private OrcidOauth2UserAuthentication getUserAuthentication(OrcidOauth2AuthoriziationCodeDetail detail) {
-        return new OrcidOauth2UserAuthentication(detail.getProfileEntity(), detail.getAuthenticated());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(detail.getOrcid());
+        return new OrcidOauth2UserAuthentication(profile, detail.getAuthenticated());
     }
     
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
@@ -133,21 +134,18 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         Authentication userAuthentication = authentication.getUserAuthentication();
         Object principal = userAuthentication.getDetails();
 
-        ProfileEntity entity = null;
+        String orcid = null;
 
         if (principal instanceof OrcidProfileUserDetails) {
             OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-            String effectiveOrcid = userDetails.getOrcid();
-            if (effectiveOrcid != null) {
-                entity = profileEntityCacheManager.retrieve(effectiveOrcid);
-            }
+            orcid = userDetails.getOrcid();
         }
 
-        if (entity == null) {
+        if (orcid == null) {
             return null;
         }
 
-        detail.setProfileEntity(entity);
+        detail.setOrcid(orcid);
         detail.setAuthenticated(userAuthentication.isAuthenticated());
         Set<String> authorities = getStringSetFromGrantedAuthorities(authentication.getAuthorities());
         detail.setAuthorities(authorities);

@@ -268,6 +268,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Override
     public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        LOGGER.debug("Loading authentication from token");
         // Feature flag: If the request is to delete an element, allow
         if (Features.ALLOW_DELETE_WITH_REVOKED_TOKENS.isActive() && RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
             OrcidOauth2TokenDetail orcidAccessToken = orcidTokenStore.readOrcidOauth2TokenDetail(accessTokenValue);
@@ -367,13 +368,13 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
 
         OrcidOauth2TokenDetail parentToken = orcidOauth2TokenDetailDao.findByRefreshTokenValue(refreshTokenValue);
 
-        ProfileEntity profileEntity = new ProfileEntity(parentToken.getProfile().getId());
+        ProfileEntity profileEntity = new ProfileEntity(parentToken.getOrcid());
         OrcidOauth2TokenDetail newToken = new OrcidOauth2TokenDetail();
 
         newToken.setApproved(true);
         newToken.setClientDetailsId(clientId);
         newToken.setPersistent(parentToken.isPersistent());
-        newToken.setProfile(profileEntity);
+        newToken.setOrcid(parentToken.getOrcid());
         newToken.setRedirectUri(parentToken.getRedirectUri());
         newToken.setRefreshTokenValue(UUID.randomUUID().toString());
         newToken.setResourceId(parentToken.getResourceId());
@@ -430,9 +431,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         result.setValue(token.getTokenValue());
         
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
-        if(token.getProfile() != null) {
-            additionalInfo.put(OrcidOauth2Constants.ORCID, token.getProfile().getId());
-            additionalInfo.put(OrcidOauth2Constants.NAME, profileEntityManager.retrivePublicDisplayName(token.getProfile().getId()));
+        if(token.getOrcid() != null) {
+            additionalInfo.put(OrcidOauth2Constants.ORCID, token.getOrcid());
+            additionalInfo.put(OrcidOauth2Constants.NAME, profileEntityManager.retrivePublicDisplayName(token.getOrcid()));
         }                        
         
         result.setAdditionalInformation(additionalInfo);

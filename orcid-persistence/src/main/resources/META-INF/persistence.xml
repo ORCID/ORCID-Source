@@ -78,9 +78,6 @@
 		<!-- Orcid props entity -->
 		<class>org.orcid.persistence.jpa.entities.OrcidPropsEntity</class>
 		
-		<!-- Orcid social -->
-		<class>org.orcid.persistence.jpa.entities.OrcidSocialEntity</class>
-		
 		<!-- Invalid record data changes -->
 		<class>org.orcid.persistence.jpa.entities.InvalidRecordDataChangeEntity</class>
 				

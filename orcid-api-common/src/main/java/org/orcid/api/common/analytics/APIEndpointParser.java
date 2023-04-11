@@ -2,9 +2,10 @@ package org.orcid.api.common.analytics;
 
 import java.util.List;
 
-import javax.ws.rs.core.PathSegment;
 
-import com.sun.jersey.spi.container.ContainerRequest;
+import org.glassfish.jersey.server.ContainerRequest;
+
+import javax.ws.rs.core.PathSegment;
 
 public class APIEndpointParser {
 
@@ -33,7 +34,7 @@ public class APIEndpointParser {
     }
 
     private void parse(ContainerRequest request) {
-        List<PathSegment> path = request.getPathSegments(true);
+        List<PathSegment> path = request.getUriInfo().getPathSegments(true);
         int categoryIndex = 2;
         if (path.get(0).toString().matches(API_VERSION_REGEX)) {
             // found api version

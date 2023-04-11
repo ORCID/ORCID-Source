@@ -90,7 +90,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
 public class AdminControllerTest extends BaseControllerTest {
 
     @Resource(name = "emailManagerReadOnlyV3")
@@ -566,7 +566,7 @@ public class AdminControllerTest extends BaseControllerTest {
         email.setPrimary(false);
         email.setVerified(false);
         email.setVisibility(Visibility.PUBLIC);
-        emailManager.addEmail(request, "4444-4444-4444-4499", email);
+        emailManager.addEmail("4444-4444-4444-4499", email);
 
         // Verify the email
         adminController.adminVerifyEmail(request, response, "not-verified@email.com");

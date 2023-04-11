@@ -65,7 +65,7 @@ public class OrcidUserDetailsServiceTest {
         
         EmailEntity emailEntity = new EmailEntity();
         emailEntity.setEmail(EMAIL);
-        emailEntity.setProfile(new ProfileEntity(ORCID));
+        emailEntity.setOrcid(ORCID);
         
         Email email = new Email();
         email.setEmail(EMAIL);
@@ -75,8 +75,8 @@ public class OrcidUserDetailsServiceTest {
         when(emailManagerReadOnly.findPrimaryEmail(ORCID)).thenReturn(email);   
         
         when(emailDao.findByEmail(anyString())).thenReturn(null);
-        when(emailDao.findByEmail(EMAIL)).thenReturn(getEmailEntity(getProfileEntity()));
-        when(emailDao.findPrimaryEmail(ORCID)).thenReturn(getEmailEntity(getProfileEntity()));
+        when(emailDao.findByEmail(EMAIL)).thenReturn(getEmailEntity(ORCID));
+        when(emailDao.findPrimaryEmail(ORCID)).thenReturn(getEmailEntity(ORCID));
     }
 
     @Test
@@ -237,14 +237,14 @@ public class OrcidUserDetailsServiceTest {
         assertEquals(ORCID, opud.getUsername());
     }
     
-    private EmailEntity getEmailEntity(ProfileEntity profile) {
+    private EmailEntity getEmailEntity(String orcid) {
         if (email != null) {
             return email;
         }
 
         email = new EmailEntity();
         email.setEmail(EMAIL);
-        email.setProfile(profile);
+        email.setOrcid(orcid);
         email.setVerified(true);
         return email;
     }

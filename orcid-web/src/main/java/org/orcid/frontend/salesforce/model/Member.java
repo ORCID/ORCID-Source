@@ -66,10 +66,6 @@ public class Member implements Serializable {
         this.name = name;
     }
 
-    public String getSlug() {
-        return SlugUtils.createSlug(getId(), getName());
-    }
-
     public URL getWebsiteUrl() {
         return websiteUrl;
     }

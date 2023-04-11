@@ -51,7 +51,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-web-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-scheduler-context.xml" })
 public class RorOrgLoadSourceTest {
 
     @Mock

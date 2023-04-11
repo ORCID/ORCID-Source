@@ -3,6 +3,7 @@ package org.orcid.core.manager.v3;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -18,6 +19,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -47,20 +50,34 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
+import org.orcid.jaxb.model.common.CitationType;
+import org.orcid.jaxb.model.common.ContributorRole;
+import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
+import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
+import org.orcid.jaxb.model.v3.release.common.Country;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Day;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.Month;
+import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.Subtitle;
 import org.orcid.jaxb.model.v3.release.common.Title;
+import org.orcid.jaxb.model.v3.release.common.TranslatedTitle;
 import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
+import org.orcid.jaxb.model.v3.release.record.Citation;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
@@ -1668,7 +1685,7 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(workResult);
         assertNotNull(workEntity);
         assertNotNull(workEntity.getTopContributorsJson());
-        assertEquals("[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"},{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"}]}]", workEntity.getTopContributorsJson());
+        assertEquals("[{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 1\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"},{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"}]},{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 2\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"WRITING_REVIEW_EDITING\"},{\"contributorSequence\":null,\"contributorRole\":\"SOFTWARE\"}]},{\"contributorOrcid\":{\"uri\":null,\"path\":\"0000-0000-0000-000X\",\"host\":null},\"creditName\":{\"content\":\"Contributor 3\"},\"contributorEmail\":null,\"contributorAttributes\":null,\"rolesAndSequences\":[{\"contributorSequence\":null,\"contributorRole\":\"FORMAL_ANALYSIS\"},{\"contributorSequence\":null,\"contributorRole\":\"FUNDING_ACQUISITION\"}]}]", workEntity.getTopContributorsJson());
 
         workManager.removeWorks(orcid, Arrays.asList(workResult.getPutCode()));
 
@@ -1702,6 +1719,236 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(workExtended.getContributorsGroupedByOrcid());
         assertEquals(workExtended.getContributorsGroupedByOrcid().get(0).getRolesAndSequences().size(), 1);
         workManager.removeWorks(orcid, Arrays.asList(workResult.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksDifferentContent() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+        workToUpdate.setWorkType(WorkType.DISSERTATION_THESIS);
+        workToUpdate.setWorkCitation(new Citation("(Author, 2023a) Or (Author, 2023b)", CitationType.FORMATTED_APA));
+
+        WorkForm workForm = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workForm));
+
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksSameContent() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        Work workSaved = workManager.createWork(claimedOrcid, work, true);
+        work.setPutCode(workSaved.getPutCode());
+
+        workManager.updateWork(claimedOrcid, workSaved, true);
+        
+        Mockito.verify(mockNotificationManager, Mockito.times(1)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksNullAndEmptyValues() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+        workToUpdate.setWorkContributors(null);
+        workToUpdate.setShortDescription("");
+        workToUpdate.setJournalTitle(new Title(""));
+        workToUpdate.setVisibility(null);
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksPublicationDate() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+
+        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+        workToUpdate.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(1), new Day(2))));
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("title"));
+        title.setSubtitle(new Subtitle("subtitle"));
+        title.setTranslatedTitle(new TranslatedTitle("titulo traducido", "es"));
+        workToUpdate.setWorkTitle(title);
+        workToUpdate.setWorkCitation(new Citation("citation", CitationType.FORMATTED_IEEE));
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        workManager.updateWork(claimedOrcid, workUpdated, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksContributors() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+
+        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+
+        WorkContributors contributors = getContributors();
+        contributors.getContributor().get(0).getContributorAttributes().setContributorRole(ContributorRole.EDITOR.name());
+        contributors.getContributor().get(0).setCreditName(new CreditName("credit name 2"));
+
+        workToUpdate.setWorkContributors(contributors);
+
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksContributorsGroupedByOrcidId() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
+
+        WorkForm workForm = getWorkWithContributorsMultipleRoles();
+
+        Work work = workManager.createWork(claimedOrcid, workForm);
+
+        WorkExtended w = workManager.getWorkExtended(claimedOrcid, work.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+
+        WorkForm workFormToUpdate = getWorkWithContributorsMultipleRoles();
+
+        workFormToUpdate.setPutCode(Text.valueOf(workSaved.getPutCode().getValue()));
+        workFormToUpdate.setContributors(null);
+        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = getContributorsGroupedByOrcidId();
+        contributorsGroupedByOrcid.get(0).setCreditName(new CreditName("CONTRIBUTOR 1"));
+        workFormToUpdate.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+
+        Work workUpdated = workManager.updateWork(claimedOrcid, workFormToUpdate);
+        WorkExtended workExtendedUpdated = workManager.getWorkExtended(claimedOrcid, workUpdated.getPutCode());
+
+        assertTrue(WorkForm.valueOf(workExtendedUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        work = workManager.updateWork(claimedOrcid, workFormToUpdate);
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void testCompareWorksExternalIdentifiers() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+
+        WorkForm workSaved = WorkForm.valueOf(work, maxContributorsForUI);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+
+        ExternalIDs externalIDs = getExternalIDs();
+        externalIDs.getExternalIdentifier().get(0).setValue("value2");
+
+        workToUpdate.setWorkExternalIdentifiers(externalIDs);
+
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        workToUpdate = workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+
+        Work workUpdated = workManager.updateWork(claimedOrcid, workToUpdate, true);
+
+        assertTrue(WorkForm.valueOf(workUpdated, maxContributorsForUI).compare(workFormToUpdate));
+
+        Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
 
     private WorkEntity getUserPreferredWork() {
@@ -1834,6 +2081,139 @@ public class WorkManagerTest extends BaseTest {
         return work;
     }
 
+    private void fillWork(Work work) {
+        work.setCountry(new Country(Iso3166Country.US));
+        work.setJournalTitle(new Title("journal-title"));
+        work.setLanguageCode("en");
+        work.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(1), new Day(1))));
+        work.setShortDescription("short-description");
+        work.setUrl(new Url("http://test.orcid.org"));
+        work.setVisibility(Visibility.LIMITED);
+        work.setWorkCitation(new Citation("citation", CitationType.FORMATTED_HARVARD));
+        work.setWorkContributors(getContributors());
+        work.setWorkExternalIdentifiers(getExternalIDs());
+        WorkTitle title = new WorkTitle();
+        title.setTitle(new Title("title"));
+        title.setSubtitle(new Subtitle("subtitle"));
+        title.setTranslatedTitle(new TranslatedTitle("translated title", "en"));
+        work.setWorkTitle(title);
+
+        work.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+    }
+
+    private WorkContributors getContributors() {
+        List<Contributor> contributors = new ArrayList<>();
+
+        ContributorAttributes attributes = new ContributorAttributes();
+        attributes.setContributorRole("http://credit.niso.org/contributor-roles/investigation/");
+        attributes.setContributorSequence(SequenceType.FIRST);
+
+        ContributorOrcid contributorOrcid = new ContributorOrcid();
+        contributorOrcid.setHost("http://test.orcid.org");
+        contributorOrcid.setPath("0000-0000-0000-0000");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
+
+        Contributor contributor = new Contributor();
+        contributor.setContributorAttributes(attributes);
+        contributor.setContributorOrcid(contributorOrcid);
+        contributor.setCreditName(new CreditName("credit name"));
+        contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
+
+        contributors.add(contributor);
+
+        attributes = new ContributorAttributes();
+        attributes.setContributorRole("http://credit.niso.org/contributor-roles/conceptualization/");
+        attributes.setContributorSequence(SequenceType.ADDITIONAL);
+
+        contributorOrcid = new ContributorOrcid();
+        contributorOrcid.setHost("http://test.orcid.org");
+        contributorOrcid.setPath("0000-0000-0000-0001");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
+
+        contributor = new Contributor();
+        contributor.setContributorAttributes(attributes);
+        contributor.setContributorOrcid(contributorOrcid);
+        contributor.setCreditName(new CreditName("credit name 2"));
+        contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
+
+        contributors.add(contributor);
+
+        attributes = new ContributorAttributes();
+        attributes.setContributorRole("http://credit.niso.org/contributor-roles/data-curation/");
+        attributes.setContributorSequence(SequenceType.ADDITIONAL);
+
+        contributorOrcid = new ContributorOrcid();
+        contributorOrcid.setHost("http://test.orcid.org");
+        contributorOrcid.setPath("0000-0000-0000-0002");
+        contributorOrcid.setUri("https://test.orcid.org/0000-0000-0000-0000");
+
+        contributor = new Contributor();
+        contributor.setContributorAttributes(attributes);
+        contributor.setContributorOrcid(contributorOrcid);
+        contributor.setCreditName(new CreditName("credit name3"));
+        contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
+
+        contributors.add(contributor);
+
+        return new WorkContributors(Stream.of(contributor).collect(Collectors.toList()));
+    }
+
+    private ExternalIDs getExternalIDs() {
+        ExternalID id1 = new ExternalID();
+        id1.setRelationship(Relationship.SELF);
+        id1.setType("doi");
+        id1.setValue("value1");
+        id1.setUrl(new Url("http://value1.com"));
+        ExternalIDs extIds = new ExternalIDs();
+        extIds.getExternalIdentifier().add(id1);
+        return extIds;
+    }
+
+    private List<ContributorsRolesAndSequences> getContributorsGroupedByOrcidId() {
+        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = new ArrayList<>();
+        ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
+        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
+        crs.setCreditName(new CreditName("Contributor 1"));
+        List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
+        ContributorAttributes ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+        rolesAndSequences.add(ca);
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
+        rolesAndSequences.add(ca);
+        crs.setRolesAndSequences(rolesAndSequences);
+        contributorsGroupedByOrcid.add(crs);
+
+        crs = new ContributorsRolesAndSequences();
+        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
+        crs.setCreditName(new CreditName("Contributor 2"));
+        rolesAndSequences = new ArrayList<>();
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
+        rolesAndSequences.add(ca);
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.SOFTWARE.value());
+        rolesAndSequences.add(ca);
+        crs.setRolesAndSequences(rolesAndSequences);
+        contributorsGroupedByOrcid.add(crs);
+
+        crs = new ContributorsRolesAndSequences();
+        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
+        crs.setCreditName(new CreditName("Contributor 3"));
+        rolesAndSequences = new ArrayList<>();
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.FORMAL_ANALYSIS.value());
+        rolesAndSequences.add(ca);
+        ca = new ContributorAttributes();
+        ca.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
+        rolesAndSequences.add(ca);
+        crs.setRolesAndSequences(rolesAndSequences);
+        contributorsGroupedByOrcid.add(crs);
+
+
+        return contributorsGroupedByOrcid;
+    }
+
     private Work getWorkWith100Contributors() {
         Work work = getWork(null);
         List<Contributor> contributorList = new ArrayList<>();
@@ -1852,20 +2232,7 @@ public class WorkManagerTest extends BaseTest {
     private WorkForm getWorkWithContributorsMultipleRoles() {
         Work work = getWork(null);
         WorkForm workForm = WorkForm.valueOf(work, 50);
-        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = new ArrayList<>();
-        ContributorsRolesAndSequences crs = new ContributorsRolesAndSequences();
-        crs.setContributorOrcid(new ContributorOrcid("0000-0000-0000-000X"));
-        crs.setCreditName(new CreditName("Contributor 1"));
-        List<ContributorAttributes> rolesAndSequences = new ArrayList<>();
-        ContributorAttributes ca = new ContributorAttributes();
-        ca.setContributorRole(CreditRole.FUNDING_ACQUISITION.value());
-        rolesAndSequences.add(ca);
-        ca = new ContributorAttributes();
-        ca.setContributorRole(CreditRole.WRITING_REVIEW_EDITING.value());
-        rolesAndSequences.add(ca);
-        crs.setRolesAndSequences(rolesAndSequences);
-        contributorsGroupedByOrcid.add(crs);
-        workForm.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+        workForm.setContributorsGroupedByOrcid(getContributorsGroupedByOrcidId());
         return workForm;
     }
 }

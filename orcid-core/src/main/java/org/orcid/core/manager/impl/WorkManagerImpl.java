@@ -45,6 +45,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequencesV2;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -350,6 +351,25 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+
+        Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
+        WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
+
+        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
+            if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+                SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+                String client = null;
+                if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
+                    client = sourceEntity.getSourceProfile().getId();
+                }
+                if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
+                    client = sourceEntity.getSourceClient().getClientName();
+                }
+                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
+                return workSaved;
+            }
+        }
+
         String originalVisibility = workEntity.getVisibility();
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -387,8 +407,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
-        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-        return updatedWork;
+        return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
     @Override

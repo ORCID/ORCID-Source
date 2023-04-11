@@ -17,7 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
@@ -29,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
@@ -64,7 +63,7 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
         assertEquals(2, anotherDetail.getAuthorities().size());
         assertEquals(2, anotherDetail.getResourceIds().size());
         assertEquals(2, anotherDetail.getScopes().size());
-        assertEquals("4444-4444-4444-4441", anotherDetail.getProfileEntity().getId());
+        assertEquals("4444-4444-4444-4441", anotherDetail.getOrcid());
         assertNotNull(anotherDetail.getDateCreated());
         assertNotNull(anotherDetail.getLastModified());
         
@@ -88,13 +87,12 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
     }
 
     public OrcidOauth2AuthoriziationCodeDetail getOrcidOauth2AuthoriziationCodeDetail() {
-        ProfileEntity profileEntity = profileDao.find("4444-4444-4444-4441");
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
         detail.setId("a-code");
         detail.setApproved(true);
         detail.setAuthenticated(true);
         detail.setAuthorities(new HashSet<String>(Arrays.asList("ROLE_USER", "ROLE_CLIENT")));
-        detail.setProfileEntity(profileEntity);
+        detail.setOrcid("4444-4444-4444-4441");
         detail.setResourceIds(new HashSet<String>(Arrays.asList("orcid", "porkid")));
         detail.setScopes(new HashSet<String>(Arrays.asList("/orcid-profile/create", "/orcid-profile/update")));
         detail.setSessionId("a-session-id");

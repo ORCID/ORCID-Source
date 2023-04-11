@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Angel Montenegro
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";
     private static final String CLIENT_ID_2 = "APP-5555555555555556";
@@ -228,7 +228,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         assertNotNull(token1);
         assertEquals(CLIENT_ID_1, token1.getClientDetailsId());
         assertEquals(tokenValue, token1.getTokenValue());
-        assertEquals(USER_ORCID, token1.getProfile().getId());
+        assertEquals(USER_ORCID, token1.getOrcid());
         assertEquals(scopes1, token1.getScope());
         assertEquals("bearer", token1.getTokenType());
         
@@ -237,7 +237,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         assertNotNull(token2);
         assertEquals(CLIENT_ID_1, token2.getClientDetailsId());
         assertEquals(tokenValue, token2.getTokenValue());
-        assertEquals(USER_ORCID, token2.getProfile().getId());
+        assertEquals(USER_ORCID, token2.getOrcid());
         assertEquals(scopes2, token2.getScope());
         assertEquals("bearer", token2.getTokenType());
                 
@@ -246,7 +246,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         assertNotNull(token3);
         assertEquals(CLIENT_ID_1, token3.getClientDetailsId());
         assertEquals(tokenValue, token3.getTokenValue());
-        assertEquals(USER_ORCID, token3.getProfile().getId());
+        assertEquals(USER_ORCID, token3.getOrcid());
         assertEquals(scopes3, token3.getScope());
         assertEquals("bearer", token3.getTokenType()); 
         
@@ -264,7 +264,7 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
-        token.setProfile(new ProfileEntity(userOrcid));
+        token.setOrcid(userOrcid);
         token.setScope(scopes);
         token.setTokenDisabled(disabled);
         token.setTokenExpiration(expirationDate);

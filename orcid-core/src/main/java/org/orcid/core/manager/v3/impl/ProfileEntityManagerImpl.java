@@ -47,24 +47,29 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.BackupCodeDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -180,11 +185,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public boolean hasBeenGivenPermissionTo(String giverOrcid, String receiverOrcid) {
         return profileDao.hasBeenGivenPermissionTo(giverOrcid, receiverOrcid);
-    }
-
-    @Override
-    public boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId) {
-        return profileDao.existsAndNotClaimedAndBelongsTo(messageOrcid, clientId);
     }
 
     @Override
@@ -428,49 +428,49 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         if (claim != null) {
             profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility().name());
         }
-
+        // Update profile entity in the DB
+        profileDao.merge(profile);
+        profileDao.flush();
+        
         // Update the visibility for every bio element to the visibility
         // selected by the user
         // Update the bio
-        org.orcid.jaxb.model.common_v2.Visibility defaultVisibility = org.orcid.jaxb.model.common_v2.Visibility
-                .fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        Visibility defaultVisibility = claim.getActivitiesVisibilityDefault().getVisibility();
         
         // Update address
-        if (profile.getAddresses() != null) {
-            for (AddressEntity a : profile.getAddresses()) {
-                a.setVisibility(defaultVisibility.name());
-            }
-        }
+        Addresses addresses = addressManager.getAddresses(orcid);
+        for(Address address : addresses.getAddress()) {
+            address.setVisibility(defaultVisibility);
+            addressManager.updateAddress(orcid, address.getPutCode(), address, false);
+        }        
 
         // Update the keywords
-        if (profile.getKeywords() != null) {
-            for (ProfileKeywordEntity k : profile.getKeywords()) {
-                k.setVisibility(defaultVisibility.name());
-            }
+        Keywords keywords = profileKeywordManager.getKeywords(orcid); 
+        for(Keyword keyword : keywords.getKeywords()) {
+            keyword.setVisibility(defaultVisibility);
+            profileKeywordManager.updateKeyword(orcid, keyword.getPutCode(), keyword, false);
         }
 
         // Update the other names
-        if (profile.getOtherNames() != null) {
-            for (OtherNameEntity o : profile.getOtherNames()) {
-                o.setVisibility(defaultVisibility.name());
-            }
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
+        for(OtherName otherName : otherNames.getOtherNames()) {
+            otherName.setVisibility(defaultVisibility);
+            otherNameManager.updateOtherName(orcid, otherName.getPutCode(), otherName, false);
         }
 
         // Update the researcher urls
-        if (profile.getResearcherUrls() != null) {
-            for (ResearcherUrlEntity r : profile.getResearcherUrls()) {
-                r.setVisibility(defaultVisibility.name());
-            }
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid);
+        for(ResearcherUrl researcherUrl : researcherUrls.getResearcherUrls()) {
+            researcherUrl.setVisibility(defaultVisibility);
+            researcherUrlManager.updateResearcherUrl(orcid, researcherUrl, false);
         }
 
         // Update the external identifiers
-        if (profile.getExternalIdentifiers() != null) {
-            for (ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
-                e.setVisibility(defaultVisibility.name());
-            }
-        }
-        profileDao.merge(profile);
-        profileDao.flush();
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid);
+        for(PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
+            extId.setVisibility(defaultVisibility);
+            externalIdentifierManager.updateExternalIdentifier(orcid, extId, false);
+        }        
 
         // Update the biography
         if (biographyManager.exists(orcid)) {

@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.core.MediaType;
 
 @Component
 public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDocument> {

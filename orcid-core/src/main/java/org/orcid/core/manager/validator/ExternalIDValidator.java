@@ -2,6 +2,7 @@ package org.orcid.core.manager.validator;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -11,21 +12,13 @@ import org.orcid.jaxb.model.notification.permission_v2.Items;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
 
 public class ExternalIDValidator {
 
     @Resource
     IdentifierTypeManager identifierTypeManager;
 
-    @Value("${org.orcid.core.validations.requireRelationship:false}")
-    private boolean requireRelationshipOnExternalIdentifier;
-    
     public ExternalIDValidator() {
-    }
-
-    public void setRequireRelationshipOnExternalIdentifier(boolean requireRelationshipOnExternalIdentifier) {
-        this.requireRelationshipOnExternalIdentifier = requireRelationshipOnExternalIdentifier;
     }
 
     public void validateWorkOrPeerReview(ExternalID id) {
@@ -41,12 +34,10 @@ public class ExternalIDValidator {
         if(PojoUtil.isEmpty(id.getValue())) {
             errors.add("value");
         }
-        
-        if(requireRelationshipOnExternalIdentifier) {
-            if(id.getRelationship() == null) {
-                errors.add("relationship");
-            }
-        }
+                
+        if(id.getRelationship() == null) {
+            errors.add("relationship");
+        }        
         
         checkAndThrow(errors);
     }
@@ -63,12 +54,10 @@ public class ExternalIDValidator {
             if(PojoUtil.isEmpty(id.getValue())) {
                 errors.add("value");
             }
-            
-            if(requireRelationshipOnExternalIdentifier) {
-                if(id.getRelationship() == null) {
-                    errors.add("relationship");
-                }
-            }
+                        
+            if(id.getRelationship() == null) {
+                errors.add("relationship");
+            }            
         }
         checkAndThrow(errors);
     }
@@ -85,12 +74,10 @@ public class ExternalIDValidator {
             if(PojoUtil.isEmpty(id.getValue())) {
                 errors.add("value");
             }
-            
-            if(requireRelationshipOnExternalIdentifier) {
-                if(id.getRelationship() == null) {
-                    errors.add("relationship");
-                }
-            }
+                        
+            if(id.getRelationship() == null) {
+                errors.add("relationship");
+            }            
         }                
         
         checkAndThrow(errors);
@@ -111,12 +98,10 @@ public class ExternalIDValidator {
                 if(PojoUtil.isEmpty(extId.getValue())) {
                     errors.add("value");
                 }
-                
-                if(requireRelationshipOnExternalIdentifier) {
-                    if(extId.getRelationship() == null) {
-                        errors.add("relationship");
-                    }
-                }
+                                
+                if(extId.getRelationship() == null) {
+                    errors.add("relationship");
+                }                
             }
         }
         checkAndThrow(errors);

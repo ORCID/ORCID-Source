@@ -2,8 +2,10 @@ package org.orcid.internal.server;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,16 +18,18 @@ import org.junit.runner.RunWith;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
+import org.orcid.internal.util.EmailResponse;
 import org.orcid.internal.util.LastModifiedResponse;
 import org.orcid.internal.util.MemberInfo;
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.test.DBUnitTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-internal-api-context.xml", "classpath:orcid-internal-api-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-internal-api-context.xml" })
 public class InternalApiServiceDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
@@ -46,7 +50,7 @@ public class InternalApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void viewStatusText() {
+    public void viewStatusTextTest() {
         Response response = internalApiServiceDelegator.viewStatusText();
         assertNotNull(response);
         assertNotNull(response.getEntity());
@@ -54,7 +58,7 @@ public class InternalApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void viewLastModified() {
+    public void viewLastModifiedTest() {
         Response response = internalApiServiceDelegator.viewPersonLastModified(USER_ORCID);
         assertNotNull(response);
         assertNotNull(response.getEntity());
@@ -66,7 +70,7 @@ public class InternalApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void viewMemberInfo() {
+    public void viewMemberInfoTest() {
         String memberId = "5555-5555-5555-5558";
         Response response = internalApiServiceDelegator.viewMemberInfo(memberId);
         assertNotNull(response);
@@ -90,5 +94,30 @@ public class InternalApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(error);
         assertEquals(new Integer(0), error.getErrorCode());
         assertEquals("Member id or name not found for: invalid name", error.getDeveloperMessage());                        
+    }
+    
+    @Test
+    public void findOrcidByEmailTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL);
+        Response response = internalApiServiceDelegator.findOrcidByEmail("5555-5555-5555-5558@user.com");
+        assertNotNull(response);
+        EmailResponse info = (EmailResponse) response.getEntity();
+        assertEquals(HttpStatus.FOUND, info.getStatus());
+        assertEquals("5555-5555-5555-5558@user.com", info.getEmail());
+        assertEquals(USER_ORCID, info.getOrcid());
+        
+        
+        response = internalApiServiceDelegator.findOrcidByEmail("invalid@email.com");
+        assertNotNull(response);
+        info = (EmailResponse) response.getEntity();
+        assertEquals(HttpStatus.NOT_FOUND, info.getStatus());
+        assertEquals("invalid@email.com", info.getEmail());
+        assertEquals("", info.getOrcid());
+    }
+    
+    @Test(expected = AccessControlException.class)
+    public void findOrcidByEmailWrongScopeTest() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
+        internalApiServiceDelegator.findOrcidByEmail("5555-5555-5555-5558@user.com");        
     }
 }

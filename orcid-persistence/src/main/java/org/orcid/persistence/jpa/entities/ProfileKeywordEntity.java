@@ -18,12 +18,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "profile_keyword")
-public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware, DisplayIndexInterface {
+public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Comparable<ProfileKeywordEntity>, OrcidAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
     private Long id;
-    private ProfileEntity profile;
+    private String orcid;
     private String keywordName;
     private String visibility;    
     private Long displayIndex;
@@ -47,21 +47,13 @@ public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Com
         this.id = id;
     }
 
-    /**
-     * @return the profile
-     */    
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "profile_orcid", nullable = false)
-    public ProfileEntity getProfile() {
-        return profile;
+    @Column(name = "profile_orcid", nullable = false, updatable = false)
+    public String getOrcid() {
+        return orcid;
     }
 
-    /**
-     * @param profile
-     *            the profile to set
-     */
-    public void setProfile(ProfileEntity profile) {
-        this.profile = profile;
+    public void setOrcid(String orcid) {
+        this.orcid = orcid;
     }
 
     /**
@@ -115,7 +107,7 @@ public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Com
         result = prime * result + ((displayIndex == null) ? 0 : displayIndex.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((keywordName == null) ? 0 : keywordName.hashCode());
-        result = prime * result + ((profile == null) ? 0 : profile.hashCode());
+        result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((sourceId == null) ? 0 : sourceId.hashCode());
         result = prime * result + ((clientSourceId == null) ? 0 : clientSourceId.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -146,10 +138,10 @@ public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Com
                 return false;
         } else if (!keywordName.equals(other.keywordName))
             return false;
-        if (profile == null) {
-            if (other.profile != null)
+        if (orcid == null) {
+            if (other.orcid != null)
                 return false;
-        } else if (!profile.equals(other.profile))
+        } else if (!orcid.equals(other.orcid))
             return false;
         if (visibility != other.visibility)
             return false;
