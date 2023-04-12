@@ -18,29 +18,35 @@ import org.springframework.stereotype.Component;
 public class IssnClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(IssnClient.class);
-    
-    private static final String START_OF_STRING="\u0098";
+
+    private static final String START_OF_STRING = "\u0098";
     private static final String STRING_TERMINATOR = "\u009C";
-    
+
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
-    
+
     @Resource
     private HttpRequestUtils httpRequestUtils;
 
     public IssnData getIssnData(String issn) {
         String json = null;
+        
         try {
+            LOG.debug("Extracting ISSN for " +  issn);
             // ensure any lower case x is X otherwise issn portal won't work
             json = getJsonDataFromIssnPortal(issn.toUpperCase());
         } catch (IOException | InterruptedException | URISyntaxException e) {
             throw new RuntimeException("Error extracting json from issn portal response", e);
-        } 
+        }
         try {
-            IssnData data = extractIssnData(json);
-            data.setIssn(issn);
-            return data;
-        } catch (JSONException e) {
+            if (json != null) {
+                IssnData data = extractIssnData(json);
+                data.setIssn(issn);
+                return data;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             LOG.warn("Error extracting issn data from json returned from issn portal", e);
             return null;
         }
@@ -50,39 +56,40 @@ public class IssnClient {
         JSONObject jsonObject = new JSONObject(json);
         JSONArray jsonArray = jsonObject.getJSONArray("@graph");
         IssnData issnData = new IssnData();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            if (jsonArray.getJSONObject(i).has("mainTitle")) {
-                String title = jsonArray.getJSONObject(i).getString("mainTitle");
-                String cleanTitle = cleanText(title);
-                issnData.setMainTitle(cleanTitle);
-                return issnData;
-            } else if (jsonArray.getJSONObject(i).has("name")) {
-                // name and mainTitle always in same object - therefore if no mainTitle but name present, no mainTitle in data
-                try {
-                    issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
-                } catch (JSONException e) {
-                    // may not be an array
-                    issnData.setMainTitle(jsonArray.getJSONObject(i).getString("name"));
+        if (issnData != null) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                if (jsonArray.getJSONObject(i).has("mainTitle")) {
+                    String title = jsonArray.getJSONObject(i).getString("mainTitle");
+                    String cleanTitle = cleanText(title);
+                    issnData.setMainTitle(cleanTitle);
+                    return issnData;
+                } else if (jsonArray.getJSONObject(i).has("name")) {
+                    // name and mainTitle always in same object - therefore if
+                    // no mainTitle but name present, no mainTitle in data
+                    try {
+                        issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
+                    } catch (JSONException e) {
+                        // may not be an array
+                        issnData.setMainTitle(jsonArray.getJSONObject(i).getString("name"));
+                    }
+                    return issnData;
                 }
-                return issnData;
             }
         }
         return null;
     }
 
     private String getJsonDataFromIssnPortal(String issn) throws IOException, InterruptedException, URISyntaxException {
-        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);        
+        String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
         HttpResponse<String> response = httpRequestUtils.doGet(issnUrl);
-        if(response.statusCode() != 200) {
+        if (response.statusCode() != 200) {
             return null;
         }
         return response.body();
     }
-    
+
     private String cleanText(String text) {
-        return text.replaceAll("\\p{C}", "")
-                .replaceAll(START_OF_STRING,"")
-                .replaceAll(STRING_TERMINATOR, "");
+        return text.replaceAll("\\p{C}", "").replaceAll(START_OF_STRING, "").replaceAll(STRING_TERMINATOR, "");
     }
-    
+
 }
