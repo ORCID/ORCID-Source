@@ -120,6 +120,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             processDeletedElementsFile(zip, deletedElementsMap);
             processInstitutions(zip, altNamesMap, identifiersMap, dnNameMap);
             processDeletedElements(deletedElementsMap);
+            groupRinggoldsWithUpdatedExternalModifiers();
             return true;
         } catch (Exception e) {
             LOGGER.error("Error importing RINGGOLD data", e);
