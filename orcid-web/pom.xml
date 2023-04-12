@@ -154,6 +154,12 @@
             <artifactId>byte-buddy</artifactId>
         </dependency>
 
+        <!-- Togglz -->          
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-console</artifactId>
+        </dependency> 
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.orcid</groupId>
@@ -174,27 +180,6 @@
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-cypher-commons</artifactId>
             <version>2.1.2</version>
-        </dependency>
-        <!-- Togglz -->
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-spring-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.togglz</groupId>
-            <artifactId>togglz-console</artifactId>
         </dependency>        
         <dependency>
             <groupId>org.togglz</groupId>

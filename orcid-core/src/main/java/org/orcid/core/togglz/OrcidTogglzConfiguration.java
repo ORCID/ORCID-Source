@@ -21,6 +21,7 @@ import org.togglz.core.repository.jdbc.JDBCStateRepository;
 import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
+import org.togglz.spring.security.SpringSecurityUserProvider;
 
 @Component
 public class OrcidTogglzConfiguration implements TogglzConfig {
@@ -60,27 +61,7 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
 
     @Override
     public UserProvider getUserProvider() {
-        return new UserProvider() {
-            @Override
-            public FeatureUser getCurrentUser() {                
-                boolean isAdmin = false;
-                String userOrcid = null;
-                SecurityContext context = SecurityContextHolder.getContext();
-                if (context != null && context.getAuthentication() != null) {
-                    Authentication authentication = context.getAuthentication();
-                    if (authentication != null) {
-                        Object principal = authentication.getDetails();
-                        if (principal instanceof OrcidProfileUserDetails) {
-                            OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-                            isAdmin = userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
-                            userOrcid = userDetails.getOrcid();
-                        }
-                    }
-                }
-                LOG.debug("Is user {} and admin? {}", userOrcid, isAdmin);
-                return new SimpleFeatureUser(userOrcid, isAdmin);
-            }
-        };
+        return new SpringSecurityUserProvider(OrcidWebRole.ROLE_ADMIN.getAuthority());        
     }
 
 }
