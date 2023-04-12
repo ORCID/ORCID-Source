@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,7 +59,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
+
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
@@ -83,6 +84,8 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
     private static final List<String> ALLOWED_EXTERNAL_IDENTIFIERS = Arrays.asList("ISNI", "IPED", "NCES", "OFR");
 
+    private Set<Long> UPDATED_RINGGOLDS;
+
     @Override
     public String getSourceName() {
         return "RINGGOLD";
@@ -104,10 +107,11 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     }
 
     private boolean importData() {
-        Map<Integer, List<JsonNode>> altNamesMap = new HashMap<>();
-        Map<Integer, List<JsonNode>> identifiersMap = new HashMap<>();
-        Map<Integer, JsonNode> dnNameMap = new HashMap<>();
-        Map<Integer, Integer> deletedElementsMap = new HashMap<>();
+        Map<Integer, List<JsonNode>> altNamesMap = new HashMap<Integer, List<JsonNode>>();
+        Map<Integer, List<JsonNode>> identifiersMap = new HashMap<Integer, List<JsonNode>>();
+        Map<Integer, JsonNode> dnNameMap = new HashMap<Integer, JsonNode>();
+        Map<Integer, Integer> deletedElementsMap = new HashMap<Integer, Integer>();
+        UPDATED_RINGGOLDS = new HashSet<Long>();
 
         LOGGER.info("Starting the importData process");
         try (ZipFile zip = new ZipFile(ftpsFileDownloader.getLocalFilePath())) {
@@ -124,13 +128,13 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             LOGGER.warn("Ringgold import completed");
         }
     }
-    
+
     private JsonNode getJsonNode(ZipFile zip, ZipEntry entry) throws IOException, UnsupportedEncodingException {
         LOGGER.info("Generating json node for: " + entry.getName());
-        try (Reader reader = new InputStreamReader(zip.getInputStream(entry), RINGGOLD_CHARACTER_ENCODING)){
+        try (Reader reader = new InputStreamReader(zip.getInputStream(entry), RINGGOLD_CHARACTER_ENCODING)) {
             JsonNode node = JsonUtils.read(reader);
             return node;
-        }        
+        }
     }
 
     private void processAltNamesFile(ZipFile mainFile, Map<Integer, List<JsonNode>> altNamesMap, Map<Integer, JsonNode> dnNameMap)
@@ -241,7 +245,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 // Check if the status is up to date, if not, update it
                 if (!status.name().equals(existingEntity.getStatus())) {
                     existingEntity.setStatus(status.name());
-                    existingEntity.setIndexingStatus(IndexingStatus.REINDEX);
+                    existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                     if (newId != null) {
                         existingEntity.setSourceParentId(String.valueOf(newId));
                     }
@@ -295,14 +299,13 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             }
             entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
             entity.setIndexingStatus(IndexingStatus.PENDING);
-            
-            OrgDisambiguatedEntity newEntity= orgDisambiguatedManager.createOrgDisambiguated(entity);
+
+            OrgDisambiguatedEntity newEntity = orgDisambiguatedManager.createOrgDisambiguated(entity);
             try {
-              //mark group for indexing
+                // mark group for indexing
                 new OrgGrouping(newEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
 
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
             }
         } else {
@@ -321,9 +324,10 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 } catch (Exception ex) {
                     LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
                 }
-                orgDisambiguatedManager.updateOrgDisambiguated(entity);
-                
+                entity = orgDisambiguatedManager.updateOrgDisambiguated(entity);
+
             }
+
         }
 
         // If the original name was replaces by the DN name, lets create an org
@@ -365,6 +369,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 } else {
                     existingExternalIdentifiersMap.remove(id);
                 }
+                UPDATED_RINGGOLDS.add(disambiguatedEntity.getId());
             });
         }
 
@@ -372,6 +377,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         // in the ringgold data anymore
         for (OrgDisambiguatedExternalIdentifierEntity extIdToBeRemoved : existingExternalIdentifiersMap.values()) {
             orgDisambiguatedExternalIdentifierDao.remove(extIdToBeRemoved.getId());
+            UPDATED_RINGGOLDS.add(disambiguatedEntity.getId());
         }
     }
 
@@ -413,6 +419,24 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
             newOrg.setName(name);
             newOrg.setOrgDisambiguated(disambiguatedEntity);
             orgDao.persist(newOrg);
+        }
+    }
+
+    private void groupRinggoldsWithUpdatedExternalModifiers() {
+        for (Long id : UPDATED_RINGGOLDS) {
+            OrgDisambiguatedEntity entity = orgDisambiguatedDao.find(id);
+            if (entity != null) {
+                entity.setIndexingStatus(IndexingStatus.PENDING);
+                try {
+                    // mark group for indexing
+                    new OrgGrouping(entity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                } catch (Exception ex) {
+                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                }
+                entity = orgDisambiguatedManager.updateOrgDisambiguated(entity);
+
+            }
         }
     }
 
