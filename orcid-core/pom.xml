@@ -269,10 +269,18 @@
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
+        </dependency>        
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
