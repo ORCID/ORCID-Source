@@ -222,8 +222,8 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         LOGGER.info("Processing institutions");
         institutions.forEach(institution -> {
             Integer ringgoldId = institution.get("ringgold_id").asInt();
-            OrgDisambiguatedEntity entity = processInstitution(institution, dnNameMap);
-            generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
+            OrgDisambiguatedEntity entity = processInstitution(institution, dnNameMap, identifiersMap);
+            
 
             // Create orgs based on the alt names information
             if (altNamesMap.containsKey(ringgoldId)) {
@@ -264,8 +264,9 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         });
     }
 
-    private OrgDisambiguatedEntity processInstitution(JsonNode institution, Map<Integer, JsonNode> dnNameMap) {
+    private OrgDisambiguatedEntity processInstitution(JsonNode institution, Map<Integer, JsonNode> dnNameMap, Map<Integer, List<JsonNode>> identifiersMap) {
         Integer recId = institution.get("rec_id").asInt();
+        
         Integer ringgoldId = institution.get("ringgold_id").asInt();
         LOGGER.info("Processing ringgold_id: {} rec_id: {}", ringgoldId, recId);
         Integer parentId = institution.get("parent_ringgold_id").asInt() == 0 ? null : institution.get("parent_ringgold_id").asInt();
@@ -286,6 +287,7 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
 
         OrgDisambiguatedEntity entity = orgDisambiguatedDao.findBySourceIdAndSourceType(String.valueOf(ringgoldId), OrgDisambiguatedSourceType.RINGGOLD.name());
         Date now = new Date();
+        
         if (entity == null) {
             entity = new OrgDisambiguatedEntity();
             entity.setLastIndexedDate(now);
@@ -310,7 +312,6 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
             }
         } else {
-            // If the element have changed
             if (changed(entity, parentId, name, country, city, state, type)) {
                 entity.setCity(city);
                 entity.setCountry(country.name());
@@ -318,17 +319,18 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
                 entity.setOrgType(type);
                 entity.setRegion(state);
                 entity.setIndexingStatus(IndexingStatus.REINDEX);
+                entity = orgDisambiguatedManager.updateOrgDisambiguated(entity);
                 try {
                     // mark group for indexing
-                    new OrgGrouping(entity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+                    if(entity != null) {
+                        new OrgGrouping(entity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+                    }
 
                 } catch (Exception ex) {
                     LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
                 }
-                entity = orgDisambiguatedManager.updateOrgDisambiguated(entity);
 
             }
-
         }
 
         // If the original name was replaces by the DN name, lets create an org
@@ -336,6 +338,9 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
         if (originalName != null) {
             generateOrganizationFromInstitutionNode(entity, originalName, country, city, state);
         }
+         if(entity != null && identifiersMap.get(ringgoldId) != null) {
+             generateExternalIdentifiers(entity, identifiersMap.get(ringgoldId));
+         }
 
         return entity;
     }
@@ -385,12 +390,12 @@ public class RinggoldOrgLoadSource implements OrgLoadSource {
     private void generateOrganizations(OrgDisambiguatedEntity disambiguatedEntity, List<JsonNode> altNames) {
         altNames.forEach(altName -> {
             String name = altName.get("name").asText();
-            LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
             String city = altName.get("city").asText();
             Iso3166Country country = Iso3166Country.fromValue(altName.get("country").asText());
             OrgEntity existingOrg = orgDao.findByNameCityRegionCountryAndType(name, city, "", country.name(), "RINGGOLD");
             if (existingOrg != null) {
                 if (existingOrg.getOrgDisambiguated() == null) {
+                    LOGGER.info("Processing organization {} for {}", name, disambiguatedEntity.getId());
                     existingOrg.setOrgDisambiguated(disambiguatedEntity);
                     orgDao.merge(existingOrg);
                 }
