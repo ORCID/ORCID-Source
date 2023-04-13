@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -157,6 +158,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             
             //ror returns the JSON as Array of institutes
             JsonNode rootNode = JsonUtils.read(fileToLoad);
+            UPDATED_RORS = new HashSet<Long>();
 
             rootNode.forEach(institute -> {
                 String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
@@ -208,7 +210,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             });
             
             // Check if any RORs with external identifiers updated and group them
-            
+            groupRORsWithUpdatedExternalModifiers();
 
             LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
             return true;
