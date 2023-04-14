@@ -54,7 +54,7 @@ public class TwoFactorAuthenticationController extends BaseController {
         TwoFactorAuthStatus status = get2FAStatus();
         if (status.isEnabled()) {
             LOG.warn("2FA setup page requested for user who is already using 2FA");
-            return new ModelAndView("redirect:/account");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/account"));
         }
         return new ModelAndView("2FA_setup");
     }

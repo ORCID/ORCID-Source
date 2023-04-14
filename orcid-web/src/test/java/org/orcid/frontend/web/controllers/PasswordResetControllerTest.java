@@ -173,7 +173,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
 
-        assertEquals("redirect:/reset-password?expired=true", modelAndView.getViewName());
+        assertEquals("redirect:https://testserver.orcid.org/reset-password?expired=true", modelAndView.getViewName());
         verify(redirectAttributes, times(1)).addFlashAttribute("passwordResetLinkExpired", true);
 
     }
