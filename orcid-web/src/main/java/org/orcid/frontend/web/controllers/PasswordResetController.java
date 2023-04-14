@@ -229,7 +229,7 @@ public class PasswordResetController extends BaseController {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
         if (isTokenExpired(passwordResetToken)) {
             redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
-            return new ModelAndView("redirect:/reset-password?expired=true");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
         }
         ModelAndView result = new ModelAndView("password_one_time_reset");
         result.addObject("noIndex", true);

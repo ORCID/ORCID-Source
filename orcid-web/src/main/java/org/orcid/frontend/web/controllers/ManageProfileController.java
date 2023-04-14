@@ -482,10 +482,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (decryptedEmail.equals(primaryEmail)) {
             profileEntityManager.deactivateRecord(getCurrentUserOrcid());
             logoutCurrentUser(request, response);
-            result = new ModelAndView("redirect:/signin#deactivated");
+            result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
         } else {
             redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
-            return new ModelAndView("redirect:/my-orcid");
+            return new ModelAndView("redirect:"+ calculateRedirectUrl("/my-orcid"));
         }
 
         return result;
@@ -979,15 +979,15 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);                    
                     givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);
-                    return new ModelAndView("redirect:/account?delegate=" + trustedOrcid);
+                    return new ModelAndView("redirect:" + calculateRedirectUrl("/account?delegate=" + trustedOrcid));
                 } else {
-                    return new ModelAndView("redirect:/account?wrongToken=true");
+                    return new ModelAndView("redirect:" + calculateRedirectUrl("/account?wrongToken=true"));
                 }
             } else {
-                return new ModelAndView("redirect:/account?invalidToken=true");
+                return new ModelAndView("redirect:" + calculateRedirectUrl("/account?invalidToken=true"));
             }
         } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
-            return new ModelAndView("redirect:/account?invalidToken=true");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/account?invalidToken=true"));
         }
     }
     

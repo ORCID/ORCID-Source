@@ -460,9 +460,9 @@ public class RegistrationController extends BaseController {
         if (PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
             LOGGER.error("Error decypting verify email from the verify email link: {} ", encryptedEmail);
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
-            return new ModelAndView("redirect:/signin");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/signin"));
         }
-        String redirect = "redirect:/signin";
+        String redirect = "redirect:" + calculateRedirectUrl("/signin");
         StringBuilder sb = new StringBuilder();
         try {
             String toDecrypt = new String(Base64.decodeBase64(encryptedEmail), "UTF-8");
@@ -493,16 +493,16 @@ public class RegistrationController extends BaseController {
                 }
 
                 if (currentUser != null && currentUser.equals(orcid)) {
-                    redirect = "redirect:/my-orcid?" + sb.toString();
+                    redirect = "redirect:" + calculateRedirectUrl("/my-orcid?" + sb.toString());
                 } else {
-                    redirect = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin?" + sb.toString();
+                    redirect = "redirect:" + calculateRedirectUrl("/signin?" + sb.toString());
                 }
             }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             sb.append("invalidVerifyUrl=true");
-            redirect = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin?" + sb.toString();
+            redirect = "redirect:" + calculateRedirectUrl("/signin?" + sb.toString());
             SecurityContextHolder.clearContext();
         }       
 

@@ -122,7 +122,7 @@ public class LoginController extends OauthControllerBase {
     public ModelAndView signout(HttpServletRequest request, HttpServletResponse response) {
         String query = request.getQueryString();
         
-        String redirectString = "redirect:" + orcidUrlManager.getBaseUrl() + "/signin";
+        String redirectString = "redirect:" + calculateRedirectUrl("/login");
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         
         if(isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
@@ -271,12 +271,12 @@ public class LoginController extends OauthControllerBase {
         String facebookSessionState = (String) request.getSession().getAttribute("f_state");
         if (!state.equals(facebookSessionState)) {
             LOGGER.warn("Facebook session state doesnt match");
-            return new ModelAndView("redirect:/login");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/login"));
         }
 
         if (StringUtils.isBlank(code)) {
             LOGGER.warn("Can't login to Facebook, {}: {}", error, errorDescription);
-            return new ModelAndView("redirect:/login");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/login"));
         }
 
         JSONObject userData = socialSignInUtils.getFacebookUserData(code);
@@ -296,11 +296,11 @@ public class LoginController extends OauthControllerBase {
         String googleSessionState = (String) request.getSession().getAttribute("g_state");
         if (!state.equals(googleSessionState)) {
             LOGGER.warn("Google session state doesnt match");
-            return new ModelAndView("redirect:/login");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/login"));
         }
         if (StringUtils.isBlank(code)) {
             LOGGER.warn("Can't login to Google");
-            return new ModelAndView("redirect:/login");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/login"));
         }
 
         JSONObject userData = socialSignInUtils.getGoogleUserData(code);
@@ -345,7 +345,7 @@ public class LoginController extends OauthControllerBase {
         userCookieGenerator.addCookie(userConnectionId, response);
 
         if ("social_2FA".equals(view.getViewName())) {
-            return new ModelAndView("redirect:" + orcidUrlManager.getBaseUrl() + "/2fa-signin?social=true");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/2fa-signin?social=true"));
         }
 
         return view;
