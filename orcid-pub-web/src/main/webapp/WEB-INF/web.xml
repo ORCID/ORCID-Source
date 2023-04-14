@@ -161,7 +161,8 @@
 	    <init-param>
             <param-name>jersey.config.servlet.filter.staticContentRegex</param-name>
             <param-value>/static/.*</param-value>
-         </init-param>
+         </init-param> 
+   
 		<init-param>
         	<param-name>jersey.config.server.wadl.disableWadl</param-name>
         	<param-value>true</param-value>
