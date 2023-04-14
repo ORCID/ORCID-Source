@@ -43,6 +43,8 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.version.ApiSection;
 import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
@@ -51,8 +53,6 @@ import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.PrimaryRecord;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.DateUtils;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -102,7 +102,6 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
-        t.printStackTrace();
         String clientId = securityManager.getClientIdFromAPIRequest();
         if (t instanceof NotFoundException) {
             logShortError(t, clientId);

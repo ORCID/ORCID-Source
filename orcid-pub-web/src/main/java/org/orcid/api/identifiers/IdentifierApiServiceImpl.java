@@ -10,23 +10,8 @@ import javax.ws.rs.core.Response;
 import org.glassfish.jersey.message.XmlHeader;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.jaxb.model.message.ScopeConstants;
 import org.springframework.stereotype.Component;
 
-
-//import io.swagger.v3.oas.annotations.Operation;
-//TODOSWAGGER
-//import com.sun.jersey.api.provider.jaxb.XmlHeader;
-/*
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-*/
-
-//@Api("Identifier API")
 @Component
 @Path("/v{version: 2.0|2.1|3.0}" + OrcidApiConstants.IDENTIFIER_PATH)
 public class IdentifierApiServiceImpl {
@@ -46,10 +31,6 @@ public class IdentifierApiServiceImpl {
   @Produces(value = { MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
   @Path("")
   @XmlHeader(xmllocation)
-  /*@Operation(description = "Fetch identifier type map. Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
-  @ApiResponses(value = { @ApiResponse(code = 200, message = "")})
-  */
-  //public Response viewIdentifierTypes(@ApiParam() @QueryParam("locale") String locale) {
   public Response viewIdentifierTypes(@QueryParam("locale") String locale) {
       if (locale == null || locale.isEmpty())
           locale = "en";
