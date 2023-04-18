@@ -105,7 +105,15 @@ the software.
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-war-plugin</artifactId>
-               <version>2.1.1</version>
+               <version>3.2.2</version>
+               <configuration>
+                   <failOnMissingWebXml>false</failOnMissingWebXml>
+              </configuration>
+            </plugin>
+             <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-deploy-plugin</artifactId>
+               <version>3.0.0-M2</version>
                <configuration>
                    <failOnMissingWebXml>false</failOnMissingWebXml>
               </configuration>
@@ -980,7 +988,7 @@ the software.
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
-            <url>https://maven.restlet.com</url>
+            <url>https://maven.restlet.talend.com</url>
         </repository>
         <repository>
             <id>swagger2markup</id>

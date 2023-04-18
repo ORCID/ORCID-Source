@@ -1,0 +1,218 @@
+name: bld_maven
+run-name: bld-{{ inputs.artifact_name }}
+
+permissions:
+  checks: write
+  contents: read
+  issues: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: 'Name of the artifact to build'
+        required: false
+        default: "orcid-message-listener"
+        type: string
+      version_tag:
+        description: 'Name of the tag to build'
+        required: false
+        default: "v2.0.1"
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      artifact_name:
+        description: 'Name of the artifact to build'
+        required: false
+        default: "orcid-message-listener"
+        type: string
+      version_tag:
+        description: 'Name of the tag to build'
+        required: false
+        default: "v2.0.1"
+        type: string
+
+jobs:
+  bld_maven:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: find next version
+        id: version
+        uses: ORCID/version-bump-action@main
+        with:
+          version_tag: ${{ inputs.version_tag }}
+
+      - name: Set up Open JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+
+      - name: show path
+        run: |
+          echo "$PATH"
+          which java
+          echo "$JAVA_HOME"
+          echo "$tag_numeric"
+          echo "$project"
+        shell: bash
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+          project: "${{ inputs.artifact_name }}"
+
+      - name: populate orcid-persistence/src/main/resources/release_name.txt with numeric tag
+        run: |
+          echo "$version_tag_numeric" > orcid-persistence/src/main/resources/release_name.txt
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: bump version of the parent pom and connected projects
+        run: |
+          mvn -T 1C --batch-mode versions:set \
+              -DnewVersion="$version_tag_numeric" -DgenerateBackupPoms=false -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: bump the tagged version in the poms of projects not tied to the parent pom (orcid-test)
+        run: |
+          mvn -T 1C --batch-mode versions:set \
+              -DnewVersion="$version_tag_numeric" -DgenerateBackupPoms=false -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-test
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-parent into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode --non-recursive clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-test into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests\
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-test
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-utils into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-utils
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-persistence into our local maven repo because orcid-core depends on it
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-persistence
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-core into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-core
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: check some build related things
+        run: |
+          git --version
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git status
+          git diff
+
+      - name: build our project
+        run: |
+          mvn -T 1C --batch-mode -am package -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects "$project"
+          echo "------------------------------------------------------"
+
+          find . -name '*.war'
+          find . -name '*.jar'
+        env:
+          project: "${{ inputs.artifact_name }}"
+
+#
+# orcid-web customization
+#
+
+      - name: setup node for angular static file
+        if: ${{ inputs.artifact_name == 'orcid-web' }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.7.0
+
+      - name: build angular parts if we are building orcid-web
+        if: ${{ inputs.artifact_name == 'orcid-web' }}
+        run: |
+          echo "Build angular_orcid_generated.js"
+          cd orcid-nodejs
+          mvn -T 1C --batch-mode -P ci clean compile \
+            -Dnodejs.workingDirectory="${{ github.workspace }}/orcid-web/src/main/webapp/static/javascript/ng1Orcid" \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+          echo "Copying angular_orcid_generated to its final destination"
+          cp ${{ github.workspace }}/orcid-web/src/main/webapp/static/javascript/ng1Orcid/angular_orcid_generated.js ${{ github.workspace }}/orcid-web/target/orcid-web/static/javascript/ng1Orcid/
+
+          echo "Packaging orcid-web"
+          rm -f ${{ github.workspace }}/orcid-web/target/orcid-web.war
+          cd ${{ github.workspace }}/orcid-web/target/orcid-web
+
+          # have a file on the webserver we can hit
+          echo "$version_tag_numeric" > ${{ github.workspace }}/orcid-web/target/orcid-web/static/version
+
+          echo "Creating the war file"
+          jar -cf orcid-web.war .
+
+          # check_error "Creating the orcid-web.war file"
+          echo "Moving war file to the target folder"
+          cp orcid-web.war ${{ github.workspace }}/orcid-web/target/
+          echo "orcid-web.war is ready"
+
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+          project: "${{ inputs.artifact_name }}"
+
+##################################################################################################################
+
+
+      - name: install orcid-api-common into our local maven repo because the deploy depends on this orcid-web orcid-iapi orcid-api
+        if: ${{ inputs.artifact_name == 'orcid-web' }} || ${{ inputs.artifact_name == 'orcid-internal-api' }} || ${{ inputs.artifact_name == 'orcid-api-web' }} || ${{ inputs.artifact_name == 'orcid-pub-web' }}
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-api-common
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+
+      - name: deploy war file
+        run: |
+          mvn --batch-mode \
+              --settings settings-deploy.xml \
+              --file "${project}/pom.xml" \
+              -Dmaven.test.skip \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              -DaltReleaseDeploymentRepository="github::${ARTIFACT_URL}${ARTIFACT_REPO_PATH}" \
+              deploy -Dmaven.test.skip
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          ARTIFACT_URL: "${{ secrets.ARTIFACT_URL }}"
+          ARTIFACT_REPO_PATH: "${{ secrets.ARTIFACT_REPO_PATH }}"
+          ARTIFACT_USER: "${{ secrets.ARTIFACT_USER }}"
+          ARTIFACT_PASSWORD: "${{ secrets.ARTIFACT_PASSWORD }}"
+          project: "${{ inputs.artifact_name }}"
+
