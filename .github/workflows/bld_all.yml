@@ -1,0 +1,116 @@
+name: bld_all
+
+permissions:
+  checks: write
+  contents: read
+  issues: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "next_tag"
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "next_tag"
+        type: string
+
+jobs:
+
+  bld_ml:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-message-listener
+      version_tag: ${{ inputs.version_tag }}
+
+  bld_amq:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-activemq
+      version_tag: ${{ inputs.version_tag }}
+
+  bld_api:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-api-web
+      version_tag: ${{ inputs.version_tag }}
+
+  bld_iapi:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-internal-api
+      version_tag: ${{ inputs.version_tag }}
+
+  bld_pubweb:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-pub-web
+      version_tag: ${{ inputs.version_tag }}
+
+  bld_sched:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-scheduler-web
+      version_tag: ${{ inputs.version_tag }}
+
+  bld_web:
+    uses: ./.github/workflows/bld_maven.yml
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      artifact_name: orcid-web
+      version_tag: ${{ inputs.version_tag }}
+
+
+
+
+
+
