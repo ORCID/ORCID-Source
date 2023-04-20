@@ -30,16 +30,17 @@ public class IssnClient {
     private HttpRequestUtils httpRequestUtils;
 
     public IssnData getIssnData(String issn) {
+        if(StringUtils.isEmpty(issn)) {
+            return null;
+        }
         String json = null;
-        
         try {
             LOG.debug("Extracting ISSN for " +  issn);
             // ensure any lower case x is X otherwise issn portal won't work
-            if(!StringUtils.isEmpty(issn)) {
-                json = getJsonDataFromIssnPortal(issn.toUpperCase());
-            }
+            json = getJsonDataFromIssnPortal(issn.toUpperCase());
         } catch (IOException | InterruptedException | URISyntaxException e) {
-            throw new RuntimeException("Error extracting json from issn portal response for " +  issn, e);
+            LOG.error("Error when getting the issn data from issn portal " + issn, e);
+            return null;
         }
         try {
             if (json != null) {
@@ -50,7 +51,7 @@ public class IssnClient {
                 return null;
             }
         } catch (Exception e) {
-            LOG.warn("Error extracting issn data from json returned from issn portal", e);
+            LOG.warn("Error extracting issn data from json returned from issn portal "+ issn, e);
             return null;
         }
     }
