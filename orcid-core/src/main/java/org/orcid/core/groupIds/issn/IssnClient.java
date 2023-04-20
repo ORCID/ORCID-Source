@@ -6,6 +6,7 @@ import java.net.http.HttpResponse;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,9 +35,11 @@ public class IssnClient {
         try {
             LOG.debug("Extracting ISSN for " +  issn);
             // ensure any lower case x is X otherwise issn portal won't work
-            json = getJsonDataFromIssnPortal(issn.toUpperCase());
+            if(!StringUtils.isEmpty(issn)) {
+                json = getJsonDataFromIssnPortal(issn.toUpperCase());
+            }
         } catch (IOException | InterruptedException | URISyntaxException e) {
-            throw new RuntimeException("Error extracting json from issn portal response", e);
+            throw new RuntimeException("Error extracting json from issn portal response for " +  issn, e);
         }
         try {
             if (json != null) {
