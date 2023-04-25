@@ -248,7 +248,7 @@ public class WebhookManagerImpl implements WebhookManager {
             url = "http://" + url;
         }
         try {            
-            HttpResponse<String> response = httpRequestUtils.doPost(url;
+            HttpResponse<String> response = httpRequestUtils.doPost(url);
             return response.statusCode();
         } catch (IOException | InterruptedException | URISyntaxException e) {
             LOGGER.error(String.format("Error processing webhook %s", url), e);
