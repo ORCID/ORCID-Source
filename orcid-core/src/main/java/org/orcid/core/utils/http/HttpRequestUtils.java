@@ -45,22 +45,13 @@ public class HttpRequestUtils {
         return response;
     }
     
-    public HttpResponse<String> doPost(String url, List<String> headers) throws IOException, InterruptedException, URISyntaxException {
+    public HttpResponse<String> doPost(String url) throws IOException, InterruptedException, URISyntaxException {
         Duration timeout = Duration.ofSeconds(connectionTimeout);  
-        HttpRequest request;
-        if(headers != null && headers.size() > 0) {
-            request = HttpRequest.newBuilder(new URI(url))
-                    .headers(headers.toArray(String[]::new))
+        HttpRequest request = HttpRequest.newBuilder(new URI(url))
+                    .header("Content-Length", "0")
                     .POST(HttpRequest.BodyPublishers.noBody())
                     .timeout(timeout)
                     .build();
-        }
-        else {
-            request = HttpRequest.newBuilder(new URI(url))
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .timeout(timeout)
-                    .build();
-        }
         
         HttpResponse<String> response = HttpClient
                 .newBuilder()

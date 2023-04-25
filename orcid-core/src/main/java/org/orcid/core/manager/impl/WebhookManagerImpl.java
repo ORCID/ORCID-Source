@@ -247,10 +247,8 @@ public class WebhookManagerImpl implements WebhookManager {
         if (!url.toLowerCase().startsWith("http")) {
             url = "http://" + url;
         }
-        try {
-            List<String> headers = new ArrayList<>();
-            headers.add("Content-Length: 0");
-            HttpResponse<String> response = httpRequestUtils.doPost(url, headers);
+        try {            
+            HttpResponse<String> response = httpRequestUtils.doPost(url;
             return response.statusCode();
         } catch (IOException | InterruptedException | URISyntaxException e) {
             LOGGER.error(String.format("Error processing webhook %s", url), e);
