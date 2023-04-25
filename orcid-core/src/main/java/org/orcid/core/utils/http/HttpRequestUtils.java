@@ -10,6 +10,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,12 +45,23 @@ public class HttpRequestUtils {
         return response;
     }
     
-    public HttpResponse<String> doPost(String url) throws IOException, InterruptedException, URISyntaxException {
-        Duration timeout = Duration.ofSeconds(connectionTimeout);
-        HttpRequest request = HttpRequest.newBuilder(new URI(url))
-                .POST(HttpRequest.BodyPublishers.noBody())
-                .timeout(timeout)
-                .build();
+    public HttpResponse<String> doPost(String url, List<String> headers) throws IOException, InterruptedException, URISyntaxException {
+        Duration timeout = Duration.ofSeconds(connectionTimeout);  
+        HttpRequest request;
+        if(headers != null && headers.size() > 0) {
+            request = HttpRequest.newBuilder(new URI(url))
+                    .headers(headers.toArray(String[]::new))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .timeout(timeout)
+                    .build();
+        }
+        else {
+            request = HttpRequest.newBuilder(new URI(url))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .timeout(timeout)
+                    .build();
+        }
+        
         HttpResponse<String> response = HttpClient
                 .newBuilder()
                 .connectTimeout(timeout)
