@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.net.http.HttpConnectTimeoutException;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +68,8 @@ public class WebhookManagerImplTest extends BaseTest {
         clientDetails = new ClientDetailsEntity();
         clientDetails.setGroupProfileId(orcid);
         clientDetails.setId("123456789");
+        List<String> headers = new ArrayList<>();
+        headers.add("Content-Length: 0");
         
         TargetProxyHelper.injectIntoProxy(webhookManager, "httpRequestUtils", httpRequestUtilsMock);
         TargetProxyHelper.injectIntoProxy(webhookManager, "webhookDao", webhookDaoMock);
@@ -74,10 +77,10 @@ public class WebhookManagerImplTest extends BaseTest {
         when(mockResponseOk.statusCode()).thenReturn(200);
         when(mockResponseNotFound.statusCode()).thenReturn(404);
         
-        when(httpRequestUtilsMock.doPost(anyString())).thenThrow(new HttpConnectTimeoutException("Error"));
-        when(httpRequestUtilsMock.doPost(eq("http://qa-1.orcid.org"))).thenReturn(mockResponseOk);
-        when(httpRequestUtilsMock.doPost(eq("http://unexisting.orcid.com"))).thenReturn(mockResponseNotFound);   
-        when(httpRequestUtilsMock.doPost(eq("http://nowhere.com/orcid/4444-4444-4444-4443"))).thenReturn(mockResponseOk);        
+        when(httpRequestUtilsMock.doPost(anyString(), headers )).thenThrow(new HttpConnectTimeoutException("Error"));
+        when(httpRequestUtilsMock.doPost(eq("http://qa-1.orcid.org"),headers ) ).thenReturn(mockResponseOk);
+        when(httpRequestUtilsMock.doPost(eq("http://unexisting.orcid.com"),headers )).thenReturn(mockResponseNotFound);   
+        when(httpRequestUtilsMock.doPost(eq("http://nowhere.com/orcid/4444-4444-4444-4443"),headers )).thenReturn(mockResponseOk);        
     }
     
     @Test
