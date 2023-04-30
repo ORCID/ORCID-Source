@@ -52,5 +52,26 @@ public class AddressesForm implements ErrorsInterface, Serializable {
     }
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }    
+    }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AddressesForm other = (AddressesForm) obj;
+
+        if (addresses != null && other.getAddresses() != null && addresses.size() != other.getAddresses().size()) {
+            return false;
+        } else {
+            for (int i = 0; i < addresses.size(); i++) {
+                if (!addresses.get(i).compare(other.getAddresses().get(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

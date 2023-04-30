@@ -262,8 +262,12 @@ public class WorkspaceController extends BaseWorkspaceController {
                 return kf;   
             }
             
-            Keywords updatedKeywords = kf.toKeywords();                        
-            profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
+            Keywords updatedKeywords = kf.toKeywords();
+            KeywordsForm keywordsForm = KeywordsForm.valueOf(profileKeywordManager.getKeywords(getCurrentUserOrcid()));
+            Collections.reverse(keywordsForm.getKeywords());
+            if (!keywordsForm.compare(kf)) {
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);
+            }
         }
         return kf;
     }
@@ -381,7 +385,11 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             
             ResearcherUrls rUrls = ws.toResearcherUrls();
-            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);            
+            WebsitesForm websitesForm = WebsitesForm.valueOf(researcherUrlManager.getResearcherUrls(getCurrentUserOrcid()));
+            Collections.reverse(websitesForm.getWebsites());
+            if (!websitesForm.compare(ws)) {
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);
+            }
         }
         
         return ws;

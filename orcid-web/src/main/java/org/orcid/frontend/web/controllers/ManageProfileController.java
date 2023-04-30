@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ import org.orcid.pojo.ajaxForm.EditEmail;
 import org.orcid.pojo.ajaxForm.Email;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
@@ -843,7 +845,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
 
             Addresses addresses = addressesForm.toAddresses();
-            addressManager.updateAddresses(getCurrentUserOrcid(), addresses);
+            AddressesForm af = AddressesForm.valueOf(addressManager.getAddresses(getCurrentUserOrcid()));
+            Collections.reverse(af.getAddresses());
+            if (!af.compare(addressesForm)) {
+                addressManager.updateAddresses(getCurrentUserOrcid(), addresses);
+            }
         }
         return addressesForm;
     }
