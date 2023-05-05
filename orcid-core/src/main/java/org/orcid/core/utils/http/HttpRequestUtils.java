@@ -47,7 +47,7 @@ public class HttpRequestUtils {
     public HttpResponse<String> doPost(String url) throws IOException, InterruptedException, URISyntaxException {
         Duration timeout = Duration.ofSeconds(connectionTimeout);  
         HttpRequest request = HttpRequest.newBuilder(new URI(url))
-                    .header("Content-Length", "0")
+                    .version(HttpClient.Version.HTTP_1_1)
                     .POST(HttpRequest.BodyPublishers.noBody())
                     .timeout(timeout)
                     .build();
