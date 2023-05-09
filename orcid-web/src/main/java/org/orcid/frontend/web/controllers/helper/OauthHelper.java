@@ -157,6 +157,9 @@ public class OauthHelper {
                 String scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
                 // Replace any number of spaces or a plus (+) sign with a single space
                 scopesString = scopesString.replaceAll("( |\\+)+", " ");
+                if(scopesString == null || scopesString.isBlank()) {
+                    throw new OauthInvalidRequestException("Please specify the desired scopes", infoForm);
+                }
                 for (ScopePathType theScope : ScopePathType.getScopesFromSpaceSeparatedString(scopesString)) {
                     ScopeInfoForm scopeInfoForm = new ScopeInfoForm();
                     scopeInfoForm.setValue(theScope.value());
