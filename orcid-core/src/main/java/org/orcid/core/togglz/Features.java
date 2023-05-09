@@ -166,10 +166,7 @@ public enum Features implements Feature {
     ACCOUNT_LOCKOUT_SIMULATION,
     
     @Label("Enable the new 100M ID's range")
-    ENABLE_NEW_IDS, 
-    
-    @Label("Enable German, Poland and Turkish")
-    ENABLE_DE_PL_TR;
+    ENABLE_NEW_IDS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
