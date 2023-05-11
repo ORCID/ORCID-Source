@@ -447,7 +447,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         }        
                         
         PersonExternalIdentifiers externalIdentifiers = externalIdentifiersForm.toPersonExternalIdentifiers();
-        externalIdentifiers = externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
+        ExternalIdentifiersForm eif = ExternalIdentifiersForm.valueOf(externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid()));
+        Collections.reverse(eif.getExternalIdentifiers());
+        if (!eif.compare(externalIdentifiersForm)) {
+            externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
+        }
         return externalIdentifiersForm;
     }
     
