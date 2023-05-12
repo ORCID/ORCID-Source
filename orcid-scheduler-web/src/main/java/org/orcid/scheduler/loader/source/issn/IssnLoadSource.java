@@ -103,8 +103,10 @@ public class IssnLoadSource {
     }
 
     private void updateIssnEntity(GroupIdRecordEntity issnEntity, IssnData issnData) {
+        String currentGroupName = issnEntity.getGroupName();
         issnEntity.setGroupName(issnData.getMainTitle());
         issnEntity.setClientSourceId(orcidSource.getId());
+        LOG.info("group id: " + issnEntity.getGroupId() +  " | current group name: " + currentGroupName +  " | group name  to be updated: " + issnEntity.getGroupName());
         groupIdRecordDao.merge(issnEntity);
     }
 
