@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -36,7 +35,6 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
@@ -316,15 +314,9 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        WorkForm workForm = null;
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
-            workForm = WorkForm.valueOf(work, maxContributorsForUI);
-        } else {
-            Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
-            workForm = WorkForm.valueOf(work, maxContributorsForUI);
-        }
-
+        WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
+        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        
         if (workForm != null) {
             if (workForm.getPublicationDate() == null) {
                 initializePublicationDate(workForm);
@@ -406,15 +398,9 @@ public class WorksController extends BaseWorkspaceController {
                 workForm.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                if (workForm.getContributorsGroupedByOrcid() != null) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                }
-            } else {
-                if (workForm.getContributors() != null) {
-                    workForm.setContributors(filterContributors(workForm.getContributors(), activityManager));
-                }
-            }
+            if (workForm.getContributorsGroupedByOrcid() != null) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
+            }            
 
             return workForm;
         }

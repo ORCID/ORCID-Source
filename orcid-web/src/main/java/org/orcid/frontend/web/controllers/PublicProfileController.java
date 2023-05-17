@@ -25,9 +25,14 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.v3.read_only.*;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
@@ -40,8 +45,17 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.release.record.*;
-import org.orcid.jaxb.model.v3.release.record.summary.*;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
@@ -53,7 +67,6 @@ import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
-import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.EmptyJsonResponse;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
@@ -447,17 +460,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
             return null;
-
-        WorkForm work = null;
-        Work workObj = null;
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
-            work = WorkForm.valueOf(workExtended, maxContributorsForUI);
-            workObj = workExtended;
-        } else {
-            workObj = workManagerReadOnly.getWork(orcid, workId);
-            work = WorkForm.valueOf(workObj, maxContributorsForUI);
-        }
+         
+        WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
+        WorkForm work = WorkForm.valueOf(workExtended, maxContributorsForUI);
+        Work workObj = workExtended;        
 
         if (work != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
@@ -477,15 +483,9 @@ public class PublicProfileController extends BaseWorkspaceController {
                 work.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                if (work.getContributorsGroupedByOrcid() != null) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(work.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                }
-            } else {
-                if (work.getContributors() != null) {
-                    work.setContributors(filterContributors(work.getContributors(), activityManager));
-                }
-            }
+            if (work.getContributorsGroupedByOrcid() != null) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(work.getContributorsGroupedByOrcid(), maxContributorsForUI);
+            }            
 
             return new ResponseEntity<>(work, HttpStatus.OK);
         }

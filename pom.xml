@@ -973,18 +973,7 @@ the software.
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <id>spring-social-facebook-orcid-snapshot</id>
-            <name>copy of spring-social-facebook to work with Graph API 2.10</name>
-            <url>https://raw.github.com/ORCID/spring-social-facebook/mvn-repo/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+    <repositories>        
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>

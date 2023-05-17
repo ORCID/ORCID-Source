@@ -1598,8 +1598,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
-
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
@@ -1624,8 +1622,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", mockContributorsRolesAndSequencesConverter);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
         ArgumentCaptor<List<ContributorsRolesAndSequences>> captor = ArgumentCaptor.forClass((Class) List.class);
@@ -1649,8 +1645,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
-
         Work work = workManager.createWork(orcid, getWork(null), true);
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
@@ -1673,8 +1667,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
-
         Work workResult = workManager.createWork(orcid, getWorkWithContributorsMultipleRoles());
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
@@ -1695,8 +1687,6 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testUpdateWorkFromUIAndRemoveOneCreditRole() {
         String orcid = "0000-0000-0000-0004";
-
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
 
         WorkForm workForm = getWorkWithContributorsMultipleRoles();
 
@@ -1883,7 +1873,6 @@ public class WorkManagerTest extends BaseTest {
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
         togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
 
         WorkForm workForm = getWorkWithContributorsMultipleRoles();
 

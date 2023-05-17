@@ -182,7 +182,6 @@ public class WorksControllerTest extends BaseControllerTest {
 
     @Test
     public void testGetWorkInfoWithContributorsGroupedByOrcid() throws Exception {
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
         WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
         assertNotNull(work);
         assertNotNull(work.getContributorsGroupedByOrcid());

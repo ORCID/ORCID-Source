@@ -25,10 +25,7 @@ public enum Features implements Feature {
     ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
 
     @Label("Add other people contributions manually")
-    ADD_OTHER_WORK_CONTRIBUTORS,
-
-    @Label("Store and read top_contributors_json")
-    STORE_TOP_CONTRIBUTORS,
+    ADD_OTHER_WORK_CONTRIBUTORS,    
 
     @Label("Restrict delegator access to account settings")
     RESTRICTED_DELEGATORS,
@@ -59,9 +56,6 @@ public enum Features implements Feature {
 
     @Label("Orcid Angular Search")
     ORCID_ANGULAR_SEARCH,
-
-    @Label("Works pagination")
-    WORKS_PAGINATION,
 
     @Label("Email status dropdown option")
     EMAIL_STATUS_DROPDOWN_OPTION,
