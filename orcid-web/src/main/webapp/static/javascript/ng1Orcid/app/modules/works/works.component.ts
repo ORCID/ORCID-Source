@@ -114,7 +114,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     worksFromBibtex: any;
     allSelected: boolean;
     bibTexIntervals: object;
-    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean;
     manualWorkGroupingEnabled: boolean;
     exIdResolverFeatureEnabled: boolean;
     groupingSuggestionFeatureEnabled: boolean;    
@@ -179,7 +178,6 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizardsOriginal = null;
         this.workType = ['All'];
         this.worksFromBibtex = null;
-        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.manualWorkGroupingEnabled = this.featuresService.isFeatureEnabled('MANUAL_WORK_GROUPING');
         this.exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
         this.groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');  

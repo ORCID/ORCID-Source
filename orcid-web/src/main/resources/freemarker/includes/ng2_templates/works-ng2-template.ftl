@@ -91,27 +91,25 @@
                                                 </a>
                                             </li>
                                             <!--  ADD WORKS WITH EXTERNAL ID CONTAINER-->
-                                            <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
-                                                <li>
-                                                    <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
-                                                        <span class="ai ai-arxiv"></span>
-                                                        <@orcid.msg 'groups.common.add_arxiv'/>
-                                                    </a>
-                                                </li>
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
+                                                    <span class="ai ai-arxiv"></span>
+                                                    <@orcid.msg 'groups.common.add_arxiv'/>
+                                                </a>
+                                            </li>
 
-                                                <li>
-                                                    <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
-                                                        <span class="ai ai-doi"></span>
-                                                        <@orcid.msg 'groups.common.add_doi'/>
-                                                    </a>
-                                                </li>
-                                                <li >
-                                                    <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
-                                                        <span class="ai ai-pubmed"></span>
-                                                        <@orcid.msg 'groups.common.add_pubmed'/>    
-                                                    </a>
-                                                </li>
-                                            </ng-container>
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
+                                                    <span class="ai ai-doi"></span>
+                                                    <@orcid.msg 'groups.common.add_doi'/>
+                                                </a>
+                                            </li>
+                                            <li >
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
+                                                    <span class="ai ai-pubmed"></span>
+                                                    <@orcid.msg 'groups.common.add_pubmed'/>    
+                                                </a>
+                                            </li>
                                             <!--Add from Bibtex-->
                                             <li>
                                                 <a class="action-option manage-button" (click)="openBibTextWizard()">

@@ -66,9 +66,6 @@ public enum Features implements Feature {
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
 	
-    @Label("Add works based on ArXiv, DOI or PubMed id metadata")
-    ADD_WORKS_WITH_EXTERNAL_ID,
-	
     @Label("Change view privacy from work/funding/affiliation form dialogs")
     DIALOG_PRIVACY_OPTION,
 	
