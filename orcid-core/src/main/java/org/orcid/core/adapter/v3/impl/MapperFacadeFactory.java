@@ -669,9 +669,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         registerSourceConverters(mapperFactory, workSummaryExtendedMinimizedClassMap);
         workSummaryExtendedMinimizedClassMap.field("title.title.content", "title");
         
-        //TODO: Taking this out of the mapper, so, we can enable it and disable it with the TOGGLZ
-        //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, we can uncomment this line
-        //workSummaryExtendedMinimizedClassMap.fieldMap("contributors", "contributorsJson").converter("workContributorsConverterId").add();
+        workSummaryExtendedMinimizedClassMap.fieldMap("contributors", "contributorsJson").converter("workContributorsConverterId").add();
         workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.content", "translatedTitle");
         workSummaryExtendedMinimizedClassMap.field("title.translatedTitle.languageCode", "translatedTitleLanguageCode");
         workSummaryExtendedMinimizedClassMap.exclude("workType").exclude("journalTitle").customize(new CustomMapper<WorkSummaryExtended, MinimizedExtendedWorkEntity>() {
@@ -681,14 +679,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             @Override
             public void mapAtoB(WorkSummaryExtended a, MinimizedExtendedWorkEntity b, MappingContext context) {
                 b.setWorkType(a.getType().name());
-                b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);
-                
-                //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
-                if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-	                if(a.getContributors() != null) {
-	                    b.setContributorsJson(wcc.convertTo(a.getContributors(), TypeFactory.typeOf(b.getContributorsJson())));
-	                }
-                }
+                b.setJournalTitle(a.getJournalTitle() != null && a.getJournalTitle().getContent() != null ? a.getJournalTitle().getContent() : null);                
             }
 
             /**
@@ -697,16 +688,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             @Override
             public void mapBtoA(MinimizedExtendedWorkEntity b, WorkSummaryExtended a, MappingContext context) {
                 a.setType(WorkType.valueOf(b.getWorkType()));
-                a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);
-                
-                //TODO: Once the togglz ORCID_ANGULAR_WORKS_CONTRIBUTORS is removed, this should be removed and the mapping should be done directly in the workSummaryExtendedMinimizedClassMap
-                if(Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-	                if(!PojoUtil.isEmpty(b.getContributorsJson())) {
-	                    a.setContributors(wcc.convertFrom(b.getContributorsJson(), TypeFactory.typeOf(a.getContributors())));
-	                }
-                }
+                a.setJournalTitle(b.getJournalTitle() != null && !b.getJournalTitle().isEmpty() ? new Title(b.getJournalTitle()) : null);               
             }
-
         });
 
         workSummaryExtendedMinimizedClassMap.field("publicationDate.year.value", "publicationYear");

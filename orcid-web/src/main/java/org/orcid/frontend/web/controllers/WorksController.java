@@ -22,7 +22,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
@@ -566,12 +565,8 @@ public class WorksController extends BaseWorkspaceController {
         newWork.setPutCode(null);
 
         // Create work
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            newWork = workManager.createWork(getEffectiveUserOrcid(), workForm);
-        } else {
-            newWork = workManager.createWork(getEffectiveUserOrcid(), newWork, false);
-        }
-
+        newWork = workManager.createWork(getEffectiveUserOrcid(), workForm);
+        
         // Set the id in the work to be returned
         Long workId = newWork.getPutCode();
         workForm.setPutCode(Text.valueOf(workId));
@@ -584,13 +579,7 @@ public class WorksController extends BaseWorkspaceController {
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         }
 
-        Work updatedWork = workForm.toWork();
-        // Edit work
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            workManager.updateWork(userOrcid, workForm);
-        } else {
-            workManager.updateWork(userOrcid, updatedWork, false);
-        }
+        workManager.updateWork(userOrcid, workForm);        
     }
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)

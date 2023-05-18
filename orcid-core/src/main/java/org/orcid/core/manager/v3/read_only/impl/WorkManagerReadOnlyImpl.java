@@ -196,19 +196,17 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
         List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid);
         // Filter the contributors list
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            for (WorkSummaryExtended wse : wseList) {
-                if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                    wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
-                } else {
-                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
-                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
-                }
+        for (WorkSummaryExtended wse : wseList) {
+            if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
+            } else {
+                contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
+                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
+                wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
             }
-        }
+        }        
         return wseList;
     }
 
