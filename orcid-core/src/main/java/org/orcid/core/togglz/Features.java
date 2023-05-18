@@ -36,9 +36,6 @@ public enum Features implements Feature {
     @Label("Orcid Angular Lazy Load Peer Reviews")
     ORCID_ANGULAR_LAZY_LOAD_PEER_REVIEWS,
 
-    @Label("Orcid Angular Works Contributors")
-    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
-
     @Label("Orcid Angular Account settings ")
     ORCID_ANGULAR_ACCOUNT_SETTINGS,
 
