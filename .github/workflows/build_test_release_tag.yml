@@ -1,0 +1,119 @@
+name: build_test_release_tag
+
+on:
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "latest"
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch amount or try gitlog'
+        required: false
+        default: "patch"
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "latest"
+        type: string
+      bump:
+        description: |
+          How to optionally bump the semver version ( Major.Minor.Patch ) : git log will be searched for
+          '#major #minor #patch' or feat/ or fix/ branch names to optionally override the bump. Set to none to keep a specific version
+        required: false
+        options:
+          - patch
+          - minor
+          - major
+          - none
+        type: choice
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default_branch"
+        type: string
+
+
+# cancel running job if another commit comes in
+concurrency:
+  group: main-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  seed_maven_cache:
+    uses: ./.github/workflows/seed_maven_cache.yml
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+
+  install_maven_dependencies:
+    uses: ./.github/workflows/install_maven_dependencies.yml
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+    needs:
+      - seed_maven_cache
+
+  unit_tests_publish:
+    uses: ./.github/workflows/unit_tests_publish.yml
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+      seed_maven_cache: false
+      install_maven_dependencies: false
+    needs:
+      - lint
+      - seed_maven_cache
+      - install_maven_dependencies
+##############################################################################
+  bld_all:
+    uses: ./.github/workflows/bld_all.yml
+    secrets: inherit # pass all secrets for uploading assets
+    needs:
+      - lint
+      - unit_tests_publish
+      - install_maven_dependencies
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+      seed_maven_cache: false
+      install_maven_dependencies: false
+
+##############################################################################
+
+  rel_tag:
+    uses: ./.github/workflows/rel_tag.yml
+    needs: bld_all
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+    secrets: inherit # pass all secrets
+    permissions:
+      checks: write
+      contents: write
+      issues: read
+      pull-requests: write

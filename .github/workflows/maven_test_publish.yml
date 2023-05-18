@@ -1,5 +1,7 @@
-name: bld_maven
-run-name: bld-{{ inputs.project }}
+name: maven_test_publish
+
+# run maven tests and publish results in one step
+# run from privileged branch
 
 permissions:
   checks: write
@@ -41,7 +43,6 @@ on:
         required: false
         default: true
 
-
   workflow_dispatch:
     inputs:
       project:
@@ -50,21 +51,15 @@ on:
         default: 'prod'
         type: string
       version_tag:
-        description: 'Version tag to use: (bump must also be set to none to keep a specific version'
+        description: 'Name of the tag to build'
         required: false
         default: 'latest'
         type: string
       bump:
-        description: |
-          How to optionally bump the semver version ( Major.Minor.Patch ) : git log will be searched for
-          '#major #minor #patch' or feat/ or fix/ branch names to optionally override the bump. Set to none to keep a specific version
+        description: 'whether to bump the version number by a major minor patch amount or none'
         required: false
-        options:
-          - patch
-          - minor
-          - major
-          - none
-        type: choice
+        default: 'patch'
+        type: string
       ref:
         description: 'git reference to use with the checkout use default_branch to have that calculated'
         required: false
@@ -83,7 +78,7 @@ on:
 
 
 jobs:
-  bld_maven:
+  maven_test:
     runs-on: ubuntu-latest
     steps:
       - name: git-checkout-ref-action
@@ -112,11 +107,12 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-######################################################################################################################
+
+########################################################################################
 # handle restoring a custom gha cache
 
       - name: if not installing dependencies restore special previous git_sha cache
-        if: ${{ ! inputs.install_maven_dependencies }}
+        if:  ${{ ! inputs.install_maven_dependencies }}
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
@@ -157,75 +153,20 @@ jobs:
         with:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
-      - name: build our project
+########################################################################################
+      - name: "Test ${{ inputs.project }}"
         run: |
-          mvn -T 1C --batch-mode -am package -DskipTests \
+          mvn -T 1C --batch-mode -Dmaven.test.failure.ignore=true test \
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              --projects "$project"
-          echo "------------------------------------------------------"
+              --projects ${{ inputs.project }}
 
-          find . -name '*.war'
-          find . -name '*.jar'
-        env:
-          project: "${{ inputs.project }}"
-
-#
-# orcid-web customization
-#
-
-      - name: setup node for angular static file
-        if: ${{ inputs.project == 'orcid-web' }}
-        uses: actions/setup-node@v3
+      # NOTE: if the above test fail then this step will report that failure and stop the run
+      - name: Publish Unit Test Results
+        uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
+        if: always()
         with:
-          node-version: 18.7.0
-
-      - name: build angular parts if we are building orcid-web
-        if: ${{ inputs.project == 'orcid-web' }}
-        run: |
-          echo "Build angular_orcid_generated.js"
-          cd orcid-nodejs
-          mvn -T 1C --batch-mode -P ci clean compile \
-            -Dnodejs.workingDirectory="${{ github.workspace }}/orcid-web/src/main/webapp/static/javascript/ng1Orcid" \
-            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-
-          echo "Copying angular_orcid_generated to its final destination"
-          cp ${{ github.workspace }}/orcid-web/src/main/webapp/static/javascript/ng1Orcid/angular_orcid_generated.js ${{ github.workspace }}/orcid-web/target/orcid-web/static/javascript/ng1Orcid/
-
-          echo "Packaging orcid-web"
-          rm -f ${{ github.workspace }}/orcid-web/target/orcid-web.war
-          cd ${{ github.workspace }}/orcid-web/target/orcid-web
-
-          # have a file on the webserver we can hit
-          echo "$version_tag_numeric" > ${{ github.workspace }}/orcid-web/target/orcid-web/static/version
-
-          echo "Creating the war file"
-          jar -cf orcid-web.war .
-
-          # check_error "Creating the orcid-web.war file"
-          echo "Moving war file to the target folder"
-          cp orcid-web.war ${{ github.workspace }}/orcid-web/target/
-          echo "orcid-web.war is ready"
-
-        env:
-          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
-          project: "${{ inputs.project }}"
-
-##################################################################################################################
-
-      - name: deploy war file
-        run: |
-          mvn --batch-mode \
-              --settings settings-deploy.xml \
-              --file "${project}/pom.xml" \
-              -Dmaven.test.skip \
-              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              -DaltReleaseDeploymentRepository="github::${ARTIFACT_URL}${ARTIFACT_REPO_PATH}" \
-              deploy -Dmaven.test.skip
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          ARTIFACT_URL: "${{ secrets.ARTIFACT_URL }}"
-          ARTIFACT_REPO_PATH: "${{ secrets.ARTIFACT_REPO_PATH }}"
-          ARTIFACT_USER: "${{ secrets.ARTIFACT_USER }}"
-          ARTIFACT_PASSWORD: "${{ secrets.ARTIFACT_PASSWORD }}"
-          project: "${{ inputs.project }}"
+          name: "${{ inputs.project }}: Unit tests results"
+          path: ${{ inputs.project }}/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
 

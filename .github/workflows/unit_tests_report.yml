@@ -1,0 +1,78 @@
+name: unit_tests_report
+
+on:
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: latest
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: latest
+        type: string
+
+jobs:
+
+  tst_ml:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-message-listener
+
+  tst_amq:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-activemq
+
+  tst_api:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-api-web
+
+  tst_iapi:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-internal-api
+
+  tst_pubweb:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-pub-web
+
+  tst_sched:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-scheduler-web
+
+  tst_web:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-web
+
+#########################################################################################
+
+  tst_utils:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-utils
+
+  tst_core:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-core
+
+  tst_persistence:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-persistence
+
+  tst_api_common:
+    uses: ./.github/workflows/maven_test_report.yml
+    with:
+      project: orcid-api-common
+
