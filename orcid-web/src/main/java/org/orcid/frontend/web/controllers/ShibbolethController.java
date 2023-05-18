@@ -159,7 +159,7 @@ public class ShibbolethController extends BaseController {
             
             ProfileEntity profile = profileEntityCacheManager.retrieve(userConnectionEntity.getOrcid());
             if (profile.getUsing2FA()) {
-                return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() +"/2fa-signin");
+                return new ModelAndView("redirect:"+ calculateRedirectUrl("/2fa-signin"));
             }
             
             try {
@@ -181,7 +181,7 @@ public class ShibbolethController extends BaseController {
             if (queryString != null) {
                 insitutionalLinking = insitutionalLinking + "?" + queryString;
             }
-            return new ModelAndView("redirect:"+ orcidUrlManager.getBaseUrl() + insitutionalLinking);
+            return new ModelAndView("redirect:"+ calculateRedirectUrl(insitutionalLinking));
         }
         
         return mav;

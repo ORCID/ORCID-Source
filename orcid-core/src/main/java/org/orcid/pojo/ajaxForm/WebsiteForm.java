@@ -213,4 +213,22 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WebsiteForm other = (WebsiteForm) obj;
+
+        if (!WorkForm.compareTexts(url, other.getUrl(), true))
+            return false;
+        if (!WorkForm.compareStrings(urlName, other.getUrlName()))
+            return false;
+        if (visibility != null && other.visibility != null && !visibility.getVisibility().value().equals(other.visibility.getVisibility().value()))
+            return false;
+        return true;
+    }
 }

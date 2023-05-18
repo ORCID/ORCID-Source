@@ -174,9 +174,9 @@ public class RecordEmailSenderTest {
         String userOrcid = "0000-0000-0000-0003";
         ProfileEntity profile = new ProfileEntity(userOrcid);
         for (AvailableLocales locale : AvailableLocales.values()) {
-            // Ignore CS and DE locale as there is no available locale for it on
+            // Ignore CS locale as there is no available locale for it on
             // common_v2.Locale
-            if (!locale.equals(AvailableLocales.CS) && !locale.equals(AvailableLocales.DE)) {
+            if (!locale.equals(AvailableLocales.CS)) {
                 profile.setLocale(locale.name());
                 when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
                 recordEmailSender.sendClaimReminderEmail(userOrcid, 2, "test@test.com");
@@ -236,9 +236,9 @@ public class RecordEmailSenderTest {
         String userOrcid = "0000-0000-0000-0003";
         ProfileEntity profile = new ProfileEntity(userOrcid);
         for (AvailableLocales locale : AvailableLocales.values()) {
-            // Ignore CS and DE locale as there is no available locale for it on
+            // Ignore CS locale as there is no available locale for it on
             // common_v2.Locale
-            if (!locale.equals(AvailableLocales.CS) && !locale.equals(AvailableLocales.DE)) {
+            if (!locale.equals(AvailableLocales.CS)) {
                 profile.setLocale(locale.name());
                 when(mockProfileEntityCacheManager.retrieve(userOrcid)).thenReturn(profile);
                 recordEmailSender.sendForgottenIdEmail("test@test.com", userOrcid);

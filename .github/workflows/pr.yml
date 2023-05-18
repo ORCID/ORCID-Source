@@ -1,0 +1,29 @@
+name: pr
+
+# read-only repo token
+# no access to secrets
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+  workflow_call:
+
+  workflow_dispatch:
+
+# cancel running job if another commit comes in
+concurrency:
+  group: pr-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  unit_tests_artifact:
+    uses: ./.github/workflows/unit_tests_artifact.yml
+    with:
+      seed_maven_cache: true
+      install_maven_dependencies: true
+
+#   NOTE: codeql is only available on public repos or enterprise github accounts
+#   codeql:
+#     uses: ./.github/workflows/codeql.yml
+#

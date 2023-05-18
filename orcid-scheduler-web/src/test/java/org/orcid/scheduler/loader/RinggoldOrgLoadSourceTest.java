@@ -268,7 +268,7 @@ public class RinggoldOrgLoadSourceTest {
         assertEquals("City#1", entity.getCity());
         assertEquals(Iso3166Country.US.name(), entity.getCountry());
         assertEquals(Long.valueOf(1000), entity.getId());
-        assertEquals(IndexingStatus.REINDEX, entity.getIndexingStatus());
+        assertEquals(IndexingStatus.PENDING, entity.getIndexingStatus());
         assertEquals("1. Name", entity.getName());
         assertEquals("type/1", entity.getOrgType());
         assertEquals("State#1", entity.getRegion());
@@ -371,6 +371,7 @@ public class RinggoldOrgLoadSourceTest {
         verify(mockOrgDisambiguatedManager, times(4)).updateOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
 
         List<OrgDisambiguatedEntity> newOrgDisambiguatedEntities = orgDisambiguatedEntityCaptor.getAllValues();
+        
         assertEquals(4, newOrgDisambiguatedEntities.size());
 
         boolean found1 = false, found2 = false, found3 = false, found4 = false;
@@ -422,6 +423,10 @@ public class RinggoldOrgLoadSourceTest {
             }
         };
         
+        verify(mockOrgDisambiguatedDao, times(0)).persist(any());
+        verify(mockOrgDisambiguatedManager, times(4)).updateOrgDisambiguated(orgDisambiguatedEntityCaptor.capture());
+
+        
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
@@ -437,7 +442,132 @@ public class RinggoldOrgLoadSourceTest {
 
     private void setupInitialMocks() {
         doNothing().when(mockFileRotator).removeFileIfExists(anyString());
-        
+        when(mockOrgDisambiguatedDao.find(anyLong()))
+        .thenAnswer(new Answer<OrgDisambiguatedEntity>() {
+
+            @Override
+            public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
+                Long ringgoldId = invocation.getArgument(0);
+                if (ringgoldId < 1L || ringgoldId > 4L) {
+                    return null;
+                }
+                OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
+                entity.setId(ringgoldId * 1000); // 1000, 2000, 3000,
+                                                 // 4000
+                entity.setSourceId(String.valueOf(ringgoldId));
+                entity.setSourceType(OrgDisambiguatedSourceType.RINGGOLD.name());
+                OrgDisambiguatedExternalIdentifierEntity extId1, extId2;
+                Set<OrgDisambiguatedExternalIdentifierEntity> extIds;
+                switch (String.valueOf(ringgoldId)) {
+                case "1":
+                    entity.setName("1. Name");
+                    entity.setCountry(Iso3166Country.US.name());
+                    entity.setCity("City#1");
+                    entity.setRegion("State#1");
+                    entity.setOrgType("type/1");
+                    entity.setSourceParentId(null);
+                    entity.setStatus(null);
+
+                    extId1 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId1.setId(1L);
+                    extId1.setOrgDisambiguated(entity);
+                    extId1.setIdentifier("1");
+                    extId1.setIdentifierType("ISNI");
+
+                    extId2 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId2.setId(2L);
+                    extId2.setOrgDisambiguated(entity);
+                    extId2.setIdentifier("2");
+                    extId2.setIdentifierType("IPED");
+
+                    extIds = new HashSet<>();
+                    extIds.add(extId1);
+                    extIds.add(extId2);
+                    entity.setExternalIdentifiers(extIds);
+                    break;
+                case "2":
+                    entity.setName("2. Name");
+                    entity.setCountry(Iso3166Country.CR.name());
+                    entity.setCity("City#2");
+                    entity.setRegion(null);
+                    entity.setOrgType("type/2");
+                    entity.setSourceParentId(null);
+                    entity.setStatus(null);
+
+                    extId1 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId1.setId(3L);
+                    extId1.setOrgDisambiguated(entity);
+                    extId1.setIdentifier("3");
+                    extId1.setIdentifierType("NCES");
+
+                    extId2 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId2.setId(4L);
+                    extId2.setOrgDisambiguated(entity);
+                    extId2.setIdentifier("4");
+                    extId2.setIdentifierType("OFR");
+
+                    extIds = new HashSet<>();
+                    extIds.add(extId1);
+                    extIds.add(extId2);
+                    entity.setExternalIdentifiers(extIds);
+                    break;
+                case "3":
+                    entity.setName("3. Name");
+                    entity.setCountry(Iso3166Country.US.name());
+                    entity.setCity("City#3");
+                    entity.setRegion(null);
+                    entity.setOrgType("type/3");
+                    entity.setSourceParentId(null);
+                    entity.setStatus(null);
+
+                    extId1 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId1.setId(5L);
+                    extId1.setOrgDisambiguated(entity);
+                    extId1.setIdentifier("5");
+                    extId1.setIdentifierType("ISNI");
+
+                    extId2 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId2.setId(6L);
+                    extId2.setOrgDisambiguated(entity);
+                    extId2.setIdentifier("6");
+                    extId2.setIdentifierType("IPED");
+
+                    extIds = new HashSet<>();
+                    extIds.add(extId1);
+                    extIds.add(extId2);
+                    entity.setExternalIdentifiers(extIds);
+                    break;
+                case "4":
+                    entity.setName("4. Name");
+                    entity.setCountry(Iso3166Country.CR.name());
+                    entity.setCity("City#4");
+                    entity.setRegion("State#4");
+                    entity.setOrgType("type/4");
+                    entity.setSourceParentId("1");
+                    entity.setStatus(null);
+
+                    extId1 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId1.setId(7L);
+                    extId1.setOrgDisambiguated(entity);
+                    extId1.setIdentifier("7");
+                    extId1.setIdentifierType("NCES");
+
+                    extId2 = new OrgDisambiguatedExternalIdentifierEntity();
+                    extId1.setId(8L);
+                    extId2.setOrgDisambiguated(entity);
+                    extId2.setIdentifier("8");
+                    extId2.setIdentifierType("OFR");
+
+                    extIds = new HashSet<>();
+                    extIds.add(extId1);
+                    extIds.add(extId2);
+                    entity.setExternalIdentifiers(extIds);
+                    break;
+                }
+                return entity;
+            }
+
+        });
         when(mockOrgDisambiguatedDao.findBySourceIdAndSourceType(anyString(), eq(OrgDisambiguatedSourceType.RINGGOLD.name())))
                 .thenAnswer(new Answer<OrgDisambiguatedEntity>() {
 

@@ -65,4 +65,24 @@ public class KeywordsForm implements ErrorsInterface, Serializable {
         this.visibility = visibility;
     }
 
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        KeywordsForm other = (KeywordsForm) obj;
+
+        if (keywords != null && other.getKeywords() != null && keywords.size() != other.getKeywords().size()) {
+            return false;
+        } else {
+            for (int i = 0; i < keywords.size(); i++) {
+                if (!keywords.get(i).compare(other.getKeywords().get(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

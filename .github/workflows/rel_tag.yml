@@ -1,0 +1,91 @@
+name: rel_tag
+
+permissions:
+  checks: write
+  contents: write # needed to create a gh release and tag repo
+  issues: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "latest"
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch amount or try gitlog'
+        required: false
+        default: "patch"
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag to use: (bump must also be set to none to keep a specific version'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: |
+          How to optionally bump the semver version ( Major.Minor.Patch ) : git log will be searched for
+          '#major #minor #patch' or feat/ or fix/ branch names to optionally override the bump. Set to none to keep a specific version
+        required: false
+        options:
+          - patch
+          - minor
+          - major
+          - none
+        type: choice
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+
+
+
+
+jobs:
+  rel_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-checkout-ref-action
+        id: ref
+        uses: ORCID/git-checkout-ref-action@main
+        with:
+          default_branch: ${{ github.event.repository.default_branch }}
+          ref: ${{ inputs.ref }}
+
+
+      - uses: actions/checkout@v3
+        with:
+          # token with write permissions to protected branches
+          # standard github token does not allow this
+          token: ${{ secrets.RELEASE_TOKEN }}
+          ref: ${{ steps.ref.outputs.ref }}
+          # checkout some history so we can build a changelog and release
+          # NOTE: history does not include tags!
+          fetch-depth: 100
+
+      - name: find next version
+        id: version
+        uses: ORCID/version-bump-action@main
+        with:
+          version_tag: ${{ inputs.version_tag }}
+          bump: ${{ inputs.bump }}
+
+      - name: tag repo create changelog and create release
+        uses: ORCID/changelog-action@main
+        with:
+          version_tag: ${{ steps.version.outputs.version_tag }}
+          slack_channel: tech-release
+          github_write_token: ${{ secrets.RELEASE_TOKEN }}
+          slacktee_token: ${{ secrets.SLACKTEE_TOKEN }}
+

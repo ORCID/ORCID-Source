@@ -3,8 +3,11 @@ package org.orcid.core.togglz;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,10 +21,13 @@ import org.togglz.core.repository.jdbc.JDBCStateRepository;
 import org.togglz.core.user.FeatureUser;
 import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
+import org.togglz.spring.security.SpringSecurityUserProvider;
 
 @Component
 public class OrcidTogglzConfiguration implements TogglzConfig {
 
+    private static final Logger LOG = LoggerFactory.getLogger(OrcidTogglzConfiguration.class);
+    
     @Resource(name = "featuresDataSource")
     private DataSource dataSource;
 
@@ -55,26 +61,7 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
 
     @Override
     public UserProvider getUserProvider() {
-        return new UserProvider() {
-            @Override
-            public FeatureUser getCurrentUser() {
-                boolean isAdmin = false;
-                String userOrcid = null;
-                SecurityContext context = SecurityContextHolder.getContext();
-                if (context != null && context.getAuthentication() != null) {
-                    Authentication authentication = context.getAuthentication();
-                    if (authentication != null) {
-                        Object principal = authentication.getDetails();
-                        if (principal instanceof OrcidProfileUserDetails) {
-                            OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-                            isAdmin = userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
-                            userOrcid = userDetails.getOrcid();
-                        }
-                    }
-                }
-                return new SimpleFeatureUser(userOrcid, isAdmin);
-            }
-        };
+        return new SpringSecurityUserProvider(OrcidWebRole.ROLE_ADMIN.getAuthority());        
     }
 
 }

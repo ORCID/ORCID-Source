@@ -1,0 +1,32 @@
+name: pr_completed
+
+# this is a privileged workflow that can run with secrets
+# to perform actions on work carried out in the pull_request workflow
+
+on:
+  workflow_run:
+    workflows:
+      - pr
+    types:
+      - completed
+
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "next_tag"
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'version tag to use'
+        required: false
+        default: "next_tag"
+        type: string
+
+jobs:
+  unit_tests_report:
+    uses: ./.github/workflows/unit_tests_report.yml
+

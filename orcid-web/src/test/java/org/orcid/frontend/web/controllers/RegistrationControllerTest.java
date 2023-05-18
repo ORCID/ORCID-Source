@@ -177,10 +177,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         });
         
         doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString());
-        doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());
-        
-        // Disable all features by default
-        togglzRule.disableAll();
+        doNothing().when(recordEmailSender).sendWelcomeEmail(Mockito.anyString(), Mockito.anyString());        
     }
     
     @Test
@@ -533,7 +530,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/my-orcid?emailVerified=true", mav.getViewName());
+        assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=true", mav.getViewName());
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
@@ -557,7 +554,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/signin", mav.getViewName());
+        assertEquals("redirect:https://testserver.orcid.org/signin", mav.getViewName());
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
@@ -580,7 +577,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
         assertNotNull(mav);
-        assertEquals("redirect:/my-orcid?emailVerified=false", mav.getViewName());
+        assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=false", mav.getViewName());
         assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }

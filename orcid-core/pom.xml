@@ -269,23 +269,27 @@
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-core</artifactId>
-            <version>2.4.1.Final</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-spring-web</artifactId>
-            <version>2.4.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-testing</artifactId>
-            <version>2.4.1.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.togglz</groupId>
             <artifactId>togglz-junit</artifactId>
-            <version>2.4.1.Final</version>
             <scope>test</scope>
         </dependency>
 
@@ -311,7 +315,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.14.3</version>
+			<version>1.15.4</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
 		<dependency>
