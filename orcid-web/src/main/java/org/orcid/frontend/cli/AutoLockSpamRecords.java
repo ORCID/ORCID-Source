@@ -115,7 +115,7 @@ public class AutoLockSpamRecords {
 
     @SuppressWarnings("resource")
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context-spam.xml");
         profileEntityManager = (ProfileEntityManager) context.getBean("profileEntityManagerV3");
         profileEntityCacheManager = (ProfileEntityCacheManager) context.getBean("profileEntityCacheManager");
         notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
@@ -141,7 +141,7 @@ public class AutoLockSpamRecords {
         while (iterator.hasNext()) {
             keyVals = iterator.next();
             Object[] keys = keyVals.keySet().toArray();
-            spamList.add(keyVals.get(keys[5]));
+            spamList.add(keyVals.get(keys[0]));
         }
         return spamList;
     }
