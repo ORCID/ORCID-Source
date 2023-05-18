@@ -1,4 +1,4 @@
-package org.orcid.core.cli;
+package org.orcid.frontend.cli;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -50,6 +51,9 @@ public class AutoLockSpamRecords {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource 
+    private RecordEmailSender recordEmailSender;
 
     public static void main(String[] args) {
         AutoLockSpamRecords autolockSpamRecords = new AutoLockSpamRecords();
@@ -91,9 +95,11 @@ public class AutoLockSpamRecords {
                     ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcidId);
                     //only lock account was not reviewed and not already locked
                     if(!profileEntity.isReviewed() && profileEntity.isAccountNonLocked()) {
-                        profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
+                        boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
+                        if(wasLocked) {
+                            recordEmailSender.sendOrcidLockedEmail(orcidId);
+                        }
                     }
-                    
                     lastOrcidProcessed = orcidId;
                 }
             } catch (Exception e) {
@@ -113,6 +119,7 @@ public class AutoLockSpamRecords {
         profileEntityManager = (ProfileEntityManager) context.getBean("profileEntityManagerV3");
         profileEntityCacheManager = (ProfileEntityCacheManager) context.getBean("profileEntityCacheManager");
         notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
+        recordEmailSender = (RecordEmailSender) context.getBean("recordEmailSender");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
