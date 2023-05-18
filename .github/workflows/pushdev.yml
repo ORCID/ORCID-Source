@@ -1,0 +1,28 @@
+name: pushdev
+
+on:
+  push:
+    branches:
+      - development
+    # Ignore changes that are made as part of the rel_tag workflow to avoid infinite loop
+    paths-ignore:
+      - CHANGELOG.md
+    # Ignore workflow changes
+      - '.github/**'
+    # Ignore changes that are made as part of the rel_tag workflow to avoid infinite loop
+    tags-ignore:
+      - '**'
+
+# cancel running job if another commit comes in
+concurrency:
+  group: pushdev-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  build_test_release_tag:
+    uses: ./.github/workflows/build_test_release_tag.yml
+    secrets: inherit # pass all secrets for pushing
+    with:
+      # NOTE: passing in a specific branch means that commits made during the pipeline before the final build is completed will be included
+      #       the default is to always checkout the current commit that runs the pipeline in each job
+      ref: development

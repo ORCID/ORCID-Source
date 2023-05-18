@@ -1,0 +1,172 @@
+name: maven_test_publish
+
+# run maven tests and publish results in one step
+# run from privileged branch
+
+permissions:
+  checks: write
+  contents: read
+  issues: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: 'Name of the artifact env'
+        required: false
+        default: 'prod'
+        type: string
+      version_tag:
+        description: 'Name of the tag to build'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch amount or none'
+        required: false
+        default: 'patch'
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+      seed_maven_cache:
+        description: Whether to seed cache
+        type: boolean
+        required: false
+        default: true
+      install_maven_dependencies:
+        description: Whether to install dependencies or use a previous cache
+        type: boolean
+        required: false
+        default: true
+
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Name of the artifact env'
+        required: false
+        default: 'prod'
+        type: string
+      version_tag:
+        description: 'Name of the tag to build'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch amount or none'
+        required: false
+        default: 'patch'
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+      seed_maven_cache:
+        description: Whether to seed cache
+        type: boolean
+        required: false
+        default: true
+      install_maven_dependencies:
+        description: Whether to install dependencies or use a previous cache
+        type: boolean
+        required: false
+        default: true
+
+
+jobs:
+  maven_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-checkout-ref-action
+        id: ref
+        uses: ORCID/git-checkout-ref-action@main
+        with:
+          default_branch: ${{ github.event.repository.default_branch }}
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+          # checkout some history so we can scan commits for bump messages
+          # NOTE: history does not include tags!
+          fetch-depth: 100
+
+      - name: find next version
+        id: version
+        uses: ORCID/version-bump-action@main
+        with:
+          version_tag: ${{ inputs.version_tag }}
+          bump: ${{ inputs.bump }}
+
+      - name: Set up Open JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+########################################################################################
+# handle restoring a custom gha cache
+
+      - name: if not installing dependencies restore special previous git_sha cache
+        if:  ${{ ! inputs.install_maven_dependencies }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+
+      - name: bump version of the parent pom and connected projects
+        if: ${{ ! inputs.install_maven_dependencies }}
+        run: |
+          mvn -T 1C --batch-mode versions:set -DskipTests \
+              -DnewVersion="$version_tag_numeric" -DgenerateBackupPoms=false
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+########################################################################################
+
+      - name: if installing dependencies use a standard cache key name
+        if: ${{ inputs.install_maven_dependencies }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
+          restore-keys: |
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
+
+      - name: seed_maven_cache
+        if: ${{ inputs.seed_maven_cache }}
+        id: cache
+        uses: ORCID/ORCID-Source-cache-action@main
+        with:
+          version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
+
+      - name: install_dependencies and bump version
+        if: ${{ inputs.install_maven_dependencies }}
+        id: install_dependencies
+        uses: ORCID/ORCID-Source-dependencies-action@main
+        with:
+          version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
+
+########################################################################################
+      - name: "Test ${{ inputs.project }}"
+        run: |
+          mvn -T 1C --batch-mode -Dmaven.test.failure.ignore=true test \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects ${{ inputs.project }}
+
+      # NOTE: if the above test fail then this step will report that failure and stop the run
+      - name: Publish Unit Test Results
+        uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
+        if: always()
+        with:
+          name: "${{ inputs.project }}: Unit tests results"
+          path: ${{ inputs.project }}/target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
+
