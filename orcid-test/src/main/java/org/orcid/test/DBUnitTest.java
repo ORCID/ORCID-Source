@@ -66,6 +66,7 @@ public class DBUnitTest {
         cleanClientSourcedProfiles(connection);
         cleanAll(connection);
         for (String flatXMLDataFile : flatXMLDataFiles) {
+            System.out.println(flatXMLDataFile);
             DatabaseOperation.INSERT.execute(connection, getDataSet(flatXMLDataFile));
         }
         connection.close();
@@ -150,8 +151,8 @@ public class DBUnitTest {
         dataSet.addTable("research_resource");
         dataSet.addTable("find_my_stuff_history");
         dataSet.addTable("spam");
-        DatabaseOperation.DELETE.execute(connection, dataSet);
-
+        DatabaseOperation.DELETE.execute(connection, dataSet);        
+        
         QueryDataSet theRest = new QueryDataSet(connection);
         theRest.addTable("profile", "SELECT * FROM profile WHERE source_id IS NOT NULL AND source_id != orcid ORDER BY orcid DESC");
         theRest.addTable("client_details");
