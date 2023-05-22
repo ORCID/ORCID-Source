@@ -114,13 +114,11 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
     worksFromBibtex: any;
     allSelected: boolean;
     bibTexIntervals: object;
-    TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID: boolean;
     manualWorkGroupingEnabled: boolean;
     exIdResolverFeatureEnabled: boolean;
     groupingSuggestionFeatureEnabled: boolean;    
     recordLocked: boolean;
     loading: boolean;
-    TOGGLZ_WORKS_PAGINATION
     
     constructor( 
         private commonSrvc: CommonService,
@@ -180,11 +178,9 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         this.workImportWizardsOriginal = null;
         this.workType = ['All'];
         this.worksFromBibtex = null;
-        this.TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID = this.featuresService.isFeatureEnabled('ADD_WORKS_WITH_EXTERNAL_ID');
         this.manualWorkGroupingEnabled = this.featuresService.isFeatureEnabled('MANUAL_WORK_GROUPING');
         this.exIdResolverFeatureEnabled = this.featuresService.isFeatureEnabled('EX_ID_RESOLVER');
         this.groupingSuggestionFeatureEnabled = this.featuresService.isFeatureEnabled('GROUPING_SUGGESTIONS');  
-        this.TOGGLZ_WORKS_PAGINATION = this.featuresService.isFeatureEnabled('WORKS_PAGINATION');       
         om.process().then(() => { 
             this.selectedWorkType = om.get('workspace.works.import_wizzard.all');
             this.selectedGeoArea = om.get('workspace.works.import_wizzard.all');
@@ -239,11 +235,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             this.openBibTextWizard()
                         }
                     }
-                    if (!this.TOGGLZ_WORKS_PAGINATION) {
-                        this.refreshWorkGroups();
-                    } else {
-                        this.loadWorkPage()
-                    }
+                    this.refreshWorkGroups();                    
                 }
 
             },
@@ -895,11 +887,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             clearInterval(this.bibTexIntervals[interval])
                         });
                         this.closeAllMoreInfo();
-                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                            this.refreshWorkGroups();
-                        } else {
-                            this.loadWorkPage()
-                        }
+                        this.refreshWorkGroups();
                         this.savingBibtex = false;
                     }
                 }else{
@@ -1012,11 +1000,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                                     if (numToSave === 0){
                                         // ALL WORKS UPLOADED
                                         this.closeAllMoreInfo();
-                                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                                            this.refreshWorkGroups();
-                                        } else {
-                                            this.loadWorkPage()
-                                        }
+                                        this.refreshWorkGroups();
                                         this.savingBibtex = false;
                                         this.openBibTextWizard(); // CLOSE BIBTEX
                                         
@@ -1155,55 +1139,27 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
         }
         this.worksService.resetWorkGroups();
         if(this.publicView === "true"){
-            if (!this.TOGGLZ_WORKS_PAGINATION) {
-                this.worksService.getWorksPage(
-                    this.worksService.constants.access_type.ANONYMOUS, 
-                    this.sortKey, 
-                    this.sortAsc
-                )
-                .pipe(    
-                    takeUntil(this.ngUnsubscribe)
-                )
-                .subscribe(
-                    data => {
-                        this.formData = data;
-                        this.worksService.handleWorkGroupData( this.formData );
-                        this.worksService.loading = false;
-                    },
-                    error => {
-                        this.worksService.loading = false;
-                        console.log('sortError', error);
-                    } 
-            )}
-            else {
-                this.loadWorkPage (0, 50, true);
-            }
-
-        } else {
-            if (!this.TOGGLZ_WORKS_PAGINATION) {
-                this.worksService.getWorksPage(
-                    this.worksService.constants.access_type.USER, 
-                    this.sortKey, 
-                    this.sortAsc
-                )
-                .pipe(    
-                    takeUntil(this.ngUnsubscribe)
-                )
-                .subscribe(
-                    data => {
-                        this.formData = data;
-                        this.worksService.handleWorkGroupData( this.formData );
-                        this.worksService.loading = false;
-                    },
-                    error => {
-                        this.worksService.loading = false;
-                        console.log('sortError', error);
-                    } 
-                );
-            } else {
-                this.loadWorkPage (0, 50);
-            }
-        }
+	        this.worksService.getWorksPage(
+	            this.worksService.constants.access_type.ANONYMOUS, 
+	            this.sortKey, 
+	            this.sortAsc
+	        )
+	        .pipe(    
+	            takeUntil(this.ngUnsubscribe)
+	        )
+	        .subscribe(
+	            data => {
+	                this.formData = data;
+	                this.worksService.handleWorkGroupData( this.formData );
+	                this.worksService.loading = false;
+	            },
+	            error => {
+	                this.worksService.loading = false;
+	                console.log('sortError', error);
+	            } 
+        )} else {
+        	this.loadWorkPage (0, 50, true);
+       }        
        
     };
 
@@ -1310,11 +1266,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(res.action == 'delete') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
-                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                            this.refreshWorkGroups();
-                        } else {
-                            this.loadWorkPage()
-                        }
+                        this.refreshWorkGroups();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                     }
@@ -1322,12 +1274,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(res.action == 'merge') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
-                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                            this.refreshWorkGroups();
-                            this.loadMore();
-                        } else {
-                            this.loadWorkPage()
-                        }
+                        this.refreshWorkGroups();
+                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                         this.bulkEditSelect();
@@ -1335,30 +1283,18 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                             setTimeout(()=>{this.loadGroupingSuggestions(true)}, 500)
                         }
                         else {
-                            if (!this.TOGGLZ_WORKS_PAGINATION) {
-                                this.loadMore();
-                            } else {
-                                this.loadWorkPage()
-                            }
+                            this.loadMore();                            
                         }
                     }
                     else {
-                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                            this.loadMore();
-                        } else {
-                            this.loadWorkPage()
-                        }
+                        this.loadMore();                        
                     }
                 } 
                 if(res.action == 'deleteBulk') {
                     if(res.successful == true) {
                         this.bulkEditShow = false;
                         this.closeAllMoreInfo();
-                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                            this.refreshWorkGroups();
-                        } else {
-                            this.loadWorkPage()
-                        }
+                        this.refreshWorkGroups();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                     }
@@ -1366,12 +1302,8 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 if(res.action == 'add' || res.action == 'cancel') {
                     if(res.successful == true) {
                         this.closeAllMoreInfo();
-                        if (!this.TOGGLZ_WORKS_PAGINATION) {
-                            this.refreshWorkGroups();
-                            this.loadMore();
-                        } else {
-                            this.loadWorkPage()
-                        }
+                        this.refreshWorkGroups();
+                        this.loadMore();
                         this.allSelected = false;
                         this.bulkEditMap = {};
                     }
@@ -1417,7 +1349,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 userInfo => {
                     this.recordLocked = !userInfo || userInfo.IS_LOCKED === 'true' || userInfo.IS_DEACTIVATED === 'true';
                     if (!this.recordLocked) {
-                        if (!this.TOGGLZ_WORKS_PAGINATION || this.printView === "true") {
+                        if (this.printView === "true") {
                             this.loadMore();
                         } else {
                             this.loadWorkPage(0, 50, true)
@@ -1429,12 +1361,7 @@ export class WorksComponent implements AfterViewInit, OnDestroy, OnInit {
                 } 
             );
         } else {
-            
-            if (!this.TOGGLZ_WORKS_PAGINATION) {
-                this.loadMore();
-            } else {
-                this.loadWorkPage()
-            }
+            this.loadMore();
             this.loadWorkImportWizardList();
         }
     };

@@ -218,10 +218,8 @@ public class WorkGroup extends ActivityGroup {
         WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
         workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
         workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
-            workForm.setNumberOfContributors(workSummary.getNumberOfContributors());
-        }
+        workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
+        workForm.setNumberOfContributors(workSummary.getNumberOfContributors());        
         return workForm;
     }
 

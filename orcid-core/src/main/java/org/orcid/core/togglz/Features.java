@@ -25,10 +25,7 @@ public enum Features implements Feature {
     ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
 
     @Label("Add other people contributions manually")
-    ADD_OTHER_WORK_CONTRIBUTORS,
-
-    @Label("Store and read top_contributors_json")
-    STORE_TOP_CONTRIBUTORS,
+    ADD_OTHER_WORK_CONTRIBUTORS,    
 
     @Label("Restrict delegator access to account settings")
     RESTRICTED_DELEGATORS,
@@ -38,9 +35,6 @@ public enum Features implements Feature {
 
     @Label("Orcid Angular Lazy Load Peer Reviews")
     ORCID_ANGULAR_LAZY_LOAD_PEER_REVIEWS,
-
-    @Label("Orcid Angular Works Contributors")
-    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
 
     @Label("Orcid Angular Account settings ")
     ORCID_ANGULAR_ACCOUNT_SETTINGS,
@@ -60,9 +54,6 @@ public enum Features implements Feature {
     @Label("Orcid Angular Search")
     ORCID_ANGULAR_SEARCH,
 
-    @Label("Works pagination")
-    WORKS_PAGINATION,
-
     @Label("Email status dropdown option")
     EMAIL_STATUS_DROPDOWN_OPTION,
 
@@ -71,9 +62,6 @@ public enum Features implements Feature {
 
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-	
-    @Label("Add works based on ArXiv, DOI or PubMed id metadata")
-    ADD_WORKS_WITH_EXTERNAL_ID,
 	
     @Label("Change view privacy from work/funding/affiliation form dialogs")
     DIALOG_PRIVACY_OPTION,

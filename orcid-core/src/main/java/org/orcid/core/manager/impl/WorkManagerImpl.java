@@ -190,7 +190,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         setIncomingWorkPrivacy(workEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
-        if (isApiRequest && Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+        if (isApiRequest) {
             filterContributors(work, workEntity);
         }
         workDao.persist(workEntity);
@@ -270,9 +270,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
                         setIncomingWorkPrivacy(workEntity, profile);
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
-                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                            filterContributors(work, workEntity);
-                        }
+                        filterContributors(work, workEntity);                        
                         workDao.persist(workEntity);
 
                         // Update the element in the bulk
@@ -388,9 +386,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                filterContributors(work, workEntity);
-            }
+            filterContributors(work, workEntity);            
         } else {
             // validate external ID vocab
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -23,7 +22,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.WorkManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.identifiers.PIDResolverService;
@@ -36,7 +34,6 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.KeyValue;
@@ -316,15 +313,9 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        WorkForm workForm = null;
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
-            workForm = WorkForm.valueOf(work, maxContributorsForUI);
-        } else {
-            Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId);
-            workForm = WorkForm.valueOf(work, maxContributorsForUI);
-        }
-
+        WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
+        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        
         if (workForm != null) {
             if (workForm.getPublicationDate() == null) {
                 initializePublicationDate(workForm);
@@ -406,15 +397,9 @@ public class WorksController extends BaseWorkspaceController {
                 workForm.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                if (workForm.getContributorsGroupedByOrcid() != null) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                }
-            } else {
-                if (workForm.getContributors() != null) {
-                    workForm.setContributors(filterContributors(workForm.getContributors(), activityManager));
-                }
-            }
+            if (workForm.getContributorsGroupedByOrcid() != null) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
+            }            
 
             return workForm;
         }
@@ -580,12 +565,8 @@ public class WorksController extends BaseWorkspaceController {
         newWork.setPutCode(null);
 
         // Create work
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            newWork = workManager.createWork(getEffectiveUserOrcid(), workForm);
-        } else {
-            newWork = workManager.createWork(getEffectiveUserOrcid(), newWork, false);
-        }
-
+        newWork = workManager.createWork(getEffectiveUserOrcid(), workForm);
+        
         // Set the id in the work to be returned
         Long workId = newWork.getPutCode();
         workForm.setPutCode(Text.valueOf(workId));
@@ -598,13 +579,7 @@ public class WorksController extends BaseWorkspaceController {
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         }
 
-        Work updatedWork = workForm.toWork();
-        // Edit work
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            workManager.updateWork(userOrcid, workForm);
-        } else {
-            workManager.updateWork(userOrcid, updatedWork, false);
-        }
+        workManager.updateWork(userOrcid, workForm);        
     }
 
     @RequestMapping(value = "/worksValidate.json", method = RequestMethod.POST)
