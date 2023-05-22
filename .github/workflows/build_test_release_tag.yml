@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       version_tag:
-        description: 'version tag to use'
+        description: 'version tag to use(vx.x.x)'
         required: false
         default: "latest"
         type: string
@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'version tag to use'
+        description: 'version tag to use(vx.x.x)'
         required: false
         default: "latest"
         type: string
