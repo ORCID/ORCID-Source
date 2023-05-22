@@ -69,6 +69,9 @@ jobs:
       project: orcid-message-listener
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_amq:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -76,6 +79,9 @@ jobs:
       project: orcid-activemq
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_api:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -83,6 +89,9 @@ jobs:
       project: orcid-api-web
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_iapi:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -90,6 +99,9 @@ jobs:
       project: orcid-internal-api
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_pubweb:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -97,6 +109,9 @@ jobs:
       project: orcid-pub-web
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_sched:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -104,6 +119,9 @@ jobs:
       project: orcid-scheduler-web
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_web:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -111,6 +129,9 @@ jobs:
       project: orcid-web
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
 ####################################################################
 
@@ -120,6 +141,9 @@ jobs:
       project: orcid-utils
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_core:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -127,6 +151,9 @@ jobs:
       project: orcid-core
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_persistence:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -134,6 +161,9 @@ jobs:
       project: orcid-persistence
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
   tst_api_common:
     uses: ./.github/workflows/maven_test_publish.yml
@@ -141,6 +171,9 @@ jobs:
       project: orcid-api-common
       seed_maven_cache: ${{ inputs.seed_maven_cache }}
       install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
 
 #   codeql:
 #     uses: ./.github/workflows/codeql.yml
