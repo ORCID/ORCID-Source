@@ -93,11 +93,11 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-      - name: Restore the seeded cache but save dependencies into a new unique git sha hash
+      - name: Restore the seeded cache but save dependencies into a new unique git sha hash with the expected version of the build
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
 

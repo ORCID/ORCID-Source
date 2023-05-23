@@ -116,9 +116,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.sha }}
+            ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
 
       - name: bump version of the parent pom and connected projects
         if: ${{ ! inputs.install_maven_dependencies }}
