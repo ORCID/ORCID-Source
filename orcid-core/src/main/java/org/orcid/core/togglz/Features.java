@@ -39,9 +39,6 @@ public enum Features implements Feature {
     @Label("Orcid Angular Account settings ")
     ORCID_ANGULAR_ACCOUNT_SETTINGS,
 
-    @Label("Orcid Angular Public Page")
-    ORCID_ANGULAR_PUBLIC_PAGE,
-
     @Label("Disable Badges")
     DISABLE_BADGES,
 
