@@ -46,6 +46,8 @@ public class PutAuthTokenActionFilter extends OncePerRequestFilter {
             response.setHeader("Location", rootLocation);
             LOGGER.debug("Redirecting PUT token request to root");
         }
-        filterChain.doFilter(request, response);
+        else {
+            filterChain.doFilter(request, response);
+        }
     }
 }
