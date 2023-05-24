@@ -41,7 +41,7 @@ public class PutAuthTokenActionFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (Features.REDIRECT_PUT_TOKEN_ENDPOINT.isActive() && StringUtils.equalsIgnoreCase(OAUTH_TOKEN_PATH, request.getPathInfo())) {
+        if (Features.REDIRECT_PUT_TOKEN_ENDPOINT.isActive() && request.getRequestURI().contains(OAUTH_TOKEN_PATH)) {
             response.setStatus(httpRedirectCode);
             response.setHeader("Location", rootLocation);
             LOGGER.debug("Redirecting PUT token request to root");
