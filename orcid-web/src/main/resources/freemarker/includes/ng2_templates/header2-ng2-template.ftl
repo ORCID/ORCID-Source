@@ -10,9 +10,7 @@
                     <div class="slogan">${springMacroRequestContext.getMessage("public-layout.logo.tagline")?replace("<br />", " ")?replace("'", "\\'")}</div>
                      
                     <div class="menu-control">
-                        <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'>
                         <user-menu *ngIf="isMobile && !openMobileMenu"></user-menu>
-                        </@orcid.checkFeatureStatus>
                         <language-ng2 *ngIf="openMobileMenu"></language-ng2>
                         <span (click)="toggleMenu()" role="navigation"  tabindex="0" aria-label="main menu" [hidden]="!openMobileMenu" style="height: 35px" class="close" alt="close menu"> </span>
                         <img (click)="toggleMenu()" role="navigation"  tabindex="0" aria-label="main menu" [hidden]="openMobileMenu" style="height: 35px" src="{{assetsPath + '/img/glyphicon-menu.svg'}}" alt="open menu"/>
@@ -20,9 +18,7 @@
                 </div>
                 <div class="search" >
                 <div class="dropdown-menus-container">
-                        <@orcid.checkFeatureStatus 'ENABLE_USER_MENU'> 
                         <user-menu *ngIf="!isMobile"></user-menu>
-                        </@orcid.checkFeatureStatus>
                         <language-ng2 *ngIf="!isMobile"></language-ng2>
                 </div>
                    
@@ -74,15 +70,12 @@
                     <li role="presentation" class="expanded">
                         <a href="{{aboutUri}}" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.newsAndEvents")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
                     </li>
-
-                    <@orcid.checkFeatureStatus featureName='ENABLE_USER_MENU'>
                     <li role="presentation" class="last leaf ${(nav=="signin")?then('open', '')} " [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (focus)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
                         <div class="mobile-menu-sign-in">
                             <a  class="mobile-menu-sign-in-url" *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}</a>                    
                             <a class="mobile-menu-sign-in-url" *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
                         </div>
-                    </li>      
-                    </@orcid.checkFeatureStatus>
+                    </li>
                 </ul>  
                 </div>
         </div>
