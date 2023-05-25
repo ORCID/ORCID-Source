@@ -94,7 +94,7 @@ export class Header2Component  {
                 this.assetsPath = data.messages['STATIC_PATH'];
                 this.aboutUri = data.messages['ABOUT_URI'];
                 this.liveIds = data.messages['LIVE_IDS'];
-                this.userMenu = data.messages['ENABLE_USER_MENU'] === "true"    
+                this.userMenu = true   
                 
                 this.mobileMenu = {
                     HELP: false,
