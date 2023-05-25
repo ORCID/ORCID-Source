@@ -1,3 +1,8 @@
+## v2.31.5 - 2023-05-25
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.4...v2.31.5)
+
+- [#6798](https://github.com/ORCID/ORCID-Source/pull/6798): 8625 awstechtogglz redirect token endpoint in puborcidorg to the root endpoint
+
 ## v2.31.4 - 2023-05-25
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.3...v2.31.4)
 
