@@ -1,3 +1,12 @@
+## v2.31.4 - 2023-05-25
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.3...v2.31.4)
+
+- [#6800](https://github.com/ORCID/ORCID-Source/pull/6800): Remove all togglz that have to do with the angular pages
+
+### Fix
+
+-  all multiple prs to be merged at the same time
+
 ## v2.31.3 - 2023-05-23
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.2...v2.31.3)
 
