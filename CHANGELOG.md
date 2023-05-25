@@ -1,3 +1,8 @@
+## v2.31.6 - 2023-05-25
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.5...v2.31.6)
+
+- [#6801](https://github.com/ORCID/ORCID-Source/pull/6801): fix/update-node-version
+
 ## v2.31.5 - 2023-05-25
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.4...v2.31.5)
 
