@@ -13,10 +13,11 @@ on:
     tags-ignore:
       - '**'
 
-# cancel running job if another commit comes in
+# if multiple prs get merged they will wait for each job to complete
+# so we don't get duplicate builds
 concurrency:
   group: pushmain-${{ github.ref }}-1
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build_test_release_tag:
