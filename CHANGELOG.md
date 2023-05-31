@@ -1,3 +1,7 @@
+## v2.31.9 - 2023-05-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.8...v2.31.9)
+
 ## v2.31.8 - 2023-05-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.7...v2.31.8)
