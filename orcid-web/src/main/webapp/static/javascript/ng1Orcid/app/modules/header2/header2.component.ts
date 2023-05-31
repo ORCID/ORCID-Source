@@ -137,16 +137,9 @@ export class Header2Component  {
                 window.location.assign(getBaseUri() + '/search/node/' + encodeURIComponent(this.headerSearch.searchInput));
             }
             if(this.headerSearch.searchOption=='registry'){
-                if (this.togglzOrcidAngularSearch) {
-                    window.location.assign(getBaseUri()
-                    + "/orcid-search/search?searchQuery="
-                    + encodeURIComponent(this.headerSearch.searchInput));
-                }
-                else {
-                    window.location.assign(getBaseUri()
-                    + "/orcid-search/quick-search/?searchQuery="
-                    + encodeURIComponent(this.headerSearch.searchInput)); 
-                }
+                window.location.assign(getBaseUri()
+                + "/orcid-search/search?searchQuery="
+                + encodeURIComponent(this.headerSearch.searchInput));                
             }
         }
     }
