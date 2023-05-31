@@ -1,3 +1,10 @@
+## v2.31.8 - 2023-05-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.7...v2.31.8)
+
+- [#6805](https://github.com/ORCID/ORCID-Source/pull/6805): Jersey does not remove .json from the path anymore
+- [#6806](https://github.com/ORCID/ORCID-Source/pull/6806): Search link
+
 ## v2.31.7 - 2023-05-29
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.6...v2.31.7)
 
