@@ -119,7 +119,7 @@ export class AdminActionsService {
     
     reactivateRecord( obj ): Observable<any> {
         return this.http.post( 
-                getBaseUri() + '/admin-actions/reactivate-record.json', 
+                getBaseUri() + '/admin-actions/reactivate-record', 
                 JSON.stringify(obj), 
                 { headers: this.headers }
         )        
