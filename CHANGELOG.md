@@ -1,3 +1,9 @@
+## v2.31.10 - 2023-06-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.9...v2.31.10)
+
+- [#6807](https://github.com/ORCID/ORCID-Source/pull/6807): Redirect to the root endpoint with path /oauth/token
+
 ## v2.31.9 - 2023-05-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.8...v2.31.9)
