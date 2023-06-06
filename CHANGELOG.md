@@ -1,3 +1,9 @@
+## v2.31.11 - 2023-06-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.10...v2.31.11)
+
+- [#6794](https://github.com/ORCID/ORCID-Source/pull/6794): Changes to cli to support sending notification emails and only lock unverified, unlocked records
+
 ## v2.31.10 - 2023-06-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.9...v2.31.10)
