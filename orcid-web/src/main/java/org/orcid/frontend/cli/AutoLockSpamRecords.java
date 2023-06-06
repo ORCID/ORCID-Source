@@ -1,4 +1,4 @@
-package org.orcid.core.cli;
+package org.orcid.frontend.cli;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,6 +17,9 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
+import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +51,9 @@ public class AutoLockSpamRecords {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource 
+    private RecordEmailSender recordEmailSender;
 
     public static void main(String[] args) {
         AutoLockSpamRecords autolockSpamRecords = new AutoLockSpamRecords();
@@ -84,14 +90,21 @@ public class AutoLockSpamRecords {
         System.out.println("Start for batch: " + System.currentTimeMillis() + " to lock batch is: " + toLock.size());
         for (String orcidId : toLock) {
             try {
-                System.out.println("Processing orcidId: " + orcidId);
-                profileEntityManager.findByOrcid(orcidId);
-                //check if is not already locked
-                profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
-                
-                lastOrcidProcessed = orcidId;
+                LOG.info("Processing orcidId: " + orcidId);
+                if(OrcidStringUtils.isValidOrcid(orcidId)) {
+                    ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcidId);
+                    //only lock account was not reviewed and not already locked
+                    if(!profileEntity.isReviewed() && profileEntity.isAccountNonLocked()) {
+                        boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
+                        if(wasLocked) {
+                            recordEmailSender.sendOrcidLockedEmail(orcidId);
+                        }
+                    }
+                    lastOrcidProcessed = orcidId;
+                }
             } catch (Exception e) {
                 LOG.error("Exception when locking spam record " + orcidId, e);
+                LOG.info("LastOrcid processed is: " + lastOrcidProcessed);
                 e.printStackTrace();
             }
         }
@@ -102,10 +115,11 @@ public class AutoLockSpamRecords {
 
     @SuppressWarnings("resource")
     private void init() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context-spam.xml");
         profileEntityManager = (ProfileEntityManager) context.getBean("profileEntityManagerV3");
         profileEntityCacheManager = (ProfileEntityCacheManager) context.getBean("profileEntityCacheManager");
         notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
+        recordEmailSender = (RecordEmailSender) context.getBean("recordEmailSender");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
@@ -127,7 +141,7 @@ public class AutoLockSpamRecords {
         while (iterator.hasNext()) {
             keyVals = iterator.next();
             Object[] keys = keyVals.keySet().toArray();
-            spamList.add(keyVals.get(keys[5]));
+            spamList.add(keyVals.get(keys[0]));
         }
         return spamList;
     }
@@ -146,5 +160,6 @@ public class AutoLockSpamRecords {
         FeatureManager featureManager = new FeatureManagerBuilder().togglzConfig(togglzConfig).build();
         ContextClassLoaderFeatureManagerProvider.bind(featureManager);  
     }
+    
 
 }
