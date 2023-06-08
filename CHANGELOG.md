@@ -1,3 +1,13 @@
+## v2.32.0 - 2023-06-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.11...v2.32.0)
+
+- [#6809](https://github.com/ORCID/ORCID-Source/pull/6809): feature: Add professional activities togglz
+
+### Feature
+
+- Add professional activities togglz
+
 ## v2.31.11 - 2023-06-06
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.10...v2.31.11)
