@@ -5,6 +5,9 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+    @Label("Professional activities")
+    PROFESSIONAL_ACTIVITIES,
+
     @Label("Redirect PUT token actions from *.pub.orcid.org to *.orcid.org")
     REDIRECT_PUT_TOKEN_ENDPOINT,
 
