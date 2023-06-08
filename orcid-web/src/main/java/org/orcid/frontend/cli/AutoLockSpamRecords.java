@@ -19,6 +19,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
@@ -44,6 +45,9 @@ public class AutoLockSpamRecords {
     
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailDao orcidOauthDao;
 
     private static int ONE_DAY = 86400000;
 
@@ -93,8 +97,9 @@ public class AutoLockSpamRecords {
                 LOG.info("Processing orcidId: " + orcidId);
                 if(OrcidStringUtils.isValidOrcid(orcidId)) {
                     ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcidId);
-                    //only lock account was not reviewed and not already locked
-                    if(!profileEntity.isReviewed() && profileEntity.isAccountNonLocked()) {
+                    //only lock account was not reviewed and not already locked and not have an auth token
+                    
+                    if(!profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId)) {
                         boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
                         if(wasLocked) {
                             recordEmailSender.sendOrcidLockedEmail(orcidId);
@@ -120,6 +125,7 @@ public class AutoLockSpamRecords {
         profileEntityCacheManager = (ProfileEntityCacheManager) context.getBean("profileEntityCacheManager");
         notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
         recordEmailSender = (RecordEmailSender) context.getBean("recordEmailSender");
+        orcidOauthDao = (OrcidOauth2TokenDetailDao) context.getBean("orcidOauth2TokenDetailDao");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
