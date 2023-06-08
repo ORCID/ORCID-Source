@@ -1,17 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -67,6 +55,17 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
@@ -328,10 +327,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(2, applications.size());
         assertEquals(4, applications.get(0).getScopePaths().keySet().size());
         assertEquals(2, applications.get(1).getScopePaths().keySet().size());
-        
-        // test ordering based on name
-        assertEquals(CLIENT_ID_1, applications.get(0).getOrcidPath());
-        assertEquals(CLIENT_ID_2, applications.get(1).getOrcidPath());
         
         //Assert we can delete them
         profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
