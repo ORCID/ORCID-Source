@@ -1,3 +1,9 @@
+## v2.32.1 - 2023-06-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.32.0...v2.32.1)
+
+- [#6811](https://github.com/ORCID/ORCID-Source/pull/6811): check if the profile has an auth token
+
 ## v2.32.0 - 2023-06-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.31.11...v2.32.0)
