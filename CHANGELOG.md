@@ -1,3 +1,9 @@
+## v2.32.2 - 2023-06-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.32.1...v2.32.2)
+
+- [#6810](https://github.com/ORCID/ORCID-Source/pull/6810): Remove RINGGOLD from the orgs query
+
 ## v2.32.1 - 2023-06-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.32.0...v2.32.1)
