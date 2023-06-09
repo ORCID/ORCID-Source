@@ -58,12 +58,7 @@ public class LoadDataForOrganizationSource {
             if(StringUtils.equalsIgnoreCase(loadData.orgType, FUNDREF_TYPE)) {
                 LOG.info("Loading orgs from Fundref");
                 loadData.orgLoadManager.loadOrg(loadData.fundrefOrgSource);
-            }
-            else if(StringUtils.equalsIgnoreCase(loadData.orgType, RINGGOLD_TYPE)) {
-                LOG.info("Loading orgs from Ringgold");
-                loadData.orgLoadManager.loadOrg(loadData.ringgoldOrgSource);
-            }
-            else { //default to ROR
+            } else { //default to ROR
                 LOG.info("Loading orgs from ROR");
                 loadData.orgLoadManager.loadOrg(loadData.rorOrgSource);
             }

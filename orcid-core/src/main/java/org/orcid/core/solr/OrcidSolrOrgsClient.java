@@ -68,7 +68,7 @@ public class OrcidSolrOrgsClient {
             query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
         }
 
-        query.addFilterQuery(String.format("(%s:(%s OR %s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "RINGGOLD", "FUNDREF"));
+        query.addFilterQuery(String.format("(%s:(%s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "FUNDREF"));
         LOGGER.debug("SOLR Query: " + query.toQueryString());
 
         try {
