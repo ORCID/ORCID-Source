@@ -1,3 +1,14 @@
+## v2.33.0 - 2023-06-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.32.2...v2.33.0)
+
+- [#6812](https://github.com/ORCID/ORCID-Source/pull/6812): feature: Refactor `get-trusted-orgs.json` endpoint and remove unneces…
+
+### Feature
+
+- Replace label for scope type
+- Refactor `get-trusted-orgs.json` endpoint and remove unnecessary data
+
 ## v2.32.2 - 2023-06-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.32.1...v2.32.2)
