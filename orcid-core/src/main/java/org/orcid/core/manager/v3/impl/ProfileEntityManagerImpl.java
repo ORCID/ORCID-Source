@@ -344,19 +344,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 applicationSummary = new ApplicationSummary();
                 distinctApplications.put(client.getId(), applicationSummary);
                 applicationSummary.setScopePaths(new HashMap<String, String>());
-                applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
-                applicationSummary.setOrcidPath(client.getId());
                 applicationSummary.setName(client.getClientName());
                 applicationSummary.setWebsiteValue(client.getClientWebsite());
                 applicationSummary.setApprovalDate(token.getDateCreated());
-                applicationSummary.setTokenId(String.valueOf(token.getId()));
-
-                if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
-                    ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
-                    applicationSummary.setGroupOrcidPath(member.getId());
-                    applicationSummary.setGroupName(getMemberDisplayName(member));
-                }
             }
 
             Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
@@ -364,7 +354,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             for (ScopePathType tempScope : scopesGrantedToClient) {
                 try {
                     String label = localeManager.resolveMessage(scopeFullPath + tempScope.toString());
-                    applicationSummary.getScopePaths().put(label, label);
+                    applicationSummary.getScopePaths().put(tempScope.toString(), label);
                 } catch (NoSuchMessageException e) {
                     LOGGER.warn("No message to display for scope " + tempScope.toString());
                 }
