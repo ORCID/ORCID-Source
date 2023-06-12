@@ -354,7 +354,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             for (ScopePathType tempScope : scopesGrantedToClient) {
                 try {
                     String label = localeManager.resolveMessage(scopeFullPath + tempScope.toString());
-                    applicationSummary.getScopePaths().put(label, label);
+                    applicationSummary.getScopePaths().put(tempScope.toString(), label);
                 } catch (NoSuchMessageException e) {
                     LOGGER.warn("No message to display for scope " + tempScope.toString());
                 }
