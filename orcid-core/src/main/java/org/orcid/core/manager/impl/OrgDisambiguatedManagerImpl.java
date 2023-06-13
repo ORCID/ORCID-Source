@@ -272,7 +272,14 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier( String identifier, String type ) {
         List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
         List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(identifier, type);
-        extIds.stream().forEach((e) -> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
+        extIds.stream().forEach((e) -> 
+            {
+                OrgDisambiguatedEntity de = e.getOrgDisambiguated();
+                // Group only if it is not a RINGGOLD org
+                if(de != null && !OrgDisambiguatedSourceType.RINGGOLD.name().equals(de.getSourceType())) {
+                    orgDisambiguatedIds.add(convertEntity(de));
+                }
+            });
         return orgDisambiguatedIds;
     }
 
