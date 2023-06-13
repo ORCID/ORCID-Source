@@ -1,3 +1,9 @@
+## v2.34.1 - 2023-06-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.0...v2.34.1)
+
+- [#6815](https://github.com/ORCID/ORCID-Source/pull/6815): Create a csv file with the Ringgold to RORs ids
+
 ## v2.34.0 - 2023-06-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.33.1...v2.34.0)
