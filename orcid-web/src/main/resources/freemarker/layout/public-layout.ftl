@@ -163,7 +163,7 @@
                                             <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'wp-infosite-header.privacyPolicy'/></a></li>
                                             <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'wp-infosite-header.termOfUse'/></a></li>
                                             <li><a href="{{aboutUri}}/content/orcid-accessibility-statement"><@orcid.msg 'wp-infosite-header.accesibilityStatement'/></a></li>
-                                            <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactUs'/></a></li>
+                                            <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactSupport'/></a></li>
                                             <li><a href="{{aboutUri}}/orcid-dispute-procedures"><@orcid.msg 'wp-infosite-header.disputeProcedures'/></a></li>
                                             <li><a href="{{aboutUri}}/trademark-and-id-display-guidelines/"><@orcid.msg 'wp-infosite-header.brandGuidelines'/></a></li>
                                     </ul>
