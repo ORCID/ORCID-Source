@@ -1,3 +1,13 @@
+## v2.34.0 - 2023-06-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.33.1...v2.34.0)
+
+- [#6814](https://github.com/ORCID/ORCID-Source/pull/6814): feature: Update `Contact us` to `Contact Support` in footer
+
+### Feature
+
+- Update `Contact us` to `Contact Support` in footer
+
 ## v2.33.1 - 2023-06-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.33.0...v2.33.1)
