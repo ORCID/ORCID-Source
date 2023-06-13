@@ -1,3 +1,9 @@
+## v2.33.1 - 2023-06-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.33.0...v2.33.1)
+
+- [#6813](https://github.com/ORCID/ORCID-Source/pull/6813): Do not include ringgold in ORG grouping
+
 ## v2.33.0 - 2023-06-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.32.2...v2.33.0)
