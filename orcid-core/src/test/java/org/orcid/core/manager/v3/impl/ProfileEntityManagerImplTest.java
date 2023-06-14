@@ -337,7 +337,11 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
         assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
         assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
-        
+
+        // test ordering based on name
+        assertEquals(CLIENT_ID_1, applications.get(0).getClientId());
+        assertEquals(CLIENT_ID_2, applications.get(1).getClientId());
+
         //Assert we can delete them
         profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
         profileEntityManager.disableClientAccess(CLIENT_ID_2, USER_ORCID);

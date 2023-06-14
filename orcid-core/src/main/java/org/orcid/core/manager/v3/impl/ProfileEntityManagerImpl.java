@@ -1,16 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.security.InvalidParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
@@ -82,6 +71,16 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.security.InvalidParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -345,6 +344,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 distinctApplications.put(client.getId(), applicationSummary);
                 applicationSummary.setScopePaths(new HashMap<String, String>());
                 applicationSummary.setName(client.getClientName());
+                applicationSummary.setClientId(client.getId());
                 applicationSummary.setWebsiteValue(client.getClientWebsite());
                 applicationSummary.setApprovalDate(token.getDateCreated());
             }

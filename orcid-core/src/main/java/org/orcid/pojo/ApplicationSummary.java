@@ -7,6 +7,8 @@ public class ApplicationSummary {
 
     private String name;
 
+    private String clientId;
+
     private String websiteValue;
 
     private Date approvalDate;
@@ -20,6 +22,10 @@ public class ApplicationSummary {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getClientId() { return clientId; }
+
+    public void setClientId(String clientId) { this.clientId = clientId; }
 
     public String getWebsiteValue() {
         return websiteValue;
