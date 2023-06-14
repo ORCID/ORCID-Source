@@ -1,3 +1,13 @@
+## v2.34.2 - 2023-06-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.1...v2.34.2)
+
+- [#6817](https://github.com/ORCID/ORCID-Source/pull/6817): fix: Rollback clientId in ApplicationSummary
+
+### Fix
+
+- Rollback clientId in ApplicationSummary
+
 ## v2.34.1 - 2023-06-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.0...v2.34.1)
