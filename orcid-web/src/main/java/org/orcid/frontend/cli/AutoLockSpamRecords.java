@@ -14,11 +14,13 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.jaxb.model.record_v2.Affiliation;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -58,6 +60,9 @@ public class AutoLockSpamRecords {
     
     @Resource 
     private RecordEmailSender recordEmailSender;
+    
+    @Resource
+    private AffiliationsManager affiliationsManager;
 
     public static void main(String[] args) {
         AutoLockSpamRecords autolockSpamRecords = new AutoLockSpamRecords();
@@ -71,7 +76,7 @@ public class AutoLockSpamRecords {
             allIDs = autolockSpamRecords.getAllSpamIDs();
             System.out.println("Found " + allIDs.size() + " profiles for autolocking");
             LOG.info("Found {} profiles for autolocking", allIDs.size());
-
+            
             List<String> toLock = autolockSpamRecords.getNextIdSubset(allIDs);
             while (toLock != null && !toLock.isEmpty()) {
                 autolockSpamRecords.autolockRecords(toLock);
@@ -92,6 +97,7 @@ public class AutoLockSpamRecords {
     private void autolockRecords(List<String> toLock) {
         String lastOrcidProcessed = "";
         System.out.println("Start for batch: " + System.currentTimeMillis() + " to lock batch is: " + toLock.size());
+        int accountsLocked = 0;
         for (String orcidId : toLock) {
             try {
                 LOG.info("Processing orcidId: " + orcidId);
@@ -100,9 +106,14 @@ public class AutoLockSpamRecords {
                     //only lock account was not reviewed and not already locked and not have an auth token
                     
                     if(!profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId)) {
-                        boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
-                        if(wasLocked) {
-                            recordEmailSender.sendOrcidLockedEmail(orcidId);
+                        List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcidId);
+                        //Lock only if doesn't have any affiliations
+                        if(affiliations == null || affiliations.size() < 1) {
+                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
+                            if(wasLocked) {
+                                recordEmailSender.sendOrcidLockedEmail(orcidId);
+                                accountsLocked++;
+                            }
                         }
                     }
                     lastOrcidProcessed = orcidId;
@@ -113,9 +124,8 @@ public class AutoLockSpamRecords {
                 e.printStackTrace();
             }
         }
-        System.out.println("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed);
-        LOG.info("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed);
-
+        System.out.println("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked);
+        LOG.info("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked);
     }
 
     @SuppressWarnings("resource")
@@ -126,6 +136,7 @@ public class AutoLockSpamRecords {
         notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
         recordEmailSender = (RecordEmailSender) context.getBean("recordEmailSender");
         orcidOauthDao = (OrcidOauth2TokenDetailDao) context.getBean("orcidOauth2TokenDetailDao");
+        affiliationsManager = (AffiliationsManager) context.getBean("affiliationsManager");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
