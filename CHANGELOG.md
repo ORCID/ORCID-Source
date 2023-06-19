@@ -1,3 +1,9 @@
+## v2.34.4 - 2023-06-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.3...v2.34.4)
+
+- [#6816](https://github.com/ORCID/ORCID-Source/pull/6816): Use REMOVED org status to remove RINGGOLD orgs from the index
+
 ## v2.34.3 - 2023-06-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.2...v2.34.3)
