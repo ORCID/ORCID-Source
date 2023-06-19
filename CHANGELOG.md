@@ -1,3 +1,9 @@
+## v2.34.3 - 2023-06-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.2...v2.34.3)
+
+- [#6822](https://github.com/ORCID/ORCID-Source/pull/6822): Add a property to indicate if a record should have the noindex metatag
+
 ## v2.34.2 - 2023-06-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.1...v2.34.2)
