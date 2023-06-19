@@ -1,3 +1,14 @@
+## v2.34.5 - 2023-06-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.4...v2.34.5)
+
+- [#6820](https://github.com/ORCID/ORCID-Source/pull/6820): Added the check for affiliations before locking records
+- [#6819](https://github.com/ORCID/ORCID-Source/pull/6819): feature: Remove old banner and add one trus to index and link to footer
+
+### Feature
+
+- Remove old banner and add one trus to index and link to footer
+
 ## v2.34.4 - 2023-06-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.3...v2.34.4)
