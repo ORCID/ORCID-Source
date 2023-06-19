@@ -245,6 +245,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 info.put("EFFECTIVE_USER_ORCID", orcid);
                 info.put("IS_LOCKED", String.valueOf(!profile.isAccountNonLocked()));
                 info.put("IS_DEACTIVATED", String.valueOf(!(profile.getDeactivationDate() == null)));
+                info.put("READY_FOR_INDEXING", String.valueOf(isRecordReadyForIndexing(profile)));
                 if (profile.getPrimaryRecord() != null) {
                     info.put("PRIMARY_RECORD", profile.getPrimaryRecord().getId());
                 }
@@ -254,6 +255,27 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         
         return info;
+    }
+    
+    private boolean isRecordReadyForIndexing(ProfileEntity profile) {
+        // False if it is locked 
+        if(!profile.isAccountNonLocked()) {
+            return false;
+        }
+        
+        // False if it is deprecated
+        if (profile.getPrimaryRecord() != null) {
+            return false;
+        }
+
+        // False if it is not reviewed and doesn't have any integration
+        if(!profile.isReviewed()) {
+            if (!orcidOauth2TokenService.hasToken(profile.getId(), getLastModifiedTime(profile.getId()))) {
+                return false;
+            } 
+        }
+        
+        return true;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
