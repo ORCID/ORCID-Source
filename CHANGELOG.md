@@ -1,3 +1,13 @@
+## 2.35.0 - 2023-06-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.7...2.35.0)
+
+- [#6824](https://github.com/ORCID/ORCID-Source/pull/6824): fix: Temporarily remove onetrust link from footer
+
+### Fix
+
+- Temporarily remove onetrust link from footer
+
 ## v2.34.7 - 2023-06-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.6...v2.34.7)
