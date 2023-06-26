@@ -11,6 +11,10 @@ public enum Features implements Feature {
     @Label("Redirect PUT token actions from *.pub.orcid.org to *.orcid.org")
     REDIRECT_PUT_TOKEN_ENDPOINT,
 
+    @Label("New Developer tools")
+    NEW_DEVELOPER_TOOLS,
+
+
     @Label("Stop sending notification if work has not been updated")
     STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED,
 
