@@ -1,3 +1,9 @@
+## v2.34.7 - 2023-06-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.6...v2.34.7)
+
+- [#6821](https://github.com/ORCID/ORCID-Source/pull/6821): leo/8661-account-developer-tools
+
 ## v2.34.6 - 2023-06-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.5...v2.34.6)
