@@ -1,3 +1,11 @@
+## v2.34.6_patch1 - 2023-06-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.7...v2.34.6_patch1)
+
+### Fix
+
+- Temporarily remove onetrust
+
 ## v2.34.6 - 2023-06-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.5...v2.34.6)
