@@ -1,3 +1,16 @@
+## v2.34.10 - 2023-06-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.9...v2.34.10)
+
+- [#6825](https://github.com/ORCID/ORCID-Source/pull/6825): fix: Temporarily remove onetrust
+- [#6824](https://github.com/ORCID/ORCID-Source/pull/6824): fix: Temporarily remove onetrust link from footer
+- [#6821](https://github.com/ORCID/ORCID-Source/pull/6821): leo/8661-account-developer-tools
+
+### Fix
+
+- Temporarily remove onetrust
+- Temporarily remove onetrust link from footer
+
 ## 2.35.0 - 2023-06-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.7...2.35.0)
