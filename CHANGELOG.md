@@ -1,3 +1,13 @@
+## v2.35.1 - 2023-06-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.10...v2.35.1)
+
+- [#6826](https://github.com/ORCID/ORCID-Source/pull/6826): feature: Enable language detection in onetrust
+
+### Feature
+
+- Enable language detection in onetrust
+
 ## v2.34.10 - 2023-06-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.9...v2.34.10)
