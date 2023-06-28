@@ -78,7 +78,10 @@
             src="https://cdn.cookielaw.org/consent/5a6d60d3-b085-4e48-8afa-d707c7afc419-test/OtAutoBlock.js"
     ></script>
     <script
+            type="text/javascript"
             src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"
+            charset="UTF-8"
+            data-document-language="true"
             data-domain-script="5a6d60d3-b085-4e48-8afa-d707c7afc419-test"
     ></script>
     <script type="text/javascript">
