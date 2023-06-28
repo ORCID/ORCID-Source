@@ -67,14 +67,24 @@ public class IssnClient {
                     String cleanTitle = cleanText(title);
                     issnData.setMainTitle(cleanTitle);
                     return issnData;
-                } else if (jsonArray.getJSONObject(i).has("name")) {
-                    // name and mainTitle always in same object - therefore if
-                    // no mainTitle but name present, no mainTitle in data
+                } 
+            }
+            // If we reach this point it means the mainTitle was not available.
+            // Lets iterate again now looking for key
+            for (int i = 0; i < jsonArray.length(); i++) {
+                if (jsonArray.getJSONObject(i).has("name")) {
                     try {
-                        issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
+                        String title = jsonArray.getJSONObject(i).getString("name");                        
+                        issnData.setMainTitle(cleanText(title));
                     } catch (JSONException e) {
-                        // may not be an array
-                        issnData.setMainTitle(jsonArray.getJSONObject(i).getString("name"));
+                        // may be an array
+                        try {
+                            String title = jsonArray.getJSONObject(i).getJSONArray("name").getString(0);
+                            issnData.setMainTitle(cleanText(title));
+                        } catch(Exception ee) {
+                            // Nothing else to try, propagate the exception
+                            throw ee;
+                        }
                     }
                     return issnData;
                 }
