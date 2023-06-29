@@ -71,17 +71,19 @@ public class IssnLoadSource {
     private void updateIssnGroupIdRecords() {
         Date start = new Date();
         List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(batchSize, start);
-        int count = 0;
+        int batchCount = 0;
+        int total = 0;
         while (!issnEntities.isEmpty()) {
             for (GroupIdRecordEntity issnEntity : issnEntities) {
                 String issn = getIssn(issnEntity);
                 if (issn != null && issnValidator.issnValid(issn)) {
-                    count++;
+                    batchCount++;
+                    total++;
                     IssnData issnData = issnClient.getIssnData(issn);
                     if (issnData != null) {
                         updateIssnEntity(issnEntity, issnData);
                         LOG.info("Updated group id record {} - {}, processed count now {}",
-                                new Object[] { issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(count) });
+                                new Object[] { issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(total) });
                     } else {
                         LOG.warn("ISSN data not found for {}", issn);
                         recordFailure(issnEntity.getId(), "Data not found");
@@ -92,11 +94,11 @@ public class IssnLoadSource {
                 }                
                 try {
                     // Lets sleep for 30 secs after processing one batch
-                    if(count >= batchSize) {
+                    if(batchCount >= batchSize) {
                         LOG.info("Pausing the process");
                         Thread.sleep(waitBetweenBatches);
                         // Reset the count
-                        count = 0;
+                        batchCount = 0;
                     }
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
