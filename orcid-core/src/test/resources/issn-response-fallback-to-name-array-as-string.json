@@ -21,7 +21,7 @@
     "http://purl.org/ontology/bibo/issn" : "0260-8774",
     "isPartOf" : "resource/ISSN-L/0260-8774",
     "issn" : "0260-8774",
-    "name" : "Journal of food engineering",
+    "name" : "Journal of food engineering - String",
     "publication" : "resource/ISSN/0260-8774#ReferencePublicationEvent"
   }, {
     "@id" : "resource/ISSN/0260-8774#ISSN",
@@ -33,10 +33,6 @@
     "@type" : "http://id.loc.gov/ontologies/bibframe/IssnL",
     "status" : "vocabularies/IdentifierStatus#Valid",
     "value" : "0260-8774"
-  }, {
-    "@id" : "resource/ISSN/0260-8774#KeyTitle",
-    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
-    "value" : "Journal of food engineering"
   }, {
     "@id" : "resource/ISSN/0260-8774#Record",
     "@type" : "http://schema.org/CreativeWork",

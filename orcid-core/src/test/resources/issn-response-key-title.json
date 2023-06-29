@@ -41,7 +41,7 @@
   }, {
     "@id" : "resource/ISSN/1755-4349#KeyTitle",
     "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
-    "value" : "Nature chemistry (Online)"
+    "value" : "Nature chemistry (Online) - Key Title"
   }, {
     "@id" : "resource/ISSN/1755-4349#Record",
     "@type" : "http://schema.org/CreativeWork",

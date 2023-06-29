@@ -12,7 +12,7 @@
     "@id" : "resource/ISSN/0021-9525",
     "@type" : [ "http://id.loc.gov/ontologies/bibframe/Work", "http://id.loc.gov/ontologies/bibframe/Instance", "http://schema.org/Periodical" ],
     "identifiedBy" : [ "resource/ISSN/0021-9525#KeyTitle", "resource/ISSN/0021-9525#ISSN", "resource/ISSN/0021-9525#ISSN-L" ],
-    "mainTitle" : "\u0098The \u009CJournal of cell biology.",
+    "mainTitle" : "\u0098The \u009CJournal of cell biology - Main Title",
     "otherPhysicalFormat" : "resource/ISSN/1540-8140",
     "title" : "resource/ISSN/0021-9525#KeyTitle",
     "format" : "vocabularies/medium#Print",
@@ -22,7 +22,7 @@
     "http://purl.org/ontology/bibo/issn" : "0021-9525",
     "isPartOf" : "resource/ISSN-L/0021-9525",
     "issn" : "0021-9525",
-    "name" : [ "The Journal of cell biology.", "The Journal of cell biology" ],
+    "name" : [ "\u0098The \u009CJournal of cell biology - Name Array"],
     "publication" : "resource/ISSN/0021-9525#ReferencePublicationEvent",
     "url" : [ "http://www.jcb.org/", "http://www.jstor.org/journals/00219525.html", "http://www.pubmedcentral.nih.gov/tocrender.fcgi?journal=482&action=archive", "http://bibpurl.oclc.org/web/21389" ]
   }, {
@@ -38,7 +38,7 @@
   }, {
     "@id" : "resource/ISSN/0021-9525#KeyTitle",
     "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
-    "value" : "The Journal of cell biology"
+    "value" : "\u0098The \u009CJournal of cell biology - Key Title"
   }, {
     "@id" : "resource/ISSN/0021-9525#Record",
     "@type" : "http://schema.org/CreativeWork",

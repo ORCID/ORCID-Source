@@ -99,7 +99,7 @@ public class IssnLoadSource {
                     }
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    LOG.warn("Exception while pausing the issn loader", e);                    
                 }
             }
             issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(batchSize, start);
@@ -118,9 +118,9 @@ public class IssnLoadSource {
         String updatedGroupName = issnData.getMainTitle(); 
         
         if(!StringUtils.equals(currentGroupName, updatedGroupName)) {
-            issnEntity.setGroupName(updatedGroupName);
+            issnEntity.setGroupName(updatedGroupName);            
             issnEntity.setClientSourceId(orcidSource.getId());
-            LOG.info("group id: " + issnEntity.getGroupId() +  " | current group name: " + currentGroupName +  " | group name  to be updated: " + issnEntity.getGroupName());
+            LOG.info("Updating Group id: " + issnEntity.getGroupId() +  " | current group name: " + currentGroupName +  " | group name  to be updated: " + issnEntity.getGroupName());
             groupIdRecordDao.merge(issnEntity);
         } else {
             LOG.info("Group id: " + issnEntity.getGroupId() + " is up to date");
