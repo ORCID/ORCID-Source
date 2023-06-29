@@ -93,6 +93,7 @@ public class IssnLoadSource {
                 try {
                     // Lets sleep for 30 secs after processing one batch
                     if(count >= batchSize) {
+                        LOG.info("Pausing the process");
                         Thread.sleep(waitBetweenBatches);
                         // Reset the count
                         count = 0;
