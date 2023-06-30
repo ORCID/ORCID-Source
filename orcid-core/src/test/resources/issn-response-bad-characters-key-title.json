@@ -12,7 +12,6 @@
     "@id" : "resource/ISSN/0021-9525",
     "@type" : [ "http://id.loc.gov/ontologies/bibframe/Work", "http://id.loc.gov/ontologies/bibframe/Instance", "http://schema.org/Periodical" ],
     "identifiedBy" : [ "resource/ISSN/0021-9525#KeyTitle", "resource/ISSN/0021-9525#ISSN", "resource/ISSN/0021-9525#ISSN-L" ],
-    "mainTitle" : "\u0098The \u009CJournal of cell biology - Main Title",
     "otherPhysicalFormat" : "resource/ISSN/1540-8140",
     "title" : "resource/ISSN/0021-9525#KeyTitle",
     "format" : "vocabularies/medium#Print",

@@ -58,7 +58,7 @@ public class IssnClientTest {
     @Test
     public void testGetIssnDataUseMainTitle() throws IOException, JSONException, InterruptedException, URISyntaxException {
         when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
-        when(mockResponse.body()).thenReturn(getJsonInputStreamFallbackToMainTitle());
+        when(mockResponse.body()).thenReturn(getJsonInputStreamMainTitle());
         when(mockResponse.statusCode()).thenReturn(200);
         
         IssnData data = issnClient.getIssnData("0260-8774");
@@ -69,7 +69,7 @@ public class IssnClientTest {
     @Test
     public void testGetIssnDataUseNameArray() throws IOException, JSONException, InterruptedException, URISyntaxException {
         when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
-        when(mockResponse.body()).thenReturn(getJsonInputStreamFallbackToNameArray());
+        when(mockResponse.body()).thenReturn(getJsonInputStreamNameArray());
         when(mockResponse.statusCode()).thenReturn(200);
         
         IssnData data = issnClient.getIssnData("0260-8774");
@@ -80,7 +80,7 @@ public class IssnClientTest {
     @Test
     public void testGetIssnDataUseNameArrayAsString() throws IOException, JSONException, InterruptedException, URISyntaxException {
         when(mockHttpRequestUtils.doGet(any())).thenReturn(mockResponse);
-        when(mockResponse.body()).thenReturn(getJsonInputStreamFallbackToNameArrayAsString());
+        when(mockResponse.body()).thenReturn(getJsonInputStreamNameArrayAsString());
         when(mockResponse.statusCode()).thenReturn(200);
         
         IssnData data = issnClient.getIssnData("0260-8774");
@@ -135,22 +135,22 @@ public class IssnClientTest {
     }        
     
     private String getJsonInputStreamKeyTitle() throws IOException {
-        InputStream is = getClass().getResourceAsStream("/issn-response-key-title.json");
+        InputStream is = getClass().getResourceAsStream("/issn-response-use-key-title.json");
         return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
     
-    private String getJsonInputStreamFallbackToMainTitle() throws IOException {
-        InputStream is = getClass().getResourceAsStream("/issn-response-fallback-to-main-title.json");
+    private String getJsonInputStreamMainTitle() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response-use-main-title.json");
         return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
     
-    private String getJsonInputStreamFallbackToNameArray() throws IOException {
-        InputStream is = getClass().getResourceAsStream("/issn-response-fallback-to-name-array.json");
+    private String getJsonInputStreamNameArray() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response-use-name-array.json");
         return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
     
-    private String getJsonInputStreamFallbackToNameArrayAsString() throws IOException {
-        InputStream is = getClass().getResourceAsStream("/issn-response-fallback-to-name-array-as-string.json");
+    private String getJsonInputStreamNameArrayAsString() throws IOException {
+        InputStream is = getClass().getResourceAsStream("/issn-response-use-name-array-as-string.json");
         return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }    
     

@@ -45,6 +45,10 @@
     "@id" : "resource/ISSN/0260-8774#ReferencePublicationEvent",
     "@type" : "http://schema.org/PublicationEvent",
     "location" : "http://id.loc.gov/vocabulary/countries/xxk"
+  }, {
+    "@id" : "resource/ISSN/1755-4349#KeyTitle",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Identifier", "http://id.loc.gov/ontologies/bibframe/KeyTitle" ],
+    "value" : "Journal of food engineering - Key Title"
   } ],
   "@context" : {
     "wasAttributedTo" : {
