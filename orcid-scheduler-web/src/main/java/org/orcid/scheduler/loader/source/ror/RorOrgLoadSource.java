@@ -66,6 +66,9 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.ror.localDataPath:/tmp/grid/ror.json}")
     private String localDataPath;
+    
+    @Value("${org.orcid.core.orgs.ror.indexAllEnabled:false}")
+    private boolean indexAllEnabled;
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
@@ -223,7 +226,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
         if (existingBySourceId != null) {
-            if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
+            if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType) || indexAllEnabled) {
                 existingBySourceId.setCity(city);
                 existingBySourceId.setCountry(country.name());
                 existingBySourceId.setName(name);

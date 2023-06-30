@@ -22,7 +22,6 @@ public class LoadDataForOrganizationSource {
 
     private OrgLoadSource rorOrgSource;
     private OrgLoadSource fundrefOrgSource;
-    private OrgLoadSource ringgoldOrgSource;
 
     private static final String ROR_TYPE="ROR";
     private static final String FUNDREF_TYPE="FUNDREF";
@@ -44,7 +43,6 @@ public class LoadDataForOrganizationSource {
         orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
         rorOrgSource = (OrgLoadSource) context.getBean("rorOrgDataSource");
         fundrefOrgSource = (OrgLoadSource) context.getBean("fundrefOrgDataSource");
-        ringgoldOrgSource = (OrgLoadSource) context.getBean("ringgoldOrgDataSource");
     }
 
     public static void main(String[] args) {
