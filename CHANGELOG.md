@@ -1,3 +1,9 @@
+## v2.35.2 - 2023-06-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.1...v2.35.2)
+
+- [#6827](https://github.com/ORCID/ORCID-Source/pull/6827): Use mainTitle and fallback to name, do not update if nothing changes
+
 ## v2.35.1 - 2023-06-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.34.10...v2.35.1)
