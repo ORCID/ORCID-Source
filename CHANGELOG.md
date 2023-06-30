@@ -1,3 +1,9 @@
+## v2.35.3 - 2023-06-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.2...v2.35.3)
+
+- [#6828](https://github.com/ORCID/ORCID-Source/pull/6828): Added the config to group/re-index all ROR, removed ringgold references
+
 ## v2.35.2 - 2023-06-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.1...v2.35.2)
