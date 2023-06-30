@@ -23,6 +23,9 @@ public class IssnClient {
     private static final String START_OF_STRING = "\u0098";
     private static final String STRING_TERMINATOR = "\u009C";
 
+    private static final String RESOURCE_MAIN = "resource/ISSN/%issn";
+    private static final String RESOURCE_KEY_TITLE = "resource/ISSN/%issn#KeyTitle";    
+    
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
 
@@ -44,7 +47,7 @@ public class IssnClient {
         }
         try {
             if (json != null) {
-                IssnData data = extractIssnData(json);
+                IssnData data = extractIssnData(issn.toUpperCase(), json);
                 data.setIssn(issn);
                 return data;
             } else {
@@ -56,31 +59,83 @@ public class IssnClient {
         }
     }
 
-    private IssnData extractIssnData(String json) throws JSONException {
+    private IssnData extractIssnData(String issn, String json) throws JSONException {
+        LOG.info("Extracting json data from " + issn);
         JSONObject jsonObject = new JSONObject(json);
-        JSONArray jsonArray = jsonObject.getJSONArray("@graph");
-        IssnData issnData = new IssnData();
-        if (issnData != null) {
+        JSONArray jsonArray = jsonObject.getJSONArray("@graph");        
+        if (jsonArray != null) {
+            IssnData issnData = new IssnData();
+            String name0 = null;
+            // Look for mainTitle first
             for (int i = 0; i < jsonArray.length(); i++) {
-                if (jsonArray.getJSONObject(i).has("mainTitle")) {
-                    String title = jsonArray.getJSONObject(i).getString("mainTitle");
-                    String cleanTitle = cleanText(title);
-                    issnData.setMainTitle(cleanTitle);
-                    return issnData;
-                } else if (jsonArray.getJSONObject(i).has("name")) {
-                    // name and mainTitle always in same object - therefore if
-                    // no mainTitle but name present, no mainTitle in data
-                    try {
-                        issnData.setMainTitle(jsonArray.getJSONObject(i).getJSONArray("name").getString(0));
-                    } catch (JSONException e) {
-                        // may not be an array
-                        issnData.setMainTitle(jsonArray.getJSONObject(i).getString("name"));
+                JSONObject obj = jsonArray.getJSONObject(i);
+                if (obj.has("@id")) {
+                    String idName = obj.getString("@id");
+                    if (idName.equals(RESOURCE_MAIN.replace("%issn", issn))) {
+                        LOG.debug("Found main resource for " + issn);
+                        // Look for the mainTitle
+                        if (obj.has("mainTitle")) {                            
+                            String title = obj.getString("mainTitle");
+                            String cleanTitle = cleanText(title);
+                            issnData.setMainTitle(cleanTitle);
+                            LOG.debug("Found mainTitle for '" + issn + "' " + cleanTitle);
+                            return issnData;
+                        } else if (obj.has("name")) {
+                            LOG.debug("Found name array for " + issn);
+                            // If the mainTitle is not available, look for the
+                            // name array
+                            Object nameObject = jsonArray.getJSONObject(i).get("name");
+                            if (nameObject instanceof JSONArray) {
+                                String title = jsonArray.getJSONObject(i).getJSONArray("name").getString(0);
+                                String cleanTitle = cleanText(title);
+                                issnData.setMainTitle(cleanTitle);
+                                LOG.debug("Found name[0] for '" + issn + "' " + cleanTitle);
+                                // Save the name[0] in case we can't find the KeyTitle
+                                name0 = cleanTitle;
+                            } else if (nameObject instanceof String) {
+                                String title = jsonArray.getJSONObject(i).getString("name");
+                                String cleanTitle = cleanText(title);
+                                issnData.setMainTitle(cleanTitle);
+                                LOG.debug("Found name[0] for '" + issn + "' " + cleanTitle);
+                                // Save the name[0] in case we can't find the KeyTitle
+                                name0 = cleanTitle;
+                            } else {
+                                LOG.warn("Unable to extract name[0], it is not a string nor an array for " + issn);
+                                throw new IllegalArgumentException("Unable to extract name[0], it is not a string nor an array for " + issn);
+                            }
+                        } else {
+                            LOG.warn("Unable to extract name, couldn't find the mainTitle nor the name[0] for " + issn);
+                            throw new IllegalArgumentException("Unable to extract name, couldn't find the mainTitle nor the name[0] for " + issn);
+                        }
                     }
-                    return issnData;
                 }
             }
+            
+            // If mainTitle is not found, Look for the KeyTitle element
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject obj = jsonArray.getJSONObject(i);
+                if (obj.has("@id")) {
+                    String idName = obj.getString("@id");
+                    if (idName.equals(RESOURCE_KEY_TITLE.replace("%issn", issn))) {                        
+                        String title = obj.getString("value");
+                        String cleanTitle = cleanText(title);
+                        issnData.setMainTitle(cleanTitle);
+                        LOG.debug("Found KeyTitle for '" + issn + "' " + cleanTitle);
+                        return issnData;
+                    }
+                }
+            }
+
+            // If mainTitle and keyTitle are not available, return the name[0]
+            if(StringUtils.isNotEmpty(name0)) {
+                String cleanTitle = cleanText(name0);
+                issnData.setMainTitle(cleanTitle);
+                LOG.debug("Found name[0] for '" + issn + "' " + cleanTitle);
+                return issnData;
+            }
+            
         }
-        return null;
+        throw new IllegalArgumentException("Unable to extract name, couldn't find the Key Title nor the main resource for " + issn);
     }
 
     private String getJsonDataFromIssnPortal(String issn) throws IOException, InterruptedException, URISyntaxException {

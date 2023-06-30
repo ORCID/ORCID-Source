@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
 import org.orcid.core.groupIds.issn.IssnValidator;
@@ -18,6 +19,7 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -27,8 +29,12 @@ public class IssnLoadSource {
 
     private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(\\d{4}-\\d{3}[\\dXx])$");
 
-    private static final int BATCH_SIZE = 30;
+    @Value("${org.orcid.scheduler.issnLoadSource.batchSize:50}")
+    private int batchSize;
 
+    @Value("${org.orcid.scheduler.issnLoadSource.waitBetweenBatches:30000}")
+    private int waitBetweenBatches;
+    
     @Resource
     private GroupIdRecordDao groupIdRecordDao;
 
@@ -64,24 +70,20 @@ public class IssnLoadSource {
 
     private void updateIssnGroupIdRecords() {
         Date start = new Date();
-        List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(BATCH_SIZE, start);
-        int count = 0;
+        List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(batchSize, start);
+        int batchCount = 0;
+        int total = 0;
         while (!issnEntities.isEmpty()) {
             for (GroupIdRecordEntity issnEntity : issnEntities) {
                 String issn = getIssn(issnEntity);
                 if (issn != null && issnValidator.issnValid(issn)) {
+                    batchCount++;
+                    total++;
                     IssnData issnData = issnClient.getIssnData(issn);
                     if (issnData != null) {
                         updateIssnEntity(issnEntity, issnData);
-                        count++;
-                        try {
-                            LOG.info("Updated group id record {} - {}, processed count now {}",
-                                    new Object[] { issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(count) });
-                            Thread.sleep(10000l);
-                        } catch (InterruptedException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
+                        LOG.info("Updated group id record {} - {}, processed count now {}",
+                                new Object[] { issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(total) });
                     } else {
                         LOG.warn("ISSN data not found for {}", issn);
                         recordFailure(issnEntity.getId(), "Data not found");
@@ -89,9 +91,21 @@ public class IssnLoadSource {
                 } else {
                     LOG.info("Issn for group record {} not valid: {}", issnEntity.getId(), issnEntity.getGroupId());
                     recordFailure(issnEntity.getId(), "Invalid record");
+                }                
+                try {
+                    // Lets sleep for 30 secs after processing one batch
+                    if(batchCount >= batchSize) {
+                        LOG.info("Pausing the process");
+                        Thread.sleep(waitBetweenBatches);
+                        // Reset the count
+                        batchCount = 0;
+                    }
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    LOG.warn("Exception while pausing the issn loader", e);                    
                 }
             }
-            issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(BATCH_SIZE, start);
+            issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(batchSize, start);
         }
     }
 
@@ -104,10 +118,16 @@ public class IssnLoadSource {
 
     private void updateIssnEntity(GroupIdRecordEntity issnEntity, IssnData issnData) {
         String currentGroupName = issnEntity.getGroupName();
-        issnEntity.setGroupName(issnData.getMainTitle());
-        issnEntity.setClientSourceId(orcidSource.getId());
-        LOG.info("group id: " + issnEntity.getGroupId() +  " | current group name: " + currentGroupName +  " | group name  to be updated: " + issnEntity.getGroupName());
-        groupIdRecordDao.merge(issnEntity);
+        String updatedGroupName = issnData.getMainTitle(); 
+        
+        if(!StringUtils.equals(currentGroupName, updatedGroupName)) {
+            issnEntity.setGroupName(updatedGroupName);            
+            issnEntity.setClientSourceId(orcidSource.getId());
+            LOG.info("Updating Group id: " + issnEntity.getGroupId() +  " | current group name: " + currentGroupName +  " | group name  to be updated: " + issnEntity.getGroupName());
+            groupIdRecordDao.merge(issnEntity);
+        } else {
+            LOG.info("Group id: " + issnEntity.getGroupId() + " is up to date");
+        }
     }
 
     private String getIssn(GroupIdRecordEntity issnEntity) {
