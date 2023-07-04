@@ -18,17 +18,17 @@
             height: 1px;
         }
         .ot-sdk-show-settings {
-            color: inherit !important;
+            color: rgba(0,0,0,0.87) !important;
             line-height: inherit !important;
             border-width: initial !important;
             border-style: none !important;
             border-color: initial !important;
             border-image: initial !important;
-            margin: 0px auto !important;
-            padding: 7px 20px !important;
+            margin: 0 !important;
+            padding: 0 !important;
             transition: inherit !important;
-            font-size: inherit !important;
-            font-weight: inherit !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
         }
         .ot-sdk-show-settings:hover {
             color: inherit !important;
@@ -178,10 +178,23 @@
                                         <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'wp-infosite-header.privacyPolicy'/></a></li>
                                         <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'wp-infosite-header.termOfUse'/></a></li>
                                         <li><a href="{{aboutUri}}/content/orcid-accessibility-statement"><@orcid.msg 'wp-infosite-header.accesibilityStatement'/></a></li>
+                                     </ul>
+                                     <ul class="inline-list">
                                         <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactSupport'/></a></li>
                                         <li><a href="{{aboutUri}}/orcid-dispute-procedures"><@orcid.msg 'wp-infosite-header.disputeProcedures'/></a></li>
                                         <li><a href="{{aboutUri}}/trademark-and-id-display-guidelines/"><@orcid.msg 'wp-infosite-header.brandGuidelines'/></a></li>
+                                        <li><a id="ot-sdk-btn" class="ot-sdk-show-settings"><@orcid.msg 'wp-infosite-header.cookieSettings'/></a></li>
                                     </ul>
+                                        <ul class="inline-list">
+                                            <li><a href="https://info.qa.orcid.org/about">About ORCID</a></li>
+                                            <li><a href="https://info.qa.orcid.org/footer/privacy-policy">Privacy Policy </a></li>
+                                            <li><a href="https://info.qa.orcid.org/content/orcid-terms-use">Terms of Use</a></li>
+                                            <li><a href="https://info.qa.orcid.org/content/orcid-accessibility-statement">Accessibility Statement</a></li>
+                                            <li><a href="https://support.orcid.org/hc/en-us/requests/new">Contact Support</a></li>
+                                            <li><a href="https://info.qa.orcid.org/orcid-dispute-procedures">Dispute procedures</a></li>
+                                            <li><a href="https://info.qa.orcid.org/trademark-and-id-display-guidelines/">Brand Guidelines</a></li>
+
+                                        </ul>
                                     </nav>
                                 </div>
                             </div>
