@@ -1,3 +1,14 @@
+## v2.35.4 - 2023-07-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.3...v2.35.4)
+
+- [#6829](https://github.com/ORCID/ORCID-Source/pull/6829): 8659 access the onetrust widget through a link in the site footer
+
+### Fix
+
+- Remove duplicated links
+- Add link back and fix styles
+
 ## v2.35.3 - 2023-06-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.2...v2.35.3)
