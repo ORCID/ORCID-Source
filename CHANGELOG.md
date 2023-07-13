@@ -1,3 +1,13 @@
+## v2.35.5 - 2023-07-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.4...v2.35.5)
+
+- [#6830](https://github.com/ORCID/ORCID-Source/pull/6830): fix: Temporarily remove onetrust
+
+### Fix
+
+- Temporarily remove onetrust
+
 ## v2.35.4 - 2023-07-06
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.3...v2.35.4)
