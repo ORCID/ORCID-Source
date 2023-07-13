@@ -10,20 +10,66 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.v3.read_only.*;
+import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
-import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.v3.release.record.*;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.Person;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecord;
-import org.orcid.pojo.ajaxForm.*;
+import org.orcid.pojo.ajaxForm.AddressForm;
+import org.orcid.pojo.ajaxForm.AddressesForm;
+import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
+import org.orcid.pojo.ajaxForm.KeywordsForm;
+import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.OtherNamesForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.WebsitesForm;
+import org.orcid.pojo.summary.AffiliationSummary;
+import org.orcid.pojo.summary.ExternalIdentifiersSummary;
+import org.orcid.pojo.summary.RecordSummary;
+import org.orcid.utils.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +78,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class PublicRecordController extends BaseWorkspaceController {
@@ -104,6 +155,9 @@ public class PublicRecordController extends BaseWorkspaceController {
 
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
+
+    @Resource(name = "recordManagerReadOnlyV3")
+    private RecordManagerReadOnly recordManagerReadOnly;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -256,6 +310,183 @@ public class PublicRecordController extends BaseWorkspaceController {
         publicRecord.setLastModifiedTime(new java.util.Date(lastModifiedTime));
 
         return publicRecord;
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET)
+    public @ResponseBody
+    RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
+        RecordSummary recordSummary = new RecordSummary();
+        Boolean isDeprecated = false;
+
+        try {
+            // Check if the profile is deprecated or locked
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (LockedException | DeactivatedException e) {
+            recordSummary.setName(localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
+                    + localeManager.resolveMessage("public_profile.deactivated.family_name"));
+            return recordSummary;
+        } catch (OrcidNotClaimedException e) {
+            recordSummary.setName(localeManager.resolveMessage("orcid.reserved_for_claim"));
+            return recordSummary;
+        } catch (OrcidDeprecatedException e) {
+            isDeprecated = true;
+        } catch (OrcidNoResultException e) {
+            return recordSummary;
+        }
+
+        recordSummary = getSummary(orcid);
+        if (isDeprecated) {
+            recordSummary.setEmploymentAffiliations(null);
+            recordSummary.setProfessionalActivities(null);
+            recordSummary.setExternalIdentifiers(null);
+        }
+
+        return recordSummary;
+    }
+
+    public @ResponseBody
+    RecordSummary getSummary(String orcid) {
+        RecordSummary recordSummary = new RecordSummary();
+
+        Record record = recordManagerReadOnly.getPublicRecord(orcid, false);
+        Person person = record.getPerson();
+        if (person != null) {
+            String displayName = "Name is private or limited";
+            Name name = person.getName();
+            if (name != null) {
+                if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
+                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                        displayName = name.getCreditName().getContent();
+                    } else {
+                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                            displayName = name.getGivenNames().getContent() + " ";
+                        }
+                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                            displayName += name.getFamilyName().getContent();
+                        }
+                    }
+                }
+            }
+            recordSummary.setName(displayName);
+        }
+
+        ActivitiesSummary activitiesSummary = record.getActivitiesSummary();
+        Collection<AffiliationGroup<EmploymentSummary>> employmentsSummary = activitiesSummary.getEmployments().getEmploymentGroups();
+
+        List<AffiliationSummary> employmentAffiliations = new ArrayList<>();
+
+        Stream<AffiliationGroup<EmploymentSummary>> employmentsList = employmentsSummary.stream().limit(3);
+        employmentsList.forEach(e -> {
+            for (EmploymentSummary s : e.getActivities()) {
+                employmentAffiliations.add(AffiliationSummary.valueOf(s, orcid, "employment"));
+            }
+        });
+
+        recordSummary.setEmploymentAffiliationsCount(employmentsSummary.size());
+        recordSummary.setEmploymentAffiliations(employmentAffiliations);
+
+        List<AffiliationSummary> professionalActivities = retrieveProfessionalActivities(activitiesSummary, orcid);
+
+        if (professionalActivities.size() > 3) {
+            recordSummary.setProfessionalActivities(Arrays.asList(professionalActivities.get(0), professionalActivities.get(1), professionalActivities.get(2)));
+        } else {
+            recordSummary.setProfessionalActivities(professionalActivities);
+        }
+
+        recordSummary.setProfessionalActivitiesCount(professionalActivities.size());
+
+        PersonExternalIdentifiers personExternalIdentifiers;
+
+        personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+
+        recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, orcid));
+
+        Works works = activitiesSummary.getWorks();
+
+        List<WorkGroup> workGroups = works.getWorkGroup();
+
+        AtomicInteger validatedWorks = new AtomicInteger();
+        AtomicInteger selfAssertedWorks = new AtomicInteger();
+
+        workGroups.forEach(work -> {
+            work.getWorkSummary().forEach(w -> {
+                if (w.getSource().getSourceName().getContent().equals(orcid)) {
+                    selfAssertedWorks.getAndIncrement();
+                } else {
+                    validatedWorks.getAndIncrement();
+                }
+            });
+        });
+
+        recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
+        recordSummary.setValidatedWorks(validatedWorks.get());
+
+        Fundings fundings = activitiesSummary.getFundings();
+
+        List<FundingGroup> fundingGroups = fundings.getFundingGroup();
+
+        AtomicInteger validatedFunds = new AtomicInteger();
+        AtomicInteger selfAssertedFunds = new AtomicInteger();
+
+        fundingGroups.forEach(fundingGroup -> {
+            fundingGroup.getFundingSummary().forEach(funding -> {
+                if (funding.getSource().getSourceName().getContent().equals(orcid)){
+                    selfAssertedFunds.getAndIncrement();
+                } else{
+                    validatedFunds.getAndIncrement();
+                }
+            });
+        });
+
+        recordSummary.setSelfAssertedFunds(selfAssertedFunds.get());
+        recordSummary.setValidatedFunds(validatedFunds.get());
+
+        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
+
+        AtomicInteger publicationGrants = new AtomicInteger();
+
+        peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
+            publicationGrants.set(publicationGrants.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
+        });
+
+        recordSummary.setReviews(peerReviewMinimizedSummaryList.size());
+        recordSummary.setPeerReviewPublicationGrants(publicationGrants.intValue());
+
+        recordSummary.setCreation(DateUtils.convertToDate(record.getHistory().getCompletionDate().getValue()));
+        recordSummary.setLastModified(DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue()));
+
+        return recordSummary;
+    }
+
+    private List<AffiliationSummary> retrieveProfessionalActivities(ActivitiesSummary activitiesSummary, String orcid) {
+        List<AffiliationSummary> professionalActivities = new ArrayList<>();
+
+        Collection<AffiliationGroup<MembershipSummary>> membershipSummary = activitiesSummary.getMemberships().getMembershipGroups();
+        Collection<AffiliationGroup<ServiceSummary>> serviceSummary = activitiesSummary.getServices().getServiceGroups();
+        Collection<AffiliationGroup<InvitedPositionSummary>> invitedPositionSummary = activitiesSummary.getInvitedPositions().getInvitedPositionGroups();
+        Collection<AffiliationGroup<DistinctionSummary>> distinctionSummary = activitiesSummary.getDistinctions().getDistinctionGroups();
+
+        membershipSummary.forEach(e -> {
+            for (MembershipSummary m : e.getActivities()) {
+                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "membership"));
+            }
+        });
+        serviceSummary.forEach(e -> {
+            for (ServiceSummary m : e.getActivities()) {
+                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "service"));
+            }
+        });
+        invitedPositionSummary.forEach(e -> {
+            for (InvitedPositionSummary m : e.getActivities()) {
+                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "invited-position"));
+            }
+        });
+        distinctionSummary.forEach(e -> {
+            for (DistinctionSummary m : e.getActivities()) {
+                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "distinction"));
+            }
+        });
+        return professionalActivities;
     }
 
     private Long getLastModifiedTime(String orcid) {
