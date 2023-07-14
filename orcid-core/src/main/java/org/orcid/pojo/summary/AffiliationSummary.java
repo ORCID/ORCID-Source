@@ -4,14 +4,13 @@ import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AffiliationSummary {
     public String organizationName;
     public String url;
-    public Date startDate;
-    public Date endDate;
+    public String startDate;
+    public String endDate;
     public String role;
     public String title;
     public String type;
@@ -33,19 +32,19 @@ public class AffiliationSummary {
         this.url = url;
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
@@ -104,12 +103,11 @@ public class AffiliationSummary {
             }
 
             if (!PojoUtil.isEmpty(as.getStartDate())) {
-                FuzzyDate date = as.getStartDate();
-//                form.setStartDate(new Date(date.getYear().getValue(), date.getMonth(), date.getDay()));
+                form.setStartDate(getDate(as.getStartDate()));
             }
 
             if (!PojoUtil.isEmpty(as.getEndDate())) {
-//                form.setStartDate(affiliationForm.getEndDate().toJavaDate());
+                form.setEndDate(getDate(as.getEndDate()));
             }
 
             if (!PojoUtil.isEmpty(as.getRoleTitle())) {
@@ -131,5 +129,9 @@ public class AffiliationSummary {
             }
         }
         return form;
+    }
+
+    private static String getDate(FuzzyDate date) {
+        return date != null ? date.toString() : null;
     }
 }

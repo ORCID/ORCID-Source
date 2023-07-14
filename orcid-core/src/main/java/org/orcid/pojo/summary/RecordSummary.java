@@ -1,7 +1,6 @@
 package org.orcid.pojo.summary;
 
 
-import java.util.Date;
 import java.util.List;
 
 public class RecordSummary {
@@ -9,8 +8,8 @@ public class RecordSummary {
     private String orcid;
     private List<AffiliationSummary> employmentAffiliations;
     private int employmentAffiliationsCount;
-    private Date creation;
-    private Date lastModified;
+    private String creation;
+    private String lastModified;
     private int validatedWorks;
     private int selfAssertedWorks;
     private int reviews;
@@ -53,19 +52,19 @@ public class RecordSummary {
         this.employmentAffiliationsCount = employmentAffiliationsCount;
     }
 
-    public Date getCreation() {
+    public String getCreation() {
         return creation;
     }
 
-    public void setCreation(Date creation) {
+    public void setCreation(String creation) {
         this.creation = creation;
     }
 
-    public Date getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
 

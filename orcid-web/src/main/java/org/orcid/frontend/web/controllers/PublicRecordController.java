@@ -77,9 +77,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -375,12 +378,14 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         List<AffiliationSummary> employmentAffiliations = new ArrayList<>();
 
-        Stream<AffiliationGroup<EmploymentSummary>> employmentsList = employmentsSummary.stream().limit(3);
-        employmentsList.forEach(e -> {
-            for (EmploymentSummary s : e.getActivities()) {
-                employmentAffiliations.add(AffiliationSummary.valueOf(s, orcid, "employment"));
-            }
-        });
+        if (employmentsSummary.size() > 0) {
+            Stream<AffiliationGroup<EmploymentSummary>> employmentsList = employmentsSummary.stream().limit(3);
+            employmentsList.forEach(e -> {
+                for (EmploymentSummary s : e.getActivities()) {
+                    employmentAffiliations.add(AffiliationSummary.valueOf(s, orcid, "employment"));
+                }
+            });
+        }
 
         recordSummary.setEmploymentAffiliationsCount(employmentsSummary.size());
         recordSummary.setEmploymentAffiliations(employmentAffiliations);
@@ -408,15 +413,17 @@ public class PublicRecordController extends BaseWorkspaceController {
         AtomicInteger validatedWorks = new AtomicInteger();
         AtomicInteger selfAssertedWorks = new AtomicInteger();
 
-        workGroups.forEach(work -> {
-            work.getWorkSummary().forEach(w -> {
-                if (w.getSource().getSourceName().getContent().equals(orcid)) {
-                    selfAssertedWorks.getAndIncrement();
-                } else {
-                    validatedWorks.getAndIncrement();
-                }
+        if (workGroups != null) {
+            workGroups.forEach(work -> {
+                work.getWorkSummary().forEach(w -> {
+                    if (w.getSource().getSourceName().getContent().equals(orcid)) {
+                        selfAssertedWorks.getAndIncrement();
+                    } else {
+                        validatedWorks.getAndIncrement();
+                    }
+                });
             });
-        });
+        }
 
         recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
         recordSummary.setValidatedWorks(validatedWorks.get());
@@ -428,15 +435,17 @@ public class PublicRecordController extends BaseWorkspaceController {
         AtomicInteger validatedFunds = new AtomicInteger();
         AtomicInteger selfAssertedFunds = new AtomicInteger();
 
-        fundingGroups.forEach(fundingGroup -> {
-            fundingGroup.getFundingSummary().forEach(funding -> {
-                if (funding.getSource().getSourceName().getContent().equals(orcid)){
-                    selfAssertedFunds.getAndIncrement();
-                } else{
-                    validatedFunds.getAndIncrement();
-                }
+        if (fundingGroups != null) {
+            fundingGroups.forEach(fundingGroup -> {
+                fundingGroup.getFundingSummary().forEach(funding -> {
+                    if (funding.getSource().getSourceName().getContent().equals(orcid)) {
+                        selfAssertedFunds.getAndIncrement();
+                    } else {
+                        validatedFunds.getAndIncrement();
+                    }
+                });
             });
-        });
+        }
 
         recordSummary.setSelfAssertedFunds(selfAssertedFunds.get());
         recordSummary.setValidatedFunds(validatedFunds.get());
@@ -445,15 +454,23 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         AtomicInteger publicationGrants = new AtomicInteger();
 
-        peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
-            publicationGrants.set(publicationGrants.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
-        });
+        if (peerReviewMinimizedSummaryList != null) {
+            peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
+                publicationGrants.set(publicationGrants.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
+            });
+            recordSummary.setReviews(peerReviewMinimizedSummaryList.size());
+            recordSummary.setPeerReviewPublicationGrants(publicationGrants.intValue());
+        } else {
+            recordSummary.setReviews(0);
+            recordSummary.setPeerReviewPublicationGrants(0);
+        }
 
-        recordSummary.setReviews(peerReviewMinimizedSummaryList.size());
-        recordSummary.setPeerReviewPublicationGrants(publicationGrants.intValue());
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
 
-        recordSummary.setCreation(DateUtils.convertToDate(record.getHistory().getCompletionDate().getValue()));
-        recordSummary.setLastModified(DateUtils.convertToDate(record.getHistory().getLastModifiedDate().getValue()));
+        recordSummary.setLastModified(formatDate(record.getHistory().getLastModifiedDate().getValue()));
+        recordSummary.setCreation(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
+
+        recordSummary.setOrcid(recordManagerReadOnly.getOrcidIdentifier(orcid).getUri());
 
         return recordSummary;
     }
@@ -487,6 +504,12 @@ public class PublicRecordController extends BaseWorkspaceController {
             }
         });
         return professionalActivities;
+    }
+
+    private String formatDate(XMLGregorianCalendar xmlGregorianCalendar) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        GregorianCalendar gc = xmlGregorianCalendar.toGregorianCalendar();
+        return sdf.format(gc.getTime());
     }
 
     private Long getLastModifiedTime(String orcid) {
