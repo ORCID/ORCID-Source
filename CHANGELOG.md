@@ -1,3 +1,13 @@
+## v2.36.1 - 2023-07-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.0...v2.36.1)
+
+- [#6832](https://github.com/ORCID/ORCID-Source/pull/6832): fix: Rollback ot
+
+### Fix
+
+- Rollback ot
+
 ## v2.35.5 - 2023-07-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.4...v2.35.5)
