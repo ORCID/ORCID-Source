@@ -12,6 +12,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.pojo.PublicRecord;
+import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -124,5 +126,38 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(String.valueOf(13), record.getWebsite().getWebsites().get(0).getPutCode());
         assertEquals("public_rurl", record.getWebsite().getWebsites().get(0).getUrlName());
         assertEquals(Visibility.PUBLIC.value(), record.getWebsite().getWebsites().get(0).getVisibility().getVisibility().value());
+    }
+
+    @Test
+    public void testGetRecordSummary() {
+        RecordSummary record = publicRecordController.getSummaryRecord(userOrcid);
+
+        assertNotNull(record.getName());
+        assertEquals("Credit Name", record.getName());
+
+        assertNotNull(record.getEmploymentAffiliations());
+        assertEquals(1, record.getEmploymentAffiliations().size());
+        assertEquals(1, record.getEmploymentAffiliationsCount());
+        assertEquals(String.valueOf(13), record.getExternalIdentifiers().get(0).getId());
+        assertEquals("http://ext-id/public_ref", record.getExternalIdentifiers().get(0).getUrl());
+        assertFalse(record.getExternalIdentifiers().get(0).isValidatedOrSelfAsserted());
+
+        assertEquals(1, record.getValidatedWorks());
+        assertEquals(0, record.getSelfAssertedWorks());
+
+        assertEquals(0, record.getReviews());
+        assertEquals(0, record.getPeerReviewPublicationGrants());
+
+        assertEquals(1, record.getValidatedFunds());
+        assertEquals(0, record.getSelfAssertedFunds());
+
+        assertNotNull(record.getProfessionalActivities());
+        assertEquals(4, record.getProfessionalActivitiesCount());
+
+        assertNotNull(record.getExternalIdentifiers());
+        assertEquals(1, record.getExternalIdentifiers().size());
+        assertEquals(String.valueOf(13), record.getExternalIdentifiers().get(0).getId());
+        assertEquals("http://ext-id/public_ref", record.getExternalIdentifiers().get(0).getUrl());
+        assertFalse(record.getExternalIdentifiers().get(0).isValidatedOrSelfAsserted());
     }
 }
