@@ -337,11 +337,12 @@ public class PublicRecordController extends BaseWorkspaceController {
             return recordSummary;
         }
 
-        recordSummary = getSummary(orcid);
         if (isDeprecated) {
             recordSummary.setEmploymentAffiliations(null);
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
+        } else {
+            recordSummary = getSummary(orcid);
         }
 
         return recordSummary;
