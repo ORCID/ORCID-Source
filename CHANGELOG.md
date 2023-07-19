@@ -1,3 +1,18 @@
+## v2.36.2 - 2023-07-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.1...v2.36.2)
+
+- [#6831](https://github.com/ORCID/ORCID-Source/pull/6831): 8682 trust summary json format
+
+### Fix
+
+- Only get summary if record is not deprecated
+- Update dates format
+
+### Feature
+
+- Add new endpoint `summary.json`
+
 ## v2.36.1 - 2023-07-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.0...v2.36.1)
