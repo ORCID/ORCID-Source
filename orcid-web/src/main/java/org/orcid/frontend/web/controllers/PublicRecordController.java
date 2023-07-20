@@ -440,9 +440,9 @@ public class PublicRecordController extends BaseWorkspaceController {
             fundingGroups.forEach(fundingGroup -> {
                 fundingGroup.getFundingSummary().forEach(funding -> {
                     if (funding.getSource().getSourceClientId() != null && !orcid.equals(funding.getSource().getSourceClientId())) {
-                        validatedWorks.getAndIncrement();
+                        validatedFunds.getAndIncrement();
                     } else {
-                        selfAssertedWorks.getAndIncrement();
+                        selfAssertedFunds.getAndIncrement();
                     }
                 });
             });
