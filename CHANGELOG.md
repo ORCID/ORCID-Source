@@ -1,3 +1,9 @@
+## v2.36.4 - 2023-07-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.3...v2.36.4)
+
+- [#6834](https://github.com/ORCID/ORCID-Source/pull/6834): ETHOS to be case sensitive
+
 ## v2.36.3 - 2023-07-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.2...v2.36.3)
