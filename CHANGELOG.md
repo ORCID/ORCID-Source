@@ -1,3 +1,14 @@
+## v2.36.3 - 2023-07-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.2...v2.36.3)
+
+- [#6833](https://github.com/ORCID/ORCID-Source/pull/6833): fix: NPE and compare if its self asserted or validated work or funding
+
+### Fix
+
+- Replace incorrect variables
+- NPE and compare if its self asserted or validated work or funding
+
 ## v2.36.2 - 2023-07-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.1...v2.36.2)
