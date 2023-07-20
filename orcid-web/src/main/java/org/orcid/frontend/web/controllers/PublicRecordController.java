@@ -417,10 +417,10 @@ public class PublicRecordController extends BaseWorkspaceController {
         if (workGroups != null) {
             workGroups.forEach(work -> {
                 work.getWorkSummary().forEach(w -> {
-                    if (w.getSource().getSourceName().getContent().equals(orcid)) {
-                        selfAssertedWorks.getAndIncrement();
-                    } else {
+                    if (w.getSource().getSourceClientId() != null && !orcid.equals(w.getSource().getSourceClientId())) {
                         validatedWorks.getAndIncrement();
+                    } else {
+                        selfAssertedWorks.getAndIncrement();
                     }
                 });
             });
@@ -439,10 +439,10 @@ public class PublicRecordController extends BaseWorkspaceController {
         if (fundingGroups != null) {
             fundingGroups.forEach(fundingGroup -> {
                 fundingGroup.getFundingSummary().forEach(funding -> {
-                    if (funding.getSource().getSourceName().getContent().equals(orcid)) {
-                        selfAssertedFunds.getAndIncrement();
-                    } else {
+                    if (funding.getSource().getSourceClientId() != null && !orcid.equals(funding.getSource().getSourceClientId())) {
                         validatedFunds.getAndIncrement();
+                    } else {
+                        selfAssertedFunds.getAndIncrement();
                     }
                 });
             });
