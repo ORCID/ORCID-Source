@@ -5,7 +5,7 @@
 			<preConditions onFail="MARK_RAN">
 				<sqlCheck expectedResult="1">select count(*) from identifier_type WHERE id_name = 'ETHOS';</sqlCheck>
 			</preConditions>
-			<sql>UPDATE identifier_type SET case_sensitive = true WHERE id_name = 'ETHOS';</sql>
+			<sql>UPDATE identifier_type SET "case_sensitive" = true WHERE id_name = 'ETHOS';</sql>
 	</changeSet>
 
 </databaseChangeLog>
