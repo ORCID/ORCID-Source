@@ -1,5 +1,6 @@
 package org.orcid.api.common.oauth;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,12 +13,16 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
+import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
@@ -56,6 +61,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     
     @Resource(name="profileLastModifiedDao")
     private ProfileLastModifiedDao profileLastModifiedDao;
+    
+    @Resource
+    private RedisClient redisClient;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
     
     @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
@@ -152,10 +163,28 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     }                    
                 }                
             }
+            
+            //TODO: Store the token in the cache before returning it to the user
+            removeMetadataFromToken(token);
+            setToCache(token);
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
             return Response.status(error.getResponseStatus().getStatusCode()).entity(error).build();
+        }
+    }
+    
+    /**
+     * Set the access token in the cache
+     * */
+    protected void setToCache(OAuth2AccessToken accessToken) {
+        try {
+            DefaultOAuth2AccessToken d = (DefaultOAuth2AccessToken) accessToken;
+            String base64EncryptedTokenValue = Base64.encodeBase64URLSafeString(encryptionManager.encryptForExternalUse(d.getValue()).getBytes("UTF-8"));
+            String base64EncryptedJson = Base64.encodeBase64URLSafeString(encryptionManager.encryptForExternalUse(JsonUtils.convertToJsonString(accessToken)).getBytes("UTF-8"));            
+            redisClient.set(base64EncryptedTokenValue, base64EncryptedJson);
+        } catch(Exception e) {
+            
         }
     }
 
@@ -261,7 +290,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         return token;
     }
     
-    protected Response getResponse(OAuth2AccessToken accessToken) {
+    protected void removeMetadataFromToken(OAuth2AccessToken accessToken) {
         if(accessToken != null && accessToken.getAdditionalInformation() != null) {
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_VERSION))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_VERSION);
@@ -271,8 +300,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
-        }        
-        
+        }
+    }
+    
+    protected Response getResponse(OAuth2AccessToken accessToken) {                        
         return Response.ok((DefaultOAuth2AccessToken)accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
     }
 

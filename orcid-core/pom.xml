@@ -322,7 +322,12 @@
 		    <groupId>javax.ws.rs</groupId>
 		    <artifactId>javax.ws.rs-api</artifactId>		    
 		</dependency>
-        
+		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+		<dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
+		    <version>4.4.3</version>
+		</dependency>
     </dependencies>
     <build>
         <plugins>
