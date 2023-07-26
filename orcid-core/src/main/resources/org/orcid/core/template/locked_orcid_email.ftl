@@ -7,15 +7,6 @@
 <@emailMacros.msg "email.locked.this_is_an_important_message.1" />${baseUriHttp}/${orcid}?lang=${locale}<@emailMacros.msg "email.locked.this_is_an_important_message.2" />
 </#if>
 
-<@emailMacros.msg "email.locked.the_orcid_registry_provides" />
+<@emailMacros.msg "email.locked.orcid_registry_provides_identifiers" /><@emailMacros.space /><@emailMacros.msg "email.locked.please_see" /><@emailMacros.space /><a href="https://info.orcid.org/terms-of-use/"><@emailMacros.msg "email.locked.terms_of_use" /></a><@emailMacros.space /><@emailMacros.msg "email.locked.further_information" />
 
-<@emailMacros.msg "email.locked.if_you_believe" />
-
-<@emailMacros.msg "email.common.warm_regards" />
-<@emailMacros.msg "email.common.need_help.description.2.href" />
-
-
-${baseUri}/home?lang=${locale}
-
-<@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>
