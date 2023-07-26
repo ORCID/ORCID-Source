@@ -1,3 +1,13 @@
+## v2.36.5 - 2023-07-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.4...v2.36.5)
+
+- [#6836](https://github.com/ORCID/ORCID-Source/pull/6836): fix: One trust style on print preview
+
+### Fix
+
+- One trust style on print preview
+
 ## v2.36.4 - 2023-07-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.3...v2.36.4)
