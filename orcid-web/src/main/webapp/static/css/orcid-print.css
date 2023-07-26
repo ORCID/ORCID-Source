@@ -11,9 +11,7 @@
     li:first-letter,
     p:first-letter,
     p:first-line {
-        background: transparent !important;
         box-shadow: none !important;
-        color: #000 !important; /* Black prints faster:                           http://www.sanbeiji.com/archives/953 */
         text-shadow: none !important;
     }
     i.green{
@@ -329,5 +327,9 @@
 
     .source-line div:first-child{
         display: inherit;
+    }
+
+    .toggle-text h2:first-of-type {
+        color: #000 !important;
     }
 }
