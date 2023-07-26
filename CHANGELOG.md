@@ -1,3 +1,17 @@
+## v2.36.6 - 2023-07-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.5...v2.36.6)
+
+- [#6835](https://github.com/ORCID/ORCID-Source/pull/6835): Update emails notifications
+
+### Fix
+
+- Refactor deactivate email
+
+### Feature
+
+- Update emails notifications
+
 ## v2.36.5 - 2023-07-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.4...v2.36.5)
