@@ -13,7 +13,7 @@
 		    	<@emailMacros.msg "email.email_removed.the_primary" /> 
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		    	<@emailMacros.msg "email.email_removed.while.1" /><@emailMacros.space /><a href="">${baseUri}/${orcid}</a><@emailMacros.msg "email.email_removed.while.2" />
+		    	<@emailMacros.msg "email.email_removed.while.1" /><@emailMacros.space /><a href="${baseUri}/${orcid}">${baseUri}/${orcid}</a><@emailMacros.msg "email.email_removed.while.2" />
 		    </p>
 			<#include "email_footer_html.ftl"/>
 		 </div>

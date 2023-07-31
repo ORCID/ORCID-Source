@@ -15,17 +15,17 @@
 			<ul>
 				<li>
 					<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-						<@emailMacros.msg "email.reset_password_not_found.registered_using_another_email" /><@emailMacros.space /><a href="https://orcid.org/reset-password"><@emailMacros.msg "email.reset_password_not_found.try_another_email" /></a><@emailMacros.space /><@emailMacros.msg "email.reset_password_not_found.many_users_have" />
+						<@emailMacros.msg "email.reset_password_not_found.registered_using_another_email" /><@emailMacros.space /><a href="${baseUri}/reset-password"><@emailMacros.msg "email.reset_password_not_found.try_another_email" /></a><@emailMacros.space /><@emailMacros.msg "email.reset_password_not_found.many_users_have" />
 					</p>
 				</li>
 				<li>
 					<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-						<@emailMacros.msg "email.reset_password_not_found.id_associated_with_email_no_longer_access" />
+						<@emailMacros.msg "email.reset_password_not_found.id_associated_with_email_no_longer_access" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/requests/new?ticket_form_id=360003481994"><@emailMacros.msg "email.reset_password_not_found.contact_us" /></a>
 					</p>
 				</li>
 				<li>
 					<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-						<@emailMacros.msg "email.reset_password_not_found.not_registered_using_other_email" />
+						<@emailMacros.msg "email.reset_password_not_found.not_registered_using_other_email" /><@emailMacros.space /><a href="${baseUri}/register"><@emailMacros.msg "email.reset_password_not_found.register_for_an_orcid" /></a>
 					</p>
 				</li>
 			</ul>

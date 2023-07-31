@@ -26,6 +26,6 @@
 
 ${verificationUrl}?lang=${locale}
 
-<@emailMacros.msg "email.welcome.please_visit_your" /><@emailMacros.space /><@emailMacros.msg "email.welcome.researcher_home_page" /><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
+<@emailMacros.msg "email.welcome.please_visit_your" /><@emailMacros.space /><@emailMacros.msg "email.welcome.researcher_homepage" /><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
 
 <#include "email_footer.ftl"/>
