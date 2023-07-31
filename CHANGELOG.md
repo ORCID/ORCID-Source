@@ -1,3 +1,9 @@
+## v2.36.10 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.9...v2.36.10)
+
+- [#6842](https://github.com/ORCID/ORCID-Source/pull/6842): For ISSN loading, use the table id to iterate over the existing list …
+
 ## v2.36.9 - 2023-07-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.8...v2.36.9)
