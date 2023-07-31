@@ -1,3 +1,9 @@
+## v2.36.7 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.6...v2.36.7)
+
+- [#6839](https://github.com/ORCID/ORCID-Source/pull/6839): style: fix a tags color
+
 ## v2.36.6 - 2023-07-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.5...v2.36.6)
