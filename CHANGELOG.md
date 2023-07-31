@@ -1,3 +1,15 @@
+## v2.36.11 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.10...v2.36.11)
+
+- [#6838](https://github.com/ORCID/ORCID-Source/pull/6838): 8734 update the registry emails to remove links to the support team emails and forms
+
+### Fix
+
+- Remove empty white space
+- Fix typos and add missing paragraphs
+- Rollback loced orcid email
+
 ## v2.36.10 - 2023-07-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.9...v2.36.10)
