@@ -1,6 +1,5 @@
 package org.orcid.scheduler.loader.source.issn;
 
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +28,7 @@ public class IssnLoadSource {
 
     private static Pattern issnGroupTypePattern = Pattern.compile("^issn:(\\d{4}-\\d{3}[\\dXx])$");
 
-    @Value("${org.orcid.scheduler.issnLoadSource.batchSize:50}")
+    @Value("${org.orcid.scheduler.issnLoadSource.batchSize:5000}")
     private int batchSize;
 
     @Value("${org.orcid.scheduler.issnLoadSource.waitBetweenBatches:30000}")
@@ -69,8 +68,10 @@ public class IssnLoadSource {
     }
 
     private void updateIssnGroupIdRecords() {
-        Date start = new Date();
-        List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(batchSize, start);
+        Long nextBatchStartId = 0L;
+        // Get the first batch of issn's
+        LOG.info("Loading batch of ISSN's, starting id: " + nextBatchStartId + " batch size: " + batchSize);
+        List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsSortedById(batchSize, nextBatchStartId);
         int batchCount = 0;
         int total = 0;
         while (!issnEntities.isEmpty()) {
@@ -104,8 +105,13 @@ public class IssnLoadSource {
                     // TODO Auto-generated catch block
                     LOG.warn("Exception while pausing the issn loader", e);                    
                 }
+
+                if (issnEntity.getId() > nextBatchStartId) {
+                    nextBatchStartId = issnEntity.getId();
+                }
             }
-            issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsNotModifiedSince(batchSize, start);
+            LOG.info("Loading batch of ISSN's, starting id: " + nextBatchStartId);
+            issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsSortedById(batchSize, nextBatchStartId);
         }
     }
 
