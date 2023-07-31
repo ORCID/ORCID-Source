@@ -12,7 +12,6 @@ public class AffiliationSummary {
     public String startDate;
     public String endDate;
     public String role;
-    public String title;
     public String type;
     public boolean validatedOrSelfAsserted;
 
@@ -54,14 +53,6 @@ public class AffiliationSummary {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getType() {
@@ -108,14 +99,6 @@ public class AffiliationSummary {
 
             if (!PojoUtil.isEmpty(as.getEndDate())) {
                 form.setEndDate(getDate(as.getEndDate()));
-            }
-
-            if (!PojoUtil.isEmpty(as.getRoleTitle())) {
-                form.setRole(as.getRoleTitle());
-            }
-
-            if (!PojoUtil.isEmpty(as.getDepartmentName())) {
-                form.setOrganizationName(as.getDepartmentName());
             }
 
             if (!PojoUtil.isEmpty(as.getRoleTitle())) {
