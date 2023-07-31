@@ -1,3 +1,14 @@
+## v2.36.8 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.7...v2.36.8)
+
+- [#6841](https://github.com/ORCID/ORCID-Source/pull/6841): EThOS description had a typo and said 'Peristent' instead of 'Persist…
+- [#6840](https://github.com/ORCID/ORCID-Source/pull/6840): fix: Remove duplicated attribute and fix organization name
+
+### Fix
+
+- Remove duplicated attribute and fix organization name
+
 ## v2.36.7 - 2023-07-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.6...v2.36.7)
