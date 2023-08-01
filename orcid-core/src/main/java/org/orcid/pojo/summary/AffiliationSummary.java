@@ -85,7 +85,7 @@ public class AffiliationSummary {
         AffiliationSummary form = new AffiliationSummary();
 
         if (as != null) {
-            if (as.getOrganization().getName() == null || as.getOrganization().getName().trim().length() == 0) {
+            if (as.getOrganization() != null && as.getOrganization().getName() != null && as.getOrganization().getName().trim().length() != 0) {
                 form.setOrganizationName(as.getOrganization().getName());
             }
 

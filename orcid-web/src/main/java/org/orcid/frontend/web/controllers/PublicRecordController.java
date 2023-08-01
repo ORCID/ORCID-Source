@@ -325,6 +325,11 @@ public class PublicRecordController extends BaseWorkspaceController {
             // Check if the profile is deprecated or locked
             orcidSecurityManager.checkProfile(orcid);
         } catch (LockedException | DeactivatedException e) {
+            if (e instanceof LockedException) {
+                recordSummary.setStatus("locked");
+            } else {
+                recordSummary.setStatus("deactivated");
+            }
             recordSummary.setName(localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                     + localeManager.resolveMessage("public_profile.deactivated.family_name"));
             return recordSummary;
@@ -338,11 +343,13 @@ public class PublicRecordController extends BaseWorkspaceController {
         }
 
         if (isDeprecated) {
+            recordSummary.setStatus("deprecated");
             recordSummary.setEmploymentAffiliations(null);
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
         } else {
             recordSummary = getSummary(orcid);
+            recordSummary.setStatus("active");
         }
 
         return recordSummary;
