@@ -1,3 +1,13 @@
+## v2.36.12 - 2023-08-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.11...v2.36.12)
+
+- [#6844](https://github.com/ORCID/ORCID-Source/pull/6844): fix: Add status and fix organization name
+
+### Fix
+
+- Add status and fix organization name
+
 ## v2.36.11 - 2023-07-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.10...v2.36.11)
