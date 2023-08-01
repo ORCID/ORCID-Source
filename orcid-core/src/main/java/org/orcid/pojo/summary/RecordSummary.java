@@ -19,6 +19,7 @@ public class RecordSummary {
     private List<AffiliationSummary> professionalActivities;
     private int professionalActivitiesCount;
     private List<ExternalIdentifiersSummary> externalIdentifiers;
+    private String status;
 
     public String getName() {
         return name;
@@ -140,5 +141,11 @@ public class RecordSummary {
         this.externalIdentifiers = externalIdentifiers;
     }
 
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
