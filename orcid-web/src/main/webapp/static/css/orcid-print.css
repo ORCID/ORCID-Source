@@ -27,6 +27,14 @@
         content: " (" attr(href) ")";
     }
 
+    a[href="https://info.orcid.org/privacy-policy/"] {
+        color: #2E7F9F !important;
+    }
+
+    a[href="https://info.orcid.org/privacy-policy/"]:after {
+        content: "" !important;
+    }
+
     .url-work a[href]:after {
         content: none;
     }
@@ -283,6 +291,10 @@
     .workspace-peer-review .title::before {
         content: "• ";
 	}
+
+    .workspace-peer-review .peer-review-title {
+        color: black !important;
+    }
 
     .workspace-peer-review .peer-review-title :first-child:after {
         content: " ";
