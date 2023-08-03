@@ -23,9 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.stereotype.Component;
 
-@Component
 public class RorToRinggoldFundrefCSVMapping {
     private static final Logger LOGGER = LoggerFactory.getLogger(RorToRinggoldFundrefCSVMapping.class);
     private OrgDisambiguatedDao orgDisambiguatedDao;
@@ -33,7 +31,7 @@ public class RorToRinggoldFundrefCSVMapping {
 
     private static final String ROR_TYPE = "ROR";
 
-    private static final int INDEXING_CHUNK_SIZE = 100000;
+    private static final int INDEXING_CHUNK_SIZE = 200000;
 
     @Value("${org.orcid.core.orgs.ringgoldtororcsv:/tmp/ror_ringold.csv}")
     private String ringoldCsvFilePath;
@@ -77,30 +75,36 @@ public class RorToRinggoldFundrefCSVMapping {
         ringgoldMap.put("ROR", "RINGGOLD");
         HashMap<String, String> fundrefMap = new HashMap<String, String>();
         fundrefMap.put("ROR", "FUNDREF");
+        HashMap<String, String> isniMap = new HashMap<String, String>();
+        isniMap.put("ROR", "ISNI");
         int startIndex = 0;
         do {
             entities = orgDisambiguatedDao.findBySourceType(ROR_TYPE, startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("Found chunk of {} disambiguated orgs for CSV mapping", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
-
+                LOGGER.info("ROR " + entity.getSourceId() + " and ID:  " + entity.getId());
                 for (OrgDisambiguatedExternalIdentifierEntity externalIdentifier : entity.getExternalIdentifiers()) {
-                    List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
-                            .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifier.getIdentifier(), FunderIdentifierType.ISNI.value());
-                    if (orgsFromExternalIdentifier != null) {
-                        orgsFromExternalIdentifier.stream().forEach((o -> {
-                            if (o.getSourceType().equals(OrgDisambiguatedSourceType.RINGGOLD.name())) {
-                                if (!ringgoldMap.containsKey(entity.getSourceId())) {
-                                    ringgoldMap.put(entity.getSourceId(), o.getSourceId());
-                                }
-                            } else if (o.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
-                                if (!fundrefMap.containsKey(entity.getSourceId())) {
-                                    fundrefMap.put(entity.getSourceId(), o.getSourceId());
-                                }
+                    if (externalIdentifier.getIdentifierType().equals(FunderIdentifierType.ISNI.value())) {
+                        if (!isniMap.containsKey(entity.getSourceId())) {
+                            List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
+                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifier.getIdentifier(), FunderIdentifierType.ISNI.value());
+                            if (orgsFromExternalIdentifier != null) {
+                                orgsFromExternalIdentifier.stream().forEach((o -> {
+                                    if (o.getSourceType().equals(OrgDisambiguatedSourceType.RINGGOLD.name())) {
+                                        if (!ringgoldMap.containsKey(entity.getSourceId())) {
+                                            ringgoldMap.put(entity.getSourceId(), o.getSourceId());
+                                        }
+                                    } else if (o.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
+                                        if (!fundrefMap.containsKey(entity.getSourceId())) {
+                                            fundrefMap.put(entity.getSourceId(), o.getSourceId());
+                                        }
+                                    }
+
+                                }));
                             }
-
-                        }));
+                            isniMap.put(entity.getSourceId(),externalIdentifier.getIdentifier());
+                        }    
                     }
-
                     if (StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.FUNDREF.name())) {
                         fundrefMap.put(entity.getSourceId(), externalIdentifier.getIdentifier());
                     } else if (StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.RINGGOLD.name())) {
