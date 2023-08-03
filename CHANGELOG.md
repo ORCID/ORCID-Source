@@ -1,3 +1,13 @@
+## v2.36.13 - 2023-08-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.12...v2.36.13)
+
+- [#6845](https://github.com/ORCID/ORCID-Source/pull/6845): fix: Remove extra content set to one trust link
+
+### Fix
+
+- Remove extra content set to one trust link
+
 ## v2.36.12 - 2023-08-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.11...v2.36.12)
