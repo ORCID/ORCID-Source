@@ -88,8 +88,7 @@ public class RorToRinggoldFundrefCSVMapping {
                                     .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifier.getIdentifier(), FunderIdentifierType.ISNI.value());
                         if (orgsFromExternalIdentifier != null) {
                                 orgsFromExternalIdentifier.stream().forEach((o -> {
-                                    //System.out.println("found external ids  " +  entity.getSourceId() + " and ID:  " + entity.getId());
-                                    if (o.getSourceType().equals(OrgDisambiguatedSourceType.RINGGOLD.name())) {
+                                      if (o.getSourceType().equals(OrgDisambiguatedSourceType.RINGGOLD.name())) {
                                         if(!ringgoldMap.containsKey(entity.getSourceId())) {
                                             ringgoldMap.put(entity.getSourceId(), o.getSourceId());
                                         }
