@@ -1,5 +1,6 @@
 package org.orcid.pojo.summary;
 
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -108,14 +109,7 @@ public class AffiliationSummary {
             form.setType(type);
 
             if (as.getSource() != null) {
-                String sourceId = as.getSource().retrieveSourcePath();
-                String assertionOriginSourceId = as.getSource().retrieveAssertionOriginPath();
-                // If the affiliation source is the user himself or any member with OBO, then, it is considered self asserted
-                if(orcid.equals(sourceId) || orcid.equals(assertionOriginSourceId)) {
-                    form.setValidatedOrSelfAsserted(false);
-                } else {
-                    form.setValidatedOrSelfAsserted(true);
-                }
+                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(as.getSource(), orcid));
             }
         }
         return form;

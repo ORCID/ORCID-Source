@@ -1,5 +1,6 @@
 package org.orcid.pojo.summary;
 
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -59,7 +60,7 @@ public class ExternalIdentifiersSummary {
             }
 
             if (personExternalIdentifier.getSource() != null) {
-                form.setValidatedOrSelfAsserted(personExternalIdentifier.getSource().retrieveSourcePath().equals(orcid));
+                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
             }
         }
         return form;
