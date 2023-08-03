@@ -115,7 +115,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(4, a.getAddress().size());
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false;
         for (Address element : a.getAddress()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 9) {
@@ -185,6 +185,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         found2 = false;
         found3 = false;
         found4 = false;
+        found5 = false;
+        found6 = false;
 
         for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
@@ -196,6 +198,10 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
                 found3 = true;
             } else if (element.getPutCode() == 16) {
                 found4 = true;
+            } else if (element.getPutCode() == 18) {
+                found5 = true;
+            } else if (element.getPutCode() == 19) {
+                found6 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -205,6 +211,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
+        assertTrue(found5);
+        assertTrue(found6);
 
         // Keywords
         assertNotNull(p.getKeywords());
@@ -318,7 +326,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(3, a.getAddress().size());
 
-        boolean found1 = false, found2 = false, found3 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
         for (Address element : a.getAddress()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 9) {
@@ -381,6 +389,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
+        found5 = false;
         for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 13) {
@@ -388,6 +398,10 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
             } else if (element.getPutCode() == 14) {
                 found2 = true;
             } else if (element.getPutCode() == 15) {
+                found3 = true;
+            } else if (element.getPutCode() == 18) {
+                found3 = true;
+            } else if (element.getPutCode() == 19) {
                 found3 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
@@ -397,6 +411,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
 
         // Keywords
         assertNotNull(p.getKeywords());

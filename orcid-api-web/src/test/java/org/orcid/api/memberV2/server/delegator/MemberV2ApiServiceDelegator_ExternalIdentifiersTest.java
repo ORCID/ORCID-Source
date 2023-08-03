@@ -403,8 +403,8 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertNotNull(p);
         assertEquals("/0000-0000-0000-0003/external-identifiers", p.getPath());
         Utils.verifyLastModified(p.getLastModifiedDate());
-        assertEquals(3, p.getExternalIdentifiers().size());
-        boolean found13 = false, found14 = false, found15 = false;
+        assertEquals(5, p.getExternalIdentifiers().size());
+        boolean found13 = false, found14 = false, found15 = false, found18 = false, found19 = false;
         for (PersonExternalIdentifier element : p.getExternalIdentifiers()) {
             if (element.getPutCode() == 13) {
                 found13 = true;
@@ -412,6 +412,10 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
                 found14 = true;
             } else if (element.getPutCode() == 15) {
                 found15 = true;
+            } else if (element.getPutCode() == 18) {
+                found18 = true;
+            } else if (element.getPutCode() == 19) {
+                found19 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -420,6 +424,8 @@ public class MemberV2ApiServiceDelegator_ExternalIdentifiersTest extends DBUnitT
         assertTrue(found13);
         assertTrue(found14);
         assertTrue(found15);
+        assertTrue(found18);
+        assertTrue(found19);
 
         r = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
         assertNotNull(r);
