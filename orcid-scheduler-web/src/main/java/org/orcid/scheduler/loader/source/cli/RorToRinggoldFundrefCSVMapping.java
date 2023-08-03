@@ -37,7 +37,7 @@ public class RorToRinggoldFundrefCSVMapping {
 
     @Value("${org.orcid.core.orgs.ringgoldtororcsv:/tmp/ror_ringold.csv}")
     private String ringoldCsvFilePath;
-    
+
     @Value("${org.orcid.core.orgs.fundreftororcsv:/tmp/ror_fundref.csv}")
     private String fundrefCsvFilePath;
 
@@ -82,40 +82,38 @@ public class RorToRinggoldFundrefCSVMapping {
             entities = orgDisambiguatedDao.findBySourceType(ROR_TYPE, startIndex, INDEXING_CHUNK_SIZE);
             LOGGER.info("Found chunk of {} disambiguated orgs for CSV mapping", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
-                    
-                    for (OrgDisambiguatedExternalIdentifierEntity externalIdentifier : entity.getExternalIdentifiers()) {
-                        List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
-                                    .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifier.getIdentifier(), FunderIdentifierType.ISNI.value());
-                        if (orgsFromExternalIdentifier != null) {
-                                orgsFromExternalIdentifier.stream().forEach((o -> {
-                                      if (o.getSourceType().equals(OrgDisambiguatedSourceType.RINGGOLD.name())) {
-                                        if(!ringgoldMap.containsKey(entity.getSourceId())) {
-                                            ringgoldMap.put(entity.getSourceId(), o.getSourceId());
-                                        }
-                                    }
-                                    else if (o.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
-                                        if(!fundrefMap.containsKey(entity.getSourceId())) {
-                                            fundrefMap.put(entity.getSourceId(), o.getSourceId());
-                                        }
-                                    }
 
-                                })); 
-                        } 
-                            
-                        if(StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.FUNDREF.name())) {
-                            fundrefMap.put(entity.getSourceId(),externalIdentifier.getIdentifier());
-                        }
-                        else if(StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.RINGGOLD.name())) {
-                            ringgoldMap.put(entity.getSourceId(),externalIdentifier.getIdentifier());
-                        }
-                    } 
-                }         
-            
+                for (OrgDisambiguatedExternalIdentifierEntity externalIdentifier : entity.getExternalIdentifiers()) {
+                    List<OrgDisambiguated> orgsFromExternalIdentifier = orgDisambiguatedManager
+                            .findOrgDisambiguatedIdsForSameExternalIdentifier(externalIdentifier.getIdentifier(), FunderIdentifierType.ISNI.value());
+                    if (orgsFromExternalIdentifier != null) {
+                        orgsFromExternalIdentifier.stream().forEach((o -> {
+                            if (o.getSourceType().equals(OrgDisambiguatedSourceType.RINGGOLD.name())) {
+                                if (!ringgoldMap.containsKey(entity.getSourceId())) {
+                                    ringgoldMap.put(entity.getSourceId(), o.getSourceId());
+                                }
+                            } else if (o.getSourceType().equals(OrgDisambiguatedSourceType.FUNDREF.name())) {
+                                if (!fundrefMap.containsKey(entity.getSourceId())) {
+                                    fundrefMap.put(entity.getSourceId(), o.getSourceId());
+                                }
+                            }
+
+                        }));
+                    }
+
+                    if (StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.FUNDREF.name())) {
+                        fundrefMap.put(entity.getSourceId(), externalIdentifier.getIdentifier());
+                    } else if (StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.RINGGOLD.name())) {
+                        ringgoldMap.put(entity.getSourceId(), externalIdentifier.getIdentifier());
+                    }
+                }
+            }
+
             startIndex = startIndex + INDEXING_CHUNK_SIZE;
         } while (!entities.isEmpty());
-        LOGGER.info( "Ror to ringgold: " + ringgoldMap.size()) ;
+        LOGGER.info("Ror to ringgold: " + ringgoldMap.size());
         generateCsv(ringgoldMap, ringoldCsvFilePath);
-        LOGGER.info( "Ror to fundref: " + fundrefMap.size()) ;
+        LOGGER.info("Ror to fundref: " + fundrefMap.size());
         generateCsv(fundrefMap, fundrefCsvFilePath);
 
     }
@@ -123,16 +121,13 @@ public class RorToRinggoldFundrefCSVMapping {
     public void generateCsv(HashMap<String, String> csvMap, String filePath) {
         String eol = System.getProperty("line.separator");
         try (Writer writer = new FileWriter(ringoldCsvFilePath)) {
-          for (HashMap.Entry<String, String> entry : csvMap.entrySet()) {
-            writer.append(entry.getKey())
-                  .append(',')
-                  .append(entry.getValue())
-                  .append(eol);
-          }
+            for (HashMap.Entry<String, String> entry : csvMap.entrySet()) {
+                writer.append(entry.getKey()).append(',').append(entry.getValue()).append(eol);
+            }
         } catch (IOException ex) {
-          LOGGER.error("Cannot write the mapping to the csv " + filePath , ex );
+            LOGGER.error("Cannot write the mapping to the csv " + filePath, ex);
         }
-        
+
     }
 
 }
