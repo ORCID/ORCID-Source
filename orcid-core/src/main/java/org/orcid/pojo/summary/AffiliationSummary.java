@@ -108,7 +108,14 @@ public class AffiliationSummary {
             form.setType(type);
 
             if (as.getSource() != null) {
-                form.setValidatedOrSelfAsserted(as.getSource().getSourceName().getContent().equals(orcid));
+                String sourceId = as.getSource().retrieveSourcePath();
+                String assertionOriginSourceId = as.getSource().retrieveAssertionOriginPath();
+                // If the affiliation source is the user himself or any member with OBO, then, it is considered self asserted
+                if(orcid.equals(sourceId) || orcid.equals(assertionOriginSourceId)) {
+                    form.setValidatedOrSelfAsserted(false);
+                } else {
+                    form.setValidatedOrSelfAsserted(true);
+                }
             }
         }
         return form;
