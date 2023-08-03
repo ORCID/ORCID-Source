@@ -76,7 +76,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class EmailMessageSenderImpl implements EmailMessageSender {
 
-    private static final String DIGEST_FROM_ADDRESS = "update@notify.orcid.org";
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
     
     private final Integer MAX_RETRY_COUNT;
@@ -299,7 +298,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 if(!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);                    
-                    digestMessage.setFrom(DIGEST_FROM_ADDRESS);
+                    digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
@@ -395,7 +394,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
         try {
             boolean successfullySent = false;
-            String fromAddressParam = DIGEST_FROM_ADDRESS;
+            String fromAddressParam = EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG;
             if(!PojoUtil.isEmpty(fromAddress)) {
                 fromAddressParam = fromAddress;
             }
@@ -624,6 +623,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
-        mailGunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        mailGunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
     }        
 }
