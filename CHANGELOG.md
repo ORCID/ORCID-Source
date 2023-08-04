@@ -1,3 +1,10 @@
+## v2.36.14 - 2023-08-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.13...v2.36.14)
+
+- [#6849](https://github.com/ORCID/ORCID-Source/pull/6849): Fix more tests
+- [#6848](https://github.com/ORCID/ORCID-Source/pull/6848): Check the source of the element based on the source ids and not the name
+
 ## v2.36.13 - 2023-08-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.12...v2.36.13)
