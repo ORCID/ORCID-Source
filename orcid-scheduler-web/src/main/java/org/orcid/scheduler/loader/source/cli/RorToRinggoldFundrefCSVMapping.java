@@ -102,8 +102,8 @@ public class RorToRinggoldFundrefCSVMapping {
 
                                 }));
                             }
-                            isniMap.put(entity.getSourceId(),externalIdentifier.getIdentifier());
-                        }    
+                            isniMap.put(entity.getSourceId(), externalIdentifier.getIdentifier());
+                        }
                     }
                     if (StringUtils.equals(externalIdentifier.getIdentifierType(), OrgDisambiguatedSourceType.FUNDREF.name())) {
                         fundrefMap.put(entity.getSourceId(), externalIdentifier.getIdentifier());
@@ -124,7 +124,7 @@ public class RorToRinggoldFundrefCSVMapping {
 
     public void generateCsv(HashMap<String, String> csvMap, String filePath) {
         String eol = System.getProperty("line.separator");
-        try (Writer writer = new FileWriter(ringoldCsvFilePath)) {
+        try (Writer writer = new FileWriter(filePath)) {
             for (HashMap.Entry<String, String> entry : csvMap.entrySet()) {
                 writer.append(entry.getKey()).append(',').append(entry.getValue()).append(eol);
             }
