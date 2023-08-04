@@ -172,7 +172,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         PersonExternalIdentifiers elements = externalIdentifierManager.getExternalIdentifiers(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getExternalIdentifiers());
-        assertEquals(5, elements.getExternalIdentifiers().size());
+        assertEquals(7, elements.getExternalIdentifiers().size());
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false, found7 = false;
         for(PersonExternalIdentifier element : elements.getExternalIdentifiers()) {
             if(13 == element.getPutCode()){
