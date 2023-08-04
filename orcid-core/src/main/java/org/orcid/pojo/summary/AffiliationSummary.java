@@ -1,5 +1,6 @@
 package org.orcid.pojo.summary;
 
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -108,7 +109,7 @@ public class AffiliationSummary {
             form.setType(type);
 
             if (as.getSource() != null) {
-                form.setValidatedOrSelfAsserted(as.getSource().getSourceName().getContent().equals(orcid));
+                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(as.getSource(), orcid));
             }
         }
         return form;
