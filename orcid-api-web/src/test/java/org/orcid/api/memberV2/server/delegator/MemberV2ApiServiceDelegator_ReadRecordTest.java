@@ -283,7 +283,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 assertEquals("self_limited_ref", extId.getValue());
                 assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
             } else if (extId.getPutCode().equals(Long.valueOf(18))) {
-                assertEquals(Long.valueOf(3), extId.getDisplayIndex());
+                assertEquals(Long.valueOf(5), extId.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/external-identifiers/18", extId.getPath());
                 assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
                 assertEquals("self_public_type", extId.getType());
@@ -291,13 +291,13 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 assertEquals("self_public_ref", extId.getValue());
                 assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
             } else if (extId.getPutCode().equals(Long.valueOf(19))) {
-                assertEquals(Long.valueOf(3), extId.getDisplayIndex());
+                assertEquals(Long.valueOf(6), extId.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
-                assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+                assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
                 assertEquals("self_public_user_obo_type", extId.getType());
                 assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
                 assertEquals("self_public_user_obo_ref", extId.getValue());
-                assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+                assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
             } else {
                 fail("Invalid external identifier found: " + extId.getPutCode());
             }
@@ -871,7 +871,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(3, extIds.getExternalIdentifiers().size());
+        assertEquals(5, extIds.getExternalIdentifiers().size());
         found1 = false;
         found2 = false;
         found3 = false;
@@ -886,9 +886,9 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
             } else if (element.getPutCode() == 15) {
                 found3 = true;
             } else if (element.getPutCode() == 18) {
-                found3 = true;
+                found4 = true;
             } else if (element.getPutCode() == 19) {
-                found3 = true;
+                found5 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }

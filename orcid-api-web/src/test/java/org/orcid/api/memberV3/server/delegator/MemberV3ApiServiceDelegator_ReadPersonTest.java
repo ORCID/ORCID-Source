@@ -186,7 +186,7 @@ public class MemberV3ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(4, extIds.getExternalIdentifiers().size());
+        assertEquals(6, extIds.getExternalIdentifiers().size());
         found1 = false;
         found2 = false;
         found3 = false;
@@ -391,7 +391,7 @@ public class MemberV3ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(3, extIds.getExternalIdentifiers().size());
+        assertEquals(5, extIds.getExternalIdentifiers().size());
         found1 = false;
         found2 = false;
         found3 = false;

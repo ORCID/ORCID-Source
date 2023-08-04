@@ -259,7 +259,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(person.getExternalIdentifiers());
         Utils.verifyLastModified(person.getExternalIdentifiers().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals(6, person.getExternalIdentifiers().getExternalIdentifiers().size());
         for (PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifiers()) {
             Utils.verifyLastModified(extId.getLastModifiedDate());
             if (extId.getPutCode().equals(Long.valueOf(13))) {
@@ -305,11 +305,11 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
             } else if (extId.getPutCode().equals(Long.valueOf(19))) {
                 assertEquals(Long.valueOf(6), extId.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
-                assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+                assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
                 assertEquals("self_public_user_obo_type", extId.getType());
                 assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
                 assertEquals("self_public_user_obo_ref", extId.getValue());
-                assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+                assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
             } else {
                 fail("Invalid external identifier found: " + extId.getPutCode());
             }

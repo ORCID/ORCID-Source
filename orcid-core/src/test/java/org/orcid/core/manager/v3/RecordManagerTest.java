@@ -56,7 +56,7 @@ public class RecordManagerTest extends DBUnitTest {
         Person person = record.getPerson();
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
-        assertEquals(5, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals(7, person.getExternalIdentifiers().getExternalIdentifiers().size());
         
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
@@ -152,8 +152,10 @@ public class RecordManagerTest extends DBUnitTest {
         
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), person.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(19), person.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(Long.valueOf(18), person.getExternalIdentifiers().getExternalIdentifiers().get(1).getPutCode());
+        assertEquals(Long.valueOf(13), person.getExternalIdentifiers().getExternalIdentifiers().get(2).getPutCode());
         
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getResearcherUrls());
