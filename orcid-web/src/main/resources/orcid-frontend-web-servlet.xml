@@ -99,14 +99,8 @@
     
     <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
     
-    <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />
-
-    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
-        <constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
-    </bean>
-
-    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
-
+    <bean id="recordEmailSender" class="org.orcid.frontend.email.RecordEmailSender" />    
+    
     <bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
     
     <!-- Salesforce -->

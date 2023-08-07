@@ -128,6 +128,7 @@
 	<!-- Redis cache -->
 	<bean id="redisClient" class="org.orcid.core.utils.cache.redis.RedisClient">
 		<constructor-arg index="0" value="${org.orcid.core.utils.cache.redis.host}"/>
-		<constructor-arg index="1" value="${org.orcid.core.utils.cache.redis.port}" />	
+		<constructor-arg index="1" value="${org.orcid.core.utils.cache.redis.port}" />
+		<constructor-arg index="2" value="${org.orcid.core.utils.cache.redis.password}" />
 	</bean>
 </beans>

@@ -1,6 +1,5 @@
 package org.orcid.api.common.oauth;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
@@ -31,6 +29,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -67,6 +66,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     
     @Resource
     private EncryptionManager encryptionManager;
+    
+    @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
+    private boolean isTokenCacheEnabled;
     
     @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
@@ -166,7 +168,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             
             //TODO: Store the token in the cache before returning it to the user
             removeMetadataFromToken(token);
-            setToCache(token);
+            setToCache(client.getName(), token);
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
@@ -177,14 +179,24 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     /**
      * Set the access token in the cache
      * */
-    protected void setToCache(OAuth2AccessToken accessToken) {
-        try {
-            DefaultOAuth2AccessToken d = (DefaultOAuth2AccessToken) accessToken;
-            String base64EncryptedTokenValue = Base64.encodeBase64URLSafeString(encryptionManager.encryptForExternalUse(d.getValue()).getBytes("UTF-8"));
-            String base64EncryptedJson = Base64.encodeBase64URLSafeString(encryptionManager.encryptForExternalUse(JsonUtils.convertToJsonString(accessToken)).getBytes("UTF-8"));            
-            redisClient.set(base64EncryptedTokenValue, base64EncryptedJson);
-        } catch(Exception e) {
-            
+    protected void setToCache(String clientId, OAuth2AccessToken accessToken) {
+        if(isTokenCacheEnabled) {
+            try {
+                String tokenValue = accessToken.getValue();
+                Map<String, String> tokenData = new HashMap<String, String>();
+                tokenData.put(OrcidOauth2Constants.ACCESS_TOKEN, tokenValue);
+                tokenData.put(OrcidOauth2Constants.TOKEN_EXPIRATION_TIME, String.valueOf(accessToken.getExpiration().getTime()));
+                StringBuilder sb = new StringBuilder();
+                accessToken.getScope().forEach(x -> {sb.append(x); sb.append(' ');});
+                tokenData.put(OrcidOauth2Constants.SCOPE_PARAM, sb.toString());
+                tokenData.put(OrcidOauth2Constants.ORCID, (String) accessToken.getAdditionalInformation().get(OrcidOauth2Constants.ORCID));
+                tokenData.put(OrcidOauth2Constants.CLIENT_ID, clientId);
+                tokenData.put(OrcidOauth2Constants.RESOURCE_IDS, OrcidOauth2Constants.ORCID);
+                tokenData.put(OrcidOauth2Constants.APPROVED, Boolean.TRUE.toString());
+                redisClient.set(tokenValue, JsonUtils.convertToJsonString(tokenData));
+            } catch(Exception e) {
+                LOGGER.info("Unable to set token in Redis cache", e);
+            }
         }
     }
 

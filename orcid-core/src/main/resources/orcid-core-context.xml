@@ -1200,4 +1200,10 @@
 
 	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />	
 
+	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+		<constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
+	</bean>
+
+	<bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
+
 </beans>

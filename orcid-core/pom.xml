@@ -39,7 +39,12 @@
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-model</artifactId>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>orcid-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>  
 
         <!-- Internal test only -->
         <dependency>

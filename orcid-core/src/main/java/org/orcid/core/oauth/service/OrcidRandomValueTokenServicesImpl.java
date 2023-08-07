@@ -3,6 +3,7 @@ package org.orcid.core.oauth.service;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.constants.RevokeReason;
@@ -22,6 +24,8 @@ import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -92,6 +96,12 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     @Resource
     private AuthenticationKeyGenerator authenticationKeyGenerator;
+    
+    @Resource 
+    private RedisClient redisClient;
+    
+    @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
+    private boolean isTokenCacheEnabled;
     
     public boolean isCustomSupportRefreshToken() {
         return customSupportRefreshToken;
@@ -285,10 +295,27 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                 throw new InvalidTokenException("Invalid access token: " + accessTokenValue + ", revoke reason: " + revokeReason);
             }
         } else {
-            OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
-            validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
-            return orcidTokenStore.readAuthentication(accessTokenValue);
+            // Get the token from the cache
+            Map<String, String> cachedAccessToken = getTokenFromCache(accessTokenValue);
+            if(cachedAccessToken != null) {
+                 return orcidTokenStore.readAuthenticationFromCachedToken(cachedAccessToken);                 
+            }  else {
+                // Fallback to database if it is not in the cache
+                OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
+                validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+                return orcidTokenStore.readAuthentication(accessTokenValue);
+            }            
         }
+    }
+        
+    private Map<String, String> getTokenFromCache(String accessTokenValue) {
+        if(isTokenCacheEnabled) {
+            String tokenJsonInfo = redisClient.get(accessTokenValue);            
+            if(StringUtils.isNotBlank(tokenJsonInfo)) {
+                return JsonUtils.readObjectFromJsonString(tokenJsonInfo, HashMap.class);                
+            }
+        } 
+        return null;
     }
     
     private void validateTokenExpirationAndClientStatus(OAuth2AccessToken accessToken, String tokenValue) {
@@ -302,20 +329,13 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             Map<String, Object> additionalInfo = accessToken.getAdditionalInformation();
             if (additionalInfo != null) {
                 String clientId = (String) additionalInfo.get(OrcidOauth2Constants.CLIENT_ID);
-                ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                try {
-                    orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
-                } catch (LockedException le) {
-                    throw new InvalidTokenException(le.getMessage());
-                } catch (ClientDeactivatedException e) {
-                    throw new InvalidTokenException(e.getMessage());
-                }
+                orcidTokenStore.isClientEnabled(clientId);
             }
         } else {
             // Access token not found
             throw new InvalidTokenException("Invalid access token: " + tokenValue);
         }
-    }
+    }        
     
     public void setOrcidtokenStore(OrcidTokenStore orcidTokenStore) {
         super.setTokenStore(orcidTokenStore);
