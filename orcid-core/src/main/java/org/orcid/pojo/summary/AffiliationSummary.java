@@ -1,5 +1,6 @@
 package org.orcid.pojo.summary;
 
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -12,7 +13,6 @@ public class AffiliationSummary {
     public String startDate;
     public String endDate;
     public String role;
-    public String title;
     public String type;
     public boolean validatedOrSelfAsserted;
 
@@ -56,14 +56,6 @@ public class AffiliationSummary {
         this.role = role;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getType() {
         return type;
     }
@@ -94,7 +86,7 @@ public class AffiliationSummary {
         AffiliationSummary form = new AffiliationSummary();
 
         if (as != null) {
-            if (as.getOrganization().getName() == null || as.getOrganization().getName().trim().length() == 0) {
+            if (as.getOrganization() != null && as.getOrganization().getName() != null && as.getOrganization().getName().trim().length() != 0) {
                 form.setOrganizationName(as.getOrganization().getName());
             }
 
@@ -114,18 +106,10 @@ public class AffiliationSummary {
                 form.setRole(as.getRoleTitle());
             }
 
-            if (!PojoUtil.isEmpty(as.getDepartmentName())) {
-                form.setOrganizationName(as.getDepartmentName());
-            }
-
-            if (!PojoUtil.isEmpty(as.getRoleTitle())) {
-                form.setRole(as.getRoleTitle());
-            }
-
             form.setType(type);
 
             if (as.getSource() != null) {
-                form.setValidatedOrSelfAsserted(as.getSource().getSourceName().getContent().equals(orcid));
+                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(as.getSource(), orcid));
             }
         }
         return form;

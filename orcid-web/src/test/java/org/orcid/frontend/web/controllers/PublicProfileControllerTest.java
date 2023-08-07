@@ -190,12 +190,22 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertNotNull(personDetails.getPublicGroupedPersonExternalIdentifiers());
         Map<String, List<PersonExternalIdentifier>> extIds = personDetails.getPublicGroupedPersonExternalIdentifiers();        
         assertNotNull(extIds);
-        assertEquals(1, extIds.keySet().size());
+        assertEquals(3, extIds.keySet().size());
         assertTrue(extIds.containsKey("public_type:public_ref"));
+        assertTrue(extIds.containsKey("self_public_type:self_public_ref"));
+        assertTrue(extIds.containsKey("self_public_user_obo_type:self_public_user_obo_ref"));
         List<PersonExternalIdentifier> publicExternalIdentifiers = extIds.get("public_type:public_ref");        
         assertEquals(Long.valueOf(13), publicExternalIdentifiers.get(0).getPutCode());
         assertEquals("http://ext-id/public_ref", publicExternalIdentifiers.get(0).getUrl().getValue());
-        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());               
+        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());
+        publicExternalIdentifiers = extIds.get("self_public_type:self_public_ref");        
+        assertEquals(Long.valueOf(18), publicExternalIdentifiers.get(0).getPutCode());
+        assertEquals("http://ext-id/self/public", publicExternalIdentifiers.get(0).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());
+        publicExternalIdentifiers = extIds.get("self_public_user_obo_type:self_public_user_obo_ref");        
+        assertEquals(Long.valueOf(19), publicExternalIdentifiers.get(0).getPutCode());
+        assertEquals("http://ext-id/self/obo/public", publicExternalIdentifiers.get(0).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());        
     }
     
     @Test

@@ -1,3 +1,110 @@
+## v2.36.14 - 2023-08-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.13...v2.36.14)
+
+- [#6849](https://github.com/ORCID/ORCID-Source/pull/6849): Fix more tests
+- [#6848](https://github.com/ORCID/ORCID-Source/pull/6848): Check the source of the element based on the source ids and not the name
+
+## v2.36.13 - 2023-08-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.12...v2.36.13)
+
+- [#6845](https://github.com/ORCID/ORCID-Source/pull/6845): fix: Remove extra content set to one trust link
+
+### Fix
+
+- Remove extra content set to one trust link
+
+## v2.36.12 - 2023-08-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.11...v2.36.12)
+
+- [#6844](https://github.com/ORCID/ORCID-Source/pull/6844): fix: Add status and fix organization name
+
+### Fix
+
+- Add status and fix organization name
+
+## v2.36.11 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.10...v2.36.11)
+
+- [#6838](https://github.com/ORCID/ORCID-Source/pull/6838): 8734 update the registry emails to remove links to the support team emails and forms
+
+### Fix
+
+- Remove empty white space
+- Fix typos and add missing paragraphs
+- Rollback loced orcid email
+
+## v2.36.10 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.9...v2.36.10)
+
+- [#6842](https://github.com/ORCID/ORCID-Source/pull/6842): For ISSN loading, use the table id to iterate over the existing list …
+
+## v2.36.9 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.8...v2.36.9)
+
+## v2.36.8 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.7...v2.36.8)
+
+- [#6841](https://github.com/ORCID/ORCID-Source/pull/6841): EThOS description had a typo and said 'Peristent' instead of 'Persist…
+- [#6840](https://github.com/ORCID/ORCID-Source/pull/6840): fix: Remove duplicated attribute and fix organization name
+
+### Fix
+
+- Remove duplicated attribute and fix organization name
+
+## v2.36.7 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.6...v2.36.7)
+
+- [#6839](https://github.com/ORCID/ORCID-Source/pull/6839): style: fix a tags color
+
+## v2.36.6 - 2023-07-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.5...v2.36.6)
+
+- [#6835](https://github.com/ORCID/ORCID-Source/pull/6835): Update emails notifications
+
+### Fix
+
+- Refactor deactivate email
+
+### Feature
+
+- Update emails notifications
+
+## v2.36.5 - 2023-07-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.4...v2.36.5)
+
+- [#6836](https://github.com/ORCID/ORCID-Source/pull/6836): fix: One trust style on print preview
+
+### Fix
+
+- One trust style on print preview
+
+## v2.36.4 - 2023-07-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.3...v2.36.4)
+
+- [#6834](https://github.com/ORCID/ORCID-Source/pull/6834): ETHOS to be case sensitive
+
+## v2.36.3 - 2023-07-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.2...v2.36.3)
+
+- [#6833](https://github.com/ORCID/ORCID-Source/pull/6833): fix: NPE and compare if its self asserted or validated work or funding
+
+### Fix
+
+- Replace incorrect variables
+- NPE and compare if its self asserted or validated work or funding
+
 ## v2.36.2 - 2023-07-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.1...v2.36.2)

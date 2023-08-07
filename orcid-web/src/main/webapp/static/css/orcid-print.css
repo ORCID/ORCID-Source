@@ -11,9 +11,7 @@
     li:first-letter,
     p:first-letter,
     p:first-line {
-        background: transparent !important;
         box-shadow: none !important;
-        color: #000 !important; /* Black prints faster:                           http://www.sanbeiji.com/archives/953 */
         text-shadow: none !important;
     }
     i.green{
@@ -27,6 +25,14 @@
 
     a[href]:after {
         content: " (" attr(href) ")";
+    }
+
+    a[href="https://info.orcid.org/privacy-policy/"] {
+        color: #2E7F9F !important;
+    }
+
+    a[href="https://info.orcid.org/privacy-policy/"]:after {
+        content: "" !important;
     }
 
     .url-work a[href]:after {
@@ -146,6 +152,10 @@
     .workspace-body-list > li,
     .workspace-border-box {
         border: 0;
+    }
+
+    h2, a {
+        color: #000 !important;
     }
 
     #orcid-id {
@@ -281,6 +291,10 @@
     .workspace-peer-review .title::before {
         content: "• ";
 	}
+
+    .workspace-peer-review .peer-review-title {
+        color: black !important;
+    }
 
     .workspace-peer-review .peer-review-title :first-child:after {
         content: " ";
