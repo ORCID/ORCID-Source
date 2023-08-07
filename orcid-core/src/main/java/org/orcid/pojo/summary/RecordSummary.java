@@ -12,7 +12,7 @@ public class RecordSummary {
     private String lastModified;
     private int validatedWorks;
     private int selfAssertedWorks;
-    private int reviews;
+    private int peerReviewsTotal;
     private int peerReviewPublicationGrants;
     private int validatedFunds;
     private int selfAssertedFunds;
@@ -85,12 +85,12 @@ public class RecordSummary {
         this.selfAssertedWorks = selfAssertedWorks;
     }
 
-    public int getReviews() {
-        return reviews;
+    public int getPeerReviewsTotal() {
+        return peerReviewsTotal;
     }
 
-    public void setReviews(int reviews) {
-        this.reviews = reviews;
+    public void setPeerReviewsTotal(int peerReviewsTotal) {
+        this.peerReviewsTotal = peerReviewsTotal;
     }
 
     public int getPeerReviewPublicationGrants() {

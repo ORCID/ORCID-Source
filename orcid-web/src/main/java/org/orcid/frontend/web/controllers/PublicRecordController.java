@@ -362,7 +362,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         Record record = recordManagerReadOnly.getPublicRecord(orcid, false);
         Person person = record.getPerson();
         if (person != null) {
-            String displayName = "Name is private or limited";
+            String displayName = "undefined";
             Name name = person.getName();
             if (name != null) {
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
@@ -466,10 +466,10 @@ public class PublicRecordController extends BaseWorkspaceController {
             peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
                 publicationGrants.set(publicationGrants.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
             });
-            recordSummary.setReviews(peerReviewMinimizedSummaryList.size());
+            recordSummary.setPeerReviewsTotal(peerReviewMinimizedSummaryList.size());
             recordSummary.setPeerReviewPublicationGrants(publicationGrants.intValue());
         } else {
-            recordSummary.setReviews(0);
+            recordSummary.setPeerReviewsTotal(0);
             recordSummary.setPeerReviewPublicationGrants(0);
         }
 

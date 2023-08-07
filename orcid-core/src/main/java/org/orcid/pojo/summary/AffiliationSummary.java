@@ -14,7 +14,7 @@ public class AffiliationSummary {
     public String endDate;
     public String role;
     public String type;
-    public boolean validatedOrSelfAsserted;
+    public boolean validated;
 
     public String getOrganizationName() {
         return organizationName;
@@ -64,12 +64,12 @@ public class AffiliationSummary {
         this.type = type;
     }
 
-    public boolean isValidatedOrSelfAsserted() {
-        return validatedOrSelfAsserted;
+    public boolean isValidated() {
+        return validated;
     }
 
-    public void setValidatedOrSelfAsserted(boolean validatedOrSelfAsserted) {
-        this.validatedOrSelfAsserted = validatedOrSelfAsserted;
+    public void setValidated(boolean validated) {
+        this.validated = validated;
     }
 
     public static List<AffiliationSummary> valueOf(List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> affiliationGroupForms, String orcid, String type) {
@@ -109,7 +109,7 @@ public class AffiliationSummary {
             form.setType(type);
 
             if (as.getSource() != null) {
-                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(as.getSource(), orcid));
+                form.setValidated(SourceUtils.isSelfAsserted(as.getSource(), orcid));
             }
         }
         return form;
