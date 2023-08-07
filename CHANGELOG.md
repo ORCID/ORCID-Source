@@ -1,3 +1,13 @@
+## v2.36.15 - 2023-08-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.14...v2.36.15)
+
+- [#6850](https://github.com/ORCID/ORCID-Source/pull/6850): fix: Remove duplicated footer in locked email
+
+### Fix
+
+- Remove duplicated email
+
 ## v2.36.14 - 2023-08-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.13...v2.36.14)
