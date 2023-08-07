@@ -172,7 +172,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(1, record.getValidatedWorks());
         assertEquals(0, record.getSelfAssertedWorks());
 
-        assertEquals(0, record.getReviews());
+        assertEquals(0, record.getPeerReviewsTotal());
         assertEquals(0, record.getPeerReviewPublicationGrants());
 
         assertEquals(1, record.getValidatedFunds());
