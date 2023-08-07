@@ -1,3 +1,13 @@
+## v2.36.16 - 2023-08-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.15...v2.36.16)
+
+- [#6851](https://github.com/ORCID/ORCID-Source/pull/6851): fix: Rename variables in summary endpoint
+
+### Fix
+
+- Rename variable in summary endpoint
+
 ## v2.36.15 - 2023-08-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.14...v2.36.15)
