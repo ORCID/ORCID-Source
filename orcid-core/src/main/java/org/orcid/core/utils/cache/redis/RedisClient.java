@@ -74,7 +74,7 @@ public class RedisClient {
             // Pool test
             try(Jedis jedis = pool.getResource()) {
                 if(jedis.isConnected()) {
-                    LOG.info("Connected to the Redis cache");
+                    LOG.info("Connected to the Redis cache, elements will be cached for " + this.cacheExpiryInSecs + " seconds");
                     // As it was possible to make the connection, enable the client
                     enabled = true;
                 }
