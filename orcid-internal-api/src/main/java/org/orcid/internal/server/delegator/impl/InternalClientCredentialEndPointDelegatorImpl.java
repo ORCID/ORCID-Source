@@ -73,7 +73,7 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
         OAuth2AccessToken token = generateToken(client, scopes, grantType);
         removeMetadataFromToken(token);
         // TODO: Store the token in the cache before returning it to the user
-        setToCache(token);
+        setToCache(client.getName(), token);
         return getResponse(token);
     }
 }
