@@ -1,3 +1,13 @@
+## v2.37.0 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.16...v2.37.0)
+
+- [#6852](https://github.com/ORCID/ORCID-Source/pull/6852): feature: Add production script one trust
+
+### Feature
+
+- Add production script one trust
+
 ## v2.36.16 - 2023-08-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.15...v2.36.16)
