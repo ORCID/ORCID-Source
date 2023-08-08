@@ -1,4 +1,5 @@
 <@emailMacros.msg "email.common.warm_regards" />
+
 https://support.orcid.org
 
 <@emailMacros.msg "email.common.received_email_as_service" />
