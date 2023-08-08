@@ -166,7 +166,6 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }                
             }
             
-            //TODO: Store the token in the cache before returning it to the user
             removeMetadataFromToken(token);
             setToCache(client.getName(), token);
             return getResponse(token);
@@ -327,6 +326,14 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_authentication_notfound.exception"));
         }
 
+    }
+
+    public boolean isTokenCacheEnabled() {
+        return isTokenCacheEnabled;
+    }
+
+    public void setTokenCacheEnabled(boolean isTokenCacheEnabled) {
+        this.isTokenCacheEnabled = isTokenCacheEnabled;
     }
 
 }

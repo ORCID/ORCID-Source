@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -23,8 +26,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
@@ -64,6 +70,9 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
     @Mock
     private ProfileLastModifiedDao profileLastModifiedDaoMock;
     
+    @Mock
+    private RedisClient redisClientMock;
+    
     @Resource
     private ProfileLastModifiedDao profileLastModifiedDao;
     
@@ -77,6 +86,9 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "profileLastModifiedDao", profileLastModifiedDaoMock);
+        TargetProxyHelper.injectIntoProxy(orcidClientCredentialEndPointDelegator, "redisClient", redisClientMock);
+        // Keep the cache disabled
+        orcidClientCredentialEndPointDelegator.setTokenCacheEnabled(false);
     }
 
     @AfterClass
@@ -268,4 +280,66 @@ public class OrcidClientCredentialEndPointDelegatorTest extends DBUnitTest {
         assertTrue(token.getExpiration().getTime() > refreshToken.getExpiration().getTime());
     }
 
+    @Test
+    public void obtainOauth2TokenSetCacheTest() {
+        // Enable cache
+        orcidClientCredentialEndPointDelegator.setTokenCacheEnabled(true);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
+        OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true,
+                "/activities/update");
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
+        formParams.add("client_id", CLIENT_ID_1);
+        formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
+        formParams.add("grant_type", "authorization_code");
+        formParams.add("redirect_uri", "http://www.APP-5555555555555555.com/redirect/oauth");
+        formParams.add("code", authCode.getId());
+        Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) response.getEntity();
+        assertNotNull(token);
+        assertTrue(!PojoUtil.isEmpty(token.getValue()));
+        
+        String tokenValue = token.getValue();
+        
+        
+        Map<String, String> tokenData = new HashMap<String, String>();
+        tokenData.put(OrcidOauth2Constants.ACCESS_TOKEN, tokenValue);
+        tokenData.put(OrcidOauth2Constants.TOKEN_EXPIRATION_TIME, String.valueOf(token.getExpiration().getTime()));
+        StringBuilder sb = new StringBuilder();
+        token.getScope().forEach(x -> {sb.append(x); sb.append(' ');});
+        tokenData.put(OrcidOauth2Constants.SCOPE_PARAM, sb.toString());
+        tokenData.put(OrcidOauth2Constants.ORCID, (String) token.getAdditionalInformation().get(OrcidOauth2Constants.ORCID));
+        tokenData.put(OrcidOauth2Constants.CLIENT_ID, CLIENT_ID_1);
+        tokenData.put(OrcidOauth2Constants.RESOURCE_IDS, OrcidOauth2Constants.ORCID);
+        tokenData.put(OrcidOauth2Constants.APPROVED, Boolean.TRUE.toString());
+        
+        String tokenDataString = JsonUtils.convertToJsonString(tokenData);
+        
+        verify(redisClientMock, times(1)).set(Mockito.eq(tokenValue), Mockito.eq(tokenDataString));        
+    }
+    
+    @Test
+    public void obtainOauth2TokenSkipCacheTest() {
+        // Ensure cache is disabled
+        orcidClientCredentialEndPointDelegator.setTokenCacheEnabled(false);
+        
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly(CLIENT_ID_1, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.READ_LIMITED);
+        OrcidOauth2AuthoriziationCodeDetail authCode = createAuthorizationCode("code-1", CLIENT_ID_1, "http://www.APP-5555555555555555.com/redirect/oauth", true,
+                "/activities/update");
+        MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
+        formParams.add("client_id", CLIENT_ID_1);
+        formParams.add("client_secret", "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
+        formParams.add("grant_type", "authorization_code");
+        formParams.add("redirect_uri", "http://www.APP-5555555555555555.com/redirect/oauth");
+        formParams.add("code", authCode.getId());
+        Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) response.getEntity();
+        assertNotNull(token);
+        assertTrue(!PojoUtil.isEmpty(token.getValue()));
+        
+        verify(redisClientMock, never()).set(Mockito.any(), Mockito.any());        
+    }
 }

@@ -9,4 +9,8 @@ import javax.ws.rs.core.Response;
 public interface OrcidClientCredentialEndPointDelegator {
 
     Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams);
+    
+    void setTokenCacheEnabled(boolean enabled);
+    
+    boolean isTokenCacheEnabled();
 }
