@@ -141,7 +141,9 @@ public class FundrefOrgLoadSource implements OrgLoadSource {
                         existingEntity.setSourceType(OrgDisambiguatedSourceType.FUNDREF.name());
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setIndexingStatus(IndexingStatus.PENDING);
-                        existingEntity.setStatus(rdfOrganization.status);
+                        if(!StringUtils.equals(existingEntity.getStatus(),OrganizationStatus.PART_OF_GROUP.name())){
+                            existingEntity.setStatus(rdfOrganization.status);
+                        }
                         try {
                             // mark group for indexing
                             new OrgGrouping(existingEntity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
