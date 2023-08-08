@@ -460,14 +460,14 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
 
-        AtomicInteger publicationGrants = new AtomicInteger();
+        AtomicInteger totalReviewsCount = new AtomicInteger();
 
         if (peerReviewMinimizedSummaryList != null) {
             peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
-                publicationGrants.set(publicationGrants.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
+                totalReviewsCount.set(totalReviewsCount.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
             });
-            recordSummary.setPeerReviewsTotal(peerReviewMinimizedSummaryList.size());
-            recordSummary.setPeerReviewPublicationGrants(publicationGrants.intValue());
+            recordSummary.setPeerReviewsTotal(totalReviewsCount.intValue());
+            recordSummary.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
         } else {
             recordSummary.setPeerReviewsTotal(0);
             recordSummary.setPeerReviewPublicationGrants(0);

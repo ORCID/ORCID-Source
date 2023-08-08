@@ -159,15 +159,15 @@ public class PublicRecordControllerTest extends DBUnitTest {
         // Added by member
         assertEquals(String.valueOf(19), record.getExternalIdentifiers().get(0).getId());
         assertEquals("http://ext-id/self/obo/public", record.getExternalIdentifiers().get(0).getUrl());
-        assertFalse(record.getExternalIdentifiers().get(0).isValidatedOrSelfAsserted());
+        assertFalse(record.getExternalIdentifiers().get(0).isValidated());
         // Added by user
         assertEquals(String.valueOf(18), record.getExternalIdentifiers().get(1).getId());
         assertEquals("http://ext-id/self/public", record.getExternalIdentifiers().get(1).getUrl());
-        assertFalse(record.getExternalIdentifiers().get(1).isValidatedOrSelfAsserted());
+        assertFalse(record.getExternalIdentifiers().get(1).isValidated());
         // User OBO
         assertEquals(String.valueOf(13), record.getExternalIdentifiers().get(2).getId());
         assertEquals("http://ext-id/public_ref", record.getExternalIdentifiers().get(2).getUrl());
-        assertTrue(record.getExternalIdentifiers().get(2).isValidatedOrSelfAsserted());
+        assertTrue(record.getExternalIdentifiers().get(2).isValidated());
         
         assertEquals(1, record.getValidatedWorks());
         assertEquals(0, record.getSelfAssertedWorks());
