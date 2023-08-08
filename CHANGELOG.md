@@ -1,3 +1,9 @@
+## v2.37.1 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.0...v2.37.1)
+
+- [#6854](https://github.com/ORCID/ORCID-Source/pull/6854): Added a line break in the emails footer
+
 ## v2.37.0 - 2023-08-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.16...v2.37.0)
