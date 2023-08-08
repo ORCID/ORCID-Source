@@ -1,3 +1,13 @@
+## v2.37.2 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.1...v2.37.2)
+
+- [#6855](https://github.com/ORCID/ORCID-Source/pull/6855): fix: Fix summary peer reviews count
+
+### Fix
+
+- Fix summary peer reviews count
+
 ## v2.37.1 - 2023-08-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.0...v2.37.1)
