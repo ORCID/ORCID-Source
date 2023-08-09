@@ -1,3 +1,13 @@
+## v2.37.3 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.2...v2.37.3)
+
+- [#6856](https://github.com/ORCID/ORCID-Source/pull/6856): fix: Remove field from response if its private
+
+### Fix
+
+- Remove field from response if its private
+
 ## v2.37.2 - 2023-08-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.1...v2.37.2)
