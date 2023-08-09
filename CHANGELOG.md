@@ -1,3 +1,13 @@
+## v2.37.6 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.5...v2.37.6)
+
+- [#6860](https://github.com/ORCID/ORCID-Source/pull/6860): fix: Remove indentation added in ftl email locked
+
+### Fix
+
+- Remove indentation added in ftl email locked
+
 ## v2.37.5 - 2023-08-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.4...v2.37.5)
