@@ -1,3 +1,9 @@
+## v2.37.7 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.6...v2.37.7)
+
+- [#6861](https://github.com/ORCID/ORCID-Source/pull/6861): Fix jackson problem
+
 ## v2.37.6 - 2023-08-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.5...v2.37.6)
