@@ -1,12 +1,13 @@
 package org.orcid.pojo.summary;
 
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-
 import java.util.List;
 
-@JsonFilter("nameFilter")
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class RecordSummary {
+    @JsonInclude(Include.NON_NULL)
     private String name;
     private String orcid;
     private List<AffiliationSummary> employmentAffiliations;
