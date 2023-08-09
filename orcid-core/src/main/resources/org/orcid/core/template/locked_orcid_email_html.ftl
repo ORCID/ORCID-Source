@@ -26,8 +26,8 @@
 				<@emailMacros.msg "email.locked.if_you_believe_html" />
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
-				<@emailMacros.msg "email.common.warm_regards" />
-				<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
+<@emailMacros.msg "email.common.warm_regards" />
+<a href='<@emailMacros.msg "email.common.need_help.description.2.href" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 				<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
