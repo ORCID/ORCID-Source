@@ -140,7 +140,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummary() {
-        RecordSummary record = publicRecordController.getSummaryRecord(userOrcid);
+        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(userOrcid).getValue();
 
         assertEquals("active", record.getStatus());
         assertNotNull(record.getName());
@@ -150,7 +150,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(1, record.getEmploymentAffiliations().size());
         assertEquals(1, record.getEmploymentAffiliationsCount());
 
-        assertEquals("An institution", record.getEmploymentAffiliations().get(0).getOrganizationName());                
+        assertEquals("An institution", record.getEmploymentAffiliations().get(0).getOrganizationName());
         
         // Check external identifiers
         assertNotNull(record.getExternalIdentifiers());
@@ -179,12 +179,12 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(0, record.getSelfAssertedFunds());
 
         assertNotNull(record.getProfessionalActivities());
-        assertEquals(4, record.getProfessionalActivitiesCount());        
+        assertEquals(4, record.getProfessionalActivitiesCount());
     }
 
     @Test
     public void testGetRecordSummaryDeactivated() {
-        RecordSummary record = publicRecordController.getSummaryRecord(deactivatedUserOrcid);
+        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(deactivatedUserOrcid).getValue();
 
         assertEquals("Given Names Deactivated Family Name Deactivated", record.getName());
 
@@ -193,7 +193,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryLocked() {
-        RecordSummary record = publicRecordController.getSummaryRecord(lockedUserOrcid);
+        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(lockedUserOrcid).getValue();
 
         assertNotNull(record.getName());
         assertEquals("Given Names Deactivated Family Name Deactivated", record.getName());
@@ -203,10 +203,17 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryDeprecated() {
-        RecordSummary record = publicRecordController.getSummaryRecord(deprecatedUserOrcid);
+        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(deprecatedUserOrcid).getValue();
 
         assertNull(record.getName());
 
         assertEquals("deprecated", record.getStatus());
+    }
+
+    @Test
+    public void testGetRecordSummaryPrivateName() {
+        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(unclaimedUserOrcid).getValue();
+
+        assertNull(record.getName());
     }
 }
