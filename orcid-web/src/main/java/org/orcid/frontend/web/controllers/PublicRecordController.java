@@ -321,7 +321,7 @@ public class PublicRecordController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET)
-    public @ResponseBody MappingJacksonValue getSummaryRecord(@PathVariable("orcid") String orcid) {
+    public @ResponseBody RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
         RecordSummary recordSummary = new RecordSummary();
         Boolean isDeprecated = false;
 
@@ -336,14 +336,14 @@ public class PublicRecordController extends BaseWorkspaceController {
             }
             recordSummary.setName(localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                     + localeManager.resolveMessage("public_profile.deactivated.family_name"));
-            return new MappingJacksonValue(recordSummary);
+            return recordSummary;
         } catch (OrcidNotClaimedException e) {
             recordSummary.setName(localeManager.resolveMessage("orcid.reserved_for_claim"));
-            return new MappingJacksonValue(recordSummary);
+            return recordSummary;
         } catch (OrcidDeprecatedException e) {
             isDeprecated = true;
         } catch (OrcidNoResultException e) {
-            return new MappingJacksonValue(recordSummary);
+            return recordSummary;
         }
 
         if (isDeprecated) {
@@ -352,18 +352,11 @@ public class PublicRecordController extends BaseWorkspaceController {
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
 
-            return new MappingJacksonValue(recordSummary);
+            return recordSummary;
         } else {
             recordSummary = getSummary(orcid);
-            recordSummary.setStatus("active");
-
-            SimpleBeanPropertyFilter simpleBeanPropertyFilter = SimpleBeanPropertyFilter.serializeAllExcept("name");
-            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("nameFilter", simpleBeanPropertyFilter);
-            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(recordSummary);
-            if (recordSummary.getName() == null) {
-                mappingJacksonValue.setFilters(filterProvider);
-            }
-            return mappingJacksonValue;
+            recordSummary.setStatus("active");            
+            return recordSummary;
         }
     }
 
