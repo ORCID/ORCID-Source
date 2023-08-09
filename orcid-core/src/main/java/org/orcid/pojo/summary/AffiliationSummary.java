@@ -1,11 +1,9 @@
 package org.orcid.pojo.summary;
 
 import org.orcid.core.utils.v3.SourceUtils;
-import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AffiliationSummary {
     public String organizationName;
@@ -72,22 +70,12 @@ public class AffiliationSummary {
         this.validated = validated;
     }
 
-    public static List<AffiliationSummary> valueOf(List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> affiliationGroupForms, String orcid, String type) {
-        List<AffiliationSummary> affiliationSummaries = new ArrayList<>();
-
-        affiliationGroupForms.forEach(affiliationGroupForm -> {
-            affiliationSummaries.add(AffiliationSummary.valueOf(affiliationGroupForm, orcid, type));
-        });
-
-        return affiliationSummaries;
-    }
-
-    public static AffiliationSummary valueOf(org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary as, String orcid, String type) {
+    public static AffiliationSummary valueOf(AffiliationForm as, String orcid, String type) {
         AffiliationSummary form = new AffiliationSummary();
 
         if (as != null) {
-            if (as.getOrganization() != null && as.getOrganization().getName() != null && as.getOrganization().getName().trim().length() != 0) {
-                form.setOrganizationName(as.getOrganization().getName());
+            if (!PojoUtil.isEmpty(as.getAffiliationName())) {
+                form.setOrganizationName(as.getAffiliationName().getValue());
             }
 
             if (!PojoUtil.isEmpty(as.getUrl())) {
@@ -103,7 +91,7 @@ public class AffiliationSummary {
             }
 
             if (!PojoUtil.isEmpty(as.getRoleTitle())) {
-                form.setRole(as.getRoleTitle());
+                form.setRole(as.getRoleTitle().getValue());
             }
 
             form.setType(type);
@@ -115,7 +103,7 @@ public class AffiliationSummary {
         return form;
     }
 
-    private static String getDate(FuzzyDate date) {
-        return date != null ? date.toString() : null;
+    private static String getDate(Date date) {
+        return date != null ? date.toFuzzyDate().toString() : null;
     }
 }
