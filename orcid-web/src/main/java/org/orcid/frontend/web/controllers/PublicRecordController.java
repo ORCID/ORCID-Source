@@ -1,5 +1,8 @@
 package org.orcid.frontend.web.controllers;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -70,6 +73,7 @@ import org.orcid.pojo.summary.AffiliationSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -316,8 +320,7 @@ public class PublicRecordController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET)
-    public @ResponseBody
-    RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
+    public @ResponseBody MappingJacksonValue getSummaryRecord(@PathVariable("orcid") String orcid) {
         RecordSummary recordSummary = new RecordSummary();
         Boolean isDeprecated = false;
 
@@ -332,14 +335,14 @@ public class PublicRecordController extends BaseWorkspaceController {
             }
             recordSummary.setName(localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
                     + localeManager.resolveMessage("public_profile.deactivated.family_name"));
-            return recordSummary;
+            return new MappingJacksonValue(recordSummary);
         } catch (OrcidNotClaimedException e) {
             recordSummary.setName(localeManager.resolveMessage("orcid.reserved_for_claim"));
-            return recordSummary;
+            return new MappingJacksonValue(recordSummary);
         } catch (OrcidDeprecatedException e) {
             isDeprecated = true;
         } catch (OrcidNoResultException e) {
-            return recordSummary;
+            return new MappingJacksonValue(recordSummary);
         }
 
         if (isDeprecated) {
@@ -347,12 +350,20 @@ public class PublicRecordController extends BaseWorkspaceController {
             recordSummary.setEmploymentAffiliations(null);
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
+
+            return new MappingJacksonValue(recordSummary);
         } else {
             recordSummary = getSummary(orcid);
             recordSummary.setStatus("active");
-        }
 
-        return recordSummary;
+            SimpleBeanPropertyFilter simpleBeanPropertyFilter = SimpleBeanPropertyFilter.serializeAllExcept("name");
+            FilterProvider filterProvider = new SimpleFilterProvider().addFilter("nameFilter", simpleBeanPropertyFilter);
+            MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(recordSummary);
+            if (recordSummary.getName() == null) {
+                mappingJacksonValue.setFilters(filterProvider);
+            }
+            return mappingJacksonValue;
+        }
     }
 
     public @ResponseBody
@@ -362,7 +373,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         Record record = recordManagerReadOnly.getPublicRecord(orcid, false);
         Person person = record.getPerson();
         if (person != null) {
-            String displayName = "undefined";
+            String displayName = null;
             Name name = person.getName();
             if (name != null) {
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {

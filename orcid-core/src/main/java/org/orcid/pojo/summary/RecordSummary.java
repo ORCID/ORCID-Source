@@ -1,8 +1,11 @@
 package org.orcid.pojo.summary;
 
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+
 import java.util.List;
 
+@JsonFilter("nameFilter")
 public class RecordSummary {
     private String name;
     private String orcid;
