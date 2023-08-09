@@ -4,7 +4,7 @@ http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHE
 Your 16-digit ORCID identifier is 4444-4444-4444-4446, and your full ORCID iD and the link to your public record is https://testserver.orcid.org/4444-4444-4444-4446?lang=en (primary email address: josiah_carberry@brown.edu).
 
 Warm Regards,
-The ORCID Team
+ORCID Support Team
 https://support.orcid.org
 
 You have received this email as a service announcement related to your ORCID Account.
