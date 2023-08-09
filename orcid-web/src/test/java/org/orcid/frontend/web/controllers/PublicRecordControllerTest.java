@@ -140,7 +140,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummary() {
-        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(userOrcid).getValue();
+        RecordSummary record = publicRecordController.getSummaryRecord(userOrcid);
 
         assertEquals("active", record.getStatus());
         assertNotNull(record.getName());
@@ -184,7 +184,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryDeactivated() {
-        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(deactivatedUserOrcid).getValue();
+        RecordSummary record = publicRecordController.getSummaryRecord(deactivatedUserOrcid);
 
         assertEquals("Given Names Deactivated Family Name Deactivated", record.getName());
 
@@ -193,7 +193,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryLocked() {
-        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(lockedUserOrcid).getValue();
+        RecordSummary record = publicRecordController.getSummaryRecord(lockedUserOrcid);
 
         assertNotNull(record.getName());
         assertEquals("Given Names Deactivated Family Name Deactivated", record.getName());
@@ -203,7 +203,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryDeprecated() {
-        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(deprecatedUserOrcid).getValue();
+        RecordSummary record = publicRecordController.getSummaryRecord(deprecatedUserOrcid);
 
         assertNull(record.getName());
 
@@ -212,7 +212,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryPrivateName() {
-        RecordSummary record = (RecordSummary) publicRecordController.getSummaryRecord(unclaimedUserOrcid).getValue();
+        RecordSummary record = publicRecordController.getSummaryRecord(unclaimedUserOrcid);
 
         assertNull(record.getName());
     }
