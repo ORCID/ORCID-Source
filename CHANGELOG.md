@@ -1,3 +1,13 @@
+## v2.37.5 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.4...v2.37.5)
+
+- [#6857](https://github.com/ORCID/ORCID-Source/pull/6857): fix: Count only default affiliation group
+
+### Fix
+
+- Count only default affiliation group
+
 ## v2.37.4 - 2023-08-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.3...v2.37.4)
