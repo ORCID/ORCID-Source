@@ -1,3 +1,9 @@
+## v2.37.4 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.3...v2.37.4)
+
+- [#6858](https://github.com/ORCID/ORCID-Source/pull/6858): Remove the extra space between the Orcid team and the link
+
 ## v2.37.3 - 2023-08-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.2...v2.37.3)
