@@ -158,14 +158,20 @@ public class PublicRecordControllerTest extends DBUnitTest {
         
         // Added by member
         assertEquals(String.valueOf(19), record.getExternalIdentifiers().get(0).getId());
+        assertEquals("self_public_user_obo_type", record.getExternalIdentifiers().get(0).getCommonName());
+        assertEquals("self_public_user_obo_ref", record.getExternalIdentifiers().get(0).getReference());
         assertEquals("http://ext-id/self/obo/public", record.getExternalIdentifiers().get(0).getUrl());
         assertFalse(record.getExternalIdentifiers().get(0).isValidated());
         // Added by user
         assertEquals(String.valueOf(18), record.getExternalIdentifiers().get(1).getId());
+        assertEquals("self_public_type", record.getExternalIdentifiers().get(1).getCommonName());
+        assertEquals("self_public_ref", record.getExternalIdentifiers().get(1).getReference());
         assertEquals("http://ext-id/self/public", record.getExternalIdentifiers().get(1).getUrl());
         assertFalse(record.getExternalIdentifiers().get(1).isValidated());
         // User OBO
         assertEquals(String.valueOf(13), record.getExternalIdentifiers().get(2).getId());
+        assertEquals("public_type", record.getExternalIdentifiers().get(2).getCommonName());
+        assertEquals("public_ref", record.getExternalIdentifiers().get(2).getReference());
         assertEquals("http://ext-id/public_ref", record.getExternalIdentifiers().get(2).getUrl());
         assertTrue(record.getExternalIdentifiers().get(2).isValidated());
         

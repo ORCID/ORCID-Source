@@ -10,6 +10,8 @@ import java.util.List;
 
 public class ExternalIdentifiersSummary {
     private String id;
+    private String commonName;
+    private String reference;
     private String url;
     private boolean validated;
 
@@ -19,6 +21,22 @@ public class ExternalIdentifiersSummary {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getUrl() {
@@ -51,6 +69,14 @@ public class ExternalIdentifiersSummary {
         ExternalIdentifiersSummary form = new ExternalIdentifiersSummary();
 
         if (personExternalIdentifier != null) {
+            if (!PojoUtil.isEmpty(personExternalIdentifier.getType())) {
+                form.setCommonName(personExternalIdentifier.getType());
+            }
+
+            if (!PojoUtil.isEmpty(personExternalIdentifier.getValue())) {
+                form.setReference(personExternalIdentifier.getValue());
+            }
+
             if (!PojoUtil.isEmpty(personExternalIdentifier.getUrl())) {
                 form.setUrl(personExternalIdentifier.getUrl().getValue());
             }
