@@ -1,5 +1,8 @@
 package org.orcid.frontend.web.controllers;
 
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -10,6 +13,7 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
+import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -26,11 +30,13 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.SourceUtils;
+import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -44,21 +50,13 @@ import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecord;
 import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
+import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
+import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
@@ -66,10 +64,12 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
+import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.summary.AffiliationSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,7 +81,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -161,6 +160,12 @@ public class PublicRecordController extends BaseWorkspaceController {
 
     @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
+
+    @Resource
+    PublicProfileController publicProfileController;
+
+    @Resource
+    private WorksCacheManager worksCacheManager;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -316,8 +321,7 @@ public class PublicRecordController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET)
-    public @ResponseBody
-    RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
+    public @ResponseBody RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
         RecordSummary recordSummary = new RecordSummary();
         Boolean isDeprecated = false;
 
@@ -347,12 +351,13 @@ public class PublicRecordController extends BaseWorkspaceController {
             recordSummary.setEmploymentAffiliations(null);
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
+
+            return recordSummary;
         } else {
             recordSummary = getSummary(orcid);
-            recordSummary.setStatus("active");
+            recordSummary.setStatus("active");            
+            return recordSummary;
         }
-
-        return recordSummary;
     }
 
     public @ResponseBody
@@ -362,7 +367,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         Record record = recordManagerReadOnly.getPublicRecord(orcid, false);
         Person person = record.getPerson();
         if (person != null) {
-            String displayName = "undefined";
+            String displayName = null;
             Name name = person.getName();
             if (name != null) {
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
@@ -382,23 +387,22 @@ public class PublicRecordController extends BaseWorkspaceController {
         }
 
         ActivitiesSummary activitiesSummary = record.getActivitiesSummary();
-        Collection<AffiliationGroup<EmploymentSummary>> employmentsSummary = activitiesSummary.getEmployments().getEmploymentGroups();
+
+        AffiliationGroupContainer groupedAffiliations = publicProfileController.getGroupedAffiliations(orcid);
+        List<AffiliationGroupForm> groupedEmployments = groupedAffiliations.getAffiliationGroups().get(AffiliationType.EMPLOYMENT);
 
         List<AffiliationSummary> employmentAffiliations = new ArrayList<>();
 
-        if (employmentsSummary.size() > 0) {
-            Stream<AffiliationGroup<EmploymentSummary>> employmentsList = employmentsSummary.stream().limit(3);
-            employmentsList.forEach(e -> {
-                for (EmploymentSummary s : e.getActivities()) {
-                    employmentAffiliations.add(AffiliationSummary.valueOf(s, orcid, "employment"));
-                }
-            });
+        if (groupedEmployments.size() > 0) {
+
+            Stream<AffiliationGroupForm> employmentsList = groupedEmployments.stream().limit(3);
+            employmentsList.forEach(e -> employmentAffiliations.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "employment")));
         }
 
-        recordSummary.setEmploymentAffiliationsCount(employmentsSummary.size());
+        recordSummary.setEmploymentAffiliationsCount(groupedEmployments.size());
         recordSummary.setEmploymentAffiliations(employmentAffiliations);
 
-        List<AffiliationSummary> professionalActivities = retrieveProfessionalActivities(activitiesSummary, orcid);
+        List<AffiliationSummary> professionalActivities = retrieveProfessionalActivities(groupedAffiliations, orcid);
 
         if (professionalActivities.size() > 3) {
             recordSummary.setProfessionalActivities(Arrays.asList(professionalActivities.get(0), professionalActivities.get(1), professionalActivities.get(2)));
@@ -414,44 +418,40 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, orcid));
 
-        Works works = activitiesSummary.getWorks();
+        Page<org.orcid.pojo.grouping.WorkGroup> works = publicProfileController.getAllWorkGroupsJson(orcid, "date", true);
 
-        List<WorkGroup> workGroups = works.getWorkGroup();
+        List<WorkGroup> workGroups = works.getGroups();
 
         AtomicInteger validatedWorks = new AtomicInteger();
         AtomicInteger selfAssertedWorks = new AtomicInteger();
 
         if (workGroups != null) {
-            workGroups.forEach(work -> {
-                work.getWorkSummary().forEach(w -> {
-                    if (w.getSource().getSourceClientId() != null && !orcid.equals(w.getSource().getSourceClientId())) {
+            workGroups.forEach(work -> work.getWorks().forEach(w -> {
+                if (work.getDefaultPutCode().equals(Long.valueOf(w.getPutCode().getValue()))) {
+                    if (!orcid.equals(w.getSource())) {
                         validatedWorks.getAndIncrement();
                     } else {
                         selfAssertedWorks.getAndIncrement();
                     }
-                });
-            });
+                }
+            }));
         }
 
         recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
         recordSummary.setValidatedWorks(validatedWorks.get());
 
-        Fundings fundings = activitiesSummary.getFundings();
-
-        List<FundingGroup> fundingGroups = fundings.getFundingGroup();
+        List<org.orcid.pojo.grouping.FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
 
         AtomicInteger validatedFunds = new AtomicInteger();
         AtomicInteger selfAssertedFunds = new AtomicInteger();
 
         if (fundingGroups != null) {
             fundingGroups.forEach(fundingGroup -> {
-                fundingGroup.getFundingSummary().forEach(funding -> {
-                    if (funding.getSource().getSourceClientId() != null && !orcid.equals(funding.getSource().getSourceClientId())) {
-                        validatedFunds.getAndIncrement();
-                    } else {
-                        selfAssertedFunds.getAndIncrement();
-                    }
-                });
+                if (!orcid.equals(fundingGroup.getDefaultFunding().getSource())) {
+                    validatedFunds.getAndIncrement();
+                } else {
+                    selfAssertedFunds.getAndIncrement();
+                }
             });
         }
 
@@ -460,14 +460,14 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
 
-        AtomicInteger publicationGrants = new AtomicInteger();
+        AtomicInteger totalReviewsCount = new AtomicInteger();
 
         if (peerReviewMinimizedSummaryList != null) {
             peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
-                publicationGrants.set(publicationGrants.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
+                totalReviewsCount.set(totalReviewsCount.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
             });
-            recordSummary.setPeerReviewsTotal(peerReviewMinimizedSummaryList.size());
-            recordSummary.setPeerReviewPublicationGrants(publicationGrants.intValue());
+            recordSummary.setPeerReviewsTotal(totalReviewsCount.intValue());
+            recordSummary.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
         } else {
             recordSummary.setPeerReviewsTotal(0);
             recordSummary.setPeerReviewPublicationGrants(0);
@@ -483,34 +483,19 @@ public class PublicRecordController extends BaseWorkspaceController {
         return recordSummary;
     }
 
-    private List<AffiliationSummary> retrieveProfessionalActivities(ActivitiesSummary activitiesSummary, String orcid) {
+    private List<AffiliationSummary> retrieveProfessionalActivities(AffiliationGroupContainer groupedAffiliations, String orcid) {
         List<AffiliationSummary> professionalActivities = new ArrayList<>();
 
-        Collection<AffiliationGroup<MembershipSummary>> membershipSummary = activitiesSummary.getMemberships().getMembershipGroups();
-        Collection<AffiliationGroup<ServiceSummary>> serviceSummary = activitiesSummary.getServices().getServiceGroups();
-        Collection<AffiliationGroup<InvitedPositionSummary>> invitedPositionSummary = activitiesSummary.getInvitedPositions().getInvitedPositionGroups();
-        Collection<AffiliationGroup<DistinctionSummary>> distinctionSummary = activitiesSummary.getDistinctions().getDistinctionGroups();
+        List<AffiliationGroupForm> membershipGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.MEMBERSHIP);
+        List<AffiliationGroupForm> serviceGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.SERVICE);
+        List<AffiliationGroupForm> invitedPositionGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.INVITED_POSITION);
+        List<AffiliationGroupForm> distinctionGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.DISTINCTION);
 
-        membershipSummary.forEach(e -> {
-            for (MembershipSummary m : e.getActivities()) {
-                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "membership"));
-            }
-        });
-        serviceSummary.forEach(e -> {
-            for (ServiceSummary m : e.getActivities()) {
-                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "service"));
-            }
-        });
-        invitedPositionSummary.forEach(e -> {
-            for (InvitedPositionSummary m : e.getActivities()) {
-                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "invited-position"));
-            }
-        });
-        distinctionSummary.forEach(e -> {
-            for (DistinctionSummary m : e.getActivities()) {
-                professionalActivities.add(AffiliationSummary.valueOf(m, orcid, "distinction"));
-            }
-        });
+        membershipGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "membership")));
+        serviceGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "service")));
+        invitedPositionGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "invited-position")));
+        distinctionGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "distinction")));
+
         return professionalActivities;
     }
 

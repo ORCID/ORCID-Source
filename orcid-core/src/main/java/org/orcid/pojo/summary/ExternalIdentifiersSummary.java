@@ -11,7 +11,7 @@ import java.util.List;
 public class ExternalIdentifiersSummary {
     private String id;
     private String url;
-    private boolean validatedOrSelfAsserted;
+    private boolean validated;
 
     public String getId() {
         return id;
@@ -29,12 +29,12 @@ public class ExternalIdentifiersSummary {
         this.url = url;
     }
 
-    public boolean isValidatedOrSelfAsserted() {
-        return validatedOrSelfAsserted;
+    public boolean isValidated() {
+        return validated;
     }
 
-    public void setValidatedOrSelfAsserted(boolean validatedOrSelfAsserted) {
-        this.validatedOrSelfAsserted = validatedOrSelfAsserted;
+    public void setValidated(boolean validated) {
+        this.validated = validated;
     }
 
     public static List<ExternalIdentifiersSummary> valueOf(PersonExternalIdentifiers personExternalIdentifiers, String orcid) {
@@ -60,7 +60,7 @@ public class ExternalIdentifiersSummary {
             }
 
             if (personExternalIdentifier.getSource() != null) {
-                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
+                form.setValidated(SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
             }
         }
         return form;

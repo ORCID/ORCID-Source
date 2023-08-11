@@ -3,7 +3,11 @@ package org.orcid.pojo.summary;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class RecordSummary {
+    @JsonInclude(Include.NON_NULL)
     private String name;
     private String orcid;
     private List<AffiliationSummary> employmentAffiliations;
