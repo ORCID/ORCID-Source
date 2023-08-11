@@ -89,7 +89,7 @@ public class AutoLockSpamRecords {
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
-    @Resource
+    @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauthDao;
 
     private static int ONE_DAY = 86400000;
