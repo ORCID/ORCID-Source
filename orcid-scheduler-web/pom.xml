@@ -35,6 +35,12 @@
             <artifactId>solr-solrj</artifactId>
             <version>${solr.version}</version>        	
         </dependency>
+        
+        <!-- AWS -->
+	    <dependency>
+	    	<groupId>com.amazonaws</groupId>
+	    	<artifactId>aws-java-sdk-s3</artifactId>
+	  	</dependency>	 
                 
         <!-- javax.xml -->
         <dependency>
