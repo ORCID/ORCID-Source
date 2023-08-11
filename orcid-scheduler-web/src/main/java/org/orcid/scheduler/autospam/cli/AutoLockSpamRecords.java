@@ -62,9 +62,6 @@ public class AutoLockSpamRecords {
     @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
     
-    @Value("${org.orcid.scheduler.autospam.daily.batch.size:20000}")
-    private int AUTOSPAM_DAILY_BATCH_SIZE;
-    
     @Value("${org.orcid.message-listener.s3.accessKey}")
     private String S3_ACCESS_KEY;
     
