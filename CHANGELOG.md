@@ -1,3 +1,9 @@
+## v2.37.9 - 2023-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.8...v2.37.9)
+
+- [#6865](https://github.com/ORCID/ORCID-Source/pull/6865): Added pre tag to fix the new lines in the email footer
+
 ## v2.37.8 - 2023-08-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.7...v2.37.8)
