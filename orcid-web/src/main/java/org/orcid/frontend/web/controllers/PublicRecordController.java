@@ -1,8 +1,5 @@
 package org.orcid.frontend.web.controllers;
 
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -69,7 +66,6 @@ import org.orcid.pojo.summary.AffiliationSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,6 +77,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -189,7 +187,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         } catch (OrcidDeprecatedException e) {
             isDeprecated = true;
         } catch (OrcidNoResultException e) {
-            return publicRecord; 
+            return publicRecord;
         }
 
         publicRecord = getRecord(orcid);
@@ -355,7 +353,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             return recordSummary;
         } else {
             recordSummary = getSummary(orcid);
-            recordSummary.setStatus("active");            
+            recordSummary.setStatus("active");
             return recordSummary;
         }
     }
@@ -393,8 +391,9 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         List<AffiliationSummary> employmentAffiliations = new ArrayList<>();
 
-        if (groupedEmployments.size() > 0) {
+        sortAffiliationsByCreatedDate(groupedEmployments);
 
+        if (groupedEmployments.size() > 0) {
             Stream<AffiliationGroupForm> employmentsList = groupedEmployments.stream().limit(3);
             employmentsList.forEach(e -> employmentAffiliations.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "employment")));
         }
@@ -486,15 +485,16 @@ public class PublicRecordController extends BaseWorkspaceController {
     private List<AffiliationSummary> retrieveProfessionalActivities(AffiliationGroupContainer groupedAffiliations, String orcid) {
         List<AffiliationSummary> professionalActivities = new ArrayList<>();
 
-        List<AffiliationGroupForm> membershipGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.MEMBERSHIP);
-        List<AffiliationGroupForm> serviceGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.SERVICE);
-        List<AffiliationGroupForm> invitedPositionGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.INVITED_POSITION);
-        List<AffiliationGroupForm> distinctionGroupedAffiliations = groupedAffiliations.getAffiliationGroups().get(AffiliationType.DISTINCTION);
+        List<AffiliationGroupForm> affiliationGroupForms = new ArrayList<>();
 
-        membershipGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "membership")));
-        serviceGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "service")));
-        invitedPositionGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "invited-position")));
-        distinctionGroupedAffiliations.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "distinction")));
+        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.MEMBERSHIP));
+        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.SERVICE));
+        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.INVITED_POSITION));
+        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.DISTINCTION));
+
+        sortAffiliationsByCreatedDate(affiliationGroupForms);
+
+        affiliationGroupForms.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, e.getAffiliationType().value())));
 
         return professionalActivities;
     }
@@ -507,5 +507,10 @@ public class PublicRecordController extends BaseWorkspaceController {
 
     private Long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
+    }
+
+    private void sortAffiliationsByCreatedDate(List<AffiliationGroupForm> affiliationGroupForms) {
+        affiliationGroupForms.sort(Comparator.comparing(a -> a.getDefaultAffiliation().getCreatedDate().toJavaDate()));
+        Collections.reverse(affiliationGroupForms);
     }
 }
