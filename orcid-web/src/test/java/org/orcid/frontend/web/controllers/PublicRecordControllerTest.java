@@ -150,7 +150,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(1, record.getEmploymentAffiliations().size());
         assertEquals(1, record.getEmploymentAffiliationsCount());
 
-        assertEquals("An institution", record.getEmploymentAffiliations().get(0).getOrganizationName());                
+        assertEquals("An institution", record.getEmploymentAffiliations().get(0).getOrganizationName());
         
         // Check external identifiers
         assertNotNull(record.getExternalIdentifiers());
@@ -179,7 +179,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(0, record.getSelfAssertedFunds());
 
         assertNotNull(record.getProfessionalActivities());
-        assertEquals(4, record.getProfessionalActivitiesCount());        
+        assertEquals(4, record.getProfessionalActivitiesCount());
     }
 
     @Test
@@ -208,5 +208,12 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertNull(record.getName());
 
         assertEquals("deprecated", record.getStatus());
+    }
+
+    @Test
+    public void testGetRecordSummaryPrivateName() {
+        RecordSummary record = publicRecordController.getSummaryRecord(unclaimedUserOrcid);
+
+        assertNull(record.getName());
     }
 }
