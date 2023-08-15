@@ -1,3 +1,9 @@
+## v2.37.10 - 2023-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.9...v2.37.10)
+
+- [#6866](https://github.com/ORCID/ORCID-Source/pull/6866): Refactoring of the autospamcli so it can be run as scheduled or manual cli
+
 ## v2.37.9 - 2023-08-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.8...v2.37.9)
