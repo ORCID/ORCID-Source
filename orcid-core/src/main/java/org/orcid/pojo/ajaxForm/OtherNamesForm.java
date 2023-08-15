@@ -67,5 +67,26 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }        
+    }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OtherNamesForm other = (OtherNamesForm) obj;
+
+         if (otherNames != null && other.getOtherNames() != null && otherNames.size() != other.getOtherNames().size()) {
+            return false;
+        } else {
+             for (int i = 0; i < otherNames.size(); i++) {
+                 if (!otherNames.get(i).compare(other.getOtherNames().get(i))) {
+                     return false;
+                 }
+             }
+         }
+        return true;
+    }
 }

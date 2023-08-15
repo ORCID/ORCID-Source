@@ -44,7 +44,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
-    private static final int INDEXING_CHUNK_SIZE = 1000;
     private static final int INCORRECT_POPULARITY_CHUNK_SIZE = 1000;
     private static final Logger LOGGER = LoggerFactory.getLogger(OrgDisambiguatedManagerImpl.class);
 
@@ -75,18 +74,21 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Resource
     private List<OrgDisambiguatedExternalIdNormalizer> orgDisambiguatedExternalIdNormalizers;
 
+    @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.indexing.batchSize:1000}")
+    private int indexingBatchSize;
+    
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
         List<OrgDisambiguatedEntity> entities = null;
         int startIndex = 0;
         do {
-            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(startIndex, INDEXING_CHUNK_SIZE);
+            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(startIndex, indexingBatchSize);
             LOGGER.info("Found chunk of {} disambiguated orgs for indexing", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 processDisambiguatedOrgInTransaction(entity);
             }
-            startIndex = startIndex + INDEXING_CHUNK_SIZE;
+            startIndex = startIndex + indexingBatchSize;
         } while (!entities.isEmpty());
 
     }
@@ -98,13 +100,13 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         int startIndex = 0;
         do {
             LOGGER.info("GROUP: Start index is: " + startIndex);
-            entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, INDEXING_CHUNK_SIZE);
+            entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, indexingBatchSize);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
                 
                 new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
             }
-            startIndex = startIndex + INDEXING_CHUNK_SIZE;
+            startIndex = startIndex + indexingBatchSize;
 
         } while (!entities.isEmpty());
 
@@ -272,7 +274,14 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier( String identifier, String type ) {
         List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
         List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(identifier, type);
-        extIds.stream().forEach((e) -> orgDisambiguatedIds.add(convertEntity(e.getOrgDisambiguated())));
+        extIds.stream().forEach((e) -> 
+            {
+                OrgDisambiguatedEntity de = e.getOrgDisambiguated();
+                // Group only if it is not a RINGGOLD org
+                if(de != null && !OrgDisambiguatedSourceType.RINGGOLD.name().equals(de.getSourceType())) {
+                    orgDisambiguatedIds.add(convertEntity(de));
+                }
+            });
         return orgDisambiguatedIds;
     }
 

@@ -91,7 +91,7 @@ public class HomeController extends BaseController {
     
     @RequestMapping(value = "/home")
     public ModelAndView homeRedirect(HttpServletRequest request) {
-        return new ModelAndView("redirect:/");
+        return new ModelAndView("redirect:" + orcidUrlManager.getBaseUrl());
 
     }
 

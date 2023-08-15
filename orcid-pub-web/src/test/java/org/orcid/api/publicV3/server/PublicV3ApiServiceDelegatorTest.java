@@ -493,8 +493,33 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(extIds.getLastModifiedDate());
         assertNotNull(extIds.getLastModifiedDate().getValue());
         assertEquals("/0000-0000-0000-0003/external-identifiers", extIds.getPath());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(3, extIds.getExternalIdentifiers().size());
+        
         PersonExternalIdentifier extId = extIds.getExternalIdentifiers().get(0);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(19), extId.getPutCode());
+        assertEquals("self_public_user_obo_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
+        assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
+        
+        extId = extIds.getExternalIdentifiers().get(1);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(18), extId.getPutCode());
+        assertEquals("self_public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/18", extId.getPath());
+        assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+        
+        extId = extIds.getExternalIdentifiers().get(2);
         assertNotNull(extId);
         assertNotNull(extId.getLastModifiedDate());
         assertNotNull(extId.getLastModifiedDate().getValue());
@@ -1800,8 +1825,36 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
-        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        
+        PersonExternalIdentifiers extIds = person.getExternalIdentifiers();
+        
+        assertNotNull(extIds);
+        PersonExternalIdentifier extId = extIds.getExternalIdentifiers().get(0);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(19), extId.getPutCode());
+        assertEquals("self_public_user_obo_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
+        assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
+        
+        extId = extIds.getExternalIdentifiers().get(1);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(18), extId.getPutCode());
+        assertEquals("self_public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/18", extId.getPath());
+        assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+        
+        extId = extIds.getExternalIdentifiers().get(2);
         assertNotNull(extId);
         assertNotNull(extId.getLastModifiedDate());
         assertNotNull(extId.getLastModifiedDate().getValue());
@@ -1812,6 +1865,7 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
         assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+        
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getLastModifiedDate());
         assertNotNull(person.getKeywords().getLastModifiedDate().getValue());
@@ -2069,8 +2123,8 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Sets.newHashSet("WDB","grant_number"),fundingIds);
         assertEquals("PUBLIC",doc.worksAndFunding.creator.iterator().next().name);
         assertEquals("http://www.researcherurl.com?id=13",doc.url.get(0));
-        assertEquals("public_type",doc.identifier.get(0).propertyID);
-        assertEquals( "public_ref",doc.identifier.get(0).value);
+        assertEquals("self_public_user_obo_type",doc.identifier.get(0).propertyID);
+        assertEquals( "self_public_user_obo_ref",doc.identifier.get(0).value);
     }
     
     @Test

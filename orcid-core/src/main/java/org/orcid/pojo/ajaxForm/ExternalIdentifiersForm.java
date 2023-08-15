@@ -63,4 +63,25 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ExternalIdentifiersForm other = (ExternalIdentifiersForm) obj;
+
+        if (externalIdentifiers != null && other.getExternalIdentifiers() != null && externalIdentifiers.size() != other.getExternalIdentifiers().size()) {
+            return false;
+        } else {
+            for (int i = 0; i < externalIdentifiers.size(); i++) {
+                if (!externalIdentifiers.get(i).compare(other.getExternalIdentifiers().get(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

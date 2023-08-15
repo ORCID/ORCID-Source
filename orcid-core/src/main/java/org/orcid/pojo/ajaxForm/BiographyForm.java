@@ -40,4 +40,20 @@ public class BiographyForm extends VisibilityForm implements ErrorsInterface, Se
     public void setBiography(Text biography) {
         this.biography = biography;
     }
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BiographyForm other = (BiographyForm) obj;
+
+        if (!WorkForm.compareTexts(biography, other.biography, false))
+            return false;
+        if (visibility != null && other.visibility != null && !visibility.getVisibility().value().equals(other.visibility.getVisibility().value()))
+            return false;
+        return true;
+    }
 }

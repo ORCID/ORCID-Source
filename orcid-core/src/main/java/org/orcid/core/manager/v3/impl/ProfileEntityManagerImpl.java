@@ -1,16 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.security.InvalidParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
@@ -82,6 +71,16 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.security.InvalidParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -344,19 +343,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 applicationSummary = new ApplicationSummary();
                 distinctApplications.put(client.getId(), applicationSummary);
                 applicationSummary.setScopePaths(new HashMap<String, String>());
-                applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
-                applicationSummary.setOrcidPath(client.getId());
                 applicationSummary.setName(client.getClientName());
+                applicationSummary.setClientId(client.getId());
                 applicationSummary.setWebsiteValue(client.getClientWebsite());
                 applicationSummary.setApprovalDate(token.getDateCreated());
-                applicationSummary.setTokenId(String.valueOf(token.getId()));
-
-                if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
-                    ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
-                    applicationSummary.setGroupOrcidPath(member.getId());
-                    applicationSummary.setGroupName(getMemberDisplayName(member));
-                }
             }
 
             Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
@@ -364,7 +354,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             for (ScopePathType tempScope : scopesGrantedToClient) {
                 try {
                     String label = localeManager.resolveMessage(scopeFullPath + tempScope.toString());
-                    applicationSummary.getScopePaths().put(label, label);
+                    applicationSummary.getScopePaths().put(tempScope.toString(), label);
                 } catch (NoSuchMessageException e) {
                     LOGGER.warn("No message to display for scope " + tempScope.toString());
                 }

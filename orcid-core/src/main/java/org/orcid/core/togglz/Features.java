@@ -5,6 +5,15 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+    @Label("Professional activities")
+    PROFESSIONAL_ACTIVITIES,
+
+    @Label("Redirect PUT token actions from *.pub.orcid.org to *.orcid.org")
+    REDIRECT_PUT_TOKEN_ENDPOINT,
+
+    @Label("New Developer tools")
+    NEW_DEVELOPER_TOOLS,
+
 
     @Label("Stop sending notification if work has not been updated")
     STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED,
@@ -25,10 +34,7 @@ public enum Features implements Feature {
     ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
 
     @Label("Add other people contributions manually")
-    ADD_OTHER_WORK_CONTRIBUTORS,
-
-    @Label("Store and read top_contributors_json")
-    STORE_TOP_CONTRIBUTORS,
+    ADD_OTHER_WORK_CONTRIBUTORS,    
 
     @Label("Restrict delegator access to account settings")
     RESTRICTED_DELEGATORS,
@@ -36,44 +42,17 @@ public enum Features implements Feature {
     @Label("HelpHero")
     ORCID_ANGULAR_HELP_HERO,
 
-    @Label("Orcid Angular Lazy Load Peer Reviews")
-    ORCID_ANGULAR_LAZY_LOAD_PEER_REVIEWS,
-
-    @Label("Orcid Angular Works Contributors")
-    ORCID_ANGULAR_WORKS_CONTRIBUTORS,
-
-    @Label("Orcid Angular Account settings ")
-    ORCID_ANGULAR_ACCOUNT_SETTINGS,
-
-    @Label("Orcid Angular Public Page")
-    ORCID_ANGULAR_PUBLIC_PAGE,
-
     @Label("Disable Badges")
     DISABLE_BADGES,
-
-    @Label("Orcid Angular My Orcid")
-    ORCID_ANGULAR_MY_ORCID,
 
     @Label("Spam button")
     SPAM_BUTTON,
 
-    @Label("Orcid Angular Search")
-    ORCID_ANGULAR_SEARCH,
-
-    @Label("Works pagination")
-    WORKS_PAGINATION,
-
     @Label("Email status dropdown option")
     EMAIL_STATUS_DROPDOWN_OPTION,
 
-    @Label("Enable user menu")
-    ENABLE_USER_MENU,
-
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-	
-    @Label("Add works based on ArXiv, DOI or PubMed id metadata")
-    ADD_WORKS_WITH_EXTERNAL_ID,
 	
     @Label("Change view privacy from work/funding/affiliation form dialogs")
     DIALOG_PRIVACY_OPTION,
@@ -152,9 +131,6 @@ public enum Features implements Feature {
     
     @Label("Promote a client from public client to be a member")
     UPGRADE_PUBLIC_CLIENT, 
-    
-    @Label("Allow members to delete their own elements even with revoked tokens")
-    ALLOW_DELETE_WITH_REVOKED_TOKENS,
     
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB, 

@@ -196,25 +196,23 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
         List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid);
         // Filter the contributors list
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            for (WorkSummaryExtended wse : wseList) {
-                if (Features.STORE_TOP_CONTRIBUTORS.isActive() && wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                    wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
-                } else {
-                    contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
-                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
-                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
-                }
+        for (WorkSummaryExtended wse : wseList) {
+            if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
+                wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
+            } else {
+                contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
+                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
+                wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
             }
-        }
+        }        
         return wseList;
     }
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
-        List<Object[]> list = workDao.getWorksByOrcid(orcid, Features.STORE_TOP_CONTRIBUTORS.isActive());
+        List<Object[]> list = workDao.getWorksByOrcid(orcid);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
             String workType = isEmpty(q1[1]);
@@ -257,7 +255,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             List<WorkContributorsList> contributorList = new ArrayList<>();
             List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive() && contributors != null && !"".equals(contributors)) {
+            if (contributors != null && !"".equals(contributors)) {
                 contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
             } else {
                 contributorList = workContributorsConverter.getContributorsList(contributors);

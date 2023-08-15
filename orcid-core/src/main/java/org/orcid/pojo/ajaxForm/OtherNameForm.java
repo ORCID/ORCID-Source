@@ -194,5 +194,20 @@ public class OtherNameForm extends VisibilityForm implements ErrorsInterface, Se
     public void setAssertionOriginName(String assertionOriginName) {
         this.assertionOriginName = assertionOriginName;
     }
-    
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OtherNameForm other = (OtherNameForm) obj;
+
+        if (!WorkForm.compareStrings(content, other.getContent()))
+            return false;
+        if (visibility != null && other.visibility != null && !visibility.getVisibility().value().equals(other.visibility.getVisibility().value()))
+            return false;
+        return true;
+    }
 }

@@ -184,8 +184,8 @@ public class WebhookManagerImpl implements WebhookManager {
                 webhookDao.markAsFailed(orcid, uri);
             }            
         } catch(Exception e) {
-            LOGGER.warn("Exception processing webhook '{}' for '{}'", new Object[] { webhook.getUri(),
-                    clientId, orcid });
+            LOGGER.warn("Exception processing webhook '{}' for '{}':'{}'. Error: {}", new Object[] { webhook.getUri(),
+                    clientId, orcid, e.getMessage()});
             webhookDao.markAsFailed(orcid, uri);
         } finally {
             decreaseWebhook(clientId);
@@ -247,11 +247,11 @@ public class WebhookManagerImpl implements WebhookManager {
         if (!url.toLowerCase().startsWith("http")) {
             url = "http://" + url;
         }
-        try {
+        try {            
             HttpResponse<String> response = httpRequestUtils.doPost(url);
             return response.statusCode();
         } catch (IOException | InterruptedException | URISyntaxException e) {
-            LOGGER.error(String.format("Error processing webhook %s", url));
+            LOGGER.error(String.format("Error processing webhook %s", url), e);
         } 
         return 0;
     }

@@ -1,17 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,6 +26,7 @@ import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -67,6 +56,17 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
@@ -326,13 +326,22 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertEquals(2, applications.size());
-        assertEquals(4, applications.get(0).getScopePaths().keySet().size());
-        assertEquals(2, applications.get(1).getScopePaths().keySet().size());
+        assertEquals(5, applications.get(0).getScopePaths().keySet().size());
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_READ_LIMITED.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_WORKS_READ_LIMITED.toString()));
         
+        assertEquals(3, applications.get(1).getScopePaths().keySet().size());
+        assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
+        assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
+        assertTrue(applications.get(1).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
+
         // test ordering based on name
-        assertEquals(CLIENT_ID_1, applications.get(0).getOrcidPath());
-        assertEquals(CLIENT_ID_2, applications.get(1).getOrcidPath());
-        
+        assertEquals(CLIENT_ID_1, applications.get(0).getClientId());
+        assertEquals(CLIENT_ID_2, applications.get(1).getClientId());
+
         //Assert we can delete them
         profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
         profileEntityManager.disableClientAccess(CLIENT_ID_2, USER_ORCID);
@@ -364,7 +373,11 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(1, applications.size());
         
         // scopes grouped by label - Read limited information from your biography., Read your information with visibility set to Trusted Parties, Add/update your research activities (works, affiliations, etc)
-        assertEquals(3, applications.get(0).getScopePaths().keySet().size());
+        assertEquals(4, applications.get(0).getScopePaths().keySet().size());
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.READ_LIMITED.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
+        assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.PERSON_READ_LIMITED.toString()));
         
         //Revoke them to check revoking one revokes all the ones with the same scopes
         profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);

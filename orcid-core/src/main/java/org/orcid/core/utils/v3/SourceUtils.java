@@ -1,7 +1,5 @@
 package org.orcid.core.utils.v3;
 
-import java.util.List;
-
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -45,6 +43,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+
+import java.util.List;
 
 public class SourceUtils {
     private SourceNameCacheManager sourceNameCacheManager;
@@ -305,5 +305,20 @@ public class SourceUtils {
                 }
             }
         }
+    }
+    
+    public static boolean isSelfAsserted(Source source, String orcid) {
+        String sourceId = source.retrieveSourcePath();
+        String assertionOriginSourceId = source.retrieveAssertionOriginPath();
+        // If the affiliation source is the user himself or any member with OBO, then, it is considered self asserted
+        if(orcid.equals(sourceId) || orcid.equals(assertionOriginSourceId)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean isSelfAsserted(String source, String orcid) {
+        return !orcid.equals(source);
     }
 }

@@ -1,0 +1,144 @@
+name: unit_tests_artifact
+
+# Run tests and upload the results as an artifact
+# Can be run from a unprivileged pull_request action
+# Reporting is done in the pr_completed.yml workflow
+
+on:
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'Name of the tag to build'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch amount or none'
+        required: false
+        default: 'patch'
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+      seed_maven_cache:
+        description: Whether to seed cache
+        type: boolean
+        required: false
+        default: true
+      install_maven_dependencies:
+        description: Whether to install dependencies or use a previous cache
+        type: boolean
+        required: false
+        default: true
+
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Name of the tag to build'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch amount or none'
+        required: false
+        default: 'patch'
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+      seed_maven_cache:
+        description: Whether to seed cache
+        type: boolean
+        required: false
+        default: true
+      install_maven_dependencies:
+        description: Whether to install dependencies or use a previous cache
+        type: boolean
+        required: false
+        default: true
+
+jobs:
+  tst_ml:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-message-listener
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_amq:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-activemq
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_api:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-api-web
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_iapi:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-internal-api
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_pubweb:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-pub-web
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_sched:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-scheduler-web
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_web:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-web
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+##########################################################
+
+  tst_utils:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-utils
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_core:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-core
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_persistence:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-persistence
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+  tst_api_common:
+    uses: ./.github/workflows/maven_test_artifact.yml
+    with:
+      project: orcid-api-common
+      seed_maven_cache: ${{ inputs.seed_maven_cache }}
+      install_maven_dependencies: ${{ inputs.install_maven_dependencies }}
+
+

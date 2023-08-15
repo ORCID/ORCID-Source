@@ -190,4 +190,19 @@ public class ExternalIdentifierForm extends VisibilityForm implements ErrorsInte
         this.assertionOriginName = assertionOriginName;
     }
 
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ExternalIdentifierForm other = (ExternalIdentifierForm) obj;
+
+        if (!WorkForm.compareStrings(putCode, other.getPutCode()))
+            return false;
+        if (visibility != null && other.visibility != null && !visibility.getVisibility().value().equals(other.visibility.getVisibility().value()))
+            return false;
+        return true;
+    }
 }

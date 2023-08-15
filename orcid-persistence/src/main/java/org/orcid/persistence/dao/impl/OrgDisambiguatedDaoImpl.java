@@ -39,6 +39,16 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         List<OrgDisambiguatedEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+    
+    @Override
+    public List<OrgDisambiguatedEntity> findBySourceType(String sourceType, int firstResult, int maxResults){
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where sourceType = :sourceType",
+                OrgDisambiguatedEntity.class);
+        query.setParameter("sourceType", sourceType);
+        query.setFirstResult(firstResult);
+        query.setMaxResults(maxResults);
+        return query.getResultList();
+    }
 
     @Override
     public List<OrgDisambiguatedEntity> getChunk(int firstResult, int maxResults) {
@@ -99,9 +109,8 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
 
     @Override
     public List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult) {
-        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where indexingStatus != :indexingStatus",
+        TypedQuery<OrgDisambiguatedEntity> query = entityManager.createQuery("from OrgDisambiguatedEntity where indexingStatus not in ('DONE', 'IGNORE')",
                 OrgDisambiguatedEntity.class);
-        query.setParameter("indexingStatus", IndexingStatus.DONE);
         query.setFirstResult(0);
         query.setMaxResults(maxResult);
         return query.getResultList();

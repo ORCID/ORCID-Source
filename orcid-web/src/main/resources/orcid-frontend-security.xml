@@ -112,22 +112,7 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[x](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
-	<sec:http pattern="/.well-known/**" security="none" />
-	
-	<sec:http pattern="/togglz/.*" 
-		use-expressions="false" 
-		access-decision-manager-ref="accessDecisionManager" 
-		authentication-manager-ref="authenticationManager" 
-		create-session="ifRequired"
-		request-matcher="regex" >	
-		<sec:csrf token-repository-ref="csrfTokenRepo" />
-        <sec:anonymous enabled="false" />    
-        <sec:intercept-url pattern="/togglz/*" access="ROLE_ADMIN" />        
-        <sec:form-login login-processing-url="/signin/auth.json" 
-			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
-			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-			username-parameter="userId" password-parameter="password" />     
-	</sec:http>
+	<sec:http pattern="/.well-known/**" security="none" />		
 	
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
@@ -297,6 +282,8 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/public-record.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/summary.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationDetails.json(\?.*)?"
@@ -448,7 +435,7 @@
 		<sec:intercept-url pattern="/admin-actions" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/admin-actions/.*" 
-			access="ROLE_ADMIN"/>						
+			access="ROLE_ADMIN"/>							
 		<sec:intercept-url pattern="/manage-members" 
 			access="ROLE_ADMIN"/>
 		<sec:intercept-url pattern="/manage-members/.*" 
@@ -458,10 +445,8 @@
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/get-my-data" 
-			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/togglz/*" 
-			access="ROLE_ADMIN"/>
-        <sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
+			access="ROLE_USER"/>		
+		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userInfo.json(\?.*)?"
 			access="ROLE_USER" />

@@ -536,7 +536,10 @@ public class BaseController {
         return calculateRedirectUrl(request, response, justRegistered, avoidOauthRedirect, null);
     }
 
-
+    protected String calculateRedirectUrl(String destination) {
+        return orcidUrlManager.getBaseUrl() + destination;
+    }
+    
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect, String thirdPartyLogin) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);

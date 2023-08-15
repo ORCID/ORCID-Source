@@ -42,6 +42,7 @@ the software.
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
         <branchVersion>1.1.5-SNAPSHOT</branchVersion>
+        <togglz.version>3.3.3</togglz.version>
     </properties>
 
     <modules>    
@@ -104,7 +105,15 @@ the software.
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-war-plugin</artifactId>
-               <version>2.1.1</version>
+               <version>3.2.2</version>
+               <configuration>
+                   <failOnMissingWebXml>false</failOnMissingWebXml>
+              </configuration>
+            </plugin>
+             <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-deploy-plugin</artifactId>
+               <version>3.0.0-M2</version>
                <configuration>
                    <failOnMissingWebXml>false</failOnMissingWebXml>
               </configuration>
@@ -909,7 +918,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.1.0</version>
+               <version>3.2.0</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
@@ -923,25 +932,52 @@ the software.
                 <artifactId>aws-java-sdk-s3</artifactId>
                 <version>${aws.version}</version>
             </dependency>
+		<!-- Togglz -->
+		<dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-core</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-servlet</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-web</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-spring-security</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-console</artifactId>
+            <version>${togglz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-testing</artifactId>
+            <version>${togglz.version}</version>
+            <scope>test</scope>
+        </dependency>		
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-junit</artifactId>
+            <version>${togglz.version}</version>
+            <scope>test</scope>
+        </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <id>spring-social-facebook-orcid-snapshot</id>
-            <name>copy of spring-social-facebook to work with Graph API 2.10</name>
-            <url>https://raw.github.com/ORCID/spring-social-facebook/mvn-repo/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+    <repositories>        
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>
-            <url>https://maven.restlet.com</url>
+            <url>https://maven.restlet.talend.com</url>
         </repository>
         <repository>
             <id>swagger2markup</id>

@@ -6,5 +6,5 @@ package org.orcid.persistence.constants;
  * 
  */
 public enum OrganizationStatus {
-    DEPRECATED, OBSOLETE, PART_OF_GROUP;
+    DEPRECATED, OBSOLETE, PART_OF_GROUP, REMOVED;
 }

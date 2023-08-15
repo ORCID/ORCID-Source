@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -261,8 +262,12 @@ public class WorkspaceController extends BaseWorkspaceController {
                 return kf;   
             }
             
-            Keywords updatedKeywords = kf.toKeywords();                        
-            profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
+            Keywords updatedKeywords = kf.toKeywords();
+            KeywordsForm keywordsForm = KeywordsForm.valueOf(profileKeywordManager.getKeywords(getCurrentUserOrcid()));
+            Collections.reverse(keywordsForm.getKeywords());
+            if (!keywordsForm.compare(kf)) {
+                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);
+            }
         }
         return kf;
     }
@@ -310,8 +315,12 @@ public class WorkspaceController extends BaseWorkspaceController {
                 return onf;   
             }
             
-            OtherNames otherNames = onf.toOtherNames();                
-            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
+            OtherNames otherNames = onf.toOtherNames();
+            OtherNamesForm otherNamesForm = OtherNamesForm.valueOf(otherNameManager.getOtherNames(getCurrentUserOrcid()));
+            Collections.reverse(otherNamesForm.getOtherNames());
+            if (!otherNamesForm.compare(onf)) {
+                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);
+            }
         }
 
         return onf;
@@ -376,7 +385,11 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             
             ResearcherUrls rUrls = ws.toResearcherUrls();
-            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);            
+            WebsitesForm websitesForm = WebsitesForm.valueOf(researcherUrlManager.getResearcherUrls(getCurrentUserOrcid()));
+            Collections.reverse(websitesForm.getWebsites());
+            if (!websitesForm.compare(ws)) {
+                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);
+            }
         }
         
         return ws;
@@ -434,7 +447,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         }        
                         
         PersonExternalIdentifiers externalIdentifiers = externalIdentifiersForm.toPersonExternalIdentifiers();
-        externalIdentifiers = externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
+        ExternalIdentifiersForm eif = ExternalIdentifiersForm.valueOf(externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid()));
+        Collections.reverse(eif.getExternalIdentifiers());
+        if (!eif.compare(externalIdentifiersForm)) {
+            externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
+        }
         return externalIdentifiersForm;
     }
     

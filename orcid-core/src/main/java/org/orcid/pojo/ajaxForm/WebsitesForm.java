@@ -61,4 +61,24 @@ public class WebsitesForm implements ErrorsInterface, Serializable {
         this.visibility = visibility;
     }
 
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        WebsitesForm other = (WebsitesForm) obj;
+
+        if (websites != null && other.getWebsites() != null && websites.size() != other.getWebsites().size()) {
+            return false;
+        } else {
+            for (int i = 0; i < websites.size(); i++) {
+                if (!websites.get(i).compare(other.getWebsites().get(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }

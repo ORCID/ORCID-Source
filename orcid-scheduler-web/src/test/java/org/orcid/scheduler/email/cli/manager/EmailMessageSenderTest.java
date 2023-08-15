@@ -28,6 +28,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
@@ -50,7 +51,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.core.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.togglz.junit.TogglzRule;
 
@@ -111,9 +111,6 @@ public class EmailMessageSenderTest {
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(emailMessageSender, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(recordNameManagerV3, "recordNameDao", mockRecordNameDao);
-
-        // Disable all features by default
-        togglzRule.disableAll();
     }
 
     @After

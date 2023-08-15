@@ -1,0 +1,21 @@
+name: commit
+
+# run lints even before someone submits a pr
+
+on:
+  push:
+    branches:
+      - '**' # run on any branch
+      - '!main'
+      - '!development'
+
+# cancel running job if another commit comes in
+concurrency:
+  group: commit-${{ github.ref }}-1
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+  seed_maven_cache:
+    uses: ./.github/workflows/seed_maven_cache.yml

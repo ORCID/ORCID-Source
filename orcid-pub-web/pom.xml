@@ -64,14 +64,17 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>            
-        </dependency>   
+        </dependency>
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-core</artifactId>            
+        </dependency>
 
-        <!-- Test dependencies -->
-        <!-- Togglz testing support -->
+        <!-- Test dependencies -->        
+        <!-- Togglz testing support -->        
         <dependency>
           <groupId>org.togglz</groupId>
-          <artifactId>togglz-junit</artifactId>
-          <version>2.4.1.Final</version>
+          <artifactId>togglz-junit</artifactId>          
           <scope>test</scope>
         </dependency>
         <dependency>

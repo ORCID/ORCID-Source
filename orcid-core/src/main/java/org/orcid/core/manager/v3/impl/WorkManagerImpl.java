@@ -204,9 +204,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            filterContributors(work, workEntity);
-        }
+        filterContributors(work, workEntity);
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
@@ -281,9 +279,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         
                         setIncomingWorkPrivacy(workEntity, profile);        
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
-                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                            filterContributors(work, workEntity);
-                        }
+                        filterContributors(work, workEntity);
                         workDao.persist(workEntity);                    
                         
                         //Update the element in the bulk
@@ -387,7 +383,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
             }
-        }else{
+        } else {
             //validate external ID vocab
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);            
         }
@@ -401,9 +397,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            filterContributors(work, workEntity);
-        }
+        filterContributors(work, workEntity);        
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));

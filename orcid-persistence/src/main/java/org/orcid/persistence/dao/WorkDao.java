@@ -136,7 +136,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<BigInteger> getIdsOfWorksReferencingClientProfiles(int i, List<String> clientProfileOrcidIds);
 
-    List<Object[]> getWorksByOrcid(String orcid, boolean topContributorsTogglz);
+    List<Object[]> getWorksByOrcid(String orcid);
 
     List<Object[]> getWorksStartingFromWorkId(Long WorkId, int numberOfWorks);
 

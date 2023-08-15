@@ -6,8 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.StringJoiner;
 import java.util.zip.ZipEntry;
@@ -64,6 +66,9 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
     @Value("${org.orcid.core.orgs.ror.localDataPath:/tmp/grid/ror.json}")
     private String localDataPath;
+    
+    @Value("${org.orcid.core.orgs.ror.indexAllEnabled:false}")
+    private boolean indexAllEnabled;
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
@@ -79,6 +84,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
     @Resource
     private FileRotator fileRotator;
+    
+    private Set<Long> UPDATED_RORS;
 
     @Override
     public String getSourceName() {
@@ -154,6 +161,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             
             //ror returns the JSON as Array of institutes
             JsonNode rootNode = JsonUtils.read(fileToLoad);
+            UPDATED_RORS = new HashSet<Long>();
 
             rootNode.forEach(institute -> {
                 String sourceId = institute.get("id").isNull() ? null : institute.get("id").asText();
@@ -203,6 +211,9 @@ public class RorOrgLoadSource implements OrgLoadSource {
                     LOGGER.error("Illegal status '" + status + "' for institute " + sourceId);
                 }
             });
+            
+            // Check if any RORs with external identifiers updated and group them
+            groupRORsWithUpdatedExternalModifiers();
 
             LOGGER.info("Time taken to process the data: {}", Duration.between(start, Instant.now()).toString());
             return true;
@@ -215,7 +226,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
     private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city, String region, String url, String orgType) {
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
         if (existingBySourceId != null) {
-            if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType)) {
+            if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType) || indexAllEnabled) {
                 existingBySourceId.setCity(city);
                 existingBySourceId.setCountry(country.name());
                 existingBySourceId.setName(name);
@@ -260,11 +271,13 @@ public class RorOrgLoadSource implements OrgLoadSource {
                 if(StringUtils.equalsIgnoreCase(OrgDisambiguatedSourceType.GRID.name(), identifierTypeName)) {
                     JsonNode extId = (JsonNode) entry.getValue().get("all");
                     setExternalId(org, identifierTypeName, preferredId, extId);
+                    UPDATED_RORS.add(org.getId());
                 }
                 else {
                     ArrayNode elements = (ArrayNode) entry.getValue().get("all");
                     for (JsonNode extId : elements) {
                         setExternalId(org, identifierTypeName, preferredId, extId);
+                        UPDATED_RORS.add(org.getId());
                     }
                 }
             }
@@ -275,6 +288,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             // If the external identifier doesn't exists yet
             if (orgDisambiguatedExternalIdentifierDao.findByDetails(org.getId(), url, WIKIPEDIA_URL.toUpperCase()) == null) {
                 createExternalIdentifier(org, url, WIKIPEDIA_URL.toUpperCase(), true);
+                UPDATED_RORS.add(org.getId());
             } else {
                 LOGGER.info("Wikipedia URL for {} already exists", org.getId());
             }
@@ -450,5 +464,24 @@ public class RorOrgLoadSource implements OrgLoadSource {
     public boolean isEnabled() {
         return enabled;
     }   
+    
+    
+    private void groupRORsWithUpdatedExternalModifiers() {
+        for (Long id : UPDATED_RORS) {
+            OrgDisambiguatedEntity entity = orgDisambiguatedDao.find(id);
+            if (entity != null) {
+                entity.setIndexingStatus(IndexingStatus.PENDING);
+                try {
+                    // mark group for indexing
+                    new OrgGrouping(entity, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
+
+                } catch (Exception ex) {
+                    LOGGER.error("Error when grouping by ROR and marking group orgs for reindexing, eating the exception", ex);
+                }
+                entity = orgDisambiguatedManager.updateOrgDisambiguated(entity);
+
+            }
+        }
+    }
     
 }

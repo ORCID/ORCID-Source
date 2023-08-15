@@ -159,30 +159,29 @@ public class WorksControllerTest extends BaseControllerTest {
     public void testGetWorkInfoWithContributors() throws Exception {
         WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
         assertNotNull(work);
-        assertNotNull(work.getContributors());
-        assertEquals(4, work.getContributors().size());
+        assertNotNull(work.getContributorsGroupedByOrcid());
+        assertEquals(4, work.getContributorsGroupedByOrcid().size());
 
-        Contributor contributor = work.getContributors().get(0);
-        assertNull(contributor.getEmail());
-        assertEquals("Jaylen Kessler", contributor.getCreditName().getValue());
+        ContributorsRolesAndSequences contributor = work.getContributorsGroupedByOrcid().get(0);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("Jaylen Kessler", contributor.getCreditName().getContent());
 
-        contributor = work.getContributors().get(1);
-        assertNull(contributor.getEmail());
-        assertEquals("John Smith", contributor.getCreditName().getValue());
+        contributor = work.getContributorsGroupedByOrcid().get(1);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("John Smith", contributor.getCreditName().getContent());
 
-        contributor = work.getContributors().get(2);
-        assertNull(contributor.getEmail());
-        assertEquals("Credit Name", contributor.getCreditName().getValue());
+        contributor = work.getContributorsGroupedByOrcid().get(2);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("Credit Name", contributor.getCreditName().getContent());
         
         // contributor is an ORCID user with private name
-        contributor = work.getContributors().get(3);
-        assertNull(contributor.getEmail());
-        assertNull(contributor.getCreditName().getValue());
+        contributor = work.getContributorsGroupedByOrcid().get(3);
+        assertNull(contributor.getContributorEmail());
+        assertEquals("Name is private", contributor.getCreditName().getContent());
     }
 
     @Test
     public void testGetWorkInfoWithContributorsGroupedByOrcid() throws Exception {
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
         WorkForm work = worksController.getWorkInfo(Long.valueOf("5"));
         assertNotNull(work);
         assertNotNull(work.getContributorsGroupedByOrcid());

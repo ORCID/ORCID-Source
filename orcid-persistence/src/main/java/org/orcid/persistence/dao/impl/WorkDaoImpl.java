@@ -7,12 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.hibernate.type.BigIntegerType;
-import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -30,6 +26,12 @@ import com.google.common.collect.Lists;
 
 public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements WorkDao {
 
+    private final String WORKS_BY_ORCID_WITH_CONTRIBUTORS = "SELECT "
+            + " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, "
+            + " w.publication_year, w.publication_month, w.publication_day, w.date_created, "
+            + " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," + " w.assertion_origin_source_id, w.assertion_origin_client_source_id, "
+            + " w.top_contributors_json as contributors " + " FROM work w" + " WHERE orcid=:orcid";
+    
     public WorkDaoImpl() {
         super(WorkEntity.class);
     }
@@ -368,25 +370,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    public List<Object[]> getWorksByOrcid(String orcid, boolean topContributorsTogglz) {
-        String contributorsSQL = null;
-        if (topContributorsTogglz) {
-            contributorsSQL = " w.top_contributors_json as contributors";
-        } else {
-            contributorsSQL = " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as contributors ";
-        }
-
-        String sqlString =
-                "SELECT " +
-                        " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
-                        " w.publication_year, w.publication_month, w.publication_day, w.date_created, " +
-                        " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," +
-                        " w.assertion_origin_source_id, w.assertion_origin_client_source_id, " +
-                        contributorsSQL +
-                        " FROM work w" +
-                        " WHERE orcid=:orcid";
-
-        Query query = entityManager.createNativeQuery(sqlString);
+    public List<Object[]> getWorksByOrcid(String orcid) {
+        Query query = entityManager.createNativeQuery(WORKS_BY_ORCID_WITH_CONTRIBUTORS);
         query.setParameter("orcid", orcid)
                 .unwrap(org.hibernate.query.NativeQuery.class)
                 .addScalar("work_id", BigIntegerType.INSTANCE)

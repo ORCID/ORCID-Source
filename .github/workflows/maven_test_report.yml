@@ -1,0 +1,30 @@
+name: unit_test_report
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        description: 'Name of the project in the repo'
+        required: false
+        default: "."
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Name of the project in the repo'
+        required: false
+        default: "."
+        type: string
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
+      with:
+        artifact: ${{ inputs.project }}
+        name: "${{ inputs.project }} Unit Tests"   # Name of the check run which will be created
+        path: '*.xml'                              # Path to test results (inside artifact .zip)
+        reporter: java-junit                       # Format of test results
+

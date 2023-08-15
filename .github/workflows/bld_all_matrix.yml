@@ -1,0 +1,293 @@
+name: bld_all_matrix
+
+permissions:
+  checks: write
+  contents: read
+  issues: read
+  pull-requests: write
+
+on:
+  workflow_call:
+    inputs:
+      version_tag:
+        description: 'Version tag to use: (bump must also be set to none to keep a specific version'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: 'whether to bump the version number by a major minor patch'
+        required: false
+        default: 'patch'
+        type: string
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      version_tag:
+        description: 'Version tag to use: (bump must also be set to none to keep a specific version'
+        required: false
+        default: 'latest'
+        type: string
+      bump:
+        description: |
+          How to optionally bump the semver version ( Major.Minor.Patch ) : git log will be searched for
+          '#major #minor #patch' or feat/ or fix/ branch names to optionally override the bump. Set to none to keep a specific version
+        required: false
+        options:
+          - patch
+          - minor
+          - major
+          - none
+        type: choice
+      ref:
+        description: 'git reference to use with the checkout use default_branch to have that calculated'
+        required: false
+        default: "default"
+        type: string
+
+jobs:
+
+  bld:
+    strategy:
+      matrix:
+        # The include keyword that adds a new variable
+        include:
+          - artifact_name: orcid-message-listener
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+          - artifact_name: orcid-activemq
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+          - artifact_name: orcid-api-web
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+          - artifact_name: orcid-internal-api
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+          - artifact_name: orcid-pub-web
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+          - artifact_name: orcid-scheduler-web
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+          - artifact_name: orcid-web
+            version_tag: ${{ inputs.version_tag }}
+            bump: ${{ inputs.bump }}
+            ref: ${{ inputs.ref }}
+
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: git-checkout-ref-action
+        id: ref
+        uses: ORCID/git-checkout-ref-action@main
+        with:
+          default_branch: ${{ github.event.repository.default_branch }}
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.ref.outputs.ref }}
+          # checkout some history so we can scan commits for bump messages
+          # NOTE: history does not include tags!
+          fetch-depth: 100
+
+      - name: find next version
+        id: version
+        uses: ORCID/version-bump-action@main
+        with:
+          version_tag: ${{ inputs.version_tag }}
+          bump: ${{ inputs.bump }}
+
+      - name: Set up Open JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'maven'
+
+      - name: show path
+        run: |
+          echo "$PATH"
+          which java
+          echo "$JAVA_HOME"
+          echo "$tag_numeric"
+          echo "$project"
+        shell: bash
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+          project: "${{ matrix.artifact_name }}"
+
+      - name: populate orcid-persistence/src/main/resources/release_name.txt with numeric tag
+        run: |
+          echo "$version_tag_numeric" > orcid-persistence/src/main/resources/release_name.txt
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: bump version of the parent pom and connected projects
+        run: |
+          mvn -T 1C --batch-mode versions:set \
+              -DnewVersion="$version_tag_numeric" -DgenerateBackupPoms=false -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: bump the tagged version in the poms of projects not tied to the parent pom (orcid-test)
+        run: |
+          mvn -T 1C --batch-mode versions:set \
+              -DnewVersion="$version_tag_numeric" -DgenerateBackupPoms=false -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-test
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-parent into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode --non-recursive clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-test into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests\
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-test
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-utils into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-utils
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-persistence into our local maven repo because orcid-core depends on it
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-persistence
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: install orcid-core into our local maven repo because the builds depend a version release
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-core
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+      - name: check some build related things
+        run: |
+          git --version
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git status
+          git diff
+
+      - name: build our project
+        run: |
+          mvn -T 1C --batch-mode -am package -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects "$project"
+          echo "------------------------------------------------------"
+
+          find . -name '*.war'
+          find . -name '*.jar'
+        env:
+          project: "${{ matrix.artifact_name }}"
+
+#
+# orcid-web customization
+#
+
+      - name: setup node for angular static file
+        if: ${{ matrix.artifact_name == 'orcid-web' }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.7.0
+
+      - name: build angular parts if we are building orcid-web
+        if: ${{ matrix.artifact_name == 'orcid-web' }}
+        run: |
+          echo "Build angular_orcid_generated.js"
+          cd orcid-nodejs
+          mvn -T 1C --batch-mode -P ci clean compile \
+            -Dnodejs.workingDirectory="${{ github.workspace }}/orcid-web/src/main/webapp/static/javascript/ng1Orcid" \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+
+          echo "Copying angular_orcid_generated to its final destination"
+          cp ${{ github.workspace }}/orcid-web/src/main/webapp/static/javascript/ng1Orcid/angular_orcid_generated.js ${{ github.workspace }}/orcid-web/target/orcid-web/static/javascript/ng1Orcid/
+
+          echo "Packaging orcid-web"
+          rm -f ${{ github.workspace }}/orcid-web/target/orcid-web.war
+          cd ${{ github.workspace }}/orcid-web/target/orcid-web
+
+          # have a file on the webserver we can hit
+          echo "$version_tag_numeric" > ${{ github.workspace }}/orcid-web/target/orcid-web/static/version
+
+          echo "Creating the war file"
+          jar -cf orcid-web.war .
+
+          # check_error "Creating the orcid-web.war file"
+          echo "Moving war file to the target folder"
+          cp orcid-web.war ${{ github.workspace }}/orcid-web/target/
+          echo "orcid-web.war is ready"
+
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+          project: "${{ matrix.artifact_name }}"
+
+##################################################################################################################
+
+
+      - name: install orcid-api-common into our local maven repo because the deploy depends on this orcid-web orcid-iapi orcid-api
+        if: ${{ matrix.artifact_name == 'orcid-web' }} || ${{ matrix.artifact_name == 'orcid-internal-api' }} || ${{ matrix.artifact_name == 'orcid-api-web' }} || ${{ matrix.artifact_name == 'orcid-pub-web' }}
+        run: |
+          mvn -T 1C --batch-mode clean install -DskipTests \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              --projects orcid-api-common
+        env:
+          version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
+
+
+      - name: deploy war file
+        run: |
+          mvn --batch-mode \
+              --settings settings-deploy.xml \
+              --file "${project}/pom.xml" \
+              -Dmaven.test.skip \
+              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+              -DaltReleaseDeploymentRepository="github::${ARTIFACT_URL}${ARTIFACT_REPO_PATH}" \
+              deploy -Dmaven.test.skip
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          ARTIFACT_URL: "${{ secrets.ARTIFACT_URL }}"
+          ARTIFACT_REPO_PATH: "${{ secrets.ARTIFACT_REPO_PATH }}"
+          ARTIFACT_USER: "${{ secrets.ARTIFACT_USER }}"
+          ARTIFACT_PASSWORD: "${{ secrets.ARTIFACT_PASSWORD }}"
+          project: "${{ matrix.artifact_name }}"
+
+
+
+
+
+

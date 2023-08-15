@@ -87,7 +87,6 @@
 		class="org.orcid.api.common.filter.DefaultApiVersionFilter">
 		<property name="isPublicApi" value="true" />
 	</bean>  
-
     
     <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     

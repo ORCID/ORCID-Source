@@ -255,11 +255,11 @@
 <http://sws.geonames.org/290557/>	geonames:name	"United Arab Emirates" ;
 	geonames:countryCode	"AE" ;
 	rdfs:label	"United Arab Emirates" .
-<http://sws.geonames.org/298795/>	geonames:name	"Republic of Turkey" ,
-		"Turkey" ;
+<http://sws.geonames.org/298795/>	geonames:name	"Republic of Türkiye" ,
+		"Türkiye" ;
 	geonames:countryCode	"TR" ;
-	rdfs:label	"Republic of Turkey" ,
-		"Turkey" .
+	rdfs:label	"Republic of Türkiye" ,
+		"Türkiye" .
 <http://sws.geonames.org/149590/>	geonames:name	"Tanzania" ,
 		"United Republic of Tanzania" ;
 	geonames:countryCode	"TZ" ;

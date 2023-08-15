@@ -18,9 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -28,12 +26,9 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
-import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
-import org.togglz.junit.TogglzRule;
 
 public class OAuthAuthorizeNotSignedInFilterTest {
 

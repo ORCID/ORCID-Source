@@ -58,7 +58,7 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **end-date** _(optional)_ The date the affiliation ended or will end
 
-- **organization** _(required)_ Information about the organization the affiliation was with. A Ringgold, Grid, ROR, or Crossref Funder Registry organization identifier is required in 3.0+
+- **organization** _(required)_ Information about the organization the affiliation was with. A ROR, or Crossref Funder Registry organization identifier is required in 3.0+
 
 - **address** _(required)_ Information about the physical location of the organization the affiliation is with. A city and country are required (region is optional)
 

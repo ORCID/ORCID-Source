@@ -208,5 +208,21 @@ public class AddressForm extends VisibilityForm implements ErrorsInterface, Seri
     public void setAssertionOriginName(String assertionOriginName) {
         this.assertionOriginName = assertionOriginName;
     }
-    
+
+    public boolean compare(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AddressForm other = (AddressForm) obj;
+
+        if (iso2Country != null && other.getIso2Country() != null &&
+                !iso2Country.getValue().value().equals(other.getIso2Country().getValue().value()))
+            return false;
+        if (visibility != null && other.visibility != null && !visibility.getVisibility().value().equals(other.visibility.getVisibility().value()))
+            return false;
+        return true;
+    }
 }

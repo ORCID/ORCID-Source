@@ -58,8 +58,12 @@
         <!-- External dependencies -->        
         <dependency>
             <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>		    
-        </dependency>       
+            <artifactId>guava</artifactId>		    
+        </dependency>
+        <dependency>
+           <groupId>org.togglz</groupId>
+           <artifactId>togglz-core</artifactId>        
+        </dependency>
 
         <!-- Test dependencies -->
         <!-- Togglz testing support -->
@@ -73,6 +77,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>orcid-test</artifactId>
             <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Togglz testing support -->	
+        <dependency>
+            <groupId>org.togglz</groupId>
+            <artifactId>togglz-junit</artifactId>		
             <scope>test</scope>
         </dependency>
     </dependencies>

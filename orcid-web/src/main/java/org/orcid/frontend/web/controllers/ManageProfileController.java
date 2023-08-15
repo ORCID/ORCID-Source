@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ import org.orcid.pojo.ajaxForm.EditEmail;
 import org.orcid.pojo.ajaxForm.Email;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
@@ -482,10 +484,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (decryptedEmail.equals(primaryEmail)) {
             profileEntityManager.deactivateRecord(getCurrentUserOrcid());
             logoutCurrentUser(request, response);
-            result = new ModelAndView("redirect:/signin#deactivated");
+            result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
         } else {
             redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
-            return new ModelAndView("redirect:/my-orcid");
+            return new ModelAndView("redirect:"+ calculateRedirectUrl("/my-orcid"));
         }
 
         return result;
@@ -843,7 +845,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
 
             Addresses addresses = addressesForm.toAddresses();
-            addressManager.updateAddresses(getCurrentUserOrcid(), addresses);
+            AddressesForm af = AddressesForm.valueOf(addressManager.getAddresses(getCurrentUserOrcid()));
+            Collections.reverse(af.getAddresses());
+            if (!af.compare(addressesForm)) {
+                addressManager.updateAddresses(getCurrentUserOrcid(), addresses);
+            }
         }
         return addressesForm;
     }
@@ -894,7 +900,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         String orcid = getCurrentUserOrcid();
         if (recordNameManager.exists(orcid)) {
-            recordNameManager.updateRecordName(orcid, name);
+            NamesForm names = NamesForm.valueOf(recordNameManager.getRecordName(orcid));
+            if (!names.compare(nf)) {
+                recordNameManager.updateRecordName(orcid, name);
+            }
         } else {
             recordNameManager.createRecordName(orcid, name);
         }
@@ -947,7 +956,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                 }                  
             }else{
                 if (biographyManager.exists(orcid)) {
-                    biographyManager.updateBiography(orcid, bio);
+                    BiographyForm biographyForm = BiographyForm.valueOf(biographyManager.getBiography(orcid));
+                    if (!biographyForm.compare(bf)) {
+                        biographyManager.updateBiography(orcid, bio);
+                    }
                 } else {
                     biographyManager.createBiography(orcid, bio);
                 }                
@@ -973,15 +985,15 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // verify it
                     verifyPrimaryEmailIfNeeded(managedOrcid);                    
                     givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);
-                    return new ModelAndView("redirect:/account?delegate=" + trustedOrcid);
+                    return new ModelAndView("redirect:" + calculateRedirectUrl("/account?delegate=" + trustedOrcid));
                 } else {
-                    return new ModelAndView("redirect:/account?wrongToken=true");
+                    return new ModelAndView("redirect:" + calculateRedirectUrl("/account?wrongToken=true"));
                 }
             } else {
-                return new ModelAndView("redirect:/account?invalidToken=true");
+                return new ModelAndView("redirect:" + calculateRedirectUrl("/account?invalidToken=true"));
             }
         } catch (UnsupportedEncodingException | EncryptionOperationNotPossibleException e) {
-            return new ModelAndView("redirect:/account?invalidToken=true");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/account?invalidToken=true"));
         }
     }
     

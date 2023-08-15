@@ -3,10 +3,10 @@ package org.orcid.pojo.ajaxForm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.DateUtils;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
@@ -23,8 +23,6 @@ import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
-import org.orcid.core.utils.DateUtils;
-import org.orcid.core.utils.OrcidStringUtils;
 
 public class WorkForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -552,23 +550,18 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
             List<org.orcid.jaxb.model.common_v2.Contributor> contributors = null;
-            if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
-                    contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
-                } else {
-                    contributors = work.getWorkContributors().getContributor();
-                }
+            if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
+                contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
             } else {
                 contributors = work.getWorkContributors().getContributor();
-            }
-
+            }            
             if (contributors != null) {
                 for (org.orcid.jaxb.model.common_v2.Contributor contributor : contributors) {
                     contributorsList.add(Contributor.valueOf(contributor));
                 }
             }
 
-        }
+        }       
         workForm.setContributors(contributorsList);
     }
 
@@ -576,16 +569,11 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
             List<org.orcid.jaxb.model.v3.release.common.Contributor> contributors = null;
-            if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
-                    contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
-                } else {
-                    contributors = work.getWorkContributors().getContributor();
-                }
+            if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
+                contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
             } else {
                 contributors = work.getWorkContributors().getContributor();
             }
-
             if (contributors != null) {
                 for (org.orcid.jaxb.model.v3.release.common.Contributor contributor : contributors) {
                     contributorsList.add(Contributor.valueOf(contributor));

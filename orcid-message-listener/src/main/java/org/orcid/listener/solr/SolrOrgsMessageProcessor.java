@@ -57,7 +57,7 @@ public class SolrOrgsMessageProcessor implements Consumer<OrgDisambiguatedSolrDo
 
     private void process(OrgDisambiguatedSolrDocument t, Integer retryCount) {
         try {
-            if("DEPRECATED".equals(t.getOrgDisambiguatedStatus()) || "OBSOLETE".equals(t.getOrgDisambiguatedStatus()) || "PART_OF_GROUP".equals(t.getOrgDisambiguatedStatus()) ) {
+            if("DEPRECATED".equals(t.getOrgDisambiguatedStatus()) || "OBSOLETE".equals(t.getOrgDisambiguatedStatus()) || "PART_OF_GROUP".equals(t.getOrgDisambiguatedStatus()) || "REMOVED".equals(t.getOrgDisambiguatedStatus())) {
                 solrUpdater.delete(String.valueOf(t.getOrgDisambiguatedId()));
             } else {
                 solrUpdater.persist(t);                

@@ -16,19 +16,7 @@
 		    <br>
 		    	<a href="${baseUri}/${orcid}?lang=${locale}">${baseUri}/${orcid}</a>
 		    </p>
-		    <p>
-                <@emailMacros.msg "email.common.if_you_have_any" /><@emailMacros.space /><a href='https://support.orcid.org/hc/en-us/requests/new' target="orcid.contact_us"><@emailMacros.msg "email.common.if_you_have_any.contact_us" /></a><@emailMacros.msg "email.common.if_you_have_any2" />
-		    </p>	  
-		  	<p style="white-space: pre;">
-<@emailMacros.msg "email.common.warm_regards" />
-<a href='${baseUri}/home?lang=${locale}' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
-			</p>   
-			<p>	
-				<@emailMacros.msg "email.common.you_have_received_this_email" />	
-			</p>
-			<p>
-			   <#include "email_footer_html.ftl"/>
-			</p>
+			<#include "email_footer_html.ftl"/>
 		 </div>
 	 </body>
  </html>

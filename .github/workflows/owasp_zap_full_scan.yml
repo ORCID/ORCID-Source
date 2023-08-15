@@ -1,22 +1,17 @@
-# This is a basic workflow to help you get started with Actions
 
-name: OWASP ZAP Full scan
+name: owasp_zap_full_scan
 
-# Controls when the action will run. 
 on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: OWASP ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.1.0
+        # https://github.com/zaproxy/action-full-scan/commit/6eade0f93b10fad8cfb4e63b979703a2cbd0cc98
+        uses: zaproxy/action-full-scan@6eade0f93b10fad8cfb4e63b979703a2cbd0cc98
         with:
           target: "https://qa.orcid.org"

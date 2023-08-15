@@ -179,10 +179,7 @@ export class HeaderComponent implements AfterViewInit, OnDestroy, OnInit {
           );
         }
         if (this.headerSearch.searchOption == "registry") {
-          let searchUrl = "/orcid-search/quick-search/?searchQuery=";
-          if (this.ngOrcidSearch) {
-            searchUrl = "/orcid-search/search?searchQuery=";
-          }
+          let searchUrl = "/orcid-search/search?searchQuery=";
           window.location.assign(
             getBaseUri() +
               searchUrl +

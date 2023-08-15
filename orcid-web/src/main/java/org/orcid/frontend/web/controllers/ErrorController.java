@@ -29,7 +29,7 @@ public class ErrorController extends BaseController {
     public ModelAndView error404Page(ModelAndView mav) {
         String orcid = getCurrentUserOrcid();
         if (orcid != null) {
-            return new ModelAndView("redirect:/my-orcid");
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/my-orcid"));
         } else {
             mav.setViewName("error-404");
         }

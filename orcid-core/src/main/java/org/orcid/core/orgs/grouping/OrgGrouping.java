@@ -168,7 +168,10 @@ public class OrgGrouping implements Serializable {
                 String type = extIdEntity.getIdentifierType();
                 String identifier = extIdEntity.getIdentifier();
                 Boolean preferred = extIdEntity.getPreferred();
-
+                if(preferred == null) {
+                    preferred =  Boolean.FALSE;
+                }
+ 
                 OrgDisambiguatedExternalIdentifiers extId = null;
 
                 if (externalIdsMap.containsKey(type)) {

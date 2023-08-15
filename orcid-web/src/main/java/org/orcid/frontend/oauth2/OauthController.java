@@ -178,8 +178,7 @@ public class OauthController {
             requestInfoForm.setError("oauth_error");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;
-        } 
-        catch (InvalidRequestException e) {
+        } catch (InvalidRequestException e) {
             requestInfoForm.setError("oauth_error");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;

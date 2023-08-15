@@ -44,7 +44,7 @@ public class MembersListController extends BaseController {
         // Does it have slug on it? then redirect to the page with just the ID
         if(SlugUtils.containsSlug(memberId)) {
             String sanitizedId = SlugUtils.extractIdFromSlug(memberId);
-            return new ModelAndView("redirect:/members/" + sanitizedId);
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/members/" + sanitizedId));
         }
         ModelAndView mav = new ModelAndView("member-page");
         if (!domainsAllowingRobots.contains(orcidUrlManager.getBaseDomainRmProtocall())) {
