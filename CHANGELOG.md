@@ -1,3 +1,9 @@
+## v2.37.14 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.13...v2.37.14)
+
+- [#6859](https://github.com/ORCID/ORCID-Source/pull/6859): Changed the translation for email.common.warm_regards key
+
 ## v2.37.13 - 2023-08-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.12...v2.37.13)
