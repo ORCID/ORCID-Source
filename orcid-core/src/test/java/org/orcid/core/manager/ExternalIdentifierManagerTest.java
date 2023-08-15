@@ -158,8 +158,8 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         PersonExternalIdentifiers elements = externalIdentifierManager.getExternalIdentifiers(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getExternalIdentifiers());
-        assertEquals(5, elements.getExternalIdentifiers().size());
-        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+        assertEquals(7, elements.getExternalIdentifiers().size());
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false, found6 = false, found7 = false;
         for(PersonExternalIdentifier element : elements.getExternalIdentifiers()) {
             if(13 == element.getPutCode()){
                 found1 = true;
@@ -171,6 +171,10 @@ public class ExternalIdentifierManagerTest extends BaseTest {
                 found4 = true;
             } else if(17 == element.getPutCode()){
                 found5 = true;
+            } else if(18 == element.getPutCode()){
+                found6 = true;
+            } else if(19 == element.getPutCode()){
+                found7 = true;
             } else {
                 fail("Invalid put code found: " + element.getPutCode());
             }
@@ -180,6 +184,8 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         assertTrue(found3);
         assertTrue(found4);
         assertTrue(found5);
+        assertTrue(found6);
+        assertTrue(found7);
     }
     
     @Test
@@ -188,8 +194,10 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         PersonExternalIdentifiers elements = externalIdentifierManager.getPublicExternalIdentifiers(orcid);
         assertNotNull(elements);
         assertNotNull(elements.getExternalIdentifiers());
-        assertEquals(1, elements.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), elements.getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(3, elements.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(19), elements.getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(Long.valueOf(18), elements.getExternalIdentifiers().get(1).getPutCode());
+        assertEquals(Long.valueOf(13), elements.getExternalIdentifiers().get(2).getPutCode());
     }
     
     private PersonExternalIdentifier getExternalIdentifier() {

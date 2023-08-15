@@ -1,3 +1,272 @@
+## v2.37.11 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.10...v2.37.11)
+
+- [#6869](https://github.com/ORCID/ORCID-Source/pull/6869): fix: Remove duplicated email in claim reminder email
+
+### Fix
+
+- Remove duplicated email in claim reminder email
+
+## v2.37.10 - 2023-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.9...v2.37.10)
+
+- [#6866](https://github.com/ORCID/ORCID-Source/pull/6866): Refactoring of the autospamcli so it can be run as scheduled or manual cli
+
+## v2.37.9 - 2023-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.8...v2.37.9)
+
+- [#6865](https://github.com/ORCID/ORCID-Source/pull/6865): Added pre tag to fix the new lines in the email footer
+
+## v2.37.8 - 2023-08-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.7...v2.37.8)
+
+- [#6864](https://github.com/ORCID/ORCID-Source/pull/6864): Transifex
+
+## v2.37.7 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.6...v2.37.7)
+
+- [#6861](https://github.com/ORCID/ORCID-Source/pull/6861): Fix jackson problem
+
+## v2.37.6 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.5...v2.37.6)
+
+- [#6860](https://github.com/ORCID/ORCID-Source/pull/6860): fix: Remove indentation added in ftl email locked
+
+### Fix
+
+- Remove indentation added in ftl email locked
+
+## v2.37.5 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.4...v2.37.5)
+
+- [#6857](https://github.com/ORCID/ORCID-Source/pull/6857): fix: Count only default affiliation group
+
+### Fix
+
+- Count only default affiliation group
+
+## v2.37.4 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.3...v2.37.4)
+
+- [#6858](https://github.com/ORCID/ORCID-Source/pull/6858): Remove the extra space between the Orcid team and the link
+
+## v2.37.3 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.2...v2.37.3)
+
+- [#6856](https://github.com/ORCID/ORCID-Source/pull/6856): fix: Remove field from response if its private
+
+### Fix
+
+- Remove field from response if its private
+
+## v2.37.2 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.1...v2.37.2)
+
+- [#6855](https://github.com/ORCID/ORCID-Source/pull/6855): fix: Fix summary peer reviews count
+
+### Fix
+
+- Fix summary peer reviews count
+
+## v2.37.1 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.0...v2.37.1)
+
+- [#6854](https://github.com/ORCID/ORCID-Source/pull/6854): Added a line break in the emails footer
+
+## v2.37.0 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.16...v2.37.0)
+
+- [#6852](https://github.com/ORCID/ORCID-Source/pull/6852): feature: Add production script one trust
+
+### Feature
+
+- Add production script one trust
+
+## v2.36.16 - 2023-08-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.15...v2.36.16)
+
+- [#6851](https://github.com/ORCID/ORCID-Source/pull/6851): fix: Rename variables in summary endpoint
+
+### Fix
+
+- Rename variable in summary endpoint
+
+## v2.36.15 - 2023-08-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.14...v2.36.15)
+
+- [#6850](https://github.com/ORCID/ORCID-Source/pull/6850): fix: Remove duplicated footer in locked email
+
+### Fix
+
+- Remove duplicated email
+
+## v2.36.14 - 2023-08-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.13...v2.36.14)
+
+- [#6849](https://github.com/ORCID/ORCID-Source/pull/6849): Fix more tests
+- [#6848](https://github.com/ORCID/ORCID-Source/pull/6848): Check the source of the element based on the source ids and not the name
+
+## v2.36.13 - 2023-08-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.12...v2.36.13)
+
+- [#6845](https://github.com/ORCID/ORCID-Source/pull/6845): fix: Remove extra content set to one trust link
+
+### Fix
+
+- Remove extra content set to one trust link
+
+## v2.36.12 - 2023-08-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.11...v2.36.12)
+
+- [#6844](https://github.com/ORCID/ORCID-Source/pull/6844): fix: Add status and fix organization name
+
+### Fix
+
+- Add status and fix organization name
+
+## v2.36.11 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.10...v2.36.11)
+
+- [#6838](https://github.com/ORCID/ORCID-Source/pull/6838): 8734 update the registry emails to remove links to the support team emails and forms
+
+### Fix
+
+- Remove empty white space
+- Fix typos and add missing paragraphs
+- Rollback loced orcid email
+
+## v2.36.10 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.9...v2.36.10)
+
+- [#6842](https://github.com/ORCID/ORCID-Source/pull/6842): For ISSN loading, use the table id to iterate over the existing list …
+
+## v2.36.9 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.8...v2.36.9)
+
+## v2.36.8 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.7...v2.36.8)
+
+- [#6841](https://github.com/ORCID/ORCID-Source/pull/6841): EThOS description had a typo and said 'Peristent' instead of 'Persist…
+- [#6840](https://github.com/ORCID/ORCID-Source/pull/6840): fix: Remove duplicated attribute and fix organization name
+
+### Fix
+
+- Remove duplicated attribute and fix organization name
+
+## v2.36.7 - 2023-07-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.6...v2.36.7)
+
+- [#6839](https://github.com/ORCID/ORCID-Source/pull/6839): style: fix a tags color
+
+## v2.36.6 - 2023-07-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.5...v2.36.6)
+
+- [#6835](https://github.com/ORCID/ORCID-Source/pull/6835): Update emails notifications
+
+### Fix
+
+- Refactor deactivate email
+
+### Feature
+
+- Update emails notifications
+
+## v2.36.5 - 2023-07-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.4...v2.36.5)
+
+- [#6836](https://github.com/ORCID/ORCID-Source/pull/6836): fix: One trust style on print preview
+
+### Fix
+
+- One trust style on print preview
+
+## v2.36.4 - 2023-07-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.3...v2.36.4)
+
+- [#6834](https://github.com/ORCID/ORCID-Source/pull/6834): ETHOS to be case sensitive
+
+## v2.36.3 - 2023-07-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.2...v2.36.3)
+
+- [#6833](https://github.com/ORCID/ORCID-Source/pull/6833): fix: NPE and compare if its self asserted or validated work or funding
+
+### Fix
+
+- Replace incorrect variables
+- NPE and compare if its self asserted or validated work or funding
+
+## v2.36.2 - 2023-07-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.1...v2.36.2)
+
+- [#6831](https://github.com/ORCID/ORCID-Source/pull/6831): 8682 trust summary json format
+
+### Fix
+
+- Only get summary if record is not deprecated
+- Update dates format
+
+### Feature
+
+- Add new endpoint `summary.json`
+
+## v2.36.1 - 2023-07-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.0...v2.36.1)
+
+- [#6832](https://github.com/ORCID/ORCID-Source/pull/6832): fix: Rollback ot
+
+### Fix
+
+- Rollback ot
+
+## v2.35.5 - 2023-07-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.4...v2.35.5)
+
+- [#6830](https://github.com/ORCID/ORCID-Source/pull/6830): fix: Temporarily remove onetrust
+
+### Fix
+
+- Temporarily remove onetrust
+
+## v2.35.4 - 2023-07-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.3...v2.35.4)
+
+- [#6829](https://github.com/ORCID/ORCID-Source/pull/6829): 8659 access the onetrust widget through a link in the site footer
+
+### Fix
+
+- Remove duplicated links
+- Add link back and fix styles
+
 ## v2.35.3 - 2023-06-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.35.2...v2.35.3)

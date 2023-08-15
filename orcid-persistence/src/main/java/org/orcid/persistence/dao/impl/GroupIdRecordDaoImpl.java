@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -9,8 +8,8 @@ import javax.persistence.TypedQuery;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 
-public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Long> implements GroupIdRecordDao {
-
+public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Long> implements GroupIdRecordDao {    
+    
     public GroupIdRecordDaoImpl() {
         super(GroupIdRecordEntity.class);
     }
@@ -71,13 +70,13 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
         }
         Long result = query.getSingleResult();
         return (result != null && result > 0);
-    }
-
-    @SuppressWarnings("unchecked")
+    }   
+    
     @Override
-    public List<GroupIdRecordEntity> getIssnRecordsNotModifiedSince(int pageSize, Date date) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g LEFT OUTER JOIN invalid_issn_group_id_record p ON g.id = p.id where p.id IS NULL AND g.group_id like 'issn:%' and g.last_modified < :date", GroupIdRecordEntity.class);
-        query.setParameter("date", date);
+    public List<GroupIdRecordEntity> getIssnRecordsSortedById(int batchSize, long initialId) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g LEFT OUTER JOIN invalid_issn_group_id_record p ON g.id = p.id where p.id IS NULL AND g.group_id like 'issn:%' and g.id > :initialId order by g.id", GroupIdRecordEntity.class);
+        query.setParameter("initialId", initialId);
+        query.setMaxResults(batchSize);        
         return query.getResultList();
     }
 }

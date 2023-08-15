@@ -1,7 +1,8 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.forgotten_id.could_not_find" /> ${submittedEmail}
 
-<@emailMacros.msg "email.forgotten_id.try_anohter_email" /><@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/><@emailMacros.msg "email.common.period"/>
+<@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/><@emailMacros.msg "email.forgotten_id.many_users_have"/><@emailMacros.msg "email.common.period"/>
+
 
 ${baseUri}/reset-password
 

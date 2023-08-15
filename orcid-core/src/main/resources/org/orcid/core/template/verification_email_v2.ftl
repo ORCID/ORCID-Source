@@ -25,15 +25,5 @@
 ${verificationUrl}?lang=${locale}
 
 <@emailMacros.msg "email.verify.1" /><@emailMacros.space />${orcid}<@emailMacros.msg "email.verify.2" /><@emailMacros.space />${baseUri}/${orcid}?lang=${locale}<@emailMacros.space /><@emailMacros.msg "email.verify.primary_email_1" /><@emailMacros.space />${primaryEmail}<@emailMacros.msg "email.verify.primary_email_2" />.
- 
-<@emailMacros.msg "email.verify.if_you_did_not" />
 
-<@emailMacros.msg "email.common.did_you_know" /><@emailMacros.space />${baseUri}/blog
-
-<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2.text" />
-
-<@emailMacros.msg "email.common.warm_regards.simple" />
-${baseUri}/home?lang=${locale}
-
-<@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>

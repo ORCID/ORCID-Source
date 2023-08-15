@@ -371,4 +371,5 @@
   <include file="/db/updates/add-kosovo-to-country-reference.xml" />
   <include file="/db/updates/dw_profile_add_locale_reviewed_creation_method.xml" />
   <include file="/db/updates/statistics.xml" />
+  <include file="/db/updates/identifier-types/update-ethos-to-be-case-sensitive.xml" />
 </databaseChangeLog>

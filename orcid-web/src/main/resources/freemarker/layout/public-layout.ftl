@@ -18,17 +18,17 @@
             height: 1px;
         }
         .ot-sdk-show-settings {
-            color: inherit !important;
+            color: rgba(0,0,0,0.87) !important;
             line-height: inherit !important;
             border-width: initial !important;
             border-style: none !important;
             border-color: initial !important;
             border-image: initial !important;
-            margin: 0px auto !important;
-            padding: 7px 20px !important;
+            margin: 0 !important;
+            padding: 0 !important;
             transition: inherit !important;
-            font-size: inherit !important;
-            font-weight: inherit !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
         }
         .ot-sdk-show-settings:hover {
             color: inherit !important;
@@ -173,15 +173,18 @@
                                     <p role="presentation">
                                         <a rel="license noreferrer" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/" ><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none; margin-right: 4px;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license noreferrer" target="footer.copyright_cc0" class="footer-url" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a><@orcid.msg 'common.period'/> <@orcid.msg 'footer.copyright_cc0_3'/><@orcid.msg 'common.period'/></p>
                                     <nav>
-                                    <ul class="inline-list">
-                                        <li><a href="{{aboutUri}}/about"><@orcid.msg 'wp-infosite-header.aboutOrcid'/></a></li>
-                                        <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'wp-infosite-header.privacyPolicy'/></a></li>
-                                        <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'wp-infosite-header.termOfUse'/></a></li>
-                                        <li><a href="{{aboutUri}}/content/orcid-accessibility-statement"><@orcid.msg 'wp-infosite-header.accesibilityStatement'/></a></li>
-                                        <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactSupport'/></a></li>
-                                        <li><a href="{{aboutUri}}/orcid-dispute-procedures"><@orcid.msg 'wp-infosite-header.disputeProcedures'/></a></li>
-                                        <li><a href="{{aboutUri}}/trademark-and-id-display-guidelines/"><@orcid.msg 'wp-infosite-header.brandGuidelines'/></a></li>
-                                    </ul>
+                                        <ul class="inline-list">
+                                            <li><a href="{{aboutUri}}/about"><@orcid.msg 'wp-infosite-header.aboutOrcid'/></a></li>
+                                            <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'wp-infosite-header.privacyPolicy'/></a></li>
+                                            <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'wp-infosite-header.termOfUse'/></a></li>
+                                            <li><a href="{{aboutUri}}/content/orcid-accessibility-statement"><@orcid.msg 'wp-infosite-header.accesibilityStatement'/></a></li>
+                                        </ul>
+                                        <ul class="inline-list">
+                                            <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactSupport'/></a></li>
+                                            <li><a href="{{aboutUri}}/orcid-dispute-procedures"><@orcid.msg 'wp-infosite-header.disputeProcedures'/></a></li>
+                                            <li><a href="{{aboutUri}}/trademark-and-id-display-guidelines/"><@orcid.msg 'wp-infosite-header.brandGuidelines'/></a></li>
+                                            <li><a id="ot-sdk-btn" class="ot-sdk-show-settings"><@orcid.msg 'wp-infosite-header.cookieSettings'/></a></li>
+                                        </ul>
                                     </nav>
                                 </div>
                             </div>
