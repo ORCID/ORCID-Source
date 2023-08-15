@@ -1,3 +1,26 @@
+## v2.37.12 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.11...v2.37.12)
+
+- [#6757](https://github.com/ORCID/ORCID-Source/pull/6757): Bump jettison from 1.5.1 to 1.5.4 in /orcid-core
+- [#6863](https://github.com/ORCID/ORCID-Source/pull/6863): fix: Add commonName and reference in ExternalIdentifiersSummary
+- [#6867](https://github.com/ORCID/ORCID-Source/pull/6867): Bump socket.io-parser from 4.2.2 to 4.2.4 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+- [#6853](https://github.com/ORCID/ORCID-Source/pull/6853): Fixed the bug when the  grouping is undone for an existing Fundref that  has been updated in Fundref registry
+
+### Fix
+
+- Add commonName and reference in ExternalIdentifiersSummary
+
+## v2.37.11 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.10...v2.37.11)
+
+- [#6869](https://github.com/ORCID/ORCID-Source/pull/6869): fix: Remove duplicated email in claim reminder email
+
+### Fix
+
+- Remove duplicated email in claim reminder email
+
 ## v2.37.10 - 2023-08-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.9...v2.37.10)
