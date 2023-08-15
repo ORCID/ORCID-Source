@@ -1,3 +1,13 @@
+## v2.37.11 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.10...v2.37.11)
+
+- [#6869](https://github.com/ORCID/ORCID-Source/pull/6869): fix: Remove duplicated email in claim reminder email
+
+### Fix
+
+- Remove duplicated email in claim reminder email
+
 ## v2.37.10 - 2023-08-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.9...v2.37.10)
