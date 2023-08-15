@@ -1,3 +1,9 @@
+## v2.37.13 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.12...v2.37.13)
+
+- [#6846](https://github.com/ORCID/ORCID-Source/pull/6846): Ror to fundref ringgold mapping
+
 ## v2.37.12 - 2023-08-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.11...v2.37.12)
