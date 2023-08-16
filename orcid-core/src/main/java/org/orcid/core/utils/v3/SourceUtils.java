@@ -1,7 +1,5 @@
 package org.orcid.core.utils.v3;
 
-import java.util.List;
-
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -45,6 +43,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+
+import java.util.List;
 
 public class SourceUtils {
     private SourceNameCacheManager sourceNameCacheManager;
@@ -316,5 +316,9 @@ public class SourceUtils {
         } else {
             return true;
         }
+    }
+
+    public static boolean isSelfAsserted(String source, String orcid) {
+        return !orcid.equals(source);
     }
 }

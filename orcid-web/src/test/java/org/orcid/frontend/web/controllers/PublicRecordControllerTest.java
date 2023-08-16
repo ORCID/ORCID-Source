@@ -150,7 +150,7 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertEquals(1, record.getEmploymentAffiliations().size());
         assertEquals(1, record.getEmploymentAffiliationsCount());
 
-        assertEquals("An institution", record.getEmploymentAffiliations().get(0).getOrganizationName());                
+        assertEquals("An institution", record.getEmploymentAffiliations().get(0).getOrganizationName());
         
         // Check external identifiers
         assertNotNull(record.getExternalIdentifiers());
@@ -158,28 +158,34 @@ public class PublicRecordControllerTest extends DBUnitTest {
         
         // Added by member
         assertEquals(String.valueOf(19), record.getExternalIdentifiers().get(0).getId());
+        assertEquals("self_public_user_obo_type", record.getExternalIdentifiers().get(0).getCommonName());
+        assertEquals("self_public_user_obo_ref", record.getExternalIdentifiers().get(0).getReference());
         assertEquals("http://ext-id/self/obo/public", record.getExternalIdentifiers().get(0).getUrl());
-        assertFalse(record.getExternalIdentifiers().get(0).isValidatedOrSelfAsserted());
+        assertFalse(record.getExternalIdentifiers().get(0).isValidated());
         // Added by user
         assertEquals(String.valueOf(18), record.getExternalIdentifiers().get(1).getId());
+        assertEquals("self_public_type", record.getExternalIdentifiers().get(1).getCommonName());
+        assertEquals("self_public_ref", record.getExternalIdentifiers().get(1).getReference());
         assertEquals("http://ext-id/self/public", record.getExternalIdentifiers().get(1).getUrl());
-        assertFalse(record.getExternalIdentifiers().get(1).isValidatedOrSelfAsserted());
+        assertFalse(record.getExternalIdentifiers().get(1).isValidated());
         // User OBO
         assertEquals(String.valueOf(13), record.getExternalIdentifiers().get(2).getId());
+        assertEquals("public_type", record.getExternalIdentifiers().get(2).getCommonName());
+        assertEquals("public_ref", record.getExternalIdentifiers().get(2).getReference());
         assertEquals("http://ext-id/public_ref", record.getExternalIdentifiers().get(2).getUrl());
-        assertTrue(record.getExternalIdentifiers().get(2).isValidatedOrSelfAsserted());
+        assertTrue(record.getExternalIdentifiers().get(2).isValidated());
         
         assertEquals(1, record.getValidatedWorks());
         assertEquals(0, record.getSelfAssertedWorks());
 
-        assertEquals(0, record.getReviews());
+        assertEquals(0, record.getPeerReviewsTotal());
         assertEquals(0, record.getPeerReviewPublicationGrants());
 
         assertEquals(1, record.getValidatedFunds());
         assertEquals(0, record.getSelfAssertedFunds());
 
         assertNotNull(record.getProfessionalActivities());
-        assertEquals(4, record.getProfessionalActivitiesCount());        
+        assertEquals(4, record.getProfessionalActivitiesCount());
     }
 
     @Test
@@ -208,5 +214,12 @@ public class PublicRecordControllerTest extends DBUnitTest {
         assertNull(record.getName());
 
         assertEquals("deprecated", record.getStatus());
+    }
+
+    @Test
+    public void testGetRecordSummaryPrivateName() {
+        RecordSummary record = publicRecordController.getSummaryRecord(unclaimedUserOrcid);
+
+        assertNull(record.getName());
     }
 }

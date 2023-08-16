@@ -3,7 +3,11 @@ package org.orcid.pojo.summary;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 public class RecordSummary {
+    @JsonInclude(Include.NON_NULL)
     private String name;
     private String orcid;
     private List<AffiliationSummary> employmentAffiliations;
@@ -12,7 +16,7 @@ public class RecordSummary {
     private String lastModified;
     private int validatedWorks;
     private int selfAssertedWorks;
-    private int reviews;
+    private int peerReviewsTotal;
     private int peerReviewPublicationGrants;
     private int validatedFunds;
     private int selfAssertedFunds;
@@ -85,12 +89,12 @@ public class RecordSummary {
         this.selfAssertedWorks = selfAssertedWorks;
     }
 
-    public int getReviews() {
-        return reviews;
+    public int getPeerReviewsTotal() {
+        return peerReviewsTotal;
     }
 
-    public void setReviews(int reviews) {
-        this.reviews = reviews;
+    public void setPeerReviewsTotal(int peerReviewsTotal) {
+        this.peerReviewsTotal = peerReviewsTotal;
     }
 
     public int getPeerReviewPublicationGrants() {

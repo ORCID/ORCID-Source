@@ -15,5 +15,6 @@ please contact ORCID Support at https://support.orcid.org/hc/en-us/requests/new.
 
 Kind Regards,
 The ORCID Team
+
 https://support.orcid.org/hc/en-us/requests/new
 http://testserver.orcid.org

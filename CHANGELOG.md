@@ -1,3 +1,148 @@
+## v2.38.0 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.14...v2.38.0)
+
+## v2.37.14 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.13...v2.37.14)
+
+- [#6859](https://github.com/ORCID/ORCID-Source/pull/6859): Changed the translation for email.common.warm_regards key
+
+## v2.37.13 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.12...v2.37.13)
+
+- [#6846](https://github.com/ORCID/ORCID-Source/pull/6846): Ror to fundref ringgold mapping
+
+## v2.37.12 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.11...v2.37.12)
+
+- [#6757](https://github.com/ORCID/ORCID-Source/pull/6757): Bump jettison from 1.5.1 to 1.5.4 in /orcid-core
+- [#6863](https://github.com/ORCID/ORCID-Source/pull/6863): fix: Add commonName and reference in ExternalIdentifiersSummary
+- [#6867](https://github.com/ORCID/ORCID-Source/pull/6867): Bump socket.io-parser from 4.2.2 to 4.2.4 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+- [#6853](https://github.com/ORCID/ORCID-Source/pull/6853): Fixed the bug when the  grouping is undone for an existing Fundref that  has been updated in Fundref registry
+
+### Fix
+
+- Add commonName and reference in ExternalIdentifiersSummary
+
+## v2.37.11 - 2023-08-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.10...v2.37.11)
+
+- [#6869](https://github.com/ORCID/ORCID-Source/pull/6869): fix: Remove duplicated email in claim reminder email
+
+### Fix
+
+- Remove duplicated email in claim reminder email
+
+## v2.37.10 - 2023-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.9...v2.37.10)
+
+- [#6866](https://github.com/ORCID/ORCID-Source/pull/6866): Refactoring of the autospamcli so it can be run as scheduled or manual cli
+
+## v2.37.9 - 2023-08-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.8...v2.37.9)
+
+- [#6865](https://github.com/ORCID/ORCID-Source/pull/6865): Added pre tag to fix the new lines in the email footer
+
+## v2.37.8 - 2023-08-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.7...v2.37.8)
+
+- [#6864](https://github.com/ORCID/ORCID-Source/pull/6864): Transifex
+
+## v2.37.7 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.6...v2.37.7)
+
+- [#6861](https://github.com/ORCID/ORCID-Source/pull/6861): Fix jackson problem
+
+## v2.37.6 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.5...v2.37.6)
+
+- [#6860](https://github.com/ORCID/ORCID-Source/pull/6860): fix: Remove indentation added in ftl email locked
+
+### Fix
+
+- Remove indentation added in ftl email locked
+
+## v2.37.5 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.4...v2.37.5)
+
+- [#6857](https://github.com/ORCID/ORCID-Source/pull/6857): fix: Count only default affiliation group
+
+### Fix
+
+- Count only default affiliation group
+
+## v2.37.4 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.3...v2.37.4)
+
+- [#6858](https://github.com/ORCID/ORCID-Source/pull/6858): Remove the extra space between the Orcid team and the link
+
+## v2.37.3 - 2023-08-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.2...v2.37.3)
+
+- [#6856](https://github.com/ORCID/ORCID-Source/pull/6856): fix: Remove field from response if its private
+
+### Fix
+
+- Remove field from response if its private
+
+## v2.37.2 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.1...v2.37.2)
+
+- [#6855](https://github.com/ORCID/ORCID-Source/pull/6855): fix: Fix summary peer reviews count
+
+### Fix
+
+- Fix summary peer reviews count
+
+## v2.37.1 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.37.0...v2.37.1)
+
+- [#6854](https://github.com/ORCID/ORCID-Source/pull/6854): Added a line break in the emails footer
+
+## v2.37.0 - 2023-08-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.16...v2.37.0)
+
+- [#6852](https://github.com/ORCID/ORCID-Source/pull/6852): feature: Add production script one trust
+
+### Feature
+
+- Add production script one trust
+
+## v2.36.16 - 2023-08-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.15...v2.36.16)
+
+- [#6851](https://github.com/ORCID/ORCID-Source/pull/6851): fix: Rename variables in summary endpoint
+
+### Fix
+
+- Rename variable in summary endpoint
+
+## v2.36.15 - 2023-08-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.14...v2.36.15)
+
+- [#6850](https://github.com/ORCID/ORCID-Source/pull/6850): fix: Remove duplicated footer in locked email
+
+### Fix
+
+- Remove duplicated email
+
 ## v2.36.14 - 2023-08-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.36.13...v2.36.14)

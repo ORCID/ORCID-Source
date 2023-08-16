@@ -10,8 +10,10 @@ import java.util.List;
 
 public class ExternalIdentifiersSummary {
     private String id;
+    private String commonName;
+    private String reference;
     private String url;
-    private boolean validatedOrSelfAsserted;
+    private boolean validated;
 
     public String getId() {
         return id;
@@ -19,6 +21,22 @@ public class ExternalIdentifiersSummary {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public String getUrl() {
@@ -29,12 +47,12 @@ public class ExternalIdentifiersSummary {
         this.url = url;
     }
 
-    public boolean isValidatedOrSelfAsserted() {
-        return validatedOrSelfAsserted;
+    public boolean isValidated() {
+        return validated;
     }
 
-    public void setValidatedOrSelfAsserted(boolean validatedOrSelfAsserted) {
-        this.validatedOrSelfAsserted = validatedOrSelfAsserted;
+    public void setValidated(boolean validated) {
+        this.validated = validated;
     }
 
     public static List<ExternalIdentifiersSummary> valueOf(PersonExternalIdentifiers personExternalIdentifiers, String orcid) {
@@ -51,6 +69,14 @@ public class ExternalIdentifiersSummary {
         ExternalIdentifiersSummary form = new ExternalIdentifiersSummary();
 
         if (personExternalIdentifier != null) {
+            if (!PojoUtil.isEmpty(personExternalIdentifier.getType())) {
+                form.setCommonName(personExternalIdentifier.getType());
+            }
+
+            if (!PojoUtil.isEmpty(personExternalIdentifier.getValue())) {
+                form.setReference(personExternalIdentifier.getValue());
+            }
+
             if (!PojoUtil.isEmpty(personExternalIdentifier.getUrl())) {
                 form.setUrl(personExternalIdentifier.getUrl().getValue());
             }
@@ -60,7 +86,7 @@ public class ExternalIdentifiersSummary {
             }
 
             if (personExternalIdentifier.getSource() != null) {
-                form.setValidatedOrSelfAsserted(SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
+                form.setValidated(SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
             }
         }
         return form;
