@@ -91,11 +91,7 @@
 	
     <bean id="rorOrgDataSource" class="org.orcid.scheduler.loader.source.ror.RorOrgLoadSource" />
     <bean id="fundrefOrgDataSource" class="org.orcid.scheduler.loader.source.fundref.FundrefOrgLoadSource" />
-    <bean id="issnDataSource" class="org.orcid.scheduler.loader.source.issn.IssnLoadSource" />
-
-    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
-        <constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
-    </bean>
+    <bean id="issnDataSource" class="org.orcid.scheduler.loader.source.issn.IssnLoadSource" />    
 	
     <bean id="jerseyClientHelperDevelopmentMode" class="org.orcid.utils.jersey.JerseyClientHelper">
         <constructor-arg value="true"/>
@@ -111,8 +107,6 @@
     
 
     <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
-
-    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
 
 	<bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
 	

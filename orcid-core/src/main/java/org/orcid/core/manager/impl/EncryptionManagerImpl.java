@@ -108,14 +108,14 @@ public class EncryptionManagerImpl implements EncryptionManager,PasswordEncoder,
         return externalEncryptor.encrypt(stringToEncrypt);
     }
 
-	@Override
-	public String decryptForExternalUse(String stringToDecrypt) {
-		try {
-			return externalEncryptor.decrypt(stringToDecrypt);
-		} catch (EncryptionOperationNotPossibleException e) {
-			return decryptForLegacyExternalUse(stringToDecrypt);
-		}
-	}
+    @Override
+    public String decryptForExternalUse(String stringToDecrypt) {
+        try {
+            return externalEncryptor.decrypt(stringToDecrypt);
+        } catch (EncryptionOperationNotPossibleException e) {
+            return decryptForLegacyExternalUse(stringToDecrypt);
+        }
+    }
 
     @Override
     @Deprecated
@@ -225,14 +225,14 @@ public class EncryptionManagerImpl implements EncryptionManager,PasswordEncoder,
         }
     }
 
-	@Override
-	public boolean matches(CharSequence rawPass, String encPass) {
-	        LOGGER.debug("About to start password check");
-	        StopWatch stopWatch = new StopWatch();
-	        stopWatch.start();
-	        boolean result = hashMatches(rawPass.toString(), encPass);
-	        stopWatch.stop();
-	        LOGGER.debug("Password check took {} ms", stopWatch.getTime());
-	        return result;
-	    } 
+    @Override
+    public boolean matches(CharSequence rawPass, String encPass) {
+        LOGGER.debug("About to start password check");
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        boolean result = hashMatches(rawPass.toString(), encPass);
+        stopWatch.stop();
+        LOGGER.debug("Password check took {} ms", stopWatch.getTime());
+        return result;
+    }
 }

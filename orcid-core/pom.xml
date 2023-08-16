@@ -39,7 +39,12 @@
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-model</artifactId>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>orcid-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>  
 
         <!-- Internal test only -->
         <dependency>
@@ -322,7 +327,12 @@
 		    <groupId>javax.ws.rs</groupId>
 		    <artifactId>javax.ws.rs-api</artifactId>		    
 		</dependency>
-        
+		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
+		<dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
+		    <version>4.4.3</version>
+		</dependency>
     </dependencies>
     <build>
         <plugins>

@@ -50,10 +50,16 @@ public class DBUnitTest {
     static {        
         try {
             context = new ClassPathXmlApplicationContext(TEST_CORE_CONTEXT);
-        } catch (Exception e) {
+        } catch (Exception e) {            
             try {
                 context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
             } catch (Exception e2) {
+                System.out.println("Initial error: ");
+                e.printStackTrace();
+                System.out.println();
+                System.out.println();
+                System.out.println();
+                System.out.println("Second error: ");
                 e2.printStackTrace();
                 fail();
             }

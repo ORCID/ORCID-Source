@@ -1200,4 +1200,18 @@
 
 	<bean id="VerifyEmailUtils" class="org.orcid.core.utils.VerifyEmailUtils" />	
 
+	<bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
+		<constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
+	</bean>
+
+	<bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
+
+	<!-- Redis cache -->
+	<bean id="redisClient" class="org.orcid.core.utils.cache.redis.RedisClient">
+		<constructor-arg index="0" value="${org.orcid.core.utils.cache.redis.host}"/>
+		<constructor-arg index="1" value="${org.orcid.core.utils.cache.redis.port}" />
+		<constructor-arg index="2" value="${org.orcid.core.utils.cache.redis.password}" />
+		<constructor-arg index="3" value="${org.orcid.core.utils.cache.redis.expiration_in_secs:600}" />
+	</bean>
+
 </beans>
