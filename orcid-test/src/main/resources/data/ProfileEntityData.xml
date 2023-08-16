@@ -714,9 +714,34 @@
             last_modified="2011-07-02 15:31:00.00"
             display_index="4"
             />
-
 	<external_identifier
             id="18"
+            external_id_reference="self_public_ref"
+            external_id_type="self_public_type"
+            orcid="0000-0000-0000-0003"
+            external_id_url="http://ext-id/self/public"
+            source_id="0000-0000-0000-0003"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:32:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="5"
+            />          
+
+	<external_identifier
+            id="19"
+            external_id_reference="self_public_user_obo_ref"
+            external_id_type="self_public_user_obo_type"
+            orcid="0000-0000-0000-0003"
+            external_id_url="http://ext-id/self/obo/public"
+            client_source_id="APP-5555555555555558"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:32:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="6"
+            /> 
+
+	<external_identifier
+            id="20"
             external_id_reference="public"
             external_id_type="public"
             orcid="0000-0000-0000-0001"
@@ -729,7 +754,7 @@
             />
 
 	<external_identifier
-            id="19"
+            id="21"
             external_id_reference="limited"
             external_id_type="limited"
             orcid="0000-0000-0000-0001"
@@ -742,7 +767,7 @@
             />
 
 	<external_identifier
-            id="20"
+            id="22"
             external_id_reference="private"
             external_id_type="private"
             orcid="0000-0000-0000-0001"

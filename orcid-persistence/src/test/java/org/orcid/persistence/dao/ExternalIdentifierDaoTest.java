@@ -142,7 +142,7 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         long initialNumber = dao.countAll();
         long elementThatBelogsToUser = dao.getExternalIdentifiers(USER_ORCID, 0L).size();
         long otherUserElements = dao.getExternalIdentifiers(OTHER_USER_ORCID, 0L).size();
-        assertEquals(5, elementThatBelogsToUser);
+        assertEquals(7, elementThatBelogsToUser);
         assertTrue(elementThatBelogsToUser < initialNumber);
         assertEquals(3, otherUserElements);
         //Remove all elements that belongs to USER_ORCID

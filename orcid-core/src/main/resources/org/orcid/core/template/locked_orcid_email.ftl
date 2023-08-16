@@ -18,4 +18,8 @@
 ${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.common.you_have_received_this_email" />
-<#include "email_footer.ftl"/>
+<@emailMacros.msg "email.common.email.preferences" /> (${baseUri}/account)
+<@emailMacros.msg "email.common.privacy_policy" /> (${baseUri}/privacy-policy)
+<@emailMacros.msg "email.common.address1" />
+
+<@emailMacros.msg "email.common.address2" />

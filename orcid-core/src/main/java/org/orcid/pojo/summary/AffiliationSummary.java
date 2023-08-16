@@ -1,10 +1,9 @@
 package org.orcid.pojo.summary;
 
-import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.core.utils.v3.SourceUtils;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AffiliationSummary {
     public String organizationName;
@@ -13,7 +12,7 @@ public class AffiliationSummary {
     public String endDate;
     public String role;
     public String type;
-    public boolean validatedOrSelfAsserted;
+    public boolean validated;
 
     public String getOrganizationName() {
         return organizationName;
@@ -63,30 +62,20 @@ public class AffiliationSummary {
         this.type = type;
     }
 
-    public boolean isValidatedOrSelfAsserted() {
-        return validatedOrSelfAsserted;
+    public boolean isValidated() {
+        return validated;
     }
 
-    public void setValidatedOrSelfAsserted(boolean validatedOrSelfAsserted) {
-        this.validatedOrSelfAsserted = validatedOrSelfAsserted;
+    public void setValidated(boolean validated) {
+        this.validated = validated;
     }
 
-    public static List<AffiliationSummary> valueOf(List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> affiliationGroupForms, String orcid, String type) {
-        List<AffiliationSummary> affiliationSummaries = new ArrayList<>();
-
-        affiliationGroupForms.forEach(affiliationGroupForm -> {
-            affiliationSummaries.add(AffiliationSummary.valueOf(affiliationGroupForm, orcid, type));
-        });
-
-        return affiliationSummaries;
-    }
-
-    public static AffiliationSummary valueOf(org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary as, String orcid, String type) {
+    public static AffiliationSummary valueOf(AffiliationForm as, String orcid, String type) {
         AffiliationSummary form = new AffiliationSummary();
 
         if (as != null) {
-            if (as.getOrganization() != null && as.getOrganization().getName() != null && as.getOrganization().getName().trim().length() != 0) {
-                form.setOrganizationName(as.getOrganization().getName());
+            if (!PojoUtil.isEmpty(as.getAffiliationName())) {
+                form.setOrganizationName(as.getAffiliationName().getValue());
             }
 
             if (!PojoUtil.isEmpty(as.getUrl())) {
@@ -102,19 +91,19 @@ public class AffiliationSummary {
             }
 
             if (!PojoUtil.isEmpty(as.getRoleTitle())) {
-                form.setRole(as.getRoleTitle());
+                form.setRole(as.getRoleTitle().getValue());
             }
 
             form.setType(type);
 
             if (as.getSource() != null) {
-                form.setValidatedOrSelfAsserted(as.getSource().getSourceName().getContent().equals(orcid));
+                form.setValidated(SourceUtils.isSelfAsserted(as.getSource(), orcid));
             }
         }
         return form;
     }
 
-    private static String getDate(FuzzyDate date) {
-        return date != null ? date.toString() : null;
+    private static String getDate(Date date) {
+        return date != null ? date.toFuzzyDate().toString() : null;
     }
 }
