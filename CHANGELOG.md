@@ -1,3 +1,9 @@
+## v2.38.2 - 2023-08-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.1...v2.38.2)
+
+- [#6837](https://github.com/ORCID/ORCID-Source/pull/6837): Add Redis cache to store the tokens
+
 ## v2.38.1 - 2023-08-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.0...v2.38.1)
