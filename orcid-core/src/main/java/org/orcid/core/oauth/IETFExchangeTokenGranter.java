@@ -324,8 +324,6 @@ public class IETFExchangeTokenGranter implements TokenGranter {
             token = tokenServices.createAccessToken(authentication);    
         }        
 
-        //TODO: Store the token in the cache before returning it to the user
-        
         return new DefaultOAuth2AccessToken(IETFTokenExchangeResponse.accessToken(token));
         // Note, redirect_uri is left blank.
     }
