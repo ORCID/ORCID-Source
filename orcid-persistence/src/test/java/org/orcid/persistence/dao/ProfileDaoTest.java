@@ -104,9 +104,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(22, all.size());
+        assertEquals(23, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(22), count);
+        assertEquals(Long.valueOf(23), count);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(profile.getDateCreated(), profile.getLastModified());
         
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(23), count);
+        assertEquals(Long.valueOf(24), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -151,7 +151,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(profile.getLastModified());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(23), count);
+        assertEquals(Long.valueOf(24), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -177,7 +177,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(retrievedProfile.getLastModified());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(23), count);
+        assertEquals(Long.valueOf(24), count);
     }
 
     @Test
@@ -278,12 +278,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(22), confirmedProfileCount);
+        assertEquals(Long.valueOf(23), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(21), confirmedProfileCount);
+        assertEquals(Long.valueOf(22), confirmedProfileCount);
     }
 
     @Test
