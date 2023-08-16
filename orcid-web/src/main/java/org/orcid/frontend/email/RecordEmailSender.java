@@ -128,7 +128,7 @@ public class RecordEmailSender {
         // Generate html from template
         String html = templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams);
 
-        mailgunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, html);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, html);
     }
 
     public void sendOrcidDeactivateEmail(String userOrcid) {
@@ -159,7 +159,7 @@ public class RecordEmailSender {
         // Generate html from template
         String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
 
-        mailgunManager.sendEmail(EmailConstants.DEACTIVATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     public void sendOrcidLockedEmail(String orcidToLock) {
@@ -184,7 +184,7 @@ public class RecordEmailSender {
         // Generate html from template
         String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
 
-        mailgunManager.sendEmail(EmailConstants.LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     public void sendPasswordResetEmail(String submittedEmail, String userOrcid) {
@@ -208,7 +208,7 @@ public class RecordEmailSender {
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset", locale), body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset", locale), body, htmlBody);
     }
 
     public void sendPasswordResetNotFoundEmail(String submittedEmail, Locale locale) {
@@ -222,7 +222,7 @@ public class RecordEmailSender {
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_not_found_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_not_found_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset_not_found", locale), body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset_not_found", locale), body, htmlBody);
     }
 
     public void sendReactivationEmail(String submittedEmail, String userOrcid) {
@@ -245,7 +245,7 @@ public class RecordEmailSender {
         // Generate body from template
         String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reactivation", locale), body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reactivation", locale), body, htmlBody);
     }
 
     public void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail) {
@@ -274,7 +274,7 @@ public class RecordEmailSender {
         // Generate html from template
         String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
 
-        mailgunManager.sendEmail(EmailConstants.EMAIL_CHANGED_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
     }
 
     public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
@@ -334,7 +334,7 @@ public class RecordEmailSender {
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            mailgunManager.sendEmail(EmailConstants.CLAIM_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.claim_reminder", locale), body, htmlBody);
+            mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.claim_reminder", locale), body, htmlBody);
             profileEventDao.persist(new ProfileEventEntity(userOrcid, ProfileEventType.CLAIM_REMINDER_SENT));
         } else {
             LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
@@ -364,7 +364,7 @@ public class RecordEmailSender {
         String html = templateManager.processTemplate("email_2fa_disabled_html.ftl", templateParams);
 
         for (Email email : emails.getEmails()) {
-            mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+            mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
         }
     }
 
@@ -382,7 +382,7 @@ public class RecordEmailSender {
 
         String body = templateManager.processTemplate("forgot_id_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("forgot_id_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.forgotten_id", locale), body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.forgotten_id", locale), body, htmlBody);
     }
 
     public void sendForgottenIdEmailNotFoundEmail(String email, Locale locale) {
@@ -395,7 +395,7 @@ public class RecordEmailSender {
 
         String body = templateManager.processTemplate("forgot_id_email_not_found_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("forgot_id_email_not_found_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.RESET_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.forgotten_id", locale), body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, verifyEmailUtils.getSubject("email.subject.forgotten_id", locale), body, htmlBody);
     }
 
     public void sendVerificationEmailToNonPrimaryEmails(String userOrcid) {
@@ -420,7 +420,7 @@ public class RecordEmailSender {
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.SUPPORT_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
     }
       
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
