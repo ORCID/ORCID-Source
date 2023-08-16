@@ -1,3 +1,14 @@
+## v2.38.3 - 2023-08-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.2...v2.38.3)
+
+- [#6870](https://github.com/ORCID/ORCID-Source/pull/6870): fix: Sort affiliations by created date
+
+### Fix
+
+- Fix test errors caused by adding more affiliations in test data
+- Sort affiliations by created date
+
 ## v2.38.2 - 2023-08-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.1...v2.38.2)
