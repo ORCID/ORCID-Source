@@ -79,7 +79,7 @@ public class AutospamEmailSender {
         // Generate html from template
         String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
 
-        mailgunManager.sendEmail(EmailConstants.LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
       
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
