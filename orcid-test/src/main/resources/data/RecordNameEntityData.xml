@@ -207,5 +207,16 @@
 		given_names="Given names"
 		family_name="Family name"
 		visibility="PRIVATE"	
-		/>		
+		/>
+
+	<record_name
+			id="19"
+			date_created="2023-01-01 00:00:00.00"
+			last_modified="2023-01-01 00:00:00.00"
+			orcid="0000-0000-0000-0008"
+			credit_name="Credit Name"
+			given_names="Given Names"
+			family_name="Family Name"
+			visibility="PUBLIC"
+	/>
 </dataset>

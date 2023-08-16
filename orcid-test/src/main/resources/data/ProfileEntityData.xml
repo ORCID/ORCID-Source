@@ -435,6 +435,26 @@
             using_2fa="true"
             />
 
+    <profile
+            orcid="0000-0000-0000-0008"
+            creation_method="API"
+            completed_date="2023-03-29 15:31:00.00"
+            date_created="2023-03-29 15:31:00.00"
+            submission_date="2023-03-29 15:31:00.00"
+            last_indexed_date="2023-03-29 15:31:00.00"
+            last_modified="2023-03-29 15:31:00.00"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            activities_visibility_default="PUBLIC"
+            indexing_status="DONE"
+            orcid_type="USER"
+            claimed="true"
+            reviewed="true"
+            record_locked="false"
+            using_2fa="false"
+            secret_for_2fa="secret"
+    />
+
     <granted_authority
             authority="USER_ROLE"
             orcid="4444-4444-4444-4441"
@@ -495,6 +515,11 @@
             authority="USER_ROLE"
             orcid="0000-0000-0000-0007"
             />
+
+    <granted_authority
+            authority="USER_ROLE"
+            orcid="0000-0000-0000-0008"
+    />
 
     <external_identifier
     		id="1"
