@@ -52,7 +52,7 @@ import com.amazonaws.util.IOUtils;
 public class AutoLockSpamRecords {
 
     private static final Logger LOG = LoggerFactory.getLogger(AutoLockSpamRecords.class);
-    
+
     @Resource
     private SlackManager slackManager;
 
@@ -61,48 +61,49 @@ public class AutoLockSpamRecords {
 
     @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
-    
+
     @Value("${org.orcid.message-listener.s3.accessKey}")
     private String S3_ACCESS_KEY;
-    
+
     @Value("${org.orcid.message-listener.s3.secretKey}")
     private String S3_SECRET_KEY;
-    
+
     @Value("${org.orcid.scheduler.aws.bucket:auto-spam-folder}")
     private String SPAM_BUCKET;
-    
+
     @Value("${org.orcid.scheduler.aws.file:orcidspam.csv}")
     private String ORCID_S3_SPAM_FILE;
-    
+
     @Value("${org.orcid.scheduler.autospam.enabled:false}")
     private boolean AUTOSPAM_ENABLED;
-    
+
     @Value("${org.orcid.scheduler.autospam.file:orcidspam.csv}")
     private String ORCID_SPAM_FILE;
-    
+
     @Value("${org.orcid.scheduler.autospam.daily.batch:20000}")
     private int DAILY_BATCH_SIZE;
-    
+
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
-    
-    @Resource(name="orcidOauth2TokenDetailDao")
+
+    @Resource(name = "orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauthDao;
 
     private static int ONE_DAY = 86400000;
 
+    @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Resource 
+
+    @Resource
     private AutospamEmailSender autospamEmailSender;
-    
+
     @Resource
     private AffiliationsManager affiliationsManager;
 
-    //for running spam manually
+    // for running spam manually
     public static void main(String[] args) {
         AutoLockSpamRecords autolockSpamRecords = new AutoLockSpamRecords();
         try {
@@ -125,16 +126,17 @@ public class AutoLockSpamRecords {
         for (String orcidId : toLock) {
             try {
                 LOG.info("Processing orcidId: " + orcidId);
-                if(OrcidStringUtils.isValidOrcid(orcidId)) {
+                if (OrcidStringUtils.isValidOrcid(orcidId)) {
                     ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcidId);
-                    //only lock account was not reviewed and not already locked and not have an auth token
-                    
-                    if(!profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId)) {
+                    // only lock account was not reviewed and not already locked
+                    // and not have an auth token
+
+                    if (profileEntity != null && !profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId)) {
                         List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcidId);
-                        //Lock only if doesn't have any affiliations
-                        if(affiliations == null || affiliations.size() < 1) {
+                        // Lock only if doesn't have any affiliations
+                        if (affiliations == null || affiliations.size() < 1) {
                             boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
-                            if(wasLocked) {
+                            if (wasLocked) {
                                 autospamEmailSender.sendOrcidLockedEmail(orcidId);
                                 accountsLocked++;
                             }
@@ -144,45 +146,46 @@ public class AutoLockSpamRecords {
                 }
             } catch (Exception e) {
                 LOG.error("Exception when locking spam record " + orcidId, e);
-                slackManager.sendAlert("Exception when locking spam record " + orcidId + ". LastOrcid processed is: " + lastOrcidProcessed , slackChannel, slackUser);
+                slackManager.sendAlert("Exception when locking spam record " + orcidId + ". LastOrcid processed is: " + lastOrcidProcessed, slackChannel, slackUser);
                 LOG.info("LastOrcid processed is: " + lastOrcidProcessed);
                 e.printStackTrace();
             }
         }
-        System.out.println("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked);
-        LOG.info("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked);
-        slackManager.sendAlert("Spam locking for the batch processed on the day ended. LastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked, slackChannel, slackUser);
-     }
-    
-    
-    public void scheduledProcess() throws InterruptedException, IOException {
-        if(AUTOSPAM_ENABLED) {     
-            process(true);
-         }
+        System.out.println("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed
+                + " acccounts locked in DB: " + accountsLocked);
+        LOG.info("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed
+                + " acccounts locked in DB: " + accountsLocked);
+        slackManager.sendAlert(
+                "Spam locking for the batch processed on the day ended. LastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked,
+                slackChannel, slackUser);
     }
 
-            
+    public void scheduledProcess() throws InterruptedException, IOException {
+        if (AUTOSPAM_ENABLED) {
+            process(true);
+        }
+    }
+
     public void process(boolean fromS3) throws InterruptedException, IOException {
         List<String> allIDs = getAllSpamIDs(fromS3);
         System.out.println("Found " + allIDs.size() + " profiles for autolocking. Starting the autolocking process");
         slackManager.sendAlert("Found " + allIDs.size() + " profiles for autolocking.", slackChannel, slackUser);
         LOG.info("Found {} profiles for autolocking", allIDs.size());
-        
+
         List<String> toLock = getNextIdSubset(allIDs);
         while (toLock != null && !toLock.isEmpty()) {
             autolockRecords(toLock);
             LOG.info("Locked {} profiles, {} remaining to lock", new Object[] { toLock.size(), allIDs.size() });
             LOG.info("Profiles autolocked");
             Thread.sleep(ONE_DAY);
-            if(allIDs.size() - toLock.size() <=0) {
+            if (allIDs.size() - toLock.size() <= 0) {
                 break;
-            }
-            else {
+            } else {
                 toLock = getNextIdSubset(allIDs);
             }
-        }                          
+        }
     }
-            
+
     @SuppressWarnings("resource")
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-context.xml");
@@ -205,17 +208,14 @@ public class AutoLockSpamRecords {
 
     private ArrayList<String> getAllSpamIDs(boolean fromS3) throws IOException {
         Reader reader;
-        if(fromS3) {
-            BasicAWSCredentials creds = new BasicAWSCredentials(S3_SECRET_KEY, S3_ACCESS_KEY);
-            AmazonS3 s3 = AmazonS3Client.builder()
-                    .withRegion(Regions.US_EAST_2)
-                    .withCredentials(new AWSStaticCredentialsProvider(creds))
-                    .build();
-            
+        if (fromS3) {
+            BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY, S3_SECRET_KEY);
+            AmazonS3 s3 = AmazonS3Client.builder().withRegion(Regions.US_EAST_2).withCredentials(new AWSStaticCredentialsProvider(creds)).build();
+
             S3Object response = s3.getObject(new GetObjectRequest(SPAM_BUCKET, ORCID_S3_SPAM_FILE));
             byte[] byteArray = IOUtils.toByteArray(response.getObjectContent());
             reader = new InputStreamReader(new ByteArrayInputStream(byteArray));
-            
+
         } else {
             reader = new FileReader(ORCID_SPAM_FILE);
         }
@@ -232,10 +232,9 @@ public class AutoLockSpamRecords {
         return spamList;
     }
 
-    
     private static void bootstrapTogglz(OrcidTogglzConfiguration togglzConfig) {
         FeatureManager featureManager = new FeatureManagerBuilder().togglzConfig(togglzConfig).build();
-        ContextClassLoaderFeatureManagerProvider.bind(featureManager);  
-    }   
+        ContextClassLoaderFeatureManagerProvider.bind(featureManager);
+    }
 
 }
