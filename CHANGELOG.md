@@ -1,3 +1,14 @@
+## v2.38.6 - 2023-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.5...v2.38.6)
+
+- [#6872](https://github.com/ORCID/ORCID-Source/pull/6872): fix: Sort professional activities by end date in summary endpoint
+- [#6874](https://github.com/ORCID/ORCID-Source/pull/6874): Trim org data
+
+### Fix
+
+- Sort professional activities by end date in summary endpoint
+
 ## v2.38.5 - 2023-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.4...v2.38.5)
