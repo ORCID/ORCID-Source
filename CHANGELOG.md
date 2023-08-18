@@ -1,3 +1,9 @@
+## v2.38.5 - 2023-08-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.4...v2.38.5)
+
+- [#6873](https://github.com/ORCID/ORCID-Source/pull/6873): send-deactivate-account.json should be a POST action, since we are as…
+
 ## v2.38.4 - 2023-08-17
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.3...v2.38.4)
