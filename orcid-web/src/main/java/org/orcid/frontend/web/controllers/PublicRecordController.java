@@ -55,6 +55,7 @@ import org.orcid.pojo.ajaxForm.AddressesForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.NamesForm;
@@ -510,7 +511,29 @@ public class PublicRecordController extends BaseWorkspaceController {
     }
 
     private void sortAffiliationsByCreatedDate(List<AffiliationGroupForm> affiliationGroupForms) {
-        affiliationGroupForms.sort(Comparator.comparing(a -> a.getDefaultAffiliation().getCreatedDate().toJavaDate()));
+        List<Long> activePutCodesWithOutDate = new ArrayList<>();
+
+        affiliationGroupForms.forEach(affiliationGroupForm -> {
+            if (affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear() == null || "".equals(affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear())) {
+                activePutCodesWithOutDate.add(affiliationGroupForm.getActivePutCode());
+                affiliationGroupForm.getDefaultAffiliation().setEndDate(Date.valueOf(new java.util.Date()));
+            }
+        });
+
+        affiliationGroupForms.sort(Comparator.comparing(a -> a.getDefaultAffiliation().getEndDate().toJavaDate()));
         Collections.reverse(affiliationGroupForms);
+
+        if (activePutCodesWithOutDate.size() > 0) {
+            Iterator<Long> i = activePutCodesWithOutDate.iterator();
+            while (i.hasNext()) {
+                Long activePutCode = i.next();
+                affiliationGroupForms.forEach(affiliationGroupForm -> {
+                    if (activePutCode.equals(affiliationGroupForm.getActivePutCode())) {
+                        affiliationGroupForm.getDefaultAffiliation().setEndDate(null);
+                        i.remove();
+                    }
+                });
+            }
+        }
     }
 }
