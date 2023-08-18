@@ -515,7 +515,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         return new Errors();
     }
 
-    @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.POST)
     public @ResponseBody String startDeactivateOrcidAccount(HttpServletRequest request) {
         String currentUserOrcid = getCurrentUserOrcid();
         recordEmailSender.sendOrcidDeactivateEmail(currentUserOrcid);

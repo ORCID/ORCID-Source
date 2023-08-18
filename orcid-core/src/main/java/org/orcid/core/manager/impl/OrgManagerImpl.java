@@ -9,6 +9,7 @@ import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.common_v2.OrganizationHolder;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
@@ -20,7 +21,6 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.core.utils.OrcidStringUtils;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -157,10 +157,10 @@ public class OrgManagerImpl implements OrgManager {
 
         OrgEntity orgEntity = new OrgEntity();
         org.orcid.jaxb.model.common_v2.Organization organization = holder.getOrganization();
-        orgEntity.setName(organization.getName());
+        orgEntity.setName(organization.getName().trim());
         org.orcid.jaxb.model.common_v2.OrganizationAddress address = organization.getAddress();
-        orgEntity.setCity(address.getCity());
-        orgEntity.setRegion(address.getRegion() != null ? address.getRegion() : "");
+        orgEntity.setCity(address.getCity().trim());
+        orgEntity.setRegion(address.getRegion() != null ? address.getRegion().trim() : "");
         orgEntity.setCountry(address.getCountry().value());
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             OrgDisambiguatedEntity disambiguatedOrg = orgDisambiguatedDao.findBySourceIdAndSourceType(
