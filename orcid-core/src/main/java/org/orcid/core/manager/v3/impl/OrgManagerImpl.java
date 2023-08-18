@@ -154,10 +154,10 @@ public class OrgManagerImpl implements OrgManager {
 
     private OrgEntity getOrgEntity(org.orcid.jaxb.model.v3.release.common.Organization organization) {
         OrgEntity orgEntity = new OrgEntity();
-        orgEntity.setName(organization.getName());
+        orgEntity.setName(organization.getName().trim());
         org.orcid.jaxb.model.v3.release.common.OrganizationAddress address = organization.getAddress();
-        orgEntity.setCity(address.getCity());
-        orgEntity.setRegion(address.getRegion() != null ? address.getRegion() : "");
+        orgEntity.setCity(address.getCity().trim());
+        orgEntity.setRegion(address.getRegion() != null ? address.getRegion().trim() : "");
         orgEntity.setCountry(address.getCountry().name());
 
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
@@ -275,6 +275,4 @@ public class OrgManagerImpl implements OrgManager {
             peerReviewDao.merge(p);
         });
     }
-
-
 }
