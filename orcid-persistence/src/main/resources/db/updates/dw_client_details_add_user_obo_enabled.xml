@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+    <changeSet id="ALTER-DW-CLIENT-DETAILS-VIEW-USER-OBO" author="Camelia Dumitru">
+        <dropView  viewName="dw_client_details"/>  
+        <createView viewName="dw_client_details">
+            select client_details_id, client_name, client_description, client_website, group_orcid,
+            client_type, user_obo_enabled, date_created, last_modified
+            from client_details
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-CLIENT_DETAILS_OBO" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_client_details to dw_user;</sql>
+    </changeSet>         
+</databaseChangeLog>
