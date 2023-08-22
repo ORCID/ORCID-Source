@@ -16,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.utils.JsonUtils;
@@ -62,10 +61,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     private ProfileLastModifiedDao profileLastModifiedDao;
     
     @Resource
-    private RedisClient redisClient;
-    
-    @Resource
-    private EncryptionManager encryptionManager;
+    private RedisClient redisClient;    
     
     @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
     private boolean isTokenCacheEnabled;

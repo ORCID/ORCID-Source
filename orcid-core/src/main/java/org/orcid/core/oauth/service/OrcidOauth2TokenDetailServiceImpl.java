@@ -10,12 +10,14 @@ import javax.persistence.NoResultException;
 
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,12 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
+    
+    @Resource
+    private RedisClient redisClient;
+    
+    @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
+    private boolean isTokenCacheEnabled;
 
     @Override
     public void setOrcidOauth2TokenDetailDao(OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
@@ -128,6 +136,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void revokeAccessToken(String accessToken) {
+        // Remove the token from the cache
+        if(isTokenCacheEnabled) {
+            redisClient.remove(accessToken);
+        }
+        // Revoke the token
         orcidOauth2TokenDetailDao.revokeAccessToken(accessToken);
     }
     
