@@ -1,3 +1,9 @@
+## v2.38.8 - 2023-08-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.7...v2.38.8)
+
+- [#6876](https://github.com/ORCID/ORCID-Source/pull/6876): Remove token from cache when it is revoked
+
 ## v2.38.7 - 2023-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.6...v2.38.7)
