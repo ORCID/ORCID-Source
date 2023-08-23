@@ -1,3 +1,9 @@
+## v2.38.9 - 2023-08-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.8...v2.38.9)
+
+- [#6877](https://github.com/ORCID/ORCID-Source/pull/6877): Remove tokens from cache
+
 ## v2.38.8 - 2023-08-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.7...v2.38.8)
