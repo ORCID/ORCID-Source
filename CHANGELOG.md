@@ -1,3 +1,9 @@
+## v2.38.10 - 2023-08-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.9...v2.38.10)
+
+- [#6878](https://github.com/ORCID/ORCID-Source/pull/6878): Deactivate endpoint should return the email in a json object
+
 ## v2.38.9 - 2023-08-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.8...v2.38.9)
