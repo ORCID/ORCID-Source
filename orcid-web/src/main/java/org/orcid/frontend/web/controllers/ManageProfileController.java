@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
@@ -76,6 +78,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author Declan Newman (declan) Date: 22/02/2012
@@ -516,10 +520,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/send-deactivate-account.json", method = RequestMethod.POST)
-    public @ResponseBody String startDeactivateOrcidAccount(HttpServletRequest request) {
+    public @ResponseBody String startDeactivateOrcidAccount(HttpServletRequest request) throws JSONException {
         String currentUserOrcid = getCurrentUserOrcid();
         recordEmailSender.sendOrcidDeactivateEmail(currentUserOrcid);
-        return emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
+        String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
+        JSONObject response = new JSONObject();
+        response.put("email", primaryEmail);
+        return response.toString();
     }
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
