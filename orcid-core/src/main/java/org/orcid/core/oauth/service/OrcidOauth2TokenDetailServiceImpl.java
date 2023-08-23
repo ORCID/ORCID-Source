@@ -246,6 +246,16 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void disableClientAccess(String clientDetailsId, String userOrcid) {
+        // As a security measure, remove any user tokens from the cache
+        List<OrcidOauth2TokenDetail> userTokens = findByUserName(userOrcid);
+        if(userTokens != null && !userTokens.isEmpty()) {
+            for(OrcidOauth2TokenDetail token : userTokens) {
+                if(clientDetailsId.equals(token.getClientDetailsId())) {
+                    redisClient.remove(token.getTokenValue());
+                }
+            }
+        }
+        // And then disable all user tokens
         orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
     }
     
