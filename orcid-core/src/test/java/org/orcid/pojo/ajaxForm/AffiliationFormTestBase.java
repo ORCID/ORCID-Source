@@ -160,7 +160,7 @@ public abstract class AffiliationFormTestBase {
         aff.setLastModifiedDate(new LastModifiedDate(lastModified));
         aff.setPutCode(1L);
         aff.setPath("/distinction/1");
-        
+        aff.setUrl(new Url("https://test.orcid.org"));
         aff.setDepartmentName("department-name");
         aff.setDisplayIndex("0");
         aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));
