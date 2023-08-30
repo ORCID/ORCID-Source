@@ -115,7 +115,21 @@ public class RedisClient {
                 LOG.debug("Reading Key: {}" , key);
                 return jedis.get(key);
             }
-        }
+        }        
         return null;
-    }       
+    }
+    
+    public boolean remove(String key) {
+        if (enabled && pool != null) {
+            try (Jedis jedis = pool.getResource()) {
+                LOG.debug("Removing Key: {}", key);
+                if (jedis.exists(key)) {
+                    return jedis.del(key) > 0;
+                } else {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
 }

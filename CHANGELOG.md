@@ -1,3 +1,28 @@
+## v2.39.0 - 2023-08-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.10...v2.39.0)
+
+- [#6882](https://github.com/ORCID/ORCID-Source/pull/6882): Add url to summary
+- [#6880](https://github.com/ORCID/ORCID-Source/pull/6880): Add url info to affiliations form
+
+## v2.38.10 - 2023-08-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.9...v2.38.10)
+
+- [#6878](https://github.com/ORCID/ORCID-Source/pull/6878): Deactivate endpoint should return the email in a json object
+
+## v2.38.9 - 2023-08-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.8...v2.38.9)
+
+- [#6877](https://github.com/ORCID/ORCID-Source/pull/6877): Remove tokens from cache
+
+## v2.38.8 - 2023-08-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.7...v2.38.8)
+
+- [#6876](https://github.com/ORCID/ORCID-Source/pull/6876): Remove token from cache when it is revoked
+
 ## v2.38.7 - 2023-08-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.6...v2.38.7)

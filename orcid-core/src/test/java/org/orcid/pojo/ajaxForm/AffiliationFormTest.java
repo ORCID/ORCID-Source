@@ -20,8 +20,9 @@ public class AffiliationFormTest extends AffiliationFormTestBase {
     public void fromAffiliationSummaryTest() {
         AffiliationForm f1 = getAffiliationForm();
         AffiliationSummary s1 = getAffiliationSummary();
-        // Summary doesn't have url
-        f1.setUrl(new Text());
+        
+        AffiliationForm f2 = AffiliationForm.valueOf(s1);
+        f2.equals(f1);
         assertEquals(f1, AffiliationForm.valueOf(s1));
     }
     

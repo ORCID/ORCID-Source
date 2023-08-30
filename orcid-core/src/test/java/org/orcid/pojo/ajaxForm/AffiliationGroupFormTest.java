@@ -120,7 +120,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
     
     private AffiliationForm getForm1() {
         AffiliationForm affForm = getAffiliationForm();
-        affForm.setUrl(new Text());
+        affForm.setUrl(Text.valueOf("https://test.orcid.org"));
         affForm.setPutCode(Text.valueOf(2L));
         
         Visibility v = new Visibility();
@@ -139,7 +139,7 @@ public class AffiliationGroupFormTest extends AffiliationFormTestBase {
     
     private AffiliationForm getForm2() {
         AffiliationForm affForm = getAffiliationForm();
-        affForm.setUrl(new Text());
+        affForm.setUrl(Text.valueOf("https://test.orcid.org"));
         affForm.setPutCode(Text.valueOf(1L));
         
         Visibility v = new Visibility();
