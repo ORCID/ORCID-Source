@@ -192,8 +192,9 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             form.setAffiliationExternalIdentifiers(affiliationExternalIdentifiers);
         }
 
-        // Set empty url field
-        form.setUrl(new Text());
+        if(summary.getUrl() != null && summary.getUrl().getValue() != null) {
+            form.setUrl(Text.valueOf(summary.getUrl().getValue()));
+        }
         
         form.setCreatedDate(Date.valueOf(summary.getCreatedDate()));
         form.setLastModified(Date.valueOf(summary.getLastModifiedDate()));
