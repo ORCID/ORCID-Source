@@ -1,3 +1,9 @@
+## v2.39.1 - 2023-08-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.0...v2.39.1)
+
+- [#6875](https://github.com/ORCID/ORCID-Source/pull/6875): Added user_obo_enabled column to dw_client_details view
+
 ## v2.39.0 - 2023-08-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.10...v2.39.0)
