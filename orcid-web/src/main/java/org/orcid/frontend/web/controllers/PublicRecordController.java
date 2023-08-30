@@ -383,9 +383,7 @@ public class PublicRecordController extends BaseWorkspaceController {
                 }
             }
             recordSummary.setName(displayName);
-        }
-
-        ActivitiesSummary activitiesSummary = record.getActivitiesSummary();
+        }        
 
         AffiliationGroupContainer groupedAffiliations = publicProfileController.getGroupedAffiliations(orcid);
         List<AffiliationGroupForm> groupedEmployments = groupedAffiliations.getAffiliationGroups().get(AffiliationType.EMPLOYMENT);
