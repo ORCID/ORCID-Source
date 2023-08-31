@@ -1,3 +1,9 @@
+## v2.39.3 - 2023-08-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.2...v2.39.3)
+
+- [#6884](https://github.com/ORCID/ORCID-Source/pull/6884): Leave only the following status: In Development, Complete, Certified …
+
 ## v2.39.2 - 2023-08-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.1...v2.39.2)
