@@ -46,7 +46,6 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecord;
@@ -173,7 +172,7 @@ public class PublicRecordController extends BaseWorkspaceController {
     public @ResponseBody
     PublicRecord getPublicRecord(@PathVariable("orcid") String orcid) {
         PublicRecord publicRecord = new PublicRecord();
-        Boolean isDeprecated = false;
+        boolean isDeprecated = false;
 
         try {
             // Check if the profile is deprecated or locked
@@ -224,16 +223,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             if (publicPersonalDetails.getName() != null) {
                 Name name = publicPersonalDetails.getName();
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
-                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                        displayName = name.getCreditName().getContent();
-                    } else {
-                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                            displayName = name.getGivenNames().getContent() + " ";
-                        }
-                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                            displayName += name.getFamilyName().getContent();
-                        }
-                    }
+                    displayName = getDisplayName(name);
                     publicRecord.setNames(NamesForm.valueOf(name));
                 }
             }
@@ -256,13 +246,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             // Fill other names
             OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
             if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
-                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
-                while (it.hasNext()) {
-                    OtherName otherName = it.next();
-                    if (!org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
-                        it.remove();
-                    }
-                }
+                publicOtherNames.getOtherNames().removeIf(otherName -> !org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(otherName.getVisibility()));
             }
             publicRecord.setOtherNames(OtherNamesForm.valueOf(publicOtherNames));
         }
@@ -299,9 +283,9 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         Emails filteredEmails = new Emails();
         if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
+            filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails().stream().filter(Email::isVerified).collect(Collectors.toList())));
         } else {
-            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails()));
+            filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails()));
         }
 
         publicRecord.setEmails(org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails));
@@ -322,7 +306,7 @@ public class PublicRecordController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET)
     public @ResponseBody RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
         RecordSummary recordSummary = new RecordSummary();
-        Boolean isDeprecated = false;
+        boolean isDeprecated = false;
 
         try {
             // Check if the profile is deprecated or locked
@@ -351,12 +335,11 @@ public class PublicRecordController extends BaseWorkspaceController {
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
 
-            return recordSummary;
         } else {
             recordSummary = getSummary(orcid);
             recordSummary.setStatus("active");
-            return recordSummary;
         }
+        return recordSummary;
     }
 
     public @ResponseBody
@@ -370,16 +353,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             Name name = person.getName();
             if (name != null) {
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
-                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                        displayName = name.getCreditName().getContent();
-                    } else {
-                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                            displayName = name.getGivenNames().getContent() + " ";
-                        }
-                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                            displayName += name.getFamilyName().getContent();
-                        }
-                    }
+                    displayName = getDisplayName(name);
                 }
             }
             recordSummary.setName(displayName);
@@ -481,6 +455,21 @@ public class PublicRecordController extends BaseWorkspaceController {
         return recordSummary;
     }
 
+    private String getDisplayName(Name name) {
+        String displayName = null;
+        if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+            displayName = name.getCreditName().getContent();
+        } else {
+            if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                displayName = name.getGivenNames().getContent() + " ";
+            }
+            if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                displayName += name.getFamilyName().getContent();
+            }
+        }
+        return displayName;
+    }
+
     private List<AffiliationSummary> retrieveProfessionalActivities(AffiliationGroupContainer groupedAffiliations, String orcid) {
         List<AffiliationSummary> professionalActivities = new ArrayList<>();
 
@@ -512,7 +501,14 @@ public class PublicRecordController extends BaseWorkspaceController {
         List<Long> activePutCodesWithOutDate = new ArrayList<>();
 
         affiliationGroupForms.forEach(affiliationGroupForm -> {
-            if (affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear() == null || "".equals(affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear())) {
+            if ("distinction".equals(affiliationGroupForm.getDefaultAffiliation().getAffiliationType().getValue()) &&
+                    affiliationGroupForm.getDefaultAffiliation().getStartDate().getYear() != null
+            ) {
+                affiliationGroupForm.getDefaultAffiliation().setEndDate(affiliationGroupForm.getDefaultAffiliation().getStartDate());
+            }
+
+            if (affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear() == null ||
+                    "".equals(affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear())) {
                 activePutCodesWithOutDate.add(affiliationGroupForm.getActivePutCode());
                 affiliationGroupForm.getDefaultAffiliation().setEndDate(Date.valueOf(new java.util.Date()));
             }
