@@ -1,3 +1,13 @@
+## v2.39.2 - 2023-08-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.1...v2.39.2)
+
+- [#6883](https://github.com/ORCID/ORCID-Source/pull/6883): fix: Use distinction start date as an end data for sorting if exists
+
+### Fix
+
+- Use distinction start date as an end data for sorting if exists
+
 ## v2.39.1 - 2023-08-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.0...v2.39.1)
