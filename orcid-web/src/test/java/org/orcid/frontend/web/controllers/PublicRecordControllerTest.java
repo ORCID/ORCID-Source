@@ -228,8 +228,8 @@ public class PublicRecordControllerTest extends DBUnitTest {
         RecordSummary record = publicRecordController.getSummaryRecord("0000-0000-0000-0008");
 
         assertEquals(5, record.getProfessionalActivitiesCount());
-        assertEquals("2030-01-03", record.getProfessionalActivities().get(0).getEndDate());
-        assertEquals("2030-01-01", record.getProfessionalActivities().get(1).getEndDate());
-        assertNull(record.getProfessionalActivities().get(2).getEndDate());
+        assertNull(record.getProfessionalActivities().get(0).getEndDate());
+        assertEquals("2023-01-01", record.getProfessionalActivities().get(1).getEndDate());
+        assertEquals("2021-12-05", record.getProfessionalActivities().get(2).getEndDate());
     }
 }
