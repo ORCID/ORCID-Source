@@ -1,3 +1,9 @@
+## v2.39.4 - 2023-09-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.3...v2.39.4)
+
+- [#6885](https://github.com/ORCID/ORCID-Source/pull/6885): Remove the integration if it is not in one of the desiered stages
+
 ## v2.39.3 - 2023-08-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.2...v2.39.3)
