@@ -1,3 +1,32 @@
+## v2.39.3 - 2023-08-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.2...v2.39.3)
+
+- [#6884](https://github.com/ORCID/ORCID-Source/pull/6884): Leave only the following status: In Development, Complete, Certified …
+
+## v2.39.2 - 2023-08-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.1...v2.39.2)
+
+- [#6883](https://github.com/ORCID/ORCID-Source/pull/6883): fix: Use distinction start date as an end data for sorting if exists
+
+### Fix
+
+- Use distinction start date as an end data for sorting if exists
+
+## v2.39.1 - 2023-08-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.0...v2.39.1)
+
+- [#6875](https://github.com/ORCID/ORCID-Source/pull/6875): Added user_obo_enabled column to dw_client_details view
+
+## v2.39.0 - 2023-08-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.10...v2.39.0)
+
+- [#6882](https://github.com/ORCID/ORCID-Source/pull/6882): Add url to summary
+- [#6880](https://github.com/ORCID/ORCID-Source/pull/6880): Add url info to affiliations form
+
 ## v2.38.10 - 2023-08-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.38.9...v2.38.10)
