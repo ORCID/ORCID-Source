@@ -17,7 +17,7 @@
 				<a href="${baseUri}/reset-password"><@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/></a><@emailMacros.space /><@emailMacros.msg "email.forgotten_id.many_users_have"/><@emailMacros.msg "email.common.period"/>
 				</li>
 				<li>
-					<@emailMacros.msg "email.forgotten_id.id_associated_with_email" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/requests/new?ticket_form_id=360003481994"> <@emailMacros.msg "email.forgotten_id._please_contact_us"/></a>
+					<@emailMacros.msg "email.forgotten_id.id_associated_with_email" /><@emailMacros.space /><a href="https://support.orcid.org/?ticket_form_id=360003481994"> <@emailMacros.msg "email.forgotten_id._please_contact_us"/></a>
 				</li>
 
 				<li><@emailMacros.msg "email.forgotten_id.certain_not_regiser" />

@@ -41,7 +41,7 @@
 				<br>
 				Regards,<br>
 				The ORCID Team<br>
-				<a target="help-contact-us" href="https://support.orcid.org/hc/en-us/requests/new">https://support.orcid.org/hc/en-us/requests/new</a><br>
+				<a target="help-contact-us" href="https://support.orcid.org/">https://support.orcid.org/</a><br>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 				You have received this email as a service announcement related to your ORCID Account.

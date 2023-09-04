@@ -10,6 +10,6 @@ URL: http://testserver.orcid.org/account
 
 Kind Regards,
 The ORCID Team
-https://support.orcid.org/hc/en-us/requests/new
+https://support.orcid.org/
 http://testserver.orcid.org
 

@@ -50,7 +50,7 @@
             </ul>
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
-            As always, please <a href="https://support.orcid.org/hc/en-us/requests/new" target="_blank">contact us</a> if you have questions about ORCID and your data privacy.
+            As always, please <a href="https://support.orcid.org/" target="_blank">contact us</a> if you have questions about ORCID and your data privacy.
         </p>
         <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C; white-space: pre;">
 Cheers,

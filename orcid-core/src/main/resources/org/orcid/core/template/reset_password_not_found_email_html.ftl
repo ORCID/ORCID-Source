@@ -20,7 +20,7 @@
 				</li>
 				<li>
 					<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-						<@emailMacros.msg "email.reset_password_not_found.id_associated_with_email_no_longer_access" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/requests/new?ticket_form_id=360003481994"><@emailMacros.msg "email.reset_password_not_found.contact_us" /></a>
+						<@emailMacros.msg "email.reset_password_not_found.id_associated_with_email_no_longer_access" /><@emailMacros.space /><a href="https://support.orcid.org/?ticket_form_id=360003481994"><@emailMacros.msg "email.reset_password_not_found.contact_us" /></a>
 					</p>
 				</li>
 				<li>
