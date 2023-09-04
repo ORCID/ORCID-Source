@@ -809,5 +809,21 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
         return;
     }
+    
+    public boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId) {
+        try {
+            String queryString = "select p.orcid from profile p where p.orcid = :orcid and ( exists (select 1 from work w where w.orcid = p.orcid and w.client_source_id = :clientId) or exists (select 1 from org_affiliation_relation o where o.orcid = p.orcid and o.client_source_id = :clientId));";
+            Query query = entityManager.createNativeQuery(queryString);
+            query.setParameter("orcid", orcid);
+            query.setParameter("clientId", clientId);
+            String result = (String) query.getSingleResult();
+            if(orcid.equals(result)) {
+                return true;
+            } 
+        } catch(NoResultException nre) {
+            return false;
+        }
+        return false;
+    }
 
 }

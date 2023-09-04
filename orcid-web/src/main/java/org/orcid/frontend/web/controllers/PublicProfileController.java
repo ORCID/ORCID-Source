@@ -15,6 +15,7 @@ import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
@@ -44,6 +45,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -147,6 +149,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
+    
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -269,8 +274,22 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         // False if it is not reviewed and doesn't have any integration
         if(!profile.isReviewed()) {
-            if (!orcidOauth2TokenService.hasToken(profile.getId(), getLastModifiedTime(profile.getId()))) {
-                return false;
+            String userOrcid = profile.getId();
+            if (!orcidOauth2TokenService.hasToken(userOrcid, getLastModifiedTime(userOrcid))) {
+                // If the user doesn't have any token, check if it was created by member, if so, 
+                // verify if that member pushed any work of affiliation on creation time
+                SourceEntity source = profile.getSource();
+                if(source != null) {                    
+                    // If it was created by a member, verify if it have any activity that belongs to that member
+                    String clientId = source.getSourceClient() == null ? null : source.getSourceClient().getId();
+                    if(profileEntityManagerReadOnly.haveMemberPushedWorksOrAffiliationsToRecord(userOrcid, clientId)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }                
             } 
         }
         
