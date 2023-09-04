@@ -186,7 +186,7 @@ public class PasswordResetController extends BaseController {
                 if (profile == null) {
                     String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " "
                             + getMessage("orcid.frontend.reset.password.email_not_found_2");
-                    message += "<a href=\"https://support.orcid.org/hc/en-us/requests/new\">";
+                    message += "<a href=\"https://support.orcid.org/\">";
                     message += getMessage("orcid.frontend.reset.password.email_not_found_3");
                     message += "</a>";
                     message += getMessage("orcid.frontend.reset.password.email_not_found_4");
@@ -198,7 +198,7 @@ public class PasswordResetController extends BaseController {
                     /*
                      * String message = getMessage(
                      * "orcid.frontend.reset.password.disabled_account_1");
-                     * message += "<a href=\"https://support.orcid.org/hc/en-us/requests/new\">"; message +=
+                     * message += "<a href=\"https://support.orcid.org/\">"; message +=
                      * getMessage(
                      * "orcid.frontend.reset.password.disabled_account_2");
                      * message += "</a>"; errors.add(message);

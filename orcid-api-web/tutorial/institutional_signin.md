@@ -122,7 +122,7 @@ New display name:
 
 If Institutional Connect is enabled, when a researcher first connects their institutional account to ORCID via Institutional sign in they will receive a notification asking that they grant the institution access to their ORCID record via the standard 3 step OAuth process. To enabled Institutional Connect an organization must have a working Institutional Sign in process and a working integration using 3 step OAuth.
 
-To enable Institutional Connect you will need to send a request to [ORCID support](https://support.orcid.org/hc/en-us/requests/new). We suggest first testing Institutional Connect using the ORCID Sandbox, if institutional sign-in is working for your organization on the sandbox. In your request including the following information:
+To enable Institutional Connect you will need to send a request to [ORCID support](https://support.orcid.org/). We suggest first testing Institutional Connect using the ORCID Sandbox, if institutional sign-in is working for your organization on the sandbox. In your request including the following information:
 
 * Your ORCID Client ID
 * Your identity provider entity ID (e.g. https://idp.example.org/idp/shibboleth)

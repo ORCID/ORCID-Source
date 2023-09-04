@@ -11,10 +11,10 @@ After changing your password you will be asked to sign in with your email
 address/ORCID iD and new password.
 
 If you have any questions or concerns about this password reset request, 
-please contact ORCID Support at https://support.orcid.org/hc/en-us/requests/new.
+please contact ORCID Support at https://support.orcid.org/.
 
 Kind Regards,
 The ORCID Team
 
-https://support.orcid.org/hc/en-us/requests/new
+https://support.orcid.org/
 http://testserver.orcid.org

@@ -24,7 +24,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 
 
 
- For additional help please contact https://support.orcid.org/hc/en-us/requests/new.
+ For additional help please contact https://support.orcid.org/.
 
  ## List of Error codes and solutions
 
@@ -56,7 +56,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |500|	Internal Server Error|	Ensure that that your XML is valid and that any ORCID records you reference in the file are valid|--|
 |500|	Redirect URI mismatch.	|Check that the redirect_uri in the request for the authorization code matches the redirect_uri used when exchanging the authorization code for an access token|--|
 |500|	Invalid authorization code	|Check that the authorization code has not already been exchanged for an access token, authorization codes can only be used once|--|
-|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact https://support.orcid.org/hc/en-us/requests/new to correct this problem
+|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact https://support.orcid.org/ to correct this problem
 |500|	org.hibernate.exception.DataException: could not execute statement	|Something that you are posting doesn't comply with field restrictions, check that fields don't exceed character limits, urls are properly formatted, etc.|--|
 |***|url: (3) [globbing] bad range in column 32|Check that you have filled in all the relevant information, this error came from a missing ORCID|--|
 |***|API 1.2 is disabled, please upgrade to the 2.0 API https://members.orcid.org/api/news/xsd-20-update</error-desc>|You are using API version 1 please use v3.0|--|
