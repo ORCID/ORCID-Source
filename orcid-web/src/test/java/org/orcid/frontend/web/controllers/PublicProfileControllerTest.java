@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -31,6 +32,7 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -42,7 +44,9 @@ import org.orcid.jaxb.model.v3.release.record.OtherName;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
@@ -51,6 +55,7 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -75,6 +80,8 @@ public class PublicProfileControllerTest extends DBUnitTest {
     String reviewedWithIntegrationsOrcid = "0009-0000-0000-0002";
     String unreviewedNoIntegrationsOrcid = "0009-0000-0000-0003";
     String unreviewedWithIntegrationsOrcid = "0009-0000-0000-0004";
+    String unreviewedCreatedByMembersWithActivitiesOrcid = "0009-0000-0000-0005";
+    String unreviewedCreatedByMembersWithNoActivitiesOrcid = "0009-0000-0000-0006";
     String primaryRecord = "0000-0000-0000-0000";
     
     @Resource
@@ -100,6 +107,9 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Mock
     private OrcidOauth2TokenDetailService orcidOauth2TokenServiceMock;
+    
+    @Mock
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnlyMock;
     
     @Before
     public void before() {
@@ -317,6 +327,22 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(map1.get("READY_FOR_INDEXING"), "true");
         assertFalse(map1.containsKey("PRIMARY_RECORD"));
         
+        // Check member created, un-reviewed record with no integrations and no activities
+        map1 = publicProfileController.getUserInfo(unreviewedCreatedByMembersWithNoActivitiesOrcid);
+        assertEquals(map1.get("EFFECTIVE_USER_ORCID"), unreviewedCreatedByMembersWithNoActivitiesOrcid);
+        assertEquals(map1.get("IS_LOCKED"), "false");
+        assertEquals(map1.get("IS_DEACTIVATED"), "false");
+        assertEquals(map1.get("READY_FOR_INDEXING"), "false");
+        assertFalse(map1.containsKey("PRIMARY_RECORD"));
+        
+        // Check member created, un-reviewed record with no integrations and activities
+        map1 = publicProfileController.getUserInfo(unreviewedCreatedByMembersWithActivitiesOrcid);
+        assertEquals(map1.get("EFFECTIVE_USER_ORCID"), unreviewedCreatedByMembersWithActivitiesOrcid);
+        assertEquals(map1.get("IS_LOCKED"), "false");
+        assertEquals(map1.get("IS_DEACTIVATED"), "false");
+        assertEquals(map1.get("READY_FOR_INDEXING"), "true");
+        assertFalse(map1.containsKey("PRIMARY_RECORD"));
+        
         // Check reviewed record with no integrations
         map1 = publicProfileController.getUserInfo(reviewedNoIntegrationsOrcid);
         assertEquals(map1.get("EFFECTIVE_USER_ORCID"), reviewedNoIntegrationsOrcid);
@@ -359,8 +385,15 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     private void setupUserInfoMocks() {
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-000000000001"));
         TargetProxyHelper.injectIntoProxy(publicProfileController, "orcidOauth2TokenService", orcidOauth2TokenServiceMock);
         TargetProxyHelper.injectIntoProxy(publicProfileController, "profileEntityCacheManager", profileEntityCacheManagerMock);
+        TargetProxyHelper.injectIntoProxy(publicProfileController, "profileEntityManagerReadOnly", profileEntityManagerReadOnlyMock);
+        
+        //This function must be used just by a specific user, if it is called by any other throw an exception
+        when(profileEntityManagerReadOnlyMock.haveMemberPushedWorksOrAffiliationsToRecord(anyString(), anyString())).thenThrow(MethodNotAllowedException.class);
+        when(profileEntityManagerReadOnlyMock.haveMemberPushedWorksOrAffiliationsToRecord(eq(unreviewedCreatedByMembersWithActivitiesOrcid), anyString())).thenReturn(true);
+        when(profileEntityManagerReadOnlyMock.haveMemberPushedWorksOrAffiliationsToRecord(eq(unreviewedCreatedByMembersWithNoActivitiesOrcid), anyString())).thenReturn(false);
         
         // Reviewed record with no integrations
         ProfileEntity reviewedNoIntegrations = new ProfileEntity(reviewedNoIntegrationsOrcid);
@@ -368,7 +401,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         reviewedNoIntegrations.setReviewed(true);
         
         when(orcidOauth2TokenServiceMock.hasToken(eq(reviewedNoIntegrationsOrcid), anyLong())).thenReturn(false);
-        when(profileEntityCacheManagerMock.retrieve(reviewedNoIntegrationsOrcid)).thenReturn(reviewedNoIntegrations);
+        when(profileEntityCacheManagerMock.retrieve(reviewedNoIntegrationsOrcid)).thenReturn(reviewedNoIntegrations);        
         
         // Reviewed record with integrations
         ProfileEntity reviewedWithIntegrations = new ProfileEntity(reviewedWithIntegrationsOrcid);
@@ -378,7 +411,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         when(orcidOauth2TokenServiceMock.hasToken(eq(reviewedWithIntegrationsOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(reviewedWithIntegrationsOrcid)).thenReturn(reviewedWithIntegrations);
         
-        // Un reviewed record with no integrations
+        // Un-reviewed record with no integrations
         ProfileEntity unreviewedNoIntegrations = new ProfileEntity(unreviewedNoIntegrationsOrcid);
         unreviewedNoIntegrations.setRecordLocked(false);
         unreviewedNoIntegrations.setReviewed(false);
@@ -386,13 +419,32 @@ public class PublicProfileControllerTest extends DBUnitTest {
         when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedNoIntegrationsOrcid), anyLong())).thenReturn(false);
         when(profileEntityCacheManagerMock.retrieve(unreviewedNoIntegrationsOrcid)).thenReturn(unreviewedNoIntegrations);
         
-        // Un reviewed record with integrations
+        // Un-reviewed record with integrations
         ProfileEntity unreviewedWithIntegrations = new ProfileEntity(unreviewedWithIntegrationsOrcid);
         unreviewedWithIntegrations.setRecordLocked(false);
         unreviewedWithIntegrations.setReviewed(false);
         
         when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedWithIntegrationsOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(unreviewedWithIntegrationsOrcid)).thenReturn(unreviewedWithIntegrations);
+        
+        // Un reviewed record, created by member, with no integrations and no activities
+        ProfileEntity unreviewedCreatedByMembersWithNoActivities = new ProfileEntity(unreviewedCreatedByMembersWithNoActivitiesOrcid);
+        unreviewedCreatedByMembersWithNoActivities.setSource(sourceEntity);
+        unreviewedWithIntegrations.setRecordLocked(false);
+        unreviewedWithIntegrations.setReviewed(false);
+        
+        when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedCreatedByMembersWithNoActivitiesOrcid), anyLong())).thenReturn(false);
+        when(profileEntityCacheManagerMock.retrieve(eq(unreviewedCreatedByMembersWithNoActivitiesOrcid))).thenReturn(unreviewedCreatedByMembersWithNoActivities);
+        
+        
+        // Un reviewed record, created by member, with no integrations and activities
+        ProfileEntity unreviewedCreatedByMembersWithActivities = new ProfileEntity(unreviewedCreatedByMembersWithActivitiesOrcid);
+        unreviewedCreatedByMembersWithActivities.setSource(sourceEntity);
+        unreviewedWithIntegrations.setRecordLocked(false);
+        unreviewedWithIntegrations.setReviewed(false);
+        
+        when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedCreatedByMembersWithActivitiesOrcid), anyLong())).thenReturn(false);
+        when(profileEntityCacheManagerMock.retrieve(eq(unreviewedCreatedByMembersWithActivitiesOrcid))).thenReturn(unreviewedCreatedByMembersWithActivities);
         
         // Deprecated 
         ProfileEntity deprecated = new ProfileEntity(deprecatedUserOrcid);

@@ -159,4 +159,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public void resetSigninLock(String orcid);
 
     public void updateSigninLock(String orcid, Integer count);
+    
+    boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId);
 }
