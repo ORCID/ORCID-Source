@@ -56,8 +56,11 @@ public class AutoLockSpamRecords {
     @Resource
     private SlackManager slackManager;
 
-    @Value("${org.orcid.core.orgs.load.slackChannel}")
+    @Value("${org.orcid.core.autospam.slackChannel:collab-spam-reports}")
     private String slackChannel;
+    
+    @Value("${org.orcid.core.autospam.webhookUrl}")
+    private String webhookUrl;
 
     @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
@@ -120,7 +123,7 @@ public class AutoLockSpamRecords {
 
     private void autolockRecords(List<String> toLock) {
         String lastOrcidProcessed = "";
-        slackManager.sendAlert("Start time for batch: " + System.currentTimeMillis() + " the batch size is: " + toLock.size(), slackChannel, slackUser);
+        slackManager.sendAlert("Start time for batch: " + System.currentTimeMillis() + " the batch size is: " + toLock.size(), slackChannel, slackUser, webhookUrl);
         System.out.println("Start for batch: " + System.currentTimeMillis() + " to lock batch is: " + toLock.size());
         int accountsLocked = 0;
         for (String orcidId : toLock) {
@@ -146,7 +149,7 @@ public class AutoLockSpamRecords {
                 }
             } catch (Exception e) {
                 LOG.error("Exception when locking spam record " + orcidId, e);
-                slackManager.sendAlert("Exception when locking spam record " + orcidId + ". LastOrcid processed is: " + lastOrcidProcessed, slackChannel, slackUser);
+                slackManager.sendAlert("Exception when locking spam record " + orcidId + ". LastOrcid processed is: " + lastOrcidProcessed, slackChannel, slackUser, webhookUrl);
                 LOG.info("LastOrcid processed is: " + lastOrcidProcessed);
                 e.printStackTrace();
             }
@@ -169,7 +172,7 @@ public class AutoLockSpamRecords {
     public void process(boolean fromS3) throws InterruptedException, IOException {
         List<String> allIDs = getAllSpamIDs(fromS3);
         System.out.println("Found " + allIDs.size() + " profiles for autolocking. Starting the autolocking process");
-        slackManager.sendAlert("Found " + allIDs.size() + " profiles for autolocking.", slackChannel, slackUser);
+        slackManager.sendAlert("Found " + allIDs.size() + " profiles for autolocking.", slackChannel, slackUser, webhookUrl);
         LOG.info("Found {} profiles for autolocking", allIDs.size());
 
         List<String> toLock = getNextIdSubset(allIDs);
