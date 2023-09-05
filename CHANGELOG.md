@@ -1,3 +1,12 @@
+## v2.39.6 - 2023-09-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.4...v2.39.6)
+
+- [#6889](https://github.com/ORCID/ORCID-Source/pull/6889): Update support url
+- [#6888](https://github.com/ORCID/ORCID-Source/pull/6888): Stage name is NONE_PLANNED
+- [#6886](https://github.com/ORCID/ORCID-Source/pull/6886): Added the code to send the slack alert to dedicated channel, increased the number of threads for the sched task pool
+- [#6887](https://github.com/ORCID/ORCID-Source/pull/6887): If a record was member created and the member added activities to it …
+
 ## v2.39.4 - 2023-09-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.3...v2.39.4)
