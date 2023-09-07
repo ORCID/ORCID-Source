@@ -1,3 +1,9 @@
+## v2.39.7 - 2023-09-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.6...v2.39.7)
+
+- [#6890](https://github.com/ORCID/ORCID-Source/pull/6890): 8831 tech send spam notification to the spam channel collab spam reports
+
 ## v2.39.6 - 2023-09-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.4...v2.39.6)
