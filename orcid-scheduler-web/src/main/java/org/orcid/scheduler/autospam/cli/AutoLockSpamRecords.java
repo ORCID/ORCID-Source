@@ -160,7 +160,7 @@ public class AutoLockSpamRecords {
                 + " acccounts locked in DB: " + accountsLocked);
         slackManager.sendAlert(
                 "Spam locking for the batch processed on the day ended. LastOrcid processed is: " + lastOrcidProcessed + " acccounts locked in DB: " + accountsLocked,
-                slackChannel, slackUser);
+                slackChannel, slackUser, webhookUrl);
     }
 
     public void scheduledProcess() throws InterruptedException, IOException {
