@@ -181,7 +181,7 @@ public class AutoLockSpamRecords {
             LOG.info("Locked {} profiles, {} remaining to lock", new Object[] { toLock.size(), allIDs.size() });
             LOG.info("Profiles autolocked");
             Thread.sleep(ONE_DAY);
-            if (allIDs.size() - toLock.size() <= 0) {
+            if (allIDs.size() - toLock.size() < 0) {
                 break;
             } else {
                 toLock = getNextIdSubset(allIDs);
