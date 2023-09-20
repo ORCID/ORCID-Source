@@ -206,8 +206,15 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
                         for (int i = 0; i < urls.length(); i++) {
                             JSONObject url = urls.getJSONObject(i);
                             // Look for html or doi links
-                            String urlType = url.getString("documentStyle");
-                            String availability = url.getString("availability");
+                            String urlType = null;
+                            if (url.has("documentStyle")) {
+                                urlType = url.getString("documentStyle");
+                            }
+                            String availability = null;
+                            if (url.has("availability")) {
+                                availability = url.getString("availability");
+                            }
+
                             // If we find the html link, use it and stop
                             // searching
                             if (urlType.equals("html")) {
