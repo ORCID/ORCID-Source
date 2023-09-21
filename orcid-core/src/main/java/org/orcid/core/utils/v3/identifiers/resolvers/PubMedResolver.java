@@ -217,13 +217,15 @@ public class PubMedResolver implements LinkResolver, MetadataResolver {
 
                             // If we find the html link, use it and stop
                             // searching
-                            if (urlType.equals("html")) {
-                                if(availability == null || availability.equals("Free") || availability.equals("Open access")) {
+                            if (urlType != null) {
+                                if (urlType.equals("html")) {
+                                    if(availability == null || availability.equals("Free") || availability.equals("Open access")) {
+                                        work.setUrl(new Url(url.getString("url")));
+                                        break;
+                                    }
+                                } else if (urlType.equals("doi")) {
                                     work.setUrl(new Url(url.getString("url")));
-                                    break;
                                 }
-                            } else if (urlType.equals("doi")) {
-                                work.setUrl(new Url(url.getString("url")));
                             }
                         }
                     }
