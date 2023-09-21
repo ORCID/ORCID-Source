@@ -1,3 +1,14 @@
+## v2.40.1 - 2023-09-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.0...v2.40.1)
+
+- [#6892](https://github.com/ORCID/ORCID-Source/pull/6892): fix: Validate that availability and documentStyle exist
+
+### Fix
+
+- Validate if urlType its not null
+- Validate that availability and documentStyle are included
+
 ## v2.40.0 - 2023-09-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.39.7...v2.40.0)
