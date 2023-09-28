@@ -181,8 +181,8 @@ public class WorksPaginatorTest {
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
         Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.SOURCE_SORT_KEY, false);
 
-        assertEquals("orcid", page.getGroups().get(0).getWorks().get(0).getSource());
-        assertEquals("orcid", page.getGroups().get(0).getWorks().get(49).getSource());
+        assertEquals("APP-5555-5555-5555-5555", page.getGroups().get(0).getWorks().get(0).getSource());
+        assertEquals("orcid", page.getGroups().get(49).getWorks().get(0).getSource());
     }
 
     @Test
