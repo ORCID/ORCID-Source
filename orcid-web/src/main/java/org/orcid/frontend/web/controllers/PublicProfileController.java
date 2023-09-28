@@ -428,7 +428,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             fundingGroups.add(fundingGroup);
         }
 
-        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
+        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc, orcid));
         return fundingGroups;
     }
 

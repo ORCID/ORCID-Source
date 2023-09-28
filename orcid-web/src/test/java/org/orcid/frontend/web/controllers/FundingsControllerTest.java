@@ -637,6 +637,19 @@ public class FundingsControllerTest extends BaseControllerTest {
         assertEquals(fundingController.getMessage("fundings.endDate.after"), funding.getErrors().get(0));
     }
 
+    @Test
+    public void testGetFundingsJsonSortedBySource() {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
+
+        List<FundingGroup> fundings = fundingController.getFundingsJson("source", true);
+        assertNotNull(fundings);
+        assertEquals(3, fundings.size());
+        assertEquals("4444-4444-4444-4441", fundings.get(0).getFundings().get(0).getSource());
+        assertEquals("4444-4444-4444-4443", fundings.get(2).getFundings().get(0).getSource());
+    }
+
     private FundingForm getFundingForm() {
         FundingForm funding = fundingController.getFunding();
         funding.setFundingType(Text.valueOf("award"));

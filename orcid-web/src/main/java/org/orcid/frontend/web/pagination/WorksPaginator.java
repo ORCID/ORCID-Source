@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -27,7 +28,9 @@ public class WorksPaginator {
     static final String DATE_SORT_KEY = "date";
 
     static final String TYPE_SORT_KEY = "type";
-    
+
+    static final String SOURCE_SORT_KEY = "source";
+
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
 
@@ -42,7 +45,7 @@ public class WorksPaginator {
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
             List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
-            filteredGroups = sort(filteredGroups, sort, sortAsc);
+            filteredGroups = sort(filteredGroups, sort, sortAsc, orcid);
 
             worksPage.setTotalGroups(filteredGroups.size());
 
@@ -62,7 +65,7 @@ public class WorksPaginator {
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
             List<WorkGroupExtended> filteredGroups = filterWorksExtended(works, justPublic);
-            filteredGroups = sortExtended(filteredGroups, sort, sortAsc);
+            filteredGroups = sortExtended(filteredGroups, sort, sortAsc, orcid);
 
             worksPage.setTotalGroups(filteredGroups.size());
 
@@ -79,7 +82,7 @@ public class WorksPaginator {
 
     public Page<WorkGroup> refreshWorks(String orcid, int limit, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
+        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc, orcid);
 
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         worksPage.setTotalGroups(sortedGroups.size());
@@ -100,7 +103,7 @@ public class WorksPaginator {
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
             List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
-            filteredGroups = sort(filteredGroups, sort, sortAsc);
+            filteredGroups = sort(filteredGroups, sort, sortAsc, orcid);
 
             worksPage.setTotalGroups(filteredGroups.size());
 
@@ -116,13 +119,15 @@ public class WorksPaginator {
         return worksPage;
     }
 
-    private List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sort(List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> list, String sort, boolean sortAsc) {
+    private List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sort(List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> list, String sort, boolean sortAsc, String orcid) {
         if (TITLE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TitleComparator());
         } else if (DATE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new DateComparator());
         } else if (TYPE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TypeComparator());
+        } else if (SOURCE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new SourceComparator(orcid));
         }
 
         if (!sortAsc) {
@@ -131,13 +136,15 @@ public class WorksPaginator {
         return list;
     }
 
-    private List<WorkGroupExtended> sortExtended(List<WorkGroupExtended> list, String sort, boolean sortAsc) {
+    private List<WorkGroupExtended> sortExtended(List<WorkGroupExtended> list, String sort, boolean sortAsc, String orcid) {
         if (TITLE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TitleComparatorWorkGroupExtended());
         } else if (DATE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new DateComparatorWorkGroupExtended());
         } else if (TYPE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TypeComparatorWorkGroupExtended());
+        } else if (SOURCE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new SourceComparatorWorkGroupExtended(orcid));
         }
 
         if (!sortAsc) {
@@ -312,6 +319,24 @@ public class WorksPaginator {
         }
     }
 
+    private class SourceComparator implements Comparator<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> {
+
+        private String orcid;
+
+        SourceComparator(String orcid) {
+            this.orcid = orcid;
+        }
+
+        @Override
+        public int compare(org.orcid.jaxb.model.v3.release.record.summary.WorkGroup o1, org.orcid.jaxb.model.v3.release.record.summary.WorkGroup o2) {
+            return Boolean.compare(isSelfAsserted(o1.getWorkSummary().get(0)), isSelfAsserted(o2.getWorkSummary().get(0)));
+        }
+
+        private boolean isSelfAsserted(WorkSummary workSummary) {
+            return SourceUtils.isSelfAsserted(workSummary.getSource(), orcid);
+        }
+    }
+
     private class DateComparatorWorkGroupExtended implements Comparator<WorkGroupExtended> {
 
         @Override
@@ -429,6 +454,23 @@ public class WorksPaginator {
             }
 
             return o1.getWorkSummary().get(0).getType().name().compareTo(o2.getWorkSummary().get(0).getType().name());
+        }
+    }
+
+    private class SourceComparatorWorkGroupExtended implements Comparator<WorkGroupExtended> {
+        private String orcid;
+
+        SourceComparatorWorkGroupExtended(String orcid) {
+            this.orcid = orcid;
+        }
+
+        @Override
+        public int compare(WorkGroupExtended o1, WorkGroupExtended o2) {
+            return Boolean.compare(isSelfAsserted(o1.getWorkSummary().get(0)), isSelfAsserted(o2.getWorkSummary().get(0)));
+        }
+
+        private boolean isSelfAsserted(WorkSummaryExtended workSummary) {
+            return SourceUtils.isSelfAsserted(workSummary.getSource(), orcid);
         }
     }
 

@@ -196,7 +196,7 @@ public class FundingsController extends BaseWorkspaceController {
             fundingGroups.add(fundingGroup);
         }
 
-        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
+        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc, getEffectiveUserOrcid()));
         return fundingGroups;
     }
     
