@@ -152,29 +152,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         String eppn = extractFirst(headers.get(InstitutionalSignInManager.EPPN_HEADER));
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;
-        }
-        String displayName = extractFirst(headers.get(InstitutionalSignInManager.DISPLAY_NAME_HEADER));
-        if (StringUtils.isNotBlank(displayName)) {
-            return displayName;
-        }
-        String givenName = extractFirst(headers.get(InstitutionalSignInManager.GIVEN_NAME_HEADER));
-        String sn = extractFirst(headers.get(InstitutionalSignInManager.SN_HEADER));
-        String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
-        if (StringUtils.isNotBlank(combinedNames)) {
-            return combinedNames;
-        }
-        RemoteUser remoteUser = retrieveRemoteUser(headers);
-        if (remoteUser != null) {
-            String remoteUserId = remoteUser.getUserId();
-            if (StringUtils.isNotBlank(remoteUserId)) {
-                int indexOfBang = remoteUserId.lastIndexOf("!");
-                if (indexOfBang != -1) {
-                    return remoteUserId.substring(indexOfBang);
-                } else {
-                    return remoteUserId;
-                }
-            }
-        }
+        }        
         return null;
     }
     

@@ -50,9 +50,9 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     public List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic) {
         String sqlString = null;
         if (justPublic) {
-            sqlString = "SELECT g.id, p.group_id, p.id as put_code, p.visibility, g.group_name FROM peer_review p, group_id_record g WHERE p.orcid=:orcid AND p.visibility='PUBLIC' AND lower(p.group_id)=lower(g.group_id) ORDER BY p.group_id, p.display_index, p.date_created";
+            sqlString = "SELECT g.id, p.group_id, p.id as put_code, p.visibility, g.group_name, p.source_id, p.client_source_id, p.assertion_origin_source_id FROM peer_review p, group_id_record g WHERE p.orcid=:orcid AND p.visibility='PUBLIC' AND lower(p.group_id)=lower(g.group_id) ORDER BY p.group_id, p.display_index, p.date_created";
         } else {
-            sqlString = "SELECT g.id, p.group_id, p.id as put_code, p.visibility, g.group_name FROM peer_review p, group_id_record g WHERE p.orcid=:orcid AND lower(p.group_id)=lower(g.group_id) ORDER BY p.group_id, p.display_index, p.date_created";
+            sqlString = "SELECT g.id, p.group_id, p.id as put_code, p.visibility, g.group_name, p.source_id, p.client_source_id, p.assertion_origin_source_id FROM peer_review p, group_id_record g WHERE p.orcid=:orcid AND lower(p.group_id)=lower(g.group_id) ORDER BY p.group_id, p.display_index, p.date_created";
         }
         Query query = entityManager.createNativeQuery(sqlString);
         query.setParameter("orcid", orcid);

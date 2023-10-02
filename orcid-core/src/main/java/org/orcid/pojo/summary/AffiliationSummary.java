@@ -97,7 +97,7 @@ public class AffiliationSummary {
             form.setType(type);
 
             if (as.getSource() != null) {
-                form.setValidated(SourceUtils.isSelfAsserted(as.getSource(), orcid));
+                form.setValidated(!SourceUtils.isSelfAsserted(as, orcid));
             }
         }
         return form;

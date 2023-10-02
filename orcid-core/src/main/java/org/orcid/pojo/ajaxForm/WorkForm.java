@@ -67,7 +67,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private String assertionOriginClientId;
     
     private String assertionOriginName;
-
+    
     private Text title;
 
     private Text subtitle;
@@ -84,9 +84,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private Date createdDate;
 
-    private Date lastModified;
-    
-    private boolean userSource;
+    private Date lastModified;        
 
     public static WorkForm valueOf(Work work, int maxContributorsForUI) {
         if (work == null)
@@ -1029,16 +1027,8 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
-    }
+    }    
     
-    public boolean isUserSource() {
-        return userSource;
-    }
-
-    public void setUserSource(boolean userSource) {
-        this.userSource = userSource;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -1204,7 +1194,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             if (other.workType != null)
                 return false;
         } else if (!workType.equals(other.workType))
-            return false;
+            return false;        
         return true;
     }
 
