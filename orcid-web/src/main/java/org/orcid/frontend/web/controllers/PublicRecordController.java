@@ -21,6 +21,7 @@ import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
@@ -164,6 +165,9 @@ public class PublicRecordController extends BaseWorkspaceController {
 
     @Resource
     private WorksCacheManager worksCacheManager;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -346,11 +350,9 @@ public class PublicRecordController extends BaseWorkspaceController {
     RecordSummary getSummary(String orcid) {
         RecordSummary recordSummary = new RecordSummary();
 
-        Record record = recordManagerReadOnly.getPublicRecord(orcid, false);
-        Person person = record.getPerson();
-        if (person != null) {
-            String displayName = null;
-            Name name = person.getName();
+        Name name = recordNameManagerReadOnly.getRecordName(orcid);
+        if(name != null) {
+            String displayName = null;            
             if (name != null) {
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
                     displayName = getDisplayName(name);
@@ -400,11 +402,11 @@ public class PublicRecordController extends BaseWorkspaceController {
         if (workGroups != null) {
             workGroups.forEach(work -> work.getWorks().forEach(w -> {
                 if (work.getDefaultPutCode().equals(Long.valueOf(w.getPutCode().getValue()))) {
-                    if (!orcid.equals(w.getSource())) {
-                        validatedWorks.getAndIncrement();
-                    } else {
+                    if(orcid.equals(w.getSource()) || orcid.equals(w.getAssertionOriginOrcid())) {
                         selfAssertedWorks.getAndIncrement();
-                    }
+                    } else {
+                        validatedWorks.getAndIncrement();
+                    }                    
                 }
             }));
         }
@@ -447,7 +449,7 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
 
-        recordSummary.setLastModified(formatDate(record.getHistory().getLastModifiedDate().getValue()));
+        recordSummary.setLastModified(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
         recordSummary.setCreation(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
 
         recordSummary.setOrcid(recordManagerReadOnly.getOrcidIdentifier(orcid).getUri());
