@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class PeerReviewMinimizedSummary implements Serializable {
+    private static final long serialVersionUID = 5900200502612060021L;
 
     private String orcid;
     private BigInteger groupId;
@@ -18,7 +19,10 @@ public class PeerReviewMinimizedSummary implements Serializable {
     private boolean visibilityError;
     private String name;
     private int duplicated;
-
+    private String sourceId;
+    private String clientSourceId;
+    private String assertionOriginSourceId;
+    
     public PeerReviewMinimizedSummary(String orcid, BigInteger groupId, String groupIdValue, BigInteger putCode, Visibility visibility, String name, int duplicated) {
         this.orcid = orcid;
         this.groupId = groupId;
@@ -97,6 +101,30 @@ public class PeerReviewMinimizedSummary implements Serializable {
         this.putCodes.add(putCode);
     }
 
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public String getClientSourceId() {
+        return clientSourceId;
+    }
+
+    public void setClientSourceId(String clientSourceId) {
+        this.clientSourceId = clientSourceId;
+    }
+
+    public String getAssertionOriginSourceId() {
+        return assertionOriginSourceId;
+    }
+
+    public void setAssertionOriginSourceId(String assertionOriginSourceId) {
+        this.assertionOriginSourceId = assertionOriginSourceId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,11 +135,14 @@ public class PeerReviewMinimizedSummary implements Serializable {
                 Objects.equals(getGroupId(), that.getGroupId()) &&
                 Objects.equals(getGroupIdValue(), that.getGroupIdValue()) &&
                 getVisibility() == that.getVisibility() &&
-                Objects.equals(getName(), that.getName());
+                Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getSourceId(), that.getSourceId()) &&
+                Objects.equals(getClientSourceId(), that.getClientSourceId()) &&
+                Objects.equals(getAssertionOriginSourceId(), that.getAssertionOriginSourceId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOrcid(), getGroupId(), getGroupIdValue(), getVisibility(), getName(), getDuplicated());
+        return Objects.hash(getOrcid(), getGroupId(), getGroupIdValue(), getVisibility(), getName(), getDuplicated(), getSourceId(), getClientSourceId(), getAssertionOriginSourceId());
     }
 }

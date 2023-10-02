@@ -91,6 +91,9 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
             BigInteger putCode = (BigInteger) q1[2];
             String visibility = q1[3].toString();
             String groupName = q1[4].toString();
+            String sourceId = q1[5].toString();
+            String clientSourceId = q1[6].toString();
+            String assertionOriginSourceId = q1[7].toString();
             if (peerReviewMinimizedSummaryList.size() > 0) {
                 List<PeerReviewMinimizedSummary> peerReviews = peerReviewMinimizedSummaryList
                         .stream()
@@ -103,10 +106,18 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
                         peerReviews.get(0).setVisibilityError(true);
                     }
                 } else {
-                    peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, putCode, Visibility.fromValue(visibility), groupName, 1));
+                    PeerReviewMinimizedSummary ps = new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, putCode, Visibility.fromValue(visibility), groupName, 1);
+                    ps.setAssertionOriginSourceId(assertionOriginSourceId);
+                    ps.setClientSourceId(clientSourceId);
+                    ps.setSourceId(sourceId);
+                    peerReviewMinimizedSummaryList.add(ps);
                 }
             } else {
-                peerReviewMinimizedSummaryList.add(new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, putCode, Visibility.fromValue(visibility), groupName, 1));
+                PeerReviewMinimizedSummary ps = new PeerReviewMinimizedSummary(orcid, groupId, groupIdValue, putCode, Visibility.fromValue(visibility), groupName, 1);
+                ps.setAssertionOriginSourceId(assertionOriginSourceId);
+                ps.setClientSourceId(clientSourceId);
+                ps.setSourceId(sourceId);                
+                peerReviewMinimizedSummaryList.add(ps);
             }
         }
         return peerReviewMinimizedSummaryList;
