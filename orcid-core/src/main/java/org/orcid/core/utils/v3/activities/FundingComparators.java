@@ -3,6 +3,7 @@ package org.orcid.core.utils.v3.activities;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.grouping.FundingGroup;
 
@@ -13,8 +14,12 @@ public class FundingComparators {
     private static final String DATE_SORT_KEY = "date";
 
     private static final String TYPE_SORT_KEY = "type";
-    
-    public static Comparator<FundingGroup> getInstance(String key, boolean sortAsc) {
+
+    private static final String SOURCE_SORT_KEY = "source";
+
+    private static String orcid = null;
+
+    public static Comparator<FundingGroup> getInstance(String key, boolean sortAsc, String orcid) {
         Comparator<FundingGroup> comparator = null;
         if (DATE_SORT_KEY.equals(key)) {
             comparator = FundingComparators.DATE_COMPARATOR;
@@ -22,8 +27,11 @@ public class FundingComparators {
             comparator = FundingComparators.TITLE_COMPARATOR;
         } else if (TYPE_SORT_KEY.equals(key)) {
             comparator = FundingComparators.TYPE_COMPARATOR;
+        } else if (SOURCE_SORT_KEY.equals(key)) {
+            FundingComparators.orcid = orcid;
+            comparator = FundingComparators.SOURCE_COMPARATOR;
         }
-        
+
         if (sortAsc) {
             return comparator;
         } else {
@@ -94,4 +102,9 @@ public class FundingComparators {
         return g1.getStartDate().compareTo(g2.getStartDate());
     };
 
+    public static Comparator<FundingGroup> SOURCE_COMPARATOR = (g1, g2) -> Boolean.compare(isSelfAsserted(g1), isSelfAsserted(g2));
+
+    private static boolean isSelfAsserted(FundingGroup fundingGroup) {
+        return SourceUtils.isSelfAsserted(fundingGroup.getSource(), FundingComparators.orcid);
+    }
 }
