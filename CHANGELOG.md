@@ -1,3 +1,9 @@
+## v2.40.2 - 2023-10-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.1...v2.40.2)
+
+- [#6896](https://github.com/ORCID/ORCID-Source/pull/6896): Self asserted activities should not have the green check on the summary
+
 ## v2.40.1 - 2023-09-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.0...v2.40.1)
