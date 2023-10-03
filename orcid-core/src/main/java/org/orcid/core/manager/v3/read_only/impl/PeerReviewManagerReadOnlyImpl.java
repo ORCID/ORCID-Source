@@ -91,9 +91,9 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
             BigInteger putCode = (BigInteger) q1[2];
             String visibility = q1[3].toString();
             String groupName = q1[4].toString();
-            String sourceId = q1[5].toString();
-            String clientSourceId = q1[6].toString();
-            String assertionOriginSourceId = q1[7].toString();
+            String sourceId = (q1[5] == null) ? null : q1[5].toString();
+            String clientSourceId = (q1[6] == null) ? null : q1[6].toString();
+            String assertionOriginSourceId = (q1[7] == null) ? null : q1[7].toString();
             if (peerReviewMinimizedSummaryList.size() > 0) {
                 List<PeerReviewMinimizedSummary> peerReviews = peerReviewMinimizedSummaryList
                         .stream()
