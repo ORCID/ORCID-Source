@@ -1,3 +1,13 @@
+## v2.40.5 - 2023-10-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.4...v2.40.5)
+
+- [#6899](https://github.com/ORCID/ORCID-Source/pull/6899): fix: Update isSelfAsserted method in funding and fix NPE in peer review
+
+### Fix
+
+- Update isSelfAsserted method in funding and fix NPE in peer review
+
 ## v2.40.4 - 2023-10-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.3...v2.40.4)
