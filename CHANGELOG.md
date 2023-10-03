@@ -1,3 +1,19 @@
+## v2.40.3 - 2023-10-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.2...v2.40.3)
+
+- [#6897](https://github.com/ORCID/ORCID-Source/pull/6897): 8716 source sorting option
+- [#6895](https://github.com/ORCID/ORCID-Source/pull/6895): feature: Add sorting by source functionality to funding and works
+
+### Fix
+
+- Update comparator class to not be static so we can assign an orcid id every time the comparator class its generated
+- Sort by source unit test
+
+### Feature
+
+- Add sorting by source functionality to funding and works
+
 ## v2.40.2 - 2023-10-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.1...v2.40.2)
