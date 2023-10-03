@@ -1,3 +1,9 @@
+## v2.40.4 - 2023-10-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.3...v2.40.4)
+
+- [#6898](https://github.com/ORCID/ORCID-Source/pull/6898): Fix NPE when checking for the peer review source
+
 ## v2.40.3 - 2023-10-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.2...v2.40.3)
