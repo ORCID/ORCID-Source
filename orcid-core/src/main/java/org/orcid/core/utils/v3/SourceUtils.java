@@ -322,4 +322,8 @@ public class SourceUtils {
     public static boolean isSelfAsserted(AffiliationForm af, String orcid) {
         return (orcid.equals(af.getSource()) || orcid.equals(af.getAssertionOriginOrcid()));
     }
+
+    public static boolean isSelfAsserted(String source, String orcid) {
+        return !orcid.equals(source);
+    }
 }
