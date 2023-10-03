@@ -110,6 +110,6 @@ public class FundingComparators {
     public Comparator<FundingGroup> SOURCE_COMPARATOR = (g1, g2) -> Boolean.compare(isSelfAsserted(g1), isSelfAsserted(g2));
 
     private boolean isSelfAsserted(FundingGroup fundingGroup) {
-        return SourceUtils.isSelfAsserted(fundingGroup.getSource(), orcid);
+        return SourceUtils.isSelfAsserted(fundingGroup.getDefaultFunding(), orcid);
     }
 }

@@ -43,6 +43,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import java.util.List;
@@ -323,7 +324,7 @@ public class SourceUtils {
         return (orcid.equals(af.getSource()) || orcid.equals(af.getAssertionOriginOrcid()));
     }
 
-    public static boolean isSelfAsserted(String source, String orcid) {
-        return !orcid.equals(source);
+    public static boolean isSelfAsserted(FundingForm ff, String orcid) {
+        return (orcid.equals(ff.getSource()) || orcid.equals(ff.getAssertionOriginOrcid()));
     }
 }
