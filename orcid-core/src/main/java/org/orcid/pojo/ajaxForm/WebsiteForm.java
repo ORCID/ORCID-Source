@@ -223,7 +223,7 @@ public class WebsiteForm extends VisibilityForm implements ErrorsInterface, Seri
             return false;
         WebsiteForm other = (WebsiteForm) obj;
 
-        if (!WorkForm.compareTexts(url, other.getUrl(), true))
+        if (!WorkForm.compareTexts(url, other.getUrl(), false))
             return false;
         if (!WorkForm.compareStrings(urlName, other.getUrlName()))
             return false;
