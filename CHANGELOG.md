@@ -1,3 +1,13 @@
+## v2.41.0 - 2023-10-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.5...v2.41.0)
+
+- [#6900](https://github.com/ORCID/ORCID-Source/pull/6900): feature: Add `SOURCE_SORTING` togglz
+
+### Feature
+
+- Add `SOURCE_SORTING` togglz
+
 ## v2.40.5 - 2023-10-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.4...v2.40.5)

@@ -5,6 +5,9 @@ import org.togglz.core.annotation.Label;
 import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
+    @Label("Source sorting")
+    SOURCE_SORTING,
+
     @Label("Professional activities")
     PROFESSIONAL_ACTIVITIES,
 
@@ -13,7 +16,6 @@ public enum Features implements Feature {
 
     @Label("New Developer tools")
     NEW_DEVELOPER_TOOLS,
-
 
     @Label("Stop sending notification if work has not been updated")
     STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED,
