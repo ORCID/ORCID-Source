@@ -21,7 +21,7 @@ public class EmailDomainEntity extends BaseEntity<Long> {
     
     private static final long serialVersionUID = 7138838021634315502L;
 
-    public enum DomainCategory {PERSONAL, PROFESSIONAL, UNDEFINED}
+    public static enum DomainCategory {PERSONAL, PROFESSIONAL, UNDEFINED}
     
     private Long id;
     private String emailDomain; 
