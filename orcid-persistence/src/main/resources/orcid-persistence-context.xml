@@ -458,6 +458,12 @@
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
+    <bean id="emailDomainDao" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl" />
+
+    <bean id="emailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+    
     <!-- Statistics -->
     <bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
         <property name="entityManager" ref="entityManager" />

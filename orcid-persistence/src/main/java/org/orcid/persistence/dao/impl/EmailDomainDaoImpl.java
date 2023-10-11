@@ -2,22 +2,23 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> implements EmailDomainDao {
-
     
     public EmailDomainDaoImpl() {
         super(EmailDomainEntity.class);
     }
-    
+        
     @Override
+    @Transactional
     public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {
         EmailDomainEntity e = new EmailDomainEntity();
         e.setEmailDomain(emailDomain);
@@ -27,6 +28,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     }
 
     @Override
+    @Transactional
     public boolean updateCategory(long id, DomainCategory category) {
         Query query = entityManager.createNativeQuery("UPDATE email_domain SET category=:category WHERE id = :id");
         query.setParameter("id", id);        
@@ -38,8 +40,15 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     public EmailDomainEntity findByEmailDoman(String emailDomain) {
         TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where emailDomain = :emailDomain", EmailDomainEntity.class);
         query.setParameter("emailDomain", emailDomain);
-        List<EmailDomainEntity> results = query.getResultList();
-        return results.isEmpty() ? null : results.get(0);
+        try {
+            return query.getSingleResult();
+        } catch(NoResultException nre) {
+            // Ignore this exception
+        } catch(Exception e) {
+            // Propagate any other exception
+            throw e;
+        }
+        return null;
     }
 
     @Override
@@ -48,6 +57,5 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
         query.setParameter("category", category);
         List<EmailDomainEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
-    }
-
+    }   
 }
