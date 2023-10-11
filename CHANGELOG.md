@@ -1,3 +1,13 @@
+## v2.41.1 - 2023-10-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.41.0...v2.41.1)
+
+- [#6903](https://github.com/ORCID/ORCID-Source/pull/6903): fix: Only compare assertion origin orcid in obo
+
+### Fix
+
+- Only compare assertion origin orcid in obo
+
 ## v2.41.0 - 2023-10-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.40.5...v2.41.0)
