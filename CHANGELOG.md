@@ -1,3 +1,9 @@
+## v2.41.2 - 2023-10-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.41.1...v2.41.2)
+
+- [#6901](https://github.com/ORCID/ORCID-Source/pull/6901): URL comparison should be case sensitive
+
 ## v2.41.1 - 2023-10-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.41.0...v2.41.1)
