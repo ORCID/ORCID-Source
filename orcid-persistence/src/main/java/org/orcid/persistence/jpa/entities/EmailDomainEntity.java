@@ -29,7 +29,15 @@ public class EmailDomainEntity extends BaseEntity<Long> {
     private String emailDomain; 
     private DomainCategory category;
     
+    public EmailDomainEntity() {
+        
+    }
 
+    public EmailDomainEntity(String emailDomain, DomainCategory category) {
+        this.emailDomain = emailDomain;
+        this.category = category;
+    }
+    
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "email_domain_seq")

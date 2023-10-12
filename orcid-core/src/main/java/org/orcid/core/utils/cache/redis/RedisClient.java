@@ -66,6 +66,10 @@ public class RedisClient {
 
     @PostConstruct
     private void init() {
+        if(!enabled) {
+            LOG.debug("Redis is not enabled, so, it will not be initilized");
+            return;
+        }
         try {
             JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis).timeoutMillis(this.clientTimeoutInMillis)
                     .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();        
