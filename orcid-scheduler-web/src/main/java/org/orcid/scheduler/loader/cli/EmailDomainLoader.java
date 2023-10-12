@@ -15,11 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 public class EmailDomainLoader {
     
@@ -82,7 +80,7 @@ public class EmailDomainLoader {
                     EmailDomainEntity newEde = emailDomainManager.createEmailDomain(elementDomain, category);
                     newEntities += 1;
                     LOG.info("New EmailDomainEntity created for domain {} with id {}", elementDomain, newEde.getId());
-                } else if(!elementDomain.equalsIgnoreCase(ede.getCategory().name())) {                    
+                } else if(!elementCategory.equalsIgnoreCase(ede.getCategory().toString())) {  
                     boolean updated = emailDomainManager.updateCategory(ede.getId(), category);
                     if(updated) {
                         LOG.info("Email category has been update for email domain {} from {} to {}", elementDomain, ede.getCategory(), elementCategory);
@@ -96,7 +94,7 @@ public class EmailDomainLoader {
     }    
     
     public static void main(String[] args) throws IOException {
-        String filePath = "C:/Users/angel/Documents/ORCID/development/tmp/deleteme/email_domains/file.csv"; 
+        String filePath = args[0]; 
         EmailDomainLoader edl = new EmailDomainLoader(filePath);
         edl.execute();
     }

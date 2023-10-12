@@ -9,9 +9,13 @@ import javax.persistence.TypedQuery;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> implements EmailDomainDao {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(EmailDomainDaoImpl.class);
     
     public EmailDomainDaoImpl() {
         super(EmailDomainEntity.class);
@@ -20,6 +24,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     @Override
     @Transactional
     public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {
+        LOG.debug("Creating domain {} with category {}", emailDomain, category);
         EmailDomainEntity e = new EmailDomainEntity();
         e.setEmailDomain(emailDomain);
         e.setCategory(category);
@@ -30,9 +35,10 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     @Override
     @Transactional
     public boolean updateCategory(long id, DomainCategory category) {
+        LOG.debug("Updating domain with id {} with category {}", id, category);
         Query query = entityManager.createNativeQuery("UPDATE email_domain SET category=:category WHERE id = :id");
         query.setParameter("id", id);        
-        query.setParameter("category", category);
+        query.setParameter("category", category.toString());
         return query.executeUpdate() > 0; 
     }
 

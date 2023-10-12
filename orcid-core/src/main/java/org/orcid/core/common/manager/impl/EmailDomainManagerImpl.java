@@ -9,6 +9,8 @@ import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
 
+import com.google.common.net.InternetDomainName;
+
 public class EmailDomainManagerImpl implements EmailDomainManager {
 
     @Resource(name = "emailDomainDao")
@@ -21,6 +23,9 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
+        }
+        if(!InternetDomainName.isValid(emailDomain)) {
+            throw new IllegalArgumentException("Email Domain '" + emailDomain + "' is invalid");
         }
         if (category == null) {
             throw new IllegalArgumentException("Category must not be empty");

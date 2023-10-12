@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.net.InternetDomainName;
-
 @Controller("emailDomainController")
 @RequestMapping(value = { "/email-domain" })
 public class EmailDomainController {
@@ -23,7 +21,7 @@ public class EmailDomainController {
     @RequestMapping(value = "/find-category", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     public @ResponseBody String findCategory(@RequestParam("domain") String domain) {
         
-        if(domain == null || domain.length() > 64 || !InternetDomainName.isValid(domain)) {
+        if(domain == null || domain.length() > 64) {
             return "{'error':'domain lenght too long or invalid'}";
         }        
                 
