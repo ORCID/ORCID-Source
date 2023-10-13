@@ -1,3 +1,9 @@
+## v2.42.1 - 2023-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.0...v2.42.1)
+
+- [#6905](https://github.com/ORCID/ORCID-Source/pull/6905): Email domain to org
+
 ## v2.42.0 - 2023-10-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.41.2...v2.42.0)
