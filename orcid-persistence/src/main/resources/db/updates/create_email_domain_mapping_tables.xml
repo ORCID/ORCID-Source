@@ -14,7 +14,7 @@
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="email_domain_pkey" />
 			</column>
-			<column name="email_domain" type="VARCHAR(64)">
+			<column name="email_domain" type="VARCHAR(254)">
 				<constraints nullable="false" />
 			</column>
 			<column name="category" type="VARCHAR(16)">

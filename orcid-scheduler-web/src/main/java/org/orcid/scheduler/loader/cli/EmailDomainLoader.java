@@ -27,6 +27,8 @@ public class EmailDomainLoader {
     private EmailDomainManager emailDomainManager;
     List<List<String>> emailDomainData;
 
+    List<String> invalidDomains = new ArrayList<String>();
+    
     public EmailDomainLoader(String filePath) {
         this.filePath = filePath;
         init(filePath);        
@@ -77,9 +79,14 @@ public class EmailDomainLoader {
                 EmailDomainEntity ede = emailDomainManager.findByEmailDoman(elementDomain);
                 EmailDomainEntity.DomainCategory category = EmailDomainEntity.DomainCategory.valueOf(elementCategory.toUpperCase());
                 if(ede == null) {
-                    EmailDomainEntity newEde = emailDomainManager.createEmailDomain(elementDomain, category);
-                    newEntities += 1;
-                    LOG.info("New EmailDomainEntity created for domain {} with id {}", elementDomain, newEde.getId());
+                    try {
+                        EmailDomainEntity newEde = emailDomainManager.createEmailDomain(elementDomain, category);
+                        newEntities += 1;
+                        LOG.info("New EmailDomainEntity created for domain {} with id {}", elementDomain, newEde.getId());
+                    } catch(IllegalArgumentException iae) {
+                        LOG.error("Invalid domain: {}", elementDomain);
+                        invalidDomains.add(elementDomain);
+                    }
                 } else if(!elementCategory.equalsIgnoreCase(ede.getCategory().toString())) {  
                     boolean updated = emailDomainManager.updateCategory(ede.getId(), category);
                     if(updated) {
@@ -89,6 +96,10 @@ public class EmailDomainLoader {
                 }
                 total += 1;
             }
+        }
+        LOG.warn("List of invalid domains:");
+        for(String invalidDomain : invalidDomains) {
+            LOG.warn(invalidDomain);
         }
         LOG.info("Process done, total: {}, new entities: {}, updated entities: {}", total, newEntities, updatedEntities);
     }    

@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 @Controller("emailDomainController")
 @RequestMapping(value = { "/email-domain" })
 public class EmailDomainController {
@@ -20,16 +23,23 @@ public class EmailDomainController {
     private EmailDomainManager emailDomainManager;
     
     @RequestMapping(value = "/find-category", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-    public @ResponseBody String findCategory(@RequestParam("domain") String domain) {        
-        if(domain == null || domain.isBlank() || domain.length() > 64) {
-            return "{'error':'domain lenght too long or invalid'}";
+    public @ResponseBody ObjectNode findCategory(@RequestParam("domain") String domain) {        
+        ObjectMapper mapper = new ObjectMapper();
+        if(domain == null || domain.isBlank() || domain.length() > 254) {
+            ObjectNode response = mapper.createObjectNode();
+            response.put("error", "domain lenght too long or invalid");
+            return response;
         }
         domain = OrcidStringUtils.stripHtml(domain);
-        EmailDomainEntity ede = emailDomainManager.findByEmailDoman(domain);
+        EmailDomainEntity ede = emailDomainManager.findByEmailDoman(domain);        
         if(ede == null) {
-            return "{'category':'" + EmailDomainEntity.DomainCategory.UNDEFINED.name() + "'}";
+            ObjectNode response = mapper.createObjectNode();
+            response.put("category", EmailDomainEntity.DomainCategory.UNDEFINED.name());
+            return response;
         } else {
-            return "{'category':'" + ede.getCategory().name() + "'}";
+            ObjectNode response = mapper.createObjectNode();
+            response.put("category", ede.getCategory().name());
+            return response;
         }
     }
 }
