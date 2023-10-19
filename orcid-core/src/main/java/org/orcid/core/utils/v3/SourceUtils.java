@@ -316,11 +316,7 @@ public class SourceUtils {
             assertionOriginOrcid = source.getAssertionOriginOrcid().getPath();
         }
         // If the affiliation source is the user himself or any member with OBO, then, it is considered self asserted
-        if(orcid.equals(sourceId) || orcid.equals(assertionOriginOrcid)) {
-            return false;
-        } else {
-            return true;
-        }
+        return orcid.equals(sourceId) || orcid.equals(assertionOriginOrcid);
     }
 
     public static boolean isSelfAsserted(AffiliationForm af, String orcid) {
