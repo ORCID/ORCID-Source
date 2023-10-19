@@ -67,6 +67,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.solr:indexDisambiguatedOrgs}")
     private String updateSolrQueueName;
+    
+    @Value("${org.orcid.core.cleanExtIdsOnOrgUpdate:true}")
+    private boolean cleanDuplicateExtIdOnOrgUpdate;
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
@@ -219,6 +222,9 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     public OrgDisambiguatedEntity updateOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         normalizeExternalIdentifiers(orgDisambiguatedEntity);
+        if(cleanDuplicateExtIdOnOrgUpdate) {
+            cleanDuplicatedExternalIdentifiersForOrgDisambiguated(orgDisambiguatedEntity);
+        }
         return orgDisambiguatedDao.merge(orgDisambiguatedEntity);
     }
 
@@ -345,6 +351,42 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                 normalizeExternalIdentifier(identifier);
             }
         }
+    }
+    
+    public void cleanDuplicatedExternalIdentifiersForOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
+        if (orgDisambiguatedEntity.getExternalIdentifiers() != null) {
+            HashMap<String, OrgDisambiguatedExternalIdentifierEntity> extIdsMapping = new HashMap<String, OrgDisambiguatedExternalIdentifierEntity>();
+            String extIdentifierKey ;
+            OrgDisambiguatedExternalIdentifierEntity mappedExtIdentifier;
+            List<OrgDisambiguatedExternalIdentifierEntity> duplicatedExtIdentifiersToBeRemoved = new ArrayList<OrgDisambiguatedExternalIdentifierEntity>();
+            for (OrgDisambiguatedExternalIdentifierEntity identifier : orgDisambiguatedEntity.getExternalIdentifiers()) {
+                extIdentifierKey  = identifier.getIdentifierType() + "::" + identifier.getIdentifier();
+                if(extIdsMapping.containsKey(extIdentifierKey)) {
+                    
+                        if(!identifier.getPreferred()) {
+                            duplicatedExtIdentifiersToBeRemoved.add(identifier);
+                        }
+                        else {
+                            mappedExtIdentifier = extIdsMapping.get(extIdentifierKey);
+                            duplicatedExtIdentifiersToBeRemoved.add(mappedExtIdentifier);
+                            extIdsMapping.put(extIdentifierKey, identifier);                          
+                        }
+                    
+                }
+            }
+            //remove the duplicates from DB
+            try {
+                LOGGER.info("About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org " + orgDisambiguatedEntity.getId() );
+                duplicatedExtIdentifiersToBeRemoved.stream().forEach((e) -> {
+                    orgDisambiguatedExternalIdentifierDao.remove(e);
+                    LOGGER.debug("Removed ext id " + e.getIdentifierType() + "::" + e.getIdentifier() + "::" + e.getId());
+                });
+                
+            } catch (Exception ex) {
+                LOGGER.error("Exception when removing duplicate external ids for Disambiguated Org " + orgDisambiguatedEntity.getId(), ex);
+            }
+        }
+    
     }
 
 }
