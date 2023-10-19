@@ -271,7 +271,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         normalizeExternalIdentifier(identifier);
         boolean toPersist = true;
         OrgDisambiguatedEntity orgDisambiguatedEntity = identifier.getOrgDisambiguated();
-        if (orgDisambiguatedEntity.getExternalIdentifiers() != null) {
+        if (orgDisambiguatedEntity != null && orgDisambiguatedEntity.getExternalIdentifiers() != null) {
             String extIdentifierKeyToAdd = identifier.getIdentifierType() + "::" + identifier.getIdentifier();
             String extIdentifierKey;
             for (OrgDisambiguatedExternalIdentifierEntity identifier1 : orgDisambiguatedEntity.getExternalIdentifiers()) {
