@@ -52,7 +52,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Resource
     private OrgDao orgDao;
-    
+
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
 
@@ -67,7 +67,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.solr:indexDisambiguatedOrgs}")
     private String updateSolrQueueName;
-    
+
     @Value("${org.orcid.core.cleanExtIdsOnOrgUpdate:true}")
     private boolean cleanDuplicateExtIdOnOrgUpdate;
 
@@ -79,7 +79,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.indexing.batchSize:1000}")
     private int indexingBatchSize;
-    
+
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
@@ -106,7 +106,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             entities = orgDisambiguatedDaoReadOnly.findOrgsToGroup(startIndex, indexingBatchSize);
             LOGGER.info("GROUP: Found chunk of {} disambiguated orgs for indexing as group", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
-                
+
                 new OrgGrouping(entity, this).markGroupForIndexing(orgDisambiguatedDao);
             }
             startIndex = startIndex + indexingBatchSize;
@@ -150,7 +150,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
         Set<String> orgNames = new HashSet<>();
         orgNames.add(entity.getName());
-        
+
         List<OrgEntity> orgs = orgDao.findByOrgDisambiguatedId(entity.getId());
         if (orgs != null) {
             for (OrgEntity org : orgs) {
@@ -222,7 +222,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     public OrgDisambiguatedEntity updateOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         normalizeExternalIdentifiers(orgDisambiguatedEntity);
-        if(cleanDuplicateExtIdOnOrgUpdate) {
+        if (cleanDuplicateExtIdOnOrgUpdate) {
             cleanDuplicatedExternalIdentifiersForOrgDisambiguated(orgDisambiguatedEntity);
         }
         return orgDisambiguatedDao.merge(orgDisambiguatedEntity);
@@ -277,17 +277,16 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         orgDisambiguatedExternalIdentifierDao.merge(identifier);
     }
 
-    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier( String identifier, String type ) {
+    public List<OrgDisambiguated> findOrgDisambiguatedIdsForSameExternalIdentifier(String identifier, String type) {
         List<OrgDisambiguated> orgDisambiguatedIds = new ArrayList<OrgDisambiguated>();
         List<OrgDisambiguatedExternalIdentifierEntity> extIds = orgDisambiguatedExternalIdentifierDao.findByIdentifierIdAndType(identifier, type);
-        extIds.stream().forEach((e) -> 
-            {
-                OrgDisambiguatedEntity de = e.getOrgDisambiguated();
-                // Group only if it is not a RINGGOLD org
-                if(de != null && !OrgDisambiguatedSourceType.RINGGOLD.name().equals(de.getSourceType())) {
-                    orgDisambiguatedIds.add(convertEntity(de));
-                }
-            });
+        extIds.stream().forEach((e) -> {
+            OrgDisambiguatedEntity de = e.getOrgDisambiguated();
+            // Group only if it is not a RINGGOLD org
+            if (de != null && !OrgDisambiguatedSourceType.RINGGOLD.name().equals(de.getSourceType())) {
+                orgDisambiguatedIds.add(convertEntity(de));
+            }
+        });
         return orgDisambiguatedIds;
     }
 
@@ -352,41 +351,39 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             }
         }
     }
-    
+
     public void cleanDuplicatedExternalIdentifiersForOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         if (orgDisambiguatedEntity.getExternalIdentifiers() != null) {
             HashMap<String, OrgDisambiguatedExternalIdentifierEntity> extIdsMapping = new HashMap<String, OrgDisambiguatedExternalIdentifierEntity>();
-            String extIdentifierKey ;
+            String extIdentifierKey;
             OrgDisambiguatedExternalIdentifierEntity mappedExtIdentifier;
             List<OrgDisambiguatedExternalIdentifierEntity> duplicatedExtIdentifiersToBeRemoved = new ArrayList<OrgDisambiguatedExternalIdentifierEntity>();
             for (OrgDisambiguatedExternalIdentifierEntity identifier : orgDisambiguatedEntity.getExternalIdentifiers()) {
-                extIdentifierKey  = identifier.getIdentifierType() + "::" + identifier.getIdentifier();
-                if(extIdsMapping.containsKey(extIdentifierKey)) {
-                    
-                        if(!identifier.getPreferred()) {
-                            duplicatedExtIdentifiersToBeRemoved.add(identifier);
-                        }
-                        else {
-                            mappedExtIdentifier = extIdsMapping.get(extIdentifierKey);
-                            duplicatedExtIdentifiersToBeRemoved.add(mappedExtIdentifier);
-                            extIdsMapping.put(extIdentifierKey, identifier);                          
-                        }
-                    
+                extIdentifierKey = identifier.getIdentifierType() + "::" + identifier.getIdentifier();
+                if (extIdsMapping.containsKey(extIdentifierKey)) {
+
+                    if (!identifier.getPreferred()) {
+                        duplicatedExtIdentifiersToBeRemoved.add(identifier);
+                    } else {
+                        mappedExtIdentifier = extIdsMapping.get(extIdentifierKey);
+                        duplicatedExtIdentifiersToBeRemoved.add(mappedExtIdentifier);
+                        extIdsMapping.put(extIdentifierKey, identifier);
+                    }
+
                 }
             }
-            //remove the duplicates from DB
+            // remove the duplicates from DB
             try {
-                LOGGER.info("About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org " + orgDisambiguatedEntity.getId() );
+                LOGGER.info("About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org "
+                        + orgDisambiguatedEntity.getId());
                 duplicatedExtIdentifiersToBeRemoved.stream().forEach((e) -> {
                     orgDisambiguatedExternalIdentifierDao.remove(e);
                     LOGGER.debug("Removed ext id " + e.getIdentifierType() + "::" + e.getIdentifier() + "::" + e.getId());
                 });
-                
+
             } catch (Exception ex) {
                 LOGGER.error("Exception when removing duplicate external ids for Disambiguated Org " + orgDisambiguatedEntity.getId(), ex);
             }
         }
-    
     }
-
 }
