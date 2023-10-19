@@ -31,6 +31,18 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
         entityManager.persist(e);
         return e;
     }
+    
+    @Override
+    @Transactional
+    public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category, String rorId) {
+        LOG.debug("Creating domain {} with category {} and ror Id {}", emailDomain, category, rorId);
+        EmailDomainEntity e = new EmailDomainEntity();
+        e.setEmailDomain(emailDomain);
+        e.setCategory(category);
+        e.setRorId(rorId);
+        entityManager.persist(e);
+        return e;
+    }
 
     @Override
     @Transactional
@@ -42,6 +54,16 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
         return query.executeUpdate() > 0; 
     }
 
+    @Override
+    @Transactional
+    public boolean updateRorId(long id, String rorId) {
+        LOG.debug("Updating domain with id {} with rorId {}", id, rorId);
+        Query query = entityManager.createNativeQuery("UPDATE email_domain SET ror_id=:rorId WHERE id = :id");
+        query.setParameter("id", id);        
+        query.setParameter("rorId", rorId.toString());
+        return query.executeUpdate() > 0; 
+    }
+    
     @Override
     public EmailDomainEntity findByEmailDoman(String emailDomain) {
         TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where emailDomain = :emailDomain", EmailDomainEntity.class);

@@ -19,14 +19,18 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     @Resource(name = "emailDomainDaoReadOnly")
     private EmailDomainDao emailDomainDaoReadOnly;
 
-    @Override
-    public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {
+    private void validateEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
         }
         if(!InternetDomainName.isValid(emailDomain)) {
             throw new IllegalArgumentException("Email Domain '" + emailDomain + "' is invalid");
         }
+    }
+    
+    @Override
+    public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {        
+        validateEmailDomain(emailDomain);
         if (category == null) {
             throw new IllegalArgumentException("Category must not be empty");
         }
@@ -55,6 +59,19 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
             throw new IllegalArgumentException("Category must not be empty");
         }
         return emailDomainDaoReadOnly.findByCategory(category);
+    }
+
+    @Override
+    public EmailDomainEntity createOrUpdateEmailDomain(String emailDomain, String rorId) {
+        EmailDomainEntity existingEntity = emailDomainDaoReadOnly.findByEmailDoman(emailDomain);
+        if(existingEntity != null) {
+            if(!rorId.equals(existingEntity.getRorId())) {
+                emailDomainDao.updateRorId(existingEntity.getId(), rorId);
+            }
+        } else {
+            return emailDomainDao.createEmailDomain(emailDomain, DomainCategory.PROFESSIONAL, rorId);
+        }
+        return existingEntity;
     }
 
 }
