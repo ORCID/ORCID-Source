@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
@@ -268,7 +269,27 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     public void createOrgDisambiguatedExternalIdentifier(OrgDisambiguatedExternalIdentifierEntity identifier) {
         normalizeExternalIdentifier(identifier);
-        orgDisambiguatedExternalIdentifierDao.persist(identifier);
+        boolean toPersist = true;
+        OrgDisambiguatedEntity orgDisambiguatedEntity = identifier.getOrgDisambiguated();
+        if (orgDisambiguatedEntity.getExternalIdentifiers() != null) {
+            String extIdentifierKeyToAdd = identifier.getIdentifierType() + "::" + identifier.getIdentifier();
+            String extIdentifierKey;
+            for (OrgDisambiguatedExternalIdentifierEntity identifier1 : orgDisambiguatedEntity.getExternalIdentifiers()) {
+                extIdentifierKey = identifier1.getIdentifierType() + "::" + identifier1.getIdentifier();
+                if (StringUtils.equals(extIdentifierKeyToAdd, extIdentifierKey)) {
+                    toPersist = false;
+                    break;
+                }
+            }
+        }
+        if (cleanDuplicateExtIdOnOrgUpdate) {
+            cleanDuplicatedExternalIdentifiersForOrgDisambiguated(orgDisambiguatedEntity);
+        }
+        // check if in the current external id list the identifier already
+        if (toPersist) {
+            orgDisambiguatedExternalIdentifierDao.persist(identifier);
+        }
+
     }
 
     @Override
@@ -373,17 +394,18 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                 }
             }
             // remove the duplicates from DB
-            try {
-                LOGGER.info("About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org "
-                        + orgDisambiguatedEntity.getId());
-                duplicatedExtIdentifiersToBeRemoved.stream().forEach((e) -> {
+
+            LOGGER.info(
+                    "About to remove " + duplicatedExtIdentifiersToBeRemoved.size() + " duplicate external Ids for Disambiguated Org " + orgDisambiguatedEntity.getId());
+            duplicatedExtIdentifiersToBeRemoved.stream().forEach((e) -> {
+                try {
                     orgDisambiguatedExternalIdentifierDao.remove(e);
                     LOGGER.debug("Removed ext id " + e.getIdentifierType() + "::" + e.getIdentifier() + "::" + e.getId());
-                });
+                } catch (Exception ex) {
+                    LOGGER.error("Exception when removing duplicate external ids for Disambiguated Org " + orgDisambiguatedEntity.getId(), ex);
+                }
+            });
 
-            } catch (Exception ex) {
-                LOGGER.error("Exception when removing duplicate external ids for Disambiguated Org " + orgDisambiguatedEntity.getId(), ex);
-            }
         }
     }
 }
