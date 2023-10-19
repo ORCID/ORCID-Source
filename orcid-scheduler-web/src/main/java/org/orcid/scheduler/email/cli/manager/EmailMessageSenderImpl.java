@@ -82,7 +82,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     ExecutorService pool;
     
-    private int verifyReminderAfterDays = 2;
+    private int verifyReminderAfterTwoDays = 2;
+    
+    private int verifyReminderAfterSevenDays = 7;
+    
+    private int verifyReminderAfterTwentyHeightDays = 28;
     
     @Resource
     private NotificationDao notificationDao;
@@ -141,7 +145,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Value("${org.notifications.max_elements_to_show:20}")
     private Integer maxNotificationsToShowPerClient;           
     
-    @Value("${org.orcid.core.email.verify.tooOld:15}")
+    @Value("${org.orcid.core.email.verify.tooOld:30}")
     private int emailTooOld;    
     
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
@@ -566,7 +570,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         LOGGER.info("About to process unverIfied emails for reminder");
         List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
         do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterDays, 100);
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterTwoDays, 100);
             LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
             LocalDateTime now = LocalDateTime.now();
             Date tooOld = now.minusDays(emailTooOld).toDate();
@@ -580,7 +584,46 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             }
         } while (!elements.isEmpty());
     }
-
+    
+    synchronized private void processUnverifiedEmailsDays(int days, EmailEventType eventSent, EmailEventType eventSkipped) {
+        LOGGER.info("About to process unverIfied emails for reminder");
+        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
+        do {
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(days, 100);
+            LOGGER.info("Got batch of {} profiles with unverified emails for reminder", elements.size());
+            LocalDateTime now = LocalDateTime.now();
+            Date tooOld = now.minusDays(emailTooOld).toDate();
+            for (Pair<String, Date> element : elements) {
+                if(element.getRight() == null || element.getRight().after(tooOld)) {
+                    processUnverifiedEmailsInTransaction(element.getLeft(), eventSent, eventSkipped);
+                } else {
+                    // Mark is as too old to send the verification email
+                    markUnverifiedEmailAsTooOld(element.getLeft());
+                }
+            }
+        } while (!elements.isEmpty());
+    }
+    
+    
+    private void processUnverifiedEmailsInTransaction(final String email, EmailEventType eventSent, EmailEventType eventSkipped) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            @Transactional
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    String userOrcid = emailManagerReadOnly.findOrcidIdByEmail(email);
+                    sendVerificationReminderEmail(userOrcid, email);
+                    emailEventDao.persist(new EmailEventEntity(email, eventSent));
+                    emailEventDao.flush();
+                } catch (Exception e) {
+                    LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
+                    emailEventDao.persist(new EmailEventEntity(email, eventSkipped));
+                    emailEventDao.flush();
+                }
+            }
+        });
+    }
+    
     private void processUnverifiedEmails2DaysInTransaction(final String email) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
