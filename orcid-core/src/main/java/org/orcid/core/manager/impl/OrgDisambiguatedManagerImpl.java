@@ -69,8 +69,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Value("${org.orcid.persistence.messaging.updated.disambiguated_org.solr:indexDisambiguatedOrgs}")
     private String updateSolrQueueName;
 
-    @Value("${org.orcid.core.cleanExtIdsOnOrgUpdate:true}")
-    private boolean cleanDuplicateExtIdOnOrgUpdate;
+    @Value("${org.orcid.core.cleanExtIdsForOrg:false}")
+    private boolean cleanDuplicateExtIdForOrg;
 
     @Resource(name = "jmsMessageSender")
     private JmsMessageSender messaging;
@@ -223,7 +223,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     public OrgDisambiguatedEntity updateOrgDisambiguated(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         normalizeExternalIdentifiers(orgDisambiguatedEntity);
-        if (cleanDuplicateExtIdOnOrgUpdate) {
+        if (cleanDuplicateExtIdForOrg) {
             cleanDuplicatedExternalIdentifiersForOrgDisambiguated(orgDisambiguatedEntity);
         }
         return orgDisambiguatedDao.merge(orgDisambiguatedEntity);
@@ -282,7 +282,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
                 }
             }
         }
-        if (cleanDuplicateExtIdOnOrgUpdate) {
+        if (cleanDuplicateExtIdForOrg) {
             cleanDuplicatedExternalIdentifiersForOrgDisambiguated(orgDisambiguatedEntity);
         }
         // check if in the current external id list the identifier already
