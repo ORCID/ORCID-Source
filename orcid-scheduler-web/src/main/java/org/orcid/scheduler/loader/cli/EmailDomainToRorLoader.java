@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class EmailDomainToRorLoader {
     private EmailDomainManager emailDomainManager;
     List<List<String>> csvData;
 
-    List<String> invalidDomains = new ArrayList<String>();  
+    Set<String> invalidDomains = new HashSet<String>();  
     
     Map<String, DomainToRorMap> map = new HashMap<String, DomainToRorMap>();
     
@@ -42,6 +42,7 @@ public class EmailDomainToRorLoader {
     public void execute() throws IOException {
         load(this.filePath);
         processCsvData();
+        storeDomainToRorMap();
     }
     
     private void init(String filePath) {
@@ -106,14 +107,22 @@ public class EmailDomainToRorLoader {
     
     private void storeDomainToRorMap() {
         for(DomainToRorMap element : map.values()) {
+            LOG.debug("Processing domain {}", element.getDomain());
             // If the domain has only one entry with no parent, store that one
             if(element.getIdsWithNoParent().size() == 1) {
-                
+                emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithNoParent().get(0));
             } else if(element.getIdsWithParent().size() == 1) {
                 // Else, if the domain has only one entry with parent, store that one
+                emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithParent().get(0));
             } else {            
                 // Else log a warning because there is no way to provide a suggestion
+                invalidDomains.add(element.getDomain());
             }
+        }
+        
+        LOG.warn("The following domains couldn't be mapped");
+        for(String invalidDomain : invalidDomains) {
+            LOG.warn("{}", invalidDomain);
         }
     }
     
@@ -131,6 +140,7 @@ public class EmailDomainToRorLoader {
         }
         
         public void addIdWithParent(String rorId) {
+            LOG.debug("Domain {} adding {} with parent flag", this.domain, rorId);
             idsWithParent.add(rorId);
         }
         
@@ -139,11 +149,18 @@ public class EmailDomainToRorLoader {
         }
         
         public void addIdWithNoParent(String rorId) {
+            LOG.debug("Domain {} adding {} with NO parent flag", this.domain, rorId);
             idsWithNoParent.add(rorId);
         }
         
         public List<String> getIdsWithNoParent() {
             return this.idsWithNoParent;
         }
+    }
+    
+    public static void main(String[] args) throws IOException {
+        String filePath = args[0]; 
+        EmailDomainToRorLoader edl = new EmailDomainToRorLoader(filePath);
+        edl.execute();
     }
 }
