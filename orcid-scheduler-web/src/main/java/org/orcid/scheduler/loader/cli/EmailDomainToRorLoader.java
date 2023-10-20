@@ -32,6 +32,7 @@ public class EmailDomainToRorLoader {
     private List<List<String>> csvData;
     private Set<String> invalidDomains = new HashSet<String>();  
     private Map<String, DomainToRorMap> map = new HashMap<String, DomainToRorMap>();
+    
     private int updatedEntries = 0;
     private int createdEntries = 0;
     
@@ -75,7 +76,8 @@ public class EmailDomainToRorLoader {
                 if(r.size() > 1)
                     csvData.add(r);
             }                        
-        }        
+        }
+        fileReader.close();
     }
     
     private void processCsvData() {
