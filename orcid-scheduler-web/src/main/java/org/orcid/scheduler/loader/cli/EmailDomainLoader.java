@@ -97,9 +97,11 @@ public class EmailDomainLoader {
                 total += 1;
             }
         }
-        LOG.warn("List of invalid domains:");
-        for(String invalidDomain : invalidDomains) {
-            LOG.warn(invalidDomain);
+        if(!invalidDomains.isEmpty()) {
+            LOG.warn("List of invalid domains:");
+            for(String invalidDomain : invalidDomains) {
+                LOG.info(invalidDomain);
+            }
         }
         LOG.info("Process done, total: {}, new entities: {}, updated entities: {}", total, newEntities, updatedEntities);
     }    

@@ -6,8 +6,12 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 
 public interface EmailDomainDao extends GenericDao<EmailDomainEntity, Long> {
     EmailDomainEntity createEmailDomain(String emailDomain, EmailDomainEntity.DomainCategory category);
+    
+    EmailDomainEntity createEmailDomain(String emailDomain, EmailDomainEntity.DomainCategory category, String rorId);
 
     boolean updateCategory(long id, EmailDomainEntity.DomainCategory category);
+    
+    boolean updateRorId(long id, String rorId);
 
     EmailDomainEntity findByEmailDoman(String emailDomain);
 

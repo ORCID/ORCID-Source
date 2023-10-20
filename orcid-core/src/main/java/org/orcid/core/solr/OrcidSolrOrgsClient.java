@@ -33,7 +33,7 @@ public class OrcidSolrOrgsClient {
     
     private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
 
-    
+    private static final String SOLR_ORG_BY_ROR_ID_QUERY = "org-disambiguated-id-from-source:%s";
 
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
@@ -92,5 +92,20 @@ public class OrcidSolrOrgsClient {
             String errorMessage = MessageFormat.format("Error when attempting to search for orgs for self-service, with search term {0}", new Object[] { searchTerm });
             throw new NonTransientDataAccessResourceException(errorMessage, se);
         }
+    }
+    
+    public OrgDisambiguatedSolrDocument getOrgByRorId(String rorId) {
+        SolrQuery query = new SolrQuery();
+        // Escape the : on the email domain to be able to search in solr
+        query.setQuery(SOLR_ORG_BY_ROR_ID_QUERY.replace("%s", rorId.replace(":", "\\:")));
+        query.addOrUpdateSort("score", ORDER.desc);        
+        try {
+            QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
+            List<OrgDisambiguatedSolrDocument> result = queryResponse.getBeans(OrgDisambiguatedSolrDocument.class); 
+            return (result == null || result.isEmpty()) ? null : result.get(0); 
+        } catch (SolrServerException | IOException se) {
+            String errorMessage = MessageFormat.format("Error when attempting to search for orgs by ror id, with ror id {0}", new Object[] { rorId });
+            throw new NonTransientDataAccessResourceException(errorMessage, se);
+        }        
     }
 }
