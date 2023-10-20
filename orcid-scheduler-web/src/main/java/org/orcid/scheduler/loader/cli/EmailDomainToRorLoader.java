@@ -29,12 +29,9 @@ public class EmailDomainToRorLoader {
     
     private String filePath;
     private EmailDomainManager emailDomainManager;
-    List<List<String>> csvData;
-
-    Set<String> invalidDomains = new HashSet<String>();  
-    
-    Map<String, DomainToRorMap> map = new HashMap<String, DomainToRorMap>();
-    
+    private List<List<String>> csvData;
+    private Set<String> invalidDomains = new HashSet<String>();  
+    private Map<String, DomainToRorMap> map = new HashMap<String, DomainToRorMap>();
     private int updatedEntries = 0;
     private int createdEntries = 0;
     
