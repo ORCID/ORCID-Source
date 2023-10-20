@@ -13,6 +13,8 @@ import com.google.common.net.InternetDomainName;
 
 public class EmailDomainManagerImpl implements EmailDomainManager {
 
+    public enum STATUS {CREATED, UPDATED};
+    
     @Resource(name = "emailDomainDao")
     private EmailDomainDao emailDomainDao;
 
@@ -62,16 +64,21 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     }
 
     @Override
-    public EmailDomainEntity createOrUpdateEmailDomain(String emailDomain, String rorId) {
+    public STATUS createOrUpdateEmailDomain(String emailDomain, String rorId) {
         EmailDomainEntity existingEntity = emailDomainDaoReadOnly.findByEmailDoman(emailDomain);
         if(existingEntity != null) {
             if(!rorId.equals(existingEntity.getRorId())) {
-                emailDomainDao.updateRorId(existingEntity.getId(), rorId);
+                boolean updated = emailDomainDao.updateRorId(existingEntity.getId(), rorId);
+                if(updated)
+                    return STATUS.UPDATED;
             }
         } else {
-            return emailDomainDao.createEmailDomain(emailDomain, DomainCategory.PROFESSIONAL, rorId);
+            EmailDomainEntity newEntity = emailDomainDao.createEmailDomain(emailDomain, DomainCategory.PROFESSIONAL, rorId);
+            if (newEntity != null) {
+                return STATUS.CREATED;
+            }
         }
-        return existingEntity;
+        return null;
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.orcid.core.common.manager.EmailDomainManager;
+import org.orcid.core.common.manager.impl.EmailDomainManagerImpl.STATUS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -33,6 +34,9 @@ public class EmailDomainToRorLoader {
     Set<String> invalidDomains = new HashSet<String>();  
     
     Map<String, DomainToRorMap> map = new HashMap<String, DomainToRorMap>();
+    
+    private int updatedEntries = 0;
+    private int createdEntries = 0;
     
     public EmailDomainToRorLoader(String filePath) {
         this.filePath = filePath;
@@ -62,13 +66,17 @@ public class EmailDomainToRorLoader {
         FileReader fileReader = new FileReader(filePath);       
         CsvMapper csvMapper = new CsvMapper();
         csvMapper.enable(CsvParser.Feature.WRAP_AS_ARRAY);
+        csvMapper.enable(CsvParser.Feature.TRIM_SPACES);
+        
         MappingIterator<List<String>> it = csvMapper.readerForListOf(String.class).readValues(fileReader);
 
         if (it != null) {
             csvData = new ArrayList<List<String>>();
             while(it.hasNext()) {
                 List<String> r = it.next();
-                csvData.add(r);
+                // Hack to avoid adding empty lines if they are present, we need at least 2 columns, the domain and the ror id
+                if(r.size() > 1)
+                    csvData.add(r);
             }                        
         }        
     }
@@ -93,9 +101,9 @@ public class EmailDomainToRorLoader {
                 } else {
                     dtrm.addIdWithNoParent(rorId);
                 }
-                map.put(rorId, dtrm);
+                map.put(domain, dtrm);
             } else {
-                DomainToRorMap dtrm = map.get(rorId);
+                DomainToRorMap dtrm = map.get(domain);
                 if(hasParent) {
                     dtrm.addIdWithParent(rorId);
                 } else {
@@ -110,20 +118,33 @@ public class EmailDomainToRorLoader {
             LOG.debug("Processing domain {}", element.getDomain());
             // If the domain has only one entry with no parent, store that one
             if(element.getIdsWithNoParent().size() == 1) {
-                emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithNoParent().get(0));
+                STATUS s = emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithNoParent().get(0));
+                if(STATUS.CREATED.equals(s)) {
+                    createdEntries++;
+                } else if (STATUS.UPDATED.equals(s)) {
+                    updatedEntries++;
+                }
             } else if(element.getIdsWithParent().size() == 1) {
                 // Else, if the domain has only one entry with parent, store that one
-                emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithParent().get(0));
+                STATUS s = emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithParent().get(0));
+                if(STATUS.CREATED.equals(s)) {
+                    createdEntries++;
+                } else if (STATUS.UPDATED.equals(s)) {
+                    updatedEntries++;
+                }
             } else {            
                 // Else log a warning because there is no way to provide a suggestion
                 invalidDomains.add(element.getDomain());
             }
         }
         
-        LOG.warn("The following domains couldn't be mapped");
-        for(String invalidDomain : invalidDomains) {
-            LOG.warn("{}", invalidDomain);
+        if(!invalidDomains.isEmpty()) {
+            LOG.warn("The following domains couldn't be mapped ({} In total):", invalidDomains.size());
+            for(String invalidDomain : invalidDomains) {
+                LOG.warn("{}", invalidDomain);
+            }
         }
+        LOG.info("Created entries: {}, updated entries: {}", createdEntries, updatedEntries);
     }
     
     private class DomainToRorMap {

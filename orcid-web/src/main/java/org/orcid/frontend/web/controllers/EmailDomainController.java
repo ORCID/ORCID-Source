@@ -27,7 +27,7 @@ public class EmailDomainController {
         ObjectMapper mapper = new ObjectMapper();
         if(domain == null || domain.isBlank() || domain.length() > 254) {
             ObjectNode response = mapper.createObjectNode();
-            response.put("error", "Domain lenght too long, empty or invalid");
+            response.put("error", "Domain length too short, empty or invalid");
             return response;
         }
         domain = OrcidStringUtils.stripHtml(domain);

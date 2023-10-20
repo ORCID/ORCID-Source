@@ -2,6 +2,7 @@ package org.orcid.core.common.manager;
 
 import java.util.List;
 
+import org.orcid.core.common.manager.impl.EmailDomainManagerImpl.STATUS;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 
 public interface EmailDomainManager {
@@ -13,5 +14,5 @@ public interface EmailDomainManager {
 
     List<EmailDomainEntity> findByCategory(EmailDomainEntity.DomainCategory category);
     
-    EmailDomainEntity createOrUpdateEmailDomain(String emailDomain, String rorId);
+    STATUS createOrUpdateEmailDomain(String emailDomain, String rorId);
 }
