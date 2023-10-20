@@ -1,3 +1,9 @@
+## v2.42.3 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.2...v2.42.3)
+
+- [#6911](https://github.com/ORCID/ORCID-Source/pull/6911): Initial commit
+
 ## v2.42.2 - 2023-10-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.1...v2.42.2)
