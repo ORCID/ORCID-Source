@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +20,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.impl.EmailDomainManagerImpl;
+import org.orcid.core.common.manager.impl.EmailDomainManagerImpl.STATUS;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
@@ -38,12 +43,17 @@ public class EmailDomainManagerTest {
         
         EmailDomainEntity e1 = new EmailDomainEntity("gmail.com", DomainCategory.PERSONAL);
         EmailDomainEntity e2 = new EmailDomainEntity("yahoo.com", DomainCategory.PERSONAL);
-        EmailDomainEntity e3 = new EmailDomainEntity("orcid.org", DomainCategory.PROFESSIONAL);
+        EmailDomainEntity e3 = new EmailDomainEntity("orcid.org", DomainCategory.PROFESSIONAL, "https://ror.org/04fa4r544");
+        e3.setId(1000L);
         
         when(emailDomainDaoReadOnlyMock.findByCategory(eq(DomainCategory.PERSONAL))).thenReturn(List.of(e1, e2));
         when(emailDomainDaoReadOnlyMock.findByCategory(eq(DomainCategory.PROFESSIONAL))).thenReturn(List.of(e3));
         
         when(emailDomainDaoReadOnlyMock.findByEmailDoman("gmail.com")).thenReturn(e1);
+        when(emailDomainDaoReadOnlyMock.findByEmailDoman("orcid.org")).thenReturn(e3);
+        
+        when(emailDomainDaoMock.createEmailDomain(eq("new.domain"), eq(DomainCategory.PROFESSIONAL), eq("https://ror.org/0"))).thenReturn(new EmailDomainEntity("new.domain", DomainCategory.PROFESSIONAL, "https://ror.org/0"));
+        when(emailDomainDaoMock.updateRorId(1000L, "https://ror.org/0")).thenReturn(true);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -134,5 +144,29 @@ public class EmailDomainManagerTest {
         assertEquals("gmail.com", personal.get(0).getEmailDomain());
         assertEquals(DomainCategory.PERSONAL, personal.get(1).getCategory());
         assertEquals("yahoo.com", personal.get(1).getEmailDomain());
+    }
+    
+    @Test
+    public void createOrUpdateEmailDomain_CreateTest() {
+        STATUS s = edm.createOrUpdateEmailDomain("new.domain", "https://ror.org/0");
+        assertEquals(STATUS.CREATED, s);
+        verify(emailDomainDaoMock, times(1)).createEmailDomain(eq("new.domain"), eq(DomainCategory.PROFESSIONAL), eq("https://ror.org/0"));
+        verify(emailDomainDaoMock, never()).updateRorId(anyLong(), anyString());
+    }
+    
+    @Test
+    public void createOrUpdateEmailDomain_UpdateTest() {
+        STATUS s = edm.createOrUpdateEmailDomain("orcid.org", "https://ror.org/0");
+        assertEquals(STATUS.UPDATED, s);
+        verify(emailDomainDaoMock, times(1)).updateRorId(eq(1000L), eq("https://ror.org/0"));
+        verify(emailDomainDaoMock, never()).createEmailDomain(anyString(), any(), anyString());
+    }
+    
+    @Test
+    public void createOrUpdateEmailDomain_NoUpdatesTest() {
+        STATUS s = edm.createOrUpdateEmailDomain("orcid.org", "https://ror.org/04fa4r544");
+        assertNull(s);
+        verify(emailDomainDaoMock, never()).updateRorId(anyLong(), anyString());
+        verify(emailDomainDaoMock, never()).createEmailDomain(anyString(), any(), anyString());
     }
 }

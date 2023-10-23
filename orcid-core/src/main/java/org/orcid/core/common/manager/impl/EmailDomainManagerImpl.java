@@ -13,20 +13,26 @@ import com.google.common.net.InternetDomainName;
 
 public class EmailDomainManagerImpl implements EmailDomainManager {
 
+    public enum STATUS {CREATED, UPDATED};
+    
     @Resource(name = "emailDomainDao")
     private EmailDomainDao emailDomainDao;
 
     @Resource(name = "emailDomainDaoReadOnly")
     private EmailDomainDao emailDomainDaoReadOnly;
 
-    @Override
-    public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {
+    private void validateEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
         }
         if(!InternetDomainName.isValid(emailDomain)) {
             throw new IllegalArgumentException("Email Domain '" + emailDomain + "' is invalid");
         }
+    }
+    
+    @Override
+    public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {        
+        validateEmailDomain(emailDomain);
         if (category == null) {
             throw new IllegalArgumentException("Category must not be empty");
         }
@@ -55,6 +61,24 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
             throw new IllegalArgumentException("Category must not be empty");
         }
         return emailDomainDaoReadOnly.findByCategory(category);
+    }
+
+    @Override
+    public STATUS createOrUpdateEmailDomain(String emailDomain, String rorId) {
+        EmailDomainEntity existingEntity = emailDomainDaoReadOnly.findByEmailDoman(emailDomain);
+        if(existingEntity != null) {
+            if(!rorId.equals(existingEntity.getRorId())) {
+                boolean updated = emailDomainDao.updateRorId(existingEntity.getId(), rorId);
+                if(updated)
+                    return STATUS.UPDATED;
+            }
+        } else {
+            EmailDomainEntity newEntity = emailDomainDao.createEmailDomain(emailDomain, DomainCategory.PROFESSIONAL, rorId);
+            if (newEntity != null) {
+                return STATUS.CREATED;
+            }
+        }
+        return null;
     }
 
 }

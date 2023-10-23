@@ -1,3 +1,25 @@
+## v2.42.4 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.3...v2.42.4)
+
+- [#6907](https://github.com/ORCID/ORCID-Source/pull/6907): fix/remove-fundingSubType-core-details-from-codebase
+
+### Fix
+
+- remove fundingSubType core config manually removed from prod
+
+## v2.42.3 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.2...v2.42.3)
+
+- [#6911](https://github.com/ORCID/ORCID-Source/pull/6911): Initial commit
+
+## v2.42.2 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.1...v2.42.2)
+
+- [#6910](https://github.com/ORCID/ORCID-Source/pull/6910): 8855 duplicate isni external identifiers for same disambiguated organisation
+
 ## v2.42.1 - 2023-10-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.0...v2.42.1)
