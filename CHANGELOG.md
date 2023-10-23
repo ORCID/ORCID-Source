@@ -1,3 +1,14 @@
+## v2.42.5 - 2023-10-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.4...v2.42.5)
+
+- [#6909](https://github.com/ORCID/ORCID-Source/pull/6909): fix: Update sort by source functionality to sort also alphabetically
+
+### Fix
+
+- Update external identifier is validates method
+- Update sort by source functionality to sort also alphabetically
+
 ## v2.42.4 - 2023-10-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.3...v2.42.4)
