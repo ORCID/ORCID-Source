@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
@@ -24,7 +25,7 @@ public class RedisClient {
     private static final Logger LOG = LoggerFactory.getLogger(RedisClient.class);
     
     private static final int DEFAULT_CACHE_EXPIRY = 60;
-    private static final int DEFAULT_TIMEOUT = 5000;
+    private static final int DEFAULT_TIMEOUT = 10000;
     
     private final String redisHost;
     private final int redisPort;
@@ -37,7 +38,7 @@ public class RedisClient {
     @Resource
     private SlackManager slackManager;
     
-    // Assume the connection to Redis is disabled by default
+    // Assume the connection to Redis is disabled by default    
     private boolean enabled = false;
     
     public RedisClient(String redisHost, int redisPort, String password) {
@@ -66,10 +67,6 @@ public class RedisClient {
 
     @PostConstruct
     private void init() {
-        if(!enabled) {
-            LOG.debug("Redis is not enabled, so, it will not be initilized");
-            return;
-        }
         try {
             JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis).timeoutMillis(this.clientTimeoutInMillis)
                     .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();        
