@@ -1,3 +1,9 @@
+## v2.42.6 - 2023-10-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.5...v2.42.6)
+
+- [#6912](https://github.com/ORCID/ORCID-Source/pull/6912): add an option to configure timeout
+
 ## v2.42.5 - 2023-10-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.4...v2.42.5)
