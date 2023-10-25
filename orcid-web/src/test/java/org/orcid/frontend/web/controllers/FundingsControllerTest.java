@@ -646,8 +646,8 @@ public class FundingsControllerTest extends BaseControllerTest {
         List<FundingGroup> fundings = fundingController.getFundingsJson("source", true);
         assertNotNull(fundings);
         assertEquals(3, fundings.size());
-        assertEquals("4444-4444-4444-4443", fundings.get(0).getFundings().get(0).getSource());
-        assertEquals("4444-4444-4444-4441", fundings.get(2).getFundings().get(0).getSource());
+        assertEquals("4444-4444-4444-4441", fundings.get(0).getFundings().get(0).getSource());
+        assertEquals("4444-4444-4444-4443", fundings.get(2).getFundings().get(0).getSource());
     }
 
     private FundingForm getFundingForm() {

@@ -475,8 +475,7 @@ public class WorksPaginator {
         selfAsserted.sort(new TitleComparator());
         validated.sort(new TitleComparator());
 
-        return sortAsc ? Stream.concat(selfAsserted.stream(), validated.stream())
-                .collect(Collectors.toList()) : Stream.concat(validated.stream(), selfAsserted.stream())
+        return (sortAsc ? Stream.concat(validated.stream(), selfAsserted.stream()) : Stream.concat(selfAsserted.stream(), validated.stream()))
                 .collect(Collectors.toList());
     }
 
@@ -492,7 +491,7 @@ public class WorksPaginator {
         selfAsserted.sort(new TitleComparatorWorkGroupExtended());
         validated.sort(new TitleComparatorWorkGroupExtended());
 
-        return (sortAsc ? Stream.concat(selfAsserted.stream(), validated.stream()) : Stream.concat(validated.stream(), selfAsserted.stream()))
+        return (sortAsc ? Stream.concat(validated.stream(), selfAsserted.stream()) : Stream.concat(selfAsserted.stream(), validated.stream()))
                 .collect(Collectors.toList());
     }
 
