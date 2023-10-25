@@ -70,7 +70,7 @@ public class EventDaoTest extends DBUnitTest {
 
     @Test
     public void testRemoveSpam() throws NoResultException {
-        List<EventEntity> eventEntities = eventDao.getEvents(OTHER_USER_ORCID);
+        List<EventEntity> eventEntities = eventDao.getEvents(USER_ORCID);
         assertNotNull(eventEntities);
         eventDao.removeEvents(eventEntities.get(0).getOrcid());
     }

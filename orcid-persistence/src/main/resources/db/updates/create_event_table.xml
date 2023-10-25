@@ -22,7 +22,7 @@
                                  baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid"/>
     </changeSet>
 
-    <changeSet id="CREATE-EVENT-SEQUENCES" author="Daniel Palafox" dbms="postgresql">
+    <changeSet id="CREATE-EVENT-SEQUENCES" author="Daniel Palafox">
         <preConditions onFail="MARK_RAN">
             <not>
                 <sequenceExists sequenceName="event_seq"/>

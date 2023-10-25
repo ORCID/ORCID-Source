@@ -37,7 +37,7 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public void createEvent(String orcid, EventType eventType, HttpServletRequest request, RequestInfoForm requestInfoForm) {
-        String label = null;
+        String label = "Website";
         String clientId = null;
         String redirectUrl = null;
         String publicPage = null;
@@ -62,8 +62,6 @@ public class EventManagerImpl implements EventManager {
                         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
                         label = "OAuth " + clientDetailsEntity.getClientName();
                     }
-                } else {
-                    label = "Website";
                 }
         }
 
