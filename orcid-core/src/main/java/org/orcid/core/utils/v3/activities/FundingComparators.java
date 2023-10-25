@@ -18,15 +18,7 @@ public class FundingComparators {
 
     private final String TYPE_SORT_KEY = "type";
 
-    private final String SOURCE_SORT_KEY = "source";
-
-    private String orcid = null;
-
     public FundingComparators() {}
-
-    public FundingComparators(String orcid) {
-        this.orcid = orcid;
-    }
 
     public Comparator<FundingGroup> getInstance(String key, boolean sortAsc, String orcid) {
         Comparator<FundingGroup> comparator = null;
@@ -120,7 +112,7 @@ public class FundingComparators {
         selfAsserted.sort(new FundingComparators().TITLE_COMPARATOR);
         validated.sort(new FundingComparators().TITLE_COMPARATOR);
 
-        return (sortAsc ? Stream.concat(selfAsserted.stream(), validated.stream()) : Stream.concat(validated.stream(), selfAsserted.stream()))
+        return (sortAsc ? Stream.concat(validated.stream(), selfAsserted.stream()) : Stream.concat(selfAsserted.stream(), validated.stream()))
                 .collect(Collectors.toList());
     }
 }
