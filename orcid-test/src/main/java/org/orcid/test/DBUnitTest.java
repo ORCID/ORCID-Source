@@ -43,7 +43,7 @@ public class DBUnitTest {
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
             "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes",
-            "research_resource","research_resource_item, spam", "backup_code", "profile_history_event"};
+            "research_resource","research_resource_item, spam", "backup_code", "profile_history_event", "event"};
 
     private static ApplicationContext context;
 
@@ -156,6 +156,7 @@ public class DBUnitTest {
         dataSet.addTable("research_resource");
         dataSet.addTable("find_my_stuff_history");
         dataSet.addTable("spam");
+        dataSet.addTable("event");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);

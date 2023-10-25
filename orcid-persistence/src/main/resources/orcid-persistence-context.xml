@@ -457,7 +457,9 @@
     <bean id="spamDaoReadOnly" class="org.orcid.persistence.dao.impl.SpamDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
-    
+
+	<bean id="eventDao" class="org.orcid.persistence.dao.impl.EventDaoImpl" />
+
     <!-- Statistics -->
     <bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
         <property name="entityManager" ref="entityManager" />
