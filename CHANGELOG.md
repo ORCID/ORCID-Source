@@ -1,3 +1,17 @@
+## v2.43.0 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.6...v2.43.0)
+
+- [#6913](https://github.com/ORCID/ORCID-Source/pull/6913): feature: Add functionality to capture user events in the database and…
+
+### Fix
+
+- Add missing label and fix test
+
+### Feature
+
+- Add functionality to capture user events in the database and create views to display info in panoply
+
 ## v2.42.6 - 2023-10-24
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.5...v2.42.6)
