@@ -1,3 +1,9 @@
+## v2.43.1 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.0...v2.43.1)
+
+- [#6914](https://github.com/ORCID/ORCID-Source/pull/6914): Shorter id
+
 ## v2.43.0 - 2023-10-25
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.6...v2.43.0)
