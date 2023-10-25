@@ -20,6 +20,7 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
@@ -27,6 +28,8 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -129,6 +132,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private SocialSignInUtils socialSignInUtils;
+
+    @Resource
+    private EventManager eventManager;
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -298,6 +304,9 @@ public class RegistrationController extends BaseController {
             redirectUrl = calculateRedirectUrl(request, response, true, true);
         } 
         r.setUrl(redirectUrl);
+        if (Features.EVENTS.isActive()) {
+            eventManager.createEvent(getCurrentUserOrcid(), EventType.NEW_REGISTRATION, request, null);
+        }
         return r;
     }
 

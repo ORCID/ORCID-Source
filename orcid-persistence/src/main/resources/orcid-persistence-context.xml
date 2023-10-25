@@ -449,21 +449,25 @@
     </bean>
     
     <util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
-	<bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
-	<bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
+    <bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
+    <bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
 	
-	<bean id="spamDao" class="org.orcid.persistence.dao.impl.SpamDaoImpl" />
+    <bean id="spamDao" class="org.orcid.persistence.dao.impl.SpamDaoImpl" />
 
     <bean id="spamDaoReadOnly" class="org.orcid.persistence.dao.impl.SpamDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
-    
+
+    <bean id="eventDao" class="org.orcid.persistence.dao.impl.EventDaoImpl" />
+
+   
     <bean id="emailDomainDao" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl" />
 
     <bean id="emailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
+
     <!-- Statistics -->
     <bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
         <property name="entityManager" ref="entityManager" />

@@ -374,4 +374,6 @@
   <include file="/db/updates/identifier-types/update-ethos-to-be-case-sensitive.xml" />
   <include file="/db/updates/dw_client_details_add_user_obo_enabled.xml" />
   <include file="/db/updates/create_email_domain_mapping_tables.xml" />
+  <include file="/db/updates/create_event_table.xml" />
+  <include file="/db/updates/dw_event.xml" />  
 </databaseChangeLog>

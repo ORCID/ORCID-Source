@@ -1215,6 +1215,8 @@
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
 	</bean>
 
+	<bean id="eventManager" class="org.orcid.core.common.manager.impl.EventManagerImpl"/>
+
 	<bean id="emailDomainManager" class="org.orcid.core.common.manager.impl.EmailDomainManagerImpl"/>
 
 </beans>

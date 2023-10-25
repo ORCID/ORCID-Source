@@ -60,6 +60,7 @@
         <class>org.orcid.persistence.jpa.entities.ResearchResourceItemEntity</class>
         <class>org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity</class>
         <class>org.orcid.persistence.jpa.entities.SpamEntity</class>
+        <class>org.orcid.persistence.jpa.entities.EventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailDomainEntity</class>
 
         <!-- OAuth entities -->
