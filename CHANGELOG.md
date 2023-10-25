@@ -1,3 +1,13 @@
+## v2.43.2 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.1...v2.43.2)
+
+- [#6916](https://github.com/ORCID/ORCID-Source/pull/6916): fix: Invert selfAsserted and validated in sort by source
+
+### Fix
+
+- Invert selfAsserted and validated in sort by source
+
 ## v2.43.1 - 2023-10-25
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.0...v2.43.1)
