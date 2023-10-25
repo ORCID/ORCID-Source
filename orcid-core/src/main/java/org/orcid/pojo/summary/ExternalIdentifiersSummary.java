@@ -86,7 +86,7 @@ public class ExternalIdentifiersSummary {
             }
 
             if (personExternalIdentifier.getSource() != null) {
-                form.setValidated(SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
+                form.setValidated(!SourceUtils.isSelfAsserted(personExternalIdentifier.getSource(), orcid));
             }
         }
         return form;

@@ -1,3 +1,48 @@
+## v2.42.6 - 2023-10-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.5...v2.42.6)
+
+- [#6912](https://github.com/ORCID/ORCID-Source/pull/6912): add an option to configure timeout
+
+## v2.42.5 - 2023-10-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.4...v2.42.5)
+
+- [#6909](https://github.com/ORCID/ORCID-Source/pull/6909): fix: Update sort by source functionality to sort also alphabetically
+
+### Fix
+
+- Update external identifier is validates method
+- Update sort by source functionality to sort also alphabetically
+
+## v2.42.4 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.3...v2.42.4)
+
+- [#6907](https://github.com/ORCID/ORCID-Source/pull/6907): fix/remove-fundingSubType-core-details-from-codebase
+
+### Fix
+
+- remove fundingSubType core config manually removed from prod
+
+## v2.42.3 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.2...v2.42.3)
+
+- [#6911](https://github.com/ORCID/ORCID-Source/pull/6911): Initial commit
+
+## v2.42.2 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.1...v2.42.2)
+
+- [#6910](https://github.com/ORCID/ORCID-Source/pull/6910): 8855 duplicate isni external identifiers for same disambiguated organisation
+
+## v2.42.1 - 2023-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.0...v2.42.1)
+
+- [#6905](https://github.com/ORCID/ORCID-Source/pull/6905): Email domain to org
+
 ## v2.42.0 - 2023-10-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.41.2...v2.42.0)

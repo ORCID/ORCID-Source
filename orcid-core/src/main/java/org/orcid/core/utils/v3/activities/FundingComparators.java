@@ -2,6 +2,9 @@ package org.orcid.core.utils.v3.activities;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -33,8 +36,6 @@ public class FundingComparators {
             comparator = new FundingComparators().TITLE_COMPARATOR;
         } else if (TYPE_SORT_KEY.equals(key)) {
             comparator = new FundingComparators().TYPE_COMPARATOR;
-        } else if (SOURCE_SORT_KEY.equals(key)) {
-            comparator = new FundingComparators(orcid).SOURCE_COMPARATOR;
         }
 
         if (sortAsc) {
@@ -107,9 +108,19 @@ public class FundingComparators {
         return g1.getStartDate().compareTo(g2.getStartDate());
     };
 
-    public Comparator<FundingGroup> SOURCE_COMPARATOR = (g1, g2) -> Boolean.compare(isSelfAsserted(g1), isSelfAsserted(g2));
+    public List<FundingGroup> sortBySource(List<FundingGroup> fundingGroups, boolean sortAsc, String orcid) {
+        List<FundingGroup> selfAsserted = fundingGroups.stream()
+                .filter(fundingGroup -> SourceUtils.isSelfAsserted(fundingGroup.getDefaultFunding(), orcid))
+                .collect(Collectors.toList());
 
-    private boolean isSelfAsserted(FundingGroup fundingGroup) {
-        return SourceUtils.isSelfAsserted(fundingGroup.getDefaultFunding(), orcid);
+        List<FundingGroup> validated = fundingGroups.stream()
+                .filter(fundingGroup -> !SourceUtils.isSelfAsserted(fundingGroup.getDefaultFunding(), orcid))
+                .collect(Collectors.toList());
+
+        selfAsserted.sort(new FundingComparators().TITLE_COMPARATOR);
+        validated.sort(new FundingComparators().TITLE_COMPARATOR);
+
+        return (sortAsc ? Stream.concat(selfAsserted.stream(), validated.stream()) : Stream.concat(validated.stream(), selfAsserted.stream()))
+                .collect(Collectors.toList());
     }
 }

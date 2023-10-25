@@ -1,0 +1,58 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Angel Montenegro" id="CREATE-EMAIL-DOMAIN-TABLE">		
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="email_domain" />
+			</not>
+		</preConditions>
+		
+		<createTable tableName="email_domain">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="email_domain_pkey" />
+			</column>
+			<column name="email_domain" type="VARCHAR(254)">
+				<constraints nullable="false" />
+			</column>
+			<column name="category" type="VARCHAR(16)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ror_id" type="VARCHAR(30)">
+				<constraints nullable="true" />
+			</column>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
+		</createTable>
+	</changeSet>
+	   
+	<changeSet id="CREATE-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="email_domain_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="email_domain_seq" startValue="1000" />
+    </changeSet>
+	
+	<changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="email_domain" columnName="id" columnDataType="bigint"/>
+    </changeSet>	   
+
+	<changeSet id="EMAIL-DOMAIN-INDEX" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="email_domain_domain_index" tableName="email_domain" />
+			</not>
+		</preConditions>
+		<sql>create index email_domain_domain_index on email_domain(email_domain);</sql>
+		<sql>create index email_domain_ror_id_index on email_domain(ror_id);</sql>
+	</changeSet>
+	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO" author="Angel Montenegro" dbms="postgresql">		
+		<sql>GRANT SELECT ON email_domain to orcidro;</sql>		
+	</changeSet>
+	
+</databaseChangeLog>	

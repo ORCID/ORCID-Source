@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -45,7 +47,11 @@ public class WorksPaginator {
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
             List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
-            filteredGroups = sort(filteredGroups, sort, sortAsc, orcid);
+            if ("source".equals(sort)) {
+                filteredGroups = sortBySource(filteredGroups, sortAsc, orcid);
+            } else {
+                filteredGroups = sort(filteredGroups, sort, sortAsc, orcid);
+            }
 
             worksPage.setTotalGroups(filteredGroups.size());
 
@@ -65,7 +71,11 @@ public class WorksPaginator {
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
             List<WorkGroupExtended> filteredGroups = filterWorksExtended(works, justPublic);
-            filteredGroups = sortExtended(filteredGroups, sort, sortAsc, orcid);
+            if ("source".equals(sort)) {
+                filteredGroups = sortBySourceExtended(filteredGroups, sortAsc, orcid);
+            } else {
+                filteredGroups = sortExtended(filteredGroups, sort, sortAsc, orcid);
+            }
 
             worksPage.setTotalGroups(filteredGroups.size());
 
@@ -126,8 +136,6 @@ public class WorksPaginator {
             Collections.sort(list, new DateComparator());
         } else if (TYPE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TypeComparator());
-        } else if (SOURCE_SORT_KEY.equals(sort)) {
-            Collections.sort(list, new SourceComparator(orcid));
         }
 
         if (!sortAsc) {
@@ -143,8 +151,6 @@ public class WorksPaginator {
             Collections.sort(list, new DateComparatorWorkGroupExtended());
         } else if (TYPE_SORT_KEY.equals(sort)) {
             Collections.sort(list, new TypeComparatorWorkGroupExtended());
-        } else if (SOURCE_SORT_KEY.equals(sort)) {
-            Collections.sort(list, new SourceComparatorWorkGroupExtended(orcid));
         }
 
         if (!sortAsc) {
@@ -457,21 +463,37 @@ public class WorksPaginator {
         }
     }
 
-    private class SourceComparatorWorkGroupExtended implements Comparator<WorkGroupExtended> {
-        private String orcid;
+    public List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortBySource(List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> workGroups, boolean sortAsc, String orcid) {
+        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> selfAsserted = workGroups.stream()
+                .filter(work -> SourceUtils.isSelfAsserted(work.getWorkSummary().get(0).getSource(), orcid))
+                .collect(Collectors.toList());
 
-        SourceComparatorWorkGroupExtended(String orcid) {
-            this.orcid = orcid;
-        }
+        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> validated = workGroups.stream()
+                .filter(work -> !SourceUtils.isSelfAsserted(work.getWorkSummary().get(0).getSource(), orcid))
+                .collect(Collectors.toList());
 
-        @Override
-        public int compare(WorkGroupExtended o1, WorkGroupExtended o2) {
-            return Boolean.compare(isSelfAsserted(o1.getWorkSummary().get(0)), isSelfAsserted(o2.getWorkSummary().get(0)));
-        }
+        selfAsserted.sort(new TitleComparator());
+        validated.sort(new TitleComparator());
 
-        private boolean isSelfAsserted(WorkSummaryExtended workSummary) {
-            return SourceUtils.isSelfAsserted(workSummary.getSource(), orcid);
-        }
+        return sortAsc ? Stream.concat(selfAsserted.stream(), validated.stream())
+                .collect(Collectors.toList()) : Stream.concat(validated.stream(), selfAsserted.stream())
+                .collect(Collectors.toList());
+    }
+
+    public List<WorkGroupExtended> sortBySourceExtended(List<WorkGroupExtended> workGroups, boolean sortAsc, String orcid) {
+        List<WorkGroupExtended> selfAsserted = workGroups.stream()
+                .filter(work -> SourceUtils.isSelfAsserted(work.getWorkSummary().get(0).getSource(), orcid))
+                .collect(Collectors.toList());
+
+        List<WorkGroupExtended> validated = workGroups.stream()
+                .filter(work -> !SourceUtils.isSelfAsserted(work.getWorkSummary().get(0).getSource(), orcid))
+                .collect(Collectors.toList());
+
+        selfAsserted.sort(new TitleComparatorWorkGroupExtended());
+        validated.sort(new TitleComparatorWorkGroupExtended());
+
+        return (sortAsc ? Stream.concat(selfAsserted.stream(), validated.stream()) : Stream.concat(validated.stream(), selfAsserted.stream()))
+                .collect(Collectors.toList());
     }
 
 }
