@@ -79,7 +79,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
     @Resource
     private OrgDisambiguatedExternalIdentifierDao orgDisambiguatedExternalIdentifierDao;
     
-    @Value("${org.orcid.core.orgs.ror.zenodoRecordsUrl:https://zenodo.org/api/records/?communities=ror-data}")
+    @Value("${org.orcid.core.orgs.ror.zenodoRecordsUrl:https://zenodo.org/api/records?communities=ror-data}")
     private String rorZenodoRecordsUrl;
 
     @Resource
