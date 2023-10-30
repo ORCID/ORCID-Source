@@ -28,6 +28,7 @@ public class EmailDomainEntity extends BaseEntity<Long> {
     private Long id;
     private String emailDomain; 
     private DomainCategory category;
+    private String rorId;
     
     public EmailDomainEntity() {
         
@@ -36,6 +37,12 @@ public class EmailDomainEntity extends BaseEntity<Long> {
     public EmailDomainEntity(String emailDomain, DomainCategory category) {
         this.emailDomain = emailDomain;
         this.category = category;
+    }
+    
+    public EmailDomainEntity(String emailDomain, DomainCategory category, String rorId) {
+        this.emailDomain = emailDomain;
+        this.category = category;
+        this.rorId = rorId;
     }
     
     @Override
@@ -70,9 +77,18 @@ public class EmailDomainEntity extends BaseEntity<Long> {
         this.emailDomain = emailDomain;
     }
 
+    @Column(name = "ror_id")
+    public String getRorId() {
+        return rorId;
+    }
+
+    public void setRorId(String rorId) {
+        this.rorId = rorId;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(category, emailDomain, id);
+        return Objects.hash(category, emailDomain, id, rorId);
     }
 
     @Override
@@ -84,6 +100,6 @@ public class EmailDomainEntity extends BaseEntity<Long> {
         if (getClass() != obj.getClass())
             return false;
         EmailDomainEntity other = (EmailDomainEntity) obj;
-        return category == other.category && Objects.equals(emailDomain, other.emailDomain) && Objects.equals(id, other.id);
-    }    
+        return category == other.category && Objects.equals(emailDomain, other.emailDomain) && Objects.equals(id, other.id) && Objects.equals(rorId, other.rorId);
+    }
 }

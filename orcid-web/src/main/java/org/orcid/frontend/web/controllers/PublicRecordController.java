@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -27,6 +28,7 @@ import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
@@ -164,6 +166,9 @@ public class PublicRecordController extends BaseWorkspaceController {
     PublicProfileController publicProfileController;
 
     @Resource
+    private EventManager eventManager;
+
+    @Resource
     private WorksCacheManager worksCacheManager;
     
     @Resource(name = "recordNameManagerReadOnlyV3")
@@ -179,6 +184,9 @@ public class PublicRecordController extends BaseWorkspaceController {
         boolean isDeprecated = false;
 
         try {
+            if (Features.EVENTS.isActive()) {
+                eventManager.createEvent(orcid, EventType.PUBLIC_PAGE, null, null);
+            }
             // Check if the profile is deprecated or locked
             orcidSecurityManager.checkProfile(orcid);
         } catch (LockedException | DeactivatedException e) {

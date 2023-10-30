@@ -1,7 +1,9 @@
 package org.orcid.scheduler.loader.source.zenodo.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ZenodoRecordsHitLinks {
     
     @JsonProperty("badge")

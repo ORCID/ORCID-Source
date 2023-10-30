@@ -11,8 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -52,6 +55,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @Resource
     private OauthHelper oauthHelper;
+
+    @Resource
+    private EventManager eventManager;
     
     /** This is called if user is already logged in.  
      * Checks permissions have been granted to client and generates access code.
@@ -244,6 +250,10 @@ public class OauthAuthorizeController extends OauthControllerBase {
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
         requestInfoForm.setRedirectUrl(view.getUrl());
+        if (Features.EVENTS.isActive()) {
+            EventType eventType = "true".equals(approvalParams.get("user_oauth_approval")) ? EventType.AUTHORIZE : EventType.AUTHORIZE_DENY;
+            eventManager.createEvent(auth.getPrincipal().toString(), eventType, null, requestInfoForm);
+        }
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
@@ -252,7 +262,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         return requestInfoForm;
     }
-   
+
     /**
      * Copies all request parameters into the provided params map
      * 

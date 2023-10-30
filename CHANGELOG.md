@@ -1,3 +1,78 @@
+## v2.43.3 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.2...v2.43.3)
+
+- [#6918](https://github.com/ORCID/ORCID-Source/pull/6918): 8889 prod looks like the ror loader is broken
+
+## v2.43.2 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.1...v2.43.2)
+
+- [#6916](https://github.com/ORCID/ORCID-Source/pull/6916): fix: Invert selfAsserted and validated in sort by source
+
+### Fix
+
+- Invert selfAsserted and validated in sort by source
+
+## v2.43.1 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.0...v2.43.1)
+
+- [#6914](https://github.com/ORCID/ORCID-Source/pull/6914): Shorter id
+
+## v2.43.0 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.6...v2.43.0)
+
+- [#6913](https://github.com/ORCID/ORCID-Source/pull/6913): feature: Add functionality to capture user events in the database and…
+
+### Fix
+
+- Add missing label and fix test
+
+### Feature
+
+- Add functionality to capture user events in the database and create views to display info in panoply
+
+## v2.42.6 - 2023-10-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.5...v2.42.6)
+
+- [#6912](https://github.com/ORCID/ORCID-Source/pull/6912): add an option to configure timeout
+
+## v2.42.5 - 2023-10-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.4...v2.42.5)
+
+- [#6909](https://github.com/ORCID/ORCID-Source/pull/6909): fix: Update sort by source functionality to sort also alphabetically
+
+### Fix
+
+- Update external identifier is validates method
+- Update sort by source functionality to sort also alphabetically
+
+## v2.42.4 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.3...v2.42.4)
+
+- [#6907](https://github.com/ORCID/ORCID-Source/pull/6907): fix/remove-fundingSubType-core-details-from-codebase
+
+### Fix
+
+- remove fundingSubType core config manually removed from prod
+
+## v2.42.3 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.2...v2.42.3)
+
+- [#6911](https://github.com/ORCID/ORCID-Source/pull/6911): Initial commit
+
+## v2.42.2 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.1...v2.42.2)
+
+- [#6910](https://github.com/ORCID/ORCID-Source/pull/6910): 8855 duplicate isni external identifiers for same disambiguated organisation
+
 ## v2.42.1 - 2023-10-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.0...v2.42.1)

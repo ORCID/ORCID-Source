@@ -84,11 +84,14 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @Controller
 public class PublicProfileController extends BaseWorkspaceController {
@@ -428,7 +431,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             fundingGroups.add(fundingGroup);
         }
 
-        fundingGroups.sort(new FundingComparators().getInstance(sort, sortAsc, orcid));
+        if ("source".equals(sort)) {
+            fundingGroups = new FundingComparators().sortBySource(fundingGroups, sortAsc, orcid);
+        } else {
+            fundingGroups.sort(new FundingComparators().getInstance(sort, sortAsc, orcid));
+        }
         return fundingGroups;
     }
 
