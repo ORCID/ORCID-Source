@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -13,6 +16,7 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -20,6 +24,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
@@ -141,6 +146,36 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
         queryString.append(" ORDER BY e.last_modified");
 
+        Query query = entityManager.createNativeQuery(queryString.toString());
+        query.setMaxResults(maxResults);
+        List<Object[]> dbInfo = query.getResultList();
+        List<Pair<String, Date>> results = new ArrayList<Pair<String, Date>>();
+        dbInfo.stream().forEach(element -> {
+            Pair<String, Date> pair = Pair.of((String) element[0], (Date) element[1]);
+            results.add(pair);
+        });
+        return results;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Pair<String, Date>> findEmailsUnverifiedDaysAndEventType(int daysUnverified, int maxResults, List<EmailEventType> eventTypes) {
+        List<String> stringList = eventTypes.stream().map(Optional::ofNullable) //Stream<Optional<..>>
+                .map(opt -> opt.orElse(null)) 
+                .map(Objects::toString) 
+                .map(opt -> "'"+opt+"'")
+                .collect(Collectors.toList());
+        
+        String eventsTypeStr = StringUtils.collectionToCommaDelimitedString(stringList);
+        StringBuilder queryString = new StringBuilder("SELECT e.email, e.date_created FROM email e ");
+        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
+        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
+        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
+        queryString.append("where (ev.email IS NULL or email_event_type NOT IN ("+ eventsTypeStr+"))" + "and e.is_verified = false ");
+        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
+        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
+        queryString.append(" GROUP BY e.email, e.date_created, e.last_modified");
+        queryString.append(" ORDER BY e.last_modified");
         Query query = entityManager.createNativeQuery(queryString.toString());
         query.setMaxResults(maxResults);
         List<Object[]> dbInfo = query.getResultList();

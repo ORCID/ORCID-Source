@@ -23,6 +23,8 @@
         <task:scheduled ref="cleanOldClientKeysCronJob" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />            
         <task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:35 */5 * * * *}" />
         <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/> 
+        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 0 0 * * FRI}"/> 
+        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails28Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails28Days:0 0 0 */28 * * }"/>
         <task:scheduled ref="identityProviderLoader" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>        
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>

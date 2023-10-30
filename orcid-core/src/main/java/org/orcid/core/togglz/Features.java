@@ -150,7 +150,10 @@ public enum Features implements Feature {
     ACCOUNT_LOCKOUT_SIMULATION,
     
     @Label("Enable the new 100M ID's range")
-    ENABLE_NEW_IDS;
+    ENABLE_NEW_IDS,
+    
+    @Label("Send verification emails for 2, 7 and 28 days. If disabled 2 days only verification emails will be sent.")
+    SEND_ALL_VERIFICATION_EMAILS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
