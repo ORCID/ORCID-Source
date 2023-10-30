@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(value = { "metadata", "owners", "stats", "revision" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ZenodoRecordsHit {
     
     @JsonProperty("conceptdoi")
