@@ -1,3 +1,9 @@
+## v2.43.6 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.5...v2.43.6)
+
+- [#6908](https://github.com/ORCID/ORCID-Source/pull/6908): Bump @babel/traverse from 7.17.9 to 7.23.2 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+
 ## v2.43.5 - 2023-10-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.4...v2.43.5)
