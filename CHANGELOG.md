@@ -1,3 +1,15 @@
+## v2.43.4 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.3...v2.43.4)
+
+- [#6915](https://github.com/ORCID/ORCID-Source/pull/6915): 8875 update the email verification schedule to send emails 2 7 and 28 days after email creation
+- [#6917](https://github.com/ORCID/ORCID-Source/pull/6917): fix: Add indexes to event table
+- [#6919](https://github.com/ORCID/ORCID-Source/pull/6919): Bump browserify-sign from 4.2.1 to 4.2.2 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+
+### Fix
+
+- Add indexes to event table
+
 ## v2.43.3 - 2023-10-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.2...v2.43.3)
