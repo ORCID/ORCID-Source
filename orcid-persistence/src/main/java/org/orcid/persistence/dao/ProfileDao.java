@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -76,6 +77,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
 
     public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
+    
+    public List<Pair<String, Date>> findEmailsUnverifiedDaysAndEventType(int daysUnverified, int maxResults, List<EmailEventType> eventTypes);
 
     String retrieveOrcidType(String orcid);
 
