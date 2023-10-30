@@ -1,3 +1,9 @@
+## v2.43.3 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.2...v2.43.3)
+
+- [#6918](https://github.com/ORCID/ORCID-Source/pull/6918): 8889 prod looks like the ror loader is broken
+
 ## v2.43.2 - 2023-10-25
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.1...v2.43.2)
