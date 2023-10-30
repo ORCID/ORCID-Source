@@ -44,7 +44,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/jquery": "3.3.2",
     "@types/node": "^10.14.20",
-    "css-loader": "^2.1.1",
+    "css-loader": "^6.8.1",
     "file-loader": "^3.0.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
