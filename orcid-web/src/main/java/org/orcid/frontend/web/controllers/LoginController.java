@@ -24,6 +24,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.EventType;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
@@ -325,7 +326,9 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = userConnection.getId().getUserid();            
             // Store relevant data in the session
             socialSignInUtils.setSignedInData(request, userData);
-            eventManager.createEvent(userConnection.getOrcid(), EventType.SIGN_IN, request, null);
+            if (Features.EVENTS.isActive()) {
+                eventManager.createEvent(userConnection.getOrcid(), EventType.SIGN_IN, request, null);
+            }
             
             if(userConnection.isLinked()) {                
                 // If user exists and is linked update user connection info
