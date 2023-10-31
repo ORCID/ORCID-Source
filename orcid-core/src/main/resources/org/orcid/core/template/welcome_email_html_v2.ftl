@@ -28,13 +28,22 @@
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.welcome.thank_you_for_creating" /><@emailMacros.space />${orcidId}<@emailMacros.msg "email.welcome.full_orcid_and_link_public" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
+                <@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<br/>
+                <@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
+            </p>
+            <hr />
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome" /><@emailMacros.space />${userName},<br/>
+                <@emailMacros.msg "email.welcome.congrats" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.welcome.please_verify_your_email" />
+                <@emailMacros.msg "email.welcome.verify.1" />
             </p>
 
-             <table
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+                <b><@emailMacros.msg "email.welcome.verify.2" /></b><br />
+                <@emailMacros.msg "email.welcome.verify.3" />
+                <table
                         cellpadding="0"
                         cellspacing="0"
                         style="font-family: Helvetica, Arial, sans-serif;  border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; margin-top:20px"
@@ -54,8 +63,11 @@
                         </tr>
                         </tbody>
                     </table>
-
-                    <table
+            </p>
+            
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome.verify.4" />
+                <table
                         cellpadding="0"
                         cellspacing="0"
                         style="font-family: arial, helvetica, sans-serif; border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; "
@@ -79,8 +91,8 @@
                         </tr>
                         </tbody>
                     </table>
-    
-
+            </p>
+            <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.welcome.please_visit_your" /><@emailMacros.space /><a href="https://info.orcid.org/researchers/" target="orcid.blank"><@emailMacros.msg "email.welcome.researcher_homepage" /></a><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
             </p>
