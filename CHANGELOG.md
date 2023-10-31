@@ -1,3 +1,14 @@
+## v2.44.2 - 2023-10-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.1...v2.44.2)
+
+- [#6922](https://github.com/ORCID/ORCID-Source/pull/6922): fix: Add missing create event method for social sign in
+
+### Fix
+
+- Add missing togglz for events in social sign in
+- Add missing create event method for social sign in
+
 ## v2.44.1 - 2023-10-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.0...v2.44.1)
