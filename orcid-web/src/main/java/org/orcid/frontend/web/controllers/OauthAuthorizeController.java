@@ -13,6 +13,7 @@ import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.EventType;
@@ -252,7 +253,14 @@ public class OauthAuthorizeController extends OauthControllerBase {
         requestInfoForm.setRedirectUrl(view.getUrl());
         if (Features.EVENTS.isActive()) {
             EventType eventType = "true".equals(approvalParams.get("user_oauth_approval")) ? EventType.AUTHORIZE : EventType.AUTHORIZE_DENY;
-            eventManager.createEvent(auth.getPrincipal().toString(), eventType, null, requestInfoForm);
+            String orcid = null;
+            Object principal = auth.getPrincipal();
+            if (principal instanceof OrcidProfileUserDetails) {
+                orcid = ((OrcidProfileUserDetails) principal).getOrcid();
+            } else {
+                orcid = auth.getPrincipal().toString();
+            }
+            eventManager.createEvent(orcid, eventType, null, requestInfoForm);
         }
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);

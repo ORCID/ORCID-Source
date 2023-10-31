@@ -42,27 +42,24 @@ public class EventManagerImpl implements EventManager {
         String redirectUrl = null;
         String publicPage = null;
 
-        switch (eventType) {
-            case PUBLIC_PAGE:
-                publicPage = orcid;
-                orcid = null;
-                break;
-            case REAUTHORIZE:
-                clientId = requestInfoForm.getClientId();
-                redirectUrl = requestInfoForm.getRedirectUrl();
-                label = "OAuth " + requestInfoForm.getClientName();
-                break;
-            default:
-                if (request != null) {
-                    Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-                    if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
-                        String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
-                        clientId = getParameterValue(queryString, "client_id");
-                        redirectUrl = getParameterValue(queryString, "redirect_uri");
-                        ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                        label = "OAuth " + clientDetailsEntity.getClientName();
-                    }
+        if (eventType == EventType.PUBLIC_PAGE) {
+            publicPage = orcid;
+            orcid = null;
+        } else {
+            if (request != null) {
+                Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+                if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+                    String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+                    clientId = getParameterValue(queryString, "client_id");
+                    redirectUrl = getParameterValue(queryString, "redirect_uri");
+                    ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+                    label = "OAuth " + clientDetailsEntity.getClientName();
                 }
+            } else if (requestInfoForm != null) {
+                clientId = requestInfoForm.getClientId();
+                redirectUrl = removeAttributesFromUrl(requestInfoForm.getRedirectUrl());
+                label = "OAuth " + requestInfoForm.getClientName();
+            }
         }
 
         EventEntity eventEntity = new EventEntity();
@@ -93,5 +90,12 @@ public class EventManagerImpl implements EventManager {
             }
         }
         return null;
+    }
+
+    private String removeAttributesFromUrl(String url) {
+        if (url.contains("?")) {
+            return url.substring(0, url.indexOf("?"));
+        }
+        return url;
     }
 }
