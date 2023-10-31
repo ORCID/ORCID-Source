@@ -1,3 +1,9 @@
+## v2.44.1 - 2023-10-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.0...v2.44.1)
+
+- [#6921](https://github.com/ORCID/ORCID-Source/pull/6921): Send the reminders at different time by default
+
 ## v2.44.0 - 2023-10-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.6...v2.44.0)
