@@ -26,15 +26,7 @@
 
 <@emailMacros.msg "email.welcome.verify.1" />
 
-<@emailMacros.msg "email.welcome.verify.2" />
-
-<@emailMacros.msg "email.welcome.verify.3" />
-
-<@emailMacros.msg "email.button" />
-
-<@emailMacros.msg "email.welcome.verify.4" />
-
-${verificationUrl}?lang=${locale}
+<#include "how_do_i_verify_my_email_address.ftl"/>
 
 <@emailMacros.msg "email.welcome.please_visit_our" /><@emailMacros.space /><@emailMacros.msg "email.welcome.researcher_homepage" /><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
 

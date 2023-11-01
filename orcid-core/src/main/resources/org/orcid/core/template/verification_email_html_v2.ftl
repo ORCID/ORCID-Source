@@ -1,21 +1,3 @@
-<#--
-
-    =============================================================================
-
-    ORCID (R) Open Source
-    http://orcid.org
-
-    Copyright (c) 2012-2014 ORCID, Inc.
-    Licensed under an MIT-Style License (MIT)
-    http://orcid.org/open-source-license
-
-    This copyright and license information (including a link to the full license)
-    shall be included in its entirety in all copies or substantial portion of
-    the software.
-
-    =============================================================================
-
--->
 <#import "email_macros.ftl" as emailMacros />
 <#escape x as x?html>
 <!DOCTYPE html>
@@ -34,7 +16,7 @@
             <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
                 <@emailMacros.msg "email.verify.hi" /><@emailMacros.space />${userName},<br/>
-                <#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary.reminder" /><#elseif><@emailMacros.msg "email.verify.alternate.reminder" /></#if>
+                <#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary.reminder" /><#else><@emailMacros.msg "email.verify.alternate.reminder" /></#if>
             </p>
             <#include "how_do_i_verify_my_email_address_html.ftl"/>
             <hr />

@@ -36,6 +36,9 @@
                 <@emailMacros.msg "email.welcome" /><@emailMacros.space />${userName},<br/>
                 <@emailMacros.msg "email.welcome.congrats" />
             </p>
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome.verify.1" />
+            </p>
             <#include "how_do_i_verify_my_email_address_html.ftl"/>
             <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">

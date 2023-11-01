@@ -34,7 +34,7 @@ public class VerifyEmailUtils {
         templateParams.put("isPrimary", isPrimary);
         templateParams.put("userName", emailFriendlyName);
         templateParams.put("verificationUrl", createVerificationUrl(email, orcidUrlManager.getBaseUrl()));
-        templateParams.put("orcid", orcid);
+        templateParams.put("orcidId", orcid);
         templateParams.put("subject", getSubject((isPrimary ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder"), locale));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
         addMessageParams(templateParams, locale);
