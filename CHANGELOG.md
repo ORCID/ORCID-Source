@@ -1,3 +1,7 @@
+## v2.43.3_patch_alter_dw_event_views - 2023-11-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.3...v2.43.3_patch_alter_dw_event_views)
+
 ## v2.43.3 - 2023-10-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.2...v2.43.3)
