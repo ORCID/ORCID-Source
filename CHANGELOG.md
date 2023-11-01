@@ -1,3 +1,13 @@
+## v2.44.3 - 2023-11-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.2...v2.44.3)
+
+- [#6924](https://github.com/ORCID/ORCID-Source/pull/6924): fix: Add missing `last_modified` in events view so panoply can run su…
+
+### Fix
+
+- Add missing `last_modified` in events view so panoply can run successfully
+
 ## v2.44.2 - 2023-10-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.1...v2.44.2)
