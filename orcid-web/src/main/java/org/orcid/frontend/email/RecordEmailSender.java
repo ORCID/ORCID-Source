@@ -379,23 +379,21 @@ public class RecordEmailSender {
 
     public void sendVerificationEmailToNonPrimaryEmails(String userOrcid) {
         emailManager.getEmails(userOrcid).getEmails().stream().filter(e -> !e.isPrimary()).map(e -> e.getEmail()).forEach(e -> {
-            sendVerificationEmail(userOrcid, e);
+            sendVerificationEmail(userOrcid, e, false);
         });
     }
 
-    public void sendVerificationEmail(String userOrcid, String email) {
-        processVerificationEmail(userOrcid, email, false);
+    public void sendVerificationEmail(String userOrcid, String email, Boolean isPrimaryEmail) {
+        processVerificationEmail(userOrcid, email, isPrimaryEmail);
     }
 
-    private void processVerificationEmail(String userOrcid, String email, boolean isVerificationReminder) {
+    private void processVerificationEmail(String userOrcid, String email, boolean isPrimaryEmail) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale locale = getUserLocaleFromProfileEntity(profile);
-
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        
         String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
-        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        String subject = (String) templateParams.get("subject");
-        templateParams.put("isReminder", isVerificationReminder);
+        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, isPrimaryEmail, locale);
+        String subject = (String) templateParams.get("subject");        
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);

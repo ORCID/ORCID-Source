@@ -62,7 +62,6 @@ import org.orcid.pojo.ajaxForm.EditEmail;
 import org.orcid.pojo.ajaxForm.Email;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
-import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
@@ -78,8 +77,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @author Declan Newman (declan) Date: 22/02/2012
@@ -500,16 +497,18 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {  
     	String currentUserOrcid = getCurrentUserOrcid();
-        String primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid).getEmail();
-        if (primaryEmail.equals(email))
-            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-
-        String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
+    	
+    	String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
         if(!currentUserOrcid.equals(emailOwner)) {
-        	throw new IllegalArgumentException("Invalid email address provided");
+                throw new IllegalArgumentException("Invalid email address provided");
+        }
+    	
+        boolean isPrimaryEmail = emailManagerReadOnly.isPrimaryEmail(currentUserOrcid, email);
+        if (isPrimaryEmail) {
+            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);        
         }
         
-        recordEmailSender.sendVerificationEmail(currentUserOrcid, email);
+        recordEmailSender.sendVerificationEmail(currentUserOrcid, email, isPrimaryEmail);
         return new Errors();
     }
 
@@ -649,7 +648,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
                 recordEmailSender.sendEmailAddressChangedNotification(currentUserOrcid, keys.get("new"), keys.get("old"));
             }
-            recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()));
+            recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
         } else {
             email.setErrors(errors);
         }
@@ -745,7 +744,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 String oldPrimary = keys.get("old");
                 recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);
                 if(keys.containsKey("sendVerification")) {
-                    recordEmailSender.sendVerificationEmail(orcid, newPrimary);
+                    recordEmailSender.sendVerificationEmail(orcid, newPrimary, true);
                     request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
                 }
             }
@@ -795,7 +794,8 @@ public class ManageProfileController extends BaseWorkspaceController {
                 recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);                
             }
             String verifyAddress = keys.get("verifyAddress");
-            recordEmailSender.sendVerificationEmail(orcid, verifyAddress);
+            boolean isPrimaryEmail = keys.containsKey("new") ? true : false;
+            recordEmailSender.sendVerificationEmail(orcid, verifyAddress, isPrimaryEmail);
         } else {
             editEmail.setErrors(errors);
         }

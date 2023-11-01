@@ -29,21 +29,14 @@ public class VerifyEmailUtils {
     @Resource
     private EncryptionManager encryptionManager;
 
-    public Map<String, Object> createParamsForVerificationEmail(String emailFriendlyName, String orcid, String email, String primaryEmail, Locale locale) {
+    public Map<String, Object> createParamsForVerificationEmail(String emailFriendlyName, String orcid, String email, boolean isPrimary, Locale locale) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = getSubject(primaryEmail.equalsIgnoreCase(email) ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder", locale);
-
-        templateParams.put("primaryEmail", primaryEmail);
-        templateParams.put("isPrimary", primaryEmail.equalsIgnoreCase(email));
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = createVerificationUrl(email, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
+        templateParams.put("isPrimary", isPrimary);
+        templateParams.put("userName", emailFriendlyName);
+        templateParams.put("verificationUrl", createVerificationUrl(email, orcidUrlManager.getBaseUrl()));
         templateParams.put("orcid", orcid);
-        templateParams.put("email", email);
-        templateParams.put("subject", subject);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", getSubject((isPrimary ? "email.subject.verify_reminder_primary" : "email.subject.verify_reminder"), locale));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
         addMessageParams(templateParams, locale);
         return templateParams;
     }

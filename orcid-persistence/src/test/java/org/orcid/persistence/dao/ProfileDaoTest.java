@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dbunit.dataset.DataSetException;
 import org.joda.time.LocalDateTime;
 import org.junit.AfterClass;
@@ -405,13 +405,13 @@ public class ProfileDaoTest extends DBUnitTest {
         // Created 15 days ago and verified
         assertEquals(1, insertEmailWithDateCreated("verified_2@test.orcid.org", "896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971", orcid, true, LocalDateTime.now().minusDays(15).toDate()));
         
-        List<Pair<String, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100);
+        List<Triple<String, Boolean, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100);
         assertNotNull(results);
         assertEquals(2, results.size());
         
         boolean found1 = false, found2 = false;
         
-        for(Pair<String, Date> element : results) {
+        for(Triple<String, Boolean, Date> element : results) {
             assertNotNull(element.getRight());
             if(element.getLeft().equals("unverified_2@test.orcid.org")) {
                 found1 = true;

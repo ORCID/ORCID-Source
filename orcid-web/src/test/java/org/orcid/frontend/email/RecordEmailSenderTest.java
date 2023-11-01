@@ -134,7 +134,7 @@ public class RecordEmailSenderTest {
         email.setEmail("josiah_carberry@brown.edu");
         when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
 
-        recordEmailSender.sendVerificationEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
+        recordEmailSender.sendVerificationEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu", true);
     }
 
     @Test

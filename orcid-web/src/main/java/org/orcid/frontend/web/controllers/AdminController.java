@@ -26,6 +26,8 @@ import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -33,8 +35,6 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.frontend.email.RecordEmailSender;
-import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
@@ -332,7 +332,8 @@ public class AdminController extends BaseController {
             // Notify any new email address
             if (!emailsToNotify.isEmpty()) {
                 for (String emailToNotify : emailsToNotify) {
-                    recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+                    boolean isPrimaryEmail = emailManager.isPrimaryEmail(orcid, emailToNotify);
+                    recordEmailSender.sendVerificationEmail(orcid, emailToNotify, isPrimaryEmail);
                 }
             }
             profileDetails.setStatus(getMessage("admin.success"));

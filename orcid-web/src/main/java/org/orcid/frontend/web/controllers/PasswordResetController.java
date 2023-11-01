@@ -535,7 +535,8 @@ public class PasswordResetController extends BaseController {
         // Notify any new email address
         if (!emailsToNotify.isEmpty()) {
             for (String emailToNotify : emailsToNotify) {
-                recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+                boolean isPrimaryEmail = emailManager.isPrimaryEmail(orcid, emailToNotify);
+                recordEmailSender.sendVerificationEmail(orcid, emailToNotify, isPrimaryEmail);
             }
         }
         
