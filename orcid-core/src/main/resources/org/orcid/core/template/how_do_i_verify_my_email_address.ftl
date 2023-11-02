@@ -2,4 +2,4 @@
 
 <@emailMacros.msg "email.welcome.verify.4" />
 
-${verificationUrl}?lang=${locale}                    
+${verificationUrl}?lang=${locale}
