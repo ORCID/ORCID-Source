@@ -964,7 +964,7 @@ public class ManageProfileControllerTest {
         mockRequest.setSession(mockSession);
         controller.verifyEmail(mockRequest, "email@email.com");
         
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@email.com"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@email.com"), eq(false));
     }
     
     @Test
@@ -987,7 +987,7 @@ public class ManageProfileControllerTest {
         controller.addEmails(mockRequest, newEmail);
         
         verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
     }
     
     @Test
@@ -1010,7 +1010,7 @@ public class ManageProfileControllerTest {
         controller.addEmails(mockRequest, newEmail);
         
         verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("new@email.com"), eq("old@email.com"));
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
     }
     
     @Test
@@ -1031,7 +1031,7 @@ public class ManageProfileControllerTest {
         controller.setPrimary(mockRequest, email);
         
         verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
-        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any());
+        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any(), any());
     }
     
     @Test
@@ -1052,7 +1052,7 @@ public class ManageProfileControllerTest {
         controller.setPrimary(mockRequest, email);
         
         verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
-        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any());
+        verify(mockRecordEmailSender, Mockito.never()).sendVerificationEmail(any(), any(), any());
     }
     
     @Test
@@ -1076,7 +1076,7 @@ public class ManageProfileControllerTest {
         controller.setPrimary(mockRequest, email);
         
         verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
     
     @Test
@@ -1100,7 +1100,7 @@ public class ManageProfileControllerTest {
         controller.editEmail(mockRequest, email);
         
         verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(any(), any(), any());
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(false));
     }
     
     @Test
@@ -1121,7 +1121,7 @@ public class ManageProfileControllerTest {
         controller.editEmail(mockRequest, email);
         
         verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
-        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
     
     protected Authentication getAuthentication(String orcid) {

@@ -18,14 +18,16 @@
 -->
 <#import "email_macros.ftl" as emailMacros />
 
-<@emailMacros.msg "email.welcome.thank_you_for_creating" /><@emailMacros.space />${orcidId}<@emailMacros.space /><@emailMacros.msg "email.welcome.full_orcid_and_link_public" /><@emailMacros.space />${baseUri}/${orcidId}
+<@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<br/>
+<@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
 
-<@emailMacros.msg "email.welcome.please_verify_your_email" />
+<@emailMacros.msg "email.welcome" /><@emailMacros.space />${userName}
+<@emailMacros.msg "email.welcome.congrats" />
 
-<@emailMacros.msg "email.button" />
+<@emailMacros.msg "email.welcome.verify.1" />
 
-${verificationUrl}?lang=${locale}
+<#include "how_do_i_verify_my_email_address.ftl"/>
 
-<@emailMacros.msg "email.welcome.please_visit_your" /><@emailMacros.space /><@emailMacros.msg "email.welcome.researcher_homepage" /><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
+<@emailMacros.msg "email.welcome.please_visit_our" /><@emailMacros.space /><@emailMacros.msg "email.welcome.researcher_homepage" /><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
 
 <#include "email_footer.ftl"/>

@@ -24,7 +24,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.joda.time.LocalDateTime;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.locale.LocaleManager;
@@ -571,7 +571,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     synchronized public void processUnverifiedEmails2Days() {
         LOGGER.info("About to process unverIfied emails for 2 days reminder");
-        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
+        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
         do {
             elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterTwoDays, 100);
             LOGGER.info("Got batch of {} profiles with unverified emails for 2 days reminder", elements.size());
@@ -581,9 +581,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if(Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
                 tooOld = now.minusDays(emailTooOld).toDate();
             }
-            for (Pair<String, Date> element : elements) {
+            for (Triple<String, Boolean, Date> element : elements) {
                 if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmails2DaysInTransaction(element.getLeft());
+                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_2_DAYS_SENT, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
                 } else {
                     // Mark is as too old to send the verification email
                     markUnverifiedEmailAsTooOld(element.getLeft());
@@ -596,15 +596,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     synchronized public void processUnverifiedEmails7Days() {
         if(Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
         LOGGER.info("About to process unverIfied emails for 7 days reminder");
-        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
+        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
         do {
             elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterSevenDays, 100);
             LOGGER.info("Got batch of {} profiles with unverified emails for 7 days reminder", elements.size());
             LocalDateTime now = LocalDateTime.now();
             Date tooOld = now.minusDays(emailTooOld).toDate();
-            for (Pair<String, Date> element : elements) {
+            for (Triple<String, Boolean, Date> element : elements) {
                 if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmailsInTransaction(element.getLeft(), EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
+                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
                 } else {
                     // Mark is as too old to send the verification email
                     markUnverifiedEmailAsTooOld(element.getLeft());
@@ -618,15 +618,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     synchronized public void processUnverifiedEmails28Days() {
         if(Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
         LOGGER.info("About to process unverIfied emails for 28  days reminder");
-        List<Pair<String, Date>> elements = Collections.<Pair<String, Date>> emptyList();
+        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
         do {
             elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterTwentyEightDays, 100);
             LOGGER.info("Got batch of {} profiles with unverified emails for 28 days reminder", elements.size());
             LocalDateTime now = LocalDateTime.now();
             Date tooOld = now.minusDays(emailTooOld).toDate();
-            for (Pair<String, Date> element : elements) {
+            for (Triple<String, Boolean, Date> element : elements) {
                 if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmailsInTransaction(element.getLeft(),EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
+                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
                 } else {
                     // Mark is as too old to send the verification email
                     markUnverifiedEmailAsTooOld(element.getLeft());
@@ -636,14 +636,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
     }
     
-    private void processUnverifiedEmailsInTransaction(final String email, EmailEventType eventSent, EmailEventType eventSkipped) {
+    private void processUnverifiedEmailsInTransaction(final String email, final Boolean isPrimaryEmail, EmailEventType eventSent, EmailEventType eventSkipped) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             @Transactional
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
                     String userOrcid = emailManagerReadOnly.findOrcidIdByEmail(email);
-                    sendVerificationReminderEmail(userOrcid, email);
+                    sendVerificationReminderEmail(userOrcid, email, isPrimaryEmail);
                     emailEventDao.persist(new EmailEventEntity(email, eventSent));
                     emailEventDao.flush();
                 } catch (Exception e) {
@@ -653,26 +653,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 }
             }
         });
-    }
-    
-    private void processUnverifiedEmails2DaysInTransaction(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                try {
-                    String userOrcid = emailManagerReadOnly.findOrcidIdByEmail(email);
-                    sendVerificationReminderEmail(userOrcid, email);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT));
-                    emailEventDao.flush();
-                } catch (Exception e) {
-                    LOGGER.error("Unable to send unverified email reminder to email: " + email, e);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED));
-                    emailEventDao.flush();
-                }
-            }
-        });
-    }
+    }        
     
     private void markUnverifiedEmailAsTooOld(final String email) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -685,13 +666,12 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         });
     }
     
-    private void sendVerificationReminderEmail(String userOrcid, String email) {
+    private void sendVerificationReminderEmail(String userOrcid, String email, Boolean isPrimaryEmail) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale locale = getUserLocaleFromProfileEntity(profile);
 
-        String primaryEmail = emailManagerReadOnly.findPrimaryEmail(userOrcid).getEmail();
         String emailFriendlyName = recordNameManagerV3.deriveEmailFriendlyName(userOrcid);
-        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, primaryEmail, locale);
+        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, isPrimaryEmail, locale);
         String subject = (String) templateParams.get("subject");
         templateParams.put("isReminder", true);
         // Generate body from template

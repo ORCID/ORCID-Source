@@ -89,37 +89,16 @@ public class RecordEmailSender {
 
         String subject = messages.getMessage("email.subject.register.welcome", null, userLocale);
 
-        String emailName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+        String userName = recordNameManager.deriveEmailFriendlyName(userOrcid);
         String verificationUrl = verifyEmailUtils.createVerificationUrl(email, orcidUrlManager.getBaseUrl());
         String orcidId = userOrcid;
         String baseUri = orcidUrlManager.getBaseUrl();
-        String baseUriHttp = orcidUrlManager.getBaseUriHttp();
-
+        
         templateParams.put("subject", subject);
-        templateParams.put("emailName", emailName);
+        templateParams.put("userName", userName);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcidId", orcidId);
-        templateParams.put("baseUri", baseUri);
-        templateParams.put("baseUriHttp", baseUriHttp);
-
-        SourceEntity source = sourceManager.retrieveActiveSourceEntity();
-        if (source != null) {
-            String sourceId = SourceEntityUtils.getSourceId(source);
-            String sourceName = sourceEntityUtils.getSourceName(source);
-            // If the source is not the user itself
-            if (sourceId != null && !sourceId.equals(orcidId)) {
-                if (!PojoUtil.isEmpty(sourceName)) {
-                    String paramValue = " " + messages.getMessage("common.through", null, userLocale) + " " + sourceName + ".";
-                    templateParams.put("source_name_if_exists", paramValue);
-                } else {
-                    templateParams.put("source_name_if_exists", ".");
-                }
-            } else {
-                templateParams.put("source_name_if_exists", ".");
-            }
-        } else {
-            templateParams.put("source_name_if_exists", ".");
-        }
+        templateParams.put("baseUri", baseUri);                
 
         verifyEmailUtils.addMessageParams(templateParams, userLocale);
 
@@ -127,7 +106,7 @@ public class RecordEmailSender {
         String body = templateManager.processTemplate("welcome_email_v2.ftl", templateParams);
         // Generate html from template
         String html = templateManager.processTemplate("welcome_email_html_v2.ftl", templateParams);
-
+        
         mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, html);
     }
 
@@ -400,23 +379,21 @@ public class RecordEmailSender {
 
     public void sendVerificationEmailToNonPrimaryEmails(String userOrcid) {
         emailManager.getEmails(userOrcid).getEmails().stream().filter(e -> !e.isPrimary()).map(e -> e.getEmail()).forEach(e -> {
-            sendVerificationEmail(userOrcid, e);
+            sendVerificationEmail(userOrcid, e, false);
         });
     }
 
-    public void sendVerificationEmail(String userOrcid, String email) {
-        processVerificationEmail(userOrcid, email, false);
+    public void sendVerificationEmail(String userOrcid, String email, Boolean isPrimaryEmail) {
+        processVerificationEmail(userOrcid, email, isPrimaryEmail);
     }
 
-    private void processVerificationEmail(String userOrcid, String email, boolean isVerificationReminder) {
+    private void processVerificationEmail(String userOrcid, String email, boolean isPrimaryEmail) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale locale = getUserLocaleFromProfileEntity(profile);
-
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
+        
         String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
-        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, primaryEmail, locale);
-        String subject = (String) templateParams.get("subject");
-        templateParams.put("isReminder", isVerificationReminder);
+        Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, isPrimaryEmail, locale);
+        String subject = (String) templateParams.get("subject");        
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
