@@ -24,7 +24,7 @@
         <title>${subject}</title>
     </head>
     <body>
-        <div style="padding: 20px; padding-top: 10px; margin: auto;">
+        <div style="padding: 20px; padding-top: 10px; margin: auto; line-height: 1.5;">
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
