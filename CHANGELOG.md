@@ -1,3 +1,9 @@
+## v2.44.4 - 2023-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.3...v2.44.4)
+
+- [#6923](https://github.com/ORCID/ORCID-Source/pull/6923): Welcome email ready to go
+
 ## v2.44.3 - 2023-11-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.2...v2.44.3)
