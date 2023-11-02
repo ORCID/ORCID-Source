@@ -1,7 +1,4 @@
 <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
-    <@emailMacros.msg "email.welcome.verify.1" />
-</p>
-<p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
     <b><@emailMacros.msg "email.welcome.verify.2" /></b><br />
     <@emailMacros.msg "email.welcome.verify.3" />
     <table cellpadding="0" cellspacing="0" style="font-family: Helvetica, Arial, sans-serif;  border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; margin-top:20px">
