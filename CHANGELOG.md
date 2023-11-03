@@ -1,3 +1,9 @@
+## v2.44.5 - 2023-11-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.4...v2.44.5)
+
+- [#6925](https://github.com/ORCID/ORCID-Source/pull/6925): Is there is more than one org with no parent, we should not suggest a…
+
 ## v2.44.4 - 2023-11-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.3...v2.44.4)
