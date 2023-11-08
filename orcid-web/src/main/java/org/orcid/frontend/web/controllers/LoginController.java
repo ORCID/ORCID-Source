@@ -326,9 +326,6 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = userConnection.getId().getUserid();            
             // Store relevant data in the session
             socialSignInUtils.setSignedInData(request, userData);
-            if (Features.EVENTS.isActive()) {
-                eventManager.createEvent(userConnection.getOrcid(), EventType.SIGN_IN, request, null);
-            }
             
             if(userConnection.isLinked()) {                
                 // If user exists and is linked update user connection info
@@ -350,6 +347,9 @@ public class LoginController extends OauthControllerBase {
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
+        }
+        if (Features.EVENTS.isActive()) {
+            eventManager.createEvent(userConnection.getOrcid(), EventType.SIGN_IN, request);
         }
         userCookieGenerator.addCookie(userConnectionId, response);
 

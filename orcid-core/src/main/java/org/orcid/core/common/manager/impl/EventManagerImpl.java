@@ -7,10 +7,14 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.EventType;
+import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EventEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 
 import java.io.UnsupportedEncodingException;
@@ -30,13 +34,16 @@ public class EventManagerImpl implements EventManager {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;
+
     @Override
     public boolean removeEvents(String orcid) {
         return eventDao.removeEvents(orcid);
     }
 
     @Override
-    public void createEvent(String orcid, EventType eventType, HttpServletRequest request, RequestInfoForm requestInfoForm) {
+    public void createEvent(String orcid, EventType eventType, HttpServletRequest request) {
         String label = "Website";
         String clientId = null;
         String redirectUrl = null;
@@ -48,17 +55,33 @@ public class EventManagerImpl implements EventManager {
         } else {
             if (request != null) {
                 Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-                if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+                RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute("requestInfoForm");
+                if (requestInfoForm != null) {
+                    clientId = requestInfoForm.getClientId();
+                    redirectUrl = removeAttributesFromUrl(requestInfoForm.getRedirectUrl());
+                    label = "OAuth " + requestInfoForm.getMemberName() + " " + requestInfoForm.getClientName();
+                } else if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
                     String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
                     clientId = getParameterValue(queryString, "client_id");
                     redirectUrl = getParameterValue(queryString, "redirect_uri");
                     ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                    label = "OAuth " + clientDetailsEntity.getClientName();
+                    String memberName = "";
+                    String clientName = clientDetailsEntity.getClientName();
+
+                    if (ClientType.PUBLIC_CLIENT.equals(clientDetailsEntity.getClientType())) {
+                        memberName = "PubApp";
+                    } else if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId())) {
+                        Name name = recordNameManagerReadOnly.getRecordName(clientDetailsEntity.getGroupProfileId());
+                        if (name != null) {
+                            memberName = name.getCreditName() != null ? name.getCreditName().getContent() : "";
+                        }
+                    }
+
+                    if (StringUtils.isBlank(memberName)) {
+                        memberName = clientName;
+                    }
+                    label = "OAuth " + memberName + " " + clientName;
                 }
-            } else if (requestInfoForm != null) {
-                clientId = requestInfoForm.getClientId();
-                redirectUrl = removeAttributesFromUrl(requestInfoForm.getRedirectUrl());
-                label = "OAuth " + requestInfoForm.getClientName();
             }
         }
 
