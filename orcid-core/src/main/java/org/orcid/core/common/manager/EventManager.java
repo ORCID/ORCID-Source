@@ -14,6 +14,6 @@ public interface EventManager {
 
     boolean removeEvents(String orcid);
 
-    void createEvent(String orcid, EventType eventType, HttpServletRequest request, RequestInfoForm requestInfoForm);
+    void createEvent(String orcid, EventType eventType, HttpServletRequest request);
 
 }
