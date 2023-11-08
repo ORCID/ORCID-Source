@@ -260,7 +260,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
             } else {
                 orcid = auth.getPrincipal().toString();
             }
-            eventManager.createEvent(orcid, eventType, null, requestInfoForm);
+            eventManager.createEvent(orcid, eventType, request);
         }
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
