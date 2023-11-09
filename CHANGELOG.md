@@ -1,3 +1,13 @@
+## v2.44.6 - 2023-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.5...v2.44.6)
+
+- [#6926](https://github.com/ORCID/ORCID-Source/pull/6926): fix: Add create event to ShibbolethController and Add missing member …
+
+### Fix
+
+- Add create event to ShibbolethController and Add missing member name
+
 ## v2.44.5 - 2023-11-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.4...v2.44.5)
