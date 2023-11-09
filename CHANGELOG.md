@@ -1,3 +1,9 @@
+## v2.44.7 - 2023-11-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.6...v2.44.7)
+
+- [#6927](https://github.com/ORCID/ORCID-Source/pull/6927): Add more logging for when the request changes during oauth
+
 ## v2.44.6 - 2023-11-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.5...v2.44.6)
