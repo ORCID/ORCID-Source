@@ -2,6 +2,7 @@ package org.orcid.persistence.dao;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -78,7 +79,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
     
-    public List<Pair<String, Date>> findEmailsUnverifiedDaysAndEventType(int daysUnverified, int maxResults, List<EmailEventType> eventTypes);
+    public HashMap<String, HashMap<String, Date>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int daysTooOld);
 
     String retrieveOrcidType(String orcid);
 
