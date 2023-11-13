@@ -1,3 +1,159 @@
+## v2.44.7 - 2023-11-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.6...v2.44.7)
+
+- [#6927](https://github.com/ORCID/ORCID-Source/pull/6927): Add more logging for when the request changes during oauth
+
+## v2.44.6 - 2023-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.5...v2.44.6)
+
+- [#6926](https://github.com/ORCID/ORCID-Source/pull/6926): fix: Add create event to ShibbolethController and Add missing member …
+
+### Fix
+
+- Add create event to ShibbolethController and Add missing member name
+
+## v2.44.5 - 2023-11-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.4...v2.44.5)
+
+- [#6925](https://github.com/ORCID/ORCID-Source/pull/6925): Is there is more than one org with no parent, we should not suggest a…
+
+## v2.44.4 - 2023-11-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.3...v2.44.4)
+
+- [#6923](https://github.com/ORCID/ORCID-Source/pull/6923): Welcome email ready to go
+
+## v2.44.3 - 2023-11-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.2...v2.44.3)
+
+- [#6924](https://github.com/ORCID/ORCID-Source/pull/6924): fix: Add missing `last_modified` in events view so panoply can run su…
+
+### Fix
+
+- Add missing `last_modified` in events view so panoply can run successfully
+
+## v2.44.2 - 2023-10-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.1...v2.44.2)
+
+- [#6922](https://github.com/ORCID/ORCID-Source/pull/6922): fix: Add missing create event method for social sign in
+
+### Fix
+
+- Add missing togglz for events in social sign in
+- Add missing create event method for social sign in
+
+## v2.44.1 - 2023-10-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.0...v2.44.1)
+
+- [#6921](https://github.com/ORCID/ORCID-Source/pull/6921): Send the reminders at different time by default
+
+## v2.44.0 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.6...v2.44.0)
+
+## v2.43.6 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.5...v2.43.6)
+
+- [#6908](https://github.com/ORCID/ORCID-Source/pull/6908): Bump @babel/traverse from 7.17.9 to 7.23.2 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+
+## v2.43.5 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.4...v2.43.5)
+
+## v2.43.4 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.3...v2.43.4)
+
+- [#6915](https://github.com/ORCID/ORCID-Source/pull/6915): 8875 update the email verification schedule to send emails 2 7 and 28 days after email creation
+- [#6917](https://github.com/ORCID/ORCID-Source/pull/6917): fix: Add indexes to event table
+- [#6919](https://github.com/ORCID/ORCID-Source/pull/6919): Bump browserify-sign from 4.2.1 to 4.2.2 in /orcid-web/src/main/webapp/static/javascript/ng1Orcid
+
+### Fix
+
+- Add indexes to event table
+
+## v2.43.3 - 2023-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.2...v2.43.3)
+
+- [#6918](https://github.com/ORCID/ORCID-Source/pull/6918): 8889 prod looks like the ror loader is broken
+
+## v2.43.2 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.1...v2.43.2)
+
+- [#6916](https://github.com/ORCID/ORCID-Source/pull/6916): fix: Invert selfAsserted and validated in sort by source
+
+### Fix
+
+- Invert selfAsserted and validated in sort by source
+
+## v2.43.1 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.43.0...v2.43.1)
+
+- [#6914](https://github.com/ORCID/ORCID-Source/pull/6914): Shorter id
+
+## v2.43.0 - 2023-10-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.6...v2.43.0)
+
+- [#6913](https://github.com/ORCID/ORCID-Source/pull/6913): feature: Add functionality to capture user events in the database and…
+
+### Fix
+
+- Add missing label and fix test
+
+### Feature
+
+- Add functionality to capture user events in the database and create views to display info in panoply
+
+## v2.42.6 - 2023-10-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.5...v2.42.6)
+
+- [#6912](https://github.com/ORCID/ORCID-Source/pull/6912): add an option to configure timeout
+
+## v2.42.5 - 2023-10-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.4...v2.42.5)
+
+- [#6909](https://github.com/ORCID/ORCID-Source/pull/6909): fix: Update sort by source functionality to sort also alphabetically
+
+### Fix
+
+- Update external identifier is validates method
+- Update sort by source functionality to sort also alphabetically
+
+## v2.42.4 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.3...v2.42.4)
+
+- [#6907](https://github.com/ORCID/ORCID-Source/pull/6907): fix/remove-fundingSubType-core-details-from-codebase
+
+### Fix
+
+- remove fundingSubType core config manually removed from prod
+
+## v2.42.3 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.2...v2.42.3)
+
+- [#6911](https://github.com/ORCID/ORCID-Source/pull/6911): Initial commit
+
+## v2.42.2 - 2023-10-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.1...v2.42.2)
+
+- [#6910](https://github.com/ORCID/ORCID-Source/pull/6910): 8855 duplicate isni external identifiers for same disambiguated organisation
+
 ## v2.42.1 - 2023-10-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.42.0...v2.42.1)

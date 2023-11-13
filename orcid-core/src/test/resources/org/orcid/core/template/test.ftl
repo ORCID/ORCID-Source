@@ -1,1 +1,0 @@
-Hello, ${name}. Did you say ${word}?

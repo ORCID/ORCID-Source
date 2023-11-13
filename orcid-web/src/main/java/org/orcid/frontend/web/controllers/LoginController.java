@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
@@ -23,6 +24,8 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
@@ -86,6 +89,9 @@ public class LoginController extends OauthControllerBase {
     
     @Resource
     private OauthHelper oauthHelper;
+
+    @Resource
+    private EventManager eventManager;
     
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
     public @ResponseBody Names getAccountNames(@PathVariable String type) {
@@ -341,6 +347,9 @@ public class LoginController extends OauthControllerBase {
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
+        }
+        if (Features.EVENTS.isActive()) {
+            eventManager.createEvent(userConnection.getOrcid(), EventType.SIGN_IN, request);
         }
         userCookieGenerator.addCookie(userConnectionId, response);
 

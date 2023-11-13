@@ -4,6 +4,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -22,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
@@ -106,6 +109,7 @@ public class RecordEmailSenderTest {
         ReflectionTestUtils.setField(recordEmailSender, "emailManager", mockEmailManager);
         ReflectionTestUtils.setField(recordEmailSender, "recordNameManager", mockRecordNameManager);
         ReflectionTestUtils.setField(recordEmailSender, "profileEventDao", mockProfileEventDao);
+        ReflectionTestUtils.setField(recordEmailSender, "mailgunManager", mockMailGunManager);
         
     }
     
@@ -114,8 +118,10 @@ public class RecordEmailSenderTest {
         Email email = new Email();
         email.setEmail("josiah_carberry@brown.edu");
         when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
-
+        
         recordEmailSender.sendWelcomeEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
+        
+        verify(mockMailGunManager, times(1)).sendEmail(eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG), eq("josiah_carberry@brown.edu"), eq("[ORCID] Welcome to ORCID"), anyString(), anyString());
     }
 
     @Test
@@ -128,7 +134,7 @@ public class RecordEmailSenderTest {
         email.setEmail("josiah_carberry@brown.edu");
         when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
 
-        recordEmailSender.sendVerificationEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
+        recordEmailSender.sendVerificationEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu", true);
     }
 
     @Test

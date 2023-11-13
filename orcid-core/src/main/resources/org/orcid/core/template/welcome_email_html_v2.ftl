@@ -24,65 +24,25 @@
         <title>${subject}</title>
     </head>
     <body>
-        <div style="padding: 20px; padding-top: 10px; margin: auto;">
+        <div style="padding: 20px; padding-top: 10px; margin: auto; line-height: 1.5;">
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.welcome.thank_you_for_creating" /><@emailMacros.space />${orcidId}<@emailMacros.msg "email.welcome.full_orcid_and_link_public" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<br/>
+                <@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
             </p>
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.welcome.please_verify_your_email" />
+            <hr />
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome" /><@emailMacros.space />${userName},<br/>
+                <@emailMacros.msg "email.welcome.congrats" />
             </p>
-
-             <table
-                        cellpadding="0"
-                        cellspacing="0"
-                        style="font-family: Helvetica, Arial, sans-serif;  border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; margin-top:20px"
-                    >
-                        <tbody>
-                        <tr>
-                            <td
-                            style="border-spacing: 0px; border-collapse: collapse; line-height: 24px; font-size: 16px; border-radius: 4px; margin: 0;"
-                            >
-                            <a
-                                id="verificationButton"
-                                href="${verificationUrl}?lang=${locale}"
-                                style="font-size: 20px; font-family: Helvetica, Arial, sans-serif; text-decoration: none; border-radius: 4.8px; line-height: 25px; display: inline-block; font-weight: normal; white-space: nowrap; background-color: #31789B; color: #ffffff; padding: 8px 16px; border: 1px solid #31789B;"
-                                > <@emailMacros.msg "email.button" /></a
-                            >
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <table
-                        cellpadding="0"
-                        cellspacing="0"
-                        style="font-family: arial, helvetica, sans-serif; border-spacing: 0px; border-collapse: separate !important; border-radius: 4px; margin: 0 auto; "
-                    >
-                        <tbody>
-                        <tr>
-                            <td>
-                            <p
-                                align="center"
-                                class="text-center"
-                                style="line-height: 24px; font-size: 16px; margin: 0; padding-bottom: 30px; padding-top: 20px; word-break: break-word;"
-                            >
-                                <a
-                                id="verificationUrl"
-                                href="${verificationUrl}?lang=${locale}"
-                                target="orcid.blank"
-                                >${verificationUrl}?lang=${locale}</a
-                                >
-                            </p>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-    
-
-            <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <@emailMacros.msg "email.welcome.please_visit_your" /><@emailMacros.space /><a href="https://info.orcid.org/researchers/" target="orcid.blank"><@emailMacros.msg "email.welcome.researcher_homepage" /></a><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome.verify.1" />
+            </p>
+            <#include "how_do_i_verify_my_email_address_html.ftl"/>
+            <hr />
+            <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
+                <@emailMacros.msg "email.welcome.please_visit_our" /><@emailMacros.space /><a href="https://info.orcid.org/researchers/" target="orcid.blank"><@emailMacros.msg "email.welcome.researcher_homepage" /></a><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
             </p>
             <#include "email_footer_html.ftl"/>
          </div>

@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
@@ -21,6 +22,8 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
@@ -75,6 +78,9 @@ public class OauthController {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
+    @Resource
+    private EventManager eventManager;
+
     @RequestMapping(value = { "/oauth/custom/init.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
@@ -90,6 +96,9 @@ public class OauthController {
             List<String> responseParam = parameters.get(requestInfoForm.getResponseType());
             if (responseParam != null && !responseParam.isEmpty() && !PojoUtil.isEmpty(responseParam.get(0))) {
                 isResponseSet = true;
+                if (Features.EVENTS.isActive()) {
+                    eventManager.createEvent(requestInfoForm.getUserOrcid(), EventType.REAUTHORIZE, request);
+                }
             }
         }
 

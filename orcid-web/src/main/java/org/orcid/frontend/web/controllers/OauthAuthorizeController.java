@@ -11,8 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -23,9 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.AuthorizationRequest;
+import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +58,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @Resource
     private OauthHelper oauthHelper;
+
+    @Resource
+    private EventManager eventManager;
     
     /** This is called if user is already logged in.  
      * Checks permissions have been granted to client and generates access code.
@@ -242,8 +251,33 @@ public class OauthAuthorizeController extends OauthControllerBase {
         }
 
         // Approve
-        RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-        requestInfoForm.setRedirectUrl(view.getUrl());
+        try {
+            RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
+            requestInfoForm.setRedirectUrl(view.getUrl());
+        } catch (InvalidRequestException ire) {
+            LOGGER.error("Something changed on the request, here are the authorization request and original authorization request values:");
+            LOGGER.error("Client id: original '{}' latest '{}'", originalRequest.get(OrcidOauth2Constants.CLIENT_ID), authorizationRequest.getClientId());
+            LOGGER.error("State: original '{}' latest '{}'", originalRequest.get(OrcidOauth2Constants.STATE_PARAM), authorizationRequest.getState());
+            LOGGER.error("Redirect uri: original '{}' latest '{}'", originalRequest.get(OrcidOauth2Constants.REDIRECT_URI_PARAM), authorizationRequest.getRedirectUri());
+            LOGGER.error("Response type: original '{}' latest '{}'", originalRequest.get(OrcidOauth2Constants.RESPONSE_TYPE_PARAM), authorizationRequest.getResponseTypes());
+            LOGGER.error("Scope: original '{}' latest '{}'", originalRequest.get(OrcidOauth2Constants.SCOPE_PARAM), authorizationRequest.getScope());
+            LOGGER.error("Approved: original '{}' latest '{}'", originalRequest.get("approved"), authorizationRequest.isApproved());
+            LOGGER.error("Resource Ids: original '{}' latest '{}'", originalRequest.get("resourceIds"), authorizationRequest.getResourceIds());
+            LOGGER.error("Authorities: original '{}' latest '{}'", originalRequest.get("authorities"), authorizationRequest.getAuthorities());
+            // Propagate the exception
+            throw ire;
+        }
+        if (Features.EVENTS.isActive()) {
+            EventType eventType = "true".equals(approvalParams.get("user_oauth_approval")) ? EventType.AUTHORIZE : EventType.AUTHORIZE_DENY;
+            String orcid = null;
+            Object principal = auth.getPrincipal();
+            if (principal instanceof OrcidProfileUserDetails) {
+                orcid = ((OrcidProfileUserDetails) principal).getOrcid();
+            } else {
+                orcid = auth.getPrincipal().toString();
+            }
+            eventManager.createEvent(orcid, eventType, request);
+        }
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
@@ -252,7 +286,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         return requestInfoForm;
     }
-   
+
     /**
      * Copies all request parameters into the provided params map
      * 

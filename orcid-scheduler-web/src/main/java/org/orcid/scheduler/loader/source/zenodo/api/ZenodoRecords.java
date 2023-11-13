@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(value = { "aggregations", "links" })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ZenodoRecords {
 
     @JsonProperty("hits")

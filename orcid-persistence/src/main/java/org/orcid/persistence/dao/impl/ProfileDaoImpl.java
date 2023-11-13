@@ -6,18 +6,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -27,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
@@ -140,8 +135,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults) {
-        StringBuilder queryString = new StringBuilder("SELECT e.email, e.date_created FROM email e ");
+    public List<Triple<String, Boolean, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults) {
+        StringBuilder queryString = new StringBuilder("SELECT e.email, e.is_primary, e.date_created FROM email e ");
         queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
         queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
         queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
@@ -153,18 +148,18 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery(queryString.toString());
         query.setMaxResults(maxResults);
         List<Object[]> dbInfo = query.getResultList();
-        List<Pair<String, Date>> results = new ArrayList<Pair<String, Date>>();
+        List<Triple<String, Boolean, Date>> results = new ArrayList<Triple<String, Boolean, Date>>();
         dbInfo.stream().forEach(element -> {
-            Pair<String, Date> pair = Pair.of((String) element[0], (Date) element[1]);
-            results.add(pair);
+            Triple<String, Boolean, Date> triple = Triple.of((String) element[0], (Boolean) element[1], (Date) element[2]);
+            results.add(triple);
         });
         return results;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public HashMap<String, HashMap<String, Date>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int daysTooOld) {
-        StringBuilder queryString = new StringBuilder("SELECT e.email, e.date_created, ev.email_event_type FROM email e ");
+    public List<Triple<String, Boolean, String>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int daysTooOld) {
+        StringBuilder queryString = new StringBuilder("SELECT e.email, e.is_primary, ev.email_event_type FROM email e ");
         queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
         queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
         queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
@@ -176,16 +171,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createNativeQuery(queryString.toString());
         LOGGER.debug("Unverified Emails Query by Event Type " + query.toString());
         List<Object[]> dbInfo = query.getResultList();
-        HashMap<String, HashMap<String, Date>> results = new HashMap<String, HashMap<String, Date>>();
+        List<Triple<String, Boolean, String>> results = new ArrayList<Triple<String, Boolean, String>>();
 
         dbInfo.stream().forEach(element -> {
-            String email = (String) element[0];
-            HashMap<String, Date> evMap = new HashMap<String, Date>();
-            if (results.containsKey(email)) {
-                evMap = results.get(email);
-                evMap.put((String) element[2], (Date) element[1]);
-            }
-            results.put(email, evMap);
+            Triple<String, Boolean, String> triple = Triple.of((String) element[0], (Boolean) element[1], (String) element[2]);
+            results.add(triple);
         });
 
         return results;

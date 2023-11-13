@@ -1,0 +1,31 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="EVENT-ORCID-INDEX" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="event_orcid_index" tableName="event"/>
+            </not>
+        </preConditions>
+        <sql>create index event_orcid_index on event(orcid);</sql>
+    </changeSet>
+
+    <changeSet id="EVENT-CLIENT-ID-INDEX" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="event_client_id_index" tableName="event"/>
+            </not>
+        </preConditions>
+        <sql>create index event_client_id_index on event(client_id);</sql>
+    </changeSet>
+
+    <changeSet id="EVENT-TYPE-INDEX" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="event_type_index" tableName="event"/>
+            </not>
+        </preConditions>
+        <sql>create index event_type_index on event(event_type);</sql>
+    </changeSet>
+</databaseChangeLog>
