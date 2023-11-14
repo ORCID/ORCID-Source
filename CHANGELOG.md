@@ -1,3 +1,9 @@
+## v2.44.8 - 2023-11-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.7...v2.44.8)
+
+- [#6929](https://github.com/ORCID/ORCID-Source/pull/6929): Changed the code to use triples
+
 ## v2.44.7 - 2023-11-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.6...v2.44.7)
