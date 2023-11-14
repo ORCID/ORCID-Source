@@ -1,0 +1,62 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="DROP-ORCID-INDEX-ON-EVENT" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <indexExists indexName="event_orcid_index" tableName="event"/>            
+        </preConditions>
+        <dropIndex tableName="event" indexName="event_orcid_index"/>               
+    </changeSet>
+    
+    <changeSet id="DROP-ORCID-FK-EVENT" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyTableName="event" foreignKeyName="event_orcid_fk"/>            
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="event" constraintName="event_orcid_fk"/>
+    </changeSet>
+    
+    <changeSet id="ALTER-DW-EVENT-VIEW-GROUP-BY-DAY-CLIENT_ID-AND-EVENT_TYPE" author="Angel Montenegro" dbms="postgresql">
+        <dropView viewName="dw_event"/>
+
+        <createView viewName="dw_event">
+            SELECT event_type, client_id, COUNT(id), DATE_TRUNC('day', date_created), DATE_TRUNC('day', date_created) as last_modified
+            FROM event
+            GROUP BY event_type, client_id, DATE_TRUNC('day', date_created)
+            ORDER BY DATE_TRUNC('day', date_created) DESC;
+        </createView>
+    </changeSet>
+
+	<changeSet id="DROP-VIEW-FOR-PUBLIC-PAGE" author="Angel Montenegro" dbms="postgresql">
+        <dropView viewName="dw_event_public_page"/>
+    </changeSet>    
+    
+    <changeSet id="DROP-ORCID-FROM-EVENT" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+            <columnExists tableName="event" columnName="orcid"/>            
+        </preConditions>
+        <dropColumn tableName="event" columnName="orcid"/>
+    </changeSet>
+    
+    <changeSet id="DROP-REDIRECT-URL-FROM-EVENT" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+            <columnExists tableName="event" columnName="redirect_url"/>            
+        </preConditions>
+        <dropColumn tableName="event" columnName="redirect_url"/>
+    </changeSet>
+    
+    <changeSet id="DROP-PUBLIC-PAGE-FROM-EVENT" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+            <columnExists tableName="event" columnName="public_page"/>            
+        </preConditions>
+        <dropColumn tableName="event" columnName="public_page"/>
+    </changeSet>
+    
+    <changeSet id="DROP-LAST-MODIFIED-FROM-EVENT" author="Angel Montenegro">
+    	<preConditions onFail="MARK_RAN">
+            <columnExists tableName="event" columnName="last_modified"/>            
+        </preConditions>
+        <dropColumn tableName="event" columnName="last_modified"/>
+    </changeSet>
+    
+</databaseChangeLog>

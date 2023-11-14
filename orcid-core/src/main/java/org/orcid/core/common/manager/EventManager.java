@@ -1,9 +1,8 @@
 package org.orcid.core.common.manager;
 
-import org.orcid.core.utils.EventType;
-import org.orcid.pojo.ajaxForm.RequestInfoForm;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.orcid.core.utils.EventType;
 
 /**
  *
@@ -11,8 +10,6 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public interface EventManager {
-
-    boolean removeEvents(String orcid);
 
     void createEvent(String orcid, EventType eventType, HttpServletRequest request);
 
