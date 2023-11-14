@@ -77,7 +77,9 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
 
     public List<Triple<String, Boolean, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
-    
+
+    public List<Triple<String, Boolean, String>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int tooOldNumberOfDays);
+
     String retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
@@ -156,10 +158,10 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public List<Object[]> getSigninLock(String orcid);
 
     public void startSigninLock(String orcid);
-    
+
     public void resetSigninLock(String orcid);
 
     public void updateSigninLock(String orcid, Integer count);
-    
+
     boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId);
 }
