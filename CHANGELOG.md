@@ -1,3 +1,9 @@
+## v2.44.9 - 2023-11-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.8...v2.44.9)
+
+- [#6930](https://github.com/ORCID/ORCID-Source/pull/6930): Remove orcid, redirect_url, public_page and last_modified from event
+
 ## v2.44.8 - 2023-11-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.7...v2.44.8)
