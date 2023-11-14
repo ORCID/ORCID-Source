@@ -21,9 +21,14 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
     private static final String PRIVATE_VISIBILITY = "PRIVATE";
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
     @Value("${org.orcid.postgres.query.timeout:30000}")
     private Integer queryTimeout;
@@ -150,7 +155,32 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             results.add(pair);
         });
         return results;
-    }        
+    } 
+    
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Triple<String, Boolean, String>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int tooOldNumberOfDays) {
+        StringBuilder queryString = new StringBuilder("SELECT e.email, e.is_primary, ev.email_event_type FROM email e ");
+        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
+        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
+        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
+        queryString.append("where e.is_verified = false ");
+        queryString.append("and e.date_created between (now() - CAST('").append(tooOldNumberOfDays)
+            .append("' AS INTERVAL DAY)) and (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
+        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
+        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
+        queryString.append(" ORDER BY e.last_modified");
+
+        Query query = entityManager.createNativeQuery(queryString.toString());
+        List<Object[]> dbInfo = query.getResultList();
+        List<Triple<String, Boolean, String>> results = new ArrayList<Triple<String, Boolean, String>>();
+        dbInfo.stream().forEach(element -> {
+            Triple<String, Boolean, String> pair = Triple.of((String) element[0], (Boolean) element[1], (String) element[2]);
+            results.add(pair);
+        });
+        return results;
+    } 
 
     @SuppressWarnings("unchecked")
     @Override

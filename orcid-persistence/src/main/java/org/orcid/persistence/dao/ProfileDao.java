@@ -78,6 +78,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public List<Triple<String, Boolean, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
     
+    public List<Triple<String, Boolean, String>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int tooOldNumberOfDays);
+    
     String retrieveOrcidType(String orcid);
 
     List<Object[]> findInfoForDecryptionAnalysis();
