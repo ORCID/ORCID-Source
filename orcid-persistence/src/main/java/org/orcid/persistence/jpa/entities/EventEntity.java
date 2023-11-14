@@ -1,5 +1,8 @@
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Date;
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,15 +18,13 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "event")
-public class EventEntity extends BaseEntity<Long> implements OrcidAware {
+public class EventEntity {
     private static final long serialVersionUID = 1L;
     private Long id;
-    private String orcid;
-    private String eventType;
     private String clientId;
-    private String redirectUrl;
+    private String eventType;
     private String label;
-    private String publicPage;
+    private Date dateCreated;
 
     @Id
     @Column(name = "id")
@@ -37,37 +38,58 @@ public class EventEntity extends BaseEntity<Long> implements OrcidAware {
         this.id = id;
     }
 
-    @Column(name = "orcid")
-    public String getOrcid() {
-        return orcid;
-    }
-
-    public void setOrcid(String orcid) {
-        this.orcid = orcid;
-    }
-
     @Column(name = "event_type")
-    public String getEventType() { return eventType; }
+    public String getEventType() {
+        return eventType;
+    }
 
-    public void setEventType(String eventType) { this.eventType = eventType; }
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
     @Column(name = "client_id")
-    public String getClientId() { return clientId; }
+    public String getClientId() {
+        return clientId;
+    }
 
-    public void setClientId(String client_id) { this.clientId = client_id; }
-
-    @Column(name = "redirect_url")
-    public String getRedirectUrl() { return redirectUrl; }
-
-    public void setRedirectUrl(String redirect_url) { this.redirectUrl = redirect_url; }
+    public void setClientId(String client_id) {
+        this.clientId = client_id;
+    }
 
     @Column(name = "label")
-    public String getLabel() { return label; }
+    public String getLabel() {
+        return label;
+    }
 
-    public void setLabel(String label) { this.label = label; }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-    @Column(name = "public_page")
-    public String getPublicPage() { return publicPage; }
+    @Column(name = "date_created")
+    public Date getDateCreated() {
+        return dateCreated;
+    }
 
-    public void setPublicPage(String public_page) { this.publicPage = public_page; }
+    public void setDateCreated(Date date) {
+        this.dateCreated = date;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientId, dateCreated, eventType, id, label);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EventEntity other = (EventEntity) obj;
+        return Objects.equals(clientId, other.clientId) && Objects.equals(dateCreated, other.dateCreated) && Objects.equals(eventType, other.eventType)
+                && Objects.equals(id, other.id) && Objects.equals(label, other.label);
+    }
+
 }

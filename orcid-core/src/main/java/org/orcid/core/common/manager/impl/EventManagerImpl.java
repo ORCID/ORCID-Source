@@ -1,5 +1,10 @@
 package org.orcid.core.common.manager.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,10 +22,6 @@ import org.orcid.persistence.jpa.entities.EventEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 /**
  *
  * @author Daniel Palafox
@@ -35,18 +36,12 @@ public class EventManagerImpl implements EventManager {
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnly;
-
-    @Override
-    public boolean removeEvents(String orcid) {
-        return eventDao.removeEvents(orcid);
-    }
+    private RecordNameManagerReadOnly recordNameManagerReadOnly;   
 
     @Override
     public void createEvent(String orcid, EventType eventType, HttpServletRequest request) {
         String label = "Website";
         String clientId = null;
-        String redirectUrl = null;
         String publicPage = null;
 
         if (eventType == EventType.PUBLIC_PAGE) {
@@ -58,12 +53,10 @@ public class EventManagerImpl implements EventManager {
                 RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute("requestInfoForm");
                 if (requestInfoForm != null) {
                     clientId = requestInfoForm.getClientId();
-                    redirectUrl = removeAttributesFromUrl(requestInfoForm.getRedirectUrl());
                     label = "OAuth " + requestInfoForm.getMemberName() + " " + requestInfoForm.getClientName();
                 } else if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
                     String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
                     clientId = getParameterValue(queryString, "client_id");
-                    redirectUrl = getParameterValue(queryString, "redirect_uri");
                     ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
                     String memberName = "";
                     String clientName = clientDetailsEntity.getClientName();
@@ -87,13 +80,10 @@ public class EventManagerImpl implements EventManager {
 
         EventEntity eventEntity = new EventEntity();
 
-        eventEntity.setOrcid(orcid);
         eventEntity.setEventType(eventType.getValue());
         eventEntity.setClientId(clientId);
-        eventEntity.setRedirectUrl(redirectUrl);
         eventEntity.setLabel(label);
-        eventEntity.setPublicPage(publicPage);
-
+        eventEntity.setDateCreated(new Date());
         eventDao.createEvent(eventEntity);
     }
 
