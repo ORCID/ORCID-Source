@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
     private static final String PRIVATE_VISIBILITY = "PRIVATE";
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
     @Value("${org.orcid.postgres.query.timeout:30000}")
@@ -155,9 +155,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             results.add(pair);
         });
         return results;
-    } 
-    
-    
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Triple<String, Boolean, String>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int tooOldNumberOfDays) {
@@ -166,8 +165,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
         queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
         queryString.append("where e.is_verified = false ");
-        queryString.append("and e.date_created between (now() - CAST('").append(tooOldNumberOfDays)
-            .append("' AS INTERVAL DAY)) and (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
+        queryString.append("and e.date_created between (now() - CAST('").append(tooOldNumberOfDays).append("' AS INTERVAL DAY)) and (now() - CAST('")
+                .append(daysUnverified).append("' AS INTERVAL DAY)) ");
         queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
         queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
         queryString.append(" ORDER BY e.last_modified");
@@ -180,7 +179,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             results.add(pair);
         });
         return results;
-    } 
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -815,7 +814,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
         return;
     }
-    
+
     @Override
     @Transactional
     public void resetSigninLock(String orcid) {
@@ -839,7 +838,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
         return;
     }
-    
+
     public boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId) {
         try {
             String queryString = "select p.orcid from profile p where p.orcid = :orcid and ( exists (select 1 from work w where w.orcid = p.orcid and w.client_source_id = :clientId) or exists (select 1 from org_affiliation_relation o where o.orcid = p.orcid and o.client_source_id = :clientId));";
@@ -847,10 +846,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             query.setParameter("orcid", orcid);
             query.setParameter("clientId", clientId);
             String result = (String) query.getSingleResult();
-            if(orcid.equals(result)) {
+            if (orcid.equals(result)) {
                 return true;
-            } 
-        } catch(NoResultException nre) {
+            }
+        } catch (NoResultException nre) {
             return false;
         }
         return false;
