@@ -25,7 +25,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.joda.time.LocalDateTime;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
@@ -69,8 +68,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -572,84 +569,38 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Override
     synchronized public void processUnverifiedEmails2Days() {
-        LOGGER.info("About to process unverIfied emails for 2 days reminder");
-        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
-        do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterTwoDays, 100);
-            LOGGER.info("Got batch of {} profiles with unverified emails for 2 days reminder", elements.size());
-            LocalDateTime now = LocalDateTime.now();
-            // togglz here
-            Date tooOld = now.minusDays(emailTooOldLegacy).toDate();
-            if (Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
-                tooOld = now.minusDays(emailTooOld).toDate();
-            }
-            for (Triple<String, Boolean, Date> element : elements) {
-                if (element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_2_DAYS_SENT,
-                            EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
-                } else {
-                    // Mark is as too old to send the verification email
-                    markUnverifiedEmailAsTooOld(element.getLeft());
-                }
-            }
-        } while (!elements.isEmpty());
+        processUnverifiedEmails(verifyReminderAfterTwoDays, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
     }
 
     synchronized public void processUnverifiedEmails7Days() {
-        if (Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
-            LOGGER.info("About to process unverIfied emails for 7 days reminder");
-            List<Triple<String, Boolean, String>> elements = Collections.<Triple<String, Boolean, String>> emptyList();
-
-            elements = profileDaoReadOnly.findEmailsUnverifiedDaysByEventType(verifyReminderAfterSevenDays, emailTooOld);
-            LOGGER.info("Got {} profiles with email event and unverified emails for 7 days reminder", elements.size());
-
-            HashMap<String, Triple<String, Boolean, String>> hasEventTypesMap = hasEventTypes(elements,
-                    List.of(EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED, EmailEventType.VERIFY_EMAIL_TOO_OLD));
-            for (Triple<String, Boolean, String> element : elements) {
-                if (!hasEventTypesMap.containsKey(element.getLeft()))
-                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_7_DAYS_SENT,
-                            EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
-                hasEventTypesMap.put(element.getLeft(), element);
-            }
-        }
-    }
-
-    // helper method to get the triple map for an event type list
-    private HashMap<String, Triple<String, Boolean, String>> hasEventTypes(List<Triple<String, Boolean, String>> elements, List<EmailEventType> eventTypes) {
-        HashMap<String, Triple<String, Boolean, String>> hasEventTypesMap = new HashMap<String, Triple<String, Boolean, String>>();
-        for (Triple<String, Boolean, String> element : elements) {
-            if (eventTypes.contains(EmailEventType.valueOf(element.getRight()))) {
-                hasEventTypesMap.put(element.getLeft(), element);
-            }
-        }
-        return hasEventTypesMap;
+        processUnverifiedEmails(verifyReminderAfterSevenDays, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
     }
 
     synchronized public void processUnverifiedEmails28Days() {
+        processUnverifiedEmails(verifyReminderAfterTwentyEightDays, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
+    }
+    
+    private void processUnverifiedEmails(int unverifiedDays, EmailEventType sent, EmailEventType failed) {
         if (Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
-            LOGGER.info("About to process unverIfied emails for 28  days reminder");
-            List<Triple<String, Boolean, String>> elements = Collections.<Triple<String, Boolean, String>> emptyList();
-            elements = profileDaoReadOnly.findEmailsUnverifiedDaysByEventType(verifyReminderAfterTwentyEightDays, emailTooOld);
-            LOGGER.info("Got {} profiles with email event and unverified emails for 28 days reminder", elements.size());
+            LOGGER.info("About to process unverIfied emails for {}  days reminder", unverifiedDays);
+            List<Triple<String, String, Boolean>> elements = Collections.<Triple<String, String, Boolean>> emptyList();
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(unverifiedDays, sent);
+            LOGGER.info("Got {} profiles with email event and unverified emails for {} days reminder", elements.size(), unverifiedDays);
 
-            HashMap<String, Triple<String, Boolean, String>> hasEventTypesMap = hasEventTypes(elements,
-                    List.of(EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED, EmailEventType.VERIFY_EMAIL_TOO_OLD));
-            for (Triple<String, Boolean, String> element : elements) {
-                if (!hasEventTypesMap.containsKey(element.getLeft()))
-                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_28_DAYS_SENT,
-                            EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
-                hasEventTypesMap.put(element.getLeft(), element);
+            for (Triple<String, String, Boolean> element : elements) {
+                processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), element.getRight(), sent,
+                            failed);                
             }
         }
     }
 
-    private void processUnverifiedEmailsInTransaction(final String email, final Boolean isPrimaryEmail, EmailEventType eventSent, EmailEventType eventSkipped) {
+    private void processUnverifiedEmailsInTransaction(final String userOrcid, final String email, final Boolean isPrimaryEmail, EmailEventType eventSent, EmailEventType eventSkipped) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             @Transactional
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
-                    String userOrcid = emailManagerReadOnly.findOrcidIdByEmail(email);
+                    LOGGER.debug("Sending reminder {} to email address {}, orcid {}", eventSent, email, userOrcid);
                     sendVerificationReminderEmail(userOrcid, email, isPrimaryEmail);
                     emailEventDao.persist(new EmailEventEntity(email, eventSent));
                     emailEventDao.flush();
@@ -658,17 +609,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     emailEventDao.persist(new EmailEventEntity(email, eventSkipped));
                     emailEventDao.flush();
                 }
-            }
-        });
-    }
-
-    private void markUnverifiedEmailAsTooOld(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_TOO_OLD));
-                emailEventDao.flush();
             }
         });
     }

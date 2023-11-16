@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -17,7 +16,6 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.dbunit.dataset.DataSetException;
 import org.joda.time.LocalDateTime;
 import org.junit.AfterClass;
@@ -26,11 +24,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
-import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.util.Quadruple;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
@@ -393,51 +391,57 @@ public class ProfileDaoTest extends DBUnitTest {
         // Created today
         assertEquals(1, insertEmailWithDateCreated("unverified_1@test.orcid.org", "bd22086b65b6259fe79f7844a6b6a369441733b9ef04eff762f3d640957b78f5", orcid, false, new Date()));
         
-        // Created a week ago
-        assertEquals(1, insertEmailWithDateCreated("unverified_2@test.orcid.org", "95770578974f683fb05c179a84f57c3fc7d4b260f8079fbc590080e51873bb67", orcid, false, LocalDateTime.now().minusDays(7).toDate()));
+        // Created 2 days ago
+        assertEquals(1, insertEmailWithDateCreated("unverified_2@test.orcid.org", "95770578974f683fb05c179a84f57c3fc7d4b260f8079fbc590080e51873bb67", orcid, false, LocalDateTime.now().minusDays(2).toDate()));
+
+        // Created 7 days ago
+        assertEquals(1, insertEmailWithDateCreated("unverified_3@test.orcid.org", "3cbebfc1de2500494fc95553c956e757cb1998149d366afb71888cdeb1550719", orcid, false, LocalDateTime.now().minusDays(7).toDate()));
            
         // Created 15 days ago
-        assertEquals(1, insertEmailWithDateCreated("unverified_3@test.orcid.org", "3cbebfc1de2500494fc95553c956e757cb1998149d366afb71888cdeb1550719", orcid, false, LocalDateTime.now().minusDays(15).toDate()));
+        assertEquals(1, insertEmailWithDateCreated("unverified_4@test.orcid.org", "8fccc2e14b546b968033dee2efb1644623a31a7878b55ae8ad52951961ca3719", orcid, false, LocalDateTime.now().minusDays(15).toDate()));
+        
+        // Created 2 days ago and verified
+        assertEquals(1, insertEmailWithDateCreated("verified_1@test.orcid.org", "2f4812b9c675e9803a4bb616dd1bc241c8c9302ba5690a1ea9d48049a32e7c5f", orcid, true, LocalDateTime.now().minusDays(2).toDate()));
         
         // Created 7 days ago and verified
-        assertEquals(1, insertEmailWithDateCreated("verified_1@test.orcid.org", "2f4812b9c675e9803a4bb616dd1bc241c8c9302ba5690a1ea9d48049a32e7c5f", orcid, true, LocalDateTime.now().minusDays(7).toDate()));
+        assertEquals(1, insertEmailWithDateCreated("verified_2@test.orcid.org", "896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971", orcid, true, LocalDateTime.now().minusDays(7).toDate()));
         
         // Created 15 days ago and verified
-        assertEquals(1, insertEmailWithDateCreated("verified_2@test.orcid.org", "896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971", orcid, true, LocalDateTime.now().minusDays(15).toDate()));
+        assertEquals(1, insertEmailWithDateCreated("verified_3@test.orcid.org", "f98cce12446df199b852583ce677ecf9870ebe1b58df21bc4e7b01dea67daf01", orcid, true, LocalDateTime.now().minusDays(15).toDate()));
         
-        List<Triple<String, Boolean, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100);
-        assertNotNull(results);
-        assertEquals(2, results.size());
-        
-        boolean found1 = false, found2 = false;
-        
-        for(Triple<String, Boolean, Date> element : results) {
-            assertNotNull(element.getRight());
-            if(element.getLeft().equals("unverified_2@test.orcid.org")) {
-                found1 = true;
-            } else if(element.getLeft().equals("unverified_3@test.orcid.org")) {
-                found2 = true;
-            } else {
-                fail("Unexpected email id: " + element.getRight());
-            }
-        }
-        
-        assertTrue(found1);
-        assertTrue(found2);
-        
-        // Put an email event on 'unverified_2@test.orcid.org' and verify there is only one result
-        emailEventDao.persist(new EmailEventEntity("unverified_2@test.orcid.org", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
-        
-        results = profileDao.findEmailsUnverfiedDays(7, 100);
+        List<Quadruple<String, String, Boolean, String>> results = profileDao.findEmailsUnverfiedDays(2);
         assertNotNull(results);
         assertEquals(1, results.size());
-        assertEquals("unverified_3@test.orcid.org", results.get(0).getLeft());
+        assertEquals(orcid, results.get(0).getFirst());
+        assertEquals("unverified_2@test.orcid.org", results.get(0).getSecond());
         
-        // Put an email event on 'unverified_3@test.orcid.org' and verify there is no result anymore
-        emailEventDao.persist(new EmailEventEntity("unverified_3@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
-        results = profileDao.findEmailsUnverfiedDays(7, 100);
+        results = profileDao.findEmailsUnverfiedDays(7);
         assertNotNull(results);
-        assertTrue(results.isEmpty());        
+        assertEquals(1, results.size());
+        assertEquals(orcid, results.get(0).getFirst());
+        assertEquals("unverified_3@test.orcid.org", results.get(0).getSecond());
+        
+        results = profileDao.findEmailsUnverfiedDays(15);
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals(orcid, results.get(0).getFirst());
+        assertEquals("unverified_4@test.orcid.org", results.get(0).getSecond());
+        
+        results = profileDao.findEmailsUnverfiedDays(6);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+        
+        results = profileDao.findEmailsUnverfiedDays(8);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+        
+        results = profileDao.findEmailsUnverfiedDays(14);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+        
+        results = profileDao.findEmailsUnverfiedDays(16);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
     }
     
     private int insertEmailWithDateCreated(String email, String emailHash, String orcid, boolean isVerified, Date dateCreated) {
