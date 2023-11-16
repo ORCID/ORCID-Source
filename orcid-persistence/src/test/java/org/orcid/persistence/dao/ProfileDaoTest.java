@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.dbunit.dataset.DataSetException;
 import org.joda.time.LocalDateTime;
@@ -70,12 +72,12 @@ public class ProfileDaoTest extends DBUnitTest {
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/WorksEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml"));
     }
 
     @Before
@@ -375,5 +377,25 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.disable2FA("2000-0000-0000-0002");
         profile = profileDao.find("2000-0000-0000-0002");
         assertFalse(profile.getUsing2FA());
-    }       
+    }
+
+    @Test
+    @Transactional
+    public void findEmailsToSendAddWorksEmail() {
+        String orcid = "4444-4444-4444-4441";
+
+        updateProfileWithDateCreated(orcid, LocalDateTime.now().minusDays(7).toDate());
+
+        List<Pair<String, String>> results = profileDao.findEmailsToSendAddWorksEmail();
+        assertNotNull(results);
+        assertEquals(1, results.size());
+    }
+
+    private int updateProfileWithDateCreated(String orcid, Date dateCreated) {
+        Query q = entityManager.createNativeQuery(
+                "UPDATE profile set date_created = :dateCreated where orcid = :orcid");
+        q.setParameter("orcid", orcid);
+        q.setParameter("dateCreated", dateCreated);
+        return q.executeUpdate();
+    }
 }

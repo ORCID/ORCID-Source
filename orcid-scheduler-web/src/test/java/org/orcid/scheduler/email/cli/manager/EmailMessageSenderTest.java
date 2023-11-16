@@ -133,6 +133,19 @@ public class EmailMessageSenderTest {
         assertEquals(expectedBodyText, text);
     }
 
+    @Test
+    public void testAddWorksToRecordEmail() throws IOException {
+        EmailMessage emailMessage = emailMessageSender.createAddWorksToRecordEmail("email@orcid.org", "0000-0000-0000-0000");
+        assertNotNull(emailMessage);
+        String text = emailMessage.getBodyText();
+        String html = emailMessage.getBodyHtml();
+        String expectedBodyText = IOUtils.toString(EmailMessageSenderTest.class.getClassLoader().getResourceAsStream("email/example_add_works_to_record.txt"));
+        String expectedBodyHtml = IOUtils.toString(EmailMessageSenderTest.class.getClassLoader().getResourceAsStream("email/example_add_works_to_record.html"));
+        assertEquals("[ORCID] Add Research Outputs to your ORCID record", emailMessage.getSubject());
+        assertEquals(expectedBodyText, text);
+        assertEquals(expectedBodyHtml, html);
+    }
+
     private List<Notification> generateNotifications() {
         List<Notification> notifications = new ArrayList<>();
 

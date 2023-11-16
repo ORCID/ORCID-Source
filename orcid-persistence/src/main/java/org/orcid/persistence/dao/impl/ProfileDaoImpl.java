@@ -10,6 +10,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
@@ -840,4 +841,37 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return false;
     }
 
+    @Override
+    public List<Pair<String, String>> findEmailsToSendAddWorksEmail() {
+        StringBuilder qs = new StringBuilder("SELECT e.email, p.orcid FROM email e ");
+        qs.append("LEFT JOIN email_frequency ef ON e.orcid = ef.orcid ");
+        qs.append("LEFT OUTER JOIN work w ON e.orcid = w.orcid ");
+        qs.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true AND p.deprecated_date is null AND ");
+        qs.append("p.profile_deactivation_date is null AND p.account_expiry is null ");
+        qs.append("WHERE ");
+        qs.append(getWorkCreatedNumberOfDaysAgo("7"));
+        qs.append("OR ");
+        qs.append(getWorkCreatedNumberOfDaysAgo("28"));
+        qs.append("OR ");
+        qs.append(getWorkCreatedNumberOfDaysAgo("90"));
+        qs.append("GROUP BY e.email, p.orcid");
+
+        System.out.println(qs.toString());
+
+        Query query = entityManager.createNativeQuery(qs.toString());
+        List<Object[]> dbInfo = query.getResultList();
+        List<Pair<String, String>> results = new ArrayList<Pair<String, String>>();
+        dbInfo.stream().forEach(element -> {
+            Pair<String, String> pair = Pair.of((String) element[0], (String) element[1]);
+            results.add(pair);
+        });
+        return results;
+    }
+
+    private String getWorkCreatedNumberOfDaysAgo(String days) {
+        return "e.is_verified = true and e.is_primary = true and\n" +
+                "      ef.send_quarterly_tips = true and\n" +
+                "      w.orcid is null and\n" +
+                "      CAST(p.date_created as date) = CAST(CURRENT_DATE - INTERVAL '"+ days +"' day as date) ";
+    }
 }
