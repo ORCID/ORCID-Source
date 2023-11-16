@@ -1,3 +1,9 @@
+## v2.44.11 - 2023-11-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.10...v2.44.11)
+
+- [#6933](https://github.com/ORCID/ORCID-Source/pull/6933): Add missing keys
+
 ## v2.44.10 - 2023-11-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.9...v2.44.10)
