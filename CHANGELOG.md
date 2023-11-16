@@ -1,3 +1,9 @@
+## v2.44.10 - 2023-11-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.9...v2.44.10)
+
+- [#6932](https://github.com/ORCID/ORCID-Source/pull/6932): Just one query
+
 ## v2.44.9 - 2023-11-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.8...v2.44.9)
