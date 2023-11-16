@@ -30,16 +30,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
-    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_verified"
+    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_primary "
             + "FROM email e, profile p "
             + "WHERE e.is_verified = false "
             + "        AND p.orcid = e.orcid "
             + "        AND p.deprecated_date is null "
             + "        AND p.profile_deactivation_date is null "
             + "        AND p.account_expiry is null "
-            + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY))"
+            + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY)) "
             + "        AND NOT EXISTS "
-            + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}'))"
+            + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}')) "
             + "order by e.last_modified";
     
     @Value("${org.orcid.postgres.query.timeout:30000}")
