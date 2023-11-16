@@ -173,7 +173,7 @@ public class ShibbolethController extends BaseController {
                 processAuthentication(remoteUser, userConnectionEntity);
                 if (Features.EVENTS.isActive()) {
                     OrcidProfileUserDetails orcidProfileUserDetails = getOrcidProfileUserDetails(userConnectionEntity.getOrcid());
-                    eventManager.createEvent(orcidProfileUserDetails.getOrcid(), EventType.SIGN_IN, request);
+                    eventManager.createEvent(EventType.SIGN_IN, request);
                 }
             } catch (AuthenticationException e) {
                 // this should never happen

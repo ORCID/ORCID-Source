@@ -282,7 +282,7 @@ public class RegistrationController extends BaseController {
             // Ip
             String ip = OrcidRequestUtil.getIpAddress(request);
             if (Features.EVENTS.isActive()) {
-                eventManager.createEvent(getCurrentUserOrcid(), EventType.NEW_REGISTRATION, request);
+                eventManager.createEvent(EventType.NEW_REGISTRATION, request);
             }
             createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
         } catch (Exception e) {
