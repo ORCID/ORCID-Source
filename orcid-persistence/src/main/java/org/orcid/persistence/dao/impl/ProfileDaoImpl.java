@@ -30,21 +30,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
-    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "select orcid, email, is_verified \n"
-            + "from email \n"
-            + "where email in \n"
-            + "        (SELECT distinct(e.email) \n"
-            + "        FROM email e, email_event ev, profile p \n"
-            + "        WHERE e.is_verified = false \n"
-            + "        AND p.orcid = e.orcid \n"
-            + "        AND p.deprecated_date is null \n"
-            + "        AND p.profile_deactivation_date is null \n"
-            + "        AND p.account_expiry is null \n"
-            + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY)) \n"
-            + "        AND NOT EXISTS \n"
-            + "                (SELECT email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}')\n"
-            + "        )\n"
-            + ") order by last_modified;";
+    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_verified"
+            + "FROM email e, profile p "
+            + "WHERE e.is_verified = false "
+            + "        AND p.orcid = e.orcid "
+            + "        AND p.deprecated_date is null "
+            + "        AND p.profile_deactivation_date is null "
+            + "        AND p.account_expiry is null "
+            + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY))"
+            + "        AND NOT EXISTS "
+            + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}'))"
+            + "order by e.last_modified";
     
     @Value("${org.orcid.postgres.query.timeout:30000}")
     private Integer queryTimeout;
