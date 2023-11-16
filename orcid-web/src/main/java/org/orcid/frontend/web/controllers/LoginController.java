@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -335,7 +334,7 @@ public class LoginController extends OauthControllerBase {
             } else {
                 // Forward to account link page
                 view = socialLinking(request);
-            }   
+            }            
         } else {
             // Store relevant data in the session
             socialSignInUtils.setSignedInData(request, userData);
@@ -343,16 +342,17 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
-            view = socialLinking(request);
+            view = socialLinking(request);            
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
         }
+        
         if (Features.EVENTS.isActive()) {
-            eventManager.createEvent(userConnection.getOrcid(), EventType.SIGN_IN, request);
+            eventManager.createEvent(EventType.SIGN_IN, request);
         }
-        userCookieGenerator.addCookie(userConnectionId, response);
-
+        userCookieGenerator.addCookie(userConnectionId, response);        
+        
         if ("social_2FA".equals(view.getViewName())) {
             return new ModelAndView("redirect:" + calculateRedirectUrl("/2fa-signin?social=true"));
         }

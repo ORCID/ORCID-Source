@@ -185,7 +185,7 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         try {
             if (Features.EVENTS.isActive()) {
-                eventManager.createEvent(orcid, EventType.PUBLIC_PAGE, null);
+                eventManager.createEvent(EventType.PUBLIC_PAGE, null);
             }
             // Check if the profile is deprecated or locked
             orcidSecurityManager.checkProfile(orcid);

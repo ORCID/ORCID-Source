@@ -26,7 +26,7 @@ public class AjaxAuthenticationSuccessHandler extends AjaxAuthenticationSuccessH
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
     	String targetUrl = getTargetUrl(request, response, authentication);
         if (Features.EVENTS.isActive()) {
-            eventManager.createEvent(authentication.getPrincipal().toString(), EventType.SIGN_IN, request);
+            eventManager.createEvent(EventType.SIGN_IN, request);
         }
         response.setContentType("application/json");
         response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
