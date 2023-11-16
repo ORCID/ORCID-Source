@@ -13,16 +13,16 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang3.tuple.Triple;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Transactional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
@@ -30,6 +30,18 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
+    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_primary "
+            + "FROM email e, profile p "
+            + "WHERE e.is_verified = false "
+            + "        AND p.orcid = e.orcid "
+            + "        AND p.deprecated_date is null "
+            + "        AND p.profile_deactivation_date is null "
+            + "        AND p.account_expiry is null "
+            + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY)) "
+            + "        AND NOT EXISTS "
+            + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}')) "
+            + "order by e.last_modified";
+    
     @Value("${org.orcid.postgres.query.timeout:30000}")
     private Integer queryTimeout;
 
@@ -136,47 +148,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Triple<String, Boolean, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults) {
-        StringBuilder queryString = new StringBuilder("SELECT e.email, e.is_primary, e.date_created FROM email e ");
-        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
-        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
-        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
-        queryString.append("where ev.email IS NULL " + "and e.is_verified = false ");
-        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
-        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
-        queryString.append(" ORDER BY e.last_modified");
+    public List<Triple<String, String, Boolean>> findEmailsUnverfiedDays(int daysUnverified, EmailEventType eventSent) {
+        int rangeStart = daysUnverified;
+        int rangeEnd = daysUnverified - 1;
 
-        Query query = entityManager.createNativeQuery(queryString.toString());
-        query.setMaxResults(maxResults);
-        List<Object[]> dbInfo = query.getResultList();
-        List<Triple<String, Boolean, Date>> results = new ArrayList<Triple<String, Boolean, Date>>();
-        dbInfo.stream().forEach(element -> {
-            Triple<String, Boolean, Date> pair = Triple.of((String) element[0], (Boolean) element[1], (Date) element[2]);
-            results.add(pair);
-        });
-        return results;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Triple<String, Boolean, String>> findEmailsUnverifiedDaysByEventType(int daysUnverified, int tooOldNumberOfDays) {
-        StringBuilder queryString = new StringBuilder("SELECT e.email, e.is_primary, ev.email_event_type FROM email e ");
-        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
-        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
-        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
-        queryString.append("where e.is_verified = false ");
-        queryString.append("and e.date_created between (now() - CAST('").append(tooOldNumberOfDays).append("' AS INTERVAL DAY)) and (now() - CAST('")
-                .append(daysUnverified).append("' AS INTERVAL DAY)) ");
-        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
-        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
-        queryString.append(" ORDER BY e.last_modified");
-
+        String queryString = FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER.replace("{RANGE_START}", String.valueOf(rangeStart))
+                .replace("{RANGE_END}", String.valueOf(rangeEnd)).replace("{EVENT_SENT}", eventSent.name());
+        LOGGER.debug("Query to search unverified emails");
+        LOGGER.debug(queryString);
         Query query = entityManager.createNativeQuery(queryString.toString());
         List<Object[]> dbInfo = query.getResultList();
-        List<Triple<String, Boolean, String>> results = new ArrayList<Triple<String, Boolean, String>>();
+        List<Triple<String, String, Boolean>> results = new ArrayList<Triple<String, String, Boolean>>();
         dbInfo.stream().forEach(element -> {
-            Triple<String, Boolean, String> pair = Triple.of((String) element[0], (Boolean) element[1], (String) element[2]);
-            results.add(pair);
+            Triple<String, String, Boolean> q = Triple.of((String) element[0], (String) element[1], (Boolean) element[2]);
+            results.add(q);
         });
         return results;
     }
