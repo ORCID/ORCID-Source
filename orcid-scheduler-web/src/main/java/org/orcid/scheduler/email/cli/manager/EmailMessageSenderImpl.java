@@ -569,19 +569,19 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Override
     synchronized public void processUnverifiedEmails2Days() {
-        processUnverifiedEmails(verifyReminderAfterTwoDays, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
+        processUnverifiedEmails(true, verifyReminderAfterTwoDays, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
     }
 
     synchronized public void processUnverifiedEmails7Days() {
-        processUnverifiedEmails(verifyReminderAfterSevenDays, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
+        processUnverifiedEmails(false, verifyReminderAfterSevenDays, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
     }
 
     synchronized public void processUnverifiedEmails28Days() {
-        processUnverifiedEmails(verifyReminderAfterTwentyEightDays, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
+        processUnverifiedEmails(false, verifyReminderAfterTwentyEightDays, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
     }
     
-    private void processUnverifiedEmails(int unverifiedDays, EmailEventType sent, EmailEventType failed) {
-        if (Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
+    private void processUnverifiedEmails(boolean forceSending, int unverifiedDays, EmailEventType sent, EmailEventType failed) {
+        if (forceSending || Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
             LOGGER.info("About to process unverIfied emails for {}  days reminder", unverifiedDays);
             List<Triple<String, String, Boolean>> elements = Collections.<Triple<String, String, Boolean>> emptyList();
             elements = profileDaoReadOnly.findEmailsUnverfiedDays(unverifiedDays, sent);
