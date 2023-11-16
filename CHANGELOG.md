@@ -1,3 +1,15 @@
+## v2.44.12 - 2023-11-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.11...v2.44.12)
+
+- [#6936](https://github.com/ORCID/ORCID-Source/pull/6936): fix: Add missing capture event in shibboleth account link
+- [#6935](https://github.com/ORCID/ORCID-Source/pull/6935): allways send 2 days reminder
+- [#6934](https://github.com/ORCID/ORCID-Source/pull/6934): Fix NPE on social sign in
+
+### Fix
+
+- Add missing capture event in shibboleth account link
+
 ## v2.44.11 - 2023-11-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.10...v2.44.11)
