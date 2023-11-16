@@ -39,42 +39,36 @@ public class EventManagerImpl implements EventManager {
     private RecordNameManagerReadOnly recordNameManagerReadOnly;   
 
     @Override
-    public void createEvent(String orcid, EventType eventType, HttpServletRequest request) {
+    public void createEvent(EventType eventType, HttpServletRequest request) {
         String label = "Website";
         String clientId = null;
-        String publicPage = null;
 
-        if (eventType == EventType.PUBLIC_PAGE) {
-            publicPage = orcid;
-            orcid = null;
-        } else {
-            if (request != null) {
-                Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-                RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute("requestInfoForm");
-                if (requestInfoForm != null) {
-                    clientId = requestInfoForm.getClientId();
-                    label = "OAuth " + requestInfoForm.getMemberName() + " " + requestInfoForm.getClientName();
-                } else if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
-                    String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
-                    clientId = getParameterValue(queryString, "client_id");
-                    ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                    String memberName = "";
-                    String clientName = clientDetailsEntity.getClientName();
+        if (request != null) {
+            Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+            RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute("requestInfoForm");
+            if (requestInfoForm != null) {
+                clientId = requestInfoForm.getClientId();
+                label = "OAuth " + requestInfoForm.getMemberName() + " " + requestInfoForm.getClientName();
+            } else if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+                String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+                clientId = getParameterValue(queryString, "client_id");
+                ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+                String memberName = "";
+                String clientName = clientDetailsEntity.getClientName();
 
-                    if (ClientType.PUBLIC_CLIENT.equals(clientDetailsEntity.getClientType())) {
-                        memberName = "PubApp";
-                    } else if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId())) {
-                        Name name = recordNameManagerReadOnly.getRecordName(clientDetailsEntity.getGroupProfileId());
-                        if (name != null) {
-                            memberName = name.getCreditName() != null ? name.getCreditName().getContent() : "";
-                        }
+                if (ClientType.PUBLIC_CLIENT.equals(clientDetailsEntity.getClientType())) {
+                    memberName = "PubApp";
+                } else if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId())) {
+                    Name name = recordNameManagerReadOnly.getRecordName(clientDetailsEntity.getGroupProfileId());
+                    if (name != null) {
+                        memberName = name.getCreditName() != null ? name.getCreditName().getContent() : "";
                     }
-
-                    if (StringUtils.isBlank(memberName)) {
-                        memberName = clientName;
-                    }
-                    label = "OAuth " + memberName + " " + clientName;
                 }
+
+                if (StringUtils.isBlank(memberName)) {
+                    memberName = clientName;
+                }
+                label = "OAuth " + memberName + " " + clientName;
             }
         }
 

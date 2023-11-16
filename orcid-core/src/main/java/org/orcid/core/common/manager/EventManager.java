@@ -11,6 +11,6 @@ import org.orcid.core.utils.EventType;
  */
 public interface EventManager {
 
-    void createEvent(String orcid, EventType eventType, HttpServletRequest request);
+    void createEvent(EventType eventType, HttpServletRequest request);
 
 }
