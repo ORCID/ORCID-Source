@@ -97,7 +97,7 @@ public class OauthController {
             if (responseParam != null && !responseParam.isEmpty() && !PojoUtil.isEmpty(responseParam.get(0))) {
                 isResponseSet = true;
                 if (Features.EVENTS.isActive()) {
-                    eventManager.createEvent(requestInfoForm.getUserOrcid(), EventType.REAUTHORIZE, null, requestInfoForm);
+                    eventManager.createEvent(EventType.REAUTHORIZE, request);
                 }
             }
         }

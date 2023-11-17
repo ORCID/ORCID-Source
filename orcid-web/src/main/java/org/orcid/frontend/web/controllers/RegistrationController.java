@@ -281,6 +281,9 @@ public class RegistrationController extends BaseController {
             Locale locale = RequestContextUtils.getLocale(request);
             // Ip
             String ip = OrcidRequestUtil.getIpAddress(request);
+            if (Features.EVENTS.isActive()) {
+                eventManager.createEvent(EventType.NEW_REGISTRATION, request);
+            }
             createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
         } catch (Exception e) {
             LOGGER.error("Error registering a new user", e);
@@ -304,9 +307,6 @@ public class RegistrationController extends BaseController {
             redirectUrl = calculateRedirectUrl(request, response, true, true);
         } 
         r.setUrl(redirectUrl);
-        if (Features.EVENTS.isActive()) {
-            eventManager.createEvent(getCurrentUserOrcid(), EventType.NEW_REGISTRATION, request, null);
-        }
         return r;
     }
 

@@ -25,7 +25,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.joda.time.LocalDateTime;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EmailMessage;
@@ -78,17 +77,17 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class EmailMessageSenderImpl implements EmailMessageSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailMessageSenderImpl.class);
-    
+
     private final Integer MAX_RETRY_COUNT;
-    
+
     ExecutorService pool;
-    
+
     private int verifyReminderAfterTwoDays = 2;
-    
+
     private int verifyReminderAfterSevenDays = 7;
-    
+
     private int verifyReminderAfterTwentyEightDays = 28;
-    
+
     @Resource
     private NotificationDao notificationDao;
 
@@ -103,7 +102,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private EmailDao emailDao;
-    
+
     @Resource
     private TransactionTemplate transactionTemplate;
 
@@ -124,33 +123,33 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
-    
+
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
-    
+
     @Resource
     private ProfileDao profileDaoReadOnly;
-    
+
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
-    
+
     @Resource
     private VerifyEmailUtils verifyEmailUtils;
-    
+
     @Value("${org.notifications.service_announcements.batchSize:60000}")
     private Integer batchSize;
-    
+
     @Value("${org.notifications.max_elements_to_show:20}")
-    private Integer maxNotificationsToShowPerClient;           
-    
+    private Integer maxNotificationsToShowPerClient;
+
     @Value("${org.orcid.core.email.verify.tooOld:45}")
-    private int emailTooOld; 
-    
-    private int emailTooOldLegacy = 15;  
-    
+    private int emailTooOld;
+
+    private int emailTooOldLegacy = 15;
+
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
         if (maxThreads == null || maxThreads > 64 || maxThreads < 1) {
@@ -161,7 +160,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
         MAX_RETRY_COUNT = maxRetry;
     }
-    
+
     @Override
     public EmailMessage createDigest(String orcid, Collection<Notification> notifications) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
@@ -171,7 +170,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String bodyHtmlDelegate = null;
         String bodyHtmlDelegateRecipient = null;
         String bodyHtmlAdminDelegate = null;
-        
+
         Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
 
@@ -227,19 +226,21 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 }
             }
         }
-        
+
         List<String> sortedClientIds = updatesByClient.keySet().stream().sorted().collect(Collectors.toList());
         List<ClientUpdates> sortedClientUpdates = new ArrayList<ClientUpdates>();
-        sortedClientIds.stream().forEach(s -> {sortedClientUpdates.add(updatesByClient.get(s));});
+        sortedClientIds.stream().forEach(s -> {
+            sortedClientUpdates.add(updatesByClient.get(s));
+        });
 
         String emailName = recordNameManagerV3.deriveEmailFriendlyName(record.getId());
         String subject = messages.getMessage("email.subject.digest", new String[] { emailName }, locale);
         Map<String, Object> params = new HashMap<>();
         params.put("locale", locale);
         params.put("messages", messages);
-        params.put("messageArgs", new Object[0]); 
+        params.put("messageArgs", new Object[0]);
         params.put("emailName", emailName);
-        params.put("digestEmail", digestEmail);        
+        params.put("digestEmail", digestEmail);
         params.put("orcidMessageCount", orcidMessageCount);
         params.put("baseUri", orcidUrlManager.getBaseUrl());
         params.put("subject", subject);
@@ -262,17 +263,17 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
     }
-    
+
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
         if (locale != null) {
             AvailableLocales loc = AvailableLocales.valueOf(locale);
             return LocaleUtils.toLocale(loc.value());
         }
-        
+
         return LocaleUtils.toLocale("en");
     }
-    
+
     private String encryptAndEncodePutCode(Long putCode) {
         String encryptedPutCode = encryptionManager.encryptForExternalUse(String.valueOf(putCode));
         try {
@@ -285,26 +286,26 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
-        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();       
-        
+        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+
         for (final Object[] element : orcidsWithUnsentNotifications) {
-            String orcid = (String) element[0];                        
+            String orcid = (String) element[0];
             try {
                 Float emailFrequencyDays = null;
                 Date recordActiveDate = null;
                 recordActiveDate = (Date) element[1];
-                    
+
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
-                                
+
                 EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
                 if (primaryEmail == null) {
                     LOGGER.info("No primary email for orcid: " + orcid);
                     return;
                 }
-                
-                if(!notifications.isEmpty()) {
+
+                if (!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage = createDigest(orcid, notifications);                    
+                    EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
@@ -350,11 +351,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void sendTips(Integer customBatchSize, String fromAddress) {
         LOGGER.info("About to send Tips messages");
-        
+
         List<NotificationEntity> serviceAnnouncementsOrTips = new ArrayList<NotificationEntity>();
         try {
             long startTime = System.currentTimeMillis();
@@ -381,11 +382,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             e.printStackTrace();
         }
     }
-    
+
     private void processServiceAnnouncementOrTipNotification(NotificationEntity n) {
         processServiceAnnouncementOrTipNotification(n, null);
     }
-    
+
     private void processServiceAnnouncementOrTipNotification(NotificationEntity n, String fromAddress) {
         String orcid = n.getOrcid();
         EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
@@ -394,7 +395,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             flagAsFailed(orcid, n);
             return;
         }
-        if(!primaryEmail.getVerified()) {
+        if (!primaryEmail.getVerified()) {
             LOGGER.info("Primary email not verified for: " + orcid);
             flagAsFailed(orcid, n);
             return;
@@ -402,23 +403,21 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         try {
             boolean successfullySent = false;
             String fromAddressParam = EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG;
-            if(!PojoUtil.isEmpty(fromAddress)) {
+            if (!PojoUtil.isEmpty(fromAddress)) {
                 fromAddressParam = fromAddress;
             }
             if (n instanceof NotificationServiceAnnouncementEntity) {
                 NotificationServiceAnnouncementEntity nc = (NotificationServiceAnnouncementEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(),
-                        nc.getBodyHtml());            
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(), nc.getBodyHtml());
             } else if (n instanceof NotificationTipEntity) {
                 NotificationTipEntity nc = (NotificationTipEntity) n;
                 // They might be custom notifications to have the
                 // html/text ready to be sent
-                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(),
-                        nc.getBodyHtml());            
+                successfullySent = mailGunManager.sendMarketingEmail(fromAddressParam, primaryEmail.getEmail(), nc.getSubject(), nc.getBodyText(), nc.getBodyHtml());
             }
-            
+
             if (successfullySent) {
                 flagAsSent(n.getId());
             } else {
@@ -428,58 +427,58 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             LOGGER.warn("Problem sending service announcement message to user: " + orcid, e);
         }
     }
-    
+
     private void flagAsSent(Long id) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 notificationDao.flagAsSent(Arrays.asList(id));
             }
-        });        
+        });
     }
-    
+
     private void flagAsFailed(String orcid, NotificationEntity n) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {            
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if(n.getRetryCount() != null && n.getRetryCount() >= MAX_RETRY_COUNT) {
+                if (n.getRetryCount() != null && n.getRetryCount() >= MAX_RETRY_COUNT) {
                     notificationDao.flagAsNonSendable(orcid, n.getId());
                 } else {
-                    if(n.getRetryCount() == null) {
+                    if (n.getRetryCount() == null) {
                         notificationDao.updateRetryCount(orcid, n.getId(), 1L);
                     } else {
                         notificationDao.updateRetryCount(orcid, n.getId(), (n.getRetryCount() + 1));
                     }
-                }                
+                }
             }
-        }); 
+        });
     }
-    
+
     public class ClientUpdates {
         String clientId;
         String clientName;
         String clientDescription;
         Integer counter = 0;
         Locale userLocale;
-        
-        Map<String, Map<String, Set<String>>> updates = new HashMap<>();        
-        
+
+        Map<String, Map<String, Set<String>>> updates = new HashMap<>();
+
         public void setClientId(String clientId) {
             this.clientId = clientId;
         }
-        
+
         public void setClientName(String clientName) {
             this.clientName = clientName;
         }
-        
+
         public void setClientDescription(String clientDescription) {
             this.clientDescription = clientDescription;
         }
-        
+
         public void setUserLocale(Locale locale) {
             this.userLocale = locale;
         }
-        
+
         public String getClientId() {
             return clientId;
         }
@@ -495,11 +494,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         public Locale getUserLocale() {
             return userLocale;
         }
-        
+
         public Map<String, Map<String, Set<String>>> getUpdates() {
             return updates;
         }
-        
+
         public Integer getCounter() {
             return counter;
         }
@@ -507,11 +506,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         private String renderCreationDate(XMLGregorianCalendar createdDate) {
             String result = new String();
             result += createdDate.getYear();
-            result += "-" + (createdDate.getMonth() < 10 ? "0" + createdDate.getMonth() : createdDate.getMonth());               
-            result += "-" + (createdDate.getDay() < 10 ? "0" + createdDate.getDay() : createdDate.getDay());            
+            result += "-" + (createdDate.getMonth() < 10 ? "0" + createdDate.getMonth() : createdDate.getMonth());
+            result += "-" + (createdDate.getDay() < 10 ? "0" + createdDate.getDay() : createdDate.getDay());
             return result;
-        }       
-        
+        }
+
         public void addElement(XMLGregorianCalendar createdDate, Item item) {
             init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
             String value = null;
@@ -548,7 +547,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 counter += 1;
             }
 
-        }  
+        }
 
         private void init(String itemType, String actionType) {
             if (!updates.containsKey(itemType)) {
@@ -567,82 +566,41 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         int bodyTagClose = notificationAdministrative.getBodyHtml().indexOf("</body>");
         return notificationAdministrative.getBodyHtml().substring(bodyTag + 6, bodyTagClose);
     }
-    
+
     @Override
     synchronized public void processUnverifiedEmails2Days() {
-        LOGGER.info("About to process unverIfied emails for 2 days reminder");
-        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
-        do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterTwoDays, 100);
-            LOGGER.info("Got batch of {} profiles with unverified emails for 2 days reminder", elements.size());
-            LocalDateTime now = LocalDateTime.now();
-            //togglz here
-            Date tooOld = now.minusDays(emailTooOldLegacy).toDate();
-            if(Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
-                tooOld = now.minusDays(emailTooOld).toDate();
-            }
-            for (Triple<String, Boolean, Date> element : elements) {
-                if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_2_DAYS_SENT, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
-                } else {
-                    // Mark is as too old to send the verification email
-                    markUnverifiedEmailAsTooOld(element.getLeft());
-                }
-            }
-        } while (!elements.isEmpty());
+        processUnverifiedEmails(true, verifyReminderAfterTwoDays, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT, EmailEventType.VERIFY_EMAIL_2_DAYS_SENT_SKIPPED);
     }
-    
-    
+
     synchronized public void processUnverifiedEmails7Days() {
-        if(Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
-        LOGGER.info("About to process unverIfied emails for 7 days reminder");
-        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
-        do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterSevenDays, 100);
-            LOGGER.info("Got batch of {} profiles with unverified emails for 7 days reminder", elements.size());
-            LocalDateTime now = LocalDateTime.now();
-            Date tooOld = now.minusDays(emailTooOld).toDate();
-            for (Triple<String, Boolean, Date> element : elements) {
-                if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
-                } else {
-                    // Mark is as too old to send the verification email
-                    markUnverifiedEmailAsTooOld(element.getLeft());
-                }
-            }
-        } while (!elements.isEmpty());
-        }
+        processUnverifiedEmails(false, verifyReminderAfterSevenDays, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT, EmailEventType.VERIFY_EMAIL_7_DAYS_SENT_SKIPPED);
     }
-    
-    
+
     synchronized public void processUnverifiedEmails28Days() {
-        if(Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
-        LOGGER.info("About to process unverIfied emails for 28  days reminder");
-        List<Triple<String, Boolean, Date>> elements = Collections.<Triple<String, Boolean, Date>> emptyList();
-        do {
-            elements = profileDaoReadOnly.findEmailsUnverfiedDays(verifyReminderAfterTwentyEightDays, 100);
-            LOGGER.info("Got batch of {} profiles with unverified emails for 28 days reminder", elements.size());
-            LocalDateTime now = LocalDateTime.now();
-            Date tooOld = now.minusDays(emailTooOld).toDate();
-            for (Triple<String, Boolean, Date> element : elements) {
-                if(element.getRight() == null || element.getRight().after(tooOld)) {
-                    processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
-                } else {
-                    // Mark is as too old to send the verification email
-                    markUnverifiedEmailAsTooOld(element.getLeft());
-                }
-            }
-        } while (!elements.isEmpty());
-        }
+        processUnverifiedEmails(false, verifyReminderAfterTwentyEightDays, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
     }
     
-    private void processUnverifiedEmailsInTransaction(final String email, final Boolean isPrimaryEmail, EmailEventType eventSent, EmailEventType eventSkipped) {
+    private void processUnverifiedEmails(boolean forceSending, int unverifiedDays, EmailEventType sent, EmailEventType failed) {
+        if (forceSending || Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
+            LOGGER.info("About to process unverIfied emails for {}  days reminder", unverifiedDays);
+            List<Triple<String, String, Boolean>> elements = Collections.<Triple<String, String, Boolean>> emptyList();
+            elements = profileDaoReadOnly.findEmailsUnverfiedDays(unverifiedDays, sent);
+            LOGGER.info("Got {} profiles with email event and unverified emails for {} days reminder", elements.size(), unverifiedDays);
+
+            for (Triple<String, String, Boolean> element : elements) {
+                processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), element.getRight(), sent,
+                            failed);                
+            }
+        }
+    }
+
+    private void processUnverifiedEmailsInTransaction(final String userOrcid, final String email, final Boolean isPrimaryEmail, EmailEventType eventSent, EmailEventType eventSkipped) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             @Transactional
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 try {
-                    String userOrcid = emailManagerReadOnly.findOrcidIdByEmail(email);
+                    LOGGER.debug("Sending reminder {} to email address {}, orcid {}", eventSent, email, userOrcid);
                     sendVerificationReminderEmail(userOrcid, email, isPrimaryEmail);
                     emailEventDao.persist(new EmailEventEntity(email, eventSent));
                     emailEventDao.flush();
@@ -653,19 +611,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 }
             }
         });
-    }        
-    
-    private void markUnverifiedEmailAsTooOld(final String email) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            @Transactional
-            protected void doInTransactionWithoutResult(TransactionStatus status) {                                
-                emailEventDao.persist(new EmailEventEntity(email, EmailEventType.VERIFY_EMAIL_TOO_OLD));
-                emailEventDao.flush();
-            }
-        });
     }
-    
+
     private void sendVerificationReminderEmail(String userOrcid, String email, Boolean isPrimaryEmail) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale locale = getUserLocaleFromProfileEntity(profile);
@@ -678,5 +625,5 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
         mailGunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
-    }        
+    }
 }

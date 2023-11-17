@@ -1,3 +1,61 @@
+## v2.44.12 - 2023-11-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.11...v2.44.12)
+
+- [#6936](https://github.com/ORCID/ORCID-Source/pull/6936): fix: Add missing capture event in shibboleth account link
+- [#6935](https://github.com/ORCID/ORCID-Source/pull/6935): allways send 2 days reminder
+- [#6934](https://github.com/ORCID/ORCID-Source/pull/6934): Fix NPE on social sign in
+
+### Fix
+
+- Add missing capture event in shibboleth account link
+
+## v2.44.11 - 2023-11-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.10...v2.44.11)
+
+- [#6933](https://github.com/ORCID/ORCID-Source/pull/6933): Add missing keys
+
+## v2.44.10 - 2023-11-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.9...v2.44.10)
+
+- [#6932](https://github.com/ORCID/ORCID-Source/pull/6932): Just one query
+
+## v2.44.9 - 2023-11-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.8...v2.44.9)
+
+- [#6930](https://github.com/ORCID/ORCID-Source/pull/6930): Remove orcid, redirect_url, public_page and last_modified from event
+
+## v2.44.8 - 2023-11-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.7...v2.44.8)
+
+- [#6929](https://github.com/ORCID/ORCID-Source/pull/6929): Changed the code to use triples
+
+## v2.44.7 - 2023-11-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.6...v2.44.7)
+
+- [#6927](https://github.com/ORCID/ORCID-Source/pull/6927): Add more logging for when the request changes during oauth
+
+## v2.44.6 - 2023-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.5...v2.44.6)
+
+- [#6926](https://github.com/ORCID/ORCID-Source/pull/6926): fix: Add create event to ShibbolethController and Add missing member …
+
+### Fix
+
+- Add create event to ShibbolethController and Add missing member name
+
+## v2.44.5 - 2023-11-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.4...v2.44.5)
+
+- [#6925](https://github.com/ORCID/ORCID-Source/pull/6925): Is there is more than one org with no parent, we should not suggest a…
+
 ## v2.44.4 - 2023-11-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.3...v2.44.4)
