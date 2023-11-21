@@ -1,3 +1,9 @@
+## v2.44.14 - 2023-11-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.13...v2.44.14)
+
+- [#6938](https://github.com/ORCID/ORCID-Source/pull/6938): force pull
+
 ## v2.44.13 - 2023-11-17
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.12...v2.44.13)
