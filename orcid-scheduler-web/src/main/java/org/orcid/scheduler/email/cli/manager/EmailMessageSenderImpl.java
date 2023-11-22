@@ -24,6 +24,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.locale.LocaleManager;
@@ -579,7 +580,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     synchronized public void processUnverifiedEmails28Days() {
         processUnverifiedEmails(false, verifyReminderAfterTwentyEightDays, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT, EmailEventType.VERIFY_EMAIL_28_DAYS_SENT_SKIPPED);
     }
-    
+
     private void processUnverifiedEmails(boolean forceSending, int unverifiedDays, EmailEventType sent, EmailEventType failed) {
         if (forceSending || Features.SEND_ALL_VERIFICATION_EMAILS.isActive()) {
             LOGGER.info("About to process unverIfied emails for {}  days reminder", unverifiedDays);
@@ -589,7 +590,17 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
             for (Triple<String, String, Boolean> element : elements) {
                 processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), element.getRight(), sent,
-                            failed);                
+                            failed);
+            }
+        }
+    }
+
+    synchronized public void addWorksToRecord() {
+        if (Features.SEND_ADD_WORKS_EMAILS.isActive()) {
+            LOGGER.info("About to process send emails to encourage user to add works");
+            List<Pair<String, String>> elements =  profileDaoReadOnly.findEmailsToSendAddWorksEmail();
+            for (Pair<String, String> element: elements) {
+                sendAddWorksToRecordEmail(element.getLeft(), element.getRight());
             }
         }
     }
@@ -625,5 +636,38 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
         mailGunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, htmlBody);
+    }
+
+    @Override
+    public EmailMessage createAddWorksToRecordEmail(String email, String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Locale locale = getUserLocaleFromProfileEntity(profile);
+
+        String subject = messages.getMessage("email.subject.add_works", null, locale);
+        String emailName = recordNameManagerV3.deriveEmailFriendlyName(orcid);
+        Map<String, Object> params = new HashMap<>();
+        params.put("locale", locale);
+        params.put("messages", messages);
+        params.put("subject", subject);
+        params.put("messageArgs", new Object[0]);
+        params.put("emailName", emailName);
+        params.put("orcidId", orcid);
+        params.put("baseUri", orcidUrlManager.getBaseUrl());
+
+        // Generate body from template
+        String body = templateManager.processTemplate("add_works_to_record_email.ftl", params, locale);
+        String htmlBody = templateManager.processTemplate("add_works_to_record_email_html.ftl", params, locale);
+
+        EmailMessage emailMessage = new EmailMessage();
+
+        emailMessage.setSubject(subject);
+        emailMessage.setBodyText(body);
+        emailMessage.setBodyHtml(htmlBody);
+        return emailMessage;
+    }
+
+    private void sendAddWorksToRecordEmail(String email, String orcid) {
+        EmailMessage addWorksMessage = createAddWorksToRecordEmail(email, orcid);
+        mailGunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, addWorksMessage.getSubject(), addWorksMessage.getBodyText(), addWorksMessage.getBodyHtml());
     }
 }

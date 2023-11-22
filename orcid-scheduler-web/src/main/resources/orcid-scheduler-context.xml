@@ -38,7 +38,7 @@
         <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
         <task:scheduled ref="issnLoadManager" method="loadIssn" cron="${org.orcid.scheduler.web.loadIssnCronConfig:0 0 0 * * FRI}"/>
         <task:scheduled ref="autoLockSpamRecords" method="scheduledProcess" cron="${org.orcid.scheduler.autospam.process:0 0 0 * * TUE}"/>
-        
+        <task:scheduled ref="emailMessageSender" method="addWorksToRecord" cron="${org.orcid.scheduler.web.addWorksToRecord:0 10 * * * *}"/>
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:30}"/>

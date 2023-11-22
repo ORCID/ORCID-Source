@@ -175,3 +175,8 @@ source_file = orcid-core/src/main/resources/i18n/notification_share_en.propertie
 source_lang = en
 type        = UNICODEPROPERTIES
 
+[o:orcid-inc-1:p:registry:r:email-add-work]
+file_filter = orcid-core/src/main/resources/i18n/email_add_works_to_record_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email_add_works_to_record_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
