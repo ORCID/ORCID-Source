@@ -1,3 +1,14 @@
+## v2.44.15 - 2023-11-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.14...v2.44.15)
+
+- [#6931](https://github.com/ORCID/ORCID-Source/pull/6931): fix: Add new email schedule to send email to encourage email to add w…
+
+### Fix
+
+- Remove unnecessary console log
+- Add new email schedule to send email to encourage email to add works
+
 ## v2.44.14 - 2023-11-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.13...v2.44.14)
