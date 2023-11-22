@@ -856,8 +856,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         qs.append(getWorkCreatedNumberOfDaysAgo("90"));
         qs.append("GROUP BY e.email, p.orcid");
 
-        System.out.println(qs.toString());
-
         Query query = entityManager.createNativeQuery(qs.toString());
         List<Object[]> dbInfo = query.getResultList();
         List<Pair<String, String>> results = new ArrayList<Pair<String, String>>();
