@@ -156,7 +156,10 @@ public enum Features implements Feature {
     ENABLE_NEW_IDS,
     
     @Label("Send verification emails for 2, 7 and 28 days. If disabled 2 days only verification emails will be sent.")
-    SEND_ALL_VERIFICATION_EMAILS;
+    SEND_ALL_VERIFICATION_EMAILS,
+
+    @Label("Send add works emails for 7, 28 and 90 days.")
+    SEND_ADD_WORKS_EMAILS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

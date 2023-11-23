@@ -378,4 +378,5 @@
   <include file="/db/updates/dw_event.xml" />  
   <include file="/db/updates/create_event_indexes.xml" />
   <include file="/db/updates/dw_alter_event.xml" />
+  <include file="/db/updates/dw_alter_event_2.xml" />
 </databaseChangeLog>

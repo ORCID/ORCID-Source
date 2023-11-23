@@ -21,4 +21,6 @@ public interface EmailMessageSender {
     void sendEmailMessages();
     
     void processUnverifiedEmails2Days();
+
+    EmailMessage createAddWorksToRecordEmail(String email, String orcid);
 }

@@ -7,10 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.impl.EmailDomainManagerImpl.STATUS;
@@ -30,11 +28,11 @@ public class EmailDomainToRorLoader {
     private String filePath;
     private EmailDomainManager emailDomainManager;
     private List<List<String>> csvData;
-    private Set<String> invalidDomains = new HashSet<String>();  
     private Map<String, DomainToRorMap> map = new HashMap<String, DomainToRorMap>();
     
     private int updatedEntries = 0;
     private int createdEntries = 0;
+    private int invalidEntires = 0;
     
     public EmailDomainToRorLoader(String filePath) {
         this.filePath = filePath;
@@ -123,8 +121,8 @@ public class EmailDomainToRorLoader {
                 } else if (STATUS.UPDATED.equals(s)) {
                     updatedEntries++;
                 }
-            } else if(element.getIdsWithParent().size() == 1) {
-                // Else, if the domain has only one entry with parent, store that one
+            } else if(element.getIdsWithNoParent().isEmpty() && element.getIdsWithParent().size() == 1) {
+                // Else, if the domain doesn't have an org with no parents and only have one entry with parent, store that one
                 STATUS s = emailDomainManager.createOrUpdateEmailDomain(element.getDomain(), element.getIdsWithParent().get(0));
                 if(STATUS.CREATED.equals(s)) {
                     createdEntries++;
@@ -133,17 +131,12 @@ public class EmailDomainToRorLoader {
                 }
             } else {            
                 // Else log a warning because there is no way to provide a suggestion
-                invalidDomains.add(element.getDomain());
+                LOG.warn("Domain {} couldnt be mapped, it have {} rows with parent and {} rows with no parent", element.getDomain(), element.getIdsWithParent().size(), element.getIdsWithNoParent().size());
+                invalidEntires++;
             }
         }
         
-        if(!invalidDomains.isEmpty()) {
-            LOG.warn("The following domains couldn't be mapped ({} In total):", invalidDomains.size());
-            for(String invalidDomain : invalidDomains) {
-                LOG.warn("{}", invalidDomain);
-            }
-        }
-        LOG.info("Created entries: {}, updated entries: {}", createdEntries, updatedEntries);
+        LOG.info("Created entries: {}, updated entries: {}, invalid entries {}", createdEntries, updatedEntries, invalidEntires);
     }
     
     private class DomainToRorMap {

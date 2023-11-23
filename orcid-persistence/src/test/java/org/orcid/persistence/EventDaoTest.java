@@ -1,36 +1,31 @@
 package org.orcid.persistence;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.Arrays;
+import java.util.Date;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.dao.EventDao;
-import org.orcid.persistence.dao.SpamDao;
 import org.orcid.persistence.jpa.entities.EventEntity;
-import org.orcid.persistence.jpa.entities.SourceType;
-import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
-
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:test-orcid-persistence-context.xml"})
 public class EventDaoTest extends DBUnitTest {
 
-    private static String USER_ORCID = "4444-4444-4444-4497";
-    private static String OTHER_USER_ORCID = "4444-4444-4444-4499";
-
+    private static String CLIENT_ID = "APP-5555555555555555";
+    
     @Resource(name = "eventDao")
     private EventDao eventDao;
 
@@ -45,33 +40,28 @@ public class EventDaoTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
-    public void testFindByOrcid() {
-        List<EventEntity> eventEntityList = eventDao.getEvents(OTHER_USER_ORCID);
-        assertNotNull(eventEntityList);
-        assertEquals(OTHER_USER_ORCID, eventEntityList.get(0).getOrcid());
-    }
-
-    @Test
-    public void testWriteSpam() throws IllegalAccessException {
+    public void testWriteEvent() throws IllegalAccessException {
         EventEntity eventEntity = new EventEntity();
         eventEntity.setEventType("Sign-In");
-        Date date = new Date();
-        FieldUtils.writeField(eventEntity, "dateCreated", date, true);
-        FieldUtils.writeField(eventEntity, "lastModified", date, true);
-        eventEntity.setOrcid(USER_ORCID);
+        eventEntity.setLabel("This is the label");
+        FieldUtils.writeField(eventEntity, "dateCreated", new Date(), true);
+        eventEntity.setClientId(CLIENT_ID);
+
+        // Id should be null before creating the event
+        assertNull(eventEntity.getId());
 
         eventDao.createEvent(eventEntity);
 
-        List<EventEntity> eventEntities = eventDao.getEvents(USER_ORCID);
-        assertNotNull(eventEntities);
-        assertEquals(USER_ORCID, eventEntities.get(0).getOrcid());
+        // Id should be populated now
+        assertNotNull(eventEntity.getId());
+        
+        EventEntity fromDb = eventDao.find(eventEntity.getId());
+        assertNotNull(fromDb);
+        assertEquals(eventEntity.getClientId(), fromDb.getClientId());        
+        assertEquals(eventEntity.getEventType(), fromDb.getEventType());
+        assertEquals(eventEntity.getId(), fromDb.getId());
+        assertEquals(eventEntity.getLabel(), fromDb.getLabel());
+        assertNotNull(fromDb.getDateCreated());
     }
-
-    @Test
-    public void testRemoveSpam() throws NoResultException {
-        List<EventEntity> eventEntities = eventDao.getEvents(USER_ORCID);
-        assertNotNull(eventEntities);
-        eventDao.removeEvents(eventEntities.get(0).getOrcid());
-    }
+    
 }
