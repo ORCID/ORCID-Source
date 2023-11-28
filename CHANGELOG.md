@@ -1,3 +1,10 @@
+## v2.45.1 - 2023-11-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.0...v2.45.1)
+
+- [#6940](https://github.com/ORCID/ORCID-Source/pull/6940): EMPTY PR
+- [#6939](https://github.com/ORCID/ORCID-Source/pull/6939): REGISTRATION_2_0
+
 ## v2.45.0 - 2023-11-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.44.15...v2.45.0)
