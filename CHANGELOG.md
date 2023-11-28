@@ -1,3 +1,9 @@
+## v2.45.2 - 2023-11-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.1...v2.45.2)
+
+- [#6941](https://github.com/ORCID/ORCID-Source/pull/6941): Grant read permissions to dw_event table to dw_user
+
 ## v2.45.1 - 2023-11-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.0...v2.45.1)
