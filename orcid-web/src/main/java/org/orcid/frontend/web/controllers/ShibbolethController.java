@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.IdentityProviderManager;
@@ -20,6 +21,8 @@ import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.EventType;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -81,6 +84,9 @@ public class ShibbolethController extends BaseController {
     
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
+
+    @Resource
+    private EventManager eventManager;
     
     @RequestMapping(value = { "/2FA/authenticationCode.json" }, method = RequestMethod.GET)
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
@@ -165,6 +171,10 @@ public class ShibbolethController extends BaseController {
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
                 processAuthentication(remoteUser, userConnectionEntity);
+                if (Features.EVENTS.isActive()) {
+                    OrcidProfileUserDetails orcidProfileUserDetails = getOrcidProfileUserDetails(userConnectionEntity.getOrcid());
+                    eventManager.createEvent(EventType.SIGN_IN, request);
+                }
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
