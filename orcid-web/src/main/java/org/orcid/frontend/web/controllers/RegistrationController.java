@@ -1,6 +1,11 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -14,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -45,6 +51,8 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.Redirect;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -321,6 +329,28 @@ public class RegistrationController extends BaseController {
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
+        if (Features.EVENTS.isActive() && reg.getAffiliationForm() != null) {
+            AffiliationForm affiliationForm = reg.getAffiliationForm();
+            if (!affiliationForm.getAffiliationType().getValue().equals("Employment")) {
+                setError(affiliationForm.getAffiliationType(), "Invalid affiliation type");
+            }
+            if (reg.getAffiliationForm().getDepartmentName() != null) {
+                if (affiliationForm.getDepartmentName().getValue() != null && affiliationForm.getDepartmentName().getValue().trim().length() > 1000) {
+                    setError(affiliationForm.getDepartmentName(), "common.length_less_1000");
+                }
+            }
+            if (reg.getAffiliationForm().getRoleTitle() != null) {
+                if (!PojoUtil.isEmpty(affiliationForm.getRoleTitle()) && affiliationForm.getRoleTitle().getValue().trim().length() > 1000) {
+                    setError(affiliationForm.getRoleTitle(), "common.length_less_1000");
+                }
+            }
+            if (reg.getAffiliationForm().getStartDate() != null) {
+                if(!validDate(affiliationForm.getStartDate())) {
+                    setError(affiliationForm.getStartDate(), "common.dates.invalid");
+                }
+            }
+        }
+
         copyErrors(reg.getActivitiesVisibilityDefault(), reg);
         copyErrors(reg.getEmailConfirm(), reg);
         copyErrors(reg.getEmail(), reg);
@@ -579,6 +609,45 @@ public class RegistrationController extends BaseController {
         if (Visibility.PUBLIC.equals(registration.getActivitiesVisibilityDefault().getVisibility())) {
             profileHistoryEventManager.recordEvent(ProfileHistoryEventType.SET_DEFAULT_VIS_TO_PUBLIC, newUserOrcid);
         }
+    }
+
+    protected boolean validDate(Date date) {
+        DateTimeFormatter[] formatters = {
+                new DateTimeFormatterBuilder().appendPattern("yyyy").parseDefaulting(ChronoField.MONTH_OF_YEAR, 1).parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
+                        .toFormatter(),
+                new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
+                new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
+        String dateString = date.getYear();
+        // If the month is empty and day provided is an invalid date
+        if (StringUtils.isBlank(date.getMonth())) {
+            if (!StringUtils.isBlank(date.getDay())) {
+                return false;
+            }
+        }
+        else if (StringUtils.isBlank(date.getYear())) {
+            if (!StringUtils.isBlank(date.getDay()) && !StringUtils.isBlank(date.getMonth())) {
+                return false;
+            }
+        }
+        else {
+            dateString += date.getMonth();
+            if (!StringUtils.isBlank(date.getDay())) {
+                dateString += date.getDay();
+            }
+        }
+
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                LocalDate localDate = LocalDate.parse(dateString, formatter);
+                if (PojoUtil.isEmpty(date.getDay()) || localDate.getDayOfMonth() == Integer.parseInt(date.getDay())) {
+                    // formatter will correct day to last valid day of month if
+                    // it is too great
+                    return true;
+                }
+            } catch (DateTimeParseException e) {
+            }
+        }
+        return false;
     }
 
 }
