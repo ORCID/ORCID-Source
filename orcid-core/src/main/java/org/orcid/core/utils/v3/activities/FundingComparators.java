@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.grouping.FundingGroup;
+import org.orcid.pojo.grouping.PeerReviewGroup;
 
 public class FundingComparators {
 
@@ -17,17 +18,25 @@ public class FundingComparators {
     private final String DATE_SORT_KEY = "date";
 
     private final String TYPE_SORT_KEY = "type";
+    
+    private final String START_DATE_KEY = "start";
+    
+    private final String END_DATE_KEY = "end";
 
     public FundingComparators() {}
 
     public Comparator<FundingGroup> getInstance(String key, boolean sortAsc, String orcid) {
         Comparator<FundingGroup> comparator = null;
         if (DATE_SORT_KEY.equals(key)) {
-            comparator = new FundingComparators().DATE_COMPARATOR;
+            comparator = FundingComparators.DATE_COMPARATOR;
         } else if (TITLE_SORT_KEY.equals(key)) {
-            comparator = new FundingComparators().TITLE_COMPARATOR;
+            comparator = FundingComparators.TITLE_COMPARATOR;
         } else if (TYPE_SORT_KEY.equals(key)) {
-            comparator = new FundingComparators().TYPE_COMPARATOR;
+            comparator = FundingComparators.TYPE_COMPARATOR;
+        } else if (START_DATE_KEY.equals(key)) {
+            comparator = FundingComparators.START_DATE_COMPARATOR;
+        } else if (END_DATE_KEY.equals(key)) {
+            comparator = FundingComparators.END_DATE_COMPARATOR;
         }
 
         if (sortAsc) {
@@ -37,7 +46,7 @@ public class FundingComparators {
         }
     }
 
-    public Comparator<FundingGroup> TITLE_COMPARATOR = (g1, g2) -> {
+    public static Comparator<FundingGroup> TITLE_COMPARATOR = (g1, g2) -> {
         if (g1.getTitle() == null && g2.getTitle() == null) {
             return 0;
         }
@@ -51,7 +60,7 @@ public class FundingComparators {
         return g1.getTitle().toLowerCase().compareTo(g2.getTitle().toLowerCase());
     };
 
-    public Comparator<FundingGroup> TYPE_COMPARATOR = (g1, g2) -> {
+    public static Comparator<FundingGroup> TYPE_COMPARATOR = (g1, g2) -> {
         FundingForm f1 = g1.getFundings().get(0);
         FundingForm f2 = g2.getFundings().get(0);
         
@@ -69,7 +78,21 @@ public class FundingComparators {
         return f1.getFundingType().getValue().compareTo(f2.getFundingType().getValue());
     };
     
-    public Comparator<FundingGroup> END_DATE_COMPARATOR = (g1, g2) -> {
+    public static Comparator<FundingGroup> START_DATE_COMPARATOR = (g1, g2) -> {
+        if (g1.getStartDate() == null && g2.getStartDate() == null)
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
+        //Null = to present and should sort first
+        if (g1.getStartDate() == null)
+            return 1;
+        if (g2.getStartDate() == null)
+            return -1;
+        if (g1.getStartDate().compareTo(g2.getStartDate()) == 0){
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
+        }
+        return g1.getStartDate().compareTo(g2.getStartDate());
+    };
+    
+    public static Comparator<FundingGroup> END_DATE_COMPARATOR = (g1, g2) -> {
         if (g1.getEndDate() == null && g2.getEndDate() == null)
             return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
         //Null = to present and should sort first
@@ -83,7 +106,7 @@ public class FundingComparators {
         return g1.getEndDate().compareTo(g2.getEndDate());
     };
 
-    public Comparator<FundingGroup> DATE_COMPARATOR = (g1, g2) -> {
+    public static Comparator<FundingGroup> DATE_COMPARATOR = (g1, g2) -> {
         if (g1.getStartDate() == null && g2.getStartDate() == null) {
             return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
         }
