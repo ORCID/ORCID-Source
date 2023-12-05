@@ -121,7 +121,7 @@ public class RecordEmailSenderTest {
         
         recordEmailSender.sendWelcomeEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
         
-        verify(mockMailGunManager, times(1)).sendEmail(eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG), eq("josiah_carberry@brown.edu"), eq("[ORCID] Welcome to ORCID"), anyString(), anyString());
+        verify(mockMailGunManager, times(1)).sendEmail(eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG), eq("josiah_carberry@brown.edu"), eq("[ORCID] Welcome to ORCID - verify your email address"), anyString(), anyString());
     }
 
     @Test
