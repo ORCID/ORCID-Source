@@ -1,3 +1,9 @@
+## v2.45.3 - 2023-12-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.2...v2.45.3)
+
+- [#6943](https://github.com/ORCID/ORCID-Source/pull/6943): Fix end and start date comparators and make them all static so we don…
+
 ## v2.45.2 - 2023-11-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.1...v2.45.2)
