@@ -329,7 +329,7 @@ public class RegistrationController extends BaseController {
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
-        if (Features.EVENTS.isActive() && reg.getAffiliationForm() != null) {
+        if (Features.REGISTRATION_2_0.isActive() && reg.getAffiliationForm() != null) {
             AffiliationForm affiliationForm = reg.getAffiliationForm();
             if (!affiliationForm.getAffiliationType().getValue().equals("Employment")) {
                 setError(affiliationForm.getAffiliationType(), "Invalid affiliation type");

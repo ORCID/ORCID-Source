@@ -298,7 +298,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         }
         recordNameManager.createRecordName(orcid, name);
 
-        if (Features.EVENTS.isActive() && registration.getAffiliationForm() != null) {
+        if (Features.REGISTRATION_2_0.isActive() && registration.getAffiliationForm() != null) {
             Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
             affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
         }
