@@ -1,3 +1,10 @@
+## v2.45.5 - 2023-12-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.4...v2.45.5)
+
+- [#6945](https://github.com/ORCID/ORCID-Source/pull/6945): Fix unit test
+- [#6944](https://github.com/ORCID/ORCID-Source/pull/6944): Update welcome email subject to ask for verifying email address again
+
 ## v2.45.4 - 2023-12-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.3...v2.45.4)
