@@ -1,3 +1,9 @@
+## v2.45.6 - 2023-12-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.5...v2.45.6)
+
+- [#6946](https://github.com/ORCID/ORCID-Source/pull/6946): Allow backend validation but not resolution
+
 ## v2.45.5 - 2023-12-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.4...v2.45.5)
