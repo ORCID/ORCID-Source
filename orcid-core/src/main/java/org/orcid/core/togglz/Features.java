@@ -30,20 +30,8 @@ public enum Features implements Feature {
     @Label("Move client from a member to another member")
     MOVE_CLIENT,
 
-    @Label("Add other people contributions via BIBTEXT")
-    ADD_OTHER_WORK_CONTRIBUTORS_WITH_BIBTEX,
-
-    @Label("Disable matching subdomains")
-    DISABLE_MATCHING_SUBDOMAINS,
-    
     @Label("Enable Crazy Egg")
     CRAZY_EGG,
-
-    @Label("Add other people contributions via DOI & PUBMED")
-    ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED,
-
-    @Label("Add other people contributions manually")
-    ADD_OTHER_WORK_CONTRIBUTORS,    
 
     @Label("Restrict delegator access to account settings")
     RESTRICTED_DELEGATORS,
@@ -56,25 +44,12 @@ public enum Features implements Feature {
 
     @Label("Spam button")
     SPAM_BUTTON,
-
-    @Label("Email status dropdown option")
-    EMAIL_STATUS_DROPDOWN_OPTION,
-
     @Label("Enable 2019 header")
     ENABLE_HEADER2,
-	
-    @Label("Change view privacy from work/funding/affiliation form dialogs")
-    DIALOG_PRIVACY_OPTION,
 	
     @Label("Shows an alert message when a user goes to /signin and is already signed in\n")
     RE_LOGGIN_ALERT,
 
-    @Label("Affiliation org ID in UI")
-    AFFILIATION_ORG_ID,
-
-    @Label("Affiliation search")
-    AFFILIATION_SEARCH,
-    
     @Label("Arabic translation")
     LANG_AR,
 
@@ -95,9 +70,6 @@ public enum Features implements Feature {
 
     @Label("Self service org ids")
     SELF_SERVICE_ORG_IDS,
-
-    @Label("Disable reCAPTCHA")
-    DISABLE_RECAPTCHA,    
 
     @Label("Check external id resolution in UI")
     EX_ID_RESOLVER,
