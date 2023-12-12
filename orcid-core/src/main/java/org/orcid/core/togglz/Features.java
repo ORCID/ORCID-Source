@@ -75,9 +75,6 @@ public enum Features implements Feature {
     @Label("Affiliation search")
     AFFILIATION_SEARCH,
     
-    @Label("Https for links to iDs")
-    HTTPS_IDS,
-
     @Label("Arabic translation")
     LANG_AR,
 
@@ -129,12 +126,6 @@ public enum Features implements Feature {
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
     
-    @Label("Disable the 2.0 release candidates")
-    V2_DISABLE_RELEASE_CANDIDATES,
-
-    @Label("Disable the 3.0 release candidates")
-    V3_DISABLE_RELEASE_CANDIDATES,
-
     @Label("ID token 24 hours lifespan")
     ID_TOKEN_24_HOURS_LIFESPAN,
     
