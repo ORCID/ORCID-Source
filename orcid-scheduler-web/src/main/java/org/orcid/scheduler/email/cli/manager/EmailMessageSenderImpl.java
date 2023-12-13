@@ -597,10 +597,20 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     synchronized public void addWorksToRecord() {
         if (Features.SEND_ADD_WORKS_EMAILS.isActive()) {
-            LOGGER.info("About to process send emails to encourage user to add works");
-            List<Pair<String, String>> elements =  profileDaoReadOnly.findEmailsToSendAddWorksEmail();
+            List<Pair<String, String>> elements = profileDaoReadOnly.findEmailsToSendAddWorksEmail();
             for (Pair<String, String> element: elements) {
-                sendAddWorksToRecordEmail(element.getLeft(), element.getRight());
+                String email = element.getLeft();
+                String userOrcid = element.getRight();
+                try {
+                    LOGGER.debug("Sending email to encourage user to add works to email address {}, orcid {}", email, userOrcid);
+                    sendAddWorksToRecordEmail(email, userOrcid);
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.ENCOURAGE_USER_TO_ADD_WORKS_EMAIL_SENT));
+                    emailEventDao.flush();
+                } catch (Exception e) {
+                    LOGGER.error("Unable to send email to encourage user to add works to email: " + email, e);
+                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.ENCOURAGE_USER_TO_ADD_WORKS_EMAIL_SENT_SKIPPED));
+                    emailEventDao.flush();
+                }
             }
         }
     }
