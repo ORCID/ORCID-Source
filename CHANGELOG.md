@@ -1,3 +1,9 @@
+## v2.45.7 - 2023-12-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.6...v2.45.7)
+
+- [#6947](https://github.com/ORCID/ORCID-Source/pull/6947): Use the 'ShouldRun' property of liquibase to disable it
+
 ## v2.45.6 - 2023-12-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.5...v2.45.6)
