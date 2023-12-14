@@ -106,11 +106,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         twentyFourHrs.add(Calendar.DAY_OF_YEAR, 1);
         
         claims.issueTime(now);
-        if(Features.ID_TOKEN_24_HOURS_LIFESPAN.isActive()) {
-            claims.expirationTime(twentyFourHrs.getTime());
-        } else {
-            claims.expirationTime(accessToken.getExpiration());
-        }
+        claims.expirationTime(twentyFourHrs.getTime());
         
         claims.jwtID(UUID.randomUUID().toString());
         if (nonce != null)

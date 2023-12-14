@@ -21,14 +21,8 @@ public enum Features implements Feature {
     @Label("Redirect PUT token actions from *.pub.orcid.org to *.orcid.org")
     REDIRECT_PUT_TOKEN_ENDPOINT,
 
-    @Label("New Developer tools")
-    NEW_DEVELOPER_TOOLS,
-
     @Label("Stop sending notification if work has not been updated")
     STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED,
-
-    @Label("Move client from a member to another member")
-    MOVE_CLIENT,
 
     @Label("Enable Crazy Egg")
     CRAZY_EGG,
@@ -44,17 +38,9 @@ public enum Features implements Feature {
 
     @Label("Spam button")
     SPAM_BUTTON,
-    @Label("Enable 2019 header")
-    ENABLE_HEADER2,
-	
+    
     @Label("Shows an alert message when a user goes to /signin and is already signed in\n")
     RE_LOGGIN_ALERT,
-
-    @Label("Arabic translation")
-    LANG_AR,
-
-    @Label("New footer")
-    NEW_FOOTER,
     
     @Label("Reset password send email in all cases")
     RESET_PASSWORD_EMAIL,
@@ -71,35 +57,17 @@ public enum Features implements Feature {
     @Label("Self service org ids")
     SELF_SERVICE_ORG_IDS,
 
-    @Label("Check external id resolution in UI")
-    EX_ID_RESOLVER,
-
     @Label("Remove https://orcid.org from OpenID id_tokens")
     OPENID_SIMPLE_SUBJECT,
     
-    @Label("Enable manual work grouping")
-    MANUAL_WORK_GROUPING,
-
-    @Label("Grouping suggestions")
-    GROUPING_SUGGESTIONS,
-
-    @Label("Enable promotion of chosen orgs in search")
-    ENABLE_PROMOTION_OF_CHOSEN_ORGS,
-    
     @Label("Enable the API record create endpoint for QA purposes")
     ENABLE_RECORD_CREATE_ENDPOINT,
-    
-    @Label("Hide unverified emails")
-    HIDE_UNVERIFIED_EMAILS,
     
     @Label("User OBO")
     USER_OBO,
 
     @Label("Works failure debug")
     WORKS_FAILURE_DEBUG,
-    
-    @Label("ID token 24 hours lifespan")
-    ID_TOKEN_24_HOURS_LIFESPAN,
     
     @Label("Promote a client from public client to be a member")
     UPGRADE_PUBLIC_CLIENT, 
@@ -114,10 +82,7 @@ public enum Features implements Feature {
     ENABLE_ACCOUNT_LOCKOUT,
     
     @Label("Do not lock the account on the UI when the lockout threshold is exceeded")
-    ACCOUNT_LOCKOUT_SIMULATION,
-    
-    @Label("Enable the new 100M ID's range")
-    ENABLE_NEW_IDS,
+    ACCOUNT_LOCKOUT_SIMULATION,    
     
     @Label("Send verification emails for 2, 7 and 28 days. If disabled 2 days only verification emails will be sent.")
     SEND_ALL_VERIFICATION_EMAILS,

@@ -47,7 +47,7 @@ public class PersonDetailsManagerTest extends DBUnitTest {
     
     @Test
     public void testGetPersonDetails() {
-        Person person = personDetailsManager.getPersonDetails(ORCID, !Features.HIDE_UNVERIFIED_EMAILS.isActive());
+        Person person = personDetailsManager.getPersonDetails(ORCID, false);
         assertNotNull(person);
         
         assertNotNull(person.getExternalIdentifiers());
@@ -72,16 +72,11 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            assertEquals(4, person.getEmails().getEmails().size());
-    
-            for (Email email : person.getEmails().getEmails()) {
-                assertTrue(email.isVerified());
-            }
-        } else {
-            assertEquals(5, person.getEmails().getEmails().size());
-        }
+        assertEquals(4, person.getEmails().getEmails().size());
+
+        for (Email email : person.getEmails().getEmails()) {
+            assertTrue(email.isVerified());
+        }        
         
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());

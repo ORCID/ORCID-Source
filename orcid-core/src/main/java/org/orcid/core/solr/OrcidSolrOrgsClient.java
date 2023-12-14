@@ -1,6 +1,6 @@
 package org.orcid.core.solr;
 
-import static org.orcid.core.solr.SolrConstants.*;
+import static org.orcid.core.solr.SolrConstants.ORG_DISAMBIGUATED_ID;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -51,11 +51,7 @@ public class OrcidSolrOrgsClient {
         return null;
     }
 
-    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean promoteChosenOrgs) {
-        return getOrgs(searchTerm, firstResult, maxResult, false, promoteChosenOrgs);
-    }
-
-    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean promoteChosenOrgs) {
+   public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
         StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm));
         if (fundersOnly) {
             queryString.append(" AND is-funding-org:true");

@@ -1061,7 +1061,7 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/validate-client-conversion.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient validateClientConversion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive() && !Features.MOVE_CLIENT.isActive()) {
+        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
             throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
         }
         data.setGroupIdNotFound(false);
@@ -1145,9 +1145,6 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/move-client.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient moveClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if (!Features.MOVE_CLIENT.isActive()) {
-            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
-        }
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
         if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound() || data.isClientDeactivated()) {

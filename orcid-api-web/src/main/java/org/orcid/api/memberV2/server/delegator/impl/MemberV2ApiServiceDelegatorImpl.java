@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.ElementUtils;
@@ -57,7 +56,6 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
@@ -770,23 +768,14 @@ public class MemberV2ApiServiceDelegatorImpl implements
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
             
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
-            } else {
-                emails = emailManagerReadOnly.getEmails(orcid);
-            }
+            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
-            } else {
-                emails = emailManagerReadOnly.getEmails(orcid);
-            }
+            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
