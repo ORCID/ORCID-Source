@@ -1,3 +1,9 @@
+## v2.46.0 - 2023-12-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.7...v2.46.0)
+
+- [#6948](https://github.com/ORCID/ORCID-Source/pull/6948): Togglz cleanup
+
 ## v2.45.7 - 2023-12-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.6...v2.45.7)
