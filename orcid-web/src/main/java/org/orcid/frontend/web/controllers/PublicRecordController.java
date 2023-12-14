@@ -1,5 +1,21 @@
 package org.orcid.frontend.web.controllers;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
@@ -42,12 +58,9 @@ import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
 import org.orcid.jaxb.model.v3.release.record.OtherNames;
-import org.orcid.jaxb.model.v3.release.record.Person;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
@@ -74,21 +87,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 public class PublicRecordController extends BaseWorkspaceController {
@@ -294,12 +292,8 @@ public class PublicRecordController extends BaseWorkspaceController {
         publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
 
         Emails filteredEmails = new Emails();
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails().stream().filter(Email::isVerified).collect(Collectors.toList())));
-        } else {
-            filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails()));
-        }
-
+        filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails().stream().filter(Email::isVerified).collect(Collectors.toList())));
+        
         publicRecord.setEmails(org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails));
 
         // Fill external identifiers

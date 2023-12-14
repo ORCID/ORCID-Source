@@ -1,7 +1,6 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
@@ -13,23 +12,22 @@ import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common_v2.Visibility;
-import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Address;
+import org.orcid.jaxb.model.record_v2.Addresses;
 import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Keywords;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.jaxb.model.record_v2.Keyword;
+import org.orcid.jaxb.model.record_v2.Keywords;
 import org.orcid.jaxb.model.record_v2.Name;
-import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.OtherName;
+import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.Person;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
+import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
@@ -125,13 +123,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         Emails emails = emailManager.getEmails(orcid);
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
-            
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
-            } else {
-                filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
-            }
-            
+            filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
             person.setEmails(filteredEmails);
         }
         return person;

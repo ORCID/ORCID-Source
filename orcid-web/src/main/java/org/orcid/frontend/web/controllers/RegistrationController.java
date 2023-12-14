@@ -516,18 +516,7 @@ public class RegistrationController extends BaseController {
         }       
 
         return new ModelAndView(redirect);
-    }
-
-    private Search findPotentialDuplicatesByFirstNameLastName(String firstName, String lastName) {
-        LOGGER.debug("About to search for potential duplicates during registration for first name={}, last name={}", firstName, lastName);
-        SearchOrcidSolrCriteria queryForm = new SearchOrcidSolrCriteria();
-        queryForm.setGivenName(firstName);
-        queryForm.setFamilyName(lastName);
-        Search visibleProfiles = orcidSearchManager.findOrcidsByQuery(queryForm.deriveQueryString(), DUP_SEARCH_START, DUP_SEARCH_ROWS);
-        LOGGER.debug("Found {} potential duplicates during registration for first name={}, last name={}",
-                new Object[] { visibleProfiles.getNumFound(), firstName, lastName });
-        return visibleProfiles;
-    }
+    }    
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
             boolean usedCaptchaVerification, Locale locale, String ip) {

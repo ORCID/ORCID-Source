@@ -918,11 +918,7 @@ public class BaseController {
             publicEmails = emailManagerReadOnly.getEmails(orcid);
         }   
         Emails filteredEmails = new Emails();
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
-        } else {
-            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails()));
-        } 
+        filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
         
         Map<String, List<org.orcid.jaxb.model.v3.release.record.Email>> groupedEmails = groupEmails(filteredEmails);
         publicRecordPersonDetails.setPublicGroupedEmails(groupedEmails);

@@ -309,11 +309,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             groupGenerator.group(work);
         }
         Works works = processGroupedWorks(groupGenerator.getGroups());
-        
-        if (Features.GROUPING_SUGGESTIONS.isActive()) {
-            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-        }
+        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
         return works;
     }
 
@@ -324,11 +321,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             groupGenerator.group(work);
         }
         WorksExtended works = processGroupedWorksExtended(groupGenerator.getGroups());
-
-        if (Features.GROUPING_SUGGESTIONS.isActive()) {
-            List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-            groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-        }
+        List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
         return works;
     }
 

@@ -14,6 +14,7 @@ import java.util.Locale;
 import javax.ws.rs.core.MediaType;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,6 +23,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.PubMedResolver;
@@ -34,8 +36,6 @@ import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.togglz.junit.TogglzRule;
-import org.junit.Rule;
-import org.orcid.core.togglz.Features;
 
 
 public class PubMedResolverTest {
@@ -226,7 +226,6 @@ public class PubMedResolverTest {
 
     @Test
     public void resolvePMIDMetadataContributorsTest() {
-        togglzRule.enable(Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED);
         WorkExtended work = resolver.resolveMetadata("pmid", "pmid1");
         List<ContributorsRolesAndSequences> contributors = work.getContributorsGroupedByOrcid();
         assertNotNull(work);

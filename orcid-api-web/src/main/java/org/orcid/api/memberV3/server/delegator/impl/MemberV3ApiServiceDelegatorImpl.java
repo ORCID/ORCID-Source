@@ -64,7 +64,6 @@ import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -855,24 +854,14 @@ public class MemberV3ApiServiceDelegatorImpl implements
         try {
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
-            
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
-            } else {
-                emails = emailManagerReadOnly.getEmails(orcid);
-            }
+            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
-            } else {
-                emails = emailManagerReadOnly.getEmails(orcid);
-            }
+            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
@@ -1160,7 +1149,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response viewPerson(String orcid) {
         checkProfileStatus(orcid, true);
-        Person person = personDetailsManagerReadOnly.getPersonDetails(orcid, !Features.HIDE_UNVERIFIED_EMAILS.isActive());
+        Person person = personDetailsManagerReadOnly.getPersonDetails(orcid, false);
         orcidSecurityManager.checkAndFilter(orcid, person);
         ElementUtils.setPathToPerson(person, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(person);
