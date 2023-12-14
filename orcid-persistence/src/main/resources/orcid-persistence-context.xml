@@ -326,6 +326,7 @@
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
         <property name="changeLog" value="classpath:db-master.xml" />
+        <property name="shouldRun" value="\${org.orcid.persistence.liquibase.enabled:true}" />
     </bean>
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
