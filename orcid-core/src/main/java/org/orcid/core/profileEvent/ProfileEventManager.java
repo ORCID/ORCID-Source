@@ -15,8 +15,8 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class ProfileEventManager {
     private ProfileDao profileDao;
 
     @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -136,11 +136,11 @@ public class ProfileEventManager {
         this.profileDao = profileDao;
     }
 
-    public GenericDao<ProfileEventEntity, Long> getProfileEventDao() {
+    public ProfileEventDao getProfileEventDao() {
         return profileEventDao;
     }
 
-    public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
+    public void setProfileEventDao(ProfileEventDao profileEventDao) {
         this.profileEventDao = profileEventDao;
     }
 

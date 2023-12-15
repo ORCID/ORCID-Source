@@ -28,6 +28,7 @@ import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 
@@ -49,7 +50,7 @@ public class TwoFactorAuthenticationManagerTest {
     private ProfileDao profileDao;
     
     @Mock
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
     
     @InjectMocks
     private TwoFactorAuthenticationManagerImpl twoFactorAuthenticationManager;

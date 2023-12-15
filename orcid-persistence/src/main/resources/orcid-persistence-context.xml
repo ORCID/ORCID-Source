@@ -207,9 +207,7 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />
     </bean>
     
-    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.ProfileEventEntity" />
-    </bean>    
+    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.ProfileEventDaoImpl" />
 
     <bean id="emailEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.EmailEventEntity" />

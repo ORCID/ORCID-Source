@@ -36,6 +36,7 @@ import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -51,7 +52,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class RecordEmailSenderTest {
 
     @Mock
-    private GenericDao<ProfileEventEntity, Long> mockProfileEventDao;
+    private ProfileEventDao mockProfileEventDao;
 
     @Mock
     private SourceManager sourceManager;

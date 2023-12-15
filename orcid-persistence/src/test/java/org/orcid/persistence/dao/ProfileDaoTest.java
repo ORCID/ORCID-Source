@@ -61,7 +61,7 @@ public class ProfileDaoTest extends DBUnitTest {
     private ClientDetailsDao clientDetailsDao;
 
     @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
     
     @Resource(name="entityManager")
     protected EntityManager entityManager;
@@ -381,12 +381,12 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     @Transactional
-    public void findEmailsToSendAddWorksEmail() {
+    public void findEmailsToSendAddWorksFirstAttemptEmail() {
         String orcid = "4444-4444-4444-4441";
 
         updateProfileWithDateCreated(orcid, LocalDateTime.now().minusDays(7).toDate());
 
-        List<Pair<String, String>> results = profileDao.findEmailsToSendAddWorksEmail();
+        List<Pair<String, String>> results = profileDao.findEmailsToSendAddWorksEmail(7);
         assertNotNull(results);
         assertEquals(1, results.size());
     }

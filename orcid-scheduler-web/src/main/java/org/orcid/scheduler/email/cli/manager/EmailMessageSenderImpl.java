@@ -51,6 +51,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
@@ -58,6 +59,8 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.pojo.DigestEmail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.email.MailGunManager;
@@ -140,6 +143,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Resource
     private VerifyEmailUtils verifyEmailUtils;
 
+    @Resource
+    private ProfileEventDao profileEventDao;
+
     @Value("${org.notifications.service_announcements.batchSize:60000}")
     private Integer batchSize;
 
@@ -150,6 +156,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     private int emailTooOld;
 
     private int emailTooOldLegacy = 15;
+
+    @Value("${org.orcid.core.email.addWorks.firstAttempt:7}")
+    private int addWorksFirstAttemptEmail;
+    
+    @Value("${org.orcid.core.email.addWorks.secondAttempt:28}")
+    private int addWorksSecondAttemptEmail;
+    
+    @Value("${org.orcid.core.email.addWorks.thirdAttempt:90}")
+    private int addWorksThirdAttemptEmail;
 
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
@@ -595,21 +610,52 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
     }
 
-    synchronized public void addWorksToRecord() {
+    synchronized public void addWorksToRecordFirstReminder() {
+        sendAddWorksToRecordEmailAttempt(addWorksFirstAttemptEmail, ProfileEventType.ADD_WORKS_FIRST_REMINDER_SENT);
+    }
+    
+    synchronized public void addWorksToRecordSecondReminder() {
+        sendAddWorksToRecordEmailAttempt(addWorksSecondAttemptEmail, ProfileEventType.ADD_WORKS_SECOND_REMINDER_SENT);
+    }
+    
+    synchronized public void addWorksToRecordThirdReminder() {
+        sendAddWorksToRecordEmailAttempt(addWorksThirdAttemptEmail, ProfileEventType.ADD_WORKS_THIRD_REMINDER_SENT);
+    }
+    
+    private void sendAddWorksToRecordEmailAttempt(int addWorksAttemptEmail, ProfileEventType profileEventType){
         if (Features.SEND_ADD_WORKS_EMAILS.isActive()) {
-            List<Pair<String, String>> elements = profileDaoReadOnly.findEmailsToSendAddWorksEmail();
+            List<Pair<String, String>> elements = profileDaoReadOnly.findEmailsToSendAddWorksEmail(addWorksAttemptEmail);
             for (Pair<String, String> element: elements) {
                 String email = element.getLeft();
                 String userOrcid = element.getRight();
-                try {
-                    LOGGER.debug("Sending email to encourage user to add works to email address {}, orcid {}", email, userOrcid);
-                    sendAddWorksToRecordEmail(email, userOrcid);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.ENCOURAGE_USER_TO_ADD_WORKS_EMAIL_SENT));
-                    emailEventDao.flush();
-                } catch (Exception e) {
-                    LOGGER.error("Unable to send email to encourage user to add works to email: " + email, e);
-                    emailEventDao.persist(new EmailEventEntity(email, EmailEventType.ENCOURAGE_USER_TO_ADD_WORKS_EMAIL_SENT_SKIPPED));
-                    emailEventDao.flush();
+                String numberAttempt = null;
+                ProfileEventType skipped = null;
+                
+                switch (profileEventType) {
+                    case ADD_WORKS_FIRST_REMINDER_SENT:
+                        numberAttempt = "first";
+                        skipped = ProfileEventType.ADD_WORKS_FIRST_REMINDER_SENT_SKIPPED;
+                        break;
+                    case ADD_WORKS_SECOND_REMINDER_SENT:
+                        numberAttempt = "second";
+                        skipped = ProfileEventType.ADD_WORKS_SECOND_REMINDER_SENT_SKIPPED;
+                        break;
+                    case ADD_WORKS_THIRD_REMINDER_SENT:
+                        numberAttempt = "third";
+                        skipped = ProfileEventType.ADD_WORKS_THIRD_REMINDER_SENT_SKIPPED;
+                        break;
+                }
+                if (!profileEventDao.isAttemptSend(userOrcid, profileEventType)) {
+                    try {
+                        LOGGER.debug("Sending "+ numberAttempt +" attempt email to encourage user to add works to email address {}, orcid {}", email, userOrcid);
+                        sendAddWorksToRecordEmail(email, userOrcid);
+                        profileEventDao.persist(new ProfileEventEntity(userOrcid, profileEventType, email));
+                        profileEventDao.flush();
+                    } catch (Exception e) {
+                        LOGGER.error("Unable to send "+ numberAttempt +" attempt email to encourage user to add works to email: " + email, e);
+                        profileEventDao.persist(new ProfileEventEntity(userOrcid, skipped, email));
+                        profileEventDao.flush();
+                    }
                 }
             }
         }
