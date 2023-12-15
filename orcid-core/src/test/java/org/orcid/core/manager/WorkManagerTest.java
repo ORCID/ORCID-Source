@@ -53,6 +53,7 @@ import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
@@ -61,7 +62,6 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -1133,8 +1133,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1161,9 +1159,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksSameContent() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
+        
         Work work = new Work();
         fillWork(work);
         Work workSaved = workManager.createWork(claimedOrcid, work, true);

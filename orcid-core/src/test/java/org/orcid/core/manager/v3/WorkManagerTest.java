@@ -1716,8 +1716,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1745,8 +1743,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         Work workSaved = workManager.createWork(claimedOrcid, work, true);
@@ -1763,8 +1759,6 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksNullAndEmptyValues() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
 
         Work work = new Work();
         fillWork(work);
@@ -1793,8 +1787,6 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksPublicationDate() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
 
         Work work = new Work();
         fillWork(work);
@@ -1833,8 +1825,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1872,8 +1862,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         WorkForm workForm = getWorkWithContributorsMultipleRoles();
 
         Work work = workManager.createWork(claimedOrcid, workForm);
@@ -1907,8 +1895,6 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksExternalIdentifiers() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
 
         Work work = new Work();
         fillWork(work);
