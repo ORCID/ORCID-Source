@@ -375,19 +375,17 @@ public class ContributorUtils {
 
     public String getAssertionOriginOrcid(String clientSourceId, String orcid, Long putCode, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager, WorkDao workDao) {
         String assertionOriginOrcid = null;
-        if (Features.USER_OBO.isActive()) {
-            ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(clientSourceId);
-            if (clientSource.isUserOBOEnabled()) {
-                WorkEntity e = workDao.getWork(orcid, putCode);
+        ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+        if (clientSource.isUserOBOEnabled()) {
+            WorkEntity e = workDao.getWork(orcid, putCode);
 
-                String orcidId = null;
-                if (e instanceof OrcidAware) {                    
-                    orcidId = ((OrcidAware) e).getOrcid();
-                }
-                assertionOriginOrcid = orcidId;
+            String orcidId = null;
+            if (e instanceof OrcidAware) {                    
+                orcidId = ((OrcidAware) e).getOrcid();
             }
+            assertionOriginOrcid = orcidId;
         }
-
+        
         return assertionOriginOrcid;
     }
 
