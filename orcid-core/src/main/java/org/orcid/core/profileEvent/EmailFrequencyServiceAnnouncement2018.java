@@ -19,7 +19,6 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.RecordNameManager;
@@ -27,6 +26,8 @@ import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
+import org.orcid.persistence.dao.impl.ProfileEventDaoImpl;
 import org.orcid.persistence.jpa.entities.NotificationServiceAnnouncementEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -54,7 +55,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
 
     private TemplateManager templateManager;
 
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;    
+    private ProfileEventDao profileEventDao;    
 
     private NotificationDao notificationDao;
     
@@ -100,7 +101,7 @@ public class EmailFrequencyServiceAnnouncement2018 {
         profileDaoReadOnly = (ProfileDao) context.getBean("profileDaoReadOnly");
         messages = (MessageSource) context.getBean("messageSource");
         templateManager = (TemplateManager) context.getBean("templateManager");
-        profileEventDao = (GenericDao) context.getBean("profileEventDao");
+        profileEventDao = (ProfileEventDao) context.getBean("profileEventDao");
         notificationDao = (NotificationDao) context.getBean("notificationDao");
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         recordNameManager = (RecordNameManager) context.getBean("recordNameManagerV3");
