@@ -1,3 +1,14 @@
+## v2.47.0 - 2023-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.46.0...v2.47.0)
+
+- [#6949](https://github.com/ORCID/ORCID-Source/pull/6949): feature: Add encourage user to add works to email events log
+
+### Feature
+
+- Add log for sending `add works reminder` to `profile_event` table
+- Add encourage user to add works to email events log
+
 ## v2.46.0 - 2023-12-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.7...v2.46.0)
