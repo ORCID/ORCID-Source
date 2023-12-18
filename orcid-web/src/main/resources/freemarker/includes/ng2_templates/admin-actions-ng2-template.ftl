@@ -536,92 +536,84 @@
 </div>
 
 <!-- convert public client to member client -->
-<@orcid.checkFeatureStatus featureName='UPGRADE_PUBLIC_CLIENT'>
-	<div class="workspace-accordion-item" id="convert-client">
-	    <p>
-	        <a *ngIf="showConvertClient" (click)="showConvertClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.convert_client.title' /></a>
-	        <a *ngIf="!showConvertClient" (click)="showConvertClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.convert_client.title' /></a>
-	    </p>
-	    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showConvertClient">
-	       <div>
-	            <div class="alert alert-success" *ngIf="convertClient.clientNotFound">
-	                <@spring.message "admin.convert_client.client_not_found"/>
-	            </div>
-	            <div class="alert alert-success" *ngIf="convertClient.groupIdNotFound">
-	                <@spring.message "admin.convert_client.group_id_not_found"/>
-	            </div>
-	            <div class="alert alert-success" *ngIf="convertClient.groupIdDeactivated">
-	                <@spring.message "admin.convert_client.group_id.invalid"/>
-	            </div>
-	            <div class="alert alert-success" *ngIf="convertClient.alreadyMember">
-	                <@spring.message "admin.convert_client.already_member"/>
-	            </div>	            
-	        </div>
-	        <div class="form-group">
-	            <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>
-	            <input type="text" id="client_to_convert" [(ngModel)]="convertClient.clientId" placeholder="<@orcid.msg 'admin.convert_client.client_id.placeholder' />" class="input-xlarge" />
-	        </div>
-	        <div class="form-group">
-	            <label for="client_group_id"><@orcid.msg 'admin.convert_client.group_id.label' /></label>
-	            <input type="text" id="client_group_id" (keyup.enter)="processClientConversion()" [(ngModel)]="convertClient.groupId" placeholder="<@orcid.msg 'admin.convert_client.group_id.placeholder' />" class="input-xlarge" />
-	        </div>
-	        <div class="controls save-btns pull-left">
-	            <span id="bottom-convert-client" (click)="processClientConversion()" class="btn btn-primary"><@orcid.msg 'admin.convert_client.convert_button_text'/></span>
-	        </div>
-	    </div>
-	</div>
-</@orcid.checkFeatureStatus>
-
-<@orcid.checkFeatureStatus featureName='MOVE_CLIENT'>
-
-    <div class="workspace-accordion-item" id="move-client">
-            <p>
-                <a *ngIf="showMoveClient" (click)="showMoveClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.move_client.title' /></a>
-                <a *ngIf="!showMoveClient" (click)="showMoveClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.move_client.title' /></a>
-            </p>
-            <div class="collapsible bottom-margin-small admin-modal" *ngIf="showMoveClient">
-            <div>
-                    <div class="alert alert-success" *ngIf="moveClient.clientNotFound">
-                        <@spring.message "admin.convert_client.client_not_found"/>
-                        </div>
-                        <div class="alert alert-success" *ngIf="moveClient.groupIdNotFound">
-                            <@spring.message "admin.convert_client.group_id_not_found"/>
-                        </div>
-                        <div class="alert alert-success" *ngIf="moveClient.groupIdDeactivated">
-                            <@spring.message "admin.convert_client.group_id.invalid"/>
-                        </div>
-                        <div class="alert alert-success" *ngIf="moveClient.alreadyMember !== undefined && !moveClient.alreadyMember">
-                            <@spring.message "admin.convert_client.is_not_already_member"/>
-                        </div>	   
-                        <div class="alert alert-success" *ngIf="!moveClient.clientNotFound && !moveClient.clientDeactivated">
-                            <@spring.message "admin.convert_client.is_not_active"/>
-                        </div>	           
-                    </div>
-                <div class="form-group">
-                    <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>
-                    <input type="text" id="client_to_convert" [(ngModel)]="moveClient.clientId" placeholder="<@orcid.msg 'admin.convert_client.client_id.placeholder' />" class="input-xlarge" />
-                </div>
-                <div class="form-group">
-                    <label for="client_group_id"><@orcid.msg 'admin.convert_client.group_id.label' /></label>
-                    <input type="text" id="client_group_id" (keyup.enter)="processClientMove()" [(ngModel)]="moveClient.groupId" placeholder="<@orcid.msg 'admin.convert_client.group_id.placeholder' />" class="input-xlarge" />
-                </div>
-                <div class="controls save-btns pull-left">
-                    <span id="bottom-convert-client" (click)="processClientMove()" class="btn btn-primary"><@orcid.msg 'admin.move_client.confirmation.button.label'/></span>
-                </div>
+<div class="workspace-accordion-item" id="convert-client">
+    <p>
+        <a *ngIf="showConvertClient" (click)="showConvertClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.convert_client.title' /></a>
+        <a *ngIf="!showConvertClient" (click)="showConvertClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.convert_client.title' /></a>
+    </p>
+    <div class="collapsible bottom-margin-small admin-modal" *ngIf="showConvertClient">
+       <div>
+            <div class="alert alert-success" *ngIf="convertClient.clientNotFound">
+                <@spring.message "admin.convert_client.client_not_found"/>
             </div>
+            <div class="alert alert-success" *ngIf="convertClient.groupIdNotFound">
+                <@spring.message "admin.convert_client.group_id_not_found"/>
+            </div>
+            <div class="alert alert-success" *ngIf="convertClient.groupIdDeactivated">
+                <@spring.message "admin.convert_client.group_id.invalid"/>
+            </div>
+            <div class="alert alert-success" *ngIf="convertClient.alreadyMember">
+                <@spring.message "admin.convert_client.already_member"/>
+            </div>	            
+        </div>
+        <div class="form-group">
+            <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>
+            <input type="text" id="client_to_convert" [(ngModel)]="convertClient.clientId" placeholder="<@orcid.msg 'admin.convert_client.client_id.placeholder' />" class="input-xlarge" />
+        </div>
+        <div class="form-group">
+            <label for="client_group_id"><@orcid.msg 'admin.convert_client.group_id.label' /></label>
+            <input type="text" id="client_group_id" (keyup.enter)="processClientConversion()" [(ngModel)]="convertClient.groupId" placeholder="<@orcid.msg 'admin.convert_client.group_id.placeholder' />" class="input-xlarge" />
+        </div>
+        <div class="controls save-btns pull-left">
+            <span id="bottom-convert-client" (click)="processClientConversion()" class="btn btn-primary"><@orcid.msg 'admin.convert_client.convert_button_text'/></span>
+        </div>
     </div>
-</@orcid.checkFeatureStatus>
+</div>
+
+
+<div class="workspace-accordion-item" id="move-client">
+        <p>
+            <a *ngIf="showMoveClient" (click)="showMoveClient = false"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.move_client.title' /></a>
+            <a *ngIf="!showMoveClient" (click)="showMoveClient = true"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.move_client.title' /></a>
+        </p>
+        <div class="collapsible bottom-margin-small admin-modal" *ngIf="showMoveClient">
+        <div>
+                <div class="alert alert-success" *ngIf="moveClient.clientNotFound">
+                    <@spring.message "admin.convert_client.client_not_found"/>
+                    </div>
+                    <div class="alert alert-success" *ngIf="moveClient.groupIdNotFound">
+                        <@spring.message "admin.convert_client.group_id_not_found"/>
+                    </div>
+                    <div class="alert alert-success" *ngIf="moveClient.groupIdDeactivated">
+                        <@spring.message "admin.convert_client.group_id.invalid"/>
+                    </div>
+                    <div class="alert alert-success" *ngIf="moveClient.alreadyMember !== undefined && !moveClient.alreadyMember">
+                        <@spring.message "admin.convert_client.is_not_already_member"/>
+                    </div>	   
+                    <div class="alert alert-success" *ngIf="!moveClient.clientNotFound && !moveClient.clientDeactivated">
+                        <@spring.message "admin.convert_client.is_not_active"/>
+                    </div>	           
+                </div>
+            <div class="form-group">
+                <label for="client_to_convert"><@orcid.msg 'admin.convert_client.client_id.label' /></label>
+                <input type="text" id="client_to_convert" [(ngModel)]="moveClient.clientId" placeholder="<@orcid.msg 'admin.convert_client.client_id.placeholder' />" class="input-xlarge" />
+            </div>
+            <div class="form-group">
+                <label for="client_group_id"><@orcid.msg 'admin.convert_client.group_id.label' /></label>
+                <input type="text" id="client_group_id" (keyup.enter)="processClientMove()" [(ngModel)]="moveClient.groupId" placeholder="<@orcid.msg 'admin.convert_client.group_id.placeholder' />" class="input-xlarge" />
+            </div>
+            <div class="controls save-btns pull-left">
+                <span id="bottom-convert-client" (click)="processClientMove()" class="btn btn-primary"><@orcid.msg 'admin.move_client.confirmation.button.label'/></span>
+            </div>
+        </div>
+</div>
 </script>
 
-	
-<@orcid.checkFeatureStatus featureName='UPGRADE_PUBLIC_CLIENT'>	
-	<modalngcomponent elementHeight="370" elementId="confirmConvertClient" elementWidth="400">
-	    <convert-client-confirm-ng2></convert-client-confirm-ng2>
-	</modalngcomponent>
-</@orcid.checkFeatureStatus>
+<modalngcomponent elementHeight="370" elementId="confirmConvertClient" elementWidth="400">
+    <convert-client-confirm-ng2></convert-client-confirm-ng2>
+</modalngcomponent>
 
-<@orcid.checkFeatureStatus featureName='MOVE_CLIENT'>	
-    <modalngcomponent elementHeight="370" elementId="confirmMoveClient" elementWidth="400">
-        <move-client-confirm-ng2></move-client-confirm-ng2>
-    </modalngcomponent>
-</@orcid.checkFeatureStatus>
+
+<modalngcomponent elementHeight="370" elementId="confirmMoveClient" elementWidth="400">
+    <move-client-confirm-ng2></move-client-confirm-ng2>
+</modalngcomponent>

@@ -106,22 +106,11 @@
         <!--hide header if oauth login-->
         <#if !(RequestParameters['oauth'])??>  
             <#include "/includes/ng2_templates/language-ng2-template.ftl">
-            <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>
-                <#include "/includes/ng2_templates/user-menu-template.ftl">
-                <#include "/includes/ng2_templates/header2-ng2-template.ftl">
-                <header2-ng2></header2-ng2>
-            </@orcid.checkFeatureStatus>
-         
-            <div class="container"
-             <@orcid.checkFeatureStatus 'NEW_FOOTER'> style="min-height: calc(100% - 118px);" </@orcid.checkFeatureStatus> 
-             >
-                <@orcid.checkFeatureStatus featureName='ENABLE_HEADER2' enabled=false>
-                    <#include "/includes/ng2_templates/header-ng2-template.ftl">
-                    <div class="header center">
-                        <header-ng2></header-ng2>
-                    </div><!-- .header -->
-                </@orcid.checkFeatureStatus>
-                <div id="main" role="main" aria-label="main" class="main <@orcid.checkFeatureStatus 'ENABLE_HEADER2'>header2-main</@orcid.checkFeatureStatus>">
+            <#include "/includes/ng2_templates/user-menu-template.ftl">
+            <#include "/includes/ng2_templates/header2-ng2-template.ftl">
+            <header2-ng2></header2-ng2>
+            <div class="container" style="min-height: calc(100% - 118px);" >
+			<div id="main" role="main" aria-label="main" class="main header2-main">
         </#if>
                 <script type="text/ng-template" id="maintenance-message-ng2-template">
                     <div *ngIf="maintenanceMessage!='' && visible" class="row">
@@ -148,66 +137,49 @@
                     </a>
                     </div>
                 </div>
-                <@orcid.checkFeatureStatus 'NEW_FOOTER'>
-                    <footer class="footer-main" aria-label="<@orcid.msg 'aria.footer'/>">
-                        <div class="container" role="presentation">
-            	            <span id="noop" role="presentation"><!-- For automated tests --> </span>
-                            <div class="row footer-row-container" role="presentation"> 
+                
+                <footer class="footer-main" aria-label="<@orcid.msg 'aria.footer'/>">
+                    <div class="container" role="presentation">
+        	            <span id="noop" role="presentation"><!-- For automated tests --> </span>
+                        <div class="row footer-row-container" role="presentation"> 
 
-                                <div class="footer-row-text-container" role="presentation">
-                                    <div>
-                                        <div class="footer-row-icons-container" role="presentation">
-                                            <a href="{{aboutUri}}" alt="ORCID logo">
-                                                <img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
-                                            </a>
-                                            <nav aria-label="social">
-                                                <ul class="inline-list" role="presentation">
-                                                    <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter" rel="noreferrer"><span class="social social-twitter" aria-label="twitter"></span></a></li>
-                                                    <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss" rel="noreferrer"><span class="social social-rss" aria-label="rss"></span></a></li>
-                                                    <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github" rel="noreferrer"><span class="social social-github" aria-label="github"></span></a></li>
-                                                </ul>
-                                            </nav>
-                                        </div>
+                            <div class="footer-row-text-container" role="presentation">
+                                <div>
+                                    <div class="footer-row-icons-container" role="presentation">
+                                        <a href="{{aboutUri}}" alt="ORCID logo">
+                                            <img *ngIf="assetsPath != null" src="{{assetsPath + '/img/orcid-logo.svg'}}" width="110px" alt="ORCID logo">
+                                        </a>
+                                        <nav aria-label="social">
+                                            <ul class="inline-list" role="presentation">
+                                                <li role="presentation"><a class="social-button" href="https://twitter.com/orcid_org" target="social-twitter" rel="noreferrer"><span class="social social-twitter" aria-label="twitter"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="http://orcid.org/blog/feed" target="social-rss" rel="noreferrer"><span class="social social-rss" aria-label="rss"></span></a></li>
+                                                <li role="presentation"><a class="social-button" href="https://github.com/ORCID" target="social-github" rel="noreferrer"><span class="social social-github" aria-label="github"></span></a></li>
+                                            </ul>
+                                        </nav>
                                     </div>
+                                </div>
 
-                                    <p role="presentation">
-                                        <a rel="license noreferrer" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/" ><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none; margin-right: 4px;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license noreferrer" target="footer.copyright_cc0" class="footer-url" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a><@orcid.msg 'common.period'/> <@orcid.msg 'footer.copyright_cc0_3'/><@orcid.msg 'common.period'/></p>
-                                    <nav>
-                                        <ul class="inline-list">
-                                            <li><a href="{{aboutUri}}/about"><@orcid.msg 'wp-infosite-header.aboutOrcid'/></a></li>
-                                            <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'wp-infosite-header.privacyPolicy'/></a></li>
-                                            <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'wp-infosite-header.termOfUse'/></a></li>
-                                            <li><a href="{{aboutUri}}/content/orcid-accessibility-statement"><@orcid.msg 'wp-infosite-header.accesibilityStatement'/></a></li>
-                                        </ul>
-                                        <ul class="inline-list">
-                                            <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactSupport'/></a></li>
-                                            <li><a href="{{aboutUri}}/orcid-dispute-procedures"><@orcid.msg 'wp-infosite-header.disputeProcedures'/></a></li>
-                                            <li><a href="{{aboutUri}}/trademark-and-id-display-guidelines/"><@orcid.msg 'wp-infosite-header.brandGuidelines'/></a></li>
-                                            <li><a id="ot-sdk-btn" class="ot-sdk-show-settings"><@orcid.msg 'wp-infosite-header.cookieSettings'/></a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </footer>
-                </@orcid.checkFeatureStatus>
-                <@orcid.checkFeatureStatus featureName='NEW_FOOTER' enabled=false>
-                    <div id="footer" class="footer clear-fix">
-                        <span id="noop"><!-- For automated tests --> </span>
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-11 col-md-offset-1">
-                                    <ul class="col-md-11 col-md-offset-1">
-                                        <li class=""><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'public-layout.contact_us'/></a></li>
-                                        <li class=""><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'public-layout.privacy_policy'/></a></li>
-                                        <li class=""><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'public-layout.terms_of_use'/></a></li>
-                                        <li class=""><a href="{{aboutUri}}/open-source-license"><@orcid.msg 'footer.openSource'/></a></li>
+                                <p role="presentation">
+                                    <a rel="license noreferrer" target="footer.copyright_cc0" href="http://creativecommons.org/publicdomain/zero/1.0/" ><img *ngIf="assetsPath != null" src="{{assetsPath + '/img/cc0_80x15.png'}}" style="border-style: none; margin-right: 4px;" alt="CC0" /></a> <@orcid.msg 'footer.copyright_cc0_1'/> <a rel="license noreferrer" target="footer.copyright_cc0" class="footer-url" href="http://creativecommons.org/publicdomain/zero/1.0/"><@orcid.msg 'footer.copyright_cc0_2'/></a><@orcid.msg 'common.period'/> <@orcid.msg 'footer.copyright_cc0_3'/><@orcid.msg 'common.period'/></p>
+                                <nav>
+                                    <ul class="inline-list">
+                                        <li><a href="{{aboutUri}}/about"><@orcid.msg 'wp-infosite-header.aboutOrcid'/></a></li>
+                                        <li><a href="{{aboutUri}}/footer/privacy-policy"><@orcid.msg 'wp-infosite-header.privacyPolicy'/></a></li>
+                                        <li><a href="{{aboutUri}}/content/orcid-terms-use"><@orcid.msg 'wp-infosite-header.termOfUse'/></a></li>
+                                        <li><a href="{{aboutUri}}/content/orcid-accessibility-statement"><@orcid.msg 'wp-infosite-header.accesibilityStatement'/></a></li>
                                     </ul>
-                                </div>
+                                    <ul class="inline-list">
+                                        <li><a href="https://support.orcid.org/hc/en-us/requests/new"><@orcid.msg 'wp-infosite-header.contactSupport'/></a></li>
+                                        <li><a href="{{aboutUri}}/orcid-dispute-procedures"><@orcid.msg 'wp-infosite-header.disputeProcedures'/></a></li>
+                                        <li><a href="{{aboutUri}}/trademark-and-id-display-guidelines/"><@orcid.msg 'wp-infosite-header.brandGuidelines'/></a></li>
+                                        <li><a id="ot-sdk-btn" class="ot-sdk-show-settings"><@orcid.msg 'wp-infosite-header.cookieSettings'/></a></li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
-                </@orcid.checkFeatureStatus>
+                </footer>
+                
                 <form action="{{getBaseUri()}}" aria-hidden="true">
                     <input id="imageUrl" type="hidden" value="{{assetsPath}}/images">                
                 </form>
