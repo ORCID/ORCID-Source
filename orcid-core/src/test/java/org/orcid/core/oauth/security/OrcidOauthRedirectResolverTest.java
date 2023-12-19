@@ -218,14 +218,14 @@ public class OrcidOauthRedirectResolverTest {
     
     @Test
     public void redirectMatches_AllowMatchingSubdomainsTest() {
-        // Temp: Subdomain should match if the togglz is OFF
-        assertTrue(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
-        assertTrue(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));        
+        // Subdomain should not match
+        assertFalse(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
+        assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));    
         
-        // Acceptance criteria checks: These should pass when the togglz is OFF
-        assertTrue(resolver.redirectMatches("https://subdomain.example.com/", "https://example.com"));
-        assertTrue(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
-        assertTrue(resolver.redirectMatches("https://www.example.com", "https://example.com"));
+        // Acceptance criteria checks: subdomains should be rejected
+        assertFalse(resolver.redirectMatches("https://subdomain.example.com/", "https://example.com"));
+        assertFalse(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
+        assertFalse(resolver.redirectMatches("https://www.example.com", "https://example.com"));
     }
     
 }
