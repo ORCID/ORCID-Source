@@ -17,7 +17,7 @@ For adding multiple published articles: Scopus allows you to add your Scopus Aut
 
 BASE (Bielefeld Academic Search Engine) allows you to claim and import works from the Bielefeld Academic Search Engine. To use, you must first create a BASE user account. Recommended for authors of open access publications.
 
-We have more `search and link` wizards available within your ORCID record.
+We have more 'search and link' wizards available within your ORCID record.
 
 If you are having trouble adding your research outputs or you would like to know more about how to add data to your ORCID record, please visit our ORCID Help Center.
 

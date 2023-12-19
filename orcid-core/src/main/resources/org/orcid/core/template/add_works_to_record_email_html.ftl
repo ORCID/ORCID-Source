@@ -31,7 +31,7 @@
         <p><@emailMacros.msg "email.addWorks.belowAreLinks" /></p>
         <p><@emailMacros.msg "email.addWorks.forAddingJournal" /><@emailMacros.space /><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
-                    href="https://orcid.org/oauth/authorize?client_id=0000-0002-3054-1567&response_type=code&scope=%2Fread-limited%20%2Factivities%2Fupdate&redirect_uri=https:%2F%2Fsearch.crossref.org%2Fauth%2Forcid%2Fimport"
+                    href="https://orcid.org/oauth/authorize?client_id=0000-0002-3054-1567&response_type=code&scope=%2Factivities%2Fupdate%20%2Fread-limited&redirect_uri=https:%2F%2Fsearch.crossref.org%2Fauth%2Forcid%2Fsearch-and-link"
                     target="_blank">Crossref Metadata Search</a><@emailMacros.space /><@emailMacros.msg "email.addWorks.allowsYouToSearch" /></p>
         <p><@emailMacros.msg "email.addWorks.forAddingLife" /><@emailMacros.space /><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
@@ -45,9 +45,9 @@
         <p><a style="text-decoration: underline;color: #085c77;display: inline-block;"
                 href="https://orcid.org/oauth/authorize?client_id=APP-HCGH49OO61VH1II3&response_type=code&scope=%2Fread-limited%20%2Factivities%2Fupdate&redirect_uri=https:%2F%2Fwww.base-search.net%2FSearch%2FOrcidSearchLink"
                 target="_blank">BASE</a> (Bielefeld Academic Search Engine)<@emailMacros.space /><@emailMacros.msg "email.addWorks.allowsYouClaim" /></p>
-        <p><@emailMacros.msg "email.addWorks.weHaveSeachAndLink" /><@emailMacros.space /><a
+        <p><@emailMacros.msg "email.addWorks.weHaveSearchAndLink" /><@emailMacros.space /><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
-                    href="https://testserver.orcid.org/my-orcid"
+                    href="${baseUri}/my-orcid"
                     target="_blank"><@emailMacros.msg "email.addWorks.yourOrcidRecord" /></a>.</p>
         <p><@emailMacros.msg "email.addWorks.ifYouAreHavingTrouble" /><@emailMacros.space /><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
@@ -73,7 +73,7 @@
             > | <a style="text-decoration: underline;color: #085c77;display: inline-block;"
                    href="https://orcid.org/footer/privacy-policy" target="_blank"
             ><@emailMacros.msg "email.common.privacy_policy" /></a> |
-            <b><@emailMacros.msg "email.common.address1" /></b> | <@emailMacros.msg "email.common.address2" /> |
+            <@emailMacros.msg "email.common.address1" /> | <@emailMacros.msg "email.common.address2" /> |
             <a
                     style="text-decoration: underline;color: #085c77;"
                     href="${baseUri}"
