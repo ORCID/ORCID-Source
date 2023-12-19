@@ -60,10 +60,8 @@ public class OrcidSolrOrgsClient {
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
         query.addOrUpdateSort("score", ORDER.desc);
-        if (Features.ORG_SEARCH_SORT_BY_POPULARITY.isActive()) {
-            query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
-        }
-
+        query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
+        
         query.addFilterQuery(String.format("(%s:(%s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "FUNDREF"));
         LOGGER.debug("SOLR Query: " + query.toQueryString());
 

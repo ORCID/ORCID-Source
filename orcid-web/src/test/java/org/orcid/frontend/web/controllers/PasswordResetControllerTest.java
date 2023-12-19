@@ -118,8 +118,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
     
     @Test
     public void testPasswordResetUnclaimedSendEmail() throws DatatypeConfigurationException {
-        //TODO: remove togglzRule.enable togglz when feature is live
-        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
         String email = "email1@test.orcid.org";
         String orcid = "0000-0000-0000-0000";
         when(emailManager.emailExists(email)).thenReturn(true); 
@@ -137,8 +135,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
     
     @Test
     public void testPasswordResetUserNotFoundSendEmail() {
-        //TODO: remove togglzRule.enable togglz when feature is live
-        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);        
         EmailRequest resetRequest = new EmailRequest();
         resetRequest.setEmail("not_in_orcid@test.orcid.org");
         resetRequest = passwordResetController.issuePasswordResetRequest(new MockHttpServletRequest(), resetRequest).getBody();
@@ -148,8 +144,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
     @Test
     public void testPasswordResetUserDeactivatedSendEmail() throws DatatypeConfigurationException {
-        //TODO: remove togglzRule.enable togglz when feature is live
-        togglzRule.enable(Features.RESET_PASSWORD_EMAIL);
         String email = "email1@test.orcid.org";
         String orcid = "0000-0000-0000-0000";
         when(emailManager.emailExists(email)).thenReturn(true); 

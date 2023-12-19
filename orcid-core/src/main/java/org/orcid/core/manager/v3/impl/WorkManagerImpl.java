@@ -1,5 +1,17 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
@@ -17,7 +29,6 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -48,17 +59,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
@@ -359,13 +359,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
 
-        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
-            if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
-                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
-                return workSaved;
-            }
+        if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+            return workSaved;
         }
-
+        
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
         Source activeSource = sourceManager.retrieveActiveSource();
         
@@ -548,14 +546,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         WorkExtended workSaved = jpaJaxbWorkAdapter.toWorkExtended(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
-
-        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
-            if (workFormSaved.compare(workForm)) {
-                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
-                return workSaved;
-            }
+        
+        if (workFormSaved.compare(workForm)) {
+            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+            return workSaved;
         }
-
+        
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
 
         //Save the original source
