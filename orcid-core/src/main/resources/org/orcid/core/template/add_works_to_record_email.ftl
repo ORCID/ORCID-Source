@@ -21,7 +21,7 @@
 
 BASE (Bielefeld Academic Search Engine)<@emailMacros.space /><@emailMacros.msg "email.addWorks.allowsYouClaim" />
 
-<@emailMacros.msg "email.addWorks.weHaveSeachAndLink" /><@emailMacros.space /><@emailMacros.msg "email.addWorks.yourOrcidRecord" />.
+<@emailMacros.msg "email.addWorks.weHaveSearchAndLink" /><@emailMacros.space /><@emailMacros.msg "email.addWorks.yourOrcidRecord" />.
 
 <@emailMacros.msg "email.addWorks.ifYouAreHavingTrouble" /><@emailMacros.space /><@emailMacros.msg "email.addWorks.orcidHelpCenter" />.
 
