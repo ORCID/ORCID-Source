@@ -13,8 +13,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -40,7 +40,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     private BackupCodeManager backupCodeManager;
     
     @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
     
     @Resource
     private ProfileDao profileDao;

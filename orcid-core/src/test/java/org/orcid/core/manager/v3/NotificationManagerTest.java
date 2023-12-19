@@ -64,6 +64,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
@@ -90,7 +91,7 @@ public class NotificationManagerTest extends DBUnitTest {
             "/data/BiographyEntityData.xml");
 
     @Mock
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
 
     @Mock
     private SourceManager mockSourceManager;

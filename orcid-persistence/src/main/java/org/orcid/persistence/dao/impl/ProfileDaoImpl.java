@@ -842,18 +842,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    public List<Pair<String, String>> findEmailsToSendAddWorksEmail() {
+    public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo) {
         StringBuilder qs = new StringBuilder("SELECT e.email, p.orcid FROM email e ");
         qs.append("LEFT JOIN email_frequency ef ON e.orcid = ef.orcid ");
         qs.append("LEFT OUTER JOIN work w ON e.orcid = w.orcid ");
         qs.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true AND p.deprecated_date is null AND ");
         qs.append("p.profile_deactivation_date is null AND p.account_expiry is null ");
         qs.append("WHERE ");
-        qs.append(getWorkCreatedNumberOfDaysAgo("7"));
-        qs.append("OR ");
-        qs.append(getWorkCreatedNumberOfDaysAgo("28"));
-        qs.append("OR ");
-        qs.append(getWorkCreatedNumberOfDaysAgo("90"));
+        qs.append("e.is_verified = true and e.is_primary = true and ");
+        qs.append("ef.send_quarterly_tips = true and ");
+        qs.append("w.orcid is null and ");
+        qs.append("CAST(p.date_created as date) = CAST(CURRENT_DATE - INTERVAL '");
+        qs.append(profileCreatedNumberOfDaysAgo);
+        qs.append("' day as date) ");
         qs.append("GROUP BY e.email, p.orcid");
 
         Query query = entityManager.createNativeQuery(qs.toString());
@@ -866,10 +867,4 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return results;
     }
 
-    private String getWorkCreatedNumberOfDaysAgo(String days) {
-        return "e.is_verified = true and e.is_primary = true and\n" +
-                "      ef.send_quarterly_tips = true and\n" +
-                "      w.orcid is null and\n" +
-                "      CAST(p.date_created as date) = CAST(CURRENT_DATE - INTERVAL '"+ days +"' day as date) ";
-    }
 }
