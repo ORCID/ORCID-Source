@@ -91,6 +91,6 @@ public class OrcidOauthRedirectResolver extends DefaultRedirectResolver {
     
     @Override
     protected boolean hostMatches(String registered, String requested) {
-        return isEqual(registered, requested) || (requested != null && requested.endsWith("." + registered));        
+        return isEqual(registered, requested);
     }
 }
