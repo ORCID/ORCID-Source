@@ -1,3 +1,15 @@
+## v2.47.3 - 2023-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.2...v2.47.3)
+
+- [#6954](https://github.com/ORCID/ORCID-Source/pull/6954): fix: Update links and translations in `encourage email to add works` …
+- [#6953](https://github.com/ORCID/ORCID-Source/pull/6953): Check for orcidaware entity
+- [#6950](https://github.com/ORCID/ORCID-Source/pull/6950): Togglz cleanup3
+
+### Fix
+
+- Update links and translations in `encourage email to add works` email
+
 ## v2.47.2 - 2023-12-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.1...v2.47.2)
