@@ -1,3 +1,9 @@
+## v2.47.2 - 2023-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.1...v2.47.2)
+
+- [#6952](https://github.com/ORCID/ORCID-Source/pull/6952): Sub domains should not match
+
 ## v2.47.1 - 2023-12-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.0...v2.47.1)
