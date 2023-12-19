@@ -103,14 +103,16 @@ public class SourceEntityUtils {
         // client
         if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
-            ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
-            if (clientSource.isUserOBOEnabled()) {
-                String orcidId = null;
-                if (e instanceof OrcidAware) {                        
-                    orcidId = ((OrcidAware) e).getOrcid();
-                }
-                source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
-            }            
+            if(e instanceof OrcidAware) {
+                ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
+                if (clientSource.isUserOBOEnabled()) {
+                    String orcidId = null;
+                    if (e instanceof OrcidAware) {                        
+                        orcidId = ((OrcidAware) e).getOrcid();
+                    }
+                    source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
+                }     
+            }
         }
 
         // member obo
