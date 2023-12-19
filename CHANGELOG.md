@@ -1,3 +1,9 @@
+## v2.47.4 - 2023-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.3...v2.47.4)
+
+- [#6955](https://github.com/ORCID/ORCID-Source/pull/6955): Remove RESTRICTED_DELEGATORS
+
 ## v2.47.3 - 2023-12-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.2...v2.47.3)
