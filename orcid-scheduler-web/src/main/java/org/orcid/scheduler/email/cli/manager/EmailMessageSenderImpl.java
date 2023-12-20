@@ -624,7 +624,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     private void sendAddWorksToRecordEmailAttempt(int addWorksAttemptEmail, ProfileEventType profileEventType){
         if (Features.SEND_ADD_WORKS_EMAILS.isActive()) {
+            LOGGER.info("Sending 'Add works' email reminder for {} days", addWorksAttemptEmail);
             List<Pair<String, String>> elements = profileDaoReadOnly.findEmailsToSendAddWorksEmail(addWorksAttemptEmail);
+            LOGGER.debug("Found {} add works reminders to send" , elements.size());
             for (Pair<String, String> element: elements) {
                 String email = element.getLeft();
                 String userOrcid = element.getRight();
