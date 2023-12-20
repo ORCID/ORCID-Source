@@ -1,3 +1,9 @@
+## v2.47.5 - 2023-12-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.4...v2.47.5)
+
+- [#6957](https://github.com/ORCID/ORCID-Source/pull/6957): Add works email granular config props
+
 ## v2.47.4 - 2023-12-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.3...v2.47.4)
