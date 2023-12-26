@@ -1,3 +1,9 @@
+## v2.47.6 - 2023-12-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.5...v2.47.6)
+
+- [#6958](https://github.com/ORCID/ORCID-Source/pull/6958): Remove the ENABLE_RECORD_CREATE_ENDPOINT togglz
+
 ## v2.47.5 - 2023-12-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.4...v2.47.5)
