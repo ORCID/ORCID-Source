@@ -25,10 +25,7 @@ public enum Features implements Feature {
     CRAZY_EGG,
 
     @Label("HelpHero")
-    ORCID_ANGULAR_HELP_HERO,    
-    
-    @Label("Enable the API record create endpoint for QA purposes")
-    ENABLE_RECORD_CREATE_ENDPOINT,
+    ORCID_ANGULAR_HELP_HERO,
     
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB, 
