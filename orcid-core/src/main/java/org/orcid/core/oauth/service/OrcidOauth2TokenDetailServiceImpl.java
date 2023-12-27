@@ -234,6 +234,16 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, RevokeReason reason) {
+        // Find the tokens to disable
+        List<String> tokensToDisable = orcidOauth2TokenDetailDao.findAccessTokenByCodeAndClient(authorizationCode, clientID); 
+        // Remove them from the cache
+        for(String accessToken : tokensToDisable) {
+            LOGGER.info("Token {} will be disabled because auth code {} was reused", accessToken, authorizationCode);
+            if(isTokenCacheEnabled) {
+                redisClient.remove(accessToken);
+            }            
+        }
+        // Disable them
         return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID, reason.name());
     }
 
