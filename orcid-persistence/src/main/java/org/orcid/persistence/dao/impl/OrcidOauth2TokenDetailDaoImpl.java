@@ -169,8 +169,16 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         query.setParameter("authorizationCode", authorizationCode);
         query.setParameter("clientId", clientId);
         query.setParameter("reason", reason);
-        int count = query.executeUpdate();
-        return count;
+        return query.executeUpdate();
+    }
+    
+    @Override
+    public List<String> findAccessTokenByCodeAndClient(String authorizationCode, String clientId) {
+        Query query = entityManager.createQuery("select tokenValue from OrcidOauth2TokenDetail where clientDetailsId = :clientId and authorizationCode = :authorizationCode");
+        query.setParameter("authorizationCode", authorizationCode);
+        query.setParameter("clientId", clientId);
+        
+        return query.getResultList();
     }
     
     @Override

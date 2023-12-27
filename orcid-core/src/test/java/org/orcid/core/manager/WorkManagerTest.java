@@ -26,14 +26,12 @@ import javax.xml.datatype.DatatypeFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.CreatedDate;
@@ -74,7 +72,6 @@ import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.togglz.junit.TogglzRule;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
@@ -104,9 +101,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
-
-    @Rule
-    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {

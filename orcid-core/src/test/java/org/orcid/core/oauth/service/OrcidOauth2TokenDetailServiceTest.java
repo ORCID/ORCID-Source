@@ -7,9 +7,12 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -19,16 +22,22 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -50,12 +59,23 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
+    @Mock
+    private RedisClient redisClientMock;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
                 "/data/ProfileEntityData.xml"));
     }
 
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        // Enable the cache
+        TargetProxyHelper.injectIntoProxy(orcidOauth2TokenDetailService, "isTokenCacheEnabled", true);
+        TargetProxyHelper.injectIntoProxy(orcidOauth2TokenDetailService, "redisClient", redisClientMock);
+    }
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -216,6 +236,57 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         }
     }
     
+    @Test
+    public void disableAccessTokenByCodeAndClientTest() {
+        Date date = new Date(System.currentTimeMillis() + 100000);
+        String authCode = "auth-code-1";
+        OrcidOauth2TokenDetail dbt1 = createToken(CLIENT_ID_1, "token-1", USER_ORCID, date, "/activities/update", false, authCode);
+        OrcidOauth2TokenDetail dbt2 = createToken(CLIENT_ID_1, "token-2", USER_ORCID, date, "/activities/update", false, authCode);
+        OrcidOauth2TokenDetail dbt3 = createToken(CLIENT_ID_1, "token-3", USER_ORCID, date, "/activities/update", false, authCode);
+        OrcidOauth2TokenDetail dbt4 = createToken(CLIENT_ID_1, "token-4", USER_ORCID_2, date, "/activities/update", false, authCode);
+        OrcidOauth2TokenDetail dbt5 = createToken(CLIENT_ID_2, "token-5", USER_ORCID_3, date, "/activities/update", false, authCode);
+        OrcidOauth2TokenDetail dbt6 = createToken(CLIENT_ID_2, "token-6", USER_ORCID, date, "/activities/update", false, authCode);
+        
+        // Disable tokens with authCode and CLIENT_ID_1
+        orcidOauth2TokenDetailService.disableAccessTokenByCodeAndClient(authCode, CLIENT_ID_1, RevokeReason.AUTH_CODE_REUSED);
+        
+        verify(redisClientMock, times(1)).remove("token-1");
+        verify(redisClientMock, times(1)).remove("token-2");
+        verify(redisClientMock, times(1)).remove("token-3");
+        verify(redisClientMock, times(1)).remove("token-4");
+        
+        // Tokens 1, 2, 3 and 4 should be revoked
+        OrcidOauth2TokenDetail t1 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-1");
+        assertNotNull(t1.getRevocationDate());
+        assertEquals(RevokeReason.AUTH_CODE_REUSED.toString(), t1.getRevokeReason());
+        OrcidOauth2TokenDetail t2 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-2");
+        assertNotNull(t2.getRevocationDate());
+        assertEquals(RevokeReason.AUTH_CODE_REUSED.toString(), t2.getRevokeReason());
+        OrcidOauth2TokenDetail t3 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-3");
+        assertNotNull(t3.getRevocationDate());
+        assertEquals(RevokeReason.AUTH_CODE_REUSED.toString(), t3.getRevokeReason());
+        // This case is never possible, the client used the same auth code to create a token on other user
+        OrcidOauth2TokenDetail t4 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-4");
+        assertNotNull(t4.getRevocationDate());
+        assertEquals(RevokeReason.AUTH_CODE_REUSED.toString(), t4.getRevokeReason());        
+        
+        // Tokens 5 and 6 should be active
+        OrcidOauth2TokenDetail t5 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-5");
+        assertNull(t5.getRevocationDate());
+        assertNull(t5.getRevokeReason());
+        OrcidOauth2TokenDetail t6 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-6");
+        assertNull(t6.getRevocationDate());
+        assertNull(t6.getRevokeReason());
+        
+        // Cleanup
+        orcidOauth2TokenDetailDao.remove(dbt1.getId());
+        orcidOauth2TokenDetailDao.remove(dbt2.getId());
+        orcidOauth2TokenDetailDao.remove(dbt3.getId());
+        orcidOauth2TokenDetailDao.remove(dbt4.getId());
+        orcidOauth2TokenDetailDao.remove(dbt5.getId());
+        orcidOauth2TokenDetailDao.remove(dbt6.getId());
+    }
+    
     @Test    
     public void updateScopesTest() {
         String tokenValue = "TOKEN123";
@@ -261,6 +332,10 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     }
     
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
+        return createToken(clientId, tokenValue, userOrcid, expirationDate, scopes, disabled, null);
+    }
+    
+    private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled, String authCode) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);
@@ -270,7 +345,9 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         token.setTokenExpiration(expirationDate);
         token.setTokenType("bearer");
         token.setTokenValue(tokenValue);
+        token.setAuthorizationCode(authCode);
         orcidOauth2TokenDetailDao.persist(token);
         return token;
     }
+        
 }
