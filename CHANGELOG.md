@@ -1,3 +1,9 @@
+## v2.47.7 - 2023-12-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.6...v2.47.7)
+
+- [#6959](https://github.com/ORCID/ORCID-Source/pull/6959): Add unit tests
+
 ## v2.47.6 - 2023-12-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.5...v2.47.6)
