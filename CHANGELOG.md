@@ -1,3 +1,9 @@
+## v2.47.8 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.7...v2.47.8)
+
+- [#6961](https://github.com/ORCID/ORCID-Source/pull/6961): OCID to ORCID
+
 ## v2.47.7 - 2023-12-27
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.6...v2.47.7)
