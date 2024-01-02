@@ -1,3 +1,9 @@
+## v2.47.9 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.8...v2.47.9)
+
+- [#6963](https://github.com/ORCID/ORCID-Source/pull/6963): Research outputs email
+
 ## v2.47.8 - 2024-01-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.7...v2.47.8)
