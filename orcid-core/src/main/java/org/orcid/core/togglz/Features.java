@@ -40,7 +40,10 @@ public enum Features implements Feature {
     SEND_ALL_VERIFICATION_EMAILS,
 
     @Label("Send add works emails for 7, 28 and 90 days.")
-    SEND_ADD_WORKS_EMAILS;
+    SEND_ADD_WORKS_EMAILS,
+
+    @Label("Delete events older than 90 days from the DB ")
+    DELETE_EVENTS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

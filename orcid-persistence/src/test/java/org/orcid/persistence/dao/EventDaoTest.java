@@ -1,4 +1,4 @@
-package org.orcid.persistence;
+package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -14,7 +15,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.EventEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -37,6 +37,21 @@ public class EventDaoTest extends DBUnitTest {
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/EventEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
+    }
+
+    @Test
+    public void deleteEventsByDate() {
+        List<EventEntity> eventEntityList = eventDao.findAll();
+
+        assertNotNull(eventEntityList);
+        assertEquals(3, eventEntityList.size());
+
+        eventDao.deleteEventsByDate(90);
+
+        eventEntityList = eventDao.findAll();
+
+        assertNotNull(eventEntityList);
+        assertEquals(0, eventEntityList.size());
     }
 
     @Test
@@ -63,5 +78,4 @@ public class EventDaoTest extends DBUnitTest {
         assertEquals(eventEntity.getLabel(), fromDb.getLabel());
         assertNotNull(fromDb.getDateCreated());
     }
-    
 }
