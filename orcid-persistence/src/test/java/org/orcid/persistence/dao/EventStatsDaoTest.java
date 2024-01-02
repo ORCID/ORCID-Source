@@ -9,6 +9,9 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.annotation.Resource;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -42,7 +45,9 @@ public class EventStatsDaoTest {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventType("Sign-In");
             eventEntity.setClientId("Client " + 1);
-            eventEntity.setDateCreated(new Date());
+            LocalDate date = LocalDate.now().minusDays(1);
+            Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
+            eventEntity.setDateCreated(Date.from(instant));
             eventDao.createEvent(eventEntity);
         }
     }

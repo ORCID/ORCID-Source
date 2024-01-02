@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.AfterClass;
@@ -77,5 +78,7 @@ public class EventDaoTest extends DBUnitTest {
         assertEquals(eventEntity.getId(), fromDb.getId());
         assertEquals(eventEntity.getLabel(), fromDb.getLabel());
         assertNotNull(fromDb.getDateCreated());
+
+        eventDao.delete(eventEntity.getId());
     }
 }

@@ -35,6 +35,12 @@ public class EventDaoImpl implements EventDao {
     }
 
     @Override
+    @Transactional
+    public void delete(long id) {
+        entityManager.remove(find(id));
+    }
+
+    @Override
     public List<EventEntity> findAll() {
         TypedQuery<EventEntity> query = entityManager.createQuery("from EventEntity", EventEntity.class);
         return query.getResultList();
@@ -43,7 +49,7 @@ public class EventDaoImpl implements EventDao {
     @Override
     @Transactional
     public void deleteEventsByDate(Integer numberOfDays) {
-        String query = "DELETE FROM event where CAST(date_created as date) < CAST(now() - (CAST('1' AS INTERVAL DAY) * 1) as date) * :numberOfDays)";
+        String query = "DELETE FROM event where CAST(date_created as date) < CAST(now() - (CAST('1' AS INTERVAL DAY) * :numberOfDays) as date)";
         Query queryDelete = entityManager.createNativeQuery(query);
         queryDelete.setParameter("numberOfDays", numberOfDays);
         queryDelete.executeUpdate();
