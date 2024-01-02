@@ -1,3 +1,9 @@
+## v2.47.10 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.9...v2.47.10)
+
+- [#6964](https://github.com/ORCID/ORCID-Source/pull/6964): Missing tx files
+
 ## v2.47.9 - 2024-01-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.8...v2.47.9)
