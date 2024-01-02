@@ -184,3 +184,8 @@ filters:
     source_language: en
     translation_files_expression: orcid-core/src/main/resources/i18n/layout_<lang>.properties
     source_file: orcid-core/src/main/resources/i18n/layout_en.properties
+  - filter_type: file
+    file_format: UNICODEPROPERTIES
+    source_language: en
+    translation_files_expression: orcid-core/src/main/resources/i18n/email_add_works_to_record_<lang>.properties
+    source_file: orcid-core/src/main/resources/i18n/email_add_works_to_record_en.properties
