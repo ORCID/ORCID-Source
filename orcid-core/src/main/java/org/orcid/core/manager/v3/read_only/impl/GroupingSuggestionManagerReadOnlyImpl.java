@@ -6,7 +6,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.GroupingSuggestionsCacheManager;
 import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
 import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
@@ -18,9 +17,6 @@ public class GroupingSuggestionManagerReadOnlyImpl implements GroupingSuggestion
 
     @Override
     public WorkGroupingSuggestions getGroupingSuggestions(String orcid) {
-        if (!Features.GROUPING_SUGGESTIONS.isActive()) {
-            return null;
-        }
         boolean more = groupingSuggestionsCacheManager.getGroupingSuggestionCount(orcid) > SUGGESTION_BATCH_SIZE;
         List<WorkGroupingSuggestion> suggestions = groupingSuggestionsCacheManager.getGroupingSuggestions(orcid, SUGGESTION_BATCH_SIZE);
         return getWorkGroupingSuggestions(suggestions, more);

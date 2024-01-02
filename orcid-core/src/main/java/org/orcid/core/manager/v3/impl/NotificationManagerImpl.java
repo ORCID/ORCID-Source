@@ -55,6 +55,7 @@ import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -101,7 +102,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private EncryptionManager encryptionManager;
 
     @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
 
     @Resource
     private ProfileDao profileDao;
@@ -175,7 +176,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         this.encryptionManager = encryptionManager;
     }
 
-    public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
+    public void setProfileEventDao(ProfileEventDao profileEventDao) {
         this.profileEventDao = profileEventDao;
     }
 

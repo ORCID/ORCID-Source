@@ -22,6 +22,7 @@ import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.NotificationTipEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -41,7 +42,7 @@ public abstract class QuarterlyNotificationsManager {
 
     private static Logger LOG = LoggerFactory.getLogger(QuarterlyNotificationsManager.class);
     
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
 
     private ProfileDao profileDaoReadOnly;
     
@@ -89,7 +90,7 @@ public abstract class QuarterlyNotificationsManager {
         notificationDao = (NotificationDao) context.getBean("notificationDao");        
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         emailFrequencyDao = (EmailFrequencyDao) context.getBean("emailFrequencyDao");
-        profileEventDao = (GenericDao) context.getBean("profileEventDao");
+        profileEventDao = (ProfileEventDao) context.getBean("profileEventDao");
         encryptionManager = (EncryptionManager) context.getBean("encryptionManager");
         messages = (MessageSource) context.getBean("messageSource");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");

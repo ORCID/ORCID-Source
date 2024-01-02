@@ -207,9 +207,7 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />
     </bean>
     
-    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.ProfileEventEntity" />
-    </bean>    
+    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.ProfileEventDaoImpl" />
 
     <bean id="emailEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.EmailEventEntity" />
@@ -326,6 +324,7 @@
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
         <property name="changeLog" value="classpath:db-master.xml" />
+        <property name="shouldRun" value="\${org.orcid.persistence.liquibase.enabled:true}" />
     </bean>
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />

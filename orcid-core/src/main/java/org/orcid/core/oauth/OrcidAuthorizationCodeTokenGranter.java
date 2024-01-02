@@ -10,7 +10,6 @@ import javax.annotation.Resource;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
-import org.orcid.core.togglz.Features;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -84,12 +83,10 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
-            if (Features.REVOKE_TOKEN_ON_CODE_REUSE.isActive()){
-                int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId(), RevokeReason.AUTH_CODE_REUSED);
-                if (numDisabled >0){
-                    throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
-                }                
-            }
+            int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId(), RevokeReason.AUTH_CODE_REUSED);
+            if (numDisabled > 0) {
+                throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
+            }                
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
         } else {
             // Check auth code expiration

@@ -24,7 +24,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -153,75 +152,31 @@ public class PasswordResetController extends BaseController {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
-        if (Features.RESET_PASSWORD_EMAIL.isActive()) {
-            try {
-                if (emailManager.emailExists(passwordResetRequest.getEmail())) {
-                    String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-                    if (profileEntityManager.isDeactivated(orcid)) {
-                        LOGGER.info("Password reset: Reactivation email sent to '{}'", passwordResetRequest.getEmail());
-                        recordEmailSender.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
-                    } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
-                        LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
-                        recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
-                    } else {
-                        LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
-                        recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
-                    }
-                } else {
-                    Locale locale = localeManager.getLocale();
-                    LOGGER.info("Password reset: Email not found email sent to '{}' with locale '{}'", passwordResetRequest.getEmail(), locale);
-                    recordEmailSender.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
-                }
-                passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-                return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-            } catch(Exception e) {
-                LOGGER.error("Password reset: Unable to reset password for " + passwordResetRequest.getEmail(), e);                
-                errors.add(getMessage("Email.resetPasswordForm.error"));
-                return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
-            }
-        } else {
-            try {
+        try {
+            if (emailManager.emailExists(passwordResetRequest.getEmail())) {
                 String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-                ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                if (profile == null) {
-                    String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " "
-                            + getMessage("orcid.frontend.reset.password.email_not_found_2");
-                    message += "<a href=\"https://support.orcid.org/\">";
-                    message += getMessage("orcid.frontend.reset.password.email_not_found_3");
-                    message += "</a>";
-                    message += getMessage("orcid.frontend.reset.password.email_not_found_4");
-                    errors.add(message);
-                    return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-                }
-
-                if (profile.getDeactivationDate() != null) {
-                    /*
-                     * String message = getMessage(
-                     * "orcid.frontend.reset.password.disabled_account_1");
-                     * message += "<a href=\"https://support.orcid.org/\">"; message +=
-                     * getMessage(
-                     * "orcid.frontend.reset.password.disabled_account_2");
-                     * message += "</a>"; errors.add(message);
-                     */
-                    errors.add(getMessage("orcid.frontend.security.orcid_deactivated"));
-                    return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-                }
-
-                Boolean isClaimed = profile.getClaimed();
-                String toEmail = passwordResetRequest.getEmail();
-                if (isClaimed == null || !isClaimed) {
-                    LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcid);
-                    recordEmailSender.sendClaimReminderEmail(orcid, 0, toEmail);
+                if (profileEntityManager.isDeactivated(orcid)) {
+                    LOGGER.info("Password reset: Reactivation email sent to '{}'", passwordResetRequest.getEmail());
+                    recordEmailSender.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
+                } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
+                    LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
+                    recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
                 } else {
-                    recordEmailSender.sendPasswordResetEmail(toEmail, orcid);
+                    LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
+                    recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                 }
-                
-                passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-            } catch (NoResultException nre) {
-                errors.add(getMessage("Email.resetPasswordForm.error"));
+            } else {
+                Locale locale = localeManager.getLocale();
+                LOGGER.info("Password reset: Email not found email sent to '{}' with locale '{}'", passwordResetRequest.getEmail(), locale);
+                recordEmailSender.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
             }
+            passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-        }
+        } catch(Exception e) {
+            LOGGER.error("Password reset: Unable to reset password for " + passwordResetRequest.getEmail(), e);                
+            errors.add(getMessage("Email.resetPasswordForm.error"));
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
+        }        
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)

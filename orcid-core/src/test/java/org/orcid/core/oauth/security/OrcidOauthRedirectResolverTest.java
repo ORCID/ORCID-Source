@@ -161,17 +161,10 @@ public class OrcidOauthRedirectResolverTest {
 
     @Test
     public void redirectUriGeneralTests() {
-        redirectUriGeneralTest(true);
-        redirectUriGeneralTest(false);
+        redirectUriGeneralTest();
     }
     
-    private void redirectUriGeneralTest(Boolean togglzEnabled) {
-        if(togglzEnabled) {
-            togglzRule.enable(Features.DISABLE_MATCHING_SUBDOMAINS);
-        } else {
-            togglzRule.disable(Features.DISABLE_MATCHING_SUBDOMAINS);
-        }
-        
+    private void redirectUriGeneralTest() {
         // No matches at all
         assertFalse(resolver.redirectMatches("https://example.com", "https://qa.orcid.org"));
         assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://example.com"));
@@ -225,25 +218,7 @@ public class OrcidOauthRedirectResolverTest {
     
     @Test
     public void redirectMatches_AllowMatchingSubdomainsTest() {
-        // Allow matching subdomains
-        togglzRule.disable(Features.DISABLE_MATCHING_SUBDOMAINS);
-                
-        // Temp: Subdomain should match if the togglz is OFF
-        assertTrue(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
-        assertTrue(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));        
-        
-        // Acceptance criteria checks: These should pass when the togglz is OFF
-        assertTrue(resolver.redirectMatches("https://subdomain.example.com/", "https://example.com"));
-        assertTrue(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
-        assertTrue(resolver.redirectMatches("https://www.example.com", "https://example.com"));
-    }
-    
-    @Test
-    public void redirectMatches_RejectMatchingSubdomainsTest() {
-        // Reject matching subdomains
-        togglzRule.enable(Features.DISABLE_MATCHING_SUBDOMAINS);
-                
-        // Subdomain should not match if togglz is ON
+        // Subdomain should not match
         assertFalse(resolver.redirectMatches("https://www.orcid.org", "https://orcid.org"));
         assertFalse(resolver.redirectMatches("https://qa.orcid.org", "https://orcid.org"));    
         
@@ -252,4 +227,5 @@ public class OrcidOauthRedirectResolverTest {
         assertFalse(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
         assertFalse(resolver.redirectMatches("https://www.example.com", "https://example.com"));
     }
+    
 }

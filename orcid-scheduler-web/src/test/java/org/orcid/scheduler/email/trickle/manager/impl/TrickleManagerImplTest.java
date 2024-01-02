@@ -18,8 +18,8 @@ import org.orcid.core.manager.v3.EmailMessage;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.persistence.dao.EmailFrequencyDao;
 import org.orcid.persistence.dao.EmailScheduleDao;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.EmailFrequencyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -48,7 +48,7 @@ public class TrickleManagerImplTest {
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @Mock
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
 
     @InjectMocks
     private TrickleManagerImpl trickleManager;

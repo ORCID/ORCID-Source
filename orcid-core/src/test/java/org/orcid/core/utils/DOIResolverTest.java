@@ -2,8 +2,8 @@ package org.orcid.core.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,6 +23,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.resolvers.DOIResolver;
@@ -34,9 +36,7 @@ import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.orcid.core.togglz.Features;
 import org.togglz.junit.TogglzRule;
-import org.junit.Rule;
 
 
 
@@ -195,7 +195,6 @@ public class DOIResolverTest {
 
         });
 
-        togglzRule.enable(Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED);
         when(cache.get(eq("https://doi.org/10.000/0000.0004"), any(HashMap.class))).thenAnswer(new Answer<InputStream>() {
 
             @Override

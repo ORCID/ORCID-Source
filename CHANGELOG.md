@@ -1,3 +1,80 @@
+## v2.47.8 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.7...v2.47.8)
+
+- [#6961](https://github.com/ORCID/ORCID-Source/pull/6961): OCID to ORCID
+
+## v2.47.7 - 2023-12-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.6...v2.47.7)
+
+- [#6959](https://github.com/ORCID/ORCID-Source/pull/6959): Add unit tests
+
+## v2.47.6 - 2023-12-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.5...v2.47.6)
+
+- [#6958](https://github.com/ORCID/ORCID-Source/pull/6958): Remove the ENABLE_RECORD_CREATE_ENDPOINT togglz
+
+## v2.47.5 - 2023-12-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.4...v2.47.5)
+
+- [#6957](https://github.com/ORCID/ORCID-Source/pull/6957): Add works email granular config props
+
+## v2.47.4 - 2023-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.3...v2.47.4)
+
+- [#6955](https://github.com/ORCID/ORCID-Source/pull/6955): Remove RESTRICTED_DELEGATORS
+
+## v2.47.3 - 2023-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.2...v2.47.3)
+
+- [#6954](https://github.com/ORCID/ORCID-Source/pull/6954): fix: Update links and translations in `encourage email to add works` …
+- [#6953](https://github.com/ORCID/ORCID-Source/pull/6953): Check for orcidaware entity
+- [#6950](https://github.com/ORCID/ORCID-Source/pull/6950): Togglz cleanup3
+
+### Fix
+
+- Update links and translations in `encourage email to add works` email
+
+## v2.47.2 - 2023-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.1...v2.47.2)
+
+- [#6952](https://github.com/ORCID/ORCID-Source/pull/6952): Sub domains should not match
+
+## v2.47.1 - 2023-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.0...v2.47.1)
+
+- [#6951](https://github.com/ORCID/ORCID-Source/pull/6951): Remove old togglz from FTL
+
+## v2.47.0 - 2023-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.46.0...v2.47.0)
+
+- [#6949](https://github.com/ORCID/ORCID-Source/pull/6949): feature: Add encourage user to add works to email events log
+
+### Feature
+
+- Add log for sending `add works reminder` to `profile_event` table
+- Add encourage user to add works to email events log
+
+## v2.46.0 - 2023-12-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.7...v2.46.0)
+
+- [#6948](https://github.com/ORCID/ORCID-Source/pull/6948): Togglz cleanup
+
+## v2.45.7 - 2023-12-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.6...v2.45.7)
+
+- [#6947](https://github.com/ORCID/ORCID-Source/pull/6947): Use the 'ShouldRun' property of liquibase to disable it
+
 ## v2.45.6 - 2023-12-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.45.5...v2.45.6)

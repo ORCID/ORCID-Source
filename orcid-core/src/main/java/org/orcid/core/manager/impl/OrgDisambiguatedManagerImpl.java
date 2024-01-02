@@ -19,7 +19,6 @@ import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.orgs.extId.normalizer.OrgDisambiguatedExternalIdNormalizer;
 import org.orcid.core.orgs.grouping.OrgGrouping;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
-import org.orcid.core.togglz.Features;
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;
@@ -199,8 +198,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
-        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly,
-                Features.ENABLE_PROMOTION_OF_CHOSEN_ORGS.isActive());
+        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly);
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc : docs) {
             OrgDisambiguated org = convertSolrDocument(doc);

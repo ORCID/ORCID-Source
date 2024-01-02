@@ -10,7 +10,6 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
@@ -100,7 +99,7 @@ public class SourceManagerImpl implements SourceManager {
                     ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
                     source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
                     source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));  
-                } else if (tokenDetail.getOrcid() != null && clientDetails.isUserOBOEnabled() && Features.USER_OBO.isActive()) {
+                } else if (tokenDetail.getOrcid() != null && clientDetails.isUserOBOEnabled()) {
                     source.setAssertionOriginOrcid(new SourceOrcid(tokenDetail.getOrcid()));
                     source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(tokenDetail.getOrcid())));
                 }

@@ -7,7 +7,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
@@ -104,8 +103,7 @@ public class SourceEntityUtils {
         // client
         if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
-
-            if (Features.USER_OBO.isActive() && e instanceof OrcidAware) {
+            if(e instanceof OrcidAware) {
                 ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
                 if (clientSource.isUserOBOEnabled()) {
                     String orcidId = null;
@@ -113,7 +111,7 @@ public class SourceEntityUtils {
                         orcidId = ((OrcidAware) e).getOrcid();
                     }
                     source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
-                }
+                }     
             }
         }
 

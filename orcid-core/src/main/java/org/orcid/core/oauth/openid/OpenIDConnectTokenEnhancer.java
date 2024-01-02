@@ -12,7 +12,6 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_v2.Person;
@@ -91,12 +90,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
     public String buildIdToken(OAuth2AccessToken accessToken, String orcid, String clientID, String nonce) throws JOSEException {
         Builder claims = new JWTClaimsSet.Builder();
         claims.audience(clientID);
-        if (Features.OPENID_SIMPLE_SUBJECT.isActive()){
-            claims.subject(orcid);   
-        }else{
-            claims.subject("https://orcid.org"+"/"+orcid);
-            claims.claim("id_path", orcid);
-        }
+        claims.subject(orcid);   
         claims.issuer(path);
         claims.claim("at_hash", createAccessTokenHash(accessToken.getValue()));
         
@@ -106,11 +100,7 @@ public class OpenIDConnectTokenEnhancer implements TokenEnhancer {
         twentyFourHrs.add(Calendar.DAY_OF_YEAR, 1);
         
         claims.issueTime(now);
-        if(Features.ID_TOKEN_24_HOURS_LIFESPAN.isActive()) {
-            claims.expirationTime(twentyFourHrs.getTime());
-        } else {
-            claims.expirationTime(accessToken.getExpiration());
-        }
+        claims.expirationTime(twentyFourHrs.getTime());
         
         claims.jwtID(UUID.randomUUID().toString());
         if (nonce != null)
