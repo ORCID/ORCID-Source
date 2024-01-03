@@ -22,6 +22,7 @@
 	<sec:http pattern="/v3**/o2c.html" security="none"/>
 	
 	<!--  Status check -->
+	<sec:http pattern="/v*/status" security="none"/>
 	<sec:http pattern="/v*/apiStatus" security="none"/>
 	
     <!-- Authenticate the client before reaching the token endpoint -->

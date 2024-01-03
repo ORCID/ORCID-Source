@@ -41,6 +41,13 @@ public class StatusManagerImpl implements StatusManager {
         return result;
     }
 
+    @Override
+    public Map<String, Boolean> createStatusMapSimple() {
+        Map<String, Boolean> result = new LinkedHashMap<>();
+        result.put(TOMCAT_UP, true);
+        return result;
+    }
+
     private boolean isConnectionOk(MiscDao miscDao) {
         try {
             Date dbDate = miscDao.retrieveDatabaseDatetime();
