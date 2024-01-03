@@ -38,8 +38,8 @@ public class PublicV3ApiServiceVersionedDelegatorImpl implements PublicV3ApiServ
     }
 
     @Override
-    public Response viewStatusText() {
-        return publicV3ApiServiceDelegator.viewStatusText();
+    public Response viewStatusSimple() {
+        return publicV3ApiServiceDelegator.viewStatusSimple();
     }
 
     @Override

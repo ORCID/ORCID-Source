@@ -9,7 +9,7 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     static final String LATEST_V3_VERSION = "3.0";
 
-    Response viewStatusText();
+    Response viewStatusSimple();
     
     Response viewStatus();
 

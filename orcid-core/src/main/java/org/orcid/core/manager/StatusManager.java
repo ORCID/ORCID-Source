@@ -15,5 +15,7 @@ public interface StatusManager {
     String TOMCAT_UP = "tomcatUp";
 
     Map<String, Boolean> createStatusMap();
+
+    Map<String, Boolean> createStatusMapSimple();
     
 }
