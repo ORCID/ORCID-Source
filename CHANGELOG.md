@@ -1,3 +1,20 @@
+## v2.48.1 - 2024-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.0...v2.48.1)
+
+- [#6965](https://github.com/ORCID/ORCID-Source/pull/6965): fix: Add OL identifier case sensitive and RRID regex validator
+- [#6942](https://github.com/ORCID/ORCID-Source/pull/6942): feature: Add affiliation when a new user registers
+
+### Fix
+
+- Add OL identifier case sensitive and RRID regex validator
+- Update registration togglz
+- Reorganize initdb scripts
+
+### Feature
+
+- Add affiliation when a new user registers
+
 ## v2.48.0 - 2024-01-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.11...v2.48.0)
