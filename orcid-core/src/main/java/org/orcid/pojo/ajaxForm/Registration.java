@@ -52,6 +52,8 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private String linkType;
 
+    private AffiliationForm affiliationForm;
+
     public Registration() {
         errors = new ArrayList<String>();
         password = new Text();
@@ -240,5 +242,13 @@ public class Registration implements ErrorsInterface, Serializable {
 
     public void setLinkType(String linkType) {
         this.linkType = linkType;
+    }
+
+    public AffiliationForm getAffiliationForm() {
+        return affiliationForm;
+    }
+
+    public void setAffiliationForm(AffiliationForm affiliationForm) {
+        this.affiliationForm = affiliationForm;
     }
 }
