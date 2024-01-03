@@ -1,3 +1,9 @@
+## v2.47.11 - 2024-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.10...v2.47.11)
+
+- [#6962](https://github.com/ORCID/ORCID-Source/pull/6962): Repurposed plain text status checks for the APIs into simple json check.
+
 ## v2.47.10 - 2024-01-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.9...v2.47.10)
