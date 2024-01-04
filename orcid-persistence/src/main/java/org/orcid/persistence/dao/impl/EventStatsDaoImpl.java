@@ -25,8 +25,7 @@ public class EventStatsDaoImpl implements EventStatsDao {
                 "INSERT INTO event_stats (event_type, client_id, count, date, date_created, last_modified) " +
                 "SELECT event_type, client_id, COUNT(id), CAST(e.date_created as date), now(), now() " +
                 "FROM event as e " +
-                "WHERE event_type != 'Public-Page' " +
-                "AND CAST(e.date_created as date) = CAST(now() - (CAST('1' AS INTERVAL DAY) * 1) as date) " +
+                "WHERE CAST(e.date_created as date) = CAST(now() - (CAST('1' AS INTERVAL DAY) * 1) as date) " +
                 "GROUP BY event_type, client_id, CAST(e.date_created as date) " +
                 "ORDER BY CAST(e.date_created as date) DESC;";
         Query insertQuery = entityManager.createNativeQuery(query);

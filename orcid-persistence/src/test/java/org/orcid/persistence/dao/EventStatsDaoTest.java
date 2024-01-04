@@ -1,6 +1,5 @@
 package org.orcid.persistence.dao;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EventEntity;
@@ -38,6 +37,7 @@ public class EventStatsDaoTest {
 
         assertNotNull(eventStatsEntityList);
         assertEquals(1, eventStatsEntityList.size());
+        assertEquals(20, java.util.Optional.ofNullable(eventStatsEntityList.get(0).getCount()));
     }
 
     private void createEvents() {
