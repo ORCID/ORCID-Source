@@ -37,7 +37,7 @@ public class EventStatsDaoTest {
 
         assertNotNull(eventStatsEntityList);
         assertEquals(1, eventStatsEntityList.size());
-        assertEquals(20, java.util.Optional.ofNullable(eventStatsEntityList.get(0).getCount()));
+        assertEquals(Integer.valueOf(20), eventStatsEntityList.get(0).getCount());
     }
 
     private void createEvents() {
