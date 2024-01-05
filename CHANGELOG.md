@@ -1,3 +1,9 @@
+## v2.48.2 - 2024-01-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.1...v2.48.2)
+
+- [#6966](https://github.com/ORCID/ORCID-Source/pull/6966): Remove few togglz from print view
+
 ## v2.48.1 - 2024-01-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.0...v2.48.1)
