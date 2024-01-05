@@ -12,12 +12,7 @@
 
     <ng-container *ngIf="userInfo && userInfo.PRIMARY_RECORD  && userInfo.IS_LOCKED !== 'true' &&  userInfo.IS_DEACTIVATED === 'true'   ">
         <div class="alert alert-error readme">
-            <@orcid.checkFeatureStatus featureName='HTTPS_IDS'>
-                <p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="{{baseUrl + '/' + userInfo.PRIMARY_RECORD}}">{{baseUrl + '/' + userInfo.PRIMARY_RECORD}}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
-            </@orcid.checkFeatureStatus> 
-            <@orcid.checkFeatureStatus featureName='HTTPS_IDS' enabled=false> 
-                <p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="{{baseUrl + '/' + userInfo.PRIMARY_RECORD}}">{{baseUrl + '/' + userInfo.PRIMARY_RECORD}}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
-            </@orcid.checkFeatureStatus>
+			<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="{{baseUrl + '/' + userInfo.PRIMARY_RECORD}}">{{baseUrl + '/' + userInfo.PRIMARY_RECORD}}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>                       
         </div> 
     </ng-container>
 
