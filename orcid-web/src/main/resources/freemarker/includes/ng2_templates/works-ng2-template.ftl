@@ -397,19 +397,16 @@
         </div>
         <!--End bibtex import wizard-->
         <!--Works list-->
-        <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
-            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+        <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">            
                 <div *ngIf="!isPublicPage" class="col-md-12 col-sm-12 col-xs-12">
                     <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
-                        <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
-                            <div class="pull-right" *ngIf="groupingSuggestionPresent">
-                                
-                                    <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
-                                        <@orcid.msg 'groups.combine.suggestion.manage_similar'/>
-                                    </button>
-                        
-                            </div>
-                        </@orcid.checkFeatureStatus>
+                        <div class="pull-right" *ngIf="groupingSuggestionPresent">
+                            
+                                <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
+                                    <@orcid.msg 'groups.combine.suggestion.manage_similar'/>
+                                </button>
+                    
+                        </div>                        
                         <ul class="sources-actions">
                             <li>
                                 <div class="left">
@@ -468,8 +465,7 @@
                             </button>
                         </div>
                     </div>
-                </div>             
-            </@orcid.checkFeatureStatus>
+                </div>            
             
                 <#--  INITIAL LOADER  -->
                 <div *ngIf="worksService.loading && !worksService.showPagination" class="text-center" id="workSpinner">

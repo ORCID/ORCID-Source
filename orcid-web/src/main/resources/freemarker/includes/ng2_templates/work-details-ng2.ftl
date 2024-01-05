@@ -15,11 +15,6 @@
                     <div class="col-md-3 col-sm-3 col-xs-6 right padding-left-fix">
                         <div class="workspace-toolbar">
                             <ul class="workspace-private-toolbar">
-                                <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                                    <li *ngIf="bulkEditShow && !isPublicPage">
-                                        <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[group.activePutCode]" class="bulk-edit-input-header">
-                                    </li>         
-                                </@orcid.checkFeatureStatus>     
                                 <li class="works-details">
                                     <a aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)">
                                         <span [ngClass]="(moreInfo[group?.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
@@ -47,9 +42,7 @@
             <li *ngIf="group.activePutCode == work.putCode.value || editSources[group.groupId] == true">
                 <div class="row" *ngIf="group.activePutCode == work.putCode?.value">
                     <div class="col-md-9 col-sm-9 col-xs-7">
-                        <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
-                            <div *ngIf="!isPublicPage" class="left rightBuffer bulkEditCheckbox"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
-                        </@orcid.checkFeatureStatus>
+                        <div *ngIf="!isPublicPage" class="left rightBuffer bulkEditCheckbox"><input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" (change)="bulkEditSelect()" class="bulk-edit-input ng-pristine ng-valid"></div> 
                         <h3 class="workspace-title leftBuffer">
                             <span id="work.title">{{work.title.value}}</span>
                             <span class="journaltitle" *ngIf="work.journalTitle?.value">{{work.journalTitle.value}}</span>                                
@@ -64,11 +57,6 @@
                         <ul class="workspace-private-toolbar" *ngIf="!editSources[group.groupId]"> 
 
                             <!--Bulk edit checkbox-->             
-                            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING' enabled=false>
-                                <li *ngIf="bulkEditShow && !isPublicPage" class="bulk-checkbox-item">
-                                    <input type="checkbox" name="bulkEditSelectAll" [(ngModel)]="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
-                                </li>
-                            </@orcid.checkFeatureStatus>
                             <!--Show details toggle-->
                             <li class="works-details" *ngIf="!editSources[group.groupId]">
                                 <a  aria-label="<@orcid.msg 'aria.toggle-details'/>" (click)="showDetailsMouseClick(group,$event)">
