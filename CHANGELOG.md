@@ -1,3 +1,13 @@
+## v2.49.1 - 2024-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.0...v2.49.1)
+
+- [#6968](https://github.com/ORCID/ORCID-Source/pull/6968): fix: Update change set id for `dw_event_stats`
+
+### Fix
+
+- Update change set id for `dw_event_stats`
+
 ## v2.49.0 - 2024-01-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.3...v2.49.0)
