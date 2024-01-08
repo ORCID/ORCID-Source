@@ -1,3 +1,19 @@
+## v2.49.0 - 2024-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.3...v2.49.0)
+
+- [#6960](https://github.com/ORCID/ORCID-Source/pull/6960): feature: Add cron job to delete events and create events stats
+
+### Fix
+
+- Update event stats test
+- Update delete query and fix tests
+
+### Feature
+
+- Create dw_event_stats view and remove dw_even and dw_event_public
+- Add cron job to delete events and create events stats
+
 ## v2.48.3 - 2024-01-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.2...v2.48.3)
