@@ -1,4 +1,4 @@
-package org.orcid.persistence;
+package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,15 +6,16 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.EventEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -40,6 +41,21 @@ public class EventDaoTest extends DBUnitTest {
     }
 
     @Test
+    public void deleteEventsByDate() {
+        List<EventEntity> eventEntityList = eventDao.findAll();
+
+        assertNotNull(eventEntityList);
+        assertEquals(3, eventEntityList.size());
+
+        eventDao.deleteEventsByDate(90);
+
+        eventEntityList = eventDao.findAll();
+
+        assertNotNull(eventEntityList);
+        assertEquals(0, eventEntityList.size());
+    }
+
+    @Test
     public void testWriteEvent() throws IllegalAccessException {
         EventEntity eventEntity = new EventEntity();
         eventEntity.setEventType("Sign-In");
@@ -62,6 +78,7 @@ public class EventDaoTest extends DBUnitTest {
         assertEquals(eventEntity.getId(), fromDb.getId());
         assertEquals(eventEntity.getLabel(), fromDb.getLabel());
         assertNotNull(fromDb.getDateCreated());
+
+        eventDao.delete(eventEntity.getId());
     }
-    
 }

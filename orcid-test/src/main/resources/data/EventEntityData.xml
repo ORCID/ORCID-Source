@@ -13,7 +13,7 @@
     />
 
     <event id="3"
-           event_type="Sign-In"
+           event_type="Public-Page"
            label="Website"
            date_created="2023-01-01 15:31:00.00"           
     />
