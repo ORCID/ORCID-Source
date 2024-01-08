@@ -1,3 +1,9 @@
+## v2.48.3 - 2024-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.2...v2.48.3)
+
+- [#6967](https://github.com/ORCID/ORCID-Source/pull/6967): Increase version to 3.3.0
+
 ## v2.48.2 - 2024-01-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.1...v2.48.2)
