@@ -84,7 +84,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
         if(codeDetails == null) {
             int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId(), RevokeReason.AUTH_CODE_REUSED);
-            if (numDisabled >0){
+            if (numDisabled > 0) {
                 throw new InvalidGrantException("Reused authorization code: " + authorizationCode);                                
             }                
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                

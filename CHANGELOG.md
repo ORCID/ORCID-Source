@@ -1,3 +1,104 @@
+## v2.49.1 - 2024-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.0...v2.49.1)
+
+- [#6968](https://github.com/ORCID/ORCID-Source/pull/6968): fix: Update change set id for `dw_event_stats`
+
+### Fix
+
+- Update change set id for `dw_event_stats`
+
+## v2.49.0 - 2024-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.3...v2.49.0)
+
+- [#6960](https://github.com/ORCID/ORCID-Source/pull/6960): feature: Add cron job to delete events and create events stats
+
+### Fix
+
+- Update event stats test
+- Update delete query and fix tests
+
+### Feature
+
+- Create dw_event_stats view and remove dw_even and dw_event_public
+- Add cron job to delete events and create events stats
+
+## v2.48.3 - 2024-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.2...v2.48.3)
+
+- [#6967](https://github.com/ORCID/ORCID-Source/pull/6967): Increase version to 3.3.0
+
+## v2.48.2 - 2024-01-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.1...v2.48.2)
+
+- [#6966](https://github.com/ORCID/ORCID-Source/pull/6966): Remove few togglz from print view
+
+## v2.48.1 - 2024-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.48.0...v2.48.1)
+
+- [#6965](https://github.com/ORCID/ORCID-Source/pull/6965): fix: Add OL identifier case sensitive and RRID regex validator
+- [#6942](https://github.com/ORCID/ORCID-Source/pull/6942): feature: Add affiliation when a new user registers
+
+### Fix
+
+- Add OL identifier case sensitive and RRID regex validator
+- Update registration togglz
+- Reorganize initdb scripts
+
+### Feature
+
+- Add affiliation when a new user registers
+
+## v2.48.0 - 2024-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.11...v2.48.0)
+
+## v2.47.11 - 2024-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.10...v2.47.11)
+
+- [#6962](https://github.com/ORCID/ORCID-Source/pull/6962): Repurposed plain text status checks for the APIs into simple json check.
+
+## v2.47.10 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.9...v2.47.10)
+
+- [#6964](https://github.com/ORCID/ORCID-Source/pull/6964): Missing tx files
+
+## v2.47.9 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.8...v2.47.9)
+
+- [#6963](https://github.com/ORCID/ORCID-Source/pull/6963): Research outputs email
+
+## v2.47.8 - 2024-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.7...v2.47.8)
+
+- [#6961](https://github.com/ORCID/ORCID-Source/pull/6961): OCID to ORCID
+
+## v2.47.7 - 2023-12-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.6...v2.47.7)
+
+- [#6959](https://github.com/ORCID/ORCID-Source/pull/6959): Add unit tests
+
+## v2.47.6 - 2023-12-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.5...v2.47.6)
+
+- [#6958](https://github.com/ORCID/ORCID-Source/pull/6958): Remove the ENABLE_RECORD_CREATE_ENDPOINT togglz
+
+## v2.47.5 - 2023-12-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.4...v2.47.5)
+
+- [#6957](https://github.com/ORCID/ORCID-Source/pull/6957): Add works email granular config props
+
 ## v2.47.4 - 2023-12-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.47.3...v2.47.4)

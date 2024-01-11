@@ -1,0 +1,11 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="UPDATE-ETHOS-TO-BE-CASE-SENSITIVE" author="Daniel Palafox">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">select count(*) from identifier_type WHERE id_name = 'OL';</sqlCheck>
+        </preConditions>
+        <sql>UPDATE identifier_type SET "case_sensitive" = true WHERE id_name = 'OL';</sql>
+    </changeSet>
+
+</databaseChangeLog>

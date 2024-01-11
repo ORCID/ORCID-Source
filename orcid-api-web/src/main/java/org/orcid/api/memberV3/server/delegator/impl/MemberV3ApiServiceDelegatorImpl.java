@@ -278,8 +278,9 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response viewStatusText() {
-        return Response.ok(STATUS_OK_MESSAGE).build();
+    public Response viewStatusSimple() {
+        Map<String, Boolean> statusMap = statusManager.createStatusMapSimple();
+        return Response.ok(statusMap).build();
     }
     
     @Override

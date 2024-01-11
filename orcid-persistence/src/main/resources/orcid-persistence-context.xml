@@ -459,7 +459,8 @@
 
     <bean id="eventDao" class="org.orcid.persistence.dao.impl.EventDaoImpl" />
 
-   
+    <bean id="eventStatsDao" class="org.orcid.persistence.dao.impl.EventStatsDaoImpl" />
+
     <bean id="emailDomainDao" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl" />
 
     <bean id="emailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl">

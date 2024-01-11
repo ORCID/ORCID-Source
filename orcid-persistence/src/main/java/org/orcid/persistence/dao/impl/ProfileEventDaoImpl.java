@@ -1,12 +1,12 @@
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
+
+import javax.persistence.Query;
+
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-
-import javax.persistence.Query;
-import java.math.BigInteger;
-import java.util.List;
 
 /**
  *

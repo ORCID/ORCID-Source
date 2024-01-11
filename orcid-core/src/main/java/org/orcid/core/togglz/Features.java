@@ -25,10 +25,7 @@ public enum Features implements Feature {
     CRAZY_EGG,
 
     @Label("HelpHero")
-    ORCID_ANGULAR_HELP_HERO,    
-    
-    @Label("Enable the API record create endpoint for QA purposes")
-    ENABLE_RECORD_CREATE_ENDPOINT,
+    ORCID_ANGULAR_HELP_HERO,
     
     @Label("Stop caching works when doing bulk reads")
     READ_BULK_WORKS_DIRECTLY_FROM_DB, 
@@ -43,7 +40,10 @@ public enum Features implements Feature {
     SEND_ALL_VERIFICATION_EMAILS,
 
     @Label("Send add works emails for 7, 28 and 90 days.")
-    SEND_ADD_WORKS_EMAILS;
+    SEND_ADD_WORKS_EMAILS,
+
+    @Label("Delete events older than 90 days from the DB ")
+    DELETE_EVENTS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
