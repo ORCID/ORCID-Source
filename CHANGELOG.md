@@ -1,3 +1,9 @@
+## v2.49.2 - 2024-01-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.1...v2.49.2)
+
+- [#6971](https://github.com/ORCID/ORCID-Source/pull/6971): 8934-registration-add-an-affiliation-with-typeahead
+
 ## v2.49.1 - 2024-01-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.0...v2.49.1)
