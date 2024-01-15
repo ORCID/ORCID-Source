@@ -17,4 +17,6 @@ public interface RegistrationManager {
     String createMinimalRegistration(Registration registration, boolean usedCaptcha, Locale locale, String ip);
     
     Long getCount();
+
+    void createAffiliation(Registration registration, String newUserOrcid);
 }
