@@ -48,7 +48,7 @@ import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
@@ -331,7 +331,7 @@ public class RegistrationController extends BaseController {
 
         if (Features.REGISTRATION_2_0.isActive() && reg.getAffiliationForm() != null) {
             AffiliationForm affiliationForm = reg.getAffiliationForm();
-            if (!affiliationForm.getAffiliationType().getValue().equals("Employment")) {
+            if (!AffiliationType.EMPLOYMENT.equals(AffiliationType.fromValue(affiliationForm.getAffiliationType().getValue()))) {
                 setError(affiliationForm.getAffiliationType(), "Invalid affiliation type");
             }
             if (reg.getAffiliationForm().getDepartmentName() != null) {
