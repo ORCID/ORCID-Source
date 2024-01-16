@@ -476,6 +476,8 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         List<EmploymentSummary> employmentSummaryList = affiliationsManager.getEmploymentSummaryList(userOrcid);
         assertNotNull(employmentSummaryList);
         assertEquals(1, employmentSummaryList.size());
+        // Cleanup
+        affiliationsManager.removeAffiliation(userOrcid, employmentSummaryList.get(0).getPutCode());
     }
 
     private Registration createRegistrationForm(String email, boolean claimed) {
