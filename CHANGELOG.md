@@ -1,3 +1,14 @@
+## v2.49.4 - 2024-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.3...v2.49.4)
+
+- [#6973](https://github.com/ORCID/ORCID-Source/pull/6973): fix: Add disambiguated organization data to affiliation created while…
+
+### Fix
+
+- registerWithAffiliation test
+- Add disambiguated organization data to affiliation created while registering
+
 ## v2.49.3 - 2024-01-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.2...v2.49.3)
