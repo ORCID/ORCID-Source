@@ -48,8 +48,11 @@ import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.search.Search;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.persistence.constants.SendEmailFrequency;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
@@ -331,7 +334,7 @@ public class RegistrationController extends BaseController {
 
         if (Features.REGISTRATION_2_0.isActive() && reg.getAffiliationForm() != null) {
             AffiliationForm affiliationForm = reg.getAffiliationForm();
-            if (!affiliationForm.getAffiliationType().getValue().equals("Employment")) {
+            if (!AffiliationType.EMPLOYMENT.equals(AffiliationType.fromValue(affiliationForm.getAffiliationType().getValue()))) {
                 setError(affiliationForm.getAffiliationType(), "Invalid affiliation type");
             }
             if (reg.getAffiliationForm().getDepartmentName() != null) {
@@ -553,6 +556,9 @@ public class RegistrationController extends BaseController {
         String unencryptedPassword = registration.getPassword().getValue();
         String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
         logUserIn(request, response, orcidId, unencryptedPassword);
+        if (Features.REGISTRATION_2_0.isActive() && registration.getAffiliationForm() != null) {
+            createAffiliation(registration, orcidId);
+        }
     }
 
     public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
@@ -584,6 +590,10 @@ public class RegistrationController extends BaseController {
         return newUserOrcid;
     }
 
+    private void createAffiliation(Registration registration, String newUserOrcid) {
+        registrationManager.createAffiliation(registration, newUserOrcid);
+    }
+    
     private void processProfileHistoryEvents(Registration registration, String newUserOrcid) {
         // t&cs must be accepted but check just in case!
         if (registration.getTermsOfUse().getValue()) {

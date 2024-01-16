@@ -1,3 +1,13 @@
+## v2.49.3 - 2024-01-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.2...v2.49.3)
+
+- [#6972](https://github.com/ORCID/ORCID-Source/pull/6972): fix: Affiliation type validation
+
+### Fix
+
+- Affiliation type validation
+
 ## v2.49.2 - 2024-01-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.1...v2.49.2)

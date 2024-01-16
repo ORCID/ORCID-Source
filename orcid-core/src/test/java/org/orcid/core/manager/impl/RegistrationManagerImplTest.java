@@ -470,11 +470,14 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         registrationForm.setAffiliationForm(getAffiliationForm());
 
         String userOrcid = registrationManager.createMinimalRegistration(registrationForm, true, java.util.Locale.ENGLISH, "0.0.0.0");
+        registrationManager.createAffiliation(registrationForm, userOrcid);
         assertNotNull(userOrcid);
         assertTrue(OrcidStringUtils.isValidOrcid(userOrcid));
         List<EmploymentSummary> employmentSummaryList = affiliationsManager.getEmploymentSummaryList(userOrcid);
         assertNotNull(employmentSummaryList);
         assertEquals(1, employmentSummaryList.size());
+        // Cleanup
+        affiliationsManager.removeAffiliation(userOrcid, employmentSummaryList.get(0).getPutCode());
     }
 
     private Registration createRegistrationForm(String email, boolean claimed) {

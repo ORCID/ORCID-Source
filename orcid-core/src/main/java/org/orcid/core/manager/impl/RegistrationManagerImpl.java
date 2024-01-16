@@ -13,6 +13,7 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidGenerationManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -38,7 +39,9 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ProfileDeprecationRequest;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -97,6 +100,9 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Resource(name = "affiliationsManagerV3")
     private AffiliationsManager affiliationsManager;
+
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -106,6 +112,18 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Override
     public Long getCount() {
         return profileDao.getConfirmedProfileCount();
+    }
+
+    @Override
+    public void createAffiliation(Registration registration, String orcid) {
+        AffiliationForm affiliationForm = registration.getAffiliationForm();
+        OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.valueOf(affiliationForm.getOrgDisambiguatedId().getValue()));
+        affiliationForm.setDisambiguatedAffiliationSourceId(Text.valueOf(orgDisambiguated.getSourceId()));
+        affiliationForm.setDisambiguationSource(Text.valueOf(orgDisambiguated.getSourceType()));
+        affiliationForm.setCity(Text.valueOf(orgDisambiguated.getCity()));
+        affiliationForm.setCountry(Text.valueOf(orgDisambiguated.getCountry()));
+        Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
+        affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
     }
 
     @Override
@@ -297,11 +315,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
             name.setGivenNames(new GivenNames(registration.getGivenNames().getValue()));
         }
         recordNameManager.createRecordName(orcid, name);
-
-        if (Features.REGISTRATION_2_0.isActive() && registration.getAffiliationForm() != null) {
-            Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
-            affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
-        }
 
         // Create email frequency entity
         boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
