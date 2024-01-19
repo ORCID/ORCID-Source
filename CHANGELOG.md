@@ -1,3 +1,16 @@
+## v2.49.6 - 2024-01-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.5...v2.49.6)
+
+- [#6977](https://github.com/ORCID/ORCID-Source/pull/6977): Fix/9009 tech cron job to store daily stats
+
+### Fix
+
+- Run cron jobs at 00:10 and 00:20 everyday
+- Run save events stats 10 min after delete events
+- Replace logger to info level in cron save and delete events
+- Remove incorrect zero in saveEventStats cron job
+
 ## v2.49.5 - 2024-01-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.4...v2.49.5)
