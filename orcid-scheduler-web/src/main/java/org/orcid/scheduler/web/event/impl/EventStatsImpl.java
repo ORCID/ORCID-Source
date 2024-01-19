@@ -28,14 +28,14 @@ public class EventStatsImpl implements EventStats {
     public void saveEventStats() {
         LocalDate date = LocalDate.now().minusDays(1);
         String currentDate = date.getDayOfMonth() + "/" + date.getMonth() + "/" + date.getYear();
-        LOGGER.debug("Storing aggregate data to event_stats table of the day" + currentDate);
+        LOGGER.info("Storing aggregate data to event_stats table of the day" + currentDate);
         eventStatsDao.createEventStats();
     }
 
     @Override
     public void deleteEvents() {
         if (Features.DELETE_EVENTS.isActive()) {
-            LOGGER.debug("Deleting events older than "+ DELETE_EVENTS_OLDER_THAN_DAYS +" days");
+            LOGGER.info("Deleting events older than "+ DELETE_EVENTS_OLDER_THAN_DAYS +" days");
             eventDao.deleteEventsByDate(DELETE_EVENTS_OLDER_THAN_DAYS);
         }
     }

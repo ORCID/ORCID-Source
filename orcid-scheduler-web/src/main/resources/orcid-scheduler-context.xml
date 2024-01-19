@@ -41,8 +41,8 @@
         <task:scheduled ref="emailMessageSender" method="addWorksToRecordFirstReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.firstReminder:0 10 * * * *}"/>
         <task:scheduled ref="emailMessageSender" method="addWorksToRecordSecondReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.secondReminder:0 20 * * * *}"/>
         <task:scheduled ref="emailMessageSender" method="addWorksToRecordThirdReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.thirdReminder:0 30 * * * *}"/>
-        <task:scheduled ref="eventStats" method="deleteEvents" cron="${org.orcid.scheduler.web.deleteEventsOlderDays:0 10 * * * *}"/>
-        <task:scheduled ref="eventStats" method="saveEventStats" cron="${org.orcid.scheduler.web.saveEventStats:15 10 0 * * *}"/>
+        <task:scheduled ref="eventStats" method="deleteEvents" cron="${org.orcid.scheduler.web.deleteEventsOlderDays:0 10 0 * * *}"/>
+        <task:scheduled ref="eventStats" method="saveEventStats" cron="${org.orcid.scheduler.web.saveEventStats:0 20 0 * * *}"/>
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:30}"/>
