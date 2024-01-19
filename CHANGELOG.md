@@ -1,3 +1,9 @@
+## v2.49.5 - 2024-01-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.4...v2.49.5)
+
+- [#6976](https://github.com/ORCID/ORCID-Source/pull/6976): Allow to filter orgs that are not fundref
+
 ## v2.49.4 - 2024-01-16
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.3...v2.49.4)
