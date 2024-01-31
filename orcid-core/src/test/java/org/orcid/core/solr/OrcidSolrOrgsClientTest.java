@@ -86,6 +86,6 @@ public class OrcidSolrOrgsClientTest {
 
         SolrQuery query = captor.getValue();
         assertNotNull(query);
-        assertEquals("(org-disambiguated-name:\"xxx\") ^100.0  (org-disambiguated-name:xxx*) ^10.0 AND is-funding-org:false", query.getQuery());
+        assertEquals("(org-disambiguated-name:\"xxx\") ^100.0  (org-disambiguated-name:xxx*) ^10.0", query.getQuery());
     }
 }
