@@ -1,3 +1,11 @@
+## v2.49.7 - 2024-01-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.6...v2.49.7)
+
+- [#6981](https://github.com/ORCID/ORCID-Source/pull/6981): Fix test that have dup key
+- [#6980](https://github.com/ORCID/ORCID-Source/pull/6980): Why this tests didnt fail on the PR tests?
+- [#6979](https://github.com/ORCID/ORCID-Source/pull/6979): Filter by is-funding-org only on funding requests, and, filter by ROR…
+
 ## v2.49.6 - 2024-01-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.5...v2.49.6)
