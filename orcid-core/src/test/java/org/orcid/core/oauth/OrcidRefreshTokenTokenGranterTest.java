@@ -43,8 +43,6 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
     private static final String CLIENT_ID_2 = "APP-5555555555555556";
     private static final String USER_ORCID = "0000-0000-0000-0001";
 
-    private Random random = new Random(System.currentTimeMillis());
-    
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
@@ -122,8 +120,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // should be equal
         long time = System.currentTimeMillis();
         String scope = "/activities/update";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = null;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -157,8 +155,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         long time = System.currentTimeMillis();
         String parentScope = "/activities/update";
         String refreshScope = "/orcid-works/create";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -191,8 +189,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // should be enabled, refresh should be enabled
         long time = System.currentTimeMillis();
         String parentScope = "/activities/update /read-limited";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = false;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -231,8 +229,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         long time = System.currentTimeMillis();
         String parentScope = "/person/read-limited";
         String refreshScope = "/orcid-bio/read-limited";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = false;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -265,8 +263,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         long time = System.currentTimeMillis();
         String parentScope = "/person/read-limited";
         String refreshScope = "/orcid-bio/read-limited";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = false;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = 5L;
@@ -302,8 +300,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         long time = System.currentTimeMillis();
         String parentScope = "/person/update";
         String refreshScope = "/orcid-works/read-limited";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -325,8 +323,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // token, fail
         long time = System.currentTimeMillis();
         String parentScope = "/person/update";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = time + (15000);
@@ -348,8 +346,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // client # 2, fail
         long time = System.currentTimeMillis();
         String parentScope = "/person/update";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -370,8 +368,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
     public void tryToRefreshAnExpiredTokenTest() {
         long time = System.currentTimeMillis();
         String parentScope = "/person/update";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time - 10000);
         Long expireIn = null;
@@ -393,8 +391,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // fail
         long time = System.currentTimeMillis();
         String parentScope = "/person/update";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time + 10000);
         Long expireIn = null;
@@ -418,8 +416,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         // value, fail
         long time = System.currentTimeMillis();
         String parentScope = "/person/update";
-        String tokenValue = "parent-token-" + random.nextLong();
-        String refreshTokenValue = "refresh-token-" + random.nextLong();
+        String tokenValue = "parent-token-" + getRandom();
+        String refreshTokenValue = "refresh-token-" + getRandom();
         Boolean revokeOld = true;
         Date parentTokenExpiration = new Date(time + 15000);
         Long expireIn = null;
@@ -434,4 +432,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
         assertNotNull(refreshedToken);                
     } 
        
+    private long getRandom() {
+        Random random = new Random(System.currentTimeMillis());
+        return random.nextLong();
+    }
 }
