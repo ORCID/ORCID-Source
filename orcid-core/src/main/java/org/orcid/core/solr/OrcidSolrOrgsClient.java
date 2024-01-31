@@ -54,16 +54,18 @@ public class OrcidSolrOrgsClient {
         StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm));
         if (fundersOnly) {
             queryString.append(" AND is-funding-org:true");
-        } else {
-            queryString.append(" AND is-funding-org:false");
-        }
+        } 
 
         SolrQuery query = new SolrQuery();
         query.setQuery(queryString.toString());
         query.addOrUpdateSort("score", ORDER.desc);
         query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
+        if(fundersOnly) {
+            query.addFilterQuery(String.format("(%s:(%s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "FUNDREF"));
+        } else {
+            query.addFilterQuery(String.format("(%s:(%s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR"));
+        }
         
-        query.addFilterQuery(String.format("(%s:(%s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "FUNDREF"));
         LOGGER.debug("SOLR Query: " + query.toQueryString());
 
         try {
