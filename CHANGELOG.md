@@ -1,3 +1,9 @@
+## v2.49.8 - 2024-02-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.7...v2.49.8)
+
+- [#6982](https://github.com/ORCID/ORCID-Source/pull/6982): Exclude notifications created more than 4 months ago
+
 ## v2.49.7 - 2024-01-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.6...v2.49.7)
