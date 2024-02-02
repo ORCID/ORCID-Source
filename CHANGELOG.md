@@ -1,3 +1,9 @@
+## v2.49.9 - 2024-02-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.8...v2.49.9)
+
+- [#6984](https://github.com/ORCID/ORCID-Source/pull/6984): 8945-registration-suggest-affiliation-based-on-email-domain
+
 ## v2.49.8 - 2024-02-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.7...v2.49.8)
