@@ -44,6 +44,8 @@ public class EmailDomainController {
         } else {
             ObjectNode response = mapper.createObjectNode();
             response.put("category", ede.getCategory().name());
+            response.put("rorId", ede.getRorId());
+
             return response;
         }
     }
