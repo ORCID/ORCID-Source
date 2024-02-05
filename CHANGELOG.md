@@ -1,3 +1,9 @@
+## v2.49.10 - 2024-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.9...v2.49.10)
+
+- [#6985](https://github.com/ORCID/ORCID-Source/pull/6985): Add the disambiguated org id when needed
+
 ## v2.49.9 - 2024-02-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.8...v2.49.9)
