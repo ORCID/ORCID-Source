@@ -311,6 +311,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     private OrgDisambiguated convertEntity(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         OrgDisambiguated org = new OrgDisambiguated();
+        org.setDisambiguatedAffiliationIdentifier(String.valueOf(orgDisambiguatedEntity.getId()));
         org.setValue(orgDisambiguatedEntity.getName());
         org.setCity(orgDisambiguatedEntity.getCity());
         org.setRegion(orgDisambiguatedEntity.getRegion());
