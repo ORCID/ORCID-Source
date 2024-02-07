@@ -1,3 +1,13 @@
+## v2.50.0 - 2024-02-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.10...v2.50.0)
+
+- [#6986](https://github.com/ORCID/ORCID-Source/pull/6986): feature: Add new public record header togglz
+
+### Feature
+
+- Add new public record header togglz
+
 ## v2.49.10 - 2024-02-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.9...v2.49.10)
