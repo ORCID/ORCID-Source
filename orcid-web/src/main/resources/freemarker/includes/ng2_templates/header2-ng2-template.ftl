@@ -36,49 +36,7 @@
             </div>
         </div>
 
-        <div [ngClass]="{'mobile': isMobile}"  class="menu-bar"  [hidden]="!openMobileMenu && isMobile"  (mouseleave)="mouseLeave()" role="navigation" aria-label="main menu">
-                <!--  Desktop / Tablet menu -->             
-                <div class="container container-menu"> 
-                <ul class="menu" resize  role="presentation" role="menu">
-
-                    <!-- ABOUT -->
-                    <li role="presentation" class="expanded"  >
-                        <a href="{{aboutUri}}/what-is-orcid" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.about")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }}</a>
-                    </li>
-    
-                     <!-- FOR RESEARCHERS -->
-                    <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/help-getting-started-with-your-orcid/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.forResearchers")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
-                    </li>
-
-                    <!-- Membership -->
-                    <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/about-membership" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.membership")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
-                    </li>
-
-                    <!-- DOCUMENTATION -->
-                    <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/documentation/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.documentation")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
-                    </li>
-
-                    <!-- RESOURCES -->
-                    <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}/resources/" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.resources")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
-                    </li>
-
-                    <!-- NEWS & EVENTS -->
-                    <li role="presentation" class="expanded">
-                        <a href="{{aboutUri}}" role="menuitem" >{{'${springMacroRequestContext.getMessage("wp-infosite-header.newsAndEvents")?replace("<br />", " ")?replace("'", "\\'")} '| uppercase }} </a>
-                    </li>
-                    <li role="presentation" class="last leaf ${(nav=="signin")?then('open', '')} " [ngClass]="{'hover': mobileMenu.SIGNIN}" (mouseenter)="menuHandler('SIGNIN', $event)" (focus)="menuHandler('SIGNIN', $event)" (click)="menuHandler('SIGNIN', $event)">                    
-                        <div class="mobile-menu-sign-in">
-                            <a  class="mobile-menu-sign-in-url" *ngIf="!userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signin" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_in")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase  }}/{{'${springMacroRequestContext.getMessage("header.register")?replace("<br />", " ")?replace("'", "\\'")}'| uppercase }}</a>                    
-                            <a class="mobile-menu-sign-in-url" *ngIf="userInfo['REAL_USER_ORCID']" href="{{getBaseUri()}}/signout" role="menuitem">{{'${springMacroRequestContext.getMessage("public-layout.sign_out")?replace("<br />", " ")?replace("'", "\\'")}  '| uppercase }}</a>
-                        </div>
-                    </li>
-                </ul>  
-                </div>
-        </div>
+        <div [ngClass]="{'mobile': isMobile}"  class="menu-bar"  [hidden]="!openMobileMenu && isMobile"  (mouseleave)="mouseLeave()" role="navigation" aria-label="main menu"></div>
     </div>   
 </div> 
 
