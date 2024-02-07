@@ -329,7 +329,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href='http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org'>resend the claim email</a>?", reg.getEmail().getErrors().get(0));    	
+    	assertEquals("orcid.frontend.verify.unclaimed_email", reg.getEmail().getErrors().get(0));    	
     }
     
     @Test
@@ -356,7 +356,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
             assertNotNull(emailAdditionalListItem.getErrors());
             assertEquals(1, emailAdditionalListItem.getErrors().size());
-            assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href='http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org'>resend the claim email</a>?", emailAdditionalListItem.getErrors().get(0));
+            assertEquals("orcid.frontend.verify.unclaimed_email", emailAdditionalListItem.getErrors().get(0));
         }
     }
     
