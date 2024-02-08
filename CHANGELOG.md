@@ -1,3 +1,13 @@
+## v2.50.2 - 2024-02-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.1...v2.50.2)
+
+- [#6987](https://github.com/ORCID/ORCID-Source/pull/6987): fix: Remove global navigation from header
+
+### Fix
+
+- Remove global navigation from header
+
 ## v2.50.1 - 2024-02-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.0...v2.50.1)
