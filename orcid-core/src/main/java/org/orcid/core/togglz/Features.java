@@ -6,6 +6,9 @@ import org.togglz.core.context.FeatureContext;
 
 
 public enum Features implements Feature {
+    @Label("Registration 2.1: Add affiliations on registration")
+    REGISTRATION_2_1,
+
     @Label("New public record header")
     NEW_RECORD_HEADER,
    
