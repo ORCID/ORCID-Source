@@ -1,3 +1,9 @@
+## v2.50.1 - 2024-02-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.0...v2.50.1)
+
+- [#6989](https://github.com/ORCID/ORCID-Source/pull/6989): REGISTRATION_2_1
+
 ## v2.50.0 - 2024-02-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.49.10...v2.50.0)
