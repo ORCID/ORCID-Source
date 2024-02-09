@@ -451,11 +451,7 @@ public class RegistrationController extends BaseController {
             }
 
             if (!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
-                // If the email is not eligible for auto deprecate, we
-                // should show an email duplicated exception
-                String resendUrl = createResendClaimUrl(emailAddress, request);
-                String message = getVerifyUnclaimedMessage(emailAddress, resendUrl);
-                reg.getEmail().getErrors().add(message);
+                reg.getEmail().getErrors().add("orcid.frontend.verify.unclaimed_email");
                 return reg;
             } else {
                 LOGGER.info("Email " + emailAddress + " belongs to a unclaimed record and can be auto deprecated");

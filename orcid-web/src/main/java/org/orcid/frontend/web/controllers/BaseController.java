@@ -739,10 +739,7 @@ public class BaseController {
                 } else if(profileEntityManager.isProfileClaimedByEmail(emailValue)) {                                                                        
                     email.getErrors().add("orcid.frontend.verify.duplicate_email");
                 } else if(!emailManager.isAutoDeprecateEnableForEmail(emailValue)) {
-                    //If the email is not eligible for auto deprecate, we should show an email duplicated exception                        
-                    String resendUrl = createResendClaimUrl(emailValue, request);
-                    String message = getVerifyUnclaimedMessage(emailValue, resendUrl);
-                    email.getErrors().add(message);                                    
+                    email.getErrors().add("orcid.frontend.verify.unclaimed_email");                                    
                 } else {
                     LOGGER.info("Email " + emailValue + " belongs to a unclaimed record and can be auto deprecated");
                 }
