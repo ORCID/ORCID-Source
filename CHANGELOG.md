@@ -1,3 +1,11 @@
+## v2.50.3 - 2024-02-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.2...v2.50.3)
+
+### Fix
+
+- Return unclaimed error code instead of message (#6988)
+
 ## v2.50.2 - 2024-02-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.1...v2.50.2)
