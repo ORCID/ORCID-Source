@@ -43,7 +43,7 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
 
     List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic);
 
-    List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId);
+    List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId, boolean justPublic);
 
     boolean updateToMaxDisplay(String orcid, Long peerReviewId);
     

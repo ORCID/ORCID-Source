@@ -737,4 +737,24 @@ public class PeerReviewManagerTest extends BaseTest {
         
         return peerReview;
     }
+    
+    @Test
+    public void testGetPeerReviewSummaryListByGroupId() {
+        List<PeerReviewSummary> all = peerReviewManager.getPeerReviewSummaryListByGroupId(claimedOrcid, "issn:shared", false);
+        assertNotNull(all);
+        assertEquals(3, all.size());
+        assertEquals(Long.valueOf(14), all.get(0).getPutCode());
+        assertEquals(Visibility.PRIVATE, all.get(0).getVisibility());
+        assertEquals(Long.valueOf(15), all.get(1).getPutCode());
+        assertEquals(Visibility.LIMITED, all.get(1).getVisibility());
+        assertEquals(Long.valueOf(16), all.get(2).getPutCode());
+        assertEquals(Visibility.PUBLIC, all.get(2).getVisibility());
+        
+        List<PeerReviewSummary> onlyPublic = peerReviewManager.getPeerReviewSummaryListByGroupId(claimedOrcid, "issn:shared", true);
+        assertNotNull(onlyPublic);
+        assertEquals(1, onlyPublic.size());
+        assertEquals(Long.valueOf(16), onlyPublic.get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, onlyPublic.get(0).getVisibility());
+        
+    }
 }

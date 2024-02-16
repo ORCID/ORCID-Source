@@ -132,8 +132,8 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
      * @return the list of peer reviews that belongs to this user
      */
     @Override
-    public List<PeerReviewSummary> getPeerReviewSummaryListByGroupId(String orcid, String groupId) {
-        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getPeerReviewsByOrcidAndGroupId(orcid, groupId);
+    public List<PeerReviewSummary> getPeerReviewSummaryListByGroupId(String orcid, String groupId, boolean justPublic) {
+        List<PeerReviewEntity> peerReviewEntities = peerReviewDao.getPeerReviewsByOrcidAndGroupId(orcid, groupId, justPublic);
         return jpaJaxbPeerReviewAdapter.toPeerReviewSummary(peerReviewEntities);
     }
     /**
