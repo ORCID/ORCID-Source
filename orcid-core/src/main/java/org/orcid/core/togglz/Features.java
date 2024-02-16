@@ -18,9 +18,6 @@ public enum Features implements Feature {
     @Label("Track user events")
     EVENTS,
 
-    @Label("Source sorting")
-    SOURCE_SORTING,
-
     @Label("Professional activities")
     PROFESSIONAL_ACTIVITIES,
 
