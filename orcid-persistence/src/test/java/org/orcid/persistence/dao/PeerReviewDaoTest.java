@@ -64,7 +64,8 @@ public class PeerReviewDaoTest extends DBUnitTest {
     @Test
     public void hasPublicPeerReviewsTest() {
         assertTrue(dao.hasPublicPeerReviews("0000-0000-0000-0003"));
-        assertFalse(dao.hasPublicPeerReviews("0000-0000-0000-0002"));
+        assertTrue(dao.hasPublicPeerReviews("0000-0000-0000-0002"));
+        assertFalse(dao.hasPublicPeerReviews("0000-0000-0000-0004"));
     }
     
     @Test

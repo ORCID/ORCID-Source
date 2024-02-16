@@ -60,7 +60,7 @@ public interface PeerReviewManagerReadOnly {
     List<PeerReviewMinimizedSummary> getPeerReviewMinimizedSummaryList(String orcid, boolean justPublic);
 
 
-    List<PeerReviewSummary> getPeerReviewSummaryListByGroupId(String orcid, String groupId);
+    List<PeerReviewSummary> getPeerReviewSummaryListByGroupId(String orcid, String groupId, boolean justPublic);
 
     /**
      * Generate a grouped list of peer reviews with the given list of peer reviews

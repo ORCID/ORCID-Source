@@ -92,7 +92,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/peer-reviews-by-group-id.json", method = RequestMethod.GET)
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJsonByGroupId(@RequestParam("groupId") String groupId, @RequestParam("sortAsc") boolean sortAsc) {
-        List<PeerReviewGroup> peerReviewGroups = getPeerReviewsGrouped(peerReviewManager.getPeerReviewSummaryListByGroupId(getEffectiveUserOrcid(), groupId));
+        List<PeerReviewGroup> peerReviewGroups = getPeerReviewsGrouped(peerReviewManager.getPeerReviewSummaryListByGroupId(getEffectiveUserOrcid(), groupId, false));
         peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
         return peerReviewGroups;
     }

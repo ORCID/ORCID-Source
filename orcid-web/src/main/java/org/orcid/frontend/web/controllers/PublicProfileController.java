@@ -614,7 +614,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews-by-group-id.json", method = RequestMethod.GET)
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJsonByGroupId(@PathVariable("orcid") String orcid, @RequestParam("groupId") String groupId, @RequestParam("sortAsc") boolean sortAsc) {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
-        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryListByGroupId(orcid, groupId);
+        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryListByGroupId(orcid, groupId, true);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, false);
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
