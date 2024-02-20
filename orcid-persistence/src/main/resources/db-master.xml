@@ -382,5 +382,6 @@
   <include file="/db/updates/grant_select_to_dw_user_on_dw_event.xml" />
   <include file="/db/updates/identifier-types/update-ol-to-be-case-sensitive.xml" />
   <include file="/db/updates/create_event_stats_table.xml" />
-  <include file="/db/updates/dw_event_stats.xml" />
+  <include file="/db/updates/dw_event_stats.xml" />  
+  <include file="/db/updates/add_indexes_2024_02_20.xml" />
 </databaseChangeLog>
