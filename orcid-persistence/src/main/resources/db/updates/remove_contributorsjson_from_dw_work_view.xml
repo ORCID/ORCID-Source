@@ -3,7 +3,10 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet id="REMOVE_CONTRIBUTORSJSON_FROM-DW-WORK-VIEW" author="Camelia Dumitru" dbms="postgresql">
-        <createView viewName="dw_work" replaceIfExists="true">
+		<dropView 
+            schemaName="public"
+            viewName="dw_work"/>
+        <createView viewName="dw_work">
             select work_id, orcid, publication_day, publication_month, publication_year, title, subtitle, description,
             work_url, citation, citation_type, work_type, journal_title, language_code, translated_title,
             translated_title_language_code, iso2_country, external_ids_json, visibility, case when orcid = source_id then true else false end as self_asserted , client_source_id,

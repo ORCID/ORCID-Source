@@ -18,6 +18,9 @@
     </changeSet>
     
     <changeSet id="CREATE-DW-OAUTH2-TOKEN-DETAIL-VIEW" author="Camelia Dumitru" dbms="postgresql">
+		<dropView 
+            schemaName="public"
+            viewName="dw_oauth2_token_detail"/>
         <createView viewName="dw_oauth2_token_detail" replaceIfExists="true">
             select id, token_type, user_orcid, client_details_id, substring(redirect_uri from  '.*://([^/]*)') as redirect_uri, scope_type, obo_client_details_id,
             token_expiration, revocation_date, date_created, last_modified

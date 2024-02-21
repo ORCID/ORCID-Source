@@ -14,7 +14,7 @@ public class InitDb {
 
     @SuppressWarnings("resource")
     public static void main(String[] args) {
-        String configFilePath = System.getProperty(CONFIG_FILE_KEY);
+        String configFilePath = "/Users/camdum/OrcidDev/github/ORCID-Source/properties/development.properties"; //System.getProperty(CONFIG_FILE_KEY);
         if (StringUtils.isBlank(configFilePath)) {
             System.setProperty(CONFIG_FILE_KEY, "classpath:db.properties");
         }

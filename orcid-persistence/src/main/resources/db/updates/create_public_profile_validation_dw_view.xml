@@ -3,8 +3,8 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     
-    <changeSet id="CREATE-VALIDATED-PUBLIC-PROFILE-VIEW" author="George Nash" dbms="postgresql">
-        <createView viewName="dw_validated_public_profile" replaceIfExists="true">
+    <changeSet id="CREATE-VALIDATED-PUBLIC-PROFILE-VIEW" author="George Nash" dbms="postgresql">            
+        <createView viewName="dw_validated_public_profile">
             SELECT 
             MIN(date_created) as date_from, 
             MAX(date_created) as date_to, 
