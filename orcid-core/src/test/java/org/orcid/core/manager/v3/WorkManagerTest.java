@@ -1856,6 +1856,53 @@ public class WorkManagerTest extends BaseTest {
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
+    
+    @Test
+    public void testCompareIdenticalWorksDifferentSource() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+        // make a duplicate as a different assertion origin
+        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+        
+        // identical same source
+        workManager.updateWork(claimedOrcid, w, true);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+
+        WorkContributors contributors = getContributors();
+        contributors.getContributor().get(0).getContributorAttributes().setContributorRole(ContributorRole.EDITOR.name());
+        contributors.getContributor().get(0).setCreditName(new CreditName("credit name 2"));
+
+        workToUpdate.setWorkContributors(contributors);
+
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, workToUpdate, true);
+            fail();
+        } catch (Exception e) {
+        }
+        
+        //identical different source
+         try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, w, true);
+            fail();
+        } catch (Exception e) {
+        	
+        }
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
 
     @Test
     public void testCompareWorksContributorsGroupedByOrcidId() {
