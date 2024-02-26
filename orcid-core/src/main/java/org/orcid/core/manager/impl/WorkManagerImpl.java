@@ -367,7 +367,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             }
             if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
                 client = sourceEntity.getSourceClient().getClientName();
-                if(!StringUtils.endsWithIgnoreCase(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId()) ) {
+                if(!StringUtils.equals(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId()) ) {
                 	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9014.developerMessage"));
                 }
             }
