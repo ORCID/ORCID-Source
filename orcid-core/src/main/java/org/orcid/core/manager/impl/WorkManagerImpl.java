@@ -362,13 +362,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
                 client = sourceEntity.getSourceProfile().getId();
                 if(!StringUtils.equals(client, orcid) ) {
-                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9014.developerMessage"));
+                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9010.developerMessage","work"));
                 }
             }
             if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
                 client = sourceEntity.getSourceClient().getClientName();
                 if(!StringUtils.equals(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId()) ) {
-                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9014.developerMessage"));
+                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9010.developerMessage","work"));
                 }
             }
             LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
