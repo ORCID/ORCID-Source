@@ -111,6 +111,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof LockedException) {
             logShortError(t, clientId);
+        } else if (t instanceof DeactivatedException) {
+            logShortError(t, clientId);
         } else if (t instanceof ClientDeactivatedException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidNonPublicElementException) {
