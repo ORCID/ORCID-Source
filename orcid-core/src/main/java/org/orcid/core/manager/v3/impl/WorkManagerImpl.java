@@ -377,7 +377,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             if (activeSource != null) {
 
                 if(!activeSource.equals(workSaved.getSource())) {
-                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9010.developerMessage","work"));
+                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9010.developerMessage",new Object[]{"work"}));
                 }
             }
             
