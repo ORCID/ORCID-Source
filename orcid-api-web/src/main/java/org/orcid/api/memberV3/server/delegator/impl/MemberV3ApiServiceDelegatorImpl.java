@@ -1642,16 +1642,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         return Response.noContent().build();
     }
 
-    private void checkProfileStatus(String orcid, boolean readOperation) {
-        try {
-            orcidSecurityManager.checkProfile(orcid);
-        } catch (DeactivatedException e) {
-            // If it is a read operation, ignore the deactivated status since we
-            // are going to return the empty element with the deactivation date
-            if (!readOperation) {
-                throw e;
-            }
-        }
+    private void checkProfileStatus(String orcid, boolean readOperation) throws DeactivatedException {
+        orcidSecurityManager.checkProfile(orcid);        
     } 
     
     private Map<String, String> addParmsMismatchedPutCode(Long urlPutCode, Long bodyPutCode) {

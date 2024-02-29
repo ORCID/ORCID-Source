@@ -21,6 +21,7 @@ import org.jbibtex.TokenMgrError;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
@@ -111,6 +112,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof LockedException) {
             logShortError(t, clientId);
+        } else if (t instanceof DeactivatedException) {
+            logShortError(t, clientId);
         } else if (t instanceof ClientDeactivatedException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidNonPublicElementException) {
@@ -178,6 +181,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return Response.status(error.getResponseStatus()).entity(error).build();
     }
 
+    @Deprecated
     private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return Response.status(((OrcidApiException) t).getHttpStatus()).build();            
@@ -280,9 +284,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private Response newStyleErrorResponse(Throwable t, String version) {
-        if(NotFoundException.class.isAssignableFrom(t.getClass())) {
-            return getOrcidErrorResponse(t, version);
-        } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
+        if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             return getOrcidErrorResponse((WebApplicationException) t, version);
         } else {
             return getOrcidErrorResponse(t, version);
@@ -308,7 +310,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         int statusCode = 0;
 
         if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-        	statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
+            statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
             statusCode = ((org.orcid.jaxb.model.v3.release.error.OrcidError) orcidError).getResponseCode();
         }
@@ -322,7 +324,25 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                     location = getPrimaryRecordLocation(params);
                 }
             }
-
+            
+            RequestAttributes reqAttr = RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes servlReqAttr = (ServletRequestAttributes)reqAttr;
+            HttpServletRequest req = servlReqAttr.getRequest();
+            String requestMethod = (req == null) ? null : req.getMethod();
+            
+            statusCode = Response.Status.MOVED_PERMANENTLY.getStatusCode();
+            if(requestMethod != null && !requestMethod.equals("GET")) {
+                statusCode = Response.Status.CONFLICT.getStatusCode();
+                // Create a new error object
+                if(org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+                    org.orcid.jaxb.model.error_v2.OrcidError v2Error = (org.orcid.jaxb.model.error_v2.OrcidError) orcidError;
+                    orcidError = orcidCoreExceptionMapper.getDeprecatedOrcidErrorV2(v2Error.getErrorCode(), statusCode, params);
+                } else {
+                    org.orcid.jaxb.model.v3.release.error.OrcidError v3Error = (org.orcid.jaxb.model.v3.release.error.OrcidError) orcidError;
+                    orcidError = orcidCoreExceptionMapper.getDeprecatedOrcidErrorV3(v3Error.getErrorCode(), statusCode, params);
+                }
+            }
+            
             Response response = null;
             if (location != null) {
                 response = Response.status(statusCode).header(LOCATION_HEADER, location).entity(orcidError).build();

@@ -1,3 +1,33 @@
+## v2.51.8 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.7...v2.51.8)
+
+## v2.51.7 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.6...v2.51.7)
+
+### Feature
+
+- Add new sign in updates togglz (#7002)
+
+## v2.51.6 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.5...v2.51.6)
+
+## v2.51.5 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.4...v2.51.5)
+
+- [#6999](https://github.com/ORCID/ORCID-Source/pull/6999): lmendoza/wordpress-headless
+
+## v2.51.4 - 2024-02-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.3...v2.51.4)
+
+## v2.51.3 - 2024-02-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.2...v2.51.3)
+
 ## v2.51.2 - 2024-02-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.1...v2.51.2)
