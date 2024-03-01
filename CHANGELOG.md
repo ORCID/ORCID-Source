@@ -1,3 +1,15 @@
+## v2.51.8 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.7...v2.51.8)
+
+## v2.51.7 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.6...v2.51.7)
+
+### Feature
+
+- Add new sign in updates togglz (#7002)
+
 ## v2.51.6 - 2024-02-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.5...v2.51.6)
