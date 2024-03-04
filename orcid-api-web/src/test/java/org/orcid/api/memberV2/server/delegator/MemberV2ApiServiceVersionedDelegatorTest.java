@@ -1692,29 +1692,114 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             person.getResearcherUrls().getResearcherUrls().forEach(e -> assertSourceElement(e, true));
         }
     }
-    
+       
     /**
      * Deactivated elements tests
-     * */
-    @Test
-    public void testViewDeactivatedRecordDontThrowError() {
-        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);                
+     */    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewActivities() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
         serviceDelegator.viewActivities(deactivatedUserOrcid);
-        serviceDelegator.viewRecord(deactivatedUserOrcid);        
-        serviceDelegator.viewPerson(deactivatedUserOrcid);
-        serviceDelegator.viewAddresses(deactivatedUserOrcid);
-        serviceDelegator.viewEducations(deactivatedUserOrcid);
-        serviceDelegator.viewEmails(deactivatedUserOrcid);
-        serviceDelegator.viewEmployments(deactivatedUserOrcid);
-        serviceDelegator.viewExternalIdentifiers(deactivatedUserOrcid);
-        serviceDelegator.viewFundings(deactivatedUserOrcid);
-        serviceDelegator.viewKeywords(deactivatedUserOrcid);
-        serviceDelegator.viewOtherNames(deactivatedUserOrcid);
-        serviceDelegator.viewPeerReviews(deactivatedUserOrcid);
-        serviceDelegator.viewPersonalDetails(deactivatedUserOrcid);
-        serviceDelegator.viewResearcherUrls(deactivatedUserOrcid);
-        serviceDelegator.viewWorks(deactivatedUserOrcid);
+        fail();
     }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewRecord() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewRecord(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewPerson() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPerson(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewAddresses() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewAddresses(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewEducations() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEducations(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewEmails() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmails(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewEmployments() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewEmployments(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewExternalIdentifiers() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewExternalIdentifiers(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewFundings() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewFundings(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewKeywords() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewKeywords(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewOtherNames() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewOtherNames(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewPeerReviews() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPeerReviews(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewPersonalDetails() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewPersonalDetails(deactivatedUserOrcid);
+        fail();
+    }
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewResearcherUrls() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewResearcherUrls(deactivatedUserOrcid);
+        fail();
+    }        
+    
+    @Test(expected = DeactivatedException.class)
+    public void testDeactivatedRecordViewWorks() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0007", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewWorks(deactivatedUserOrcid);
+        fail();
+    }        
     
     @Test(expected = DeactivatedException.class)
     public void testDeactivatedRecordCreateWork() {

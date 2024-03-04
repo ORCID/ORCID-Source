@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -51,6 +52,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
@@ -352,15 +355,22 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
+        String devMessage = localeManager.resolveMessage("apiError.9010.developerMessage").replace("${activity}", "work");
 
         if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
             SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
             String client = null;
             if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
                 client = sourceEntity.getSourceProfile().getId();
+                if(!StringUtils.equals(client, orcid) ) {
+                	throw new OrcidForbiddenException(devMessage );
+                }
             }
             if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
                 client = sourceEntity.getSourceClient().getClientName();
+                if(!StringUtils.equals(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId()) ) {
+                	throw new OrcidForbiddenException(devMessage );
+                }
             }
             LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
             return workSaved;

@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
-import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -602,15 +601,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     }
 
     private void checkProfileStatus(String orcid, boolean readOperation) {
-        try {
-            orcidSecurityManager.checkProfile(orcid);
-        } catch (DeactivatedException e) {
-            // If it is a read operation, ignore the deactivated status since we
-            // are going to return the empty element with the deactivation date
-            if (!readOperation) {
-                throw e;
-            }
-        }
+        orcidSecurityManager.checkProfile(orcid);        
     }
 
 }

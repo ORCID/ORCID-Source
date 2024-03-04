@@ -1,7 +1,5 @@
 package org.orcid.api.publicV3.server.delegator.impl;
 
-import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -17,7 +15,6 @@ import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
-import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
@@ -927,11 +924,7 @@ public class PublicV3ApiServiceDelegatorImpl
     }
     
     private void checkProfileStatus(String orcid) {
-        try {
-            orcidSecurityManager.checkProfile(orcid);
-        } catch(DeactivatedException e) {
-            // Ignore the DeactivatedException since we should be able to return the empty element
-        }
+        orcidSecurityManager.checkProfile(orcid);        
     }
 
     @Override

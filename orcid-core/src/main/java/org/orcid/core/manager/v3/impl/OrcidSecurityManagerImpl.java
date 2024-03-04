@@ -202,15 +202,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Check if the user record is locked
         if (!profile.isAccountNonLocked()) {
-            LockedException lockedException = new LockedException();
+            LockedException lockedException = new LockedException(orcid + " is locked");
             lockedException.setOrcid(profile.getId());
             throw lockedException;
         }
 
         // Check if the user record is deactivated
         if (profile.getDeactivationDate() != null) {
-            DeactivatedException exception = new DeactivatedException();
-            exception.setOrcid(orcid);
+            DeactivatedException exception = new DeactivatedException(orcid + " is deactivated");
+            exception.setOrcid(orcid);            
             throw exception;
         }
     }

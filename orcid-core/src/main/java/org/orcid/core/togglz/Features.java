@@ -6,6 +6,13 @@ import org.togglz.core.context.FeatureContext;
 
 
 public enum Features implements Feature {
+
+    @Label("Sign in updates V1")
+    SIGN_IN_UPDATES_V1,
+
+    @Label("Homepage Headless WordPress")
+    WORDPRESS_HOME_PAGE,
+
     @Label("Registration 2.1: Add affiliations on registration")
     REGISTRATION_2_1,
 
