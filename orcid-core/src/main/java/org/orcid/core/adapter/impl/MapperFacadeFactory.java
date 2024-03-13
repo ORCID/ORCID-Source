@@ -943,7 +943,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 if(WorkType.DISSERTATION.equals(a.getSubjectType())) {
                     b.setSubjectType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
                 } else {
-                    b.setSubjectType(a.getSubjectType().name());
+                    if(a.getSubjectType() != null) {
+                        b.setSubjectType(a.getSubjectType().name());
+                    }
                 }
             }
         });
