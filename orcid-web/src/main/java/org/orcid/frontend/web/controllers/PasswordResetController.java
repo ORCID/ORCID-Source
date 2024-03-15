@@ -32,6 +32,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -343,24 +344,37 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-    public ResponseEntity<?> sendReactivation(@RequestParam("email") String email) throws UnsupportedEncodingException {
+    public ResponseEntity<?> sendReactivation(@RequestParam(name="email", required=false) String email, @RequestParam(name="orcid", required=false) String orcid) throws UnsupportedEncodingException {
 
-        if (!email.contains("@")) {
-            email = URLDecoder.decode(email, "UTF-8");
-        }
-
-        email = OrcidStringUtils.filterEmailAddress(email);
-        String orcid = null;
-
-        if (!validateEmailAddress(email)) {
-            String error = getMessage("Email.personalInfoForm.email");
-            return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+        if (email != null) {
+            if (!email.contains("@")) {
+                email = URLDecoder.decode(email, "UTF-8");
+            }
+    
+            email = OrcidStringUtils.filterEmailAddress(email);
+    
+            if (!validateEmailAddress(email)) {
+                String error = getMessage("Email.personalInfoForm.email");
+                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+            } else {
+                try{
+                    orcid = emailManager.findOrcidIdByEmail(email);
+                } catch(NoResultException nre) {
+                    String error = getMessage("Email.resendClaim.invalidEmail");
+                    return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+                }
+            }
         } else {
-            try{
-                orcid = emailManager.findOrcidIdByEmail(email);
-            } catch(NoResultException nre) {
-                String error = getMessage("Email.resendClaim.invalidEmail");
-                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+            if (!OrcidStringUtils.isValidOrcid(orcid)) {
+                String error = getMessage("Email.resetPasswordForm.error");
+                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+            } else {
+                try{
+                    email = emailManager.findPrimaryEmail(orcid).getEmail();
+                } catch(NoResultException nre) {
+                    String error = getMessage("Email.resetPasswordForm.error");
+                    return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+                }
             }
         }
 
