@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Public record header with summary")
+    NEW_RECORD_HEADER_WITH_SUMMARY,
+
     @Label("Sign in updates V1")
     SIGN_IN_UPDATES_V1,
 
