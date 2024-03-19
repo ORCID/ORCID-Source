@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.jena.sparql.function.library.e;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
@@ -27,6 +29,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -201,23 +204,35 @@ public class ClaimController extends BaseController {
         String email = resendClaimRequest.getEmail();
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);
-        
-        if (!OrcidStringUtils.isEmailValid(email)) {
-            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
-            return resendClaimRequest;
-        }
 
-        if (!emailManager.emailExists(email)) {
-            String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
-            message += "<a href=\"https://support.orcid.org/\">";
-            message += getMessage("orcid.frontend.reset.password.email_not_found_3");
-            message += "</a>";
-            message += getMessage("orcid.frontend.reset.password.email_not_found_4");
-            errors.add(message);
-            return resendClaimRequest;
+        String orcid = null;
+        if (OrcidStringUtils.isValidOrcid(email)) {
+            try{
+                orcid = email;
+                email = emailManager.findPrimaryEmail(orcid).getEmail();
+            } catch(NoResultException nre) {
+                errors.add(getMessage("Email.resetPasswordForm.error"));
+                return resendClaimRequest;            
+            }
+        } else {
+            if (!OrcidStringUtils.isEmailValid(email)) {
+                errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+                return resendClaimRequest;
+            }
+    
+            if (!emailManager.emailExists(email)) {
+                String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
+                message += "<a href=\"https://support.orcid.org/\">";
+                message += getMessage("orcid.frontend.reset.password.email_not_found_3");
+                message += "</a>";
+                message += getMessage("orcid.frontend.reset.password.email_not_found_4");
+                errors.add(message);
+                return resendClaimRequest;
+            }
+    
+            orcid = emailManager.findOrcidIdByEmail(email);
         }
-
-        String orcid = emailManager.findOrcidIdByEmail(email);
+  
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
 
         if (profile != null && profile.getClaimed()) {

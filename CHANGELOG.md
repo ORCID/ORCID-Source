@@ -1,3 +1,17 @@
+## v2.53.0 - 2024-03-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.52.1...v2.53.0)
+
+- [#7007](https://github.com/ORCID/ORCID-Source/pull/7007): feature: Update claim and reactivate methods to receive orcid and send email to associated email
+
+### Feature
+
+- Update claim and reactivate methods to receive orcid and send email to associated email
+
+## v2.52.1 - 2024-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.52.0...v2.52.1)
+
 ## v2.52.0 - 2024-03-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.11...v2.52.0)

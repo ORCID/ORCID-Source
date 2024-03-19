@@ -17,6 +17,9 @@ public class PeerReviewSubjectTypeConverter  extends BidirectionalConverter<Work
         try {
             return WorkType.valueOf(source);
         } catch (IllegalArgumentException e) {
+            if(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name().equals(source)) {
+              return WorkType.DISSERTATION;  
+            } 
             return WorkType.OTHER;
         }
     }

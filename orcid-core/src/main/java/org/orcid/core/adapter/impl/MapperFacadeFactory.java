@@ -940,6 +940,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 b.setSubjectTranslatedNameLanguageCode((a.getSubjectName() == null || a.getSubjectName().getTranslatedTitle() == null) ? null
                         : a.getSubjectName().getTranslatedTitle().getLanguageCode());
                 b.setSubjectContainerName(a.getSubjectContainerName() == null ? null : a.getSubjectContainerName().getContent());
+                if(WorkType.DISSERTATION.equals(a.getSubjectType())) {
+                    b.setSubjectType(org.orcid.jaxb.model.common.WorkType.DISSERTATION_THESIS.name());
+                } else {
+                    if(a.getSubjectType() != null) {
+                        b.setSubjectType(a.getSubjectType().name());
+                    }
+                }
             }
         });
 
