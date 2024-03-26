@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,6 +88,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.orcid.pojo.grouping.FundingGroup;
 
 @Controller
 public class PublicRecordController extends BaseWorkspaceController {
@@ -171,7 +173,7 @@ public class PublicRecordController extends BaseWorkspaceController {
     
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
-
+    
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
 
@@ -402,32 +404,45 @@ public class PublicRecordController extends BaseWorkspaceController {
         AtomicInteger selfAssertedWorks = new AtomicInteger();
 
         if (workGroups != null) {
-            workGroups.forEach(work -> work.getWorks().forEach(w -> {
-                if (work.getDefaultPutCode().equals(Long.valueOf(w.getPutCode().getValue()))) {
-                    if(orcid.equals(w.getSource()) || orcid.equals(w.getAssertionOriginOrcid())) {
-                        selfAssertedWorks.getAndIncrement();
-                    } else {
-                        validatedWorks.getAndIncrement();
-                    }                    
-                }
-            }));
+            workGroups.forEach(work -> {                
+                AtomicBoolean foundValidateWorkInGroup = new AtomicBoolean(false);
+                work.getWorks().forEach(w -> {
+                    // If the orcid is not the source, then we count the group as validated
+                    if(!orcid.equals(w.getSource()) && !orcid.equals(w.getAssertionOriginOrcid())) {
+                        foundValidateWorkInGroup.set(true);                        
+                    }                
+                });
+                
+                if(foundValidateWorkInGroup.get()) {
+                    validatedWorks.getAndIncrement();
+                } else {
+                    selfAssertedWorks.getAndIncrement();
+                }                
+            });
         }
 
         recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
         recordSummary.setValidatedWorks(validatedWorks.get());
 
-        List<org.orcid.pojo.grouping.FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
+        List<FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
 
         AtomicInteger validatedFunds = new AtomicInteger();
         AtomicInteger selfAssertedFunds = new AtomicInteger();
 
         if (fundingGroups != null) {
             fundingGroups.forEach(fundingGroup -> {
-                if(orcid.equals(fundingGroup.getDefaultFunding().getSource()) || orcid.equals(fundingGroup.getDefaultFunding().getAssertionOriginOrcid())) {
-                    selfAssertedFunds.getAndIncrement();
-                } else {
+                AtomicBoolean foundValidateFundingInGroup = new AtomicBoolean(false);
+                fundingGroup.getFundings().forEach(funding -> {
+                    if (!orcid.equals(funding.getSource()) && !orcid.equals(funding.getAssertionOriginOrcid())) {
+                        foundValidateFundingInGroup.getAndSet(true);                        
+                    }                     
+                });
+                
+                if(foundValidateFundingInGroup.get()) {
                     validatedFunds.getAndIncrement();
-                }                
+                } else {
+                    selfAssertedFunds.getAndIncrement();
+                }                                
             });
         }
 
@@ -438,7 +453,6 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         AtomicInteger totalReviewsCount = new AtomicInteger();
         AtomicInteger selfAssertedPeerReviews = new AtomicInteger();
-        
         
         if (peerReviewMinimizedSummaryList != null) {
             peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
@@ -456,7 +470,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             recordSummary.setPeerReviewPublicationGrants(0);
         }
 
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
 
         recordSummary.setLastModified(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
         recordSummary.setCreation(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
