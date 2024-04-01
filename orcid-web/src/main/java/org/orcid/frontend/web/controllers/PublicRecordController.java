@@ -78,6 +78,7 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
+import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.summary.AffiliationSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
@@ -88,7 +89,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.orcid.pojo.grouping.FundingGroup;
 
 @Controller
 public class PublicRecordController extends BaseWorkspaceController {
@@ -390,9 +390,7 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         recordSummary.setProfessionalActivitiesCount(professionalActivities.size());
 
-        PersonExternalIdentifiers personExternalIdentifiers;
-
-        personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+        PersonExternalIdentifiers personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
 
         recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, orcid));
 
