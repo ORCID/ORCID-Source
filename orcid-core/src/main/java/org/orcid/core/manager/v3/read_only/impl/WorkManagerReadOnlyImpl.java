@@ -15,12 +15,18 @@ import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.comparators.DateComparatorWorkGroupExtended;
+import org.orcid.core.utils.comparators.TitleComparator;
+import org.orcid.core.utils.comparators.TitleComparatorWorkGroupExtended;
+import org.orcid.core.utils.comparators.TypeComparator;
+import org.orcid.core.utils.comparators.TypeComparatorWorkGroupExtended;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
@@ -49,11 +55,19 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
+    
+    static final String TITLE_SORT_KEY = "title";
+
+    static final String DATE_SORT_KEY = "date";
+
+    static final String TYPE_SORT_KEY = "type";
     
     public static final String BULK_PUT_CODES_DELIMITER = ",";
 
@@ -496,4 +510,76 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         return null;
     }
 
+    @Override
+    public List<WorkGroup> filter(Works works, boolean justPublic) {
+        List<WorkGroup> filteredGroups = new ArrayList<>();
+        for (WorkGroup workGroup : works.getWorkGroup()) {
+            
+            Iterator<WorkSummary> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummary w = summariesIt.next();
+                if(justPublic && !Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
+            }
+            
+            if(!workGroup.getWorkSummary().isEmpty()) {
+                filteredGroups.add(workGroup);            
+            }            
+        }
+        return filteredGroups;
+    } 
+    
+    @Override
+    public List<WorkGroup> sort(List<WorkGroup> list, String sort, boolean sortAsc) {
+        if (TITLE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TitleComparator());
+        } else if (DATE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new DateComparator());
+        } else if (TYPE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TypeComparator());
+        }
+
+        if (!sortAsc) {
+            Collections.reverse(list);
+        }
+        return list;
+    }
+    
+    @Override
+    public List<WorkGroupExtended> sortExtended(List<WorkGroupExtended> list, String sort, boolean sortAsc) {
+        if (TITLE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TitleComparatorWorkGroupExtended());
+        } else if (DATE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new DateComparatorWorkGroupExtended());
+        } else if (TYPE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TypeComparatorWorkGroupExtended());
+        }
+
+        if (!sortAsc) {
+            Collections.reverse(list);
+        }
+        return list;
+    }
+
+    @Override
+    public List<WorkGroupExtended> filterWorksExtended(WorksExtended works, boolean justPublic) {
+        List<WorkGroupExtended> filteredGroups = new ArrayList<>();
+        for (WorkGroupExtended workGroup : works.getWorkGroup()) {
+
+            Iterator<WorkSummaryExtended> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummaryExtended w = summariesIt.next();
+                if(justPublic && !Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
+            }
+
+            if(!workGroup.getWorkSummary().isEmpty()) {
+                filteredGroups.add(workGroup);
+            }
+        }
+        return filteredGroups;
+    }
+    
 }

@@ -171,12 +171,8 @@ public class PublicRecordController extends BaseWorkspaceController {
     @Resource
     private WorksCacheManager worksCacheManager;
     
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnly;
-    
     public static int ORCID_HASH_LENGTH = 8;
-    private static final String PAGE_SIZE_DEFAULT = "50";
-
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/public-record.json", method = RequestMethod.GET)
     public @ResponseBody
     PublicRecord getPublicRecord(@PathVariable("orcid") String orcid) {
@@ -352,130 +348,7 @@ public class PublicRecordController extends BaseWorkspaceController {
 
     public @ResponseBody
     RecordSummary getSummary(String orcid) {
-        RecordSummary recordSummary = new RecordSummary();
-
-        Name name = recordNameManagerReadOnly.getRecordName(orcid);
-        if(name != null) {
-            String displayName = null;            
-            if (name != null) {
-                if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
-                    displayName = getDisplayName(name);
-                }
-            }
-            recordSummary.setName(displayName);
-        }        
-
-        AffiliationGroupContainer groupedAffiliations = publicProfileController.getGroupedAffiliations(orcid);
-        List<AffiliationGroupForm> groupedEmployments = groupedAffiliations.getAffiliationGroups().get(AffiliationType.EMPLOYMENT);
-
-        List<AffiliationSummary> employmentAffiliations = new ArrayList<>();
-
-        sortAffiliationsByCreatedDate(groupedEmployments);
-
-        if (groupedEmployments.size() > 0) {
-            Stream<AffiliationGroupForm> employmentsList = groupedEmployments.stream().limit(3);
-            employmentsList.forEach(e -> employmentAffiliations.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "employment")));
-        }
-
-        recordSummary.setEmploymentAffiliationsCount(groupedEmployments.size());
-        recordSummary.setEmploymentAffiliations(employmentAffiliations);
-
-        List<AffiliationSummary> professionalActivities = retrieveProfessionalActivities(groupedAffiliations, orcid);
-
-        if (professionalActivities.size() > 3) {
-            recordSummary.setProfessionalActivities(Arrays.asList(professionalActivities.get(0), professionalActivities.get(1), professionalActivities.get(2)));
-        } else {
-            recordSummary.setProfessionalActivities(professionalActivities);
-        }
-
-        recordSummary.setProfessionalActivitiesCount(professionalActivities.size());
-
-        PersonExternalIdentifiers personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
-
-        recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, orcid));
-
-        Page<org.orcid.pojo.grouping.WorkGroup> works = publicProfileController.getAllWorkGroupsJson(orcid, "date", true);
-
-        List<WorkGroup> workGroups = works.getGroups();
-
-        AtomicInteger validatedWorks = new AtomicInteger();
-        AtomicInteger selfAssertedWorks = new AtomicInteger();
-
-        if (workGroups != null) {
-            workGroups.forEach(work -> {                
-                AtomicBoolean foundValidateWorkInGroup = new AtomicBoolean(false);
-                work.getWorks().forEach(w -> {
-                    // If the orcid is not the source, then we count the group as validated
-                    if(!orcid.equals(w.getSource()) && !orcid.equals(w.getAssertionOriginOrcid())) {
-                        foundValidateWorkInGroup.set(true);                        
-                    }                
-                });
-                
-                if(foundValidateWorkInGroup.get()) {
-                    validatedWorks.getAndIncrement();
-                } else {
-                    selfAssertedWorks.getAndIncrement();
-                }                
-            });
-        }
-
-        recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
-        recordSummary.setValidatedWorks(validatedWorks.get());
-
-        List<FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
-
-        AtomicInteger validatedFunds = new AtomicInteger();
-        AtomicInteger selfAssertedFunds = new AtomicInteger();
-
-        if (fundingGroups != null) {
-            fundingGroups.forEach(fundingGroup -> {
-                AtomicBoolean foundValidateFundingInGroup = new AtomicBoolean(false);
-                fundingGroup.getFundings().forEach(funding -> {
-                    if (!orcid.equals(funding.getSource()) && !orcid.equals(funding.getAssertionOriginOrcid())) {
-                        foundValidateFundingInGroup.getAndSet(true);                        
-                    }                     
-                });
-                
-                if(foundValidateFundingInGroup.get()) {
-                    validatedFunds.getAndIncrement();
-                } else {
-                    selfAssertedFunds.getAndIncrement();
-                }                                
-            });
-        }
-
-        recordSummary.setSelfAssertedFunds(selfAssertedFunds.get());
-        recordSummary.setValidatedFunds(validatedFunds.get());
-
-        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
-
-        AtomicInteger totalReviewsCount = new AtomicInteger();
-        AtomicInteger selfAssertedPeerReviews = new AtomicInteger();
-        
-        if (peerReviewMinimizedSummaryList != null) {
-            peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
-                totalReviewsCount.set(totalReviewsCount.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
-                if(orcid.equals(peerReviewMinimizedSummary.getSourceId()) || orcid.equals(peerReviewMinimizedSummary.getAssertionOriginSourceId())) {
-                    selfAssertedPeerReviews.getAndIncrement();
-                }
-            });
-            recordSummary.setSelfAssertedPeerReviews(selfAssertedPeerReviews.intValue());
-            recordSummary.setPeerReviewsTotal(totalReviewsCount.intValue());
-            recordSummary.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
-        } else {
-            recordSummary.setPeerReviewsTotal(0);
-            recordSummary.setSelfAssertedPeerReviews(0);
-            recordSummary.setPeerReviewPublicationGrants(0);
-        }
-
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-
-        recordSummary.setLastModified(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
-        recordSummary.setCreation(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
-
-        recordSummary.setOrcid(recordManagerReadOnly.getOrcidIdentifier(orcid).getUri());
-
-        return recordSummary;
+        //TODO
     }
 
     private String getDisplayName(Name name) {
@@ -493,64 +366,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         return displayName;
     }
 
-    private List<AffiliationSummary> retrieveProfessionalActivities(AffiliationGroupContainer groupedAffiliations, String orcid) {
-        List<AffiliationSummary> professionalActivities = new ArrayList<>();
-
-        List<AffiliationGroupForm> affiliationGroupForms = new ArrayList<>();
-
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.MEMBERSHIP));
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.SERVICE));
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.INVITED_POSITION));
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.DISTINCTION));
-
-        sortAffiliationsByCreatedDate(affiliationGroupForms);
-
-        affiliationGroupForms.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, e.getAffiliationType().value())));
-
-        return professionalActivities;
-    }
-
-    private String formatDate(XMLGregorianCalendar xmlGregorianCalendar) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        GregorianCalendar gc = xmlGregorianCalendar.toGregorianCalendar();
-        return sdf.format(gc.getTime());
-    }
-
     private Long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
-    }
-
-    private void sortAffiliationsByCreatedDate(List<AffiliationGroupForm> affiliationGroupForms) {
-        List<Long> activePutCodesWithOutDate = new ArrayList<>();
-
-        affiliationGroupForms.forEach(affiliationGroupForm -> {
-            if ("distinction".equals(affiliationGroupForm.getDefaultAffiliation().getAffiliationType().getValue()) &&
-                    affiliationGroupForm.getDefaultAffiliation().getStartDate().getYear() != null
-            ) {
-                affiliationGroupForm.getDefaultAffiliation().setEndDate(affiliationGroupForm.getDefaultAffiliation().getStartDate());
-            }
-
-            if (affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear() == null ||
-                    "".equals(affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear())) {
-                activePutCodesWithOutDate.add(affiliationGroupForm.getActivePutCode());
-                affiliationGroupForm.getDefaultAffiliation().setEndDate(Date.valueOf(new java.util.Date()));
-            }
-        });
-
-        affiliationGroupForms.sort(Comparator.comparing(a -> a.getDefaultAffiliation().getEndDate().toJavaDate()));
-        Collections.reverse(affiliationGroupForms);
-
-        if (activePutCodesWithOutDate.size() > 0) {
-            Iterator<Long> i = activePutCodesWithOutDate.iterator();
-            while (i.hasNext()) {
-                Long activePutCode = i.next();
-                affiliationGroupForms.forEach(affiliationGroupForm -> {
-                    if (activePutCode.equals(affiliationGroupForm.getActivePutCode())) {
-                        affiliationGroupForm.getDefaultAffiliation().setEndDate(null);
-                        i.remove();
-                    }
-                });
-            }
-        }
-    }
+    }    
 }

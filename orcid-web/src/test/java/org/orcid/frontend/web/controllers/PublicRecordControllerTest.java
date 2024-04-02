@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -177,6 +178,8 @@ public class PublicRecordControllerTest {
         assertEquals("ORCID Test Credit Name", summary.getName());
         assertEquals("https://test.orcid.org/0000-0000-0000-0000", summary.getOrcid());
         
+        //TODO
+        fail();
         summary.getPeerReviewPublicationGrants();
         summary.getPeerReviewsTotal();
         summary.getProfessionalActivities();

@@ -5,10 +5,12 @@ import java.util.List;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.WorkExtended;
+import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 
@@ -123,4 +125,17 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
     WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid);
 
     WorkExtended getWorkExtended(String orcid, Long workId);
+    
+    /**
+     * Transform a Works object into a list of WorkGroups and filter the non public ones if justPublic is set to true
+     * @param justPublic
+     * @return a list of WorkGroup
+     * */
+    List<WorkGroup> filter(Works works, boolean justPublic);
+    
+    List<WorkGroup> sort(List<WorkGroup> list, String sort, boolean sortAsc);
+    
+    List<WorkGroupExtended> sortExtended(List<WorkGroupExtended> list, String sort, boolean sortAsc);
+    
+    List<WorkGroupExtended> filterWorksExtended(WorksExtended works, boolean justPublic);
 }
