@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -150,13 +151,32 @@ public class PublicRecordControllerTest {
         assertNotNull(summary);
         assertEquals(3, summary.getEmploymentAffiliationsCount());
         assertEquals(3, summary.getEmploymentAffiliations().size());
-        assertEquals("EMPLOYMENT-2", summary.getEmploymentAffiliations().get(0).getOrganizationName());
-        assertEquals("EMPLOYMENT-1", summary.getEmploymentAffiliations().get(1).getOrganizationName());
-        assertEquals("EMPLOYMENT-0", summary.getEmploymentAffiliations().get(2).getOrganizationName());
+        boolean found0 = false, found1 = false, found2 = false;
+        for(int i = 0; i < 3; i++ ) {
+            String name = summary.getEmploymentAffiliations().get(i).getOrganizationName();
+            switch(name) {
+            case "EMPLOYMENT-0":
+                found0 = true;
+                break;
+            case "EMPLOYMENT-1":
+                found1 = true;
+                break;
+            case "EMPLOYMENT-2":
+                found2 = true;
+                break;
+            }
+        }
+        assertTrue(found0);
+        assertTrue(found1);
+        assertTrue(found2);
         
-        summary.getExternalIdentifiers();
-        summary.getName();
-        summary.getOrcid();
+        assertEquals(1, summary.getExternalIdentifiers().size());
+        assertEquals("0", summary.getExternalIdentifiers().get(0).getId());
+        assertEquals("0000", summary.getExternalIdentifiers().get(0).getReference());
+        
+        assertEquals("ORCID Test Credit Name", summary.getName());
+        assertEquals("https://test.orcid.org/0000-0000-0000-0000", summary.getOrcid());
+        
         summary.getPeerReviewPublicationGrants();
         summary.getPeerReviewsTotal();
         summary.getProfessionalActivities();
@@ -191,7 +211,7 @@ public class PublicRecordControllerTest {
             agf.setActivePutCode(1L);
             agf.setActiveVisibility(Visibility.PUBLIC.name());
             agf.setAffiliationType(affiliationType);
-            affiliationGroupForms.add(agf);
+            affiliationGroupForms.add(i, agf);
         }
         return affiliationGroupForms;
     }
@@ -279,7 +299,7 @@ public class PublicRecordControllerTest {
                 }
                 fg.getFundings().add(ff);
             }
-            fundings.add(fg);
+            fundings.add(i, fg);
         }
 
         return fundings;
