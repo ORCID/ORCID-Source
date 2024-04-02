@@ -15,6 +15,7 @@ import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.comparators.DateComparator;
 import org.orcid.core.utils.comparators.DateComparatorWorkGroupExtended;
 import org.orcid.core.utils.comparators.TitleComparator;
 import org.orcid.core.utils.comparators.TitleComparatorWorkGroupExtended;

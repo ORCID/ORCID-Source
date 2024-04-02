@@ -32,12 +32,13 @@ import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.FundingGroup;
-import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 
 import java.time.LocalDate;
@@ -74,34 +75,6 @@ public class SummaryManagerImpl implements SummaryManager {
         //Generate the works summary
         generateWorksSummary(recordSummary);
         
-        Page<org.orcid.pojo.grouping.WorkGroup> works = publicProfileController.getAllWorkGroupsJson(orcid, "date", true);
-
-        List<WorkGroup> workGroups = works.getGroups();
-
-        AtomicInteger validatedWorks = new AtomicInteger();
-        AtomicInteger selfAssertedWorks = new AtomicInteger();
-
-        if (workGroups != null) {
-            workGroups.forEach(work -> {                
-                AtomicBoolean foundValidateWorkInGroup = new AtomicBoolean(false);
-                work.getWorks().forEach(w -> {
-                    // If the orcid is not the source, then we count the group as validated
-                    if(!orcid.equals(w.getSource()) && !orcid.equals(w.getAssertionOriginOrcid())) {
-                        foundValidateWorkInGroup.set(true);                        
-                    }                
-                });
-                
-                if(foundValidateWorkInGroup.get()) {
-                    validatedWorks.getAndIncrement();
-                } else {
-                    selfAssertedWorks.getAndIncrement();
-                }                
-            });
-        }
-
-        recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
-        recordSummary.setValidatedWorks(validatedWorks.get());
-
         List<FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
 
         AtomicInteger validatedFunds = new AtomicInteger();
@@ -160,6 +133,29 @@ public class SummaryManagerImpl implements SummaryManager {
     
     public void generateWorksSummary(RecordSummary recordSummary) {
         Works works = worksCacheManager.getGroupedWorks(recordSummary.getOrcid());
+        String orcid = recordSummary.getOrcid();
+        int validatedWorks = 0;
+        int selfAssertedWorks = 0;
+        
+        // Verify if the group contains at least one verified work
+        List<WorkGroup> groups = works.getWorkGroup();
+        for(WorkGroup group : groups) {
+            List<WorkSummary> summaries = group.getWorkSummary();
+            boolean validatedWorkFound = false;
+            for(WorkSummary summary : summaries) {
+                if(!orcid.equals(summary.retrieveSourcePath()) && !orcid.equals(summary.getSource().retrieveAssertionOriginPath())) {
+                    validatedWorkFound = true;
+                    break;
+                }
+            } 
+            if(validatedWorkFound) {
+                validatedWorks++;
+            } else {
+                selfAssertedWorks++;
+            }
+        }
+        recordSummary.setSelfAssertedWorks(selfAssertedWorks);
+        recordSummary.setValidatedWorks(validatedWorks);
     }
     
     public void generateExternalIdentifiersSummary(RecordSummary recordSummary) {
