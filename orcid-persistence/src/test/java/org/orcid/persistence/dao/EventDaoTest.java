@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EventEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -80,5 +81,20 @@ public class EventDaoTest extends DBUnitTest {
         assertNotNull(fromDb.getDateCreated());
 
         eventDao.delete(eventEntity.getId());
+    }
+
+    @Test
+    public void deletePapiEventsByDate() {
+        List<EventEntity> eventEntityList = eventDao.findByEventType(EventType.PAPI);
+
+        assertNotNull(eventEntityList);
+        assertEquals(3, eventEntityList.size());
+
+        eventDao.deletePapiEvents(90);
+
+        eventEntityList = eventDao.findByEventType(EventType.PAPI);
+
+        assertNotNull(eventEntityList);
+        assertEquals(0, eventEntityList.size());
     }
 }

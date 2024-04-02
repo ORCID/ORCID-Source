@@ -2,7 +2,7 @@ package org.orcid.core.common.manager;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.utils.EventType;
+import org.orcid.persistence.jpa.entities.EventType;
 
 /**
  *
@@ -12,5 +12,7 @@ import org.orcid.core.utils.EventType;
 public interface EventManager {
 
     void createEvent(EventType eventType, HttpServletRequest request);
+
+    void createPapiEvent(String clientId, boolean anonymous);
 
 }

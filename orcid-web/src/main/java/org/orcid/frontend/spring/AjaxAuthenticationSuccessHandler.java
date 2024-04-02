@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.EventType;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 

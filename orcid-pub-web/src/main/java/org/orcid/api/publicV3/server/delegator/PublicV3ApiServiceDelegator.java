@@ -3,6 +3,7 @@ package org.orcid.api.publicV3.server.delegator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 /**
@@ -131,5 +132,7 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
     Response searchByQueryCSV(Map<String, List<String>> solrParams);
 
     Response expandedSearchByQuery(Map<String, List<String>> solrParams);
+
+    void trackEvents(HttpServletRequest httpRequest);
 
 }

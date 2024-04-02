@@ -13,5 +13,7 @@ public interface EventStatsDao {
 
     void createEventStats();
 
+    void createPapiEventStats();
+
     List<EventStatsEntity> findAll();
 }
