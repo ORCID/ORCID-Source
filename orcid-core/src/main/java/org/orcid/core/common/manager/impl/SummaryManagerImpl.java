@@ -14,16 +14,23 @@ import java.util.stream.Stream;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.common.manager.SummaryManager;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Group;
+import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
+import org.orcid.jaxb.model.v3.release.record.GroupsContainer;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.SourceAware;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
@@ -31,12 +38,14 @@ import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
@@ -55,11 +64,14 @@ public class SummaryManagerImpl implements SummaryManager {
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
     
-    @Resource
-    private WorksCacheManager worksCacheManager;
-    
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
+    
+    @Resource(name = "profileFundingManagerReadOnlyV3")
+    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
+    
+    @Resource
+    private WorksCacheManager worksCacheManager;
     
     public RecordSummary getRecordSummary(String orcid) {
         RecordSummary recordSummary = new RecordSummary();
@@ -69,12 +81,14 @@ public class SummaryManagerImpl implements SummaryManager {
         // Generate the affiliations summary
         generateAffiliationsSummary(recordSummary);
         
-        //Generate the external identifiers summary
+        // Generate the external identifiers summary
         generateExternalIdentifiersSummary(recordSummary);
         
-        //Generate the works summary
+        // Generate the works summary
         generateWorksSummary(recordSummary);
         
+        // Generate the fundings summary
+        generateFundingsSummary(recordSummary);
         List<FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
 
         AtomicInteger validatedFunds = new AtomicInteger();
@@ -134,28 +148,46 @@ public class SummaryManagerImpl implements SummaryManager {
     public void generateWorksSummary(RecordSummary recordSummary) {
         Works works = worksCacheManager.getGroupedWorks(recordSummary.getOrcid());
         String orcid = recordSummary.getOrcid();
-        int validatedWorks = 0;
-        int selfAssertedWorks = 0;
         
-        // Verify if the group contains at least one verified work
-        List<WorkGroup> groups = works.getWorkGroup();
-        for(WorkGroup group : groups) {
-            List<WorkSummary> summaries = group.getWorkSummary();
-            boolean validatedWorkFound = false;
-            for(WorkSummary summary : summaries) {
-                if(!orcid.equals(summary.retrieveSourcePath()) && !orcid.equals(summary.getSource().retrieveAssertionOriginPath())) {
-                    validatedWorkFound = true;
-                    break;
+        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(works, orcid);
+        
+        recordSummary.setValidatedWorks(validAndSelfAssertedStats.getLeft());
+        recordSummary.setSelfAssertedWorks(validAndSelfAssertedStats.getRight());        
+    }
+    
+    public void generateFundingsSummary(RecordSummary recordSummary) {
+        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(recordSummary.getOrcid());
+        Fundings fundingGroups = profileFundingManagerReadOnly.groupFundings(fundings, true);
+        String orcid = recordSummary.getOrcid();
+        
+        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(fundingGroups, orcid);
+        
+        recordSummary.setValidatedFunds(validAndSelfAssertedStats.getLeft());
+        recordSummary.setSelfAssertedFunds(validAndSelfAssertedStats.getRight());        
+    }
+    
+    private Pair<Integer, Integer> calculateSelfAssertedAndValidated(GroupsContainer c, String orcid) {
+        Integer validated = 0;
+        Integer selfAsserted = 0;
+        for(Group g : c.retrieveGroups()) {
+            boolean validatedFound = false;
+            for(GroupableActivity ga : g.getActivities()) {
+                if(ga instanceof SourceAware) {
+                    SourceAware activity = (SourceAware) ga;
+                    Source source = activity.getSource();
+                    if(!orcid.equals(source.retrieveSourcePath()) && !orcid.equals(source.retrieveAssertionOriginPath())) {
+                        validatedFound = true;
+                        break;
+                    }
                 }
-            } 
-            if(validatedWorkFound) {
-                validatedWorks++;
+            }
+            if(validatedFound) {
+                validated++;
             } else {
-                selfAssertedWorks++;
+                selfAsserted++;
             }
         }
-        recordSummary.setSelfAssertedWorks(selfAssertedWorks);
-        recordSummary.setValidatedWorks(validatedWorks);
+        return Pair.of(validated, selfAsserted);
     }
     
     public void generateExternalIdentifiersSummary(RecordSummary recordSummary) {
