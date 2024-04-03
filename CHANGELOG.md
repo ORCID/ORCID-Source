@@ -1,3 +1,21 @@
+## v2.57.0 - 2024-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.56.0...v2.57.0)
+
+## v2.56.0 - 2024-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.55.0...v2.56.0)
+
+## v2.55.0 - 2024-03-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.54.0...v2.55.0)
+
+## v2.54.0 - 2024-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.53.0...v2.54.0)
+
+- [#7012](https://github.com/ORCID/ORCID-Source/pull/7012): 9149-qa-add-a-record-summaries-toggle
+
 ## v2.53.0 - 2024-03-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.52.1...v2.53.0)

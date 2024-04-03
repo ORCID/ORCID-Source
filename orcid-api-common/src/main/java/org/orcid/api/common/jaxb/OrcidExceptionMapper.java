@@ -35,9 +35,11 @@ import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.exception.OrcidNoBioException;
+import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidNotificationException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -137,6 +139,10 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof WebApplicationException) {
             logShortError(t, clientId);
         } else if (t instanceof TokenMgrError) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidNoResultException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidUnauthorizedException) {
             logShortError(t, clientId);
         } else {
             LOGGER.error("An exception has occured processing request from client " + clientId, t);
