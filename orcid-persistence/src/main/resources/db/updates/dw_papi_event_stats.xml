@@ -29,7 +29,7 @@
             <not><viewExists viewName="dw_papi_event_stats"/></not>
         </preConditions>
         <createView viewName="dw_papi_event_stats">
-            SELECT event_type, client_id, count, DATE_TRUNC('day', date), DATE_TRUNC('day', date) as last_modified
+            SELECT event_type, client_id, ip, count, DATE_TRUNC('day', date), DATE_TRUNC('day', date) as last_modified
             FROM event_stats WHERE event_type = 'Public-API'
             ORDER BY DATE_TRUNC('day', date_created) DESC;
         </createView>

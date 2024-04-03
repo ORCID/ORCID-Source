@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = {"classpath:test-orcid-persistence-context.xml"})
@@ -54,9 +55,20 @@ public class EventStatsDaoTest {
 
         assertNotNull(eventStatsEntityList);
         assertEquals(3, eventStatsEntityList.size());
+
+        assertEquals("Client 1", eventStatsEntityList.get(0).getClientId());
+        assertEquals("105.21.229.72", eventStatsEntityList.get(0).getIp());
         assertEquals(Integer.valueOf(10), eventStatsEntityList.get(0).getCount());
+
+        assertEquals("Client 2", eventStatsEntityList.get(1).getClientId());
+        assertEquals("105.21.229.73", eventStatsEntityList.get(1).getIp());
         assertEquals(Integer.valueOf(10), eventStatsEntityList.get(1).getCount());
+
+        assertNull(eventStatsEntityList.get(2).getClientId());
+        assertEquals("104.20.228.70", eventStatsEntityList.get(2).getIp());
         assertEquals(Integer.valueOf(1100), eventStatsEntityList.get(2).getCount());
+
+
 
         eventStatsDao.deleteStatsByType(EventType.PAPI);
     }
@@ -66,6 +78,7 @@ public class EventStatsDaoTest {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventType(EventType.PAPI.getValue());
             eventEntity.setClientId("Client " + (i % 2 == 0 ? 1 : 2));
+            eventEntity.setIp("105.21.229.7" + (i % 2 == 0 ? 2 : 3));
             LocalDate date = LocalDate.now().minusDays(1);
             Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
             eventEntity.setDateCreated(Date.from(instant));
@@ -75,7 +88,7 @@ public class EventStatsDaoTest {
         for (int i = 0; i < 10; i++) {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventType(EventType.PAPI.getValue());
-            eventEntity.setClientId("105.21.229.71");
+            eventEntity.setIp("105.21.229.71");
             eventEntity.setLabel("anonymous");
             LocalDate date = LocalDate.now().minusDays(1);
             Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -86,7 +99,7 @@ public class EventStatsDaoTest {
         for (int i = 0; i < 1100; i++) {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventType(EventType.PAPI.getValue());
-            eventEntity.setClientId("104.20.228.70");
+            eventEntity.setIp("104.20.228.70");
             eventEntity.setLabel("anonymous");
             LocalDate date = LocalDate.now().minusDays(1);
             Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();

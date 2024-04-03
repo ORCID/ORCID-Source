@@ -48,11 +48,11 @@ public class EventStatsDaoImpl implements EventStatsDao {
     @Transactional
     public void createPapiEventStats() {
         String query = 
-                "SELECT event_type, client_id, label, count(*), CAST(date_created as date), now(), now() " +
+                "SELECT event_type, client_id, ip, label, count(*), CAST(date_created as date), now(), now() " +
                 "FROM event " +
                 "WHERE event_type = '"+ EventType.PAPI.getValue() + "' " +
                 "AND CAST(date_created as date) = CAST(now() - (CAST('1' AS INTERVAL DAY) * 1) as date) " +
-                "GROUP BY event_type, client_id, label, CAST(date_created as date) " +
+                "GROUP BY event_type, client_id, ip, label, CAST(date_created as date) " +
                 "ORDER BY CAST(date_created as date) DESC;";
 
         Query queryList = entityManager.createNativeQuery(query);
@@ -60,20 +60,21 @@ public class EventStatsDaoImpl implements EventStatsDao {
         List<Object[]> eventsListToRemove = new ArrayList<>();
         if (eventsList.size() > 0) {
             eventsList.forEach(item -> {
-                if (item[2] == "anonymous" && item[3] != null && ((BigInteger) item[3]).intValue() < 1000) {
+                if (item[3] == "anonymous" && item[4] != null && ((BigInteger) item[4]).intValue() < 1000) {
                     eventsListToRemove.add(item);
                 }
             });
             eventsList.removeAll(eventsListToRemove);
             eventsList.forEach(item -> {
-                String insertQuery = "INSERT INTO event_stats (event_type, client_id, count, date, date_created, last_modified) VALUES (:eventType, :clientId, :count, :date, :dateCreated, :lastModified)";
+                String insertQuery = "INSERT INTO event_stats (event_type, client_id, ip, count, date, date_created, last_modified) VALUES (:eventType, :clientId, :ip, :count, :date, :dateCreated, :lastModified)";
                 Query insertQueryClients = entityManager.createNativeQuery(insertQuery);
                 insertQueryClients.setParameter("eventType", item[0]);
                 insertQueryClients.setParameter("clientId", item[1]);
-                insertQueryClients.setParameter("count", item[3]);
-                insertQueryClients.setParameter("date", item[4]);
-                insertQueryClients.setParameter("dateCreated", item[5]);
-                insertQueryClients.setParameter("lastModified", item[6]);
+                insertQueryClients.setParameter("ip", item[2]);
+                insertQueryClients.setParameter("count", item[4]);
+                insertQueryClients.setParameter("date", item[5]);
+                insertQueryClients.setParameter("dateCreated", item[6]);
+                insertQueryClients.setParameter("lastModified", item[7]);
                 insertQueryClients.executeUpdate();
             });
         }

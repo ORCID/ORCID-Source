@@ -13,6 +13,6 @@ public interface EventManager {
 
     void createEvent(EventType eventType, HttpServletRequest request);
 
-    void createPapiEvent(String clientId, boolean anonymous);
+    void createPapiEvent(String clientId, String ip, boolean anonymous);
 
 }

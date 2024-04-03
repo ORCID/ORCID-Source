@@ -107,10 +107,11 @@ public class EventManagerImpl implements EventManager {
     }
 
     @Override
-    public void createPapiEvent(String clientId, boolean anonymous) {
+    public void createPapiEvent(String clientId, String ip, boolean anonymous) {
         EventEntity eventEntity = new EventEntity();
         eventEntity.setEventType(EventType.PAPI.getValue());
         eventEntity.setClientId(clientId);
+        eventEntity.setIp(ip);
         eventEntity.setLabel(anonymous ? "anonymous" : null);
         eventEntity.setDateCreated(new Date());
         eventDao.createEvent(eventEntity);

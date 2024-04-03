@@ -969,13 +969,10 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public void trackEvents(HttpServletRequest httpRequest) {
-        boolean anonymous = false;
         String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        if (clientId == null) {
-            clientId = OrcidRequestUtil.getIpAddress(httpRequest);
-            anonymous = true;
-        }
-        eventManager.createPapiEvent(clientId, anonymous);
+        String ip = OrcidRequestUtil.getIpAddress(httpRequest);
+
+        eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
     }
 
 }
