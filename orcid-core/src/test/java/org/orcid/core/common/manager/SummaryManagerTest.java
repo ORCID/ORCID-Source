@@ -1,17 +1,14 @@
 package org.orcid.core.common.manager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Before;
@@ -28,7 +25,6 @@ import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
@@ -66,12 +62,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
-import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
-import org.orcid.pojo.ajaxForm.FundingForm;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -168,15 +158,35 @@ public class SummaryManagerTest {
         Mockito.when(recordManagerReadOnlyMock.getOrcidIdentifier(Mockito.eq(ORCID))).thenReturn(oi);
         ReflectionTestUtils.setField(manager, "recordManagerReadOnly", recordManagerReadOnlyMock);
         
-        Mockito.when(profileEntityMock.getDateCreated()).thenReturn(new Date(2024, 1, 1));
-        Mockito.when(profileEntityMock.getLastModified()).thenReturn(new Date(2024, 1, 1));
+        Mockito.when(profileEntityMock.getDateCreated()).thenReturn(new Date(124, 0, 1));
+        Mockito.when(profileEntityMock.getLastModified()).thenReturn(new Date(124, 11, 31));
         Mockito.when(profileEntityCacheManagerMock.retrieve(ORCID)).thenReturn(profileEntityMock);
         ReflectionTestUtils.setField(manager, "profileEntityCacheManager", profileEntityCacheManagerMock);
     }
 
     @Test
     public void getSummaryTest() {
-        
+        RecordSummary rs = manager.getRecordSummary(ORCID);
+        assertEquals("https://test.orcid.org/" + ORCID, rs.getOrcid());
+        assertEquals("2024-01-01", rs.getCreation());
+        assertEquals("2024-12-31", rs.getLastModified());
+        // Affiliations
+        assertEquals(3, rs.getEmploymentAffiliations().size());
+        assertEquals(3, rs.getEmploymentAffiliationsCount());
+        assertEquals(3, rs.getProfessionalActivities().size());
+        assertEquals(12, rs.getProfessionalActivitiesCount()); 
+        // External identifiers 
+        assertEquals(1, rs.getExternalIdentifiers().size());
+        // Works
+        assertEquals(0, rs.getSelfAssertedWorks());
+        assertEquals(3, rs.getValidatedWorks());
+        // Funding
+        assertEquals(0, rs.getSelfAssertedFunds());
+        assertEquals(3, rs.getValidatedFunds());
+        // Peer review
+        assertEquals(2, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());   
     }
     
     @Test
@@ -207,12 +217,21 @@ public class SummaryManagerTest {
     
     @Test
     public void generateFundingSummaryTest() {
-        
+        RecordSummary rs = new RecordSummary();
+        manager.generateFundingSummary(rs, ORCID);
+        assertEquals(0, rs.getSelfAssertedFunds());
+        assertEquals(3, rs.getValidatedFunds());
     }
     
     @Test
     public void generatePeerReviewSummaryTest() {
-        
+        RecordSummary rs = new RecordSummary();
+        manager.generatePeerReviewSummary(rs, ORCID);
+        // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
+        // So, we have 3 groups = 6 self asserted peer reviews in total
+        assertEquals(2, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());       
     }
     
     private PersonExternalIdentifiers getPersonExternalIdentifiers() {
@@ -357,14 +376,18 @@ public class SummaryManagerTest {
 
     private List<PeerReviewMinimizedSummary> getPeerReviewSummaryList() {
         List<PeerReviewMinimizedSummary> peerReviews = new ArrayList<PeerReviewMinimizedSummary>();
-        // Add 4 peer reviews per group
-        // First source is the client
-        // Second source is the user
-        // Third source is a client through OBO
-        // Fourth source is the user through OBO
-        for (int j = 0; j < 4; j++) {
-            PeerReviewMinimizedSummary pr = new PeerReviewMinimizedSummary(ORCID, null, null, null, null, null, 0);
-            switch (j) {
+        for(int i = 0; i < 4; i++) {
+            BigInteger groupId = BigInteger.valueOf(i);
+            String groupIdValue = "group-id-" + i;
+            // First source is the client
+            // Second source is the user
+            // Third source is a client through OBO
+            // Fourth source is the user through OBO
+            PeerReviewMinimizedSummary pr = new PeerReviewMinimizedSummary(ORCID, groupId, groupIdValue, BigInteger.valueOf(0), null, null, 0);            
+            pr.addPutCode(BigInteger.valueOf(1));
+            pr.addPutCode(BigInteger.valueOf(2));
+            pr.addPutCode(BigInteger.valueOf(3));
+            switch (i) {
             case 0:
                 pr.setSourceId(CLIENT1);
                 break;
@@ -378,8 +401,8 @@ public class SummaryManagerTest {
                 pr.setAssertionOriginSourceId(ORCID);
                 break;
             }
-            peerReviews.add(pr);
-        }
+            peerReviews.add(pr);              
+        }        
         return peerReviews;
     }
 }
