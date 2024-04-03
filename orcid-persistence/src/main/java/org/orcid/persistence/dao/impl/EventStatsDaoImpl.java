@@ -78,4 +78,13 @@ public class EventStatsDaoImpl implements EventStatsDao {
             });
         }
     }
+
+    @Override
+    @Transactional
+    public void deleteStatsByType(EventType eventType) {
+        String query = "DELETE FROM event_stats where event_type = :eventType";
+        Query queryDelete = entityManager.createNativeQuery(query);
+        queryDelete.setParameter("eventType", eventType.getValue());
+        queryDelete.executeUpdate();
+    }
 }

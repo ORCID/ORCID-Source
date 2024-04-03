@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import org.orcid.persistence.jpa.entities.EventStatsEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface EventStatsDao {
     void createPapiEventStats();
 
     List<EventStatsEntity> findAll();
+
+    void deleteStatsByType(EventType eventType);
 }

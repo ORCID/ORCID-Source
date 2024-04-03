@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.EventEntity;
 import org.orcid.persistence.jpa.entities.EventStatsEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -39,6 +40,8 @@ public class EventStatsDaoTest {
         assertEquals(2, eventStatsEntityList.size());
         assertEquals(Integer.valueOf(20), eventStatsEntityList.get(0).getCount());
         assertEquals(Integer.valueOf(20), eventStatsEntityList.get(1).getCount());
+
+        eventStatsDao.deleteStatsByType(EventType.SIGN_IN);
     }
 
     @Test
@@ -54,12 +57,14 @@ public class EventStatsDaoTest {
         assertEquals(Integer.valueOf(10), eventStatsEntityList.get(0).getCount());
         assertEquals(Integer.valueOf(10), eventStatsEntityList.get(1).getCount());
         assertEquals(Integer.valueOf(1100), eventStatsEntityList.get(2).getCount());
+
+        eventStatsDao.deleteStatsByType(EventType.PAPI);
     }
 
     private void createPapiEvents() {
         for (int i = 0; i < 20; i++) {
             EventEntity eventEntity = new EventEntity();
-            eventEntity.setEventType("Public-API");
+            eventEntity.setEventType(EventType.PAPI.getValue());
             eventEntity.setClientId("Client " + (i % 2 == 0 ? 1 : 2));
             LocalDate date = LocalDate.now().minusDays(1);
             Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
@@ -69,7 +74,7 @@ public class EventStatsDaoTest {
 
         for (int i = 0; i < 10; i++) {
             EventEntity eventEntity = new EventEntity();
-            eventEntity.setEventType("Public-API");
+            eventEntity.setEventType(EventType.PAPI.getValue());
             eventEntity.setClientId("105.21.229.71");
             eventEntity.setLabel("anonymous");
             LocalDate date = LocalDate.now().minusDays(1);
@@ -80,7 +85,7 @@ public class EventStatsDaoTest {
 
         for (int i = 0; i < 1100; i++) {
             EventEntity eventEntity = new EventEntity();
-            eventEntity.setEventType("Public-API");
+            eventEntity.setEventType(EventType.PAPI.getValue());
             eventEntity.setClientId("104.20.228.70");
             eventEntity.setLabel("anonymous");
             LocalDate date = LocalDate.now().minusDays(1);
@@ -93,8 +98,8 @@ public class EventStatsDaoTest {
     private void createEvents() {
         for (int i = 0; i < 40; i++) {
             EventEntity eventEntity = new EventEntity();
-            eventEntity.setEventType(i % 2 == 0 ? "Sign-In" : "Public-PAPI");
-            eventEntity.setClientId("Client " + 1);
+            eventEntity.setEventType(EventType.SIGN_IN.getValue());
+            eventEntity.setClientId("Client " + (i % 2 == 0 ? 1 : 2)) ;
             LocalDate date = LocalDate.now().minusDays(1);
             Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();
             eventEntity.setDateCreated(Date.from(instant));
