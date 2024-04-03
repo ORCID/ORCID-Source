@@ -1,25 +1,24 @@
 package org.orcid.core.common.manager.impl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.common.manager.SummaryManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
@@ -28,160 +27,131 @@ import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Group;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.release.record.GroupsContainer;
-import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.SourceAware;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
-import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
-import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
-import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
-import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
-import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Works;
-
-import java.time.LocalDate;
-
 
 public class SummaryManagerImpl implements SummaryManager {
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
-    
+
     @Resource(name = "affiliationsManagerReadOnlyV3")
     private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
-    
+
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
-    
+
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
-    
+
     @Resource(name = "profileFundingManagerReadOnlyV3")
     private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
-    
+
+    @Resource(name = "peerReviewManagerReadOnlyV3")
+    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
+
+    @Resource(name = "recordManagerReadOnlyV3")
+    private RecordManagerReadOnly recordManagerReadOnly;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
     @Resource
     private WorksCacheManager worksCacheManager;
-    
+
+    @Override
     public RecordSummary getRecordSummary(String orcid) {
         RecordSummary recordSummary = new RecordSummary();
-        recordSummary.setOrcid(orcid);
-        recordSummary.setName(recordNameManagerReadOnly.fetchDisplayablePublicName(orcid));
-        
-        // Generate the affiliations summary
-        generateAffiliationsSummary(recordSummary);
-        
-        // Generate the external identifiers summary
-        generateExternalIdentifiersSummary(recordSummary);
-        
-        // Generate the works summary
-        generateWorksSummary(recordSummary);
-        
-        // Generate the fundings summary
-        generateFundingsSummary(recordSummary);
-        List<FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
 
-        AtomicInteger validatedFunds = new AtomicInteger();
-        AtomicInteger selfAssertedFunds = new AtomicInteger();
-
-        if (fundingGroups != null) {
-            fundingGroups.forEach(fundingGroup -> {
-                AtomicBoolean foundValidateFundingInGroup = new AtomicBoolean(false);
-                fundingGroup.getFundings().forEach(funding -> {
-                    if (!orcid.equals(funding.getSource()) && !orcid.equals(funding.getAssertionOriginOrcid())) {
-                        foundValidateFundingInGroup.getAndSet(true);                        
-                    }                     
-                });
-                
-                if(foundValidateFundingInGroup.get()) {
-                    validatedFunds.getAndIncrement();
-                } else {
-                    selfAssertedFunds.getAndIncrement();
-                }                                
-            });
-        }
-
-        recordSummary.setSelfAssertedFunds(selfAssertedFunds.get());
-        recordSummary.setValidatedFunds(validatedFunds.get());
-
-        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
-
-        AtomicInteger totalReviewsCount = new AtomicInteger();
-        AtomicInteger selfAssertedPeerReviews = new AtomicInteger();
-        
-        if (peerReviewMinimizedSummaryList != null) {
-            peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
-                totalReviewsCount.set(totalReviewsCount.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
-                if(orcid.equals(peerReviewMinimizedSummary.getSourceId()) || orcid.equals(peerReviewMinimizedSummary.getAssertionOriginSourceId())) {
-                    selfAssertedPeerReviews.getAndIncrement();
-                }
-            });
-            recordSummary.setSelfAssertedPeerReviews(selfAssertedPeerReviews.intValue());
-            recordSummary.setPeerReviewsTotal(totalReviewsCount.intValue());
-            recordSummary.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
-        } else {
-            recordSummary.setPeerReviewsTotal(0);
-            recordSummary.setSelfAssertedPeerReviews(0);
-            recordSummary.setPeerReviewPublicationGrants(0);
-        }
-
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-
-        recordSummary.setLastModified(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
-        recordSummary.setCreation(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
-
+        // Set ORCID uri
         recordSummary.setOrcid(recordManagerReadOnly.getOrcidIdentifier(orcid).getUri());
+
+        // Set dates
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        recordSummary.setLastModified(DateUtils.formatDateISO8601(profileEntity.getLastModified()));
+        recordSummary.setCreation(DateUtils.formatDateISO8601(profileEntity.getDateCreated()));
+
+        recordSummary.setName(recordNameManagerReadOnly.fetchDisplayablePublicName(orcid));
+
+        // Generate the affiliations summary
+        generateAffiliationsSummary(recordSummary, orcid);
+
+        // Generate the external identifiers summary
+        generateExternalIdentifiersSummary(recordSummary, orcid);
+
+        // Generate the works summary
+        generateWorksSummary(recordSummary, orcid);
+
+        // Generate the funding summary
+        generateFundingSummary(recordSummary, orcid);
+
+        // Generate the peer review summary
+        generatePeerReviewSummary(recordSummary, orcid);
 
         return recordSummary;
     }
-    
-    public void generateWorksSummary(RecordSummary recordSummary) {
-        Works works = worksCacheManager.getGroupedWorks(recordSummary.getOrcid());
-        String orcid = recordSummary.getOrcid();
-        
-        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(works, orcid);
-        
+
+    public void generateWorksSummary(RecordSummary recordSummary, String orcid) {
+        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(worksCacheManager.getGroupedWorks(orcid), orcid);
+
         recordSummary.setValidatedWorks(validAndSelfAssertedStats.getLeft());
-        recordSummary.setSelfAssertedWorks(validAndSelfAssertedStats.getRight());        
+        recordSummary.setSelfAssertedWorks(validAndSelfAssertedStats.getRight());
     }
-    
-    public void generateFundingsSummary(RecordSummary recordSummary) {
-        List<FundingSummary> fundings = profileFundingManagerReadOnly.getFundingSummaryList(recordSummary.getOrcid());
-        Fundings fundingGroups = profileFundingManagerReadOnly.groupFundings(fundings, true);
-        String orcid = recordSummary.getOrcid();
-        
+
+    public void generateFundingSummary(RecordSummary recordSummary, String orcid) {
+        Fundings fundingGroups = profileFundingManagerReadOnly.groupFundings(profileFundingManagerReadOnly.getFundingSummaryList(orcid), true);
+
         Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(fundingGroups, orcid);
-        
+
         recordSummary.setValidatedFunds(validAndSelfAssertedStats.getLeft());
-        recordSummary.setSelfAssertedFunds(validAndSelfAssertedStats.getRight());        
+        recordSummary.setSelfAssertedFunds(validAndSelfAssertedStats.getRight());
     }
-    
+
+    public void generatePeerReviewSummary(RecordSummary recordSummary, String orcid) {
+        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
+
+        Integer totalReviewsCount = 0;
+        Integer selfAssertedPeerReviews = 0;
+
+        if (peerReviewMinimizedSummaryList != null) {
+            for (PeerReviewMinimizedSummary pr : peerReviewMinimizedSummaryList) {
+                totalReviewsCount += (pr.getPutCodes() == null) ? 0 : pr.getPutCodes().size();
+                if (orcid.equals(pr.getSourceId()) || orcid.equals(pr.getAssertionOriginSourceId())) {
+                    selfAssertedPeerReviews++;
+                }
+            }
+        }
+
+        recordSummary.setSelfAssertedPeerReviews(selfAssertedPeerReviews);
+        recordSummary.setPeerReviewsTotal(totalReviewsCount);
+        recordSummary.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
+    }
+
     private Pair<Integer, Integer> calculateSelfAssertedAndValidated(GroupsContainer c, String orcid) {
         Integer validated = 0;
         Integer selfAsserted = 0;
-        for(Group g : c.retrieveGroups()) {
+        for (Group g : c.retrieveGroups()) {
             boolean validatedFound = false;
-            for(GroupableActivity ga : g.getActivities()) {
-                if(ga instanceof SourceAware) {
+            for (GroupableActivity ga : g.getActivities()) {
+                if (ga instanceof SourceAware) {
                     SourceAware activity = (SourceAware) ga;
                     Source source = activity.getSource();
-                    if(!orcid.equals(source.retrieveSourcePath()) && !orcid.equals(source.retrieveAssertionOriginPath())) {
+                    if (!orcid.equals(source.retrieveSourcePath()) && !orcid.equals(source.retrieveAssertionOriginPath())) {
                         validatedFound = true;
                         break;
                     }
                 }
             }
-            if(validatedFound) {
+            if (validatedFound) {
                 validated++;
             } else {
                 selfAsserted++;
@@ -189,82 +159,98 @@ public class SummaryManagerImpl implements SummaryManager {
         }
         return Pair.of(validated, selfAsserted);
     }
-    
-    public void generateExternalIdentifiersSummary(RecordSummary recordSummary) {
-        PersonExternalIdentifiers personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(recordSummary.getOrcid());
-        recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, recordSummary.getOrcid()));
+
+    public void generateExternalIdentifiersSummary(RecordSummary recordSummary, String orcid) {
+        PersonExternalIdentifiers personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
+        recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, orcid));
     }
-    
-    public void generateAffiliationsSummary(RecordSummary recordSummary) {
-        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(recordSummary.getOrcid(), true);
-        
+
+    public void generateAffiliationsSummary(RecordSummary recordSummary, String orcid) {
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid,
+                true);
+
         // EMPLOYMENT
         List<AffiliationGroup<AffiliationSummary>> employmentGroups = affiliationsMap.get(AffiliationType.EMPLOYMENT);
         List<AffiliationSummary> preferredEmployments = new ArrayList<>();
-        for(AffiliationGroup<AffiliationSummary> group : employmentGroups) {
-            preferredEmployments.add(getDefaultAffiliationFromGroup(group));
+        if (employmentGroups != null) {
+            for (AffiliationGroup<AffiliationSummary> group : employmentGroups) {
+                preferredEmployments.add(getDefaultAffiliationFromGroup(group));
+            }
         }
         // Sort them by end date by default
         sortAffiliationsByEndDate(preferredEmployments);
-        
+
         List<org.orcid.pojo.summary.AffiliationSummary> employmentsTop3 = new ArrayList<>();
-        preferredEmployments.stream().limit(3).forEach(t -> {employmentsTop3.add(org.orcid.pojo.summary.AffiliationSummary.valueof(t, recordSummary.getOrcid(), AffiliationType.EMPLOYMENT.value()));});
+        preferredEmployments.stream().limit(3).forEach(t -> {
+            employmentsTop3.add(org.orcid.pojo.summary.AffiliationSummary.valueof(t, orcid, AffiliationType.EMPLOYMENT.value()));
+        });
         recordSummary.setEmploymentAffiliations(employmentsTop3);
         recordSummary.setEmploymentAffiliationsCount(preferredEmployments.size());
-        
+
         // PROFESIONAL ACTIVITIES
-        List<AffiliationGroup<AffiliationSummary>> profesionalActivitesGroups = affiliationsMap.get(AffiliationType.DISTINCTION);
-        profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.INVITED_POSITION));
-        profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.MEMBERSHIP));
-        profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.SERVICE));
-        
+        List<AffiliationGroup<AffiliationSummary>> profesionalActivitesGroups = new ArrayList<>();
+        if (affiliationsMap.containsKey(AffiliationType.DISTINCTION)) {
+            profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.DISTINCTION));
+        }
+        if (affiliationsMap.containsKey(AffiliationType.INVITED_POSITION)) {
+            profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.INVITED_POSITION));
+        }
+        if (affiliationsMap.containsKey(AffiliationType.MEMBERSHIP)) {
+            profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.MEMBERSHIP));
+        }
+        if (affiliationsMap.containsKey(AffiliationType.SERVICE)) {
+            profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.SERVICE));
+        }
         List<AffiliationSummary> preferredProfesionalActivities = new ArrayList<>();
-        for(AffiliationGroup<AffiliationSummary> group : profesionalActivitesGroups) {
+        for (AffiliationGroup<AffiliationSummary> group : profesionalActivitesGroups) {
             preferredProfesionalActivities.add(getDefaultAffiliationFromGroup(group));
         }
         // Sort them by end date by default
         sortAffiliationsByEndDate(preferredProfesionalActivities);
-        
+
         List<org.orcid.pojo.summary.AffiliationSummary> professionalActivitiesTop3 = new ArrayList<>();
-        preferredProfesionalActivities.stream().limit(3).forEach(t -> {professionalActivitiesTop3.add(org.orcid.pojo.summary.AffiliationSummary.valueof(t, recordSummary.getOrcid(), AffiliationType.EMPLOYMENT.value()));});
+        preferredProfesionalActivities.stream().limit(3).forEach(t -> {
+            professionalActivitiesTop3.add(org.orcid.pojo.summary.AffiliationSummary.valueof(t, orcid, AffiliationType.EMPLOYMENT.value()));
+        });
         recordSummary.setProfessionalActivities(professionalActivitiesTop3);
         recordSummary.setProfessionalActivitiesCount(preferredProfesionalActivities.size());
     }
-    
+
     private AffiliationSummary getDefaultAffiliationFromGroup(AffiliationGroup<AffiliationSummary> group) {
         AffiliationSummary defaultAffiliation = null;
         Long maxDisplayIndex = -1L;
-        for(AffiliationSummary as : group.getActivities()) {
-            if(as.getDisplayIndex() != null && Long.valueOf(as.getDisplayIndex()) > maxDisplayIndex) {
+        for (AffiliationSummary as : group.getActivities()) {
+            if (as.getDisplayIndex() != null && Long.valueOf(as.getDisplayIndex()) > maxDisplayIndex) {
                 maxDisplayIndex = Long.valueOf(as.getDisplayIndex());
                 defaultAffiliation = as;
             }
         }
         return defaultAffiliation;
     }
-    
+
     private void sortAffiliationsByEndDate(List<AffiliationSummary> affiliations) {
         List<AffiliationSummary> summariesWithOutEndDate = new ArrayList<>();
         LocalDate today = LocalDate.now();
         affiliations.forEach(aff -> {
-            // TODO: Why do we need to overwrite the end date when it is a Distiction? 
-            if((aff instanceof DistinctionSummary) && aff.getStartDate() != null && aff.getStartDate().getYear() != null) {
+            // TODO: Why do we need to overwrite the end date when it is a
+            // Distinction?
+            if ((aff instanceof DistinctionSummary) && aff.getStartDate() != null && aff.getStartDate().getYear() != null) {
                 aff.setEndDate(aff.getStartDate());
             }
             // To any affiliation with no end date, set the end day to today
-            if(aff.getEndDate() == null || aff.getEndDate().getYear() == null || StringUtils.isEmpty(aff.getEndDate().getYear().getValue())) {
+            if (aff.getEndDate() == null || aff.getEndDate().getYear() == null || StringUtils.isEmpty(aff.getEndDate().getYear().getValue())) {
                 FuzzyDate fd = FuzzyDate.valueOf(today.getYear(), today.getMonthValue(), today.getDayOfMonth());
                 aff.setEndDate(fd);
                 // Store the id so we can roll this back
                 summariesWithOutEndDate.add(aff);
             }
         });
-        
-        //TODO: Can we just sort this in reverse in one step?
+
+        // TODO: Can we just sort this in reverse in one step?
         affiliations.sort(Comparator.comparing(a -> a.getEndDate()));
         Collections.reverse(affiliations);
-        
+
         // Remove the end on the affiliations
         summariesWithOutEndDate.forEach(s -> s.setEndDate(null));
-    }        
+    }
 }

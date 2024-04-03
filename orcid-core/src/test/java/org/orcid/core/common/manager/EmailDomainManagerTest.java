@@ -12,6 +12,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -168,5 +169,11 @@ public class EmailDomainManagerTest {
         assertNull(s);
         verify(emailDomainDaoMock, never()).updateRorId(anyLong(), anyString());
         verify(emailDomainDaoMock, never()).createEmailDomain(anyString(), any(), anyString());
+    }
+    
+    @Test
+    public void failTest() {
+        //Just a test to confirm this package is being picked by the CI
+        fail();
     }
 }

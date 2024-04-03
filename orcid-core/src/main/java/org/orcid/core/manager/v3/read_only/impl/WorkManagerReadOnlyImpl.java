@@ -64,12 +64,6 @@ import java.util.stream.Collectors;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
-    static final String TITLE_SORT_KEY = "title";
-
-    static final String DATE_SORT_KEY = "date";
-
-    static final String TYPE_SORT_KEY = "type";
-    
     public static final String BULK_PUT_CODES_DELIMITER = ",";
 
     @Resource(name = "jpaJaxbWorkAdapterV3")

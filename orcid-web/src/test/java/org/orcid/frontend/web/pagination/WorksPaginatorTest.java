@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,6 @@ import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
@@ -50,6 +47,7 @@ import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.utils.DateUtils;
 
 public class WorksPaginatorTest {
 
@@ -75,28 +73,28 @@ public class WorksPaginatorTest {
         int pageSize = 100; 
         
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPublicWorkGroups(1000));
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorkManagerReadOnly.DATE_SORT_KEY, true);
         assertEquals(pageSize, page.getGroups().size());
         org.orcid.pojo.grouping.WorkGroup workGroupPage1 = page.getGroups().get(0);
 
-        Page<org.orcid.pojo.grouping.WorkGroup> page2 = worksPaginator.getWorksPage("orcid", page.getNextOffset(), pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page2 = worksPaginator.getWorksPage("orcid", page.getNextOffset(), pageSize, false, WorkManagerReadOnly.DATE_SORT_KEY, true);
         org.orcid.pojo.grouping.WorkGroup workGroupPage2 = page2.getGroups().get(0);
 
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitle = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.TITLE_SORT_KEY, false);
+        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitle = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, false);
         workGroupPage1 = sortedByTitle.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitlePage2 = worksPaginator.getWorksPage("orcid", sortedByTitle.getNextOffset(), pageSize, false, WorksPaginator.TITLE_SORT_KEY, false);
+        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitlePage2 = worksPaginator.getWorksPage("orcid", sortedByTitle.getNextOffset(), pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, false);
         workGroupPage2 = sortedByTitlePage2.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitle = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitle = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, true);
         workGroupPage1 = sortedByTitle.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitlePage2 = worksPaginator.getWorksPage("orcid", reversedSortedByTitle.getNextOffset(), pageSize, false, WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitlePage2 = worksPaginator.getWorksPage("orcid", reversedSortedByTitle.getNextOffset(), pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, true);
         workGroupPage2 = reversedSortedByTitlePage2.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
     }
@@ -106,7 +104,7 @@ public class WorksPaginatorTest {
         int pageSize = 100; 
         
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroups());
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, true, WorkManagerReadOnly.DATE_SORT_KEY, true);
         assertFalse(pageSize == page.getGroups().size());
         assertTrue((pageSize / 2) == page.getGroups().size());
 
@@ -122,29 +120,29 @@ public class WorksPaginatorTest {
         int pageSize = 100;
 
         Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(get1000PublicWorkGroupsExtended());
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorkManagerReadOnly.DATE_SORT_KEY, true);
         assertEquals(pageSize, page.getGroups().size());
         assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
         org.orcid.pojo.grouping.WorkGroup workGroupPage1 = page.getGroups().get(0);
 
-        Page<org.orcid.pojo.grouping.WorkGroup> page2 = worksPaginator.getWorksExtendedPage("orcid", page.getNextOffset(), pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page2 = worksPaginator.getWorksExtendedPage("orcid", page.getNextOffset(), pageSize, false, WorkManagerReadOnly.DATE_SORT_KEY, true);
         org.orcid.pojo.grouping.WorkGroup workGroupPage2 = page2.getGroups().get(0);
 
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitle = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.TITLE_SORT_KEY, false);
+        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitle = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, false);
         workGroupPage1 = sortedByTitle.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitlePage2 = worksPaginator.getWorksExtendedPage("orcid", sortedByTitle.getNextOffset(), pageSize, false, WorksPaginator.TITLE_SORT_KEY, false);
+        Page<org.orcid.pojo.grouping.WorkGroup> sortedByTitlePage2 = worksPaginator.getWorksExtendedPage("orcid", sortedByTitle.getNextOffset(), pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, false);
         workGroupPage2 = sortedByTitlePage2.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitle = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitle = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, true);
         workGroupPage1 = sortedByTitle.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
 
-        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitlePage2 = worksPaginator.getWorksExtendedPage("orcid", reversedSortedByTitle.getNextOffset(), pageSize, false, WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> reversedSortedByTitlePage2 = worksPaginator.getWorksExtendedPage("orcid", reversedSortedByTitle.getNextOffset(), pageSize, false, WorkManagerReadOnly.TITLE_SORT_KEY, true);
         workGroupPage2 = reversedSortedByTitlePage2.getGroups().get(0);
         assertFalse(workGroupPage1.getGroupId() == workGroupPage2.getGroupId());
     }
@@ -154,7 +152,7 @@ public class WorksPaginatorTest {
         int pageSize = 100;
 
         Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroupsExtended());
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorkManagerReadOnly.DATE_SORT_KEY, true);
         assertFalse(pageSize == page.getGroups().size());
         assertTrue((pageSize / 2) == page.getGroups().size());
         assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
@@ -164,26 +162,7 @@ public class WorksPaginatorTest {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
         }
-    }
-
-    @Test
-    public void testSourceSort() {
-        int pageSize = 50;
-
-        Works works = getPublicWorkGroups(50);
-        List<WorkGroup> workGroups = works.getWorkGroup().stream().limit(2).collect(Collectors.toList());
-        for (WorkGroup workGroup : workGroups) {
-            for (WorkSummary summary : workGroup.getWorkSummary()) {
-                summary.setSource(new Source("orcid"));
-            }
-        }
-
-        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.SOURCE_SORT_KEY, false);
-
-        assertEquals("orcid", page.getGroups().get(0).getWorks().get(0).getSource());
-        assertEquals("APP-5555-5555-5555-5555", page.getGroups().get(49).getWorks().get(0).getSource());
-    }
+    }    
 
     @Test
     public void testReverseSecondaryTitleSortForNullDates() {
@@ -191,7 +170,7 @@ public class WorksPaginatorTest {
         
         Works works = getWorkGroupsWithNullDates();
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorkManagerReadOnly.DATE_SORT_KEY, true);
 
         org.orcid.pojo.grouping.WorkGroup previous = page.getGroups().remove(0);
         while (!page.getGroups().isEmpty()) {
@@ -201,32 +180,13 @@ public class WorksPaginatorTest {
             assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) >= 0);
             previous = next;
         }
-    }
-
-    @Test
-    public void testTitleSortCase() {
-        int pageSize = 50;
-
-        Works works = getPublicWorkGroups(50);
-        List<WorkGroup> workGroups = works.getWorkGroup().stream().limit(2).collect(Collectors.toList());
-        for (WorkGroup workGroup : workGroups) {
-            for (WorkSummary summary : workGroup.getWorkSummary()) {
-                summary.setSource(new Source("orcid"));
-            }
-        }
-
-        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.SOURCE_SORT_KEY, false);
-
-        assertEquals("orcid", page.getGroups().get(0).getWorks().get(0).getSource());
-        assertEquals("APP-5555-5555-5555-5555", page.getGroups().get(49).getWorks().get(0).getSource());
-    }
+    }    
 
     @Test
     public void testGetAllWorks() {
         Works works = getPublicWorkGroups(1000);
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", false, WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", false, WorkManagerReadOnly.TITLE_SORT_KEY, true);
         assertEquals(1000, page.getTotalGroups());
         assertEquals(1000, page.getGroups().size());
     }
@@ -236,7 +196,7 @@ public class WorksPaginatorTest {
         int pageSize = 100; 
         
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroups());
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", true, WorksPaginator.DATE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", true, WorkManagerReadOnly.DATE_SORT_KEY, true);
         assertFalse(pageSize == page.getGroups().size());
         assertTrue((pageSize / 2) == page.getGroups().size());
 
@@ -260,7 +220,7 @@ public class WorksPaginatorTest {
         works.getWorkGroup().add(workGroup);
         
         Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", false, WorksPaginator.TITLE_SORT_KEY, true);
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getAllWorks("orcid", false, WorkManagerReadOnly.TITLE_SORT_KEY, true);
         
         for (org.orcid.pojo.grouping.WorkGroup group : page.getGroups()) {
             for (WorkForm work : group.getWorks()) {

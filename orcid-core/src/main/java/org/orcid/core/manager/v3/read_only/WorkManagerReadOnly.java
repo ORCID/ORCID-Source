@@ -16,6 +16,12 @@ import org.orcid.pojo.WorksExtended;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase {           
     
+    public static final String TITLE_SORT_KEY = "title";
+
+    public static final String DATE_SORT_KEY = "date";
+
+    public static final String TYPE_SORT_KEY = "type";
+    
     /**
      * Find the works for a specific user
      * 
