@@ -1,3 +1,9 @@
+## v2.57.1 - 2024-04-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.0...v2.57.1)
+
+- [#7017](https://github.com/ORCID/ORCID-Source/pull/7017): 9181-prod-old-header-layout-displayed-briefly-on-public-page
+
 ## v2.57.0 - 2024-04-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.56.0...v2.57.0)
