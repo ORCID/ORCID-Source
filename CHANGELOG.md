@@ -1,3 +1,11 @@
+## v2.57.2 - 2024-04-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.1...v2.57.2)
+
+### Feature
+
+- Start collection daily pub api stats (#7016)
+
 ## v2.57.1 - 2024-04-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.0...v2.57.1)
