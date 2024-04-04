@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.pagination;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Page<T> implements Serializable {
@@ -21,6 +22,13 @@ public class Page<T> implements Serializable {
         this.groups = workGroups;
     }
 
+    public void addWorkGroup(T workGroup) {
+        if(groups == null) {
+            groups = new ArrayList<T>();
+        }
+        groups.add(workGroup);
+    }
+    
     public int getNextOffset() {
         return nextOffset;
     }

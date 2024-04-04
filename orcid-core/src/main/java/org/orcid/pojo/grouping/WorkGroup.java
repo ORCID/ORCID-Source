@@ -1,6 +1,8 @@
 package org.orcid.pojo.grouping;
 
-import org.orcid.core.togglz.Features;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
@@ -8,10 +10,11 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
-import org.orcid.pojo.ajaxForm.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
+import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
 public class WorkGroup extends ActivityGroup {
 
@@ -27,6 +30,13 @@ public class WorkGroup extends ActivityGroup {
         this.works = works;
     }
 
+    public void addWork(WorkForm work) {
+        if(this.works == null) {
+            this.works = new ArrayList<WorkForm>();
+        }
+        this.works.add(work);
+    }
+    
     public static WorkGroup valueOf(org.orcid.jaxb.model.v3.release.record.summary.WorkGroup workGroup, int id, String orcid) {
         WorkGroup group = new WorkGroup();
         group.setGroupId(id);

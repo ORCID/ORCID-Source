@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,6 @@ import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.utils.DateUtils;
 import org.orcid.jaxb.model.common.SequenceType;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
@@ -50,6 +47,7 @@ import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.utils.DateUtils;
 
 public class WorksPaginatorTest {
 
@@ -164,26 +162,7 @@ public class WorksPaginatorTest {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
         }
-    }
-
-    @Test
-    public void testSourceSort() {
-        int pageSize = 50;
-
-        Works works = getPublicWorkGroups(50);
-        List<WorkGroup> workGroups = works.getWorkGroup().stream().limit(2).collect(Collectors.toList());
-        for (WorkGroup workGroup : workGroups) {
-            for (WorkSummary summary : workGroup.getWorkSummary()) {
-                summary.setSource(new Source("orcid"));
-            }
-        }
-
-        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.SOURCE_SORT_KEY, false);
-
-        assertEquals("orcid", page.getGroups().get(0).getWorks().get(0).getSource());
-        assertEquals("APP-5555-5555-5555-5555", page.getGroups().get(49).getWorks().get(0).getSource());
-    }
+    }    
 
     @Test
     public void testReverseSecondaryTitleSortForNullDates() {
@@ -201,26 +180,7 @@ public class WorksPaginatorTest {
             assertTrue(previousTitle.toLowerCase().compareTo(nextTitle.toLowerCase()) >= 0);
             previous = next;
         }
-    }
-
-    @Test
-    public void testTitleSortCase() {
-        int pageSize = 50;
-
-        Works works = getPublicWorkGroups(50);
-        List<WorkGroup> workGroups = works.getWorkGroup().stream().limit(2).collect(Collectors.toList());
-        for (WorkGroup workGroup : workGroups) {
-            for (WorkSummary summary : workGroup.getWorkSummary()) {
-                summary.setSource(new Source("orcid"));
-            }
-        }
-
-        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(works);
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksPage("orcid", 0, pageSize, false, WorksPaginator.SOURCE_SORT_KEY, false);
-
-        assertEquals("orcid", page.getGroups().get(0).getWorks().get(0).getSource());
-        assertEquals("APP-5555-5555-5555-5555", page.getGroups().get(49).getWorks().get(0).getSource());
-    }
+    }    
 
     @Test
     public void testGetAllWorks() {

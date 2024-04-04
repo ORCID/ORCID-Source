@@ -13,7 +13,6 @@ import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase {           
-    
     /**
      * Find the works for a specific user
      * 
