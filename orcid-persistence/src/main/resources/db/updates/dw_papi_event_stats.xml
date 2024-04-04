@@ -1,0 +1,45 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="DROP-VIEW-FOR-EVENT" author="Daniel Palafox" dbms="postgresql">
+        <dropView viewName="dw_event_stats"/>
+    </changeSet>
+  
+    <changeSet id="CREATE-DW-EVENT-STATS-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_event_stats"/></not>
+        </preConditions>
+        <createView viewName="dw_event_stats">
+            SELECT event_type, client_id, count, DATE_TRUNC('day', date), DATE_TRUNC('day', date) as last_modified
+            FROM event_stats WHERE event_type != 'Public-API'
+            ORDER BY DATE_TRUNC('day', date_created) DESC;
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW_USER-TO-DW_EVENT-STATS-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_event_stats to dw_user;</sql>
+    </changeSet>
+
+    <changeSet id="CREATE-DW-PAPI-EVENT-STATS-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_papi_event_stats"/></not>
+        </preConditions>
+        <createView viewName="dw_papi_event_stats">
+            SELECT event_type, client_id, ip, count, DATE_TRUNC('day', date), DATE_TRUNC('day', date) as last_modified
+            FROM event_stats WHERE event_type = 'Public-API'
+            ORDER BY DATE_TRUNC('day', date_created) DESC;
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-TO-DW-PAPI-EVENT-STATS-VIEW" author="Daniel Palafox" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_papi_event_stats to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>

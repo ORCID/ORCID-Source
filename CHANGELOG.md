@@ -1,3 +1,29 @@
+## v2.57.2 - 2024-04-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.1...v2.57.2)
+
+### Feature
+
+- Start collection daily pub api stats (#7016)
+
+## v2.57.1 - 2024-04-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.0...v2.57.1)
+
+- [#7017](https://github.com/ORCID/ORCID-Source/pull/7017): 9181-prod-old-header-layout-displayed-briefly-on-public-page
+
+## v2.57.0 - 2024-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.56.0...v2.57.0)
+
+## v2.56.0 - 2024-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.55.0...v2.56.0)
+
+## v2.55.0 - 2024-03-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.54.0...v2.55.0)
+
 ## v2.54.0 - 2024-03-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.53.0...v2.54.0)

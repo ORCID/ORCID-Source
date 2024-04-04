@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao;
 
 import org.orcid.persistence.jpa.entities.EventEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public interface EventDao {
     void delete(long id);
     
     List<EventEntity> findAll();
+
+    List<EventEntity> findByEventType(EventType eventType);
     
     void deleteEventsByDate(Integer numberOfDays);
+
+    void deletePapiEvents(Integer numberOfDays);
 }

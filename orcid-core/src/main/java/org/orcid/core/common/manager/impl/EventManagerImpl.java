@@ -13,12 +13,12 @@ import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.utils.EventType;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EventEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 
@@ -104,5 +104,16 @@ public class EventManagerImpl implements EventManager {
             return url.substring(0, url.indexOf("?"));
         }
         return url;
+    }
+
+    @Override
+    public void createPapiEvent(String clientId, String ip, boolean anonymous) {
+        EventEntity eventEntity = new EventEntity();
+        eventEntity.setEventType(EventType.PAPI.getValue());
+        eventEntity.setClientId(clientId);
+        eventEntity.setIp(ip);
+        eventEntity.setLabel(anonymous ? "anonymous" : null);
+        eventEntity.setDateCreated(new Date());
+        eventDao.createEvent(eventEntity);
     }
 }

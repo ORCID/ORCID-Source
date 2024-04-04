@@ -22,6 +22,7 @@ public class EventEntity {
     private static final long serialVersionUID = 1L;
     private Long id;
     private String clientId;
+    private String ip;
     private String eventType;
     private String label;
     private Date dateCreated;
@@ -54,6 +55,15 @@ public class EventEntity {
 
     public void setClientId(String client_id) {
         this.clientId = client_id;
+    }
+
+    @Column(name = "ip")
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     @Column(name = "label")

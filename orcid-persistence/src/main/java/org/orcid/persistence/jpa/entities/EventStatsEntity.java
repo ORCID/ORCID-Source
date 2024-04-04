@@ -22,6 +22,7 @@ public class EventStatsEntity extends BaseEntity<Long>{
     private Long id;
     private String eventType;
     private String clientId;
+    private String ip;
     private Integer count;
     private Date date;
 
@@ -53,6 +54,15 @@ public class EventStatsEntity extends BaseEntity<Long>{
 
     public void setClientId(String client_id) {
         this.clientId = client_id;
+    }
+
+    @Column(name = "ip")
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     @Column(name = "count")
