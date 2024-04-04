@@ -23,12 +23,13 @@ public class EventStatsImpl implements EventStats {
 
     @Value("${org.orcid.scheduler.event.deleteEvents.numberOfDays:90}")
     private int DELETE_EVENTS_OLDER_THAN_DAYS;
+
+    @Value("${org.orcid.scheduler.event.deletePapiEvents.numberOfDays:90}")
+    private int DELETE_PAPI_EVENTS_OLDER_THAN_DAYS;
     
     @Override
     public void saveEventStats() {
-        LocalDate date = LocalDate.now().minusDays(1);
-        String currentDate = date.getDayOfMonth() + "/" + date.getMonth() + "/" + date.getYear();
-        LOGGER.info("Storing aggregate data to event_stats table of the day" + currentDate);
+        LOGGER.info("Storing aggregate data to event_stats table of the day " + getCurrentDate());
         eventStatsDao.createEventStats();
     }
 
@@ -38,5 +39,26 @@ public class EventStatsImpl implements EventStats {
             LOGGER.info("Deleting events older than "+ DELETE_EVENTS_OLDER_THAN_DAYS +" days");
             eventDao.deleteEventsByDate(DELETE_EVENTS_OLDER_THAN_DAYS);
         }
+    }
+
+    @Override
+    public void savePapiEventStats() {
+        if (Features.PAPI_EVENTS.isActive()) {
+            LOGGER.info("Storing aggregate data to event_stats table of the day " + getCurrentDate());
+            eventStatsDao.createPapiEventStats();
+        }
+    }
+
+    @Override
+    public void deletePapiEvents() {
+        if (Features.PAPI_EVENTS.isActive()) {
+            LOGGER.info("Deleting events older than "+ DELETE_PAPI_EVENTS_OLDER_THAN_DAYS +" days");
+            eventDao.deletePapiEvents(DELETE_PAPI_EVENTS_OLDER_THAN_DAYS);
+        }
+    }
+
+    private String getCurrentDate() {
+        LocalDate date = LocalDate.now().minusDays(1);
+        return date.getDayOfMonth() + "/" + date.getMonth() + "/" + date.getYear();
     }
 }

@@ -54,7 +54,10 @@ public enum Features implements Feature {
     SEND_ADD_WORKS_EMAILS,
 
     @Label("Delete events older than 90 days from the DB ")
-    DELETE_EVENTS;
+    DELETE_EVENTS,
+
+    @Label("Track public events stats ")
+    PAPI_EVENTS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
