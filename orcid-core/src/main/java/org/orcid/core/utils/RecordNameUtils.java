@@ -16,7 +16,7 @@ public class RecordNameUtils {
             if (!StringUtils.isBlank(recordName.getCreditName())) {
                 return recordName.getCreditName();
             } else {
-                buildName(recordName.getGivenNames(), recordName.getFamilyName());
+                return buildName(recordName.getGivenNames(), recordName.getFamilyName());
             }
         }
         return null;

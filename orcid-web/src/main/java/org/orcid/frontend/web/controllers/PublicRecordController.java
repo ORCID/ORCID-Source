@@ -239,7 +239,6 @@ public class PublicRecordController extends BaseWorkspaceController {
         }
 
         // If not exceptions found, set the record as active and generate the summary
-        recordSummary.setStatus("active");
         recordSummary = summaryManager.getRecordSummary(orcid);
         return recordSummary;
     }

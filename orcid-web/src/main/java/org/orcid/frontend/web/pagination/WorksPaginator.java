@@ -1,6 +1,8 @@
 package org.orcid.frontend.web.pagination;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -10,15 +12,27 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.utils.comparators.DateComparator;
+import org.orcid.core.utils.comparators.DateComparatorWorkGroupExtended;
 import org.orcid.core.utils.comparators.TitleComparator;
 import org.orcid.core.utils.comparators.TitleComparatorWorkGroupExtended;
+import org.orcid.core.utils.comparators.TypeComparator;
+import org.orcid.core.utils.comparators.TypeComparatorWorkGroupExtended;
 import org.orcid.core.utils.v3.SourceUtils;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.pojo.WorkGroupExtended;
+import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.grouping.WorkGroup;
 
 public class WorksPaginator {
+    public static final String TITLE_SORT_KEY = "title";
+
+    public static final String DATE_SORT_KEY = "date";
+
+    public static final String TYPE_SORT_KEY = "type";
     
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
@@ -33,11 +47,11 @@ public class WorksPaginator {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
-            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = workManagerReadOnly.filter(works, justPublic);
+            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
             if ("source".equals(sort)) {
                 filteredGroups = sortBySource(filteredGroups, sortAsc, orcid);
             } else {
-                filteredGroups = workManagerReadOnly.sort(filteredGroups, sort, sortAsc);
+                filteredGroups = sort(filteredGroups, sort, sortAsc);
             }
 
             worksPage.setTotalGroups(filteredGroups.size());
@@ -57,11 +71,11 @@ public class WorksPaginator {
         WorksExtended works = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
-            List<WorkGroupExtended> filteredGroups = workManagerReadOnly.filterWorksExtended(works, justPublic);
+            List<WorkGroupExtended> filteredGroups = filterWorksExtended(works, justPublic);
             if ("source".equals(sort)) {
                 filteredGroups = sortBySourceExtended(filteredGroups, sortAsc, orcid);
             } else {
-                filteredGroups = workManagerReadOnly.sortExtended(filteredGroups, sort, sortAsc);
+                filteredGroups = sortExtended(filteredGroups, sort, sortAsc);
             }
 
             worksPage.setTotalGroups(filteredGroups.size());
@@ -79,7 +93,7 @@ public class WorksPaginator {
 
     public Page<WorkGroup> refreshWorks(String orcid, int limit, String sort, boolean sortAsc) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = workManagerReadOnly.sort(works.getWorkGroup(), sort, sortAsc);
+        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sortedGroups = sort(works.getWorkGroup(), sort, sortAsc);
 
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         worksPage.setTotalGroups(sortedGroups.size());
@@ -99,8 +113,8 @@ public class WorksPaginator {
         Works works = worksCacheManager.getGroupedWorks(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
-            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = workManagerReadOnly.filter(works, justPublic);
-            filteredGroups = workManagerReadOnly.sort(filteredGroups, sort, sortAsc);
+            List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = filter(works, justPublic);
+            filteredGroups = sort(filteredGroups, sort, sortAsc);
 
             worksPage.setTotalGroups(filteredGroups.size());
 
@@ -155,5 +169,72 @@ public class WorksPaginator {
         return (sortAsc ? Stream.concat(validated.stream(), selfAsserted.stream()) : Stream.concat(selfAsserted.stream(), validated.stream()))
                 .collect(Collectors.toList());
     }
+        
+    private List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filter(Works works, boolean justPublic) {
+        List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> filteredGroups = new ArrayList<>();
+        for (org.orcid.jaxb.model.v3.release.record.summary.WorkGroup workGroup : works.getWorkGroup()) {
+            
+            Iterator<WorkSummary> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummary w = summariesIt.next();
+                if(justPublic && !Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
+            }
+            
+            if(!workGroup.getWorkSummary().isEmpty()) {
+                filteredGroups.add(workGroup);            
+            }            
+        }
+        return filteredGroups;
+    } 
+    
+    private List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> sort(List<org.orcid.jaxb.model.v3.release.record.summary.WorkGroup> list, String sort, boolean sortAsc) {
+        if (TITLE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TitleComparator());
+        } else if (DATE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new DateComparator());
+        } else if (TYPE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TypeComparator());
+        }
 
+        if (!sortAsc) {
+            Collections.reverse(list);
+        }
+        return list;
+    }
+    
+    private List<WorkGroupExtended> sortExtended(List<WorkGroupExtended> list, String sort, boolean sortAsc) {
+        if (TITLE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TitleComparatorWorkGroupExtended());
+        } else if (DATE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new DateComparatorWorkGroupExtended());
+        } else if (TYPE_SORT_KEY.equals(sort)) {
+            Collections.sort(list, new TypeComparatorWorkGroupExtended());
+        }
+
+        if (!sortAsc) {
+            Collections.reverse(list);
+        }
+        return list;
+    }
+    
+    private List<WorkGroupExtended> filterWorksExtended(WorksExtended works, boolean justPublic) {
+        List<WorkGroupExtended> filteredGroups = new ArrayList<>();
+        for (WorkGroupExtended workGroup : works.getWorkGroup()) {
+
+            Iterator<WorkSummaryExtended> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummaryExtended w = summariesIt.next();
+                if(justPublic && !Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
+            }
+
+            if(!workGroup.getWorkSummary().isEmpty()) {
+                filteredGroups.add(workGroup);
+            }
+        }
+        return filteredGroups;
+    }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Group;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
@@ -33,6 +35,9 @@ import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
@@ -96,20 +101,36 @@ public class SummaryManagerImpl implements SummaryManager {
 
         // Generate the peer review summary
         generatePeerReviewSummary(recordSummary, orcid);
-
+        recordSummary.setStatus("active");
         return recordSummary;
     }
 
     public void generateWorksSummary(RecordSummary recordSummary, String orcid) {
-        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(worksCacheManager.getGroupedWorks(orcid), orcid);
+        Works works = worksCacheManager.getGroupedWorks(orcid);
+        // TODO Remove non public elements
+        // TODO There should be a manager that does this, but, the one we have already returns a list of work summaries, so, we need to refactor it to return the same Works element
+        Iterator<WorkGroup> workGroupIt = works.getWorkGroup().iterator();
+        while (workGroupIt.hasNext()) {
+            WorkGroup workGroup = workGroupIt.next();
+            Iterator<WorkSummary> summariesIt = workGroup.getWorkSummary().iterator();
+            while(summariesIt.hasNext()) {
+                WorkSummary w = summariesIt.next();
+                if(!Visibility.PUBLIC.equals(w.getVisibility())) {
+                    summariesIt.remove();
+                }
+            }
+            if(workGroup.getActivities() == null || workGroup.getActivities().isEmpty()) {
+                workGroupIt.remove();
+            }
+        }
+        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(works, orcid);
 
         recordSummary.setValidatedWorks(validAndSelfAssertedStats.getLeft());
         recordSummary.setSelfAssertedWorks(validAndSelfAssertedStats.getRight());
     }
 
     public void generateFundingSummary(RecordSummary recordSummary, String orcid) {
-        Fundings fundingGroups = profileFundingManagerReadOnly.groupFundings(profileFundingManagerReadOnly.getFundingSummaryList(orcid), true);
-
+        Fundings fundingGroups = profileFundingManagerReadOnly.groupFundings(profileFundingManagerReadOnly.getFundingSummaryList(orcid), true);        
         Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(fundingGroups, orcid);
 
         recordSummary.setValidatedFunds(validAndSelfAssertedStats.getLeft());
@@ -218,9 +239,9 @@ public class SummaryManagerImpl implements SummaryManager {
 
     private AffiliationSummary getDefaultAffiliationFromGroup(AffiliationGroup<AffiliationSummary> group) {
         AffiliationSummary defaultAffiliation = null;
-        Long maxDisplayIndex = -1L;
+        Long maxDisplayIndex = null;
         for (AffiliationSummary as : group.getActivities()) {
-            if (as.getDisplayIndex() != null && Long.valueOf(as.getDisplayIndex()) > maxDisplayIndex) {
+            if (maxDisplayIndex == null || (as.getDisplayIndex() != null && Long.valueOf(as.getDisplayIndex()) > maxDisplayIndex)) {
                 maxDisplayIndex = Long.valueOf(as.getDisplayIndex());
                 defaultAffiliation = as;
             }
