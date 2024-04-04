@@ -118,27 +118,15 @@ public class SummaryManagerTest {
         ReflectionTestUtils.setField(manager, "recordNameManagerReadOnly", recordNameManagerReadOnlyMock);
 
         // Set external identifiers
-        PersonExternalIdentifiers personExternalIdentifiers = getPersonExternalIdentifiers();
-        Mockito.when(externalIdentifierManagerReadOnlyMock.getPublicExternalIdentifiers(Mockito.eq(ORCID))).thenReturn(personExternalIdentifiers);
+        Mockito.when(externalIdentifierManagerReadOnlyMock.getPublicExternalIdentifiers(Mockito.eq(ORCID))).thenReturn(getPersonExternalIdentifiers());
         ReflectionTestUtils.setField(manager, "externalIdentifierManagerReadOnly", externalIdentifierManagerReadOnlyMock);        
         
         // Set affiliations
-        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = new HashMap<AffiliationType, List<AffiliationGroup<AffiliationSummary>>>();
-
-        affiliations.put(AffiliationType.DISTINCTION, getAffiliations(AffiliationType.DISTINCTION));
-        affiliations.put(AffiliationType.EDUCATION, getAffiliations(AffiliationType.EDUCATION));
-        affiliations.put(AffiliationType.EMPLOYMENT, getAffiliations(AffiliationType.EMPLOYMENT));
-        affiliations.put(AffiliationType.INVITED_POSITION, getAffiliations(AffiliationType.INVITED_POSITION));
-        affiliations.put(AffiliationType.MEMBERSHIP, getAffiliations(AffiliationType.MEMBERSHIP));
-        affiliations.put(AffiliationType.QUALIFICATION, getAffiliations(AffiliationType.QUALIFICATION));
-        affiliations.put(AffiliationType.SERVICE, getAffiliations(AffiliationType.SERVICE));        
-
-        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(generateAffiliations());
         ReflectionTestUtils.setField(manager, "affiliationsManagerReadOnly", affiliationsManagerReadOnlyMock);    
         
-        // Set works
-        Works works = getWorkGroups();
-        Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
+        // Set works        
+        Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(getWorkGroups());
         ReflectionTestUtils.setField(manager, "worksCacheManager", worksCacheManagerMock);    
         
         // Set fundings
@@ -199,12 +187,122 @@ public class SummaryManagerTest {
         // 3 of every professional activity type
         assertEquals(12, rs.getProfessionalActivitiesCount());        
     }
+    
+    @Test
+    public void generateAffiliationsSummary_EmptyTest() {
+        RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = generateAffiliations();
+        affiliations.remove(AffiliationType.DISTINCTION);
+        affiliations.remove(AffiliationType.EDUCATION);
+        affiliations.remove(AffiliationType.EMPLOYMENT);
+        affiliations.remove(AffiliationType.INVITED_POSITION);
+        affiliations.remove(AffiliationType.MEMBERSHIP);
+        affiliations.remove(AffiliationType.QUALIFICATION);
+        affiliations.remove(AffiliationType.SERVICE);
+        
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        manager.generateAffiliationsSummary(rs, ORCID);
+        assertEquals(0, rs.getEmploymentAffiliations().size());
+        assertEquals(0, rs.getEmploymentAffiliationsCount());
+        assertEquals(0, rs.getProfessionalActivities().size());
+        assertEquals(0, rs.getProfessionalActivitiesCount());
+    }
+    
+    @Test
+    public void generateAffiliationsSummary_EmploymentOnlyTest() {
+        RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = generateAffiliations();
+        affiliations.remove(AffiliationType.DISTINCTION);
+        affiliations.remove(AffiliationType.EDUCATION);
+        affiliations.remove(AffiliationType.INVITED_POSITION);
+        affiliations.remove(AffiliationType.MEMBERSHIP);
+        affiliations.remove(AffiliationType.QUALIFICATION);
+        affiliations.remove(AffiliationType.SERVICE);
+        
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        manager.generateAffiliationsSummary(rs, ORCID);
+        assertEquals(3, rs.getEmploymentAffiliations().size());
+        assertEquals(3, rs.getEmploymentAffiliationsCount());
+        assertEquals(0, rs.getProfessionalActivities().size());
+        assertEquals(0, rs.getProfessionalActivitiesCount());
+    }
+    
+    @Test
+    public void generateAffiliationsSummary_EducationOnlyTest() {
+        RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = generateAffiliations();
+        affiliations.remove(AffiliationType.DISTINCTION);
+        affiliations.remove(AffiliationType.EMPLOYMENT);
+        affiliations.remove(AffiliationType.INVITED_POSITION);
+        affiliations.remove(AffiliationType.MEMBERSHIP);
+        affiliations.remove(AffiliationType.QUALIFICATION);
+        affiliations.remove(AffiliationType.SERVICE);
+        
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        manager.generateAffiliationsSummary(rs, ORCID);
+        assertEquals(0, rs.getEmploymentAffiliations().size());
+        assertEquals(0, rs.getEmploymentAffiliationsCount());
+        assertEquals(0, rs.getProfessionalActivities().size());
+        assertEquals(0, rs.getProfessionalActivitiesCount());
+    }
+    
+    @Test
+    public void generateAffiliationsSummary_InvitedPositionOnlyTest() {
+        RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = generateAffiliations();
+        affiliations.remove(AffiliationType.DISTINCTION);
+        affiliations.remove(AffiliationType.EMPLOYMENT);
+        affiliations.remove(AffiliationType.MEMBERSHIP);
+        affiliations.remove(AffiliationType.QUALIFICATION);
+        affiliations.remove(AffiliationType.SERVICE);
+        
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        manager.generateAffiliationsSummary(rs, ORCID);
+        assertEquals(0, rs.getEmploymentAffiliations().size());
+        assertEquals(0, rs.getEmploymentAffiliationsCount());
+        assertEquals(3, rs.getProfessionalActivities().size());
+        assertEquals(3, rs.getProfessionalActivitiesCount());
+    }
+    
+    @Test
+    public void generateAffiliationsSummary_ProfessionalActivitiesOnlyTest() {
+        RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = generateAffiliations();
+        affiliations.remove(AffiliationType.EMPLOYMENT);
+        
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        manager.generateAffiliationsSummary(rs, ORCID);
+        assertEquals(0, rs.getEmploymentAffiliations().size());
+        assertEquals(0, rs.getEmploymentAffiliationsCount());
+        assertEquals(3, rs.getProfessionalActivities().size());
+        assertEquals(12, rs.getProfessionalActivitiesCount());
+    }
 
     @Test
     public void generateExternalIdentifiersSummaryTest() {
         RecordSummary rs = new RecordSummary();
         manager.generateExternalIdentifiersSummary(rs, ORCID);
         assertEquals(1, rs.getExternalIdentifiers().size());
+        assertEquals("0", rs.getExternalIdentifiers().get(0).getId());
+        assertEquals("0000", rs.getExternalIdentifiers().get(0).getReference());        
+    }
+    
+    @Test
+    public void generateExternalIdentifiersSummary_NullTest() {
+        RecordSummary rs = new RecordSummary();
+        Mockito.when(externalIdentifierManagerReadOnlyMock.getPublicExternalIdentifiers(Mockito.eq(ORCID))).thenReturn(null);
+        
+        manager.generateExternalIdentifiersSummary(rs, ORCID);        
+        assertEquals(0, rs.getExternalIdentifiers().size());
+    }
+    
+    @Test
+    public void generateExternalIdentifiersSummary_EmptyTest() {
+        RecordSummary rs = new RecordSummary();
+        Mockito.when(externalIdentifierManagerReadOnlyMock.getPublicExternalIdentifiers(Mockito.eq(ORCID))).thenReturn(new PersonExternalIdentifiers());
+        
+        manager.generateExternalIdentifiersSummary(rs, ORCID);
+        assertEquals(0, rs.getExternalIdentifiers().size());
     }
     
     @Test
@@ -213,6 +311,62 @@ public class SummaryManagerTest {
         manager.generateWorksSummary(rs, ORCID);
         assertEquals(0, rs.getSelfAssertedWorks());
         assertEquals(3, rs.getValidatedWorks());
+    }
+    
+    @Test
+    public void generateWorksSummary_OboValidatedTest() {
+        RecordSummary rs = new RecordSummary();
+        Works works = getWorkGroups();
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(CLIENT1));
+        s.setAssertionOriginClientId(new SourceClientId(CLIENT1));
+        for(WorkGroup wg : works.getWorkGroup()) {
+            for(WorkSummary ws : wg.getWorkSummary()) {
+                ws.setSource(s);
+            }
+        }
+        Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
+        
+        manager.generateWorksSummary(rs, ORCID);
+        assertEquals(0, rs.getSelfAssertedWorks());
+        assertEquals(3, rs.getValidatedWorks());
+    }
+    
+    @Test
+    public void generateWorksSummary_SelfAssertedOnlyTest() {
+        RecordSummary rs = new RecordSummary();
+        Works works = getWorkGroups();
+        Source s = new Source();
+        s.setSourceOrcid(new SourceOrcid(ORCID));
+        for(WorkGroup wg : works.getWorkGroup()) {
+            for(WorkSummary ws : wg.getWorkSummary()) {
+                ws.setSource(s);
+            }
+        }
+        Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
+        
+        manager.generateWorksSummary(rs, ORCID);
+        assertEquals(3, rs.getSelfAssertedWorks());
+        assertEquals(0, rs.getValidatedWorks());
+    }
+    
+    @Test
+    public void generateWorksSummary_OboSelfAssertedOnlyTest() {
+        RecordSummary rs = new RecordSummary();
+        Works works = getWorkGroups();
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(CLIENT1));
+        s.setAssertionOriginOrcid(new SourceOrcid(ORCID));
+        for(WorkGroup wg : works.getWorkGroup()) {
+            for(WorkSummary ws : wg.getWorkSummary()) {
+                ws.setSource(s);
+            }
+        }
+        Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
+        
+        manager.generateWorksSummary(rs, ORCID);
+        assertEquals(3, rs.getSelfAssertedWorks());
+        assertEquals(0, rs.getValidatedWorks());
     }
     
     @Test
@@ -306,6 +460,7 @@ public class SummaryManagerTest {
             // Fourth source is the user through OBO
             for (int j = 0; j < 4; j++) {
                 WorkSummary ws = new WorkSummary();
+                ws.setVisibility(Visibility.PUBLIC);
                 WorkTitle wt = new WorkTitle();
                 wt.setTitle(new Title("Work-" + j));
                 ws.setTitle(wt);
@@ -404,5 +559,18 @@ public class SummaryManagerTest {
             peerReviews.add(pr);              
         }        
         return peerReviews;
+    }
+    
+    private Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> generateAffiliations() {
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = new HashMap<AffiliationType, List<AffiliationGroup<AffiliationSummary>>>();
+
+        affiliations.put(AffiliationType.DISTINCTION, getAffiliations(AffiliationType.DISTINCTION));
+        affiliations.put(AffiliationType.EDUCATION, getAffiliations(AffiliationType.EDUCATION));
+        affiliations.put(AffiliationType.EMPLOYMENT, getAffiliations(AffiliationType.EMPLOYMENT));
+        affiliations.put(AffiliationType.INVITED_POSITION, getAffiliations(AffiliationType.INVITED_POSITION));
+        affiliations.put(AffiliationType.MEMBERSHIP, getAffiliations(AffiliationType.MEMBERSHIP));
+        affiliations.put(AffiliationType.QUALIFICATION, getAffiliations(AffiliationType.QUALIFICATION));
+        affiliations.put(AffiliationType.SERVICE, getAffiliations(AffiliationType.SERVICE)); 
+        return affiliations;
     }
 }

@@ -58,9 +58,11 @@ public class ExternalIdentifiersSummary {
     public static List<ExternalIdentifiersSummary> valueOf(PersonExternalIdentifiers personExternalIdentifiers, String orcid) {
         List<ExternalIdentifiersSummary> externalIdentifiersSummaryList = new ArrayList<>();
 
-        personExternalIdentifiers.getExternalIdentifiers().forEach(personExternalIdentifier -> {
-            externalIdentifiersSummaryList.add(ExternalIdentifiersSummary.valueOf(personExternalIdentifier, orcid));
-        });
+        if(personExternalIdentifiers != null) {
+            personExternalIdentifiers.getExternalIdentifiers().forEach(personExternalIdentifier -> {
+                externalIdentifiersSummaryList.add(ExternalIdentifiersSummary.valueOf(personExternalIdentifier, orcid));
+            });
+        }
 
         return externalIdentifiersSummaryList;
     }
