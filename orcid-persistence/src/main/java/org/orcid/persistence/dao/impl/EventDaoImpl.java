@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.EventEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -49,9 +50,27 @@ public class EventDaoImpl implements EventDao {
     @Override
     @Transactional
     public void deleteEventsByDate(Integer numberOfDays) {
-        String query = "DELETE FROM event where CAST(date_created as date) < CAST(now() - (CAST('1' AS INTERVAL DAY) * :numberOfDays) as date)";
+        String query = "DELETE FROM event where CAST(date_created as date) < CAST(now() - (CAST('1' AS INTERVAL DAY) * :numberOfDays) as date) AND event_type != :eventType";
         Query queryDelete = entityManager.createNativeQuery(query);
+        queryDelete.setParameter("eventType", EventType.PAPI.getValue());
         queryDelete.setParameter("numberOfDays", numberOfDays);
         queryDelete.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void deletePapiEvents(Integer numberOfDays) {
+        String query = "DELETE FROM event where CAST(date_created as date) < CAST(now() - (CAST('1' AS INTERVAL DAY) * :numberOfDays) as date) AND event_type = :eventType";
+        Query queryDelete = entityManager.createNativeQuery(query);
+        queryDelete.setParameter("eventType", EventType.PAPI.getValue());
+        queryDelete.setParameter("numberOfDays", numberOfDays);
+        queryDelete.executeUpdate();
+    }
+
+    @Override
+    public List<EventEntity> findByEventType(EventType eventType) {
+        TypedQuery<EventEntity> query = entityManager.createQuery("from EventEntity where eventType = :eventType", EventEntity.class);
+        query.setParameter("eventType", eventType.getValue());
+        return query.getResultList();
     }
 }

@@ -43,6 +43,8 @@
         <task:scheduled ref="emailMessageSender" method="addWorksToRecordThirdReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.thirdReminder:0 30 * * * *}"/>
         <task:scheduled ref="eventStats" method="deleteEvents" cron="${org.orcid.scheduler.web.deleteEventsOlderDays:0 10 0 * * *}"/>
         <task:scheduled ref="eventStats" method="saveEventStats" cron="${org.orcid.scheduler.web.saveEventStats:0 20 0 * * *}"/>
+        <task:scheduled ref="eventStats" method="savePapiEventStats" cron="${org.orcid.scheduler.web.savePapiEventStats:0 30 * * * *}"/>
+        <task:scheduled ref="eventStats" method="deletePapiEvents" cron="${org.orcid.scheduler.web.deletePapiEvents:0 40 * * * *}"/>
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:30}"/>

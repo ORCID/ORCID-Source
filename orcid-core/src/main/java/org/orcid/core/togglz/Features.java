@@ -19,8 +19,6 @@ public enum Features implements Feature {
     @Label("Registration 2.1: Add affiliations on registration")
     REGISTRATION_2_1,
 
-    @Label("New public record header")
-    NEW_RECORD_HEADER,
    
     @Label("Registration 2.0")
     REGISTRATION_2_0,
@@ -56,7 +54,10 @@ public enum Features implements Feature {
     SEND_ADD_WORKS_EMAILS,
 
     @Label("Delete events older than 90 days from the DB ")
-    DELETE_EVENTS;
+    DELETE_EVENTS,
+
+    @Label("Track public events stats ")
+    PAPI_EVENTS;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

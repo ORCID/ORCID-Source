@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -15,6 +16,7 @@ import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
@@ -44,6 +46,7 @@ import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0LastModifiedDatesHelper;
@@ -208,6 +211,9 @@ public class PublicV3ApiServiceDelegatorImpl
     
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+
+    @Resource
+    private EventManager eventManager;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -959,6 +965,14 @@ public class PublicV3ApiServiceDelegatorImpl
         ActivityUtils.setPathToActivity(e, orcid);
         sourceUtilsReadOnly.setSourceName(e);
         return Response.ok(e).build();
+    }
+
+    @Override
+    public void trackEvents(HttpServletRequest httpRequest) {
+        String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+        String ip = OrcidRequestUtil.getIpAddress(httpRequest);
+
+        eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
     }
 
 }
