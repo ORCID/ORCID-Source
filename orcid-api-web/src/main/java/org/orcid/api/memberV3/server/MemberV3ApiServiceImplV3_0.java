@@ -60,6 +60,7 @@ import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
 import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
+import static org.orcid.core.api.OrcidApiConstants.RECORD_SUMMARY;
 
 import java.util.HashMap;
 import java.util.List;
@@ -1042,5 +1043,12 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Path(RESEARCH_RESOURCE + PUTCODE)
     public Response deleteResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.deleteResearchResource(orcid, getPutCode(putCode));
+    }
+    
+    @GET
+    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(RECORD_SUMMARY)
+    public Response getRecordSummary(@PathParam("orcid") String orcid) {
+        return serviceDelegator.getRecordSummary(orcid);
     }
 }
