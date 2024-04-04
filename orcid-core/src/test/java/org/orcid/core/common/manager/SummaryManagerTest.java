@@ -136,8 +136,7 @@ public class SummaryManagerTest {
         ReflectionTestUtils.setField(manager, "profileFundingManagerReadOnly", profileFundingManagerReadOnlyMock);
 
         // Set peer reviews
-        List<PeerReviewMinimizedSummary> peerReviews = getPeerReviewSummaryList();
-        Mockito.when(peerReviewManagerReadOnlyMock.getPeerReviewMinimizedSummaryList(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(peerReviews);
+        Mockito.when(peerReviewManagerReadOnlyMock.getPeerReviewMinimizedSummaryList(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(getPeerReviewSummaryList());
         ReflectionTestUtils.setField(manager, "peerReviewManagerReadOnly", peerReviewManagerReadOnlyMock);
 
         // Set metadata
@@ -378,12 +377,125 @@ public class SummaryManagerTest {
     }
     
     @Test
+    public void generateFundingSummary_OboValidatedTest() {
+        RecordSummary rs = new RecordSummary();
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(CLIENT1));
+        s.setAssertionOriginClientId(new SourceClientId(CLIENT1));
+        Fundings fundings = getFundings();
+        for(FundingGroup fg : fundings.getFundingGroup()) {
+            for(FundingSummary fs : fg.getFundingSummary()) {
+                fs.setSource(s);
+            }
+        }
+        Mockito.when(profileFundingManagerReadOnlyMock.groupFundings(Mockito.anyList(), Mockito.eq(true))).thenReturn(fundings);
+        
+        manager.generateFundingSummary(rs, ORCID);
+        assertEquals(0, rs.getSelfAssertedFunds());
+        assertEquals(3, rs.getValidatedFunds());        
+    }
+    
+    @Test
+    public void generateFundingSummary_SelfAssertedTest() {
+        RecordSummary rs = new RecordSummary();
+        Source s = new Source();
+        s.setSourceOrcid(new SourceOrcid(ORCID));
+        Fundings fundings = getFundings();
+        for(FundingGroup fg : fundings.getFundingGroup()) {
+            for(FundingSummary fs : fg.getFundingSummary()) {
+                fs.setSource(s);
+            }
+        }
+        Mockito.when(profileFundingManagerReadOnlyMock.groupFundings(Mockito.anyList(), Mockito.eq(true))).thenReturn(fundings);
+        
+        manager.generateFundingSummary(rs, ORCID);
+        assertEquals(3, rs.getSelfAssertedFunds());
+        assertEquals(0, rs.getValidatedFunds());        
+    }
+    
+    @Test
+    public void generateFundingSummary_OboSelfAssertedTest() {
+        RecordSummary rs = new RecordSummary();
+        Source s = new Source();
+        s.setSourceClientId(new SourceClientId(CLIENT1));
+        s.setAssertionOriginOrcid(new SourceOrcid(ORCID));
+        Fundings fundings = getFundings();
+        for(FundingGroup fg : fundings.getFundingGroup()) {
+            for(FundingSummary fs : fg.getFundingSummary()) {
+                fs.setSource(s);
+            }
+        }
+        Mockito.when(profileFundingManagerReadOnlyMock.groupFundings(Mockito.anyList(), Mockito.eq(true))).thenReturn(fundings);
+        
+        manager.generateFundingSummary(rs, ORCID);
+        assertEquals(3, rs.getSelfAssertedFunds());
+        assertEquals(0, rs.getValidatedFunds());
+    }
+    
+    @Test
     public void generatePeerReviewSummaryTest() {
         RecordSummary rs = new RecordSummary();
         manager.generatePeerReviewSummary(rs, ORCID);
         // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
         // So, we have 3 groups = 6 self asserted peer reviews in total
         assertEquals(2, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());       
+    }
+    
+    @Test
+    public void generatePeerReviewSummary_OboValidatedTest() {
+        RecordSummary rs = new RecordSummary();
+        List<PeerReviewMinimizedSummary> peerReviews = getPeerReviewSummaryList();
+        for(PeerReviewMinimizedSummary pr : peerReviews) {
+            pr.setClientSourceId(CLIENT1);
+            pr.setAssertionOriginSourceId(CLIENT1);
+            pr.setSourceId(null);
+        }
+        Mockito.when(peerReviewManagerReadOnlyMock.getPeerReviewMinimizedSummaryList(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(peerReviews);
+        
+        manager.generatePeerReviewSummary(rs, ORCID);
+        // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
+        // So, we have 3 groups = 6 self asserted peer reviews in total
+        assertEquals(0, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());       
+    }
+    
+    @Test
+    public void generatePeerReviewSummary_SelfAssertedTest() {
+        RecordSummary rs = new RecordSummary();
+        List<PeerReviewMinimizedSummary> peerReviews = getPeerReviewSummaryList();
+        for(PeerReviewMinimizedSummary pr : peerReviews) {
+            pr.setClientSourceId(null);
+            pr.setAssertionOriginSourceId(null);
+            pr.setSourceId(ORCID);
+        }
+        Mockito.when(peerReviewManagerReadOnlyMock.getPeerReviewMinimizedSummaryList(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(peerReviews);
+        
+        manager.generatePeerReviewSummary(rs, ORCID);
+        // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
+        // So, we have 3 groups = 6 self asserted peer reviews in total
+        assertEquals(4, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());       
+    }
+    
+    @Test
+    public void generatePeerReviewSummary_Test() {
+        RecordSummary rs = new RecordSummary();
+        List<PeerReviewMinimizedSummary> peerReviews = getPeerReviewSummaryList();
+        for(PeerReviewMinimizedSummary pr : peerReviews) {
+            pr.setClientSourceId(CLIENT1);
+            pr.setAssertionOriginSourceId(ORCID);
+            pr.setSourceId(null);
+        }
+        Mockito.when(peerReviewManagerReadOnlyMock.getPeerReviewMinimizedSummaryList(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(peerReviews);
+        
+        manager.generatePeerReviewSummary(rs, ORCID);
+        // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
+        // So, we have 3 groups = 6 self asserted peer reviews in total
+        assertEquals(4, rs.getSelfAssertedPeerReviews());
         assertEquals(4, rs.getPeerReviewPublicationGrants());
         assertEquals(16, rs.getPeerReviewsTotal());       
     }
