@@ -6,13 +6,13 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class AffiliationSummary {
-    public String organizationName;
-    public String url;
-    public String startDate;
-    public String endDate;
-    public String role;
-    public String type;
-    public boolean validated;
+    private String organizationName;
+    private String url;
+    private String startDate;
+    private String endDate;
+    private String role;
+    private String type;
+    private boolean validated;
 
     public String getOrganizationName() {
         return organizationName;
