@@ -34,7 +34,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-public class PublicRecordControllerTest extends DBUnitTest {
+@Deprecated(forRemoval = true)
+public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/BiographyEntityData.xml", "/data/OrgsEntityData.xml",

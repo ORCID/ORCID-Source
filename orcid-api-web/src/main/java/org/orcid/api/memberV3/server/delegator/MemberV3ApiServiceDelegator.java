@@ -221,4 +221,5 @@ public interface MemberV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response expandedSearchByQuery(Map<String, List<String>> solrParams);
 
+    Response getRecordSummary(String orcid);
 }

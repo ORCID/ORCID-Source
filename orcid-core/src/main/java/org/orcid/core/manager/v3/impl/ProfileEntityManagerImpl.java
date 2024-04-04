@@ -1,5 +1,16 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.security.InvalidParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.constants.RevokeReason;
@@ -31,7 +42,6 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -71,16 +81,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.annotation.Resource;
-import java.security.InvalidParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -360,24 +360,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 }
             }
         }
-    }
-
-    private String getMemberDisplayName(ProfileEntity member) {
-        Name recordName = recordNameManagerReadOnlyV3.getRecordName(member.getId());
-        
-        if (recordName == null) {
-            return StringUtils.EMPTY;
-        }
-
-        // If it is a member, return the credit name
-        if (OrcidType.GROUP.name().equals(member.getOrcidType())) {
-            return recordName.getCreditName().getContent();
-        }
-
-        String memberDisplayName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(member.getId());
-        
-        return PojoUtil.isEmpty(memberDisplayName) ? StringUtils.EMPTY : memberDisplayName;
-    }
+    }    
 
     @Override
     public String getOrcidHash(String string) {

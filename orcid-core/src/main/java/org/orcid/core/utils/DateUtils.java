@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * TODO: Once the jersey migration is over, this should go back to the orcid-utils package so it could be reused form the orcid-persistence package 
+ * Use this instead: https://github.com/ORCID/ORCID-Source/blob/main/orcid-utils/src/main/java/org/orcid/utils/DateUtils.java
  */
 @Deprecated
 public class DateUtils {

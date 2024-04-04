@@ -1,57 +1,27 @@
 package org.orcid.frontend.web.controllers;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.core.common.manager.EventManager;
+import org.orcid.core.common.manager.SummaryManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
-import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.v3.SourceUtils;
-import org.orcid.frontend.web.pagination.Page;
-import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
-import org.orcid.frontend.web.pagination.WorksPaginator;
-import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
-import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -63,25 +33,17 @@ import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecord;
 import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
-import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
-import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
 import org.orcid.pojo.ajaxForm.BiographyForm;
-import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
-import org.orcid.pojo.grouping.WorkGroup;
-import org.orcid.pojo.summary.AffiliationSummary;
-import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
-import org.orcid.utils.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -90,60 +52,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class PublicRecordController extends BaseWorkspaceController {
-
-    @Resource(name = "membersManagerV3")
-    MembersManager membersManager;
-
-    @Resource(name = "workManagerReadOnlyV3")
-    private WorkManagerReadOnly workManagerReadOnly;
-
-    @Resource(name = "peerReviewManagerReadOnlyV3")
-    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
-
-    @Resource(name = "profileFundingManagerReadOnlyV3")
-    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
-
-    @Resource
-    private WorksPaginator worksPaginator;
-
-    @Resource(name = "activityManagerV3")
-    private ActivityManager activityManager;
-
-    @Resource(name = "languagesMap")
-    private LanguagesMap lm;
-
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource(name = "groupIdRecordManagerReadOnlyV3")
-    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
-
     @Resource(name = "personalDetailsManagerReadOnlyV3")
     private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
-
-    @Resource
-    private OrgDisambiguatedManager orgDisambiguatedManager;
-
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
-    @Resource(name = "sourceUtilsV3")
-    private SourceUtils sourceUtils;
-
-    @Resource(name = "affiliationsManagerReadOnlyV3")
-    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
-
-    @Resource
-    private ResearchResourcePaginator researchResourcePaginator;
-
-    @Resource(name = "researchResourceManagerReadOnlyV3")
-    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
-
-    @Resource
-    private IssnPortalUrlBuilder issnPortalUrlBuilder;
-
-    @Resource(name = "emailManagerReadOnlyV3")
-    protected EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource(name = "addressManagerReadOnlyV3")
     private AddressManagerReadOnly addressManagerReadOnly;
@@ -157,24 +70,12 @@ public class PublicRecordController extends BaseWorkspaceController {
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
-    @Resource(name = "recordManagerReadOnlyV3")
-    private RecordManagerReadOnly recordManagerReadOnly;
-
-    @Resource
-    PublicProfileController publicProfileController;
-
     @Resource
     private EventManager eventManager;
-
-    @Resource
-    private WorksCacheManager worksCacheManager;
     
-    @Resource(name = "recordNameManagerReadOnlyV3")
-    private RecordNameManagerReadOnly recordNameManagerReadOnly;
-
-    public static int ORCID_HASH_LENGTH = 8;
-    private static final String PAGE_SIZE_DEFAULT = "50";
-
+    @Resource
+    private SummaryManager summaryManager;
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/public-record.json", method = RequestMethod.GET)
     public @ResponseBody
     PublicRecord getPublicRecord(@PathVariable("orcid") String orcid) {
@@ -312,8 +213,6 @@ public class PublicRecordController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET)
     public @ResponseBody RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
         RecordSummary recordSummary = new RecordSummary();
-        boolean isDeprecated = false;
-
         try {
             // Check if the profile is deprecated or locked
             orcidSecurityManager.checkProfile(orcid);
@@ -330,142 +229,20 @@ public class PublicRecordController extends BaseWorkspaceController {
             recordSummary.setName(localeManager.resolveMessage("orcid.reserved_for_claim"));
             return recordSummary;
         } catch (OrcidDeprecatedException e) {
-            isDeprecated = true;
-        } catch (OrcidNoResultException e) {
-            return recordSummary;
-        }
-
-        if (isDeprecated) {
             recordSummary.setStatus("deprecated");
             recordSummary.setEmploymentAffiliations(null);
             recordSummary.setProfessionalActivities(null);
             recordSummary.setExternalIdentifiers(null);
-
-        } else {
-            recordSummary = getSummary(orcid);
-            recordSummary.setStatus("active");
+            return recordSummary;
+        } catch (OrcidNoResultException e) {
+            return recordSummary;
         }
+
+        // If not exceptions found, set the record as active and generate the summary
+        recordSummary = summaryManager.getRecordSummary(orcid);
         return recordSummary;
     }
-
-    public @ResponseBody
-    RecordSummary getSummary(String orcid) {
-        RecordSummary recordSummary = new RecordSummary();
-
-        Name name = recordNameManagerReadOnly.getRecordName(orcid);
-        if(name != null) {
-            String displayName = null;            
-            if (name != null) {
-                if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
-                    displayName = getDisplayName(name);
-                }
-            }
-            recordSummary.setName(displayName);
-        }        
-
-        AffiliationGroupContainer groupedAffiliations = publicProfileController.getGroupedAffiliations(orcid);
-        List<AffiliationGroupForm> groupedEmployments = groupedAffiliations.getAffiliationGroups().get(AffiliationType.EMPLOYMENT);
-
-        List<AffiliationSummary> employmentAffiliations = new ArrayList<>();
-
-        sortAffiliationsByCreatedDate(groupedEmployments);
-
-        if (groupedEmployments.size() > 0) {
-            Stream<AffiliationGroupForm> employmentsList = groupedEmployments.stream().limit(3);
-            employmentsList.forEach(e -> employmentAffiliations.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, "employment")));
-        }
-
-        recordSummary.setEmploymentAffiliationsCount(groupedEmployments.size());
-        recordSummary.setEmploymentAffiliations(employmentAffiliations);
-
-        List<AffiliationSummary> professionalActivities = retrieveProfessionalActivities(groupedAffiliations, orcid);
-
-        if (professionalActivities.size() > 3) {
-            recordSummary.setProfessionalActivities(Arrays.asList(professionalActivities.get(0), professionalActivities.get(1), professionalActivities.get(2)));
-        } else {
-            recordSummary.setProfessionalActivities(professionalActivities);
-        }
-
-        recordSummary.setProfessionalActivitiesCount(professionalActivities.size());
-
-        PersonExternalIdentifiers personExternalIdentifiers;
-
-        personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
-
-        recordSummary.setExternalIdentifiers(ExternalIdentifiersSummary.valueOf(personExternalIdentifiers, orcid));
-
-        Page<org.orcid.pojo.grouping.WorkGroup> works = publicProfileController.getAllWorkGroupsJson(orcid, "date", true);
-
-        List<WorkGroup> workGroups = works.getGroups();
-
-        AtomicInteger validatedWorks = new AtomicInteger();
-        AtomicInteger selfAssertedWorks = new AtomicInteger();
-
-        if (workGroups != null) {
-            workGroups.forEach(work -> work.getWorks().forEach(w -> {
-                if (work.getDefaultPutCode().equals(Long.valueOf(w.getPutCode().getValue()))) {
-                    if(orcid.equals(w.getSource()) || orcid.equals(w.getAssertionOriginOrcid())) {
-                        selfAssertedWorks.getAndIncrement();
-                    } else {
-                        validatedWorks.getAndIncrement();
-                    }                    
-                }
-            }));
-        }
-
-        recordSummary.setSelfAssertedWorks(selfAssertedWorks.get());
-        recordSummary.setValidatedWorks(validatedWorks.get());
-
-        List<org.orcid.pojo.grouping.FundingGroup> fundingGroups = publicProfileController.getFundingsJson(orcid, "date", true);
-
-        AtomicInteger validatedFunds = new AtomicInteger();
-        AtomicInteger selfAssertedFunds = new AtomicInteger();
-
-        if (fundingGroups != null) {
-            fundingGroups.forEach(fundingGroup -> {
-                if(orcid.equals(fundingGroup.getDefaultFunding().getSource()) || orcid.equals(fundingGroup.getDefaultFunding().getAssertionOriginOrcid())) {
-                    selfAssertedFunds.getAndIncrement();
-                } else {
-                    validatedFunds.getAndIncrement();
-                }                
-            });
-        }
-
-        recordSummary.setSelfAssertedFunds(selfAssertedFunds.get());
-        recordSummary.setValidatedFunds(validatedFunds.get());
-
-        List<PeerReviewMinimizedSummary> peerReviewMinimizedSummaryList = peerReviewManagerReadOnly.getPeerReviewMinimizedSummaryList(orcid, true);
-
-        AtomicInteger totalReviewsCount = new AtomicInteger();
-        AtomicInteger selfAssertedPeerReviews = new AtomicInteger();
-        
-        
-        if (peerReviewMinimizedSummaryList != null) {
-            peerReviewMinimizedSummaryList.forEach(peerReviewMinimizedSummary -> {
-                totalReviewsCount.set(totalReviewsCount.intValue() + peerReviewMinimizedSummary.getPutCodes().size());
-                if(orcid.equals(peerReviewMinimizedSummary.getSourceId()) || orcid.equals(peerReviewMinimizedSummary.getAssertionOriginSourceId())) {
-                    selfAssertedPeerReviews.getAndIncrement();
-                }
-            });
-            recordSummary.setSelfAssertedPeerReviews(selfAssertedPeerReviews.intValue());
-            recordSummary.setPeerReviewsTotal(totalReviewsCount.intValue());
-            recordSummary.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
-        } else {
-            recordSummary.setPeerReviewsTotal(0);
-            recordSummary.setSelfAssertedPeerReviews(0);
-            recordSummary.setPeerReviewPublicationGrants(0);
-        }
-
-        ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
-
-        recordSummary.setLastModified(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
-        recordSummary.setCreation(formatDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
-
-        recordSummary.setOrcid(recordManagerReadOnly.getOrcidIdentifier(orcid).getUri());
-
-        return recordSummary;
-    }
-
+    
     private String getDisplayName(Name name) {
         String displayName = null;
         if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
@@ -481,64 +258,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         return displayName;
     }
 
-    private List<AffiliationSummary> retrieveProfessionalActivities(AffiliationGroupContainer groupedAffiliations, String orcid) {
-        List<AffiliationSummary> professionalActivities = new ArrayList<>();
-
-        List<AffiliationGroupForm> affiliationGroupForms = new ArrayList<>();
-
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.MEMBERSHIP));
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.SERVICE));
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.INVITED_POSITION));
-        affiliationGroupForms.addAll(groupedAffiliations.getAffiliationGroups().get(AffiliationType.DISTINCTION));
-
-        sortAffiliationsByCreatedDate(affiliationGroupForms);
-
-        affiliationGroupForms.forEach(e -> professionalActivities.add(AffiliationSummary.valueOf(e.getDefaultAffiliation(), orcid, e.getAffiliationType().value())));
-
-        return professionalActivities;
-    }
-
-    private String formatDate(XMLGregorianCalendar xmlGregorianCalendar) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        GregorianCalendar gc = xmlGregorianCalendar.toGregorianCalendar();
-        return sdf.format(gc.getTime());
-    }
-
     private Long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
-    }
-
-    private void sortAffiliationsByCreatedDate(List<AffiliationGroupForm> affiliationGroupForms) {
-        List<Long> activePutCodesWithOutDate = new ArrayList<>();
-
-        affiliationGroupForms.forEach(affiliationGroupForm -> {
-            if ("distinction".equals(affiliationGroupForm.getDefaultAffiliation().getAffiliationType().getValue()) &&
-                    affiliationGroupForm.getDefaultAffiliation().getStartDate().getYear() != null
-            ) {
-                affiliationGroupForm.getDefaultAffiliation().setEndDate(affiliationGroupForm.getDefaultAffiliation().getStartDate());
-            }
-
-            if (affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear() == null ||
-                    "".equals(affiliationGroupForm.getDefaultAffiliation().getEndDate().getYear())) {
-                activePutCodesWithOutDate.add(affiliationGroupForm.getActivePutCode());
-                affiliationGroupForm.getDefaultAffiliation().setEndDate(Date.valueOf(new java.util.Date()));
-            }
-        });
-
-        affiliationGroupForms.sort(Comparator.comparing(a -> a.getDefaultAffiliation().getEndDate().toJavaDate()));
-        Collections.reverse(affiliationGroupForms);
-
-        if (activePutCodesWithOutDate.size() > 0) {
-            Iterator<Long> i = activePutCodesWithOutDate.iterator();
-            while (i.hasNext()) {
-                Long activePutCode = i.next();
-                affiliationGroupForms.forEach(affiliationGroupForm -> {
-                    if (activePutCode.equals(affiliationGroupForm.getActivePutCode())) {
-                        affiliationGroupForm.getDefaultAffiliation().setEndDate(null);
-                        i.remove();
-                    }
-                });
-            }
-        }
-    }
+    }    
 }
