@@ -310,10 +310,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Override
     public void trackEvents(HttpServletRequest httpRequest) {
-        String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        String ip = OrcidRequestUtil.getIpAddress(httpRequest);
-
-        eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
+        publicV2ApiServiceDelegator.trackEvents(httpRequest);
     }
 
 }
