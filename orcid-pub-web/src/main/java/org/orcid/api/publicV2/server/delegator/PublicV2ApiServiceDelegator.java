@@ -3,6 +3,7 @@ package org.orcid.api.publicV2.server.delegator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 /**
@@ -89,5 +90,7 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewClient(String clientId);
     
     Response viewBulkWorks(String orcid, String putCodes);
+
+    void trackEvents(HttpServletRequest httpRequest);
 
 }
