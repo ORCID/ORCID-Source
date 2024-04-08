@@ -1,3 +1,27 @@
+## v2.57.7 - 2024-04-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.6...v2.57.7)
+
+### Fix
+
+- Add togglz to track PAPI events (#7021)
+
+## v2.57.6 - 2024-04-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.5...v2.57.6)
+
+## v2.57.5 - 2024-04-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.4...v2.57.5)
+
+### Feature
+
+- Alter ip column in events to for IPV6 and add event tracking to V2 (#7019)
+
+## v2.57.4 - 2024-04-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.3...v2.57.4)
+
 ## v2.57.3 - 2024-04-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.2...v2.57.3)

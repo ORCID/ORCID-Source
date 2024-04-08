@@ -3,9 +3,12 @@ package org.orcid.pojo.summary;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@XmlRootElement
 public class RecordSummary {
     @JsonInclude(Include.NON_NULL)
     private String name;
