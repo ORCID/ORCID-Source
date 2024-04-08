@@ -89,6 +89,7 @@ import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
 import org.orcid.api.notificationsV3.server.delegator.NotificationsApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.record.Address;
@@ -1049,6 +1050,9 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RECORD_SUMMARY)
     public Response getRecordSummary(@PathParam("orcid") String orcid) {
+        if(!Features.MAPI_SUMMARY_ENDPOINT.isActive()) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return serviceDelegator.getRecordSummary(orcid);
     }
 }
