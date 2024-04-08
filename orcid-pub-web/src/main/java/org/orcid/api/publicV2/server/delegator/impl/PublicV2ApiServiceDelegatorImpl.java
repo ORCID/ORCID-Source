@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
@@ -14,9 +15,9 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
-import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -42,7 +43,9 @@ import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ContributorUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
@@ -188,6 +191,9 @@ public class PublicV2ApiServiceDelegatorImpl
     
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+
+    @Resource
+    private EventManager eventManager;
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -629,6 +635,16 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewClient(String clientId) {
         ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
+    }
+
+    @Override
+    public void trackEvents(HttpServletRequest httpRequest) {
+        if (Features.PAPI_EVENTS.isActive()) {
+            String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+            String ip = OrcidRequestUtil.getIpAddress(httpRequest);
+
+            eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
+        }
     }
 
 }

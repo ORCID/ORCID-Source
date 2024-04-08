@@ -65,7 +65,7 @@ public class EventStatsDaoTest {
         assertEquals(Integer.valueOf(10), eventStatsEntityList.get(1).getCount());
 
         assertNull(eventStatsEntityList.get(2).getClientId());
-        assertEquals("104.20.228.70", eventStatsEntityList.get(2).getIp());
+        assertEquals("2001:db8:85a3:8d3:1319:8a2e:370:7348", eventStatsEntityList.get(2).getIp());
         assertEquals(Integer.valueOf(1100), eventStatsEntityList.get(2).getCount());
 
 
@@ -99,7 +99,7 @@ public class EventStatsDaoTest {
         for (int i = 0; i < 1100; i++) {
             EventEntity eventEntity = new EventEntity();
             eventEntity.setEventType(EventType.PAPI.getValue());
-            eventEntity.setIp("104.20.228.70");
+            eventEntity.setIp("2001:db8:85a3:8d3:1319:8a2e:370:7348");
             eventEntity.setLabel("anonymous");
             LocalDate date = LocalDate.now().minusDays(1);
             Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant();

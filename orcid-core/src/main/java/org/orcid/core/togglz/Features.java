@@ -18,7 +18,6 @@ public enum Features implements Feature {
 
     @Label("Registration 2.1: Add affiliations on registration")
     REGISTRATION_2_1,
-
    
     @Label("Registration 2.0")
     REGISTRATION_2_0,

@@ -46,6 +46,7 @@ import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -969,10 +970,12 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Override
     public void trackEvents(HttpServletRequest httpRequest) {
-        String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        String ip = OrcidRequestUtil.getIpAddress(httpRequest);
+        if (Features.PAPI_EVENTS.isActive()) {
+            String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+            String ip = OrcidRequestUtil.getIpAddress(httpRequest);
 
-        eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
+            eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
+        }
     }
 
 }
