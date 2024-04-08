@@ -48,7 +48,7 @@ public class EventStatsDaoImpl implements EventStatsDao {
     @Transactional
     public void createPapiEventStats() {
         String query = 
-                "SELECT event_type, client_id, ip, label, count(*), CAST(date_created as date), now(), now() " +
+                "SELECT event_type, client_id, ip, label, count(*), CAST(date_created as date) as date, now() as date_created, now() as last_modified " +
                 "FROM event " +
                 "WHERE event_type = '"+ EventType.PAPI.getValue() + "' " +
                 "AND CAST(date_created as date) = CAST(now() - (CAST('1' AS INTERVAL DAY) * 1) as date) " +

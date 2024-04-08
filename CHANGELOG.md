@@ -1,3 +1,19 @@
+## v2.57.10 - 2024-04-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.9...v2.57.10)
+
+## v2.57.9 - 2024-04-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.8...v2.57.9)
+
+## v2.57.8 - 2024-04-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.7...v2.57.8)
+
+### Fix
+
+- Update cron job time and fix issue with select in postgres (#7024)
+
 ## v2.57.7 - 2024-04-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.6...v2.57.7)
