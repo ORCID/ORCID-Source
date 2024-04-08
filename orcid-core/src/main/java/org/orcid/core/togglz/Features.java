@@ -56,7 +56,10 @@ public enum Features implements Feature {
     DELETE_EVENTS,
 
     @Label("Track public events stats ")
-    PAPI_EVENTS;
+    PAPI_EVENTS, 
+    
+    @Label("Enable summary endpoint in the Members API")
+    MAPI_SUMMARY_ENDPOINT;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
