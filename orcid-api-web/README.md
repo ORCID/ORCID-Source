@@ -151,7 +151,7 @@ Request a second - Number of request that can be made a second.
 
 * [About the ORCID XSD](https://github.com/ORCID/orcid-model)
 
-* [Documentation on the latest XSD version](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_2.1/README.md)
+* [Documentation on the latest XSD version](https://github.com/ORCID/orcid-model/blob/master/src/main/resources/record_3.0/README.md)
 
 * [Member Integration Guide](https://info.orcid.org/documentation/integration-guide/) for detailed workflows and information for integrators using the ORCID Member API
 
