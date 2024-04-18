@@ -27,7 +27,7 @@ public class DigestEmail {
             sourceId = source.retrieveSourcePath();
         }
 
-        if (source != null && source.getSourceName().getContent() != null &&
+        if (source != null && source.getSourceName() != null && source.getSourceName().getContent() != null &&
                 !sources.contains(source.getSourceName().getContent())) {
             sources.add(source.getSourceName().getContent());
         }
