@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -30,6 +31,7 @@ import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.test.TargetProxyHelper;
 
 public class ExternalIdentifierManagerTest extends BaseTest {
@@ -56,6 +58,9 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -267,6 +272,41 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         }catch(WrongSourceException e) {
             
         }
+    }
+    
+    @Test
+    public void addExternalIdentifierUpdateLastModifiedTest() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        externalIdentifierManager.createExternalIdentifier(orcid, extId, false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));        
+    }
+    
+    @Test 
+    public void deleteExternalIdentifierUpdateLastModifiedTest() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);        
+        externalIdentifierManager.deleteExternalIdentifier(orcid, Long.valueOf(1), false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));
+    }
+    
+    @Test 
+    public void updateExternalIdentifierUpdateLastModifiedTest() {
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
+        String orcid = "4444-4444-4444-4442";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, Long.valueOf(2));
+        assertNotNull(extId);
+        assertEquals("abc123", extId.getValue());        
+        extId.setValue("Updated!");
+        externalIdentifierManager.updateExternalIdentifier(orcid, extId, false);        
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));  
     }
     
     private PersonExternalIdentifier getExternalIdentifier() {
