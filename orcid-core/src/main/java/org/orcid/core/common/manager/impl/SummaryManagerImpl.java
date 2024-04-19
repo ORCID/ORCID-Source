@@ -22,6 +22,8 @@ import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -43,6 +45,7 @@ import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummary;
 import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 public class SummaryManagerImpl implements SummaryManager {
 
@@ -72,9 +75,28 @@ public class SummaryManagerImpl implements SummaryManager {
 
     @Resource
     private WorksCacheManager worksCacheManager;
+    
+    @Resource
+    private RedisClient redisClient;    
+    
+    @Value("${org.orcid.core.utils.cache.redis.summary.enabled:false}") 
+    private boolean isSummaryCacheEnabled;
+    
+    // Set the cache TTL for the summary, 1 day by default
+    @Value("${org.orcid.core.utils.cache.redis.summary.ttl:86400}") 
+    private int summaryCacheTTL;
 
     @Override
     public RecordSummary getRecordSummary(String orcid) {
+        String cacheKey = getCacheKey(orcid);
+        // Check the cache
+        if(isSummaryCacheEnabled) {
+            String summaryString = redisClient.get(cacheKey);
+            if(StringUtils.isNotBlank(summaryString)) {
+                return JsonUtils.readObjectFromJsonString(summaryString, RecordSummary.class); 
+            }
+        }
+        
         RecordSummary recordSummary = new RecordSummary();
 
         // Set ORCID uri
@@ -102,13 +124,16 @@ public class SummaryManagerImpl implements SummaryManager {
         // Generate the peer review summary
         generatePeerReviewSummary(recordSummary, orcid);
         recordSummary.setStatus("active");
+        
+        // Set the summary in the cache
+        if(isSummaryCacheEnabled) {
+            redisClient.set(cacheKey, JsonUtils.convertToJsonString(recordSummary), summaryCacheTTL);
+        }        
         return recordSummary;
     }
 
     public void generateWorksSummary(RecordSummary recordSummary, String orcid) {
         Works works = worksCacheManager.getGroupedWorks(orcid);
-        // TODO Remove non public elements
-        // TODO There should be a manager that does this, but, the one we have already returns a list of work summaries, so, we need to refactor it to return the same Works element
         Iterator<WorkGroup> workGroupIt = works.getWorkGroup().iterator();
         while (workGroupIt.hasNext()) {
             WorkGroup workGroup = workGroupIt.next();
@@ -273,5 +298,9 @@ public class SummaryManagerImpl implements SummaryManager {
 
         // Remove the end on the affiliations
         summariesWithOutEndDate.forEach(s -> s.setEndDate(null));
+    }
+    
+    private String getCacheKey(String orcid) {
+        return orcid + "-summary";
     }
 }

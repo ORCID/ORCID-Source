@@ -1221,4 +1221,16 @@
 	
 	<bean id="summaryManager" class="org.orcid.core.common.manager.impl.SummaryManagerImpl" />
 
+	<!-- Profile last modified aspect -->
+	<bean id="profileLastModifiedAspect" class="org.orcid.core.aop.ProfileLastModifiedAspect">
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
+		<property name="enabled" value="true" />
+	</bean>
+
+	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.core.aop.ProfileLastModifiedAspect">
+		<property name="profileLastModifiedDao" ref="profileLastModifiedDaoReadOnly" />
+		<property name="enabled" value="false" />
+		<property name="name" value="read_only" />
+	</bean>
+
 </beans>
