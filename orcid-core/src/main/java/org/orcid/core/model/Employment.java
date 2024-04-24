@@ -19,50 +19,48 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class Employment {
     @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/summary")
     private Long putCode;
+    @XmlElement(name = "start-date", namespace = "http://www.orcid.org/ns/common")
+    private FuzzyDate startDate;
     @XmlElement(name = "end-date", namespace = "http://www.orcid.org/ns/common")
     private FuzzyDate endDate;
     @XmlElement(name = "organization-name", namespace = "http://www.orcid.org/ns/summary")
     private String organizationName;
     @XmlElement(name = "validated", namespace = "http://www.orcid.org/ns/summary")
     private boolean validated;
-
     public Long getPutCode() {
         return putCode;
     }
-
     public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
-
+    public FuzzyDate getStartDate() {
+        return startDate;
+    }
+    public void setStartDate(FuzzyDate startDate) {
+        this.startDate = startDate;
+    }
     public FuzzyDate getEndDate() {
         return endDate;
     }
-
     public void setEndDate(FuzzyDate endDate) {
         this.endDate = endDate;
     }
-
     public String getOrganizationName() {
         return organizationName;
     }
-
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
-
     public boolean isValidated() {
         return validated;
     }
-
     public void setValidated(boolean validated) {
         this.validated = validated;
     }
-
     @Override
     public int hashCode() {
-        return Objects.hash(endDate, organizationName, putCode, validated);
+        return Objects.hash(endDate, organizationName, putCode, startDate, validated);
     }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -73,7 +71,7 @@ public class Employment {
             return false;
         Employment other = (Employment) obj;
         return Objects.equals(endDate, other.endDate) && Objects.equals(organizationName, other.organizationName) && Objects.equals(putCode, other.putCode)
-                && validated == other.validated;
+                && Objects.equals(startDate, other.startDate) && validated == other.validated;
     }
-
+    
 }

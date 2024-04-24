@@ -192,10 +192,25 @@ public class SummaryManagerImpl implements SummaryManager {
             pojo.setEmploymentAffiliationsCount(recordSummary.getEmployments().getCount());            
         }
         
+        if(recordSummary.getProfessionalActivities() != null && recordSummary.getProfessionalActivities().getProfessionalActivities() != null) {
+            List<AffiliationSummary> professionalActivities = new ArrayList<>();
+            for(ProfessionalActivity pa : recordSummary.getProfessionalActivities().getProfessionalActivities()) {
+                AffiliationSummary as = new AffiliationSummary();
+                as.setEndDate();
+                as.setOrganizationName();
+                as.setPutCode();
+                as.setRole();
+                as.setStartDate();
+                as.setType();
+                as.setUrl();
+                as.setValidated(pa.isValidated());
+                professionalActivities.add(as);
+            }
+            
+            pojo.setProfessionalActivities(professionalActivities);
+            pojo.setProfessionalActivitiesCount(recordSummary.getProfessionalActivities().getCount());            
+        }
         
-        
-        pojo.setProfessionalActivities();
-        pojo.setProfessionalActivitiesCount();
         
         pojo.setSelfAssertedFunds();
         pojo.setValidatedFunds();
@@ -227,6 +242,7 @@ public class SummaryManagerImpl implements SummaryManager {
         preferredEmployments.stream().limit(3).forEach(t -> {
             Employment e = new Employment();
             e.setEndDate(t.getEndDate());
+            e.setStartDate(t.getStartDate());
             e.setOrganizationName((t.getOrganization() == null || StringUtils.isBlank(t.getOrganization().getName())) ? null : t.getOrganization().getName());
             e.setPutCode(t.getPutCode());
             e.setValidated(!SourceUtils.isSelfAsserted(t.getSource(), orcid));
@@ -263,6 +279,8 @@ public class SummaryManagerImpl implements SummaryManager {
             ProfessionalActivity p = new ProfessionalActivity();
             p.setOrganizationName((t.getOrganization() == null || StringUtils.isBlank(t.getOrganization().getName())) ? null : t.getOrganization().getName());
             p.setPutCode(t.getPutCode());
+            p.setStartDate(t.getStartDate());
+            p.setEndDate(t.getEndDate());
             p.setRole(p.getRole());
             if(t instanceof DistinctionSummary) {
                 p.setType(AffiliationType.DISTINCTION.name());
