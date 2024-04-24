@@ -43,7 +43,7 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.OtherNamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
-import org.orcid.pojo.summary.RecordSummary;
+import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -212,8 +212,8 @@ public class PublicRecordController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody RecordSummary getSummaryRecord(@PathVariable("orcid") String orcid) {
-        RecordSummary recordSummary = new RecordSummary();
+    public @ResponseBody RecordSummaryPojo getSummaryRecord(@PathVariable("orcid") String orcid) {
+        RecordSummaryPojo recordSummary = new RecordSummaryPojo();
         try {
             // Check if the profile is deprecated or locked
             orcidSecurityManager.checkProfile(orcid);

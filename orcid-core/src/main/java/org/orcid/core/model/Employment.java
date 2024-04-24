@@ -1,4 +1,4 @@
-package org.orcid.api.member.model;
+package org.orcid.core.model;
 
 import java.util.Objects;
 
@@ -8,65 +8,61 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "organizationName", "role", "url", "validated" })
-@XmlRootElement(name = "professional-activity", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Professional activity")
-public class ProfessionalActivity {
+@XmlType(propOrder = { "putCode", "endDate", "organizationName", "validated" })
+@XmlRootElement(name = "employment", namespace = "http://www.orcid.org/ns/summary")
+@Schema(description = "Employment")
+public class Employment {
     @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/summary")
     private Long putCode;
-    @XmlElement(name = "type", namespace = "http://www.orcid.org/ns/summary")
-    private String type;
+    @XmlElement(name = "end-date", namespace = "http://www.orcid.org/ns/common")
+    private FuzzyDate endDate;
     @XmlElement(name = "organization-name", namespace = "http://www.orcid.org/ns/summary")
     private String organizationName;
-    @XmlElement(name = "role", namespace = "http://www.orcid.org/ns/summary")
-    private String role;
-    @XmlElement(name = "url", namespace = "http://www.orcid.org/ns/summary")
-    private String url;
     @XmlElement(name = "validated", namespace = "http://www.orcid.org/ns/summary")
     private boolean validated;
+
     public Long getPutCode() {
         return putCode;
     }
+
     public void setPutCode(Long putCode) {
         this.putCode = putCode;
     }
-    public String getType() {
-        return type;
+
+    public FuzzyDate getEndDate() {
+        return endDate;
     }
-    public void setType(String type) {
-        this.type = type;
+
+    public void setEndDate(FuzzyDate endDate) {
+        this.endDate = endDate;
     }
+
     public String getOrganizationName() {
         return organizationName;
     }
+
     public void setOrganizationName(String organizationName) {
         this.organizationName = organizationName;
     }
-    public String getRole() {
-        return role;
-    }
-    public void setRole(String role) {
-        this.role = role;
-    }
-    public String getUrl() {
-        return url;
-    }
-    public void setUrl(String url) {
-        this.url = url;
-    }
+
     public boolean isValidated() {
         return validated;
     }
+
     public void setValidated(boolean validated) {
         this.validated = validated;
     }
+
     @Override
     public int hashCode() {
-        return Objects.hash(organizationName, putCode, role, type, url, validated);
+        return Objects.hash(endDate, organizationName, putCode, validated);
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -75,8 +71,9 @@ public class ProfessionalActivity {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ProfessionalActivity other = (ProfessionalActivity) obj;
-        return Objects.equals(organizationName, other.organizationName) && Objects.equals(putCode, other.putCode) && Objects.equals(role, other.role)
-                && Objects.equals(type, other.type) && Objects.equals(url, other.url) && validated == other.validated;
-    }        
+        Employment other = (Employment) obj;
+        return Objects.equals(endDate, other.endDate) && Objects.equals(organizationName, other.organizationName) && Objects.equals(putCode, other.putCode)
+                && validated == other.validated;
+    }
+
 }

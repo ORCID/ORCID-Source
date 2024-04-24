@@ -1,31 +1,41 @@
-package org.orcid.api.member.model;
+package org.orcid.core.model;
 
 import java.util.Objects;
 
+import javax.annotation.Resource;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.orcid.pojo.summary.AffiliationSummary;
+import org.orcid.utils.DateUtils;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "externalIdentifiers", "employments", "profilessionalActivities", "fundings",
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "orcidIdentifier", "externalIdentifiers", "employments", "profilessionalActivities", "fundings",
         "works", "peerReviews" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
 @Schema(description = "Record summary")
 public class RecordSummary {
-
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     private LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     private CreatedDate createdDate;
     @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/summary")
     private String creditName;
+    @XmlElement(name = "orcid-identifier", namespace = "http://www.orcid.org/ns/common")
+    protected OrcidIdentifier orcidIdentifier;
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/summary")
     private ExternalIdentifiers externalIdentifiers;
     @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/summary")
@@ -38,6 +48,14 @@ public class RecordSummary {
     private Works works;
     @XmlElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/summary")
     private PeerReviews peerReviews;
+
+    public OrcidIdentifier getOrcidIdentifier() {
+        return orcidIdentifier;
+    }
+
+    public void setOrcidIdentifier(OrcidIdentifier orcidIdentifier) {
+        this.orcidIdentifier = orcidIdentifier;
+    }
 
     public LastModifiedDate getLastModifiedDate() {
         return lastModifiedDate;
@@ -113,7 +131,8 @@ public class RecordSummary {
 
     @Override
     public int hashCode() {
-        return Objects.hash(createdDate, creditName, employments, externalIdentifiers, fundings, lastModifiedDate, peerReviews, professionalActivities, works);
+        return Objects.hash(createdDate, creditName, employments, externalIdentifiers, fundings, lastModifiedDate, orcidIdentifier, orcidUrlManager, peerReviews,
+                professionalActivities, works);
     }
 
     @Override
@@ -127,12 +146,8 @@ public class RecordSummary {
         RecordSummary other = (RecordSummary) obj;
         return Objects.equals(createdDate, other.createdDate) && Objects.equals(creditName, other.creditName) && Objects.equals(employments, other.employments)
                 && Objects.equals(externalIdentifiers, other.externalIdentifiers) && Objects.equals(fundings, other.fundings)
-                && Objects.equals(lastModifiedDate, other.lastModifiedDate) && Objects.equals(peerReviews, other.peerReviews)
+                && Objects.equals(lastModifiedDate, other.lastModifiedDate) && Objects.equals(orcidIdentifier, other.orcidIdentifier)
+                && Objects.equals(orcidUrlManager, other.orcidUrlManager) && Objects.equals(peerReviews, other.peerReviews)
                 && Objects.equals(professionalActivities, other.professionalActivities) && Objects.equals(works, other.works);
-    }
-
-    public RecordSummary valueOf(org.orcid.pojo.summary.RecordSummary coreSummaryObject) {
-        RecordSummary summary = new RecordSummary();
-        return summary;
-    }
+    }    
 }

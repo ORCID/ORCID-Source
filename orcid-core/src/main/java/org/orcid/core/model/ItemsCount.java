@@ -1,4 +1,4 @@
-package org.orcid.api.member.model;
+package org.orcid.core.model;
 
 import java.util.Objects;
 
