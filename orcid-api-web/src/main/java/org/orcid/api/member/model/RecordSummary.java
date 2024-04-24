@@ -1,0 +1,138 @@
+package org.orcid.api.member.model;
+
+import java.util.Objects;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "externalIdentifiers", "employments", "profilessionalActivities", "fundings",
+        "works", "peerReviews" })
+@XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
+@Schema(description = "Record summary")
+public class RecordSummary {
+
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
+    private LastModifiedDate lastModifiedDate;
+    @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
+    private CreatedDate createdDate;
+    @XmlElement(name = "credit-name", namespace = "http://www.orcid.org/ns/summary")
+    private String creditName;
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/summary")
+    private ExternalIdentifiers externalIdentifiers;
+    @XmlElement(name = "employments", namespace = "http://www.orcid.org/ns/summary")
+    private Employments employments;
+    @XmlElement(name = "professional-activities", namespace = "http://www.orcid.org/ns/summary")
+    private ProfessionalActivities professionalActivities;
+    @XmlElement(name = "fundings", namespace = "http://www.orcid.org/ns/summary")
+    private Fundings fundings;
+    @XmlElement(name = "works", namespace = "http://www.orcid.org/ns/summary")
+    private Works works;
+    @XmlElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/summary")
+    private PeerReviews peerReviews;
+
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(CreatedDate createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getCreditName() {
+        return creditName;
+    }
+
+    public void setCreditName(String creditName) {
+        this.creditName = creditName;
+    }
+
+    public ExternalIdentifiers getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
+
+    public void setExternalIdentifiers(ExternalIdentifiers externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
+    }
+
+    public Employments getEmployments() {
+        return employments;
+    }
+
+    public void setEmployments(Employments employments) {
+        this.employments = employments;
+    }
+
+    public ProfessionalActivities getProfessionalActivities() {
+        return professionalActivities;
+    }
+
+    public void setProfessionalActivities(ProfessionalActivities professionalActivities) {
+        this.professionalActivities = professionalActivities;
+    }
+
+    public Fundings getFundings() {
+        return fundings;
+    }
+
+    public void setFundings(Fundings fundings) {
+        this.fundings = fundings;
+    }
+
+    public Works getWorks() {
+        return works;
+    }
+
+    public void setWorks(Works works) {
+        this.works = works;
+    }
+
+    public PeerReviews getPeerReviews() {
+        return peerReviews;
+    }
+
+    public void setPeerReviews(PeerReviews peerReviews) {
+        this.peerReviews = peerReviews;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(createdDate, creditName, employments, externalIdentifiers, fundings, lastModifiedDate, peerReviews, professionalActivities, works);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RecordSummary other = (RecordSummary) obj;
+        return Objects.equals(createdDate, other.createdDate) && Objects.equals(creditName, other.creditName) && Objects.equals(employments, other.employments)
+                && Objects.equals(externalIdentifiers, other.externalIdentifiers) && Objects.equals(fundings, other.fundings)
+                && Objects.equals(lastModifiedDate, other.lastModifiedDate) && Objects.equals(peerReviews, other.peerReviews)
+                && Objects.equals(professionalActivities, other.professionalActivities) && Objects.equals(works, other.works);
+    }
+
+    public RecordSummary valueOf(org.orcid.pojo.summary.RecordSummary coreSummaryObject) {
+        RecordSummary summary = new RecordSummary();
+        return summary;
+    }
+}
