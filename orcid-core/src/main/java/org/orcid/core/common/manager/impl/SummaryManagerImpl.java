@@ -213,7 +213,7 @@ public class SummaryManagerImpl implements SummaryManager {
         
         if(recordSummary.getFundings() != null) {
             pojo.setSelfAssertedFunds(recordSummary.getFundings().getSelfAssertedCount());
-            pojo.setValidatedFunds(recordSummary.getFundings().getValidatdeCount());
+            pojo.setValidatedFunds(recordSummary.getFundings().getValidatedCount());
         }
         
         if(recordSummary.getPeerReviews() != null) {
@@ -224,7 +224,7 @@ public class SummaryManagerImpl implements SummaryManager {
         
         if(recordSummary.getWorks() != null) {
             pojo.setSelfAssertedWorks(recordSummary.getWorks().getSelfAssertedCount());
-            pojo.setValidatedWorks(recordSummary.getWorks().getValidatdeCount());
+            pojo.setValidatedWorks(recordSummary.getWorks().getValidatedCount());
         }
         
         return pojo;
@@ -264,6 +264,7 @@ public class SummaryManagerImpl implements SummaryManager {
         if(!employmentsTop3.isEmpty()) {
             e.setEmployments(employmentsTop3);
         } 
+        recordSummary.setEmployments(e);
         
         // PROFESIONAL ACTIVITIES
         List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>> profesionalActivitesGroups = new ArrayList<>();
@@ -312,6 +313,7 @@ public class SummaryManagerImpl implements SummaryManager {
         if(!professionalActivitiesTop3.isEmpty()) {
             pa.setProfessionalActivities(professionalActivitiesTop3);
         }
+        recordSummary.setProfessionalActivities(pa);
     }
     
     public void generateExternalIdentifiersSummary(RecordSummary recordSummary, String orcid) {
@@ -354,6 +356,7 @@ public class SummaryManagerImpl implements SummaryManager {
         Works worksModel = new Works();
         worksModel.setSelfAssertedCount(validAndSelfAssertedStats.getRight());
         worksModel.setValidatedCount(validAndSelfAssertedStats.getLeft());
+        recordSummary.setWorks(worksModel);
     }
     
     public void generateFundingSummary(RecordSummary recordSummary, String orcid) {
@@ -362,7 +365,8 @@ public class SummaryManagerImpl implements SummaryManager {
 
         Fundings fundingsModel = new Fundings();
         fundingsModel.setSelfAssertedCount(validAndSelfAssertedStats.getRight());
-        fundingsModel.setValidatedCount(validAndSelfAssertedStats.getLeft());        
+        fundingsModel.setValidatedCount(validAndSelfAssertedStats.getLeft());
+        recordSummary.setFundings(fundingsModel);
     }
 
     public void generatePeerReviewSummary(RecordSummary recordSummary, String orcid) {
@@ -383,7 +387,8 @@ public class SummaryManagerImpl implements SummaryManager {
         PeerReviews pr = new PeerReviews();
         pr.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
         pr.setSelfAssertedCount(selfAssertedPeerReviews);
-        pr.setTotal(totalReviewsCount);              
+        pr.setTotal(totalReviewsCount);    
+        recordSummary.setPeerReviews(pr);
     }
 
     private Pair<Integer, Integer> calculateSelfAssertedAndValidated(GroupsContainer c, String orcid) {

@@ -1,6 +1,7 @@
 package org.orcid.core.common.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -27,6 +28,7 @@ import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.model.ProfessionalActivity;
 import org.orcid.core.model.RecordSummary;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
@@ -145,6 +147,7 @@ public class SummaryManagerTest {
         // Set metadata
         OrcidIdentifier oi = new OrcidIdentifier();
         oi.setUri("https://test.orcid.org/0000-0000-0000-0000");
+        oi.setHost("test.orcid.org");
         Mockito.when(recordManagerReadOnlyMock.getOrcidIdentifier(Mockito.eq(ORCID))).thenReturn(oi);
         ReflectionTestUtils.setField(manager, "recordManagerReadOnly", recordManagerReadOnlyMock);
         
@@ -157,6 +160,9 @@ public class SummaryManagerTest {
     @Test
     public void generateAffiliationsSummaryTest() {
         RecordSummary rs = new RecordSummary();
+        Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliations = generateAffiliations();
+        Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
+        
         manager.generateAffiliationsSummary(rs, ORCID);
         assertNotNull(rs.getEmployments());
         assertEquals(Integer.valueOf(3), rs.getEmployments().getCount());
@@ -203,7 +209,6 @@ public class SummaryManagerTest {
         manager.generateAffiliationsSummary(rs, ORCID);
         assertEquals(Integer.valueOf(3), rs.getEmployments().getCount());
         assertEquals(3, rs.getEmployments().getEmployments().size());
-        
         assertEquals(Integer.valueOf(0), rs.getProfessionalActivities().getCount());
         assertNull(rs.getProfessionalActivities().getProfessionalActivities());
     }
@@ -243,6 +248,9 @@ public class SummaryManagerTest {
         assertNull(rs.getEmployments().getEmployments());
         assertEquals(Integer.valueOf(3), rs.getProfessionalActivities().getCount());
         assertEquals(3, rs.getProfessionalActivities().getProfessionalActivities().size());
+        for(ProfessionalActivity pa : rs.getProfessionalActivities().getProfessionalActivities()) {
+            assertEquals(AffiliationType.INVITED_POSITION.name(), pa.getType());
+        }
     }
     
     @Test
@@ -256,7 +264,10 @@ public class SummaryManagerTest {
         assertEquals(Integer.valueOf(0), rs.getEmployments().getCount());
         assertNull(rs.getEmployments().getEmployments());
         assertEquals(Integer.valueOf(12), rs.getProfessionalActivities().getCount());
-        assertEquals(12, rs.getProfessionalActivities().getProfessionalActivities().size());
+        assertEquals(3, rs.getProfessionalActivities().getProfessionalActivities().size());
+        for(ProfessionalActivity pa : rs.getProfessionalActivities().getProfessionalActivities()) {
+            assertNotEquals(AffiliationType.EMPLOYMENT, pa.getType());
+        }
     }
 
     @Test
@@ -264,7 +275,7 @@ public class SummaryManagerTest {
         RecordSummary rs = new RecordSummary();
         manager.generateExternalIdentifiersSummary(rs, ORCID);
         assertEquals(1, rs.getExternalIdentifiers().getExternalIdentifiers().size());
-        assertEquals("0", rs.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(Long.valueOf(0), rs.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
         assertEquals("0000", rs.getExternalIdentifiers().getExternalIdentifiers().get(0).getExternalIdValue());
     }
     
@@ -291,7 +302,7 @@ public class SummaryManagerTest {
         RecordSummary rs = new RecordSummary();
         manager.generateWorksSummary(rs, ORCID);
         assertEquals(Integer.valueOf(0), rs.getWorks().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatdeCount());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatedCount());
     }
     
     @Test
@@ -310,7 +321,7 @@ public class SummaryManagerTest {
         
         manager.generateWorksSummary(rs, ORCID);
         assertEquals(Integer.valueOf(0), rs.getWorks().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatdeCount());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatedCount());
     }
     
     @Test
@@ -328,7 +339,7 @@ public class SummaryManagerTest {
         
         manager.generateWorksSummary(rs, ORCID);
         assertEquals(Integer.valueOf(3), rs.getWorks().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(0), rs.getWorks().getValidatdeCount());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getValidatedCount());
     }
     
     @Test
@@ -347,7 +358,7 @@ public class SummaryManagerTest {
         
         manager.generateWorksSummary(rs, ORCID);
         assertEquals(Integer.valueOf(3), rs.getWorks().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(0), rs.getWorks().getValidatdeCount());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getValidatedCount());
     }
     
     @Test
@@ -355,7 +366,7 @@ public class SummaryManagerTest {
         RecordSummary rs = new RecordSummary();
         manager.generateFundingSummary(rs, ORCID);
         assertEquals(Integer.valueOf(0), rs.getFundings().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatdeCount());
+        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatedCount());
     }
     
     @Test
@@ -374,7 +385,7 @@ public class SummaryManagerTest {
         
         manager.generateFundingSummary(rs, ORCID);
         assertEquals(Integer.valueOf(0), rs.getFundings().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatdeCount());        
+        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatedCount());        
     }
     
     @Test
@@ -392,7 +403,7 @@ public class SummaryManagerTest {
         
         manager.generateFundingSummary(rs, ORCID);
         assertEquals(Integer.valueOf(3), rs.getFundings().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(0), rs.getFundings().getValidatdeCount());;        
+        assertEquals(Integer.valueOf(0), rs.getFundings().getValidatedCount());;        
     }
     
     @Test
@@ -411,7 +422,7 @@ public class SummaryManagerTest {
         
         manager.generateFundingSummary(rs, ORCID);
         assertEquals(Integer.valueOf(3), rs.getFundings().getSelfAssertedCount());
-        assertEquals(Integer.valueOf(0), rs.getFundings().getValidatdeCount());
+        assertEquals(Integer.valueOf(0), rs.getFundings().getValidatedCount());
     }
     
     @Test
@@ -439,9 +450,9 @@ public class SummaryManagerTest {
         manager.generatePeerReviewSummary(rs, ORCID);
         // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
         // So, we have 3 groups = 6 self asserted peer reviews in total
-        assertEquals(0, rs.getSelfAssertedPeerReviews());
-        assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());       
+        assertEquals(Integer.valueOf(0), rs.getPeerReviews().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());      
     }
     
     @Test
@@ -458,9 +469,9 @@ public class SummaryManagerTest {
         manager.generatePeerReviewSummary(rs, ORCID);
         // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
         // So, we have 3 groups = 6 self asserted peer reviews in total
-        assertEquals(4, rs.getSelfAssertedPeerReviews());
-        assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());       
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());       
     }
     
     @Test
@@ -477,9 +488,9 @@ public class SummaryManagerTest {
         manager.generatePeerReviewSummary(rs, ORCID);
         // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
         // So, we have 3 groups = 6 self asserted peer reviews in total
-        assertEquals(4, rs.getSelfAssertedPeerReviews());
-        assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());       
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());        
     }
     
     /**
@@ -490,26 +501,37 @@ public class SummaryManagerTest {
     @Test
     public void getSummaryTest() {
         RecordSummary rs = manager.getRecordSummary(ORCID);
-        assertEquals("https://test.orcid.org/" + ORCID, rs.getOrcid());
-        assertEquals("2024-01-01", rs.getCreation());
-        assertEquals("2024-12-31", rs.getLastModified());
+        assertEquals("test.orcid.org", rs.getOrcidIdentifier().getHost());
+        assertEquals("https://test.orcid.org/" + ORCID, rs.getOrcidIdentifier().getUri());
+        assertEquals(2024, rs.getCreatedDate().getValue().getYear());
+        assertEquals(1, rs.getCreatedDate().getValue().getMonth());
+        assertEquals(1, rs.getCreatedDate().getValue().getDay());
+        
+        
+        assertEquals(2024, rs.getLastModifiedDate().getValue().getYear());
+        assertEquals(12, rs.getLastModifiedDate().getValue().getMonth());
+        assertEquals(31, rs.getLastModifiedDate().getValue().getDay());
+        
         // Affiliations
-        assertEquals(3, rs.getEmploymentAffiliations().size());
-        assertEquals(3, rs.getEmploymentAffiliationsCount());
-        assertEquals(3, rs.getProfessionalActivities().size());
-        assertEquals(12, rs.getProfessionalActivitiesCount()); 
+        assertEquals(Integer.valueOf(3), rs.getEmployments().getCount());
+        assertEquals(3, rs.getEmployments().getEmployments().size());
+        assertEquals(Integer.valueOf(12), rs.getProfessionalActivities().getCount());
+        assertEquals(3, rs.getProfessionalActivities().getProfessionalActivities().size()); 
+        
         // External identifiers 
-        assertEquals(1, rs.getExternalIdentifiers().size());
+        assertEquals(1, rs.getExternalIdentifiers().getExternalIdentifiers().size());
         // Works
-        assertEquals(0, rs.getSelfAssertedWorks());
-        assertEquals(3, rs.getValidatedWorks());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatedCount());
+        
         // Funding
-        assertEquals(0, rs.getSelfAssertedFunds());
-        assertEquals(3, rs.getValidatedFunds());
+        assertEquals(Integer.valueOf(0), rs.getFundings().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatedCount());
+        
         // Peer review
-        assertEquals(2, rs.getSelfAssertedPeerReviews());
-        assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());   
+        assertEquals(Integer.valueOf(2), rs.getPeerReviews().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());   
     }       
     
     /**
@@ -559,7 +581,7 @@ public class SummaryManagerTest {
             AffiliationGroup<AffiliationSummary> group = new AffiliationGroup<AffiliationSummary>();
             
             for(int j = 0; j < 3; j++) {
-                AffiliationSummary summary = getAffiliationSummary(affiliationType, CLIENT1, Long.valueOf(j));
+                AffiliationSummary summary = getAffiliationSummary(affiliationType, affiliationType.name() + "-" + j, CLIENT1, Long.valueOf(j));
                 group.getActivities().add(summary);
             }
             
@@ -568,7 +590,7 @@ public class SummaryManagerTest {
         return affiliationGroups;
     }
 
-    private AffiliationSummary getAffiliationSummary(AffiliationType affiliationType, String affiliationName, Long putCode) {
+    private AffiliationSummary getAffiliationSummary(AffiliationType affiliationType, String affiliationName, String sourceId, Long putCode) {
         AffiliationSummary summary = null;
         switch(affiliationType) {
         case DISTINCTION:
@@ -600,6 +622,9 @@ public class SummaryManagerTest {
         summary.setPutCode(putCode);   
         summary.setDisplayIndex(String.valueOf(putCode));
         summary.setEndDate(new FuzzyDate(new Year(2012), null, null));
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(sourceId));
+        summary.setSource(source);
         return summary;
     }
 

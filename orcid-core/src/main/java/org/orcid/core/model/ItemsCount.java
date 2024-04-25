@@ -26,7 +26,7 @@ public abstract class ItemsCount {
         this.selfAssertedCount = selfAssertedCount;
     }
 
-    public Integer getValidatdeCount() {
+    public Integer getValidatedCount() {
         return validatedCount;
     }
 
