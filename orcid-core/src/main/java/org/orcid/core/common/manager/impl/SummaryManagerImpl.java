@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -196,13 +195,13 @@ public class SummaryManagerImpl implements SummaryManager {
             List<AffiliationSummary> professionalActivities = new ArrayList<>();
             for(ProfessionalActivity pa : recordSummary.getProfessionalActivities().getProfessionalActivities()) {
                 AffiliationSummary as = new AffiliationSummary();
-                as.setEndDate();
-                as.setOrganizationName();
-                as.setPutCode();
-                as.setRole();
-                as.setStartDate();
-                as.setType();
-                as.setUrl();
+                as.setEndDate(pa.getEndDate() == null ? null : pa.getEndDate().toString());
+                as.setStartDate(pa.getStartDate() == null ? null : pa.getStartDate().toString());
+                as.setOrganizationName(pa.getOrganizationName());
+                as.setPutCode(pa.getPutCode());
+                as.setRole(pa.getRole());                
+                as.setType(pa.getType());
+                as.setUrl(pa.getUrl());
                 as.setValidated(pa.isValidated());
                 professionalActivities.add(as);
             }
@@ -212,15 +211,23 @@ public class SummaryManagerImpl implements SummaryManager {
         }
         
         
-        pojo.setSelfAssertedFunds();
-        pojo.setValidatedFunds();
+        if(recordSummary.getFundings() != null) {
+            pojo.setSelfAssertedFunds(recordSummary.getFundings().getSelfAssertedCount());
+            pojo.setValidatedFunds(recordSummary.getFundings().getValidatdeCount());
+        }
         
-        pojo.setPeerReviewsTotal();
-        pojo.setPeerReviewPublicationGrants();
-        pojo.setSelfAssertedPeerReviews();
+        if(recordSummary.getPeerReviews() != null) {
+            pojo.setPeerReviewsTotal(recordSummary.getPeerReviews().getTotal());
+            pojo.setPeerReviewPublicationGrants(recordSummary.getPeerReviews().getPeerReviewPublicationGrants());
+            pojo.setSelfAssertedPeerReviews(recordSummary.getPeerReviews().getSelfAssertedCount());
+        }
         
-        pojo.setSelfAssertedWorks();
-        pojo.setValidatedWorks();
+        if(recordSummary.getWorks() != null) {
+            pojo.setSelfAssertedWorks(recordSummary.getWorks().getSelfAssertedCount());
+            pojo.setValidatedWorks(recordSummary.getWorks().getValidatdeCount());
+        }
+        
+        return pojo;
     }    
     
     public void generateAffiliationsSummary(RecordSummary recordSummary, String orcid) {
@@ -245,14 +252,19 @@ public class SummaryManagerImpl implements SummaryManager {
             e.setStartDate(t.getStartDate());
             e.setOrganizationName((t.getOrganization() == null || StringUtils.isBlank(t.getOrganization().getName())) ? null : t.getOrganization().getName());
             e.setPutCode(t.getPutCode());
+            e.setRole(t.getRoleTitle());
+            e.setUrl((t.getUrl() == null || StringUtils.isBlank(t.getUrl().getValue())) ? null : t.getUrl().getValue());
             e.setValidated(!SourceUtils.isSelfAsserted(t.getSource(), orcid));
             employmentsTop3.add(e);
-        });        
+        });
+        
         Employments e = new Employments();
         e.setCount(preferredEmployments.size());
-        e.setEmployments(employmentsTop3);
         recordSummary.setEmployments(e);
-
+        if(!employmentsTop3.isEmpty()) {
+            e.setEmployments(employmentsTop3);
+        } 
+        
         // PROFESIONAL ACTIVITIES
         List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>> profesionalActivitesGroups = new ArrayList<>();
         if (affiliationsMap.containsKey(AffiliationType.DISTINCTION)) {
@@ -281,7 +293,7 @@ public class SummaryManagerImpl implements SummaryManager {
             p.setPutCode(t.getPutCode());
             p.setStartDate(t.getStartDate());
             p.setEndDate(t.getEndDate());
-            p.setRole(p.getRole());
+            p.setRole(t.getRoleTitle());
             if(t instanceof DistinctionSummary) {
                 p.setType(AffiliationType.DISTINCTION.name());
             } else if (t instanceof InvitedPositionSummary) {
@@ -297,7 +309,9 @@ public class SummaryManagerImpl implements SummaryManager {
         });
         ProfessionalActivities pa = new ProfessionalActivities();
         pa.setCount(preferredProfesionalActivities.size());
-        pa.setProfessionalActivities(professionalActivitiesTop3);
+        if(!professionalActivitiesTop3.isEmpty()) {
+            pa.setProfessionalActivities(professionalActivitiesTop3);
+        }
     }
     
     public void generateExternalIdentifiersSummary(RecordSummary recordSummary, String orcid) {
@@ -306,6 +320,7 @@ public class SummaryManagerImpl implements SummaryManager {
             return;
         }
         ExternalIdentifiers eis = new ExternalIdentifiers();
+        eis.setExternalIdentifiers(new ArrayList<>());
         for(PersonExternalIdentifier pei : personExternalIdentifiers.getExternalIdentifiers()) {
             ExternalIdentifier ei = new ExternalIdentifier();
             ei.setExternalIdType(pei.getType());
@@ -313,6 +328,7 @@ public class SummaryManagerImpl implements SummaryManager {
             ei.setExternalIdValue(pei.getValue());
             ei.setPutCode(pei.getPutCode());
             ei.setValidated(!SourceUtils.isSelfAsserted(pei.getSource(), orcid));
+            eis.getExternalIdentifiers().add(ei);
         }
         recordSummary.setExternalIdentifiers(eis);
     }   

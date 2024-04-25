@@ -239,9 +239,8 @@ public class PublicRecordController extends BaseWorkspaceController {
             return recordSummary;
         }
 
-        // If not exceptions found, set the record as active and generate the summary
-        recordSummary = summaryManager.getRecordSummary(orcid);
-        return recordSummary;
+        // If not exceptions found, set the record as active and generate the summary        
+        return summaryManager.getRecordSummaryPojo(orcid);
     }
     
     private String getDisplayName(Name name) {

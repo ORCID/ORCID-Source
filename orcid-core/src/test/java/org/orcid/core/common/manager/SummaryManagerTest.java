@@ -1,6 +1,8 @@
 package org.orcid.core.common.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -63,6 +65,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
+import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -152,39 +155,17 @@ public class SummaryManagerTest {
     }
 
     @Test
-    public void getSummaryTest() {
-        RecordSummary rs = manager.getRecordSummary(ORCID);
-        assertEquals("https://test.orcid.org/" + ORCID, rs.getOrcid());
-        assertEquals("2024-01-01", rs.getCreation());
-        assertEquals("2024-12-31", rs.getLastModified());
-        // Affiliations
-        assertEquals(3, rs.getEmploymentAffiliations().size());
-        assertEquals(3, rs.getEmploymentAffiliationsCount());
-        assertEquals(3, rs.getProfessionalActivities().size());
-        assertEquals(12, rs.getProfessionalActivitiesCount()); 
-        // External identifiers 
-        assertEquals(1, rs.getExternalIdentifiers().size());
-        // Works
-        assertEquals(0, rs.getSelfAssertedWorks());
-        assertEquals(3, rs.getValidatedWorks());
-        // Funding
-        assertEquals(0, rs.getSelfAssertedFunds());
-        assertEquals(3, rs.getValidatedFunds());
-        // Peer review
-        assertEquals(2, rs.getSelfAssertedPeerReviews());
-        assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());   
-    }
-    
-    @Test
     public void generateAffiliationsSummaryTest() {
         RecordSummary rs = new RecordSummary();
         manager.generateAffiliationsSummary(rs, ORCID);
-        assertEquals(3, rs.getEmploymentAffiliations().size());
-        assertEquals(3, rs.getEmploymentAffiliationsCount());
-        assertEquals(3, rs.getProfessionalActivities().size());
+        assertNotNull(rs.getEmployments());
+        assertEquals(Integer.valueOf(3), rs.getEmployments().getCount());
+        assertEquals(3, rs.getEmployments().getEmployments().size());
+        
+        
+        assertEquals(3, rs.getProfessionalActivities().getProfessionalActivities().size());
         // 3 of every professional activity type
-        assertEquals(12, rs.getProfessionalActivitiesCount());        
+        assertEquals(Integer.valueOf(12), rs.getProfessionalActivities().getCount());
     }
     
     @Test
@@ -201,10 +182,10 @@ public class SummaryManagerTest {
         
         Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
         manager.generateAffiliationsSummary(rs, ORCID);
-        assertEquals(0, rs.getEmploymentAffiliations().size());
-        assertEquals(0, rs.getEmploymentAffiliationsCount());
-        assertEquals(0, rs.getProfessionalActivities().size());
-        assertEquals(0, rs.getProfessionalActivitiesCount());
+        assertEquals(Integer.valueOf(0), rs.getEmployments().getCount());
+        assertNull(rs.getEmployments().getEmployments());
+        assertEquals(Integer.valueOf(0), rs.getProfessionalActivities().getCount());
+        assertNull(rs.getProfessionalActivities().getProfessionalActivities());        
     }
     
     @Test
@@ -220,10 +201,11 @@ public class SummaryManagerTest {
         
         Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
         manager.generateAffiliationsSummary(rs, ORCID);
-        assertEquals(3, rs.getEmploymentAffiliations().size());
-        assertEquals(3, rs.getEmploymentAffiliationsCount());
-        assertEquals(0, rs.getProfessionalActivities().size());
-        assertEquals(0, rs.getProfessionalActivitiesCount());
+        assertEquals(Integer.valueOf(3), rs.getEmployments().getCount());
+        assertEquals(3, rs.getEmployments().getEmployments().size());
+        
+        assertEquals(Integer.valueOf(0), rs.getProfessionalActivities().getCount());
+        assertNull(rs.getProfessionalActivities().getProfessionalActivities());
     }
     
     @Test
@@ -239,10 +221,10 @@ public class SummaryManagerTest {
         
         Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
         manager.generateAffiliationsSummary(rs, ORCID);
-        assertEquals(0, rs.getEmploymentAffiliations().size());
-        assertEquals(0, rs.getEmploymentAffiliationsCount());
-        assertEquals(0, rs.getProfessionalActivities().size());
-        assertEquals(0, rs.getProfessionalActivitiesCount());
+        assertEquals(Integer.valueOf(0), rs.getEmployments().getCount());
+        assertNull(rs.getEmployments().getEmployments());
+        assertEquals(Integer.valueOf(0), rs.getProfessionalActivities().getCount());
+        assertNull(rs.getProfessionalActivities().getProfessionalActivities());
     }
     
     @Test
@@ -257,10 +239,10 @@ public class SummaryManagerTest {
         
         Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
         manager.generateAffiliationsSummary(rs, ORCID);
-        assertEquals(0, rs.getEmploymentAffiliations().size());
-        assertEquals(0, rs.getEmploymentAffiliationsCount());
-        assertEquals(3, rs.getProfessionalActivities().size());
-        assertEquals(3, rs.getProfessionalActivitiesCount());
+        assertEquals(Integer.valueOf(0), rs.getEmployments().getCount());
+        assertNull(rs.getEmployments().getEmployments());
+        assertEquals(Integer.valueOf(3), rs.getProfessionalActivities().getCount());
+        assertEquals(3, rs.getProfessionalActivities().getProfessionalActivities().size());
     }
     
     @Test
@@ -271,19 +253,19 @@ public class SummaryManagerTest {
         
         Mockito.when(affiliationsManagerReadOnlyMock.getGroupedAffiliations(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(affiliations);
         manager.generateAffiliationsSummary(rs, ORCID);
-        assertEquals(0, rs.getEmploymentAffiliations().size());
-        assertEquals(0, rs.getEmploymentAffiliationsCount());
-        assertEquals(3, rs.getProfessionalActivities().size());
-        assertEquals(12, rs.getProfessionalActivitiesCount());
+        assertEquals(Integer.valueOf(0), rs.getEmployments().getCount());
+        assertNull(rs.getEmployments().getEmployments());
+        assertEquals(Integer.valueOf(12), rs.getProfessionalActivities().getCount());
+        assertEquals(12, rs.getProfessionalActivities().getProfessionalActivities().size());
     }
 
     @Test
     public void generateExternalIdentifiersSummaryTest() {
         RecordSummary rs = new RecordSummary();
         manager.generateExternalIdentifiersSummary(rs, ORCID);
-        assertEquals(1, rs.getExternalIdentifiers().size());
-        assertEquals("0", rs.getExternalIdentifiers().get(0).getId());
-        assertEquals("0000", rs.getExternalIdentifiers().get(0).getReference());        
+        assertEquals(1, rs.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals("0", rs.getExternalIdentifiers().getExternalIdentifiers().get(0).getPutCode());
+        assertEquals("0000", rs.getExternalIdentifiers().getExternalIdentifiers().get(0).getExternalIdValue());
     }
     
     @Test
@@ -292,7 +274,7 @@ public class SummaryManagerTest {
         Mockito.when(externalIdentifierManagerReadOnlyMock.getPublicExternalIdentifiers(Mockito.eq(ORCID))).thenReturn(null);
         
         manager.generateExternalIdentifiersSummary(rs, ORCID);        
-        assertEquals(0, rs.getExternalIdentifiers().size());
+        assertNull(rs.getExternalIdentifiers());
     }
     
     @Test
@@ -301,15 +283,15 @@ public class SummaryManagerTest {
         Mockito.when(externalIdentifierManagerReadOnlyMock.getPublicExternalIdentifiers(Mockito.eq(ORCID))).thenReturn(new PersonExternalIdentifiers());
         
         manager.generateExternalIdentifiersSummary(rs, ORCID);
-        assertEquals(0, rs.getExternalIdentifiers().size());
+        assertNull(rs.getExternalIdentifiers());
     }
     
     @Test
     public void generateWorksSummaryTest() {
         RecordSummary rs = new RecordSummary();
         manager.generateWorksSummary(rs, ORCID);
-        assertEquals(0, rs.getSelfAssertedWorks());
-        assertEquals(3, rs.getValidatedWorks());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatdeCount());
     }
     
     @Test
@@ -327,8 +309,8 @@ public class SummaryManagerTest {
         Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
         
         manager.generateWorksSummary(rs, ORCID);
-        assertEquals(0, rs.getSelfAssertedWorks());
-        assertEquals(3, rs.getValidatedWorks());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getValidatdeCount());
     }
     
     @Test
@@ -345,8 +327,8 @@ public class SummaryManagerTest {
         Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
         
         manager.generateWorksSummary(rs, ORCID);
-        assertEquals(3, rs.getSelfAssertedWorks());
-        assertEquals(0, rs.getValidatedWorks());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getValidatdeCount());
     }
     
     @Test
@@ -364,16 +346,16 @@ public class SummaryManagerTest {
         Mockito.when(worksCacheManagerMock.getGroupedWorks(Mockito.eq(ORCID))).thenReturn(works);
         
         manager.generateWorksSummary(rs, ORCID);
-        assertEquals(3, rs.getSelfAssertedWorks());
-        assertEquals(0, rs.getValidatedWorks());
+        assertEquals(Integer.valueOf(3), rs.getWorks().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(0), rs.getWorks().getValidatdeCount());
     }
     
     @Test
     public void generateFundingSummaryTest() {
         RecordSummary rs = new RecordSummary();
         manager.generateFundingSummary(rs, ORCID);
-        assertEquals(0, rs.getSelfAssertedFunds());
-        assertEquals(3, rs.getValidatedFunds());
+        assertEquals(Integer.valueOf(0), rs.getFundings().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatdeCount());
     }
     
     @Test
@@ -391,8 +373,8 @@ public class SummaryManagerTest {
         Mockito.when(profileFundingManagerReadOnlyMock.groupFundings(Mockito.anyList(), Mockito.eq(true))).thenReturn(fundings);
         
         manager.generateFundingSummary(rs, ORCID);
-        assertEquals(0, rs.getSelfAssertedFunds());
-        assertEquals(3, rs.getValidatedFunds());        
+        assertEquals(Integer.valueOf(0), rs.getFundings().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(3), rs.getFundings().getValidatdeCount());        
     }
     
     @Test
@@ -409,8 +391,8 @@ public class SummaryManagerTest {
         Mockito.when(profileFundingManagerReadOnlyMock.groupFundings(Mockito.anyList(), Mockito.eq(true))).thenReturn(fundings);
         
         manager.generateFundingSummary(rs, ORCID);
-        assertEquals(3, rs.getSelfAssertedFunds());
-        assertEquals(0, rs.getValidatedFunds());        
+        assertEquals(Integer.valueOf(3), rs.getFundings().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(0), rs.getFundings().getValidatdeCount());;        
     }
     
     @Test
@@ -428,8 +410,8 @@ public class SummaryManagerTest {
         Mockito.when(profileFundingManagerReadOnlyMock.groupFundings(Mockito.anyList(), Mockito.eq(true))).thenReturn(fundings);
         
         manager.generateFundingSummary(rs, ORCID);
-        assertEquals(3, rs.getSelfAssertedFunds());
-        assertEquals(0, rs.getValidatedFunds());
+        assertEquals(Integer.valueOf(3), rs.getFundings().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(0), rs.getFundings().getValidatdeCount());
     }
     
     @Test
@@ -438,9 +420,9 @@ public class SummaryManagerTest {
         manager.generatePeerReviewSummary(rs, ORCID);
         // Each peer review group have 1 self asserted peer review and 1 user obo asserted peer review
         // So, we have 3 groups = 6 self asserted peer reviews in total
-        assertEquals(2, rs.getSelfAssertedPeerReviews());
-        assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());       
+        assertEquals(Integer.valueOf(2), rs.getPeerReviews().getSelfAssertedCount());
+        assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());
     }
     
     @Test
@@ -498,6 +480,67 @@ public class SummaryManagerTest {
         assertEquals(4, rs.getSelfAssertedPeerReviews());
         assertEquals(4, rs.getPeerReviewPublicationGrants());
         assertEquals(16, rs.getPeerReviewsTotal());       
+    }
+    
+    /**
+     * 
+     * Summary Tests
+     * 
+     * */
+    @Test
+    public void getSummaryTest() {
+        RecordSummary rs = manager.getRecordSummary(ORCID);
+        assertEquals("https://test.orcid.org/" + ORCID, rs.getOrcid());
+        assertEquals("2024-01-01", rs.getCreation());
+        assertEquals("2024-12-31", rs.getLastModified());
+        // Affiliations
+        assertEquals(3, rs.getEmploymentAffiliations().size());
+        assertEquals(3, rs.getEmploymentAffiliationsCount());
+        assertEquals(3, rs.getProfessionalActivities().size());
+        assertEquals(12, rs.getProfessionalActivitiesCount()); 
+        // External identifiers 
+        assertEquals(1, rs.getExternalIdentifiers().size());
+        // Works
+        assertEquals(0, rs.getSelfAssertedWorks());
+        assertEquals(3, rs.getValidatedWorks());
+        // Funding
+        assertEquals(0, rs.getSelfAssertedFunds());
+        assertEquals(3, rs.getValidatedFunds());
+        // Peer review
+        assertEquals(2, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());   
+    }       
+    
+    /**
+     * 
+     * POJO Tests
+     * 
+     * */
+    
+    @Test
+    public void getSummaryPojoTest() {
+        RecordSummaryPojo rs = manager.getRecordSummaryPojo(ORCID);
+        assertEquals("https://test.orcid.org/" + ORCID, rs.getOrcid());
+        assertEquals("2024-01-01", rs.getCreation());
+        assertEquals("2024-12-31", rs.getLastModified());
+        // Affiliations
+        assertEquals(3, rs.getEmploymentAffiliations().size());
+        assertEquals(3, rs.getEmploymentAffiliationsCount());
+        assertEquals(3, rs.getProfessionalActivities().size());
+        assertEquals(12, rs.getProfessionalActivitiesCount()); 
+        // External identifiers 
+        assertEquals(1, rs.getExternalIdentifiers().size());
+        // Works
+        assertEquals(0, rs.getSelfAssertedWorks());
+        assertEquals(3, rs.getValidatedWorks());
+        // Funding
+        assertEquals(0, rs.getSelfAssertedFunds());
+        assertEquals(3, rs.getValidatedFunds());
+        // Peer review
+        assertEquals(2, rs.getSelfAssertedPeerReviews());
+        assertEquals(4, rs.getPeerReviewPublicationGrants());
+        assertEquals(16, rs.getPeerReviewsTotal());   
     }
     
     private PersonExternalIdentifiers getPersonExternalIdentifiers() {
