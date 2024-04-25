@@ -1,0 +1,127 @@
+package org.orcid.core.model;
+
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.junit.Test;
+import org.orcid.jaxb.model.v3.release.common.CreatedDate;
+import org.orcid.jaxb.model.v3.release.common.Day;
+import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Month;
+import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
+import org.orcid.jaxb.model.v3.release.common.Year;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.utils.DateUtils;
+
+public class RecordSummaryMarshallingTest {
+
+    @Test
+    public void marshallingTest() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(new Class[] { RecordSummary.class });
+        Marshaller marshaller = context.createMarshaller();
+        String name = "/summary_3.0/samples/summary-3.0.xml";
+        InputStream inputStream = getClass().getResourceAsStream(name);
+        
+        
+        
+        RecordSummary recordSummary = getRecordSummary();
+        StringWriter stringWriter = new StringWriter();
+        marshaller.marshal(recordSummary, stringWriter);
+        System.out.println(stringWriter.toString());
+        
+        
+    }
+    
+    private RecordSummary getRecordSummary() {
+        RecordSummary record = new RecordSummary();
+        record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar("2024-01-01T12:00:00")));
+        record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar("2024-01-01T12:00:00")));
+        record.setCreditName("User credited name");
+        OrcidIdentifier oid = new OrcidIdentifier();
+        oid.setHost("orcid.org");
+        oid.setPath("8888-8888-8888-8880");
+        oid.setUri("https://orcid.org/8888-8888-8888-8880");
+        record.setOrcidIdentifier(oid);
+        ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
+        externalIdentifiers.setExternalIdentifiers(new ArrayList<>());
+        externalIdentifiers.getExternalIdentifiers().add(getExternalIdentifier("Scopus", 1, true));
+        externalIdentifiers.getExternalIdentifiers().add(getExternalIdentifier("ResearcherID", 2, true));
+        externalIdentifiers.getExternalIdentifiers().add(getExternalIdentifier("Other", 3, true));
+        
+        // Set the external identifiers
+        record.setExternalIdentifiers(externalIdentifiers);
+        
+        Employments employments = new Employments();
+        employments.setCount(5);
+        employments.setEmployments(new ArrayList<>());
+        employments.getEmployments().add((Employment) getProfessionalActivity(1, "Org # 1", "Fake role title", "https://www.ipp.pt/", null, false));
+        employments.getEmployments().add((Employment) getProfessionalActivity(2, "Org # 2", "Fake role title 2", "https://www.ipp.pt/2", null, false));
+        employments.getEmployments().add((Employment) getProfessionalActivity(3, "Org # 3", "Fake role title 3", "https://www.ipp.pt/3", null, true));
+        
+        // Set the employments
+        record.setEmployments(employments);
+        
+        ProfessionalActivities professionalActivities = new ProfessionalActivities();
+        professionalActivities.setCount(5);
+        professionalActivities.setProfessionalActivities(new ArrayList<>());
+        professionalActivities.getProfessionalActivities().add(getProfessionalActivity(1, "Org # 1", "Fake role title", "https://www.ipp.pt/", "distinction", false));
+        
+        // Set the professional activities
+        record.setProfessionalActivities(professionalActivities);
+        
+        Fundings fundings = new Fundings();
+        fundings.setSelfAssertedCount(0);
+        fundings.setValidatedCount(1);
+        record.setFundings(fundings);
+        
+        Works works = new Works();
+        works.setSelfAssertedCount(0);
+        works.setValidatedCount(1);
+        record.setWorks(works);
+        
+        PeerReviews peerReviews = new PeerReviews();
+        peerReviews.setPeerReviewPublicationGrants(6);
+        peerReviews.setSelfAssertedCount(0);
+        peerReviews.setTotal(6);
+        record.setPeerReviews(peerReviews);
+        
+        return record;
+    }
+    
+    private ExternalIdentifier getExternalIdentifier(String type, int putCode, boolean validated) {
+        ExternalIdentifier ei1 = new ExternalIdentifier();
+        ei1.setPutCode(Long.valueOf(putCode));
+        ei1.setExternalIdType(type);
+        ei1.setExternalIdValue(String.valueOf(putCode));
+        ei1.setExternalIdUrl("https://example.com/" + putCode);
+        ei1.setValidated(validated);
+        return ei1;
+    }
+    
+    private ProfessionalActivity getProfessionalActivity(int putCode, String role, String org, String url, String type, boolean validated) {
+        ProfessionalActivity pa = new ProfessionalActivity();
+        pa.setPutCode(Long.valueOf(putCode));
+        pa.setEndDate(getEndDate());
+        pa.setStartDate(getStartDate());
+        pa.setOrganizationName(org);
+        pa.setRole(role);        
+        pa.setUrl(url);
+        pa.setValidated(validated);
+        pa.setType(type);        
+        return pa;
+    }
+    
+    private FuzzyDate getEndDate() {
+        return new FuzzyDate(new Year(2024), new Month(12), new Day(31));
+    }
+    
+    private FuzzyDate getStartDate() {
+        return new FuzzyDate(new Year(2020), new Month(1), new Day(1));
+    }
+}
