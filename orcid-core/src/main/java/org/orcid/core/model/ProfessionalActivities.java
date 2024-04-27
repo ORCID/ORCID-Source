@@ -1,5 +1,6 @@
 package org.orcid.core.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,10 +16,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlType(propOrder = { "count", "professionalActivities" })
 @XmlRootElement(name = "professional-activities", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Professional activities list")
-public class ProfessionalActivities {
-    @XmlElement(name = "count", namespace = "http://www.orcid.org/ns/activities")
+public class ProfessionalActivities implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    @XmlElement(name = "count", namespace = "http://www.orcid.org/ns/summary")
     private Integer count;
-    @XmlElement(name = "professional-activity", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "professional-activity", namespace = "http://www.orcid.org/ns/summary")
     private List<ProfessionalActivity> professionalActivities;
 
     public Integer getCount() {

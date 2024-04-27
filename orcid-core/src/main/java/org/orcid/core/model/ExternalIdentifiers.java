@@ -1,5 +1,6 @@
 package org.orcid.core.model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,8 +16,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlType(propOrder = { "externalIdentifiers" })
 @XmlRootElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "External identifiers list")
-public class ExternalIdentifiers {
-    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/activities")
+public class ExternalIdentifiers implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/summary")
     List<ExternalIdentifier> externalIdentifiers;
 
     public List<ExternalIdentifier> getExternalIdentifiers() {

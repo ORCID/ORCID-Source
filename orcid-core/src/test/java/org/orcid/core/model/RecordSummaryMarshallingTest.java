@@ -1,13 +1,17 @@
 package org.orcid.core.model;
 
-import java.io.InputStream;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.Day;
@@ -16,26 +20,22 @@ import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Month;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.Year;
-import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.utils.DateUtils;
 
 public class RecordSummaryMarshallingTest {
 
     @Test
-    public void marshallingTest() throws JAXBException {
+    public void marshallingTest() throws JAXBException, IOException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { RecordSummary.class });
-        Marshaller marshaller = context.createMarshaller();
-        String name = "/summary_3.0/samples/summary-3.0.xml";
-        InputStream inputStream = getClass().getResourceAsStream(name);
-        
-        
+        Marshaller marshaller = context.createMarshaller();        
+        String expectedText = IOUtils.toString(getClass().getResourceAsStream("summary-3.0.xml"), StandardCharsets.UTF_8);
         
         RecordSummary recordSummary = getRecordSummary();
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(recordSummary, stringWriter);
-        System.out.println(stringWriter.toString());
+        String realText = stringWriter.toString();
         
-        
+        assertEquals(expectedText, realText);
     }
     
     private RecordSummary getRecordSummary() {
@@ -60,9 +60,9 @@ public class RecordSummaryMarshallingTest {
         Employments employments = new Employments();
         employments.setCount(5);
         employments.setEmployments(new ArrayList<>());
-        employments.getEmployments().add((Employment) getProfessionalActivity(1, "Org # 1", "Fake role title", "https://www.ipp.pt/", null, false));
-        employments.getEmployments().add((Employment) getProfessionalActivity(2, "Org # 2", "Fake role title 2", "https://www.ipp.pt/2", null, false));
-        employments.getEmployments().add((Employment) getProfessionalActivity(3, "Org # 3", "Fake role title 3", "https://www.ipp.pt/3", null, true));
+        employments.getEmployments().add(getEmployment(1, "Org # 1", "Fake role title 1", "https://test.orcid.org/1", false));
+        employments.getEmployments().add(getEmployment(2, "Org # 2", "Fake role title 2", "https://test.orcid.org/2", false));
+        employments.getEmployments().add(getEmployment(3, "Org # 3", "Fake role title 3", "https://test.orcid.org/3", true));
         
         // Set the employments
         record.setEmployments(employments);
@@ -70,7 +70,7 @@ public class RecordSummaryMarshallingTest {
         ProfessionalActivities professionalActivities = new ProfessionalActivities();
         professionalActivities.setCount(5);
         professionalActivities.setProfessionalActivities(new ArrayList<>());
-        professionalActivities.getProfessionalActivities().add(getProfessionalActivity(1, "Org # 1", "Fake role title", "https://www.ipp.pt/", "distinction", false));
+        professionalActivities.getProfessionalActivities().add(getProfessionalActivity(1, "Org # 1", "Fake role title", "https://test.orcid.org/", "distinction", false));
         
         // Set the professional activities
         record.setProfessionalActivities(professionalActivities);
@@ -99,9 +99,21 @@ public class RecordSummaryMarshallingTest {
         ei1.setPutCode(Long.valueOf(putCode));
         ei1.setExternalIdType(type);
         ei1.setExternalIdValue(String.valueOf(putCode));
-        ei1.setExternalIdUrl("https://example.com/" + putCode);
+        ei1.setExternalIdUrl("https://test.orcid.org/" + putCode);
         ei1.setValidated(validated);
         return ei1;
+    }
+    
+    private Employment getEmployment(int putCode, String role, String org, String url, boolean validated) {
+        Employment e = new Employment();
+        e.setPutCode(Long.valueOf(putCode));
+        e.setEndDate(getEndDate());
+        e.setStartDate(getStartDate());
+        e.setOrganizationName(org);
+        e.setRole(role);        
+        e.setUrl(url);
+        e.setValidated(validated);
+        return e;
     }
     
     private ProfessionalActivity getProfessionalActivity(int putCode, String role, String org, String url, String type, boolean validated) {

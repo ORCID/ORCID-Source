@@ -13,26 +13,26 @@ import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "organizationName", "role", "url", "validated" })
+@XmlType(propOrder = { "putCode", "type", "organizationName", "role", "url", "startDate", "endDate", "validated" })
 @XmlRootElement(name = "professional-activity", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Professional activity")
 public class ProfessionalActivity {
     @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/summary")
-    private Long putCode;
+    protected Long putCode;
     @XmlElement(name = "start-date", namespace = "http://www.orcid.org/ns/common")
-    private FuzzyDate startDate;
+    protected FuzzyDate startDate;
     @XmlElement(name = "end-date", namespace = "http://www.orcid.org/ns/common")
-    private FuzzyDate endDate;
+    protected FuzzyDate endDate;
     @XmlElement(name = "type", namespace = "http://www.orcid.org/ns/summary")
-    private String type;
+    protected String type;
     @XmlElement(name = "organization-name", namespace = "http://www.orcid.org/ns/summary")
-    private String organizationName;
+    protected String organizationName;
     @XmlElement(name = "role", namespace = "http://www.orcid.org/ns/summary")
-    private String role;
+    protected String role;
     @XmlElement(name = "url", namespace = "http://www.orcid.org/ns/summary")
-    private String url;
+    protected String url;
     @XmlElement(name = "validated", namespace = "http://www.orcid.org/ns/summary")
-    private boolean validated;
+    protected boolean validated;
 
     public Long getPutCode() {
         return putCode;

@@ -1,5 +1,6 @@
 package org.orcid.core.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import javax.annotation.Resource;
@@ -7,25 +8,27 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.jaxb.model.common_v2.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
-import org.orcid.pojo.summary.AffiliationSummary;
-import org.orcid.utils.DateUtils;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "orcidIdentifier", "externalIdentifiers", "employments", "profilessionalActivities", "fundings",
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "externalIdentifiers", "employments", "professionalActivities", "fundings",
         "works", "peerReviews" })
-@XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
+@XmlRootElement(name = "record-summary", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Record summary")
-public class RecordSummary {
+public class RecordSummary implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    @XmlTransient
     @Resource
     private OrcidUrlManager orcidUrlManager;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")

@@ -1,5 +1,6 @@
 package org.orcid.core.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,10 +12,14 @@ import javax.xml.bind.annotation.XmlType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "peer-review-publication-grants", "self-asserted-count", "total" })
+@XmlType(propOrder = { "peerReviewPublicationGrants", "selfAssertedCount", "total" })
 @XmlRootElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Peer reviews")
-public class PeerReviews {
+public class PeerReviews implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     @XmlElement(name = "peer-review-publication-grants", namespace = "http://www.orcid.org/ns/summary")
     private Integer peerReviewPublicationGrants;
     @XmlElement(name = "self-asserted-count", namespace = "http://www.orcid.org/ns/summary")

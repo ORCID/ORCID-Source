@@ -15,15 +15,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "External identifier")
 public class ExternalIdentifier {
-    @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "put-code", namespace = "http://www.orcid.org/ns/summary")
     private Long putCode;
-    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/summary")
     private String externalIdType;
-    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/summary")
     private String externalIdValue;
-    @XmlElement(name = "external-id-url", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "external-id-url", namespace = "http://www.orcid.org/ns/summary")
     private String externalIdUrl;
-    @XmlElement(name = "validated", namespace = "http://www.orcid.org/ns/activities")
+    @XmlElement(name = "validated", namespace = "http://www.orcid.org/ns/summary")
     private boolean validated;
 
     public Long getPutCode() {
