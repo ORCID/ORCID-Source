@@ -63,6 +63,7 @@ import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.model.RecordSummary;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -127,7 +128,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
-import org.orcid.pojo.summary.RecordSummary;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 

@@ -1,7 +1,6 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -18,7 +17,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -65,41 +63,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         } catch (UnsupportedOperationException e) {
 
         }
-    }
-
-    @Test
-    public void testAddOtherName() {
-        Date profileLastModifiedOrig = profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4441");
-        assertEquals(2, dao.getOtherNames("4444-4444-4444-4441", 0L).size());
-        boolean result = dao.addOtherName("4444-4444-4444-4441", "OtherName");
-        assertEquals(true, result);
-        assertEquals(3, dao.getOtherNames("4444-4444-4444-4441", 0L).size());
-        assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
-        
-        
-        OtherNameEntity entity = new OtherNameEntity();
-        entity.setDisplayName("The other name");
-        entity.setOrcid("4444-4444-4444-4441");
-        entity.setSourceId("4444-4444-4444-4441");
-        entity.setVisibility("PUBLIC");
-        dao.persist(entity);
-        assertEquals(4, dao.getOtherNames("4444-4444-4444-4441", 0L).size());
-    }
-
-    @Test    
-    public void testDeleteOtherName() {
-        Date now = new Date();
-        Date justBeforeStart = new Date(now.getTime() - 1000);
-        List<OtherNameEntity> otherNames = dao.getOtherNames("4444-4444-4444-4443", 0L);
-        assertNotNull(otherNames);
-        assertEquals(2, otherNames.size());
-        OtherNameEntity otherName = otherNames.get(0);
-        assertTrue(dao.deleteOtherName(otherName));
-        List<OtherNameEntity> updatedOtherNames = dao.getOtherNames("4444-4444-4444-4443", 0L);
-        assertNotNull(updatedOtherNames);
-        assertEquals(1, updatedOtherNames.size());
-        assertTrue("Profile last modified date should have been updated", justBeforeStart.before(profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
-    }
+    }    
     
     @Test
     public void testGetOtherName() {

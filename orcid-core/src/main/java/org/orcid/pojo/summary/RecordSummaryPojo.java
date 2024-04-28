@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @XmlRootElement
-public class RecordSummary {
+public class RecordSummaryPojo {
     @JsonInclude(Include.NON_NULL)
     private String name;
     private String orcid;

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ActivityManager;
@@ -22,7 +23,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;

@@ -32,7 +32,7 @@ public class RedisClient {
     private final int cacheExpiryInSecs;
     private final int clientTimeoutInMillis;
     private JedisPool pool;
-    private SetParams setParams;
+    private SetParams defaultSetParams;
     
     @Resource
     private SlackManager slackManager;
@@ -70,7 +70,7 @@ public class RedisClient {
             JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis).timeoutMillis(this.clientTimeoutInMillis)
                     .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();        
             pool = new JedisPool(new HostAndPort(this.redisHost, this.redisPort), config);            
-            setParams = new SetParams().ex(this.cacheExpiryInSecs);  
+            defaultSetParams = new SetParams().ex(this.cacheExpiryInSecs);  
             // Pool test
             try(Jedis jedis = pool.getResource()) {
                 if(jedis.isConnected()) {
@@ -99,16 +99,25 @@ public class RedisClient {
     }
 
     public boolean set(String key, String value) {
+        return set(key, value, defaultSetParams);
+    }
+    
+    public boolean set(String key, String value, int cacheExpiryInSecs) {
+        SetParams params = new SetParams().ex(cacheExpiryInSecs);
+        return set(key, value, params);
+    }
+
+    private boolean set(String key, String value, SetParams params) {
         if(enabled && pool != null) {
             try (Jedis jedis = pool.getResource()) {
                 LOG.debug("Setting Key: {}", key);
-                String result = jedis.set(key, value, setParams);
+                String result = jedis.set(key, value, params);
                 return "OK".equalsIgnoreCase(result);
             }
         }
         return false;
     }
-
+    
     public String get(String key) {
         if(enabled && pool != null) {
             try (Jedis jedis = pool.getResource()) {
