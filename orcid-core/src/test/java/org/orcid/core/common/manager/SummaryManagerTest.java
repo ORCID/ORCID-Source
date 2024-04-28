@@ -249,7 +249,7 @@ public class SummaryManagerTest {
         assertEquals(Integer.valueOf(3), rs.getProfessionalActivities().getCount());
         assertEquals(3, rs.getProfessionalActivities().getProfessionalActivities().size());
         for(ProfessionalActivity pa : rs.getProfessionalActivities().getProfessionalActivities()) {
-            assertEquals(AffiliationType.INVITED_POSITION.name(), pa.getType());
+            assertEquals(AffiliationType.INVITED_POSITION.value(), pa.getType());
         }
     }
     

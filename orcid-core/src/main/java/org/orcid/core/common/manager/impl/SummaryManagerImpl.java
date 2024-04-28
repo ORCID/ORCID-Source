@@ -98,7 +98,7 @@ public class SummaryManagerImpl implements SummaryManager {
     private boolean isSummaryCacheEnabled;
     
     // Set the cache TTL for the summary, 1 day by default
-    @Value("${org.orcid.core.utils.cache.redis.summary.ttl:86400}") 
+    @Value("${org.orcid.core.utils.cache.redis.summary.ttl:3600}") 
     private int summaryCacheTTL;
 
     @Override
