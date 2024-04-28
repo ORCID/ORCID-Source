@@ -14,7 +14,7 @@ import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "organizationName", "role", "url", "startDate", "endDate", "validated" })
+@XmlType(propOrder = { "putCode", "type", "organizationName", "role", "url", "startDate", "endDate", "validated" })
 @XmlRootElement(name = "employment", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Employment")
 public class Employment implements Serializable {
@@ -28,6 +28,8 @@ public class Employment implements Serializable {
     protected FuzzyDate startDate;
     @XmlElement(name = "end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
+    @XmlElement(name = "type", namespace = "http://www.orcid.org/ns/summary")
+    protected String type;
     @XmlElement(name = "organization-name", namespace = "http://www.orcid.org/ns/summary")
     protected String organizationName;
     @XmlElement(name = "role", namespace = "http://www.orcid.org/ns/summary")

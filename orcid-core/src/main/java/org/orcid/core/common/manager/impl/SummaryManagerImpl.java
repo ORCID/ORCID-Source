@@ -296,13 +296,13 @@ public class SummaryManagerImpl implements SummaryManager {
             p.setEndDate(t.getEndDate());
             p.setRole(t.getRoleTitle());
             if(t instanceof DistinctionSummary) {
-                p.setType(AffiliationType.DISTINCTION.name());
+                p.setType(AffiliationType.DISTINCTION.value());
             } else if (t instanceof InvitedPositionSummary) {
-                p.setType(AffiliationType.INVITED_POSITION.name());
+                p.setType(AffiliationType.INVITED_POSITION.value());
             } else if (t instanceof MembershipSummary) {
-                p.setType(AffiliationType.MEMBERSHIP.name());
+                p.setType(AffiliationType.MEMBERSHIP.value());
             } else if (t instanceof ServiceSummary) {
-                p.setType(AffiliationType.SERVICE.name());
+                p.setType(AffiliationType.SERVICE.value());
             }
             p.setUrl((t.getUrl() == null || StringUtils.isBlank(t.getUrl().getValue())) ? null : t.getUrl().getValue());
             p.setValidated(!SourceUtils.isSelfAsserted(t.getSource(), orcid));
