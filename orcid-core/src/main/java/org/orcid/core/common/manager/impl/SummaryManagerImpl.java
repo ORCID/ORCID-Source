@@ -180,9 +180,13 @@ public class SummaryManagerImpl implements SummaryManager {
         if(recordSummary.getEmployments() != null && recordSummary.getEmployments().getEmployments() != null) {            
             List<AffiliationSummary> affiliations = new ArrayList<>();
             for(Employment e : recordSummary.getEmployments().getEmployments()) {
-                AffiliationSummary as = new AffiliationSummary();                
+                AffiliationSummary as = new AffiliationSummary();
+                as.setStartDate(e.getStartDate() == null ? null : e.getStartDate().toString());
                 as.setEndDate(e.getEndDate() == null ? null : e.getEndDate().toString());
                 as.setOrganizationName(e.getOrganizationName());
+                as.setRole(e.getRole());
+                as.setType(e.getType());
+                as.setUrl(e.getUrl());
                 as.setPutCode(e.getPutCode());
                 as.setValidated(e.isValidated());
                 affiliations.add(as);

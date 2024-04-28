@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -29,7 +30,7 @@ public class Employment implements Serializable {
     @XmlElement(name = "end-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate endDate;
     @XmlElement(name = "type", namespace = "http://www.orcid.org/ns/summary")
-    protected String type;
+    protected final String type = AffiliationType.EMPLOYMENT.value();
     @XmlElement(name = "organization-name", namespace = "http://www.orcid.org/ns/summary")
     protected String organizationName;
     @XmlElement(name = "role", namespace = "http://www.orcid.org/ns/summary")
@@ -79,6 +80,9 @@ public class Employment implements Serializable {
     }
     public void setValidated(boolean validated) {
         this.validated = validated;
+    }    
+    public String getType() {
+        return type;
     }
     public static long getSerialversionuid() {
         return serialVersionUID;
