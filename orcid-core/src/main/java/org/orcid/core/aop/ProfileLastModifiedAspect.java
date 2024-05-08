@@ -1,17 +1,21 @@
-package org.orcid.persistence.aop;
+package org.orcid.core.aop;
 
 import java.util.Date;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidAware;
 import org.orcid.persistence.util.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -39,6 +43,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     private static final String UPDATE_PROFILE_LAST_MODIFIED = "@annotation(org.orcid.persistence.aop.UpdateProfileLastModified)";
     
     private static final String UPDATE_PROFILE_LAST_MODIFIED_AND_INDEXING_STATUS = "@annotation(org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus)";
+    
+    @Resource
+    private RedisClient redisClient;    
+    
+    @Value("${org.orcid.core.utils.cache.redis.summary.enabled:false}") 
+    private boolean isSummaryCacheEnabled;
     
     public boolean isEnabled() {
         return enabled;
@@ -125,7 +135,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
-            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
+            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST); 
+        
+        // Clear redis caches
+        evictCaches(orcid);
     }
     
     /** Updates the last modified date and clears the request-scope last modified cache.
@@ -144,7 +157,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
-            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);             
+            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);
+        
+        // Clear redis caches
+        evictCaches(orcid);
     }
 
     /** Fetches the last modified from the request-scope last modified cache
@@ -168,5 +184,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     private String sraKey(String orcid) {
         return REQUEST_PROFILE_LAST_MODIFIED + '_' + name + '_' + orcid;
+    }
+    
+    public void evictCaches(String orcid) {        
+        // Evict the summary cache
+        redisClient.remove(orcid + "-summary");
     }
 }

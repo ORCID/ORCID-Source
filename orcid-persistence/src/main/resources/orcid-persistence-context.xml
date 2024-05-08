@@ -26,18 +26,6 @@
     <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
-	<!-- Profile last modified aspect -->
-	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
-		<property name="enabled" value="true" />
-	</bean>
-
-	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileLastModifiedDao" ref="profileLastModifiedDaoReadOnly" />
-		<property name="enabled" value="false" />
-		<property name="name" value="read_only" />
-	</bean>
-
 	<!-- Person DAO's -->
 	<bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
 	

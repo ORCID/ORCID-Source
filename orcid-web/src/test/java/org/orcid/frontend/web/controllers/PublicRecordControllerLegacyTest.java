@@ -12,7 +12,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.pojo.PublicRecord;
-import org.orcid.pojo.summary.RecordSummary;
+import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -141,7 +141,7 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummary() {
-        RecordSummary record = publicRecordController.getSummaryRecord(userOrcid);
+        RecordSummaryPojo record = publicRecordController.getSummaryRecord(userOrcid);
 
         assertEquals("active", record.getStatus());
         assertNotNull(record.getName());
@@ -191,7 +191,7 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryDeactivated() {
-        RecordSummary record = publicRecordController.getSummaryRecord(deactivatedUserOrcid);
+        RecordSummaryPojo record = publicRecordController.getSummaryRecord(deactivatedUserOrcid);
 
         assertEquals("Given Names Deactivated Family Name Deactivated", record.getName());
 
@@ -200,7 +200,7 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryLocked() {
-        RecordSummary record = publicRecordController.getSummaryRecord(lockedUserOrcid);
+        RecordSummaryPojo record = publicRecordController.getSummaryRecord(lockedUserOrcid);
 
         assertNotNull(record.getName());
         assertEquals("Given Names Deactivated Family Name Deactivated", record.getName());
@@ -210,7 +210,7 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryDeprecated() {
-        RecordSummary record = publicRecordController.getSummaryRecord(deprecatedUserOrcid);
+        RecordSummaryPojo record = publicRecordController.getSummaryRecord(deprecatedUserOrcid);
 
         assertNull(record.getName());
 
@@ -219,14 +219,14 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
 
     @Test
     public void testGetRecordSummaryPrivateName() {
-        RecordSummary record = publicRecordController.getSummaryRecord(unclaimedUserOrcid);
+        RecordSummaryPojo record = publicRecordController.getSummaryRecord(unclaimedUserOrcid);
 
         assertNull(record.getName());
     }
 
     @Test
     public void testGetRecordSummaryProfessionalActivitiesSortedByEndDate() {
-        RecordSummary record = publicRecordController.getSummaryRecord("0000-0000-0000-0008");
+        RecordSummaryPojo record = publicRecordController.getSummaryRecord("0000-0000-0000-0008");
 
         assertEquals(5, record.getProfessionalActivitiesCount());
         assertNull(record.getProfessionalActivities().get(0).getEndDate());

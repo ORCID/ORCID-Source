@@ -59,6 +59,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
@@ -115,6 +116,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof LockedException) {
             logShortError(t, clientId);
         } else if (t instanceof DeactivatedException) {
+            logShortError(t, clientId);
+        } else if (t instanceof DisabledException) {
             logShortError(t, clientId);
         } else if (t instanceof ClientDeactivatedException) {
             logShortError(t, clientId);
@@ -249,7 +252,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
-        } else if (ClientDeactivatedException.class.isAssignableFrom(t.getClass())) {
+        }else if (DisabledException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Account not active: ", t);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+        } 
+        else if (ClientDeactivatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Client deactivated : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if (NoResultException.class.isAssignableFrom(t.getClass())) {

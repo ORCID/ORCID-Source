@@ -13,6 +13,7 @@ public class AffiliationSummary {
     private String role;
     private String type;
     private boolean validated;
+    private long putCode;
 
     public String getOrganizationName() {
         return organizationName;
@@ -69,11 +70,22 @@ public class AffiliationSummary {
     public void setValidated(boolean validated) {
         this.validated = validated;
     }
+    
+    public long getPutCode() {
+        return putCode;
+    }
+
+    public void setPutCode(long putCode) {
+        this.putCode = putCode;
+    }
 
     public static AffiliationSummary valueOf(AffiliationForm as, String orcid, String type) {
         AffiliationSummary form = new AffiliationSummary();
 
         if (as != null) {
+            if(!PojoUtil.isEmpty(as.getPutCode())) {
+                form.setPutCode(Long.valueOf(as.getPutCode().getValue()));
+            }
             if (!PojoUtil.isEmpty(as.getAffiliationName())) {
                 form.setOrganizationName(as.getAffiliationName().getValue());
             }
@@ -130,6 +142,10 @@ public class AffiliationSummary {
             
             if(as.getSource() != null) {
                 form.setValidated(!SourceUtils.isSelfAsserted(as.getSource(), orcid));
+            }
+            
+            if(as.getPutCode() != null) {
+                form.setPutCode(as.getPutCode());
             }
         }
         return form;

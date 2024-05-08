@@ -51,14 +51,12 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
     }
     
     @Override
-    @UpdateProfileLastModified
     @Transactional
     public void persist(OrcidOauth2AuthoriziationCodeDetail authCode) {
         super.persist(authCode);
     }
     
     @Override
-    @UpdateProfileLastModified
     @Transactional
     public OrcidOauth2AuthoriziationCodeDetail merge(OrcidOauth2AuthoriziationCodeDetail authCode) {
         return super.merge(authCode);
