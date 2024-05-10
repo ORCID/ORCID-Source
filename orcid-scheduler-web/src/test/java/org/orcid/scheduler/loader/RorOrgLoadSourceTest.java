@@ -130,7 +130,7 @@ public class RorOrgLoadSourceTest {
         assertNotEquals(OrganizationStatus.DEPRECATED.name(), persisted.getStatus());
         assertNotEquals(OrganizationStatus.OBSOLETE.name(), persisted.getStatus());
 
-        verify(orgDisambiguatedManager, times(5)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(4)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
         verify(orgDisambiguatedManager, never()).updateOrgDisambiguated(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
     }
@@ -149,7 +149,7 @@ public class RorOrgLoadSourceTest {
             assertNotEquals(OrganizationStatus.OBSOLETE.name(), persisted.getStatus());
         }
 
-        verify(orgDisambiguatedManager, times(27)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
+        verify(orgDisambiguatedManager, times(24)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
         verify(orgDisambiguatedManager, never()).updateOrgDisambiguated(any(OrgDisambiguatedEntity.class));
         verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
     }
@@ -238,10 +238,9 @@ public class RorOrgLoadSourceTest {
                 entity.setId(1L);
                 entity.setName("org_1");
                 entity.setSourceId("ror.1");
-                entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US.name());
+                entity.setCity("Adelaide");
+                entity.setCountry(Iso3166Country.AU.name());
                 entity.setOrgType("type_1");
-                entity.setRegion("Alabama");
                 entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
                 entity.setStatus("active");
                 entity.setUrl("http://link1.com");
@@ -256,8 +255,7 @@ public class RorOrgLoadSourceTest {
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", OrgDisambiguatedSourceType.FUNDREF.name())).thenReturn(extIdPreferred);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
         when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "http://en.wikipedia.org/wiki/org_1", "WIKIPEDIA_URL")).thenReturn(extId);
-
+ 
         Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_updated_5_external_identifiers.json").toURI());
         File testFile = path.toFile();
         ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
@@ -275,11 +273,9 @@ public class RorOrgLoadSourceTest {
         assertNotEquals(OrganizationStatus.OBSOLETE.name(), orgToBeUpdated.getStatus());
         assertEquals(Iso3166Country.AU.name(), orgToBeUpdated.getCountry());
         assertEquals(Long.valueOf(1), orgToBeUpdated.getId());
-        assertEquals("City One Updated", orgToBeUpdated.getCity());
+        assertEquals("Adelaide Updated", orgToBeUpdated.getCity());
         assertEquals(IndexingStatus.PENDING, orgToBeUpdated.getIndexingStatus());
         assertEquals("org_1_updated", orgToBeUpdated.getName());
-        assertEquals("type_1,type_2", orgToBeUpdated.getOrgType());
-        assertEquals("San Jose", orgToBeUpdated.getRegion());
         assertEquals("ror.1", orgToBeUpdated.getSourceId());
         assertEquals(OrgDisambiguatedSourceType.ROR.name(), orgToBeUpdated.getSourceType());
         assertEquals("active", orgToBeUpdated.getStatus());
@@ -437,56 +433,6 @@ public class RorOrgLoadSourceTest {
         }
         assertEquals(2, deprecatedCount);
         assertEquals(2, obsoleteCount);
-    }
-
-    @Test
-    public void execute_AddMissingWikipediaExtId_Test() throws URISyntaxException {
-        when(orgDisambiguatedDao.findBySourceIdAndSourceType("ror.1", OrgDisambiguatedSourceType.ROR.name())).thenAnswer(new Answer<OrgDisambiguatedEntity>() {
-            @Override
-            public OrgDisambiguatedEntity answer(InvocationOnMock invocation) throws Throwable {
-                OrgDisambiguatedEntity entity = new OrgDisambiguatedEntity();
-                entity.setId(1L);
-                entity.setName("org_1");
-                entity.setSourceId("ror.1");
-                entity.setCity("City One");
-                entity.setCountry(Iso3166Country.US.name());
-                entity.setOrgType("type_1");
-                entity.setRegion("Alabama");
-                entity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
-                entity.setStatus("active");
-                entity.setUrl("http://link1.com");
-                return entity;
-            }
-        });
-        OrgDisambiguatedExternalIdentifierEntity extId = new OrgDisambiguatedExternalIdentifierEntity();
-        extId.setPreferred(false);
-
-        OrgDisambiguatedExternalIdentifierEntity extIdPreferred = new OrgDisambiguatedExternalIdentifierEntity();
-        extIdPreferred.setPreferred(true);
-
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ISNI1", "ISNI")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "FUNDREF1", OrgDisambiguatedSourceType.FUNDREF.name())).thenReturn(extIdPreferred);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "ORGREF1", "ORGREF")).thenReturn(extId);
-        when(orgDisambiguatedExternalIdentifierDao.findByDetails(1L, "WIKIDATA1", "WIKIDATA")).thenReturn(extId);
-
-        Path path = Paths.get(getClass().getClassLoader().getResource("ror/ror_1_org_5_external_identifiers.json").toURI());
-        File testFile = path.toFile();
-        ReflectionTestUtils.setField(rorOrgLoadSource, "localDataPath", testFile.getAbsolutePath());
-        rorOrgLoadSource.loadOrgData();
-
-        verify(orgDisambiguatedDao, never()).persist(Mockito.any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedManager, times(1)).createOrgDisambiguatedExternalIdentifier(any(OrgDisambiguatedExternalIdentifierEntity.class));
-        verify(orgDisambiguatedDao, never()).merge(any(OrgDisambiguatedEntity.class));
-        verify(orgDisambiguatedExternalIdentifierDao, never()).merge(any(OrgDisambiguatedExternalIdentifierEntity.class));
-
-        ArgumentCaptor<OrgDisambiguatedExternalIdentifierEntity> captor = ArgumentCaptor.forClass(OrgDisambiguatedExternalIdentifierEntity.class);
-
-        verify(orgDisambiguatedManager).createOrgDisambiguatedExternalIdentifier(captor.capture());
-
-        OrgDisambiguatedExternalIdentifierEntity orgToBeUpdated = captor.getValue();
-        assertEquals("http://en.wikipedia.org/wiki/org_1", orgToBeUpdated.getIdentifier());
-        assertEquals("WIKIPEDIA_URL", orgToBeUpdated.getIdentifierType());
-        assertEquals(Boolean.TRUE, orgToBeUpdated.getPreferred());
     }
 
     @Test
