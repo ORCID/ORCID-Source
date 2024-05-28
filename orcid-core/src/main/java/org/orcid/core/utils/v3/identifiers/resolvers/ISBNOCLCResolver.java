@@ -46,7 +46,7 @@ public class ISBNOCLCResolver implements LinkResolver {
             if (disableIsbnResolution) {
                 // If it is a valid format, but the resolver is disabled,
                 // return just the valid format
-                return new PIDResolutionResult(false, true, true, null);
+                return new PIDResolutionResult(false, false, true, null);
             } else if (cache.isHttp303(normUrl)) {
                 return new PIDResolutionResult(true, true, true, normUrl);
             } else {
