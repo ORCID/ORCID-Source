@@ -373,6 +373,9 @@
       -->
     <maxBooleanClauses>${solr.max.booleanClauses:1024}</maxBooleanClauses>
 
+    <!-- log in the slow query solr_slow_requests.log if a query is slower than this time -->
+    <slowQueryThresholdMillis>4000</slowQueryThresholdMillis>
+
     <!-- Solr Internal Query Caches
 
          There are two implementations of cache available for Solr,
