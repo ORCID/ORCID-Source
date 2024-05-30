@@ -60,7 +60,7 @@ public class EventStatsDaoImpl implements EventStatsDao {
         List<Object[]> eventsListToRemove = new ArrayList<>();
         if (eventsList.size() > 0) {
             eventsList.forEach(item -> {
-                if (item[3] == "anonymous" && item[4] != null && ((BigInteger) item[4]).intValue() < 1000) {
+                if ("anonymous".equals(item[3]) && item[4] != null && ((BigInteger) item[4]).intValue() < 1000) {
                     eventsListToRemove.add(item);
                 }
             });
