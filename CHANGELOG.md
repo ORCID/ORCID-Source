@@ -1,3 +1,31 @@
+## v2.60.0 - 2024-05-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.59.2...v2.60.0)
+
+## v2.59.2 - 2024-05-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.59.1...v2.59.2)
+
+## v2.59.1 - 2024-05-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.59.0...v2.59.1)
+
+### Fix
+
+- Only collect public api anonymouse request over a 1000 (#7034)
+
+## v2.59.0 - 2024-05-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.15...v2.59.0)
+
+## v2.57.15 - 2024-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.14...v2.57.15)
+
+### Fix
+
+- Return attempted resolution as false if resolver is disabled (#7029)
+
 ## 2.58.2 - 2024-04-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.14...2.58.2)

@@ -157,7 +157,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
 	private boolean loadData() {
 		try {
 			LOGGER.info("Loading ROR data...");
-			System.out.println("Loading ROR data...");
 			Instant start = Instant.now();
 			File fileToLoad = new File(localDataPath);
 			if (!fileToLoad.exists()) {
@@ -176,6 +175,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 					ArrayNode namesNode = institute.get("names").isNull() ? null : (ArrayNode) institute.get("names");
 					String name = null;
 					String namesJson = null;
+
 					if (namesNode != null) {
 						for (JsonNode nameJson : namesNode) {
 							ArrayNode nameTypes = nameJson.get("types").isNull() ? null
@@ -187,8 +187,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 								}
 							}
 						}
-						
-						namesJson = namesNode.toString();
+	namesJson = namesNode.toString();
 					}
 
 					StringJoiner sj = new StringJoiner(",");
@@ -205,8 +204,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
 					Iso3166Country country = null;
 					String region = null;
 					String city = null;
-					String locationsJson = null;
 
+					String locationsJson = null;
 					if (locationsNode != null) {
 						for (JsonNode locationJson : locationsNode) {
 							JsonNode geoDetailsNode = locationJson.get("geonames_details").isNull() ? null
@@ -261,6 +260,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 	}
 
 	private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city,
+
 			String region, String url, String orgType, String locationsJson, String namesJson) {
 		OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId,
 				OrgDisambiguatedSourceType.ROR.name());
@@ -275,6 +275,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 				existingBySourceId.setUrl(url);
 				existingBySourceId.setLocationsJson(locationsJson);
 				existingBySourceId.setNamesJson(namesJson);
+
 				existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
 				try {
 					// mark group for indexing
