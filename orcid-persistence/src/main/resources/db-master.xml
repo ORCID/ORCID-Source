@@ -387,5 +387,6 @@
   <include file="/db/updates/dw_views_with_4_months_interval.xml" />
   <include file="/db/updates/add_ip_col_in_events.xml" />
   <include file="/db/updates/alter_ip_col_in_events.xml" />
-  <include file="/db/updates/dw_papi_event_stats.xml" />    
+  <include file="/db/updates/dw_papi_event_stats.xml" />
+  <include file="/db/updates/org_disambiguated_extra_columns.xml" />   
 </databaseChangeLog>

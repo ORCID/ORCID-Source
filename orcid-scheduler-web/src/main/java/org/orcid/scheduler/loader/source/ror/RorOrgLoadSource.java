@@ -174,6 +174,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
 				if ("active".equalsIgnoreCase(status) || "inactive".equalsIgnoreCase(status)) {
 					ArrayNode namesNode = institute.get("names").isNull() ? null : (ArrayNode) institute.get("names");
 					String name = null;
+					String namesJson = null;
+
 					if (namesNode != null) {
 						for (JsonNode nameJson : namesNode) {
 							ArrayNode nameTypes = nameJson.get("types").isNull() ? null
@@ -185,6 +187,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 								}
 							}
 						}
+						namesJson = namesNode.toString();
 					}
 
 					StringJoiner sj = new StringJoiner(",");
@@ -193,42 +196,44 @@ public class RorOrgLoadSource implements OrgLoadSource {
 						((ArrayNode) institute.get("types")).forEach(x -> sj.add(x.textValue()));
 						orgType = sj.toString();
 					}
-					
-					
-					//location node
-					
-					ArrayNode locationsNode = institute.get("locations").isNull() ? null : (ArrayNode) institute.get("locations");
+
+					// location node
+
+					ArrayNode locationsNode = institute.get("locations").isNull() ? null
+							: (ArrayNode) institute.get("locations");
 					Iso3166Country country = null;
 					String region = null;
 					String city = null;
+
+					String locationsJson = null;
 					if (locationsNode != null) {
 						for (JsonNode locationJson : locationsNode) {
 							JsonNode geoDetailsNode = locationJson.get("geonames_details").isNull() ? null
 									: (JsonNode) locationJson.get("geonames_details");
-							
-							if(geoDetailsNode !=null) {
+
+							if (geoDetailsNode != null) {
 								String countryCode = geoDetailsNode.get("country_code").isNull() ? null
 										: geoDetailsNode.get("country_code").asText();
-								country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
-								//for now storing just the first location
-								city = geoDetailsNode.get("name").isNull() ? null
-										: geoDetailsNode.get("name").asText();
-								if(country != null) {
+								country = StringUtils.isBlank(countryCode) ? null
+										: Iso3166Country.fromValue(countryCode);
+								// for now storing just the first location
+								city = geoDetailsNode.get("name").isNull() ? null : geoDetailsNode.get("name").asText();
+								if (country != null) {
 									break;
 								}
 							}
-							
+
 						}
+						locationsJson = locationsNode.toString();
 					}
-					
-					
+
 					ArrayNode urls = institute.get("links").isNull() ? null : (ArrayNode) institute.get("links");
 					// Use the first URL
 					String url = (urls != null && urls.size() > 0) ? urls.get(0).asText() : null;
 
 					// Creates or updates an institute
 					OrgDisambiguatedEntity entity = processInstitute(sourceId, name, country, city, region, url,
-							orgType);
+							orgType, locationsJson, namesJson);
 
 					// Creates external identifiers
 					processExternalIdentifiers(entity, institute);
@@ -254,7 +259,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
 	}
 
 	private OrgDisambiguatedEntity processInstitute(String sourceId, String name, Iso3166Country country, String city,
-			String region, String url, String orgType) {
+
+			String region, String url, String orgType, String locationsJson, String namesJson) {
 		OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId,
 				OrgDisambiguatedSourceType.ROR.name());
 		if (existingBySourceId != null) {
@@ -266,6 +272,9 @@ public class RorOrgLoadSource implements OrgLoadSource {
 				existingBySourceId.setOrgType(orgType);
 				existingBySourceId.setRegion(region);
 				existingBySourceId.setUrl(url);
+				existingBySourceId.setLocationsJson(locationsJson);
+				existingBySourceId.setNamesJson(namesJson);
+
 				existingBySourceId.setIndexingStatus(IndexingStatus.PENDING);
 				try {
 					// mark group for indexing
@@ -294,12 +303,11 @@ public class RorOrgLoadSource implements OrgLoadSource {
 	}
 
 	private void processExternalIdentifiers(OrgDisambiguatedEntity org, JsonNode institute) {
-			ArrayNode nodes = institute.get("external_ids") == null ? null : (ArrayNode) institute.get("external_ids");
-			if (nodes!= null) {
-			for(JsonNode entry:nodes){
+		ArrayNode nodes = institute.get("external_ids") == null ? null : (ArrayNode) institute.get("external_ids");
+		if (nodes != null) {
+			for (JsonNode entry : nodes) {
 				String identifierTypeName = entry.get("type").asText().toUpperCase();
-				String preferredId = entry.get("preferred").isNull() ? null
-						: entry.get("preferred").asText();
+				String preferredId = entry.get("preferred").isNull() ? null : entry.get("preferred").asText();
 				if (StringUtils.equalsIgnoreCase(OrgDisambiguatedSourceType.GRID.name(), identifierTypeName)) {
 					JsonNode extId = (JsonNode) entry.get("all");
 					setExternalId(org, identifierTypeName, preferredId, extId);
