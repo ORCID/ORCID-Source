@@ -9,4 +9,13 @@
             <column name="names_json" type="json" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="AADD-ORG-EXTRA-COLUMNS-HSQL" author="Camelia Dumitru"  dbms="hsqldb">
+         <addColumn tableName="org_disambiguated">
+            <column name="locations_json" type="text" />
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="names_json" type="text" />
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>
