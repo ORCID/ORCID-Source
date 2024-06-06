@@ -220,7 +220,7 @@ public class WorkManagerTest extends BaseTest {
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
 
     @Test
@@ -1435,7 +1435,7 @@ public class WorkManagerTest extends BaseTest {
 
         // full work matching user preferred id should be loaded from db (10 is
         // highest display index)
-        Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
+        Mockito.when(mockDao.find(Mockito.eq(1l))).thenReturn(getUserPreferredWork());
 
         workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
 
