@@ -201,25 +201,25 @@ public class PeerReviewManagerTest extends BaseTest {
     }
     
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromUI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, false);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
         
         assertNotNull(p);
-        assertEquals(Long.valueOf(1), p.getDisplayIndex());
+        assertEquals(Long.valueOf(0), p.getDisplayIndex());
     }
     
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromAPI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
         
         assertNotNull(91);
-        assertEquals(Long.valueOf(0), p.getDisplayIndex());
+        assertEquals(Long.valueOf(1), p.getDisplayIndex());
     }
     
     @Test

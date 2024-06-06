@@ -134,7 +134,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
 
         Funding f1 = getFunding("fromUI-1");
@@ -142,11 +142,11 @@ public class ProfileFundingManagerTest extends BaseTest {
         ProfileFundingEntity f = profileFundingDao.find(f1.getPutCode());
 
         assertNotNull(f);
-        assertEquals(Long.valueOf(1), f.getDisplayIndex());
+        assertEquals(Long.valueOf(0), f.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
 
         Funding f1 = getFunding("fromAPI-1");
@@ -154,7 +154,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         ProfileFundingEntity f = profileFundingDao.find(f1.getPutCode());
 
         assertNotNull(f);
-        assertEquals(Long.valueOf(0), f.getDisplayIndex());
+        assertEquals(Long.valueOf(1), f.getDisplayIndex());
     }
 
     @Test

@@ -18,7 +18,6 @@ import org.orcid.core.cli.anonymize.WorkPojoFromCsv;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
-import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
