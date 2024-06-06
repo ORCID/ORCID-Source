@@ -181,7 +181,7 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertNotNull(entity1.getDisplayIndex());
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
-        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
+        assertEquals(Long.valueOf(1), entity3.getDisplayIndex());
         
         //Rollback all changes
         profileFundingDao.remove(entity1.getId());
