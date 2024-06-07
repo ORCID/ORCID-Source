@@ -1,3 +1,11 @@
+## v2.60.2 - 2024-06-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.60.1...v2.60.2)
+
+### Fix
+
+- Make validated items to be default preferred source for grouping (#7039)
+
 ## v2.60.1 - 2024-06-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.60.0...v2.60.1)
