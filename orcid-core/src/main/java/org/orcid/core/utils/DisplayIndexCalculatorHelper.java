@@ -20,9 +20,9 @@ public class DisplayIndexCalculatorHelper {
     
     private static void setDisplayIndex(DisplayIndexInterface e, boolean isApiRequest) {
         if(isApiRequest) {
-            e.setDisplayIndex(0L);
-        } else {
             e.setDisplayIndex(1L);
+        } else {
+            e.setDisplayIndex(0L);
         }
     }
 }

@@ -169,7 +169,7 @@ public class AddressManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Address address = getAddress(Iso3166Country.MX);
 
@@ -177,11 +177,11 @@ public class AddressManagerTest extends BaseTest {
         address = addressManager.getAddress(claimedOrcid, address.getPutCode());
 
         assertNotNull(address);
-        assertEquals(Long.valueOf(1), address.getDisplayIndex());
+        assertEquals(Long.valueOf(0), address.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Address address = getAddress(Iso3166Country.PE);
 
@@ -189,7 +189,7 @@ public class AddressManagerTest extends BaseTest {
         address = addressManager.getAddress(claimedOrcid, address.getPutCode());
 
         assertNotNull(address);
-        assertEquals(Long.valueOf(0), address.getDisplayIndex());
+        assertEquals(Long.valueOf(1), address.getDisplayIndex());
     }
 
     @Test

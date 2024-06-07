@@ -477,9 +477,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         MinimizedWorkEntity userPreferred = null;
         
         boolean groupableExternalIdFound = false;
-        for (MinimizedWorkEntity work : works) {
+        for (MinimizedWorkEntity work : works) {     	
             if (orcid.equals(work.getSourceId())) {
                 userVersions.add(work);
+                work.setDisplayIndex(0L);
+            } else {
+                work.setDisplayIndex(1L);
             }
             if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
                 userPreferred = work;

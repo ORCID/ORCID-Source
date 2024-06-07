@@ -148,7 +148,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     }
     
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
@@ -156,11 +156,11 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         extId1 = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId1.getPutCode());
         
         assertNotNull(extId1);
-        assertEquals(Long.valueOf(1), extId1.getDisplayIndex());
+        assertEquals(Long.valueOf(0), extId1.getDisplayIndex());
     }
     
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
@@ -168,7 +168,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         extId1 = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId1.getPutCode());
         
         assertNotNull(extId1);
-        assertEquals(Long.valueOf(0), extId1.getDisplayIndex());
+        assertEquals(Long.valueOf(1), extId1.getDisplayIndex());
     }
     
     @Test
