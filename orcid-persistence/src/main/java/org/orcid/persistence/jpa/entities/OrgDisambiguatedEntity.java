@@ -211,4 +211,28 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.memberChosenOrgDisambiguatedEntity = memberChosenOrgDisambiguatedEntity;
     }
 
+    @Column(name = "locations_json")
+    private String locationsJson;
+
+    @Column(name = "locations_json")
+    public String getLocationsJson() {
+        return locationsJson;
+    }
+
+    public void setLocationsJson(String locationsJson) {
+        this.locationsJson = locationsJson;
+    }
+
+    @Column(name = "names_json")
+    private String namesJson;
+
+    @Column(name = "names_json")
+    public String getNamesJson() {
+        return namesJson;
+    }
+
+    public void setNamesJson(String namesJson) {
+        this.namesJson = namesJson;
+    }
+
 }

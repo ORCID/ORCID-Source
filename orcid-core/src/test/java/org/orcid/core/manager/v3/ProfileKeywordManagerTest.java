@@ -126,7 +126,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromUI1");
@@ -135,11 +135,11 @@ public class ProfileKeywordManagerTest extends BaseTest {
         keyword = profileKeywordManager.getKeyword(claimedOrcid, keyword.getPutCode());
 
         assertNotNull(keyword);
-        assertEquals(Long.valueOf(1), keyword.getDisplayIndex());
+        assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
     }
     
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         Keyword keyword = getKeyword();
         keyword.setContent(keyword.getContent() + " fromAPI1");        
@@ -148,7 +148,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
         keyword = profileKeywordManager.getKeyword(claimedOrcid, keyword.getPutCode());
 
         assertNotNull(keyword);
-        assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
+        assertEquals(Long.valueOf(1), keyword.getDisplayIndex());
     }
     
     @Test

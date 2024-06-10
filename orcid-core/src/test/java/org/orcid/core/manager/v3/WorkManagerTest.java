@@ -214,23 +214,23 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {        
+    public void displayIndexIsSetTo_1_FromAPI() {        
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(0), w.getDisplayIndex());
+        assertEquals(Long.valueOf(1), w.getDisplayIndex());
     }
 
     @Test
@@ -1435,7 +1435,7 @@ public class WorkManagerTest extends BaseTest {
 
         // full work matching user preferred id should be loaded from db (10 is
         // highest display index)
-        Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
+        Mockito.when(mockDao.find(Mockito.eq(1l))).thenReturn(getUserPreferredWork());
 
         workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
 

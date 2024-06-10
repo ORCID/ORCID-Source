@@ -150,7 +150,7 @@ public class OtherNameManagerTest extends BaseTest {
     }
     
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromUI");
@@ -159,11 +159,11 @@ public class OtherNameManagerTest extends BaseTest {
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
         
         assertNotNull(otherName);
-        assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
     }
     
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromAPI");
@@ -172,7 +172,7 @@ public class OtherNameManagerTest extends BaseTest {
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
         
         assertNotNull(otherName);
-        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+        assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
     }
     
     @Test
