@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="HSQLDB-Update-Identifier-type" author="Angel Montenegro" dbms="hsqldb">
+		<sql>ALTER TABLE identifier_type ALTER COLUMN primary_use varchar(1000);</sql>
+	</changeSet>
+
+</databaseChangeLog>
