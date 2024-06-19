@@ -2,14 +2,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet id="ADD-ORG-EXTRA-COLUMNS" author="Camelia Dumitru" dbms="postgresql">
-		 <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists tableName="org_disambiguated" columnName="locations_json"/>
-            </not>
-            <not>
-                <columnExists tableName="org_disambiguated" columnName="names_json"/>
-            </not>
-        </preConditions>
         <addColumn tableName="org_disambiguated">
             <column name="locations_json" type="json" />
         </addColumn>
