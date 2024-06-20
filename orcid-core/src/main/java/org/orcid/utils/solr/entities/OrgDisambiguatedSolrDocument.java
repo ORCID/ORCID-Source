@@ -53,6 +53,12 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
     @Field(SolrConstants.ORG_CHOSEN_BY_MEMBER)
     private boolean isOrgChosenByMember;
 
+    @Field(SolrConstants.ORG_NAMES_JSON)
+    private String orgNamesJson;
+
+    @Field(SolrConstants.ORG_LOCATIONS_JSON)
+    private String orgLocationsJson;
+
     public String getOrgDisambiguatedId() {
         return orgDisambiguatedId;
     }
@@ -163,6 +169,22 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
         this.orgDisambiguatedStatus = orgDisambiguatedStatus;
     }
 
+    public String getOrgNamesJson() {
+        return orgNamesJson;
+    }
+
+    public void setOrgNamesJson(String orgNamesJson) {
+        this.orgNamesJson = orgNamesJson;
+    }
+
+    public String getOrgLocationsJson() {
+        return orgLocationsJson;
+    }
+
+    public void setOrgLocationsJson(String orgLocationsJson) {
+        this.orgLocationsJson = orgLocationsJson;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -180,6 +202,8 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
         result = prime * result + ((orgDisambiguatedStatus == null) ? 0 : orgDisambiguatedStatus.hashCode());
         result = prime * result + ((orgDisambiguatedType == null) ? 0 : orgDisambiguatedType.hashCode());
         result = prime * result + ((orgNames == null) ? 0 : orgNames.hashCode());
+        result = prime * result + ((orgNamesJson == null) ? 0 : orgNamesJson.hashCode());
+        result = prime * result + ((orgLocationsJson == null) ? 0 : orgLocationsJson.hashCode());
         return result;
     }
 
@@ -251,6 +275,17 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
                 return false;
         } else if (!orgNames.equals(other.orgNames))
             return false;
+        if (orgLocationsJson == null) {
+            if (other.orgLocationsJson != null)
+                return false;
+        } else if (!orgLocationsJson.equals(other.orgLocationsJson))
+            return false;
+        if (orgNamesJson == null) {
+            if (other.orgNamesJson != null)
+                return false;
+        } else if (!orgNamesJson.equals(other.orgNamesJson))
+            return false;
         return true;
     }
+
 }

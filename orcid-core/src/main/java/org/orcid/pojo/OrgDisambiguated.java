@@ -19,6 +19,8 @@ public class OrgDisambiguated implements Serializable {
     public String sourceType;
     public String url;
     public String disambiguatedAffiliationIdentifier;
+    private String locationsJson;
+    private String namesJson;
 
     private List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers;
 
@@ -109,6 +111,22 @@ public class OrgDisambiguated implements Serializable {
     public String getAffiliationKey() {
         return (value != null ? value : "") + " " + (city != null ? city : "") + " " + (region != null ? region : "") + " " + (country != null ? country : "");
     }
+    
+    public String getLocationsJson() {
+        return locationsJson;
+    }
+
+    public void setLocationsJson(String locationsJson) {
+        this.locationsJson = locationsJson;
+    }
+    
+    public String getNamesJson() {
+        return namesJson;
+    }
+
+    public void setNamesJson(String namesJson) {
+        this.namesJson = namesJson;
+    }
 
     public Map<String, String> toMap() {
         HashMap<String, String> datum = new HashMap<String, String>();
@@ -123,10 +141,14 @@ public class OrgDisambiguated implements Serializable {
         datum.put("countryForDisplay", this.getCountryForDisplay());
         datum.put("disambiguatedAffiliationIdentifier", this.getDisambiguatedAffiliationIdentifier());
         datum.put("affiliationKey", this.getAffiliationKey());
+        datum.put("locationJson", this.getLocationsJson());
+        datum.put("namesJson", this.getNamesJson());
         return datum;
     }
 
     public String toString() {
         return this.toMap().toString();
     }
+
+
 }
