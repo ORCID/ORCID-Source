@@ -1031,6 +1031,10 @@
            multiValued="false" />
 	<field name="org-disambiguated-status" type="string" indexed="false" stored="false"
            multiValued="false" />
+    <field name="org-locations-json" type="string" indexed="true" stored="true"
+		multiValued="false" />
+    <field name="org-names-json" type="string" indexed="true" stored="true"
+		multiValued="false" />
            
 	<uniqueKey>org-disambiguated-id</uniqueKey>
 
