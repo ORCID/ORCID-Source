@@ -1,3 +1,7 @@
+## v2.61.3 - 2024-06-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.2...v2.61.3)
+
 ## v2.61.2 - 2024-06-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.1...v2.61.2)
