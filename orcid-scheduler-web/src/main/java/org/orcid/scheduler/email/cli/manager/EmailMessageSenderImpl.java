@@ -46,6 +46,8 @@ import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -186,8 +188,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String bodyHtmlDelegate = null;
         String bodyHtmlDelegateRecipient = null;
         String bodyHtmlAdminDelegate = null;
-
-        Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
 
         Map<String, ClientUpdates> updatesByClient = new HashMap<String, ClientUpdates>();
@@ -207,11 +207,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {
                 orcidMessageCount++;
-            } else {
-                SourceClientId clientId = notification.getSource().getSourceClientId();
-                if (clientId != null) {
-                    memberIds.add(clientId.getPath());
-                }
             }
             if (notification instanceof NotificationPermission) {
                 NotificationPermission permissionNotification = (NotificationPermission) notification;
@@ -322,6 +317,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 if (!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
+                    System.out.println("---------------------------------------------------");
+                    System.out.println(digestMessage.getBodyHtml());
+                    System.out.println("---------------------------------------------------");
+                    System.out.println(digestMessage.getBodyText());
+
                     digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
@@ -550,6 +550,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 break;
             }
 
+            // Set the external identifiers list
+            String externalIdentifiersList = generateExternalIdentifiersList(item);
+            value += externalIdentifiersList;
+
             Set<String> elements;
             if (item.getActionType() != null) {
                 elements = updates.get(item.getItemType().name()).get(item.getActionType().name());
@@ -574,6 +578,50 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             } else if (!updates.get(itemType).containsKey(actionType)) {
                 updates.get(itemType).put(actionType, new TreeSet<String>());
             }
+        }
+
+        private String generateExternalIdentifiersList(Item item) {
+            String extIdsHtmlList = null;
+            if (item.getAdditionalInfo() != null) {
+                if(item.getAdditionalInfo().containsKey("external_identifiers")) {
+                    Map extIds = (Map) item.getAdditionalInfo().get("external_identifiers");
+                    if(extIds != null && extIds.containsKey("externalIdentifier")) {
+                        List extIdsList = (List) extIds.get("externalIdentifier");
+                        //TODO
+                        if(extIdsList != null) {
+
+
+
+
+                            extIdsHtmlList = "<ul>";
+                            for(ExternalID extId : ) {
+                                extIdsHtmlList += "<li>" + extId.getType() + ": ";
+                                if(extId.getNormalizedUrl() != null) {
+                                    extIdsHtmlList += "<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"" + extId.getNormalizedUrl() + "\">" + extId.getNormalizedUrl() + "</a>";
+                                } else if (extId.getUrl() != null) {
+                                    extIdsHtmlList += "<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"" + extId.getUrl() + "\">" + extId.getUrl() + "</a>";
+                                } if(extId.getNormalized() != null) {
+                                    extIdsHtmlList += extId.getNormalized();
+                                } else {
+                                    extIdsHtmlList += extId.getValue();
+                                }
+                                extIdsHtmlList += "</li>";
+                            }
+                            extIdsHtmlList = "</ul>";
+
+
+
+
+
+
+
+
+
+                        }
+                    }
+                }
+            }
+            return extIdsHtmlList;
         }
     }
 
