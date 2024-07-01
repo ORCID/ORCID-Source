@@ -89,7 +89,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
 
-
     @Resource(name = "contributorUtils")
     private ContributorUtils contributorUtils;
 

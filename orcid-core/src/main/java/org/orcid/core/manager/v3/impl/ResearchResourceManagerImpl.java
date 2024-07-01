@@ -1,8 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -25,6 +23,7 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.ResearchResource;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -97,7 +96,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         rrDao.persist(researchResourceEntity);
         rrDao.flush();
         if (isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(researchResourceEntity, ActionType.CREATE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(researchResourceEntity, rr.getExternalIdentifiers(), ActionType.CREATE));
         }
         return jpaJaxbResearchResourceAdapter.toModel(researchResourceEntity);
     }
@@ -141,7 +140,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         rre = rrDao.merge(rre);
         rrDao.flush();
         if (isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rre, ActionType.UPDATE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rre, rr.getExternalIdentifiers(), ActionType.UPDATE));
         }
         return jpaJaxbResearchResourceAdapter.toModel(rre);
     }
@@ -152,7 +151,8 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         ResearchResourceEntity rr = rrDao.getResearchResource(orcid, researchResourceId);
         orcidSecurityManager.checkSourceAndThrow(rr);
         boolean result = rrDao.removeResearchResource(orcid, researchResourceId);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rr, ActionType.DELETE));
+        ResearchResource model = jpaJaxbResearchResourceAdapter.toModel(rr);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.RESEARCH_RESOURCE, createItemList(rr, model.getExternalIdentifiers(), ActionType.DELETE));
         return result;
     }
 
@@ -177,12 +177,19 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         }
     }
 
-    private List<Item> createItemList(ResearchResourceEntity researchResourceEntity, ActionType type) {
+    private List<Item> createItemList(ResearchResourceEntity researchResourceEntity, ExternalIDs extIds, ActionType type) {
         Item item = new Item();
         item.setItemName(researchResourceEntity.getTitle());
         item.setItemType(ItemType.RESEARCH_RESOURCE);
         item.setPutCode(String.valueOf(researchResourceEntity.getId()));
         item.setActionType(type);
+
+        if(extIds != null) {
+            Map<String, Object> additionalInfo = new HashMap<String, Object>();
+            additionalInfo.put("external_identifiers", extIds);
+            item.setAdditionalInfo(additionalInfo);
+        }
+
         return Arrays.asList(item);
     }
 

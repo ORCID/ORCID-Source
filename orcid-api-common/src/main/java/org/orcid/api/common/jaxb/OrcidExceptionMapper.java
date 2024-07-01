@@ -21,26 +21,7 @@ import org.jbibtex.TokenMgrError;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.core.exception.ApplicationException;
-import org.orcid.core.exception.ClientDeactivatedException;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.DuplicatedGroupIdRecordException;
-import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
-import org.orcid.core.exception.LockedException;
-import org.orcid.core.exception.OrcidApiException;
-import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.exception.OrcidCoreExceptionMapper;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.exception.OrcidDuplicatedElementException;
-import org.orcid.core.exception.OrcidInvalidScopeException;
-import org.orcid.core.exception.OrcidNoBioException;
-import org.orcid.core.exception.OrcidNoResultException;
-import org.orcid.core.exception.OrcidNonPublicElementException;
-import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.exception.OrcidNotificationException;
-import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.*;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -146,6 +127,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof OrcidNoResultException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidUnauthorizedException) {
+            logShortError(t, clientId);
+        }  else if (t instanceof InvalidPutCodeException) {
             logShortError(t, clientId);
         } else {
             LOGGER.error("An exception has occured processing request from client " + clientId, t);
