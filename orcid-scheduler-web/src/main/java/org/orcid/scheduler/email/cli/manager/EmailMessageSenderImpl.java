@@ -23,6 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -317,11 +318,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 if (!notifications.isEmpty()) {
                     LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                     EmailMessage digestMessage = createDigest(orcid, notifications);
-                    System.out.println("---------------------------------------------------");
-                    System.out.println(digestMessage.getBodyHtml());
-                    System.out.println("---------------------------------------------------");
-                    System.out.println(digestMessage.getBodyText());
-
                     digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
                     digestMessage.setTo(primaryEmail.getEmail());
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
@@ -552,7 +548,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
             // Set the external identifiers list
             String externalIdentifiersList = generateExternalIdentifiersList(item);
-            value += externalIdentifiersList;
+            if(externalIdentifiersList != null) {
+                value += externalIdentifiersList;
+            }
 
             Set<String> elements;
             if (item.getActionType() != null) {
@@ -586,43 +584,59 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 if(item.getAdditionalInfo().containsKey("external_identifiers")) {
                     Map extIds = (Map) item.getAdditionalInfo().get("external_identifiers");
                     if(extIds != null && extIds.containsKey("externalIdentifier")) {
-                        List extIdsList = (List) extIds.get("externalIdentifier");
-                        //TODO
+                        List<Map> extIdsList = (List<Map>) extIds.get("externalIdentifier");
                         if(extIdsList != null) {
-
-
-
-
                             extIdsHtmlList = "<ul>";
-                            for(ExternalID extId : ) {
-                                extIdsHtmlList += "<li>" + extId.getType() + ": ";
-                                if(extId.getNormalizedUrl() != null) {
-                                    extIdsHtmlList += "<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"" + extId.getNormalizedUrl() + "\">" + extId.getNormalizedUrl() + "</a>";
-                                } else if (extId.getUrl() != null) {
-                                    extIdsHtmlList += "<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"" + extId.getUrl() + "\">" + extId.getUrl() + "</a>";
-                                } if(extId.getNormalized() != null) {
-                                    extIdsHtmlList += extId.getNormalized();
+                            for(Map extIdMap : extIdsList) {
+                                String extIdType = extIdMap.containsKey("type") ? (String) extIdMap.get("type") : null;
+                                // External id type must not be null, so, in case it is lets log a warning
+                                if(extIdType == null) {
+                                    LOGGER.warn("External ID type is null for '" + item.getPutCode() + "', '" + item.getItemName() + "'");
+                                }
+                                extIdsHtmlList += "<li style=\"padding-left: 0;margin-top: 2px;\">" + extIdType + ": ";
+                                // Check if there is an URL
+                                if(extractValue(extIdMap, "url") != null) {
+                                    String url = extractValue(extIdMap, "url");
+                                    extIdsHtmlList += "<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"" + url + "\">" + url + "</a>";
+                                } else if (extractValue(extIdMap, "normalized") != null) {
+                                    //If there is no URL, check for the normalized value
+                                    String value = extractValue(extIdMap, "normalized");
+                                    extIdsHtmlList += value;
+                                } else if(extIdMap.containsKey("value")) {
+                                    try {
+                                        String value = (String) extIdMap.get("value");
+                                        extIdsHtmlList += value;
+                                    } catch (NullPointerException e) {
+                                        LOGGER.warn("External ID value is null for '" + item.getPutCode() + "', '" + item.getItemName() + "'");
+                                    }
                                 } else {
-                                    extIdsHtmlList += extId.getValue();
+                                    extIdsHtmlList += "Unavailable - please contact support";
+                                    LOGGER.warn("Unable to find a printable value for External ID '" + item.getPutCode() + "', '" + item.getItemName() + "'");
                                 }
                                 extIdsHtmlList += "</li>";
                             }
-                            extIdsHtmlList = "</ul>";
-
-
-
-
-
-
-
-
-
+                            extIdsHtmlList += "</ul>";
                         }
                     }
                 }
             }
             return extIdsHtmlList;
         }
+    }
+
+    private String extractValue(Map extIdMap, String keyName) {
+        if(extIdMap.containsKey(keyName)) {
+            Map keyMap = (Map) extIdMap.get(keyName);
+            try {
+                String value = (String) keyMap.get("value");
+                if (StringUtils.isNotBlank(value)) {
+                    return value;
+                }
+            } catch(NullPointerException npe) {
+                // Value might be null, so, just ignore it
+            }
+        }
+        return null;
     }
 
     private String getHtmlBody(NotificationAdministrative notificationAdministrative) {
