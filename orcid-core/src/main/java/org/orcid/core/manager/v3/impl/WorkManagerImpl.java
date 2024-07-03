@@ -271,8 +271,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 }
                             }
                         }
-
-
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
@@ -358,17 +356,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
-
-
-        
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
         Source activeSource = sourceManager.retrieveActiveSource();
-        
 
-        
         //Save the original source
         String existingSourceId = workEntity.getSourceId();
         String existingClientSourceId = workEntity.getClientSourceId();
