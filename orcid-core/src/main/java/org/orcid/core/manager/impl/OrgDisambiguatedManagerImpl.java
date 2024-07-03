@@ -159,7 +159,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         }
 
         if(entity.getNamesJson() != null) {
-            document.setOrgLocationsJson(entity.getNamesJson());
+            document.setOrgNamesJson(entity.getNamesJson());
         }
         
         List<OrgEntity> orgs = orgDao.findByOrgDisambiguatedId(entity.getId());
