@@ -175,7 +175,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         existingEntity = peerReviewDao.merge(existingEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(existingEntity);
     }
 
@@ -236,10 +236,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 throw new GroupIdRecordNotFoundException(localeManager.resolveMessage("peer_review.group_id.not_valid"));
             }
         }
-    }
-
-    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type) {
-        return createItemList(peerReviewEntity, type, null, null);
     }
 
     private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type, ExternalIDs extIds, ExternalID subjectExtId) {
