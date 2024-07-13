@@ -209,7 +209,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
-        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly);
+        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly, true);
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc : docs) {
             OrgDisambiguated org = convertSolrDocument(doc);
