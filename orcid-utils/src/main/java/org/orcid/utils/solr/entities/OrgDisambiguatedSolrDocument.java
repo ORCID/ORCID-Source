@@ -1,7 +1,9 @@
 package org.orcid.utils.solr.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -286,6 +288,26 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
         } else if (!orgNamesJson.equals(other.orgNamesJson))
             return false;
         return true;
+    }
+    
+   public  OrgDisambiguatedSolrDocument() {};
+    
+   public  OrgDisambiguatedSolrDocument(OrgDisambiguatedSolrDocument originalDoc) {     
+        this.orgDisambiguatedId = String.valueOf(originalDoc.getOrgDisambiguatedId());
+        this.orgDisambiguatedName = originalDoc.getOrgDisambiguatedName();
+        this.orgDisambiguatedCity = originalDoc.getOrgDisambiguatedCity(); 
+        this.orgDisambiguatedRegion = originalDoc.getOrgDisambiguatedRegion();
+        this.orgDisambiguatedCountry = originalDoc.getOrgDisambiguatedCountry();
+        this.orgDisambiguatedIdFromSource = originalDoc.getOrgDisambiguatedIdFromSource();
+        this.orgDisambiguatedIdSourceType = originalDoc.getOrgDisambiguatedIdSourceType();
+        this.orgDisambiguatedType = originalDoc.getOrgDisambiguatedType();
+        this.orgDisambiguatedPopularity =originalDoc.getOrgDisambiguatedPopularity();
+        this.orgNames = originalDoc.getOrgNames();
+        this.isFundingOrg =originalDoc.isFundingOrg();
+        this.orgLocationsJson = originalDoc.getOrgLocationsJson();
+        this.orgNamesJson = originalDoc.getOrgNamesJson();
+        this.isOrgChosenByMember = originalDoc.isOrgChosenByMember();
+        this.orgDisambiguatedStatus = originalDoc.getOrgDisambiguatedStatus();
     }
 
 }

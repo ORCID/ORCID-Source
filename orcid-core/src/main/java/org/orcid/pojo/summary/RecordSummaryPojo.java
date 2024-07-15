@@ -1,6 +1,5 @@
 package org.orcid.pojo.summary;
 
-
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
