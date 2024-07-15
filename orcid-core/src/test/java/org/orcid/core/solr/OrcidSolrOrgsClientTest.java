@@ -70,7 +70,7 @@ public class OrcidSolrOrgsClientTest {
     @Test
     public void findFundrefOrgsOnlyTest() throws SolrServerException, IOException {
         ArgumentCaptor<SolrQuery> captor = ArgumentCaptor.forClass(SolrQuery.class);
-        orcidSolrOrgsClient.getOrgs("xxx", 0, 0, true);
+        orcidSolrOrgsClient.getOrgs("xxx", 0, 0, true, false);
         Mockito.verify(solrReadOnlyOrgsClientMock).query(captor.capture());
 
         SolrQuery query = captor.getValue();
@@ -81,7 +81,7 @@ public class OrcidSolrOrgsClientTest {
     @Test
     public void findNonFundrefOrgsOnlyTest() throws SolrServerException, IOException {
         ArgumentCaptor<SolrQuery> captor = ArgumentCaptor.forClass(SolrQuery.class);
-        orcidSolrOrgsClient.getOrgs("xxx", 0, 0, false);
+        orcidSolrOrgsClient.getOrgs("xxx", 0, 0, false, false);
         Mockito.verify(solrReadOnlyOrgsClientMock).query(captor.capture());
 
         SolrQuery query = captor.getValue();
