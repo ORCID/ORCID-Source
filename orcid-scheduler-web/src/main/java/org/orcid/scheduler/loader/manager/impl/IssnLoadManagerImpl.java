@@ -36,7 +36,6 @@ public class IssnLoadManagerImpl implements IssnLoadManager {
             LOGGER.info("Load ISSN  for client : " + issnSource);
             issnLoadSource.loadIssn(issnSource);
             slackManager.sendAlert("Issn  succesfully updated for client " + issnSource, slackChannel, slackUser);
-    
         } catch (Exception ex) {
             LOGGER.error("Error when running ISSN for client" + issnSource, ex);
             slackManager.sendAlert("Error when running ISSN for client " + issnSource, slackChannel, slackUser);
