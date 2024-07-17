@@ -1,5 +1,7 @@
 package org.orcid.scheduler.loader.source.issn;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +9,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.exception.TooManyRequestsException;
+import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
 import org.orcid.core.groupIds.issn.IssnValidator;
@@ -76,18 +80,34 @@ public class IssnLoadSource {
         int total = 0;
         while (!issnEntities.isEmpty()) {
             for (GroupIdRecordEntity issnEntity : issnEntities) {
+                LOG.info("Processing entity {}", new Object[]{ issnEntity.getId() });
                 String issn = getIssn(issnEntity);
                 if (issn != null && issnValidator.issnValid(issn)) {
                     batchCount++;
                     total++;
-                    IssnData issnData = issnClient.getIssnData(issn);
-                    if (issnData != null) {
-                        updateIssnEntity(issnEntity, issnData);
-                        LOG.info("Updated group id record {} - {}, processed count now {}",
-                                new Object[] { issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(total) });
-                    } else {
-                        LOG.warn("ISSN data not found for {}", issn);
-                        recordFailure(issnEntity.getId(), "Data not found");
+                    try {
+                        IssnData issnData = issnClient.getIssnData(issn);
+                        if (issnData != null) {
+                            updateIssnEntity(issnEntity, issnData);
+                            LOG.info("Updated group id record {} - {}, processed count now {}",
+                                    new Object[]{issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(total)});
+                        }
+                    } catch(TooManyRequestsException tmre) {
+                        //TODO: We are being rate limited, we have to pause
+                        LOG.warn("We are being rate limited by the issn portal");
+                        recordFailure(issnEntity.getId(), "RATE_LIMIT reached");
+                    } catch(UnexpectedResponseCodeException urce) {
+                        LOG.warn("Unexpected response code {} for issn {}", urce.getReceivedCode(), issn);
+                        recordFailure(issnEntity.getId(), "Unexpected response code " + urce.getReceivedCode());
+                    } catch (IOException e) {
+                        LOG.warn("IOException for issn {}", issn);
+                        recordFailure(issnEntity.getId(), "IOException");
+                    } catch (URISyntaxException e) {
+                        LOG.warn("URISyntaxException for issn {}", issn);
+                        recordFailure(issnEntity.getId(), "URISyntaxException");
+                    } catch (InterruptedException e) {
+                        LOG.warn("InterruptedException for issn {}", issn);
+                        recordFailure(issnEntity.getId(), "InterruptedException");
                     }
                 } else {
                     LOG.info("Issn for group record {} not valid: {}", issnEntity.getId(), issnEntity.getGroupId());
