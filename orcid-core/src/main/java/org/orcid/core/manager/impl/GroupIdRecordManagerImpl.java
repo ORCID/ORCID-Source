@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jettison.json.JSONException;
 import org.orcid.core.exception.*;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
@@ -148,6 +149,9 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
             throw new InvalidIssnException();
         } catch (InterruptedException e) {
             LOG.warn("InterruptedException for issn {}", issn);
+            throw new InvalidIssnException();
+        } catch(JSONException e) {
+            LOG.warn("JSONException for issn {}", issn, e);
             throw new InvalidIssnException();
         }
     }

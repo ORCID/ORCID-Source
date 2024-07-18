@@ -1,7 +1,7 @@
 package org.orcid.scheduler.loader.source.issn;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.net.*;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.orcid.core.exception.BannedException;
 import org.orcid.core.exception.TooManyRequestsException;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.groupIds.issn.IssnClient;
@@ -19,6 +21,7 @@ import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
+import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +39,10 @@ public class IssnLoadSource {
 
     @Value("${org.orcid.scheduler.issnLoadSource.waitBetweenBatches:10000}")
     private int waitBetweenBatches;
-    
+
+    @Value("${org.orcid.scheduler.issnLoadSource.rateLimit.pause:600000}")
+    private int pause;
+
     @Resource
     private GroupIdRecordDao groupIdRecordDao;
 
@@ -53,6 +59,9 @@ public class IssnLoadSource {
 
     @Resource
     private IssnClient issnClient;
+
+    @Resource
+    private SlackManager slackManager;
     
     public void loadIssn(String issnSource) {
         
@@ -74,6 +83,7 @@ public class IssnLoadSource {
         List<GroupIdRecordEntity> issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsSortedBySyncDate(batchSize, startTime);
         int batchCount = 0;
         int total = 0;
+
         while (!issnEntities.isEmpty()) {
             for (GroupIdRecordEntity issnEntity : issnEntities) {
                 LOG.info("Processing entity {}", new Object[]{ issnEntity.getId() });
@@ -89,9 +99,29 @@ public class IssnLoadSource {
                                     new Object[]{issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(total)});
                         }
                     } catch(TooManyRequestsException tmre) {
-                        //TODO: We are being rate limited, we have to pause
+                        //We are being rate limited, we have to pause for 'pause' minutes
                         LOG.warn("We are being rate limited by the issn portal");
                         recordFailure(issnEntity, "RATE_LIMIT reached");
+                        if(pause() != 1) {
+                            LOG.warn("Unable to pause, finishing the process");
+                            return;
+                        }
+                    } catch(BannedException be) {
+                        LOG.error("We have been banned from the issn portal, the sync process will finish now");
+                        try {
+                            InetAddress id = InetAddress.getLocalHost();
+                            slackManager.sendSystemAlert("We have bee banned from the issn portal on " + id.getHostName());
+                        } catch(UnknownHostException uhe) {
+                            // Lets try to get the IP address
+                            try(final DatagramSocket socket = new DatagramSocket()){
+                                socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+                                String ip = socket.getLocalAddress().getHostAddress();
+                                slackManager.sendSystemAlert("We have bee banned from the issn portal on " + ip);
+                            } catch(SocketException | UnknownHostException se) {
+                                slackManager.sendSystemAlert("We have bee banned from the issn portal on - Couldn't identify the machine");
+                            }
+                        }
+                        return;
                     } catch(UnexpectedResponseCodeException urce) {
                         LOG.warn("Unexpected response code {} for issn {}", urce.getReceivedCode(), issn);
                         recordFailure(issnEntity, "Unexpected response code " + urce.getReceivedCode());
@@ -102,6 +132,9 @@ public class IssnLoadSource {
                         LOG.warn("URISyntaxException for issn {}", issn);
                         recordFailure(issnEntity, "URISyntaxException");
                     } catch (InterruptedException e) {
+                        LOG.warn("InterruptedException for issn {}", issn);
+                        recordFailure(issnEntity, "InterruptedException");
+                    } catch(JSONException e) {
                         LOG.warn("InterruptedException for issn {}", issn);
                         recordFailure(issnEntity, "InterruptedException");
                     }
@@ -162,6 +195,17 @@ public class IssnLoadSource {
             return matcher.group(1);
         }
         return null;
+    }
+
+    private int pause() {
+        try {
+            LOG.warn("Pause do to rate limit");
+            Thread.sleep(pause);
+            return 1;
+        } catch (InterruptedException e) {
+            LOG.warn("Unable to pause", e);
+            return -1;
+        }
     }
 
 }
