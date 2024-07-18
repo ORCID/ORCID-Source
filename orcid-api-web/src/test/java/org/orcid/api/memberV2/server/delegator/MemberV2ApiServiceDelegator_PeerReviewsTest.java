@@ -110,7 +110,7 @@ public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     private IssnClient issnClient;
     
     @Before
-    public void before() {
+    public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
         Map<String, String> map = new HashMap<String, String>();
         map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
