@@ -56,6 +56,9 @@ public class IssnClient {
             } else {
                 throw e;
             }
+        } catch (Exception e) {
+            LOG.warn("Error extracting issn data from json returned from issn portal "+ issn);
+            return null;
         }
     }
 

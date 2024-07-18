@@ -133,6 +133,10 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
             record.setName(issnData.getMainTitle());
             record.setType("journal");
             return record;
+        } catch(TooManyRequestsException tmre) {
+            //TODO: We are being rate limited, we have to pause
+            LOG.warn("We are being rate limited by the issn portal");
+            throw new InvalidIssnException();
         } catch(UnexpectedResponseCodeException urce) {
             LOG.warn("Unexpected response code {} for issn {}", urce.getReceivedCode(), issn);
             throw new InvalidIssnException();
