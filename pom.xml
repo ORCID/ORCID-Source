@@ -802,7 +802,7 @@ the software.
             <dependency>
                 <groupId>dnsjava</groupId>
                 <artifactId>dnsjava</artifactId>
-                <version>2.1.6</version>
+                <version>3.6.0</version>
             </dependency>
             <dependency>
                 <groupId>ma.glasnost.orika</groupId>
