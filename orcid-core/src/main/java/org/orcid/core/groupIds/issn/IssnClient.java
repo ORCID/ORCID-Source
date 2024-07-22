@@ -12,6 +12,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.eclipse.jetty.http.HttpStatus;
+import org.orcid.core.exception.BannedException;
 import org.orcid.core.exception.TooManyRequestsException;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.utils.http.HttpRequestUtils;
@@ -36,19 +37,24 @@ public class IssnClient {
     @Resource
     private HttpRequestUtils httpRequestUtils;
 
-    public IssnData getIssnData(String issn) throws TooManyRequestsException, UnexpectedResponseCodeException, IOException, URISyntaxException, InterruptedException {
+    public IssnData getIssnData(String issn) throws BannedException, TooManyRequestsException, UnexpectedResponseCodeException, IOException, URISyntaxException, InterruptedException, JSONException {
         if(StringUtils.isEmpty(issn)) {
             return null;
         }
         LOG.debug("Extracting ISSN for " +  issn);
         String json = getJsonDataFromIssnPortal(issn.toUpperCase());
         try {
-            if (json != null) {
-                IssnData data = extractIssnData(issn.toUpperCase(), json);
-                data.setIssn(issn);
-                return data;
-            } else {
+            IssnData data = extractIssnData(issn.toUpperCase(), json);
+            data.setIssn(issn);
+            return data;
+        } catch (JSONException e) {
+            LOG.warn("Error extracting issn data from json returned from issn portal "+ issn);
+            if(json == null) {
                 return null;
+            } else if(json.contains("you have been banned")) {
+                throw new BannedException();
+            } else {
+                throw e;
             }
         } catch (Exception e) {
             LOG.warn("Error extracting issn data from json returned from issn portal "+ issn);

@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
 
+import org.codehaus.jettison.json.JSONException;
 import org.orcid.core.exception.*;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
@@ -66,7 +67,7 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
     }
     
     @Override
-    public GroupIdRecord createOrcidSourceIssnGroupIdRecord(String groupId, String issn) {
+    public GroupIdRecord createOrcidSourceIssnGroupIdRecord(String groupId, String issn) throws TooManyRequestsException, BannedException {
         GroupIdRecord issnRecord = createIssnGroupIdRecord(groupId, issn);
         GroupIdRecordEntity entity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(issnRecord);
         entity.setClientSourceId(orcidSourceClientDetailsId);
@@ -114,7 +115,7 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
         }
     }
     
-    private GroupIdRecord createIssnGroupIdRecord(String groupId, String issn) {
+    private GroupIdRecord createIssnGroupIdRecord(String groupId, String issn) throws TooManyRequestsException, BannedException {
         if (!issnValidator.issnValid(issn)) {
             throw new InvalidIssnException();
         }
@@ -147,6 +148,9 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
             throw new InvalidIssnException();
         } catch (InterruptedException e) {
             LOG.warn("InterruptedException for issn {}", issn);
+            throw new InvalidIssnException();
+        } catch(JSONException e) {
+            LOG.warn("JSONException for issn {}", issn);
             throw new InvalidIssnException();
         }
     }

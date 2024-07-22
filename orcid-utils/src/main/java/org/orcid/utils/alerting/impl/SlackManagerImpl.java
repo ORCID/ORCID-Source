@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
  */
 public class SlackManagerImpl implements SlackManager {
 
-    @Value("${org.orcid.core.slack.webhookUrl:}")
+    @Value("${org.orcid.core.slack.webhookUrl}")
     private String webhookUrl;
 
     @Value("${org.orcid.core.slack.channel}")
