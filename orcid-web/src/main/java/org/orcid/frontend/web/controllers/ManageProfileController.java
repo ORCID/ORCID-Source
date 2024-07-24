@@ -541,7 +541,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<Email> newEmails = new ArrayList<Email>();
         String orcid = getCurrentUserOrcid();
         List<String> errors = new ArrayList<String>();
-        
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
             boolean isNewEmail = true;
             for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail: oldEmailSet.getEmails()) {
@@ -736,13 +735,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
-        if(orcid.equals(owner)) {            
+        if(orcid.equals(owner)) {
             // Sets the given email as primary
             Map<String, String> keys = emailManager.setPrimary(orcid, email.getValue().trim(), request);
             if(keys.containsKey("new")) {
                 String newPrimary = keys.get("new");
                 String oldPrimary = keys.get("old");
-                recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);
                 if(keys.containsKey("sendVerification")) {
                     recordEmailSender.sendVerificationEmail(orcid, newPrimary, true);
                     request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
