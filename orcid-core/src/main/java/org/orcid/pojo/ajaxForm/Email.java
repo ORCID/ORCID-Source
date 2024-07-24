@@ -44,22 +44,6 @@ public class Email implements ErrorsInterface {
             email.setVerified(e.isVerified());
             email.setVisibility(e.getVisibility());
 
-            if (e.getCreatedDate() != null) {
-                Date createdDate = new Date();
-                createdDate.setYear(String.valueOf(e.getCreatedDate().getValue().getYear()));
-                createdDate.setMonth(String.valueOf(e.getCreatedDate().getValue().getMonth()));
-                createdDate.setDay(String.valueOf(e.getCreatedDate().getValue().getDay()));
-                email.setCreatedDate(createdDate);
-            }
-
-            if (e.getLastModifiedDate() != null) {
-                Date lastModifiedDate = new Date();
-                lastModifiedDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
-                lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
-                lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
-                email.setLastModified(lastModifiedDate);
-            }
-
             if (e.getSource().getSourceName() != null) {
                 email.setSourceName(e.getSource().getSourceName().getContent());
             }
@@ -90,7 +74,6 @@ public class Email implements ErrorsInterface {
                 lastModifiedDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
                 lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
                 lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
-                lastModifiedDate.setTimestamp(e.getLastModifiedDate().getValue().toGregorianCalendar().getTimeInMillis());
                 email.setLastModified(lastModifiedDate);
             }
         }
