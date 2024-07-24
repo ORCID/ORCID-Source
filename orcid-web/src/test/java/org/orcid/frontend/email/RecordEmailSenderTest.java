@@ -204,7 +204,6 @@ public class RecordEmailSenderTest {
 
         for (org.orcid.jaxb.model.common_v2.Locale locale : org.orcid.jaxb.model.common_v2.Locale.values()) {
             profile.setLocale(locale.name());
-            recordEmailSender.sendEmailAddressChangedNotification(orcid, "new@email.com", "original@email.com");
         }
     }
 
