@@ -1075,7 +1075,7 @@ public class ManageProfileControllerTest {
         
         controller.setPrimary(mockRequest, email);
         
-        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
     
@@ -1120,7 +1120,7 @@ public class ManageProfileControllerTest {
         when(mockEmailManager.editEmail(eq(USER_ORCID), eq("old@orcid.org"), eq("email@orcid.org"), any())).thenReturn(Map.of("verifyAddress", "email@orcid.org", "new", "email@orcid.org", "old", "old@orcid.org"));
         controller.editEmail(mockRequest, email);
         
-        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
+        verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("email@orcid.org"), eq("old@orcid.org"));
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
     
