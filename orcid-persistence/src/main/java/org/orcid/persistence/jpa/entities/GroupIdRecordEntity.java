@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * The persistent class for the group_id_record database table.
@@ -26,7 +27,13 @@ public class GroupIdRecordEntity extends SourceAwareEntity<Long> implements Comp
 
     private String groupDescription;
 
-    private String groupType;    
+    private String groupType;
+
+    private Integer issnLoaderFailCount;
+
+    private String failReason;
+
+    private Date syncDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "group_id_record_seq")
@@ -73,6 +80,33 @@ public class GroupIdRecordEntity extends SourceAwareEntity<Long> implements Comp
 
     public void setGroupType(String groupType) {
         this.groupType = groupType;
+    }
+
+    @Column(name = "issn_loader_fail_count")
+    public Integer getIssnLoaderFailCount() {
+        return issnLoaderFailCount;
+    }
+
+    public void setIssnLoaderFailCount(Integer issnLoaderFailCount) {
+        this.issnLoaderFailCount = issnLoaderFailCount;
+    }
+
+    @Column(name = "fail_reason")
+    public String getFailReason() {
+        return failReason;
+    }
+
+    public void setFailReason(String failReason) {
+        this.failReason = failReason;
+    }
+
+    @Column(name = "sync_date")
+    public Date getSyncDate() {
+        return syncDate;
+    }
+
+    public void setSyncDate(Date syncDate) {
+        this.syncDate = syncDate;
     }
 
     @Override

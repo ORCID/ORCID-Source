@@ -3,6 +3,7 @@ package org.orcid.core.groupIds.issn;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -10,6 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.eclipse.jetty.http.HttpStatus;
+import org.orcid.core.exception.BannedException;
+import org.orcid.core.exception.TooManyRequestsException;
+import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.utils.http.HttpRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,29 +37,27 @@ public class IssnClient {
     @Resource
     private HttpRequestUtils httpRequestUtils;
 
-    public IssnData getIssnData(String issn) {
+    public IssnData getIssnData(String issn) throws BannedException, TooManyRequestsException, UnexpectedResponseCodeException, IOException, URISyntaxException, InterruptedException, JSONException {
         if(StringUtils.isEmpty(issn)) {
             return null;
         }
-        String json = null;
+        LOG.debug("Extracting ISSN for " +  issn);
+        String json = getJsonDataFromIssnPortal(issn.toUpperCase());
         try {
-            LOG.debug("Extracting ISSN for " +  issn);
-            // ensure any lower case x is X otherwise issn portal won't work
-            json = getJsonDataFromIssnPortal(issn.toUpperCase());
-        } catch (IOException | InterruptedException | URISyntaxException e) {
-            LOG.error("Error when getting the issn data from issn portal " + issn, e);
-            return null;
-        }
-        try {
-            if (json != null) {
-                IssnData data = extractIssnData(issn.toUpperCase(), json);
-                data.setIssn(issn);
-                return data;
-            } else {
+            IssnData data = extractIssnData(issn.toUpperCase(), json);
+            data.setIssn(issn);
+            return data;
+        } catch (JSONException e) {
+            LOG.warn("Error extracting issn data from json returned from issn portal "+ issn);
+            if(json == null) {
                 return null;
+            } else if(json.contains("you have been banned")) {
+                throw new BannedException();
+            } else {
+                throw e;
             }
         } catch (Exception e) {
-            LOG.warn("Error extracting issn data from json returned from issn portal "+ issn, e);
+            LOG.warn("Error extracting issn data from json returned from issn portal "+ issn);
             return null;
         }
     }
@@ -138,11 +141,16 @@ public class IssnClient {
         throw new IllegalArgumentException("Unable to extract name, couldn't find the Key Title nor the main resource for " + issn);
     }
 
-    private String getJsonDataFromIssnPortal(String issn) throws IOException, InterruptedException, URISyntaxException {
+    private String getJsonDataFromIssnPortal(String issn) throws TooManyRequestsException, UnexpectedResponseCodeException, IOException, InterruptedException, URISyntaxException {
         String issnUrl = issnPortalUrlBuilder.buildJsonIssnPortalUrlForIssn(issn);
         HttpResponse<String> response = httpRequestUtils.doGet(issnUrl);
-        if (response.statusCode() != 200) {
-            return null;
+        if (response.statusCode() != HttpStatus.OK_200) {
+            if(response.statusCode() == HttpStatus.TOO_MANY_REQUESTS_429) {
+                throw new TooManyRequestsException();
+            } else {
+                LOG.warn(issnUrl + " returned status code " + response.statusCode());
+                throw new UnexpectedResponseCodeException(response.statusCode());
+            }
         }
         return response.body();
     }

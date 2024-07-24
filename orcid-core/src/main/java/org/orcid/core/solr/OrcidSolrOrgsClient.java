@@ -4,7 +4,9 @@ import static org.orcid.core.solr.SolrConstants.ORG_DISAMBIGUATED_ID;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -33,6 +35,8 @@ public class OrcidSolrOrgsClient {
     private static final String SOLR_SELF_SERVICE_ORGS_QUERY = "(org-disambiguated-id-from-source:%s)^50.0 (org-disambiguated-name%s)^50.0 (org-disambiguated-name-string:%s)^25.0";
 
     private static final String SOLR_ORG_BY_ROR_ID_QUERY = "org-disambiguated-id-from-source:%s";
+    
+    private static final String ORG_NAMES_HIGHLIGHT_DELIMITATOR ="::";
 
     public OrgDisambiguatedSolrDocument findById(Long id) {
         SolrQuery query = new SolrQuery();
@@ -50,7 +54,7 @@ public class OrcidSolrOrgsClient {
         return null;
     }
 
-   public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
+   public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean withNamesHighlight) {
         StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm));
         if (fundersOnly) {
             queryString.append(" AND is-funding-org:true");
@@ -60,17 +64,52 @@ public class OrcidSolrOrgsClient {
         query.setQuery(queryString.toString());
         query.addOrUpdateSort("score", ORDER.desc);
         query.addOrUpdateSort("org-disambiguated-popularity", ORDER.desc);
+        
+        // Set the preserveMulti parameter
+        query.setParam("preserveMulti", "true");
+        
         if(fundersOnly) {
             query.addFilterQuery(String.format("(%s:(%s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "FUNDREF"));
         } else {
             query.addFilterQuery(String.format("(%s:(%s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR"));
         }
         
+        if(withNamesHighlight) {
+            query.setHighlight(withNamesHighlight);
+            query.addHighlightField(SolrConstants.ORG_NAMES);
+            query.setHighlightSnippets(maxResult);
+            query.setHighlightSimplePost(ORG_NAMES_HIGHLIGHT_DELIMITATOR);
+            query.setHighlightSimplePre(ORG_NAMES_HIGHLIGHT_DELIMITATOR);
+        }
+        
         LOGGER.debug("SOLR Query: " + query.toQueryString());
 
         try {
             QueryResponse queryResponse = solrReadOnlyOrgsClient.query(query);
-            return queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
+            List<OrgDisambiguatedSolrDocument> orgs = queryResponse.getBeans(OrgDisambiguatedSolrDocument.class);
+            // Get the highlight results
+            if(withNamesHighlight) {
+                List<OrgDisambiguatedSolrDocument> orgsNamesHighlighted = new ArrayList<OrgDisambiguatedSolrDocument>();
+                Map<String, Map<String, List<String>>> highlightMap = queryResponse.getHighlighting();
+                for(OrgDisambiguatedSolrDocument org : orgs) {
+                 // Print highlighted snippets
+                    if (highlightMap.containsKey(org.getOrgDisambiguatedId())) {
+                        Map<String, List<String>> fieldHighlightMap = highlightMap.get(org.getOrgDisambiguatedId());
+                        if (fieldHighlightMap.containsKey(SolrConstants.ORG_NAMES)) {
+                            List<String> highlights = fieldHighlightMap.get(SolrConstants.ORG_NAMES);
+                            OrgDisambiguatedSolrDocument highlightOrg;
+                            for (String highlight : highlights) {
+                                //strip the highlight delimitator ORG_NAMES_HIGHLIGHT_DELIMITATOR
+                                highlightOrg = new OrgDisambiguatedSolrDocument(org);
+                                highlightOrg.setOrgDisambiguatedName(highlight.replaceAll(ORG_NAMES_HIGHLIGHT_DELIMITATOR, ""));
+                                orgsNamesHighlighted.add(highlightOrg);
+                            }
+                        }
+                    }
+                }   
+                return orgsNamesHighlighted;
+            }
+            return orgs;
         } catch (SolrServerException | IOException se) {
             String errorMessage = MessageFormat.format("Error when attempting to search for orgs, with search term {0}", new Object[] { searchTerm });
             throw new NonTransientDataAccessResourceException(errorMessage, se);

@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -7,9 +8,13 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
+import org.springframework.beans.factory.annotation.Value;
 
-public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Long> implements GroupIdRecordDao {    
-    
+public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Long> implements GroupIdRecordDao {
+
+    @Value("${org.orcid.persistence.groupIdRecord.retry.max:5}")
+    private int maxRetries;
+
     public GroupIdRecordDaoImpl() {
         super(GroupIdRecordEntity.class);
     }
@@ -73,10 +78,11 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     }   
     
     @Override
-    public List<GroupIdRecordEntity> getIssnRecordsSortedById(int batchSize, long initialId) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g LEFT OUTER JOIN invalid_issn_group_id_record p ON g.id = p.id where p.id IS NULL AND g.group_id like 'issn:%' and g.id > :initialId order by g.id", GroupIdRecordEntity.class);
-        query.setParameter("initialId", initialId);
-        query.setMaxResults(batchSize);        
+    public List<GroupIdRecordEntity> getIssnRecordsSortedBySyncDate(int batchSize, Date syncTime) {
+        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g WHERE g.issn_loader_fail_count < :max AND g.group_id LIKE 'issn:%' AND (g.sync_date is null OR g.sync_date < :syncTime) ORDER BY g.sync_date", GroupIdRecordEntity.class);
+        query.setParameter("max", maxRetries);
+        query.setParameter("syncTime", syncTime);
+        query.setMaxResults(batchSize);
         return query.getResultList();
     }
 }
