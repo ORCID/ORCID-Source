@@ -22,6 +22,7 @@ public class Date implements ErrorsInterface, Required, Serializable, Comparable
     private String month;
     private String day;
     private String year;
+    private Long timestamp;
 
     private boolean required = true;
     private String getRequiredMessage;
@@ -170,6 +171,10 @@ public class Date implements ErrorsInterface, Required, Serializable, Comparable
     public void setYear(String year) {
         this.year = year;
     }
+
+    public Long getTimestamp() { return timestamp; }
+
+    public void setTimestamp(Long timestamp) { this.timestamp = timestamp; }
 
     @Override
     public int hashCode() {

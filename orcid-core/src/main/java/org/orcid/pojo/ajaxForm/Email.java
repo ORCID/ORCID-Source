@@ -1,5 +1,6 @@
 package org.orcid.pojo.ajaxForm;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,7 @@ public class Email implements ErrorsInterface {
                 createdDate.setYear(String.valueOf(e.getCreatedDate().getValue().getYear()));
                 createdDate.setMonth(String.valueOf(e.getCreatedDate().getValue().getMonth()));
                 createdDate.setDay(String.valueOf(e.getCreatedDate().getValue().getDay()));
+                createdDate.setTimestamp(e.getCreatedDate().getValue().toGregorianCalendar().getTimeInMillis());
                 email.setCreatedDate(createdDate);
             }
 
@@ -88,6 +90,7 @@ public class Email implements ErrorsInterface {
                 lastModifiedDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
                 lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
                 lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
+                lastModifiedDate.setTimestamp(e.getLastModifiedDate().getValue().toGregorianCalendar().getTimeInMillis());
                 email.setLastModified(lastModifiedDate);
             }
         }
