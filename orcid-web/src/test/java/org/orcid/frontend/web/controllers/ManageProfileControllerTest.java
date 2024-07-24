@@ -1009,7 +1009,7 @@ public class ManageProfileControllerTest {
         
         controller.addEmails(mockRequest, newEmail);
         
-        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("new@email.com"), eq("old@email.com"));
+        verify(mockRecordEmailSender, Mockito.never()).sendEmailAddressChangedNotification(eq(USER_ORCID), eq("new@email.com"), eq("old@email.com"));
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("new@email.com"), eq(false));
     }
     

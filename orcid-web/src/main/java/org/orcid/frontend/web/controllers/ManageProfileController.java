@@ -645,7 +645,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             Map<String, String> keys = emailManager.addEmail(currentUserOrcid, email.toV3Email());
             if(!keys.isEmpty()) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                recordEmailSender.sendEmailAddressChangedNotification(currentUserOrcid, keys.get("new"), keys.get("old"));
             }
             recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
         } else {
@@ -786,11 +785,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             String original = editEmail.getOriginal();
             String edited = editEmail.getEdited();
             Map<String, String> keys = emailManager.editEmail(orcid, original, edited, request);
-            if(keys.containsKey("new")) {
-                String newPrimary = keys.get("new");
-                String oldPrimary = keys.get("old");
-                recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);                
-            }
             String verifyAddress = keys.get("verifyAddress");
             boolean isPrimaryEmail = keys.containsKey("new") ? true : false;
             recordEmailSender.sendVerificationEmail(orcid, verifyAddress, isPrimaryEmail);
