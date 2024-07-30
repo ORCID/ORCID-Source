@@ -174,8 +174,12 @@ public class IssnLoadSource {
 
     private void updateIssnEntity(GroupIdRecordEntity issnEntity, IssnData issnData) {
         String currentGroupName = issnEntity.getGroupName();
-        String updatedGroupName = issnData.getMainTitle(); 
-        
+        String updatedGroupName = issnData.getMainTitle();
+
+        // Clear the fail count and reason
+        issnEntity.setIssnLoaderFailCount(0);
+        issnEntity.setFailReason(null);
+
         if(!StringUtils.equals(currentGroupName, updatedGroupName)) {
             issnEntity.setGroupName(updatedGroupName);            
             issnEntity.setClientSourceId(orcidSource.getId());

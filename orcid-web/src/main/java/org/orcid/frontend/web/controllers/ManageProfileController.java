@@ -541,7 +541,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<Email> newEmails = new ArrayList<Email>();
         String orcid = getCurrentUserOrcid();
         List<String> errors = new ArrayList<String>();
-        
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
             boolean isNewEmail = true;
             for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail: oldEmailSet.getEmails()) {
@@ -646,7 +645,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             Map<String, String> keys = emailManager.addEmail(currentUserOrcid, email.toV3Email());
             if(!keys.isEmpty()) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
-                recordEmailSender.sendEmailAddressChangedNotification(currentUserOrcid, keys.get("new"), keys.get("old"));
             }
             recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
         } else {
@@ -736,13 +734,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
-        if(orcid.equals(owner)) {            
+        if(orcid.equals(owner)) {
             // Sets the given email as primary
             Map<String, String> keys = emailManager.setPrimary(orcid, email.getValue().trim(), request);
             if(keys.containsKey("new")) {
                 String newPrimary = keys.get("new");
                 String oldPrimary = keys.get("old");
-                recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);
                 if(keys.containsKey("sendVerification")) {
                     recordEmailSender.sendVerificationEmail(orcid, newPrimary, true);
                     request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
@@ -788,11 +785,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             String original = editEmail.getOriginal();
             String edited = editEmail.getEdited();
             Map<String, String> keys = emailManager.editEmail(orcid, original, edited, request);
-            if(keys.containsKey("new")) {
-                String newPrimary = keys.get("new");
-                String oldPrimary = keys.get("old");
-                recordEmailSender.sendEmailAddressChangedNotification(orcid, newPrimary, oldPrimary);                
-            }
             String verifyAddress = keys.get("verifyAddress");
             boolean isPrimaryEmail = keys.containsKey("new") ? true : false;
             recordEmailSender.sendVerificationEmail(orcid, verifyAddress, isPrimaryEmail);
