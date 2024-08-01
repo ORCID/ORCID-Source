@@ -50,7 +50,6 @@ import com.nimbusds.jwt.SignedJWT;
  */
 public class IETFExchangeTokenGranter implements TokenGranter {
 
-    public static final String IETF_EXCHANGE = "urn:ietf:params:oauth:grant-type:token-exchange";
     private AuthorizationServerTokenServices tokenServices;
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
@@ -75,7 +74,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
     @Resource
     OpenIDConnectTokenEnhancer openIDConnectTokenEnhancer;
     
-    private List<String> doNotAllowDeleteOnTheseRevokeReasons = List.of(RevokeReason.CLIENT_REVOKED.name(), RevokeReason.STAFF_REVOKED.name());
+    private final List<RevokeReason> doNotAllowDeleteOnTheseRevokeReasons = List.of(RevokeReason.CLIENT_REVOKED, RevokeReason.STAFF_REVOKED, RevokeReason.RECORD_DEACTIVATED, RevokeReason.AUTH_CODE_REUSED);
 
     public IETFExchangeTokenGranter(AuthorizationServerTokenServices tokenServices) {
         this.tokenServices = tokenServices;
@@ -239,10 +238,12 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         Set<ScopePathType> inactiveScopesOBO = Sets.newHashSet();
         boolean issueRevokedToken = false;
         RevokeReason revokeReason = null;
+        // Lets consider token expiration time anything that goes beyond this date
+        Date now = new Date();
         for (OrcidOauth2TokenDetail d : details) {
             Set<ScopePathType> scopesInToken = ScopePathType.getScopesFromSpaceSeparatedString(d.getScope());
             // If token is expired, we should ignore it
-            if (d.getTokenExpiration().after(new Date())) {
+            if (d.getTokenExpiration().after(now)) {
                 // If token is disabled, we should know if it have the /activities/update scope on it
                 if(d.getTokenDisabled() == null || !d.getTokenDisabled()) {
                     activeScopesOBO.addAll(scopesInToken);
@@ -257,8 +258,12 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                         // Keep only the /activities/update scope if the token was not revoked by a client or staff member
                         if(revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
                             inactiveScopesOBO.add(ScopePathType.ACTIVITIES_UPDATE);
+                        } else {
+                            throw new OrcidInvalidScopeException("The id_token is disabled and does not contain any valid scope");
                         }
-                    } 
+                    } else {
+                        throw new OrcidInvalidScopeException("The id_token is disabled and does not contain any valid scope");
+                    }
                 }                
             }
         }
