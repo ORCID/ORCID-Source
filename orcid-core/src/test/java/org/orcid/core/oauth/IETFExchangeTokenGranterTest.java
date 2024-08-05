@@ -289,14 +289,14 @@ public class IETFExchangeTokenGranterTest {
             tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
             fail();
         } catch (OrcidInvalidScopeException oise) {
-            assertEquals("The id_token is not associated with a valid scope", oise.getMessage());
+            assertEquals("The id_token is disabled and does not contain any valid scope", oise.getMessage());
         } catch (Exception e) {
             fail();
         }
     }
 
     @Test
-    public void grantDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest()
+    public void grantUserDisabledTokenWithActivitiesReadLimitedGenerateDeactivatedTokenTest()
             throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
         OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
         token1.setRevokeReason(RevokeReason.USER_REVOKED.name());
@@ -307,6 +307,38 @@ public class IETFExchangeTokenGranterTest {
         verify(tokenServicesMock, times(1)).createRevokedAccessToken(any(), eq(RevokeReason.USER_REVOKED));
         // Verify regular token was never created
         verify(tokenServicesMock, never()).createAccessToken(any());
+    }
+
+    @Test
+    public void grantClientDisabledTokenWithActivitiesReadLimitedThrowExceptionTest()
+            throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
+        token1.setRevokeReason(RevokeReason.CLIENT_REVOKED.name());
+
+        when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
+        try {
+            tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
+        } catch(OrcidInvalidScopeException e) {
+            assertEquals("The id_token is disabled and does not contain any valid scope", e.getMessage());
+        } catch(Exception e) {
+            fail("Unhandled exception:" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void grantStaffDisabledTokenWithActivitiesReadLimitedThrowExceptionTest()
+            throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
+        token1.setRevokeReason(RevokeReason.STAFF_REVOKED.name());
+
+        when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1));
+        try {
+            tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
+        } catch(OrcidInvalidScopeException e) {
+            assertEquals("The id_token is disabled and does not contain any valid scope", e.getMessage());
+        } catch(Exception e) {
+            fail("Unhandled exception:" + e.getMessage());
+        }
     }
 
     @Test
