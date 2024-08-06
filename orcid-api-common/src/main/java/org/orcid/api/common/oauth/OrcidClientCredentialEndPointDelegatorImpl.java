@@ -20,6 +20,7 @@ import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
+import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
@@ -162,8 +163,11 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }                
             }
             
+            // Do not put the token in the cache if the token is disabled
+            if(token.getAdditionalInformation() != null && !token.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_DISABLED)) {
+                setToCache(client.getName(), token);
+            }
             removeMetadataFromToken(token);
-            setToCache(client.getName(), token);
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
@@ -307,6 +311,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_DISABLED))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_DISABLED);
         }
     }
     
