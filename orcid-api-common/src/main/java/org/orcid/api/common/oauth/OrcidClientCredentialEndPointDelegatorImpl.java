@@ -20,7 +20,6 @@ import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
-import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
