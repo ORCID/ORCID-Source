@@ -130,6 +130,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         }  else if (t instanceof InvalidPutCodeException) {
             logShortError(t, clientId);
+        } else if (t instanceof MismatchedPutCodeException) {
+            logShortError(t, clientId);
         } else {
             LOGGER.error("An exception has occured processing request from client " + clientId, t);
         }
