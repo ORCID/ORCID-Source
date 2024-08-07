@@ -63,6 +63,7 @@
         <class>org.orcid.persistence.jpa.entities.EventEntity</class>
         <class>org.orcid.persistence.jpa.entities.EventStatsEntity</class>
         <class>org.orcid.persistence.jpa.entities.EmailDomainEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity</class>
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>
