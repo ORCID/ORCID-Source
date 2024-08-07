@@ -10,7 +10,7 @@ public interface EmailDomainManager {
     
     boolean updateCategory(long id, EmailDomainEntity.DomainCategory category);
 
-    EmailDomainEntity findByEmailDoman(String emailDomain);
+    EmailDomainEntity findByEmailDomain(String emailDomain);
 
     List<EmailDomainEntity> findByCategory(EmailDomainEntity.DomainCategory category);
     

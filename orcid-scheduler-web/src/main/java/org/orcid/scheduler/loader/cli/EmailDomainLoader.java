@@ -76,7 +76,7 @@ public class EmailDomainLoader {
             for (List<String> row : emailDomainData) {
                 String elementDomain = row.get(0);
                 String elementCategory = row.get(1);
-                EmailDomainEntity ede = emailDomainManager.findByEmailDoman(elementDomain);
+                EmailDomainEntity ede = emailDomainManager.findByEmailDomain(elementDomain);
                 EmailDomainEntity.DomainCategory category = EmailDomainEntity.DomainCategory.valueOf(elementCategory.toUpperCase());
                 if(ede == null) {
                     try {
