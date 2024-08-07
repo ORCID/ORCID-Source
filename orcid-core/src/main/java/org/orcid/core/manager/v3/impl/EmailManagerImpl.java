@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -37,6 +39,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
+
+    @Resource(name = "profileEmailDomainManager")
+    private ProfileEmailDomainManager profileEmailDomainManager;
 
     @Resource
     private TransactionTemplate transactionTemplate;
@@ -64,7 +69,11 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean verifyEmail(String orcid, String email) {
-        return emailDao.verifyEmail(email);
+        boolean result = emailDao.verifyEmail(email);
+        if (result && Features.EMAIL_DOMAINS.isActive()) {
+            profileEmailDomainManager.processDomain(orcid, email);
+        }
+        return result;
     }
 
     @Override
@@ -72,7 +81,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public boolean verifyPrimaryEmail(String orcid) {
         try {
             String primaryEmail = emailDao.findPrimaryEmail(orcid).getEmail();
-            return emailDao.verifyEmail(primaryEmail);
+
+            boolean result = emailDao.verifyEmail(primaryEmail);
+            if (result && Features.EMAIL_DOMAINS.isActive()) {
+                profileEmailDomainManager.processDomain(orcid, primaryEmail);
+            }
+            return result;
         } catch (javax.persistence.NoResultException nre) {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
@@ -104,7 +118,11 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("orcid or email param is empty or null");
         }
 
-        return emailDao.updateVerifySetCurrentAndPrimary(orcid, email);
+        boolean result = emailDao.updateVerifySetCurrentAndPrimary(orcid, email);
+        if (result && Features.EMAIL_DOMAINS.isActive()) {
+            profileEmailDomainManager.processDomain(orcid, email);
+        }
+        return result;
     }
 
     /***
