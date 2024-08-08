@@ -62,7 +62,10 @@ public enum Features implements Feature {
     MAPI_SUMMARY_ENDPOINT,
 
     @Label("Enable email domains")
-    EMAIL_DOMAINS;
+    EMAIL_DOMAINS,
+
+    @Label("Enable email domains in the UI")
+    EMAIL_DOMAINS_UI;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
