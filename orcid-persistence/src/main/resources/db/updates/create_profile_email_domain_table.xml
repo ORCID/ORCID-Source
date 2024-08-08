@@ -36,6 +36,24 @@
         <addAutoIncrement tableName="profile_email_domain" columnName="id" columnDataType="bigint"/>
     </changeSet>
 
+    <changeSet id="PROFILE-EMAIL-DOMAIN-ORCID-INDEX" author="Andrej Romanov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="profile_email_domain_orcid_index" tableName="profile_email_domain" />
+            </not>
+        </preConditions>
+        <sql>create index profile_email_domain_orcid_index on profile_email_domain(orcid);</sql>
+    </changeSet>
+
+    <changeSet id="PROFILE-EMAIL-DOMAIN-INDEX" author="Andrej Romanov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="profile_email_domain_index" tableName="profile_email_domain" />
+            </not>
+        </preConditions>
+        <sql>create index profile_email_domain_index on profile_email_domain(email_domain);</sql>
+    </changeSet>
+
     <changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-PROFILE-EMAIL-DOMAIN" author="Andrej Romanov" dbms="postgresql">
         <preConditions>
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
