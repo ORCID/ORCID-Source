@@ -200,7 +200,6 @@ public class PublicRecordController extends BaseWorkspaceController {
         // Fill email domains
         List<ProfileEmailDomainEntity> emailDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
-            // TODO: needs some thought on whether this is the best approach, since we won't display public domains if there's already a public email with that domain
             emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(getCurrentUserOrcid());
         }
         
