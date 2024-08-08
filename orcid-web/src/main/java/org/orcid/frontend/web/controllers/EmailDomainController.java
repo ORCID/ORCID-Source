@@ -36,7 +36,7 @@ public class EmailDomainController {
             return response;
         }
         domain = OrcidStringUtils.stripHtml(domain);
-        EmailDomainEntity ede = emailDomainManager.findByEmailDoman(domain);        
+        EmailDomainEntity ede = emailDomainManager.findByEmailDomain(domain);
         if(ede == null) {
             ObjectNode response = mapper.createObjectNode();
             response.put("category", EmailDomainEntity.DomainCategory.UNDEFINED.name());
@@ -60,7 +60,7 @@ public class EmailDomainController {
         }
         domain = OrcidStringUtils.stripHtml(domain);
         
-        EmailDomainEntity ede = emailDomainManager.findByEmailDoman(domain);  
+        EmailDomainEntity ede = emailDomainManager.findByEmailDomain(domain);
         if(ede != null) {
             String rorId = ede.getRorId();
             if(rorId != null && !rorId.isBlank()) {

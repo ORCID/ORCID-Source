@@ -51,7 +51,7 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
     }
 
     /**
-     * Get the list of peer reivews that belongs to a user
+     * Get the list of peer reviews that belongs to a user
      * 
      * @param userOrcid
      * @param lastModified

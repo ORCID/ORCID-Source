@@ -48,11 +48,11 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     }
 
     @Override
-    public EmailDomainEntity findByEmailDoman(String emailDomain) {
+    public EmailDomainEntity findByEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
         }
-        return emailDomainDaoReadOnly.findByEmailDoman(emailDomain);
+        return emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
     @Override
     public STATUS createOrUpdateEmailDomain(String emailDomain, String rorId) {
-        EmailDomainEntity existingEntity = emailDomainDaoReadOnly.findByEmailDoman(emailDomain);
+        EmailDomainEntity existingEntity = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
         if(existingEntity != null) {
             if(!rorId.equals(existingEntity.getRorId())) {
                 boolean updated = emailDomainDao.updateRorId(existingEntity.getId(), rorId);

@@ -499,9 +499,19 @@
     <bean id="emailManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl">
         <property name="emailDao" ref="emailDaoReadOnly" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
-    </bean> 
-    
-    <bean id="externalIdentifierManagerV3" class="org.orcid.core.manager.v3.impl.ExternalIdentifierManagerImpl">
+    </bean>
+
+	<bean id="profileEmailDomainManager" class="org.orcid.core.manager.v3.impl.ProfileEmailDomainManagerImpl">
+		<property name="profileEmailDomainDao" ref="profileEmailDomainDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+
+	<bean id="profileEmailDomainManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl">
+		<property name="profileEmailDomainDao" ref="profileEmailDomainDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+
+	<bean id="externalIdentifierManagerV3" class="org.orcid.core.manager.v3.impl.ExternalIdentifierManagerImpl">
         <property name="externalIdentifierDao" ref="externalIdentifierDao" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean> 

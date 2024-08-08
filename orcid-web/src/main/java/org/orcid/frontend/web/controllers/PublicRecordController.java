@@ -1,6 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -14,11 +15,7 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -32,6 +29,7 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.EventType;
+import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecord;
 import org.orcid.pojo.ajaxForm.AddressForm;
@@ -70,6 +68,9 @@ public class PublicRecordController extends BaseWorkspaceController {
 
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
+
+    @Resource(name = "profileEmailDomainManagerReadOnly")
+    private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnly;
 
     @Resource
     private EventManager eventManager;
@@ -195,8 +196,14 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         Emails filteredEmails = new Emails();
         filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails().stream().filter(Email::isVerified).collect(Collectors.toList())));
+
+        // Fill email domains
+        List<ProfileEmailDomainEntity> emailDomains = null;
+        if (Features.EMAIL_DOMAINS.isActive()) {
+            emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(getCurrentUserOrcid());
+        }
         
-        publicRecord.setEmails(org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails));
+        publicRecord.setEmails(org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails, emailDomains));
 
         // Fill external identifiers
         PersonExternalIdentifiers publicPersonExternalIdentifiers;
