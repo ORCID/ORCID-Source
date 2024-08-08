@@ -33,11 +33,11 @@ Example access token request response with access and refresh token:
 Create a new token with the same scopes and expiration and revoke the old token
 
 ```
-curl -d 'refresh_token=4470d1ff-c817-45c1-86d1-b9062669c7cb' -d 'grant_type=refresh_token' -d 'client_id=APP-5GG5N5YFOKGV5N0X' -d 'client_secret=ce4db92f-d535-4014-a250-b5cdc27c0984' -d 'revoke_old=true' https://api.sandbox.orcid.org/oauth/token
+curl -d 'refresh_token=4470d1ff-c817-45c1-86d1-b9062669c7cb' -d 'grant_type=refresh_token' -d 'client_id=APP-5GG5N5YFOKGV5N0X' -d 'client_secret=ce4db92f-d535-4014-a250-b5cdc27c0984' -d 'revoke_old=true' https://sandbox.orcid.org/oauth/token
 ```
 
 Create a new token with a subset of scopes, expiring in one day and do not revoke the old token
 
 ```
-curl -d 'refresh_token=4470d1ff-c817-45c1-86d1-b9062669c7cb' -d 'grant_type=refresh_token' -d 'client_id=APP-5GG5N5YFOKGV5N0X' -d 'client_secret=ce4db92f-d535-4014-a250-b5cdc27c0984' -d 'scope=/read-limited' -d 'expires_in=86400' https://api.sandbox.orcid.org/oauth/token
+curl -d 'refresh_token=4470d1ff-c817-45c1-86d1-b9062669c7cb' -d 'grant_type=refresh_token' -d 'client_id=APP-5GG5N5YFOKGV5N0X' -d 'client_secret=ce4db92f-d535-4014-a250-b5cdc27c0984' -d 'scope=/read-limited' -d 'expires_in=86400' https://sandbox.orcid.org/oauth/token
 ```

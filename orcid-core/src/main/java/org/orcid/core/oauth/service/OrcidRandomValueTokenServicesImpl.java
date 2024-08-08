@@ -1,12 +1,6 @@
 package org.orcid.core.oauth.service;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
@@ -465,6 +459,10 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         // create the regular token
         DefaultOAuth2AccessToken accessToken = generateAccessToken(authentication);
         try {
+            if(accessToken.getAdditionalInformation() == null) {
+                accessToken.setAdditionalInformation(Collections.emptyMap());
+            }
+            accessToken.getAdditionalInformation().put(OrcidOauth2Constants.TOKEN_DISABLED, true);
             orcidTokenStore.storeRevokedAccessToken(accessToken, authentication, revokeReason);
         } catch (PersistenceException e) {
             // In the unlikely case that there is a constraint violation, lets
