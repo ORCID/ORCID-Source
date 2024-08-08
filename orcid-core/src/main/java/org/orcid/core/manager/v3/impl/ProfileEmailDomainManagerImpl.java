@@ -3,12 +3,13 @@ package org.orcid.core.manager.v3.impl;
 
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -28,6 +29,9 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     @Resource
     protected EmailDao emailDao;
 
+    private static final String DEFAULT_DOMAIN_VISIBILITY = Visibility.PRIVATE.toString();
+
+    @Transactional
     public void updateEmailDomains(String orcid, org.orcid.pojo.ajaxForm.Emails newEmails) {
         List<ProfileEmailDomainEntity> existingEmailDomains = profileEmailDomainDao.findByOrcid(orcid);
 
@@ -37,7 +41,6 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
                 for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
                     if (existingEmailDomain.getEmailDomain().equals(emailDomain.getValue())) {
                         if (!existingEmailDomain.getVisibility().equals(emailDomain.getVisibility())) {
-                            // TODO: add visibility check to see that you can't make it more restrictive than the email?
                             profileEmailDomainDao.updateVisibility(orcid, emailDomain.getValue(), emailDomain.getVisibility());
                         }
                     }
@@ -61,16 +64,14 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     }
 
     public void processDomain(String orcid, String email) {
-        // TODO: QUESTION FOR ANGEL: if something fails here, should we prevent the verification from being completed?
-        //  Verification is the only way for this to be triggered, so if this fails, but the email gets verified then it becomes a bit messy
         String domain = email.split("@")[1];
         EmailDomainEntity domainInfo = emailDomainDao.findByEmailDomain(domain);
         // Check if email is professional
-        if (domainInfo != null && domainInfo.getCategory().toString().equals("PROFESSIONAL")) {
+        if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
             ProfileEmailDomainEntity existingDomain = profileEmailDomainDao.findByEmailDomain(orcid, domain);
             // ADD NEW DOMAIN IF ONE DOESN'T EXIST
             if (existingDomain == null) {
-                profileEmailDomainDao.addEmailDomain(orcid, domain, "PRIVATE");
+                profileEmailDomainDao.addEmailDomain(orcid, domain, DEFAULT_DOMAIN_VISIBILITY);
             }
         }
     }

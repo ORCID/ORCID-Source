@@ -67,6 +67,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
+    @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean verifyEmail(String orcid, String email) {
         boolean result = emailDao.verifyEmail(email);
@@ -113,6 +114,7 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
+    @Transactional
     public boolean verifySetCurrentAndPrimary(String orcid, String email) {
         if (PojoUtil.isEmpty(orcid) || PojoUtil.isEmpty(email)) {
             throw new IllegalArgumentException("orcid or email param is empty or null");

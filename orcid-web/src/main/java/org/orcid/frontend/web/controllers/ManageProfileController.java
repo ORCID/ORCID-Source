@@ -532,7 +532,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmails(HttpServletRequest request) {                                
         Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid());
 
-        // TODO: Note to Angel - feels hacky, not sure how to better implement a togglz where the arg count changes (updatedDomains gets added to valueOf() below)
         List<ProfileEmailDomainEntity> emailDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
             emailDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
@@ -606,8 +605,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         List<ProfileEmailDomainEntity> updatedDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
-            // TODO: note to Angel - ideally this should be 1 call? I.e. updateEmailDomains() should return
-            //  a list of List<ProfileEmailDomainEntity>?
             profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet);
             updatedDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
