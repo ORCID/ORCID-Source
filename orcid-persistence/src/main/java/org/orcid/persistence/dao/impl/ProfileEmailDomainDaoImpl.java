@@ -70,4 +70,20 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
         List<ProfileEmailDomainEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
     }
+
+    @Override
+    public ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain) {
+        TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain", ProfileEmailDomainEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("emailDomain", emailDomain);
+        try {
+            return query.getSingleResult();
+        } catch(NoResultException nre) {
+            // Ignore this exception
+        } catch(Exception e) {
+            // Propagate any other exception
+            throw e;
+        }
+        return null;
+    }
 }

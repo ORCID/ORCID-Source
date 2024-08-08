@@ -11,10 +11,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 
@@ -65,31 +62,16 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
 
     public void processDomain(String orcid, String email) {
         // TODO: QUESTION FOR ANGEL: if something fails here, should we prevent the verification from being completed?
-        //  Verification is the only way for this to be triggered, so if this fails but the email gets verified then it becomes a bit messy
+        //  Verification is the only way for this to be triggered, so if this fails, but the email gets verified then it becomes a bit messy
         String domain = email.split("@")[1];
         EmailDomainEntity domainInfo = emailDomainDao.findByEmailDomain(domain);
         // Check if email is professional
         if (domainInfo != null && domainInfo.getCategory().toString().equals("PROFESSIONAL")) {
-            List<EmailEntity> existingEmails = emailDao.findByOrcid(orcid, getLastModified(orcid));
-
-            Set<String> visibilitySet = new HashSet<String>();
-            for (EmailEntity existingEmail : existingEmails) {
-                if (existingEmail.getEmail().split("@")[1].equals(domain)) {
-                    visibilitySet.add(existingEmail.getVisibility());
-                }
+            ProfileEmailDomainEntity existingDomain = profileEmailDomainDao.findByEmailDomain(orcid, domain);
+            // ADD NEW DOMAIN IF ONE DOESN'T EXIST
+            if (existingDomain == null) {
+                profileEmailDomainDao.addEmailDomain(orcid, domain, "PRIVATE");
             }
-
-            String visibility;
-            // Inherit invisibility setting from email domain if there's only one with that domain
-            if (visibilitySet.size() == 1) {
-                visibility = visibilitySet.iterator().next();
-            } else {
-                // If there are multiple, then inherit the most permissive visibility
-                visibility = visibilitySet.contains("PUBLIC") ? "PUBLIC" : visibilitySet.contains("LIMITED") ? "LIMITED" : "PRIVATE";
-            }
-
-            // ADD NEW DOMAIN
-            profileEmailDomainDao.addEmailDomain(orcid, domain, visibility);
         }
     }
 }

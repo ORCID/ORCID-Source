@@ -14,4 +14,6 @@ public interface ProfileEmailDomainDao extends GenericDao<ProfileEmailDomainEnti
     List<ProfileEmailDomainEntity> findByOrcid(String orcid);
 
     List<ProfileEmailDomainEntity> findPublicEmailDomains(String orcid);
+
+    ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain);
 }
