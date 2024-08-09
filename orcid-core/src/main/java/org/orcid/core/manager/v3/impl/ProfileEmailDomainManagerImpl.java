@@ -29,7 +29,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     @Resource
     protected EmailDao emailDao;
 
-    private static final String DEFAULT_DOMAIN_VISIBILITY = Visibility.PRIVATE.toString();
+    private static final String DEFAULT_DOMAIN_VISIBILITY = Visibility.PRIVATE.toString().toUpperCase();
 
     @Transactional
     public void updateEmailDomains(String orcid, org.orcid.pojo.ajaxForm.Emails newEmails) {
