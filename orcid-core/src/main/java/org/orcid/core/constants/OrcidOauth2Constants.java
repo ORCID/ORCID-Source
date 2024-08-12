@@ -58,6 +58,7 @@ public class OrcidOauth2Constants {
     public static final String IETF_EXCHANGE_SUBJECT_TOKEN = "subject_token";
     public static final String IETF_EXCHANGE_SUBJECT_TOKEN_TYPE = "subject_token_type";
     public static final String IETF_EXCHANGE_REQUESTED_TOKEN_TYPE = "requested_token_type";
+    public static final String TOKEN_DISABLED = "token_disabled";
     
     public static final String CODE_RESPONSE_TYPE = "code";
     
