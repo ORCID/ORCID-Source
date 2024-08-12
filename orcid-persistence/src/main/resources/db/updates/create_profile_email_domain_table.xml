@@ -29,11 +29,11 @@
                 <sequenceExists sequenceName="profile_email_domain_seq"/>
             </not>
         </preConditions>
-        <createSequence sequenceName="profile_email_domain_seq"/>
+        <createSequence sequenceName="profile_email_domain_seq" startValue="100000"/>
     </changeSet>
 
     <changeSet id="CREATE-PROFILE-EMAIL-DOMAIN-AUTOCOLS" author="Andrej Romanov" dbms="hsqldb">
-        <addAutoIncrement tableName="profile_email_domain" columnName="id" columnDataType="bigint"/>
+        <addAutoIncrement tableName="profile_email_domain" columnName="id" columnDataType="bigint" startWith="100000"/>
     </changeSet>
 
     <changeSet id="PROFILE-EMAIL-DOMAIN-ORCID-INDEX" author="Andrej Romanov">
