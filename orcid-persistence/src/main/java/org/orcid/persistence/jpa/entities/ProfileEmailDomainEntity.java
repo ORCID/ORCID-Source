@@ -19,7 +19,7 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "event_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "profile_email_domain_seq")
     @SequenceGenerator(name = "profile_email_domain_seq", sequenceName = "profile_email_domain_seq", allocationSize = 1)
     public Long getId() {
         return id;
