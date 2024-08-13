@@ -8,7 +8,10 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -20,14 +23,16 @@ import java.util.*;
  * 
  */
 public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerReadOnlyImpl implements ProfileEmailDomainManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEmailDomainManagerImpl.class);
+
     @Resource
     protected ProfileEmailDomainDao profileEmailDomainDao;
 
     @Resource
     protected EmailDomainDao emailDomainDao;
 
-    @Resource
-    protected EmailDao emailDao;
+    @Resource(name = "emailDaoReadOnly")
+    protected EmailDao emailDaoReadOnly;
 
     private static final String DEFAULT_DOMAIN_VISIBILITY = Visibility.PRIVATE.toString().toUpperCase();
 
@@ -66,13 +71,47 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     public void processDomain(String orcid, String email) {
         String domain = email.split("@")[1];
         EmailDomainEntity domainInfo = emailDomainDao.findByEmailDomain(domain);
+        String domainVisibility = DEFAULT_DOMAIN_VISIBILITY;
         // Check if email is professional
         if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
             ProfileEmailDomainEntity existingDomain = profileEmailDomainDao.findByEmailDomain(orcid, domain);
             // ADD NEW DOMAIN IF ONE DOESN'T EXIST
             if (existingDomain == null) {
-                profileEmailDomainDao.addEmailDomain(orcid, domain, DEFAULT_DOMAIN_VISIBILITY);
+                // Verify the user doesn't have more emails with that domain
+                List<EmailEntity> existingEmails = emailDaoReadOnly.findByOrcid(orcid, System.currentTimeMillis());
+                if(existingEmails != null && existingEmails.size() > 1) {
+                    for(EmailEntity emailEntity : existingEmails) {
+                        //If it is not the same emails that is being verified and it is verified
+                        if(!email.equals(emailEntity.getEmail()) && emailEntity.getVerified()) {
+                            try {
+                                String emailEntityDomain = (emailEntity.getEmail() == null) ? null : (email.split("@")[1]);
+                                // If one of the existing emails have the same domain as the email being verified check the visibility and select the less restrictive
+                                if(domain.equals(emailEntityDomain)){
+                                    String entityVisibility = emailEntity.getVisibility();
+                                    domainVisibility = getLessRestrictiveVisibility(domainVisibility, entityVisibility);
+                                }
+                            } catch (Exception e) {
+                                LOGGER.warn("Could not get email domain from email entity " + emailEntity.getEmail(), e);
+                            }
+                        }
+                    }
+                }
+                profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
             }
         }
+    }
+
+    private String getLessRestrictiveVisibility(String a, String b) {
+        String visibility = DEFAULT_DOMAIN_VISIBILITY;
+        if(Visibility.PUBLIC.name().equals(a) || Visibility.PUBLIC.name().equals(b)) {
+            visibility = Visibility.PUBLIC.name();
+        } else if(a.equals(b)) {
+            visibility = a;
+        } else if(Visibility.PRIVATE.name().equals(a)) {
+            visibility = b;
+        } else if(Visibility.PRIVATE.name().equals(b)) {
+            visibility = a;
+        }
+        return visibility;
     }
 }
