@@ -402,7 +402,7 @@ Description: Search for records modified between January 1, 2018 and today
 
 Paging: First 10 results
 
-URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=profile-last-modified-date:%5B2018-01-01T00:00:00Z%20TO%20NOW%5D&start=1&rows=10```
+URL: ```https://pub.sandbox.orcid.org/v3.0/search/?q=profile-last-modified-date:%5B2018-01-01T00:00:00Z%20TO%20NOW%5D&start=0&rows=10```
 
 ### Example 14
 
