@@ -1,3 +1,9 @@
+## v2.63.8 - 2024-08-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.7...v2.63.8)
+
+- [#7067](https://github.com/ORCID/ORCID-Source/pull/7067): 1. Fixed the correct query string for showing first 10 resutls.
+
 ## v2.63.7 - 2024-08-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.6...v2.63.7)
