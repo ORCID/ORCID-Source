@@ -135,11 +135,7 @@ See the current [XSD documentation](https://github.com/ORCID/orcid-model/blob/ma
 
 ## API Limits
 
-**v1.2**
-* Request a second - 8
-* Burst - 40
-
-**v2.0 and above**
+**v2.0, v2.1 and v3.0**
 * Request a second - 24
 * Burst - 40
 
