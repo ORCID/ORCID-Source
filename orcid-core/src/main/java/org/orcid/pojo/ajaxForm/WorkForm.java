@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.utils.DateUtils;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;

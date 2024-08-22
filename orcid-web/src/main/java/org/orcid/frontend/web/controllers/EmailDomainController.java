@@ -5,8 +5,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

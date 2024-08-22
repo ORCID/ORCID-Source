@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
-import org.orcid.persistence.util.OrcidStringUtils;
+import org.orcid.utils.NullUtils;
 
 /**
  * 
@@ -101,7 +101,7 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
     public int compareTo(ClientSecretEntity other) {
         Date otherLastModified = other.getLastModified();
         Date thisLastModified = getLastModified();
-        int dateComparison = OrcidStringUtils.compareObjectsNullSafe(thisLastModified, otherLastModified);
+        int dateComparison = NullUtils.compareObjectsNullSafe(thisLastModified, otherLastModified);
         if (dateComparison != 0) {
             return -dateComparison;
         }

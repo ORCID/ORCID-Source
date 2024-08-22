@@ -11,7 +11,7 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.crypto.DesEncrypter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
