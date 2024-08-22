@@ -200,7 +200,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         // Fill email domains
         List<ProfileEmailDomainEntity> emailDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
-            emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(getCurrentUserOrcid());
+            emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(orcid);
         }
         
         publicRecord.setEmails(org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails, emailDomains));
