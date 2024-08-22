@@ -27,7 +27,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.version.ApiSection;
 import org.orcid.jaxb.model.message.DeprecatedDate;

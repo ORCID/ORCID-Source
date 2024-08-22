@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import org.orcid.utils.DateUtils;
+
 public class PasswordResetToken {
 
     //  public static final String RESET_TOKEN_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";

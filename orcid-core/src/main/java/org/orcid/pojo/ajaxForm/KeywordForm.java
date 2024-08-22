@@ -9,7 +9,7 @@ import org.orcid.jaxb.model.v3.release.common.CreatedDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 /**
  * 
