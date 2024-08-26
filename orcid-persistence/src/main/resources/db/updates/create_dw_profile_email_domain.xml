@@ -1,0 +1,19 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <changeSet id="CREATE-DW-PROFILE-EMAIL-DOMAIN" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile_email_domain" replaceIfExists="true">
+            select id as db_id, orcid, email_domain, visibility,date_created, last_modified from profile_email_domain where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-DW-PROFILE-EMAIL-DOMAIN" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_email_domain to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
