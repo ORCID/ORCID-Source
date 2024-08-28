@@ -13,7 +13,7 @@ import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
 import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Month;
 import org.orcid.jaxb.model.v3.release.common.Year;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 public class Date implements ErrorsInterface, Required, Serializable, Comparable<Date> {
 

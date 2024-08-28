@@ -51,7 +51,7 @@ import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)

@@ -53,7 +53,12 @@
     </build>
 
     <dependencies>
-        <!-- Internal dependencies -->        
+        <!-- Internal dependencies -->    
+       <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>orcid-utils</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>      
         <dependency>
             <groupId>org.orcid</groupId>
             <artifactId>orcid-test</artifactId>
