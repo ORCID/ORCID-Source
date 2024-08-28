@@ -5,7 +5,7 @@
 
     <changeSet id="CREATE-DW-NOTIFICATION" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_notification" replaceIfExists="true">
-            select notification_type, orcid, client_source_id, date_created, sent_date, read_date, actioned_date, archived_date, last_modified 
+            select id as db_id, notification_type, orcid, client_source_id, date_created, sent_date, read_date, actioned_date, archived_date, last_modified 
             from notification where notification_type='PERMISSION' and client_source_id is not null and last_modified > date_trunc('day',(now() - interval '12 months'))
         </createView>
     </changeSet>
