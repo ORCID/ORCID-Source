@@ -3,8 +3,8 @@ package org.orcid.frontend.web.controllers;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.v3.SpamManager;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.pojo.Spam;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

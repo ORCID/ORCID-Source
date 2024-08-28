@@ -24,7 +24,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;

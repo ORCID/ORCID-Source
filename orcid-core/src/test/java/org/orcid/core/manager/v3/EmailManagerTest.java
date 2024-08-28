@@ -35,7 +35,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -45,6 +44,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 

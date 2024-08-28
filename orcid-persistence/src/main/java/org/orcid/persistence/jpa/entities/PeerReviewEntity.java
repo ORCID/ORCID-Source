@@ -13,7 +13,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.persistence.util.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.NullUtils;
 
 
 @Entity
@@ -218,17 +219,17 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
             throw new NullPointerException("Can't compare with null");
         }
                 
-        int typeCompare = OrcidStringUtils.compareObjectsNullSafe(type, other.getType());
+        int typeCompare = NullUtils.compareObjectsNullSafe(type, other.getType());
         if(typeCompare != 0) {
             return typeCompare;
         }
         
-        int roleCompare = OrcidStringUtils.compareObjectsNullSafe(role, other.getRole());
+        int roleCompare = NullUtils.compareObjectsNullSafe(role, other.getRole());
         if(roleCompare != 0) {
             return roleCompare;
         }
         
-        int completionDateCompare = OrcidStringUtils.compareObjectsNullSafe((FuzzyDateEntity)completionDate, (FuzzyDateEntity)other.getCompletionDate());
+        int completionDateCompare = NullUtils.compareObjectsNullSafe((FuzzyDateEntity)completionDate, (FuzzyDateEntity)other.getCompletionDate());
         if(completionDateCompare != 0) {
             return completionDateCompare;
         }
@@ -264,7 +265,7 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
             return subjectExtIdCompare;
         }
         
-        int subjectTypeCompare = OrcidStringUtils.compareObjectsNullSafe(subjectType, other.getSubjectType());
+        int subjectTypeCompare = NullUtils.compareObjectsNullSafe(subjectType, other.getSubjectType());
         if(subjectTypeCompare != 0) {
             return subjectTypeCompare;
         }

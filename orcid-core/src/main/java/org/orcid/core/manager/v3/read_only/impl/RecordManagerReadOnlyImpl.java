@@ -9,7 +9,7 @@ import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;

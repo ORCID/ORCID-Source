@@ -33,7 +33,7 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

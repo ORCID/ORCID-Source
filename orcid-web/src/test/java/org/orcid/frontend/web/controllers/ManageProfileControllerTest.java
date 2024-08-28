@@ -45,7 +45,7 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
