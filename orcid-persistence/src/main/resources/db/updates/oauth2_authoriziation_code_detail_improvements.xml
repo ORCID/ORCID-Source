@@ -1,0 +1,27 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Angel Montenegro" id="ADD-SCOPES-TO-oauth2_authoriziation_code_detail">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="scopes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="scopes" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORITIES-TO-oauth2_authoriziation_code_detail">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorities"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorities" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
