@@ -35,4 +35,15 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="Angel Montenegro" id="ADD-6-CHARS-AUTH-CODE-TO-oauth2_authoriziation_code_detail">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="6_chars_authoriziation_code_value"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="6_chars_authoriziation_code_value" type="VARCHAR(6)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
