@@ -24,4 +24,15 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-URI-TO-oauth2_authoriziation_code_detail">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_uri"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorization_uri" type="VARCHAR(2500)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
