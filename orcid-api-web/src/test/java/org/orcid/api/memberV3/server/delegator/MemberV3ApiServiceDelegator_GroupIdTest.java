@@ -55,7 +55,7 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 

@@ -17,7 +17,7 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
-import org.orcid.core.utils.NullUtils;
+import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

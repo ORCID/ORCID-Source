@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.orcid.core.adapter.JpaJaxbAddressAdapter;
 import org.orcid.core.adapter.MockSourceNameCache;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;

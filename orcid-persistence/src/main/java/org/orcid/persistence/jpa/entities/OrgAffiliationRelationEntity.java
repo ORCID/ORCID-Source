@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.orcid.persistence.util.OrcidStringUtils;
+import org.orcid.utils.NullUtils;
 
 /**
  * 
@@ -176,43 +176,43 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     }
 
     private int compareEnds(FuzzyDateEntity endDate, FuzzyDateEntity otherEndDate) {
-        if (OrcidStringUtils.anyNull(endDate, otherEndDate)) {
-            return -OrcidStringUtils.compareNulls(endDate, otherEndDate);
+        if (NullUtils.anyNull(endDate, otherEndDate)) {
+            return -NullUtils.compareNulls(endDate, otherEndDate);
         }
         return -endDate.compareTo(otherEndDate);
     }
 
     private int compareStarts(FuzzyDateEntity startDate, FuzzyDateEntity otherStartDate) {
-        if (OrcidStringUtils.anyNull(startDate, otherStartDate)) {
-            return OrcidStringUtils.compareNulls(startDate, otherStartDate);
+        if (NullUtils.anyNull(startDate, otherStartDate)) {
+            return NullUtils.compareNulls(startDate, otherStartDate);
         }
         return -startDate.compareTo(otherStartDate);
     }
 
     private int compareTypes(String affiliationType, String otherAffiliationType) {
-        if (OrcidStringUtils.anyNull(affiliationType, otherAffiliationType)) {
-            return OrcidStringUtils.compareNulls(affiliationType, otherAffiliationType);
+        if (NullUtils.anyNull(affiliationType, otherAffiliationType)) {
+            return NullUtils.compareNulls(affiliationType, otherAffiliationType);
         }
         return affiliationType.compareTo(otherAffiliationType);
     }
 
     private int compareNames(String name, String otherName) {
-        if (OrcidStringUtils.anyNull(name, otherName)) {
-            return OrcidStringUtils.compareNulls(name, otherName);
+        if (NullUtils.anyNull(name, otherName)) {
+            return NullUtils.compareNulls(name, otherName);
         }
         return name.compareTo(otherName);
     }
 
     private int compareDepartments(String department, String otherDepartment) {
-        if (OrcidStringUtils.anyNull(department, otherDepartment)) {
-            return OrcidStringUtils.compareNulls(department, otherDepartment);
+        if (NullUtils.anyNull(department, otherDepartment)) {
+            return NullUtils.compareNulls(department, otherDepartment);
         }
         return department.compareTo(otherDepartment);
     }
 
     private int compareTitles(String title, String otherTitle) {
-        if (OrcidStringUtils.anyNull(title, otherTitle)) {
-            return OrcidStringUtils.compareNulls(title, otherTitle);
+        if (NullUtils.anyNull(title, otherTitle)) {
+            return NullUtils.compareNulls(title, otherTitle);
         }
         return title.compareTo(otherTitle);
     }

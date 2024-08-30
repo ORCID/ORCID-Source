@@ -12,7 +12,7 @@ import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.util.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

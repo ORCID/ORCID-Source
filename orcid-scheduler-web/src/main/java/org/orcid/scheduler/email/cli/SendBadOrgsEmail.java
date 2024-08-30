@@ -38,7 +38,7 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.core.utils.NullUtils;
+import org.orcid.utils.NullUtils;
 import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

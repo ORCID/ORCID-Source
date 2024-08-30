@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 import org.junit.Test;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.ContributorRole;
 import org.orcid.jaxb.model.common.Iso3166Country;

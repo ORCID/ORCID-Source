@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
