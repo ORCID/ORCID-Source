@@ -46,4 +46,15 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUHT-CODE-REQ-ID-TO-oauth2_authoriziation_code_detail">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="spring_authorization_code_request_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="spring_authorization_code_request_id" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
