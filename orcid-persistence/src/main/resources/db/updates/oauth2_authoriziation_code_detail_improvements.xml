@@ -2,7 +2,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <changeSet author="Angel Montenegro" id="ADD-SCOPES-TO-oauth2_authoriziation_code_detail">
+    <changeSet author="Angel Montenegro" id="ADD-SCOPES">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="scopes"/>
@@ -13,7 +13,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Angel Montenegro" id="ADD-AUTHORITIES-TO-oauth2_authoriziation_code_detail">
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORITIES">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorities"/>
@@ -24,7 +24,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-URI-TO-oauth2_authoriziation_code_detail">
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-URI">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_request_uri"/>
@@ -35,7 +35,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Angel Montenegro" id="ADD-6-CHARS-AUTH-CODE-TO-oauth2_authoriziation_code_detail">
+    <changeSet author="Angel Montenegro" id="ADD-6-CHARS-AUTH-CODE">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="6_chars_authoriziation_code_value"/>
@@ -46,7 +46,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUHT-CODE-REQ-ID-TO-oauth2_authoriziation_code_detail">
+    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUHT-CODE-REQ-ID">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="spring_authorization_code_request_id"/>
