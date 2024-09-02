@@ -316,12 +316,7 @@
             <version>2.0.1</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>1.15.4</version>
-		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
 		<dependency>
 		    <groupId>javax.ws.rs</groupId>

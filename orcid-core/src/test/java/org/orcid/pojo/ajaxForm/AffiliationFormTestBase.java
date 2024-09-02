@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 public abstract class AffiliationFormTestBase {
     XMLGregorianCalendar created;

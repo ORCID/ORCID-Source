@@ -21,13 +21,12 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
-import org.orcid.core.utils.OrcidStringUtils;
-
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.scheduler.autospam.AutospamEmailSender;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

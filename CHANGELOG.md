@@ -1,3 +1,49 @@
+## v2.64.3 - 2024-09-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.2...v2.64.3)
+
+## v2.64.2 - 2024-08-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.1...v2.64.2)
+
+## v2.64.1 - 2024-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.0...v2.64.1)
+
+## v2.64.0 - 2024-08-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.10...v2.64.0)
+
+## v2.63.10 - 2024-08-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.9...v2.63.10)
+
+## v2.63.9 - 2024-08-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.8...v2.63.9)
+
+## v2.63.8 - 2024-08-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.7...v2.63.8)
+
+- [#7067](https://github.com/ORCID/ORCID-Source/pull/7067): 1. Fixed the correct query string for showing first 10 resutls.
+
+## v2.63.7 - 2024-08-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.6...v2.63.7)
+
+## v2.63.6 - 2024-08-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.5...v2.63.6)
+
+## v2.63.5 - 2024-08-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.4...v2.63.5)
+
+## v2.63.4 - 2024-08-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.3...v2.63.4)
+
 ## v2.63.3 - 2024-08-06
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.2...v2.63.3)

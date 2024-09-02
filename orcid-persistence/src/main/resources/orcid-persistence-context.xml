@@ -81,8 +81,14 @@
 	
 	<bean id="emailDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>    		
-    
+	</bean>
+
+    <bean id="profileEmailDomainDao" class="org.orcid.persistence.dao.impl.ProfileEmailDomainDaoImpl" />
+
+    <bean id="profileEmailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileEmailDomainDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+
     <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />
     
     <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">

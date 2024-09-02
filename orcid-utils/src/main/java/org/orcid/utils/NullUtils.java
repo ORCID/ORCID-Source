@@ -1,4 +1,4 @@
-package org.orcid.core.utils;
+package org.orcid.utils;
 
 /**
  * @author Will Simpson

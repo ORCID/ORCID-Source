@@ -13,7 +13,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.core.utils.NullUtils;
+import org.orcid.utils.NullUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
