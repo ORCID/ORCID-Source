@@ -24,6 +24,17 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-STATE-ATTRIBUTE">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_state_attribute"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorization_state_attribute" type="VARCHAR(500)" />
+        </addColumn>
+    </changeSet>
+
     <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-URI">
         <preConditions onFail="MARK_RAN">
             <not>
