@@ -1,7 +1,9 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -19,6 +21,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.Funding;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -132,7 +135,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if (isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, ActionType.CREATE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(profileFundingEntity, funding.getExternalIdentifiers(), ActionType.CREATE));
         }
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
@@ -194,7 +197,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         pfe = profileFundingDao.merge(pfe);
         profileFundingDao.flush();
         if (isApiRequest) {
-            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.UPDATE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, funding.getExternalIdentifiers(), ActionType.UPDATE));
         }
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
@@ -215,16 +218,24 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
         orcidSecurityManager.checkSource(pfe);
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, ActionType.DELETE));
+        Funding funding = jpaJaxbFundingAdapter.toFunding(pfe);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItemList(pfe, funding.getExternalIdentifiers(), ActionType.DELETE));
         return result;
     }
 
-    private List<Item> createItemList(ProfileFundingEntity profileFundingEntity, ActionType type) {
+    private List<Item> createItemList(ProfileFundingEntity profileFundingEntity, ExternalIDs extIds, ActionType type) {
         Item item = new Item();
         item.setItemName(profileFundingEntity.getTitle());
         item.setItemType(ItemType.FUNDING);
         item.setPutCode(String.valueOf(profileFundingEntity.getId()));
         item.setActionType(type);
+
+        if(extIds != null) {
+            Map<String, Object> additionalInfo = new HashMap<String, Object>();
+            additionalInfo.put("external_identifiers", extIds);
+            item.setAdditionalInfo(additionalInfo);
+        }
+
         return Arrays.asList(item);
     }
 

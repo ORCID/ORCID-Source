@@ -28,7 +28,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.Relationship;
@@ -229,21 +229,25 @@ public class EmailMessageSenderTest {
         }
         item.setActionType(ActionType.CREATE);
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
+        List<Map> extIds = new ArrayList<>();
         if (doi1 != null && issn1 != null) {
-            ExternalIDs extIds = new ExternalIDs();
-            ExternalID extId1 = new ExternalID();
-            extId1.setRelationship(Relationship.SELF);
-            extId1.setType("doi");
-            extId1.setValue(doi1);
-            extIds.getExternalIdentifier().add(extId1);
+            Map<String, String> map1 = new HashMap<>();
+            map1.put("type", "doi");
+            map1.put("value", doi1);
+            map1.put("relationship", Relationship.SELF.name());
+            extIds.add(map1);
 
-            ExternalID extId2 = new ExternalID();
-            extId2.setRelationship(Relationship.SELF);
-            extId2.setType("issn");
-            extId2.setValue(issn1);
-            extIds.getExternalIdentifier().add(extId2);
+            Map<String, Object> map2 = new HashMap<>();
+            map2.put("type", "doi");
+            Map<String, String> urlMap = new HashMap<>();
+            urlMap.put("value", "https://doi.org/100/100");
+            map2.put("url", urlMap);
+            map2.put("relationship", Relationship.SELF.name());
+            extIds.add(map2);
 
-            additionalInfo.put("external_identifiers", extIds);
+            Map<String, Object> extIdsMap = new HashMap<>();
+            extIdsMap.put("externalIdentifier", extIds);
+            additionalInfo.put("external_identifiers", extIdsMap);
         } else if (dept != null && org != null) {
             additionalInfo.put("department", dept);
             additionalInfo.put("org_name", org);

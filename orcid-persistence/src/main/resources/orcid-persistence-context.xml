@@ -26,18 +26,6 @@
     <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
-	<!-- Profile last modified aspect -->
-	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
-		<property name="enabled" value="true" />
-	</bean>
-
-	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileLastModifiedDao" ref="profileLastModifiedDaoReadOnly" />
-		<property name="enabled" value="false" />
-		<property name="name" value="read_only" />
-	</bean>
-
 	<!-- Person DAO's -->
 	<bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
 	
@@ -93,8 +81,14 @@
 	
 	<bean id="emailDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>    		
-    
+	</bean>
+
+    <bean id="profileEmailDomainDao" class="org.orcid.persistence.dao.impl.ProfileEmailDomainDaoImpl" />
+
+    <bean id="profileEmailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileEmailDomainDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+
     <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />
     
     <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">
@@ -281,10 +275,6 @@
     
     <bean id="rejectedGroupingSuggestionDaoReadOnly" class="org.orcid.persistence.dao.impl.RejectedGroupingSuggestionDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
-    </bean>
-    
-    <bean id="invalidIssnGroupIdRecordDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity" />
     </bean>
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">

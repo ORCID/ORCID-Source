@@ -691,7 +691,7 @@ the software.
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.3.8</version>
+                <version>42.7.2</version>
             </dependency>
             <dependency>
               <groupId>org.hibernate</groupId>
@@ -912,7 +912,7 @@ the software.
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>31.1-jre</version>
+                <version>32.0.0-jre</version>
             </dependency>
 
             <dependency>

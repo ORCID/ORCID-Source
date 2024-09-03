@@ -63,7 +63,7 @@ import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -202,15 +202,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Check if the user record is locked
         if (!profile.isAccountNonLocked()) {
-            LockedException lockedException = new LockedException();
+            LockedException lockedException = new LockedException(orcid + " is locked");
             lockedException.setOrcid(profile.getId());
             throw lockedException;
         }
 
         // Check if the user record is deactivated
         if (profile.getDeactivationDate() != null) {
-            DeactivatedException exception = new DeactivatedException();
-            exception.setOrcid(orcid);
+            DeactivatedException exception = new DeactivatedException(orcid + " is deactivated");
+            exception.setOrcid(orcid);            
             throw exception;
         }
     }

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -27,8 +28,8 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.Relationship;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
 
@@ -49,7 +50,10 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
-
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
@@ -129,7 +133,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     }
     
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
@@ -137,11 +141,11 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         extId1 = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId1.getPutCode());
         
         assertNotNull(extId1);
-        assertEquals(Long.valueOf(1), extId1.getDisplayIndex());
+        assertEquals(Long.valueOf(0), extId1.getDisplayIndex());
     }
     
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         PersonExternalIdentifier extId = getExternalIdentifier();
         extId.setType(extId.getType() + System.currentTimeMillis());
@@ -149,7 +153,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         extId1 = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId1.getPutCode());
         
         assertNotNull(extId1);
-        assertEquals(Long.valueOf(0), extId1.getDisplayIndex());
+        assertEquals(Long.valueOf(1), extId1.getDisplayIndex());
     }
     
     @Test
@@ -198,6 +202,41 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         assertEquals(Long.valueOf(19), elements.getExternalIdentifiers().get(0).getPutCode());
         assertEquals(Long.valueOf(18), elements.getExternalIdentifiers().get(1).getPutCode());
         assertEquals(Long.valueOf(13), elements.getExternalIdentifiers().get(2).getPutCode());
+    }
+    
+    @Test
+    public void addExternalIdentifierUpdateLastModifiedTest() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        externalIdentifierManager.createExternalIdentifier(orcid, extId, false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));        
+    }
+    
+    @Test 
+    public void deleteExternalIdentifierUpdateLastModifiedTest() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);        
+        externalIdentifierManager.deleteExternalIdentifier(orcid, Long.valueOf(1), false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));
+    }
+    
+    @Test 
+    public void updateExternalIdentifierUpdateLastModifiedTest() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        String orcid = "4444-4444-4444-4442";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, Long.valueOf(2));
+        assertNotNull(extId);
+        assertEquals("abc123", extId.getValue());        
+        extId.setValue("Updated!");
+        externalIdentifierManager.updateExternalIdentifier(orcid, extId, false);        
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));  
     }
     
     private PersonExternalIdentifier getExternalIdentifier() {

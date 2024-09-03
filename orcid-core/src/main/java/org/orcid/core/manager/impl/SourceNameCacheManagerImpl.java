@@ -91,6 +91,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     }
 
     private String getClientSourceName(String clientId) {
+        LOGGER.debug("Fetching client name from DB: " + clientId);
         if (clientDetailsDao.existsAndIsNotPublicClient(clientId)) {
             ClientDetailsEntity clientDetails = clientDetailsDao.find(clientId);
             return clientDetails != null ? clientDetails.getClientName() : null;
@@ -110,6 +111,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     }
 
     private String getProfileSourceNameFromDb(String orcid) {
+        LOGGER.debug("Fetching user name from DB: " + orcid);
         try {
             if (!recordNameDao.exists(orcid)) {
                 throw new IllegalArgumentException("Unable to find source name for: " + orcid);

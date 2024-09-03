@@ -214,23 +214,23 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {        
+    public void displayIndexIsSetTo_1_FromAPI() {        
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(0), w.getDisplayIndex());
+        assertEquals(Long.valueOf(1), w.getDisplayIndex());
     }
 
     @Test
@@ -1435,7 +1435,7 @@ public class WorkManagerTest extends BaseTest {
 
         // full work matching user preferred id should be loaded from db (10 is
         // highest display index)
-        Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
+        Mockito.when(mockDao.find(Mockito.eq(1l))).thenReturn(getUserPreferredWork());
 
         workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
 
@@ -1853,6 +1853,53 @@ public class WorkManagerTest extends BaseTest {
         workManager.updateWork(claimedOrcid, workToUpdate, true);
 
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+    
+    @Test
+    public void testCompareIdenticalWorksDifferentSource() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+        // make a duplicate as a different assertion origin
+        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+        
+        // identical same source
+        workManager.updateWork(claimedOrcid, w, true);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+
+        WorkContributors contributors = getContributors();
+        contributors.getContributor().get(0).getContributorAttributes().setContributorRole(ContributorRole.EDITOR.name());
+        contributors.getContributor().get(0).setCreditName(new CreditName("credit name 2"));
+
+        workToUpdate.setWorkContributors(contributors);
+
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, workToUpdate, true);
+            fail();
+        } catch (Exception e) {
+        }
+        
+        //identical different source
+         try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, w, true);
+            fail();
+        } catch (Exception e) {
+        	
+        }
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }

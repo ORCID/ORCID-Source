@@ -21,7 +21,7 @@ Welcome to ORCID Source. Here are some resources to get you started.
 
 # Getting Support
 
-If you are experience problems using ORCID you can check our [Support page](https://support.orcid.org/hc/en-us) or reach out on the [API user's listserv](https://groups.google.com/forum/#!forum/orcid-api-users). 
+If you are experiencing problems using ORCID you can check our [Support page](https://support.orcid.org/hc/en-us) or reach out on the [API user's listserv](https://groups.google.com/forum/#!forum/orcid-api-users). 
 
 # General Application Stack
 

@@ -40,7 +40,7 @@ ORCID would like to let you know
                         MORE INFO: https://testserver.orcid.org/inbox#3
 EducationNew items added:                            * <i>org name</i> education-1 (2014-07-12)
 
-WorksNew items added:                            * work-1 doi: doi01 (2014-07-12)
+WorksNew items added:                            * work-1 doi: doi01 (2014-07-12)<ul><li style="padding-left: 0;margin-top: 2px;">doi: doi01</li><li style="padding-left: 0;margin-top: 2px;">doi: <a style="text-decoration: underline;color: #085c77;" target="_blank" href="https://doi.org/100/100">https://doi.org/100/100</a></li></ul>
 
 
 Why did I get this email?

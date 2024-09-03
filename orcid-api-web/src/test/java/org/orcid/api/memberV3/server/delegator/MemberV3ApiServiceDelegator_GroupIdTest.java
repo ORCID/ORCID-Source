@@ -55,7 +55,7 @@ import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -100,7 +100,7 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     }
 
     @Test
-    public void testCreateGroupIdRecord() {
+    public void testCreateGroupIdRecord() throws Exception {
         GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
         IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
 
@@ -212,7 +212,7 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     }
 
     @Test
-    public void testFindGroupIdRecordByNonExistentIssnGroupId() {
+    public void testFindGroupIdRecordByNonExistentIssnGroupId() throws Exception {
         GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
         GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
         IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
@@ -267,7 +267,7 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     }
 
     @Test
-    public void testCreateGroupIdRecordWithNonExistentIssnGroupId() {
+    public void testCreateGroupIdRecordWithNonExistentIssnGroupId() throws Exception {
         GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
         GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
         IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
@@ -322,7 +322,7 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     }
 
     @Test
-    public void testCreateGroupIdRecordWithAnotherNonExistentIssnGroupId() {
+    public void testCreateGroupIdRecordWithAnotherNonExistentIssnGroupId() throws Exception {
         GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
         GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
         IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");
@@ -377,7 +377,7 @@ public class MemberV3ApiServiceDelegator_GroupIdTest extends DBUnitTest {
     }
 
     @Test
-    public void testCreateGroupIdRecordWithInvalidIssnGroupId() {
+    public void testCreateGroupIdRecordWithInvalidIssnGroupId() throws Exception {
         GroupIdRecordManager groupIdRecordManager = (GroupIdRecordManager) ReflectionTestUtils.getField(serviceDelegator, "groupIdRecordManager");
         GroupIdRecordDao groupIdRecordDao = (GroupIdRecordDao) ReflectionTestUtils.getField(groupIdRecordManager, "groupIdRecordDao");
         IssnClient issnClient = (IssnClient) ReflectionTestUtils.getField(groupIdRecordManager, "issnClient");

@@ -13,6 +13,8 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
@@ -141,16 +143,25 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         document.setOrgDisambiguatedId(String.valueOf(entity.getId()));
         document.setOrgDisambiguatedName(entity.getName());
         document.setOrgDisambiguatedCity(entity.getCity());
-        document.setOrgDisambiguatedRegion(entity.getRegion());
+        if (entity.getRegion() != null)
+            document.setOrgDisambiguatedRegion(entity.getRegion());
         if (entity.getCountry() != null)
             document.setOrgDisambiguatedCountry(entity.getCountry());
         document.setOrgDisambiguatedIdFromSource(entity.getSourceId());
         document.setOrgDisambiguatedIdSourceType(entity.getSourceType());
         document.setOrgDisambiguatedType(entity.getOrgType());
         document.setOrgDisambiguatedPopularity(entity.getPopularity());
-        Set<String> orgNames = new HashSet<>();
-        orgNames.add(entity.getName());
+        
+        Set<String> orgNames =  getOrgNamesFromJson(entity.getNamesJson(), entity.getName());
 
+        if(entity.getLocationsJson() != null) {
+            document.setOrgLocationsJson(entity.getLocationsJson());
+        }
+
+        if(entity.getNamesJson() != null) {
+            document.setOrgNamesJson(entity.getNamesJson());
+        }
+        
         List<OrgEntity> orgs = orgDao.findByOrgDisambiguatedId(entity.getId());
         if (orgs != null) {
             for (OrgEntity org : orgs) {
@@ -198,7 +209,7 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     @Override
     public List<OrgDisambiguated> searchOrgsFromSolr(String searchTerm, int firstResult, int maxResult, boolean fundersOnly) {
-        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly);
+        List<OrgDisambiguatedSolrDocument> docs = orcidSolrOrgsClient.getOrgs(searchTerm, firstResult, maxResult, fundersOnly, true);
         List<OrgDisambiguated> ret = new ArrayList<OrgDisambiguated>();
         for (OrgDisambiguatedSolrDocument doc : docs) {
             OrgDisambiguated org = convertSolrDocument(doc);
@@ -244,6 +255,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setDisambiguatedAffiliationIdentifier(doc.getOrgDisambiguatedId());
         org.setSourceType(doc.getOrgDisambiguatedIdSourceType());
         org.setSourceId(doc.getOrgDisambiguatedIdFromSource());
+        org.setLocationsJson(doc.getOrgLocationsJson());
+        org.setNamesJson(doc.getOrgNamesJson());
         return org;
     }
 
@@ -320,6 +333,8 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
         org.setSourceId(orgDisambiguatedEntity.getSourceId());
         org.setSourceType(orgDisambiguatedEntity.getSourceType());
         org.setUrl(orgDisambiguatedEntity.getUrl());
+        org.setNamesJson(orgDisambiguatedEntity.getNamesJson());
+        org.setLocationsJson(orgDisambiguatedEntity.getLocationsJson());
         Map<String, OrgDisambiguatedExternalIdentifiers> externalIdsMap = new HashMap<String, OrgDisambiguatedExternalIdentifiers>();
         if (orgDisambiguatedEntity.getExternalIdentifiers() != null && !orgDisambiguatedEntity.getExternalIdentifiers().isEmpty()) {
             for (OrgDisambiguatedExternalIdentifierEntity extIdEntity : orgDisambiguatedEntity.getExternalIdentifiers()) {
@@ -406,5 +421,26 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             });
 
         }
+    }
+    
+    private Set<String> getOrgNamesFromJson(String orgNamesStr, String name){
+        Set<String> orgNames = new HashSet<>();
+        orgNames.add(name);
+        if(orgNamesStr != null) {
+            
+            //add aliases, labels, acronyms
+            try {
+                JSONArray namesArr = new JSONArray(orgNamesStr);
+                for(Object nameObj: namesArr) {
+                    JSONObject nameJson = (JSONObject)nameObj;
+                    orgNames.add(nameJson.getString("value"));
+                }
+            }
+            catch (Exception ex) {
+                LOGGER.error("ORG Disambiguated exception when parsing names json: " + orgNamesStr, ex);
+            }
+        }
+        
+        return orgNames;
     }
 }

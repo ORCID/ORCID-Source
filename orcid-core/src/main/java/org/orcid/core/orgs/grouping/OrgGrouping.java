@@ -21,8 +21,8 @@ import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEnti
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.OrgDisambiguatedExternalIdentifiers;
 import org.orcid.pojo.grouping.OrgGroup;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.core.utils.FunderIdentifierType;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

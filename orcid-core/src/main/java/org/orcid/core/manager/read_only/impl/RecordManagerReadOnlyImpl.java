@@ -28,7 +28,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

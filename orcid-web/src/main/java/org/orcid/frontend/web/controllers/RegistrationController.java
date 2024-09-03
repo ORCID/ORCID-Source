@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
@@ -35,24 +35,19 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.EventType;
 import org.orcid.core.utils.OrcidRequestUtil;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
-import org.orcid.frontend.web.controllers.helper.SearchOrcidSolrCriteria;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.persistence.constants.SendEmailFrequency;
-import org.orcid.pojo.OrgDisambiguated;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
@@ -60,6 +55,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -337,17 +333,17 @@ public class RegistrationController extends BaseController {
             if (!AffiliationType.EMPLOYMENT.equals(AffiliationType.fromValue(affiliationForm.getAffiliationType().getValue()))) {
                 setError(affiliationForm.getAffiliationType(), "Invalid affiliation type");
             }
-            if (reg.getAffiliationForm().getDepartmentName() != null) {
+            if (affiliationForm.getDepartmentName() != null) {
                 if (affiliationForm.getDepartmentName().getValue() != null && affiliationForm.getDepartmentName().getValue().trim().length() > 1000) {
                     setError(affiliationForm.getDepartmentName(), "common.length_less_1000");
                 }
             }
-            if (reg.getAffiliationForm().getRoleTitle() != null) {
+            if (affiliationForm.getRoleTitle() != null) {
                 if (!PojoUtil.isEmpty(affiliationForm.getRoleTitle()) && affiliationForm.getRoleTitle().getValue().trim().length() > 1000) {
                     setError(affiliationForm.getRoleTitle(), "common.length_less_1000");
                 }
             }
-            if (reg.getAffiliationForm().getStartDate() != null) {
+            if (affiliationForm.getStartDate() != null) {
                 if(!validDate(affiliationForm.getStartDate())) {
                     setError(affiliationForm.getStartDate(), "common.dates.invalid");
                 }
@@ -361,6 +357,9 @@ public class RegistrationController extends BaseController {
         copyErrors(reg.getPassword(), reg);
         copyErrors(reg.getPasswordConfirm(), reg);
         copyErrors(reg.getTermsOfUse(), reg);
+        if(reg.getAffiliationForm() != null && reg.getAffiliationForm().getStartDate() != null) {
+            copyErrors(reg.getAffiliationForm().getStartDate(), reg);
+        }
 
         additionalEmailsValidateOnRegister(request, reg);
         for (Text emailAdditional : reg.getEmailsAdditional()) {
@@ -612,36 +611,36 @@ public class RegistrationController extends BaseController {
                         .toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
-        String dateString = date.getYear();
-        // If the month is empty and day provided is an invalid date
-        if (StringUtils.isBlank(date.getMonth())) {
+        String dateString = date.getYear();        
+        
+        // If year is blank and month or day is not, then it is invalid
+        if (StringUtils.isBlank(date.getYear())) {
+            if (!StringUtils.isBlank(date.getMonth()) || !StringUtils.isBlank(date.getDay())) {
+                return false;
+            }
+        } else if (StringUtils.isBlank(date.getMonth())) {
+            // If the month is empty and day is not empty, then it is invalid
             if (!StringUtils.isBlank(date.getDay())) {
                 return false;
             }
-        }
-        else if (StringUtils.isBlank(date.getYear())) {
-            if (!StringUtils.isBlank(date.getDay()) && !StringUtils.isBlank(date.getMonth())) {
-                return false;
-            }
-        }
-        else {
-            dateString += date.getMonth();
+        } else {
+            dateString += StringUtils.leftPad(date.getMonth(), 2, '0');
             if (!StringUtils.isBlank(date.getDay())) {
-                dateString += date.getDay();
+                dateString += StringUtils.leftPad(date.getDay(), 2, '0');
             }
         }
 
-        for (DateTimeFormatter formatter : formatters) {
-            try {
-                LocalDate localDate = LocalDate.parse(dateString, formatter);
-                if (PojoUtil.isEmpty(date.getDay()) || localDate.getDayOfMonth() == Integer.parseInt(date.getDay())) {
-                    // formatter will correct day to last valid day of month if
-                    // it is too great
+        if(StringUtils.isBlank(dateString)) {
+            return true;
+        } else {
+            for (DateTimeFormatter formatter : formatters) {
+                try {
+                    LocalDate.parse(dateString, formatter);
                     return true;
+                } catch (DateTimeParseException e) {                    
                 }
-            } catch (DateTimeParseException e) {
             }
-        }
+        } 
         return false;
     }
 

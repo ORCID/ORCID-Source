@@ -6,20 +6,24 @@ import org.togglz.core.context.FeatureContext;
 
 
 public enum Features implements Feature {
+
+    @Label("Public record header with summary")
+    NEW_RECORD_HEADER_WITH_SUMMARY,
+
+    @Label("Sign in updates V1")
+    SIGN_IN_UPDATES_V1,
+
+    @Label("Homepage Headless WordPress")
+    WORDPRESS_HOME_PAGE,
+
     @Label("Registration 2.1: Add affiliations on registration")
     REGISTRATION_2_1,
-
-    @Label("New public record header")
-    NEW_RECORD_HEADER,
    
     @Label("Registration 2.0")
     REGISTRATION_2_0,
 
     @Label("Track user events")
     EVENTS,
-
-    @Label("Source sorting")
-    SOURCE_SORTING,
 
     @Label("Professional activities")
     PROFESSIONAL_ACTIVITIES,
@@ -49,7 +53,19 @@ public enum Features implements Feature {
     SEND_ADD_WORKS_EMAILS,
 
     @Label("Delete events older than 90 days from the DB ")
-    DELETE_EVENTS;
+    DELETE_EVENTS,
+
+    @Label("Track public events stats ")
+    PAPI_EVENTS, 
+    
+    @Label("Enable summary endpoint in the Members API")
+    MAPI_SUMMARY_ENDPOINT,
+
+    @Label("Enable email domains")
+    EMAIL_DOMAINS,
+
+    @Label("Enable email domains in the UI")
+    EMAIL_DOMAINS_UI;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

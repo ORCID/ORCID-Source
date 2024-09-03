@@ -12,12 +12,14 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
@@ -50,6 +52,7 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
@@ -268,8 +271,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 }
                             }
                         }
-
-
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
@@ -355,21 +356,25 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
-
-        if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
-            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
-            return workSaved;
-        }
-        
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
         Source activeSource = sourceManager.retrieveActiveSource();
-        
+
         //Save the original source
         String existingSourceId = workEntity.getSourceId();
         String existingClientSourceId = workEntity.getClientSourceId();
+        
+        if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+            if (activeSource != null) {
+                if(!activeSource.equals(workSaved.getSource())) {
+                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9010.developerMessage").replace("${activity}", "work"));
+                }
+            }
+            
+            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+            return workSaved;
+        }
         
         if (isApiRequest) {
             activityValidator.validateWork(work, activeSource, false, isApiRequest, originalVisibility);                        
@@ -464,9 +469,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         MinimizedWorkEntity userPreferred = null;
         
         boolean groupableExternalIdFound = false;
-        for (MinimizedWorkEntity work : works) {
+        for (MinimizedWorkEntity work : works) {     	
             if (orcid.equals(work.getSourceId())) {
                 userVersions.add(work);
+                work.setDisplayIndex(0L);
+            } else {
+                work.setDisplayIndex(1L);
             }
             if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
                 userPreferred = work;

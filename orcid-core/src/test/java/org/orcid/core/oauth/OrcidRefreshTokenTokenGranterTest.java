@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.random.RandomDataGenerator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -433,7 +434,8 @@ public class OrcidRefreshTokenTokenGranterTest extends DBUnitTest {
     } 
        
     private long getRandom() {
-        Random random = new Random(System.currentTimeMillis());
-        return random.nextLong();
+    	long leftLimit = 10L;
+        long rightLimit = 10000000L;
+        return new RandomDataGenerator().nextLong(leftLimit, rightLimit);
     }
 }

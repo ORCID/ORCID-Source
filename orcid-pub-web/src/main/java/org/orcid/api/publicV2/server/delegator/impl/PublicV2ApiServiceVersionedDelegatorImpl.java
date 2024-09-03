@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
-import org.orcid.core.exception.DeactivatedException;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 
@@ -30,7 +32,10 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;    
+    private OrcidSecurityManager orcidSecurityManager;   
+    
+    @Resource
+    private EventManager eventManager;
     
     @Override
     public Response viewStatusText() {
@@ -282,11 +287,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     private void checkProfileStatus(String orcid) {
-        try {
-            orcidSecurityManager.checkProfile(orcid);
-        } catch(DeactivatedException e) {
-            // Ignore the DeactivatedException since we should be able to return the empty element
-        }
+        orcidSecurityManager.checkProfile(orcid);        
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -305,6 +306,11 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     @Override
     public Response viewClient(String clientId) {
         return publicV2ApiServiceDelegator.viewClient(clientId);
+    }
+
+    @Override
+    public void trackEvents(HttpServletRequest httpRequest) {
+        publicV2ApiServiceDelegator.trackEvents(httpRequest);
     }
 
 }

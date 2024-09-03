@@ -12,7 +12,7 @@ import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -228,35 +228,6 @@ public class RecordEmailSender {
         mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reactivation", locale), body, htmlBody);
     }
 
-    public void sendEmailAddressChangedNotification(String currentUserOrcid, String newEmail, String oldEmail) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(currentUserOrcid);
-        Locale userLocale = getUserLocaleFromProfileEntity(profile);
-
-        // build up old template
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-
-        String subject = verifyEmailUtils.getSubject("email.subject.email_removed", userLocale);
-        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(currentUserOrcid);
-        templateParams.put("emailName", emailFriendlyName);
-        String verificationUrl = verifyEmailUtils.createVerificationUrl(newEmail, orcidUrlManager.getBaseUrl());
-        templateParams.put("verificationUrl", verificationUrl);
-        templateParams.put("oldEmail", oldEmail);
-        templateParams.put("newEmail", newEmail);
-        templateParams.put("orcid", currentUserOrcid);
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", subject);
-
-        verifyEmailUtils.addMessageParams(templateParams, userLocale);
-
-        // Generate body from template
-        String body = templateManager.processTemplate("email_removed.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("email_removed_html.ftl", templateParams);
-
-        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, oldEmail, subject, body, html);
-    }
-
     public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
         ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
         String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();

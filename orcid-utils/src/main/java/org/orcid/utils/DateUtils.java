@@ -13,6 +13,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import java.text.SimpleDateFormat;
 
 /**
  * 
@@ -23,6 +24,8 @@ public class DateUtils {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d+)(?:-(\\d+))?(?:-(\\d+))?(T\\d\\d:\\d\\d:\\d\\d)?");
 
+    private static final SimpleDateFormat ISO8601 = new SimpleDateFormat("yyyy-MM-dd");
+    
     //Thread safe: see source http://www.docjar.com/html/api/com/sun/org/apache/xerces/internal/jaxp/datatype/DatatypeFactoryImpl.java.html
     //see also analysis: http://www.javajirawat.com/2015/09/xmlgregoriancalendar-datatypefactory.html
     private static DatatypeFactory dataTypeFactory;
@@ -158,5 +161,11 @@ public class DateUtils {
         }
         return dataTypeFactory;
     }
-
+    
+    public static String formatDateISO8601(Date date) {
+        if (date == null) {
+            return null;
+        }        
+        return ISO8601.format(date);
+    }
 }

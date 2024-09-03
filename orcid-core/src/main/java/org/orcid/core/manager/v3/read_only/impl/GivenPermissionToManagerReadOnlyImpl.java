@@ -13,7 +13,7 @@ import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.pojo.DelegateForm;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.cache.annotation.Cacheable;
 
 public class GivenPermissionToManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements GivenPermissionToManagerReadOnly {

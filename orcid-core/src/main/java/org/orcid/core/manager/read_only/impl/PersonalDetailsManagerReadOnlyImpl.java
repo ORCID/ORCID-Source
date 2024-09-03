@@ -15,7 +15,7 @@ import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.jaxb.model.record_v2.PersonalDetails;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 /**
  * 

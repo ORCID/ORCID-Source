@@ -162,8 +162,11 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }                
             }
             
+            // Do not put the token in the cache if the token is disabled
+            if(token.getAdditionalInformation() != null && !token.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_DISABLED)) {
+                setToCache(client.getName(), token);
+            }
             removeMetadataFromToken(token);
-            setToCache(client.getName(), token);
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
@@ -307,6 +310,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_DISABLED))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_DISABLED);
         }
     }
     

@@ -34,6 +34,7 @@ import org.orcid.api.common.writer.schemaorg.SchemaOrgMBWriterV2;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
@@ -113,7 +114,8 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private final String ORCID = "0000-0000-0000-0003";
-
+    private String deactivatedUserOrcid = "0000-0000-0000-0007";
+    
     @Resource(name = "publicV2ApiServiceDelegator")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
 
@@ -1517,4 +1519,5 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("self_public_user_obo_type",doc.identifier.get(0).propertyID);
         assertEquals( "self_public_user_obo_ref",doc.identifier.get(0).value);
     }
+    
 }

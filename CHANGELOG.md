@@ -1,3 +1,345 @@
+## v2.64.3 - 2024-09-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.2...v2.64.3)
+
+## v2.64.2 - 2024-08-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.1...v2.64.2)
+
+## v2.64.1 - 2024-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.0...v2.64.1)
+
+## v2.64.0 - 2024-08-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.10...v2.64.0)
+
+## v2.63.10 - 2024-08-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.9...v2.63.10)
+
+## v2.63.9 - 2024-08-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.8...v2.63.9)
+
+## v2.63.8 - 2024-08-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.7...v2.63.8)
+
+- [#7067](https://github.com/ORCID/ORCID-Source/pull/7067): 1. Fixed the correct query string for showing first 10 resutls.
+
+## v2.63.7 - 2024-08-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.6...v2.63.7)
+
+## v2.63.6 - 2024-08-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.5...v2.63.6)
+
+## v2.63.5 - 2024-08-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.4...v2.63.5)
+
+## v2.63.4 - 2024-08-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.3...v2.63.4)
+
+## v2.63.3 - 2024-08-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.2...v2.63.3)
+
+## v2.63.2 - 2024-08-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.1...v2.63.2)
+
+## v2.63.1 - 2024-08-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.63.0...v2.63.1)
+
+## v2.63.0 - 2024-08-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.6...v2.63.0)
+
+## v2.62.6 - 2024-08-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.5...v2.62.6)
+
+## v2.62.5 - 2024-07-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.4...v2.62.5)
+
+## v2.62.4 - 2024-07-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.3...v2.62.4)
+
+## v2.62.3 - 2024-07-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.2...v2.62.3)
+
+## v2.62.2 - 2024-07-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.1...v2.62.2)
+
+## v2.62.1 - 2024-07-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.62.0...v2.62.1)
+
+## v2.62.0 - 2024-07-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.6...v2.62.0)
+
+## v2.61.6 - 2024-07-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.5...v2.61.6)
+
+## v2.61.5 - 2024-07-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.4...v2.61.5)
+
+## v2.61.4 - 2024-07-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.3...v2.61.4)
+
+## v2.61.3 - 2024-06-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.2...v2.61.3)
+
+## v2.61.2 - 2024-06-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.1...v2.61.2)
+
+## v2.61.1 - 2024-06-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.61.0...v2.61.1)
+
+## v2.61.0 - 2024-06-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.60.2...v2.61.0)
+
+## v2.60.2 - 2024-06-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.60.1...v2.60.2)
+
+### Fix
+
+- Make validated items to be default preferred source for grouping (#7039)
+
+## v2.60.1 - 2024-06-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.60.0...v2.60.1)
+
+## v2.60.0 - 2024-05-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.59.2...v2.60.0)
+
+## v2.59.2 - 2024-05-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.59.1...v2.59.2)
+
+## v2.59.1 - 2024-05-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.59.0...v2.59.1)
+
+### Fix
+
+- Only collect public api anonymouse request over a 1000 (#7034)
+
+## v2.59.0 - 2024-05-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.15...v2.59.0)
+
+## v2.57.15 - 2024-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.14...v2.57.15)
+
+### Fix
+
+- Return attempted resolution as false if resolver is disabled (#7029)
+
+## 2.58.2 - 2024-04-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.14...2.58.2)
+
+## v2.57.14 - 2024-04-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.13...v2.57.14)
+
+## v2.57.13 - 2024-04-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.12...v2.57.13)
+
+## 2.58.1 - 2024-04-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.12...2.58.1)
+
+## v2.57.12 - 2024-04-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.11...v2.57.12)
+
+## 2.58.0 - 2024-04-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.11...2.58.0)
+
+## v2.57.11 - 2024-04-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.10...v2.57.11)
+
+## v2.57.10 - 2024-04-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.9...v2.57.10)
+
+## v2.57.9 - 2024-04-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.8...v2.57.9)
+
+## v2.57.8 - 2024-04-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.7...v2.57.8)
+
+### Fix
+
+- Update cron job time and fix issue with select in postgres (#7024)
+
+## v2.57.7 - 2024-04-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.6...v2.57.7)
+
+### Fix
+
+- Add togglz to track PAPI events (#7021)
+
+## v2.57.6 - 2024-04-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.5...v2.57.6)
+
+## v2.57.5 - 2024-04-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.4...v2.57.5)
+
+### Feature
+
+- Alter ip column in events to for IPV6 and add event tracking to V2 (#7019)
+
+## v2.57.4 - 2024-04-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.3...v2.57.4)
+
+## v2.57.3 - 2024-04-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.2...v2.57.3)
+
+## v2.57.2 - 2024-04-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.1...v2.57.2)
+
+### Feature
+
+- Start collection daily pub api stats (#7016)
+
+## v2.57.1 - 2024-04-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.57.0...v2.57.1)
+
+- [#7017](https://github.com/ORCID/ORCID-Source/pull/7017): 9181-prod-old-header-layout-displayed-briefly-on-public-page
+
+## v2.57.0 - 2024-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.56.0...v2.57.0)
+
+## v2.56.0 - 2024-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.55.0...v2.56.0)
+
+## v2.55.0 - 2024-03-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.54.0...v2.55.0)
+
+## v2.54.0 - 2024-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.53.0...v2.54.0)
+
+- [#7012](https://github.com/ORCID/ORCID-Source/pull/7012): 9149-qa-add-a-record-summaries-toggle
+
+## v2.53.0 - 2024-03-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.52.1...v2.53.0)
+
+- [#7007](https://github.com/ORCID/ORCID-Source/pull/7007): feature: Update claim and reactivate methods to receive orcid and send email to associated email
+
+### Feature
+
+- Update claim and reactivate methods to receive orcid and send email to associated email
+
+## v2.52.1 - 2024-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.52.0...v2.52.1)
+
+## v2.52.0 - 2024-03-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.11...v2.52.0)
+
+## v2.51.11 - 2024-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.10...v2.51.11)
+
+## v2.51.10 - 2024-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.9...v2.51.10)
+
+## v2.51.9 - 2024-03-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.8...v2.51.9)
+
+## v2.51.8 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.7...v2.51.8)
+
+## v2.51.7 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.6...v2.51.7)
+
+### Feature
+
+- Add new sign in updates togglz (#7002)
+
+## v2.51.6 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.5...v2.51.6)
+
+## v2.51.5 - 2024-02-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.4...v2.51.5)
+
+- [#6999](https://github.com/ORCID/ORCID-Source/pull/6999): lmendoza/wordpress-headless
+
+## v2.51.4 - 2024-02-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.3...v2.51.4)
+
+## v2.51.3 - 2024-02-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.2...v2.51.3)
+
+## v2.51.2 - 2024-02-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.1...v2.51.2)
+
+## v2.51.1 - 2024-02-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.51.0...v2.51.1)
+
+## v2.51.0 - 2024-02-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.5...v2.51.0)
+
+## v2.50.5 - 2024-02-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.4...v2.50.5)
+
+## v2.50.4 - 2024-02-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.3...v2.50.4)
+
 ## v2.50.3 - 2024-02-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.50.2...v2.50.3)

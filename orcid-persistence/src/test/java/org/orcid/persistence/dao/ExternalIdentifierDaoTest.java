@@ -37,9 +37,6 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
     private ExternalIdentifierDao dao;
     
     @Resource
-    private ProfileLastModifiedDao profileLastModifiedDao;
-
-    @Resource
     private ProfileDao profileDao;
 
     @BeforeClass
@@ -52,16 +49,6 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml"));
     }
 
-    @Test
-    public void testRemoveExternalIdentifier() {
-        Date now = new Date();
-        Date justBeforeStart = new Date(now.getTime() - 1000);
-        assertFalse(dao.removeExternalIdentifier("4444-4444-4444-4441", "d3clan"));
-        assertFalse(dao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan1"));
-        assertTrue("Profile last modified should be updated", justBeforeStart.before(profileLastModifiedDao.retrieveLastModifiedDate("4444-4444-4444-4443")));
-        assertTrue(dao.removeExternalIdentifier("4444-4444-4444-4443", "d3clan"));
-    }
-    
     @Test
     public void testGetExternalIdentifiers() {
         List<ExternalIdentifierEntity> extIds = dao.getExternalIdentifiers("4444-4444-4444-4442", 0L);

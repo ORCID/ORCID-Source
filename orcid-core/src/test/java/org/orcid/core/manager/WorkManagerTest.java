@@ -212,7 +212,7 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(entity1.getDisplayIndex());
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
-        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
+        assertEquals(Long.valueOf(1), entity3.getDisplayIndex());
 
         // Rollback all changes
         workDao.remove(entity1.getId());
@@ -221,23 +221,23 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(0), w.getDisplayIndex());
+        assertEquals(Long.valueOf(1), w.getDisplayIndex());
     }
 
     @Test

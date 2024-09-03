@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -23,6 +24,7 @@ import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.OtherName;
 import org.orcid.jaxb.model.record_v2.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
+import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -43,6 +45,9 @@ public class OtherNameManagerTest extends BaseTest {
 
     @Resource
     private OtherNameDao otherNameDao;
+    
+    @Resource
+    private ProfileLastModifiedDao profileLastModifiedDao;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -86,7 +91,7 @@ public class OtherNameManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromUI");
@@ -95,11 +100,11 @@ public class OtherNameManagerTest extends BaseTest {
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
 
         assertNotNull(otherName);
-        assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         OtherName otherName = getOtherName();
         otherName.setContent(otherName.getContent() + " fromAPI");
@@ -108,7 +113,7 @@ public class OtherNameManagerTest extends BaseTest {
         otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
 
         assertNotNull(otherName);
-        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+        assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
     }
 
     @Test
@@ -151,6 +156,38 @@ public class OtherNameManagerTest extends BaseTest {
         assertEquals(Long.valueOf(13), elements.getOtherNames().get(0).getPutCode());
     }
 
+    @Test
+    public void addOtherNameUpdateLastModifiedTest() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        OtherName otherName = getOtherName();
+        otherNameManager.createOtherName(orcid, otherName, false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified));
+    }
+    
+    @Test
+    public void deleteOtherNameUpdateLastModifiedTest() {
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        otherNameManager.deleteOtherName(orcid, Long.valueOf(2), false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified)); 
+    }
+    
+    @Test
+    public void updateOtherNameUpdateLastModifiedTest() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+        String orcid = "4444-4444-4444-4443";
+        Date lastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        OtherName otherName = otherNameManager.getOtherName(orcid, Long.valueOf(1));
+        otherName.setContent("Updated");
+        otherNameManager.updateOtherName(orcid, Long.valueOf(1), otherName, false);
+        Date updatedLastModified = profileLastModifiedDao.retrieveLastModifiedDate(orcid);
+        assertTrue("Profile last modified should be updated", lastModified.before(updatedLastModified)); 
+    }
+    
     private OtherName getOtherName() {
         OtherName otherName = new OtherName();
         otherName.setContent("other-name");

@@ -12,18 +12,21 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.AffiliationsManager;
+
+import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.ResearcherUrlManager;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
-import org.orcid.core.utils.OrcidStringUtils;
-import org.orcid.jaxb.model.record_v2.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.scheduler.autospam.AutospamEmailSender;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +105,15 @@ public class AutoLockSpamRecords {
 
     @Resource
     private AutospamEmailSender autospamEmailSender;
-
-    @Resource
-    private AffiliationsManager affiliationsManager;
+    
+   
+    @Resource(name = "biographyManagerV3")
+    private BiographyManager biographyManager;
+    
+    @Resource(name = "researcherUrlManagerV3")
+    private ResearcherUrlManager researcherUrlManager;
+    
+   
 
     // for running spam manually
     public static void main(String[] args) {
@@ -135,21 +144,22 @@ public class AutoLockSpamRecords {
                     // and not have an auth token
 
                     if (profileEntity != null && !profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId)) {
-                        List<Affiliation> affiliations = affiliationsManager.getAffiliations(orcidId);
-                        // Lock only if doesn't have any affiliations
-                        if (affiliations == null || affiliations.size() < 1) {
-                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
+                        //check if it has biography
+                    	Biography bio= biographyManager.getBiography(orcidId);
+                    	ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcidId);
+                  	
+                    	if(( bio !=null && StringUtils.isNotBlank(bio.getContent()) || (researcherUrls != null && researcherUrls.getResearcherUrls() != null && researcherUrls.getResearcherUrls().size() > 0))){
+                    		boolean wasLocked = profileEntityManager.lockProfile(orcidId, LockReason.SPAM_AUTO.getLabel(), "ML Detected", "");
                             if (wasLocked) {
                                 autospamEmailSender.sendOrcidLockedEmail(orcidId);
                                 accountsLocked++;
                             }
-                        }
+                    	}
                     }
                     lastOrcidProcessed = orcidId;
                 }
             } catch (Exception e) {
                 LOG.error("Exception when locking spam record " + orcidId, e);
-                slackManager.sendAlert("Exception when locking spam record " + orcidId + ". LastOrcid processed is: " + lastOrcidProcessed, slackChannel, slackUser, webhookUrl);
                 LOG.info("LastOrcid processed is: " + lastOrcidProcessed);
                 e.printStackTrace();
             }
@@ -197,7 +207,8 @@ public class AutoLockSpamRecords {
         notificationManager = (NotificationManager) context.getBean("notificationManagerV3");
         autospamEmailSender = (AutospamEmailSender) context.getBean("autospamEmailSender");
         orcidOauthDao = (OrcidOauth2TokenDetailDao) context.getBean("orcidOauth2TokenDetailDao");
-        affiliationsManager = (AffiliationsManager) context.getBean("affiliationsManager");
+        biographyManager = (BiographyManager) context.getBean("biographyManagerV3");
+        researcherUrlManager = (ResearcherUrlManager) context.getBean("researcherUrlManagerV3");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 

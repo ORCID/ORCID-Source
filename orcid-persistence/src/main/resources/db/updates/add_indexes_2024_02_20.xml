@@ -1,0 +1,22 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+	<changeSet id="event_date_created_idx" author="amontenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="event_date_created_idx" tableName="event" />
+			</not>
+		</preConditions>
+		<sql>create index event_date_created_idx ON event (date_created);</sql>
+	</changeSet>
+	<changeSet id="oauth2_token_detail_last_modified_idx" author="amontenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="oauth2_token_detail_last_modified_idx" tableName="oauth2_token_detail" />
+			</not>
+		</preConditions>
+		<sql>create index oauth2_token_detail_last_modified_idx ON oauth2_token_detail (last_modified);</sql>
+	</changeSet>
+
+</databaseChangeLog>

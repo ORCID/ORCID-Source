@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 
 import com.nimbusds.jwt.SignedJWT;
 
+import static org.orcid.core.constants.OrcidOauth2Constants.TOKEN_DISABLED;
+
 public class IETFTokenExchangeResponse implements OAuth2AccessToken {
 
     private Map<String, Object> additionalInformation = new HashMap<String, Object>();
@@ -46,6 +48,9 @@ public class IETFTokenExchangeResponse implements OAuth2AccessToken {
         }
         if (accessToken.getAdditionalInformation().containsKey("name")) {
             token.additionalInformation.put("name",accessToken.getAdditionalInformation().get("name"));
+        }
+        if(accessToken.getAdditionalInformation().containsKey(TOKEN_DISABLED)) {
+            token.additionalInformation.put(TOKEN_DISABLED, "true");
         }
         return token;
     }

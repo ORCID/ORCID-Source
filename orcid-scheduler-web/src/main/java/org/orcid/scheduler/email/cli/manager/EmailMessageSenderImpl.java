@@ -23,6 +23,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -46,6 +47,8 @@ import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
@@ -186,8 +189,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         String bodyHtmlDelegate = null;
         String bodyHtmlDelegateRecipient = null;
         String bodyHtmlAdminDelegate = null;
-
-        Set<String> memberIds = new HashSet<>();
         DigestEmail digestEmail = new DigestEmail();
 
         Map<String, ClientUpdates> updatesByClient = new HashMap<String, ClientUpdates>();
@@ -207,11 +208,6 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {
                 orcidMessageCount++;
-            } else {
-                SourceClientId clientId = notification.getSource().getSourceClientId();
-                if (clientId != null) {
-                    memberIds.add(clientId.getPath());
-                }
             }
             if (notification instanceof NotificationPermission) {
                 NotificationPermission permissionNotification = (NotificationPermission) notification;
@@ -324,6 +320,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                     EmailMessage digestMessage = createDigest(orcid, notifications);
                     digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
                     digestMessage.setTo(primaryEmail.getEmail());
+
                     boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                             digestMessage.getBodyText(), digestMessage.getBodyHtml());
                     if (successfullySent) {
@@ -520,16 +517,16 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
 
         private String renderCreationDate(XMLGregorianCalendar createdDate) {
-            String result = new String();
-            result += createdDate.getYear();
-            result += "-" + (createdDate.getMonth() < 10 ? "0" + createdDate.getMonth() : createdDate.getMonth());
-            result += "-" + (createdDate.getDay() < 10 ? "0" + createdDate.getDay() : createdDate.getDay());
-            return result;
+            StringBuilder result = new StringBuilder();
+            result.append(createdDate.getYear());
+            result.append("-").append(createdDate.getMonth() < 10 ? "0" + createdDate.getMonth() : createdDate.getMonth());
+            result.append("-").append(createdDate.getDay() < 10 ? "0" + createdDate.getDay() : createdDate.getDay());
+            return result.toString();
         }
 
         public void addElement(XMLGregorianCalendar createdDate, Item item) {
             init(item.getItemType().name(), item.getActionType() == null ? null : item.getActionType().name());
-            String value = null;
+            StringBuilder value = new StringBuilder();
             switch (item.getItemType()) {
             case DISTINCTION:
             case EDUCATION:
@@ -538,17 +535,25 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             case MEMBERSHIP:
             case QUALIFICATION:
             case SERVICE:
-                value = "<i>" + item.getAdditionalInfo().get("org_name") + "</i> " + (item.getItemName() != null ? item.getItemName() : "") + " ("
-                        + renderCreationDate(createdDate) + ')';
+                value.append("<i>").append(item.getAdditionalInfo().get("org_name")).append("</i> ").append((item.getItemName() != null ? item.getItemName() : "")).append(" (")
+                        .append(renderCreationDate(createdDate)).append(')');
                 break;
             default:
-                value = item.getItemName() != null ? item.getItemName() : "";
+                value.append(item.getItemName() != null ? item.getItemName() : "");
                 if (item.getExternalIdentifier() != null) {
-                    value += " " + item.getExternalIdentifier().getType() + ": " + item.getExternalIdentifier().getValue();
+                    value.append(" ").append(item.getExternalIdentifier().getType()).append(": ").append(item.getExternalIdentifier().getValue());
                 }
-                value += " (" + renderCreationDate(createdDate) + ')';
+                value.append(" (").append(renderCreationDate(createdDate)).append(')');
                 break;
             }
+
+            // Set the external identifiers list
+            String externalIdentifiersList = generateExternalIdentifiersList(item);
+            if(StringUtils.isNotBlank(externalIdentifiersList)) {
+                value.append(externalIdentifiersList);
+            }
+
+            String stringValue = value.toString();
 
             Set<String> elements;
             if (item.getActionType() != null) {
@@ -556,9 +561,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             } else {
                 elements = updates.get(item.getItemType().name()).get(ActionType.UNKNOWN.name());
             }
-            if (!elements.contains(value)) {
+            if (!elements.contains(stringValue)) {
                 if (counter < maxNotificationsToShowPerClient) {
-                    elements.add(value);
+                    elements.add(stringValue);
                 }
                 counter += 1;
             }
@@ -575,6 +580,66 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 updates.get(itemType).put(actionType, new TreeSet<String>());
             }
         }
+
+        private String generateExternalIdentifiersList(Item item) {
+            StringBuilder extIdsHtmlList = new StringBuilder();
+            if (item.getAdditionalInfo() != null) {
+                if(item.getAdditionalInfo().containsKey("external_identifiers")) {
+                    Map extIds = (Map) item.getAdditionalInfo().get("external_identifiers");
+                    if(extIds != null && extIds.containsKey("externalIdentifier")) {
+                        List<Map> extIdsList = (List<Map>) extIds.get("externalIdentifier");
+                        if(extIdsList != null) {
+                            extIdsHtmlList.append("<ul>");
+                            for(Map extIdMap : extIdsList) {
+                                String extIdType = extIdMap.containsKey("type") ? (String) extIdMap.get("type") : null;
+                                // External id type must not be null, so, in case it is lets log a warning
+                                if(extIdType == null) {
+                                    LOGGER.warn("External ID type is null for '" + item.getPutCode() + "', '" + item.getItemName() + "'");
+                                }
+                                extIdsHtmlList.append("<li style=\"padding-left: 0;margin-top: 2px;\">").append(extIdType).append(": ");
+                                // Check if there is an URL
+                                if(extractValue(extIdMap, "url") != null) {
+                                    String url = extractValue(extIdMap, "url");
+                                    extIdsHtmlList.append("<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"").append(url).append("\">").append(url).append("</a>");
+                                } else if (extractValue(extIdMap, "normalized") != null) {
+                                    //If there is no URL, check for the normalized value
+                                    String value = extractValue(extIdMap, "normalized");
+                                    extIdsHtmlList.append(value);
+                                } else if(extIdMap.containsKey("value")) {
+                                    try {
+                                        String value = (String) extIdMap.get("value");
+                                        extIdsHtmlList.append(value);
+                                    } catch (NullPointerException e) {
+                                        LOGGER.warn("External ID value is null for '" + item.getPutCode() + "', '" + item.getItemName() + "'");
+                                    }
+                                } else {
+                                    extIdsHtmlList.append("Unavailable - please contact support");
+                                    LOGGER.warn("Unable to find a printable value for External ID '" + item.getPutCode() + "', '" + item.getItemName() + "'");
+                                }
+                                extIdsHtmlList.append("</li>");
+                            }
+                            extIdsHtmlList.append("</ul>");
+                        }
+                    }
+                }
+            }
+            return extIdsHtmlList.toString();
+        }
+    }
+
+    private String extractValue(Map extIdMap, String keyName) {
+        if(extIdMap.containsKey(keyName)) {
+            Map keyMap = (Map) extIdMap.get(keyName);
+            try {
+                String value = (String) keyMap.get("value");
+                if (StringUtils.isNotBlank(value)) {
+                    return value;
+                }
+            } catch(NullPointerException npe) {
+                // Value might be null, so, just ignore it
+            }
+        }
+        return null;
     }
 
     private String getHtmlBody(NotificationAdministrative notificationAdministrative) {

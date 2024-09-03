@@ -1,13 +1,13 @@
 package org.orcid.core.manager.impl;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.GregorianCalendar;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.exception.DuplicatedGroupIdRecordException;
-import org.orcid.core.exception.GroupIdRecordNotFoundException;
-import org.orcid.core.exception.InvalidIssnException;
-import org.orcid.core.exception.OrcidElementCantBeDeletedException;
+import org.codehaus.jettison.json.JSONException;
+import org.orcid.core.exception.*;
 import org.orcid.core.groupIds.issn.IssnClient;
 import org.orcid.core.groupIds.issn.IssnData;
 import org.orcid.core.groupIds.issn.IssnValidator;
@@ -22,16 +22,17 @@ import org.orcid.jaxb.model.common_v2.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManager {
 
-    @Resource
-    private SourceManager sourceManager;
+    private static final Logger LOG = LoggerFactory.getLogger(GroupIdRecordManagerImpl.class);
 
     @Resource
-    private LocaleManager localeManager;
+    private SourceManager sourceManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -118,20 +119,41 @@ public class GroupIdRecordManagerImpl extends GroupIdRecordManagerReadOnlyImpl i
         if (!issnValidator.issnValid(issn)) {
             throw new InvalidIssnException();
         }
-        
-        IssnData issnData = issnClient.getIssnData(issn);
-        if (issnData == null) {
+
+        try {
+            IssnData issnData = issnClient.getIssnData(issn);
+            if (issnData == null) {
+                throw new InvalidIssnException();
+            }
+
+            GroupIdRecord record = new GroupIdRecord();
+            record.setGroupId(groupId);
+            GregorianCalendar cal = new GregorianCalendar();
+            record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+            record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
+            record.setName(issnData.getMainTitle());
+            record.setType("journal");
+            return record;
+        } catch(TooManyRequestsException tmre) {
+            //TODO: We are being rate limited, we have to pause
+            LOG.warn("We are being rate limited by the issn portal");
+            throw new InvalidIssnException();
+        } catch(UnexpectedResponseCodeException urce) {
+            LOG.warn("Unexpected response code {} for issn {}", urce.getReceivedCode(), issn);
+            throw new InvalidIssnException();
+        } catch (IOException e) {
+            LOG.warn("IOException for issn {}", issn);
+            throw new InvalidIssnException();
+        } catch (URISyntaxException e) {
+            LOG.warn("URISyntaxException for issn {}", issn);
+            throw new InvalidIssnException();
+        } catch (InterruptedException e) {
+            LOG.warn("InterruptedException for issn {}", issn);
+            throw new InvalidIssnException();
+        } catch(JSONException e) {
+            LOG.warn("JSONException for issn {}", issn, e);
             throw new InvalidIssnException();
         }
-        
-        GroupIdRecord record = new GroupIdRecord();
-        record.setGroupId(groupId);
-        GregorianCalendar cal = new GregorianCalendar();
-        record.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
-        record.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(cal)));
-        record.setName(issnData.getMainTitle());
-        record.setType("journal");
-        return record;
     }
 
     private void validateDuplicate(GroupIdRecord newGroupIdRecord) {

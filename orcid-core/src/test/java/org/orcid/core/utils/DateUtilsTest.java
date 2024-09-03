@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Test;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 /**
  * 
