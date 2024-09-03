@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("New Relic Browser Monitoring")
+    NEW_RELIC_BROWSER_MONITORING,
+
     @Label("Public record header with summary")
     NEW_RECORD_HEADER_WITH_SUMMARY,
 
