@@ -91,7 +91,12 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
             entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(startIndex, indexingBatchSize);
             LOGGER.info("Found chunk of {} disambiguated orgs for indexing", entities.size());
             for (OrgDisambiguatedEntity entity : entities) {
-                processDisambiguatedOrgInTransaction(entity);
+                try {
+                    processDisambiguatedOrgInTransaction(entity);
+                }
+                catch(Exception ex) {
+                    LOGGER.error("@@@FAILED to process the disambiguated org" + entity.getId() + " source id: " + entity.getSourceId(), ex);
+                }
             }
             startIndex = startIndex + indexingBatchSize;
         } while (!entities.isEmpty());
