@@ -51,6 +51,12 @@ public class RecordSummary implements Serializable {
     private Works works;
     @XmlElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/summary")
     private PeerReviews peerReviews;
+    
+    @XmlElement(name = "education-qualifications", namespace = "http://www.orcid.org/ns/summary")
+    private EducationQualifications educationQualifications;
+    @XmlElement(name = "research-resources", namespace = "http://www.orcid.org/ns/summary")
+    private ResearchResources researchResources;
+    
 
     public OrcidIdentifier getOrcidIdentifier() {
         return orcidIdentifier;
@@ -130,6 +136,23 @@ public class RecordSummary implements Serializable {
 
     public void setPeerReviews(PeerReviews peerReviews) {
         this.peerReviews = peerReviews;
+    }
+    
+    public EducationQualifications getEducationQualifications() {
+        return educationQualifications;
+    }
+
+    public void setEducationQualifications(EducationQualifications educationQualifications) {
+        this.educationQualifications = educationQualifications;
+    }
+
+    
+    public ResearchResources getResearchResources() {
+        return researchResources;
+    }
+
+    public void setResearchResources(ResearchResources researchResources) {
+        this.researchResources = researchResources;
     }
 
     @Override

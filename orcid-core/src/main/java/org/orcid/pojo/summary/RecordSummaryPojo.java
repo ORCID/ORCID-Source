@@ -27,6 +27,10 @@ public class RecordSummaryPojo {
     private int professionalActivitiesCount;
     private List<ExternalIdentifiersSummary> externalIdentifiers;
     private String status;
+    private List<AffiliationSummary> educationQualifications;
+    private int educationQualificationsCount;
+    private int validatedResearchResources;
+    private int selfAssertedResearchResources;
 
     public String getName() {
         return name;
@@ -163,4 +167,37 @@ public class RecordSummaryPojo {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    public List<AffiliationSummary> getEducationQualifications() {
+        return educationQualifications;
+    }
+
+    public void setEducationQualifications(List<AffiliationSummary> educationQualifications) {
+        this.educationQualifications = educationQualifications;
+    }
+
+    public int getEducationQualificationsCount() {
+        return educationQualificationsCount;
+    }
+
+    public void setEducationQualificationsCount(int educationQualificationsCount) {
+        this.educationQualificationsCount = educationQualificationsCount;
+    }
+
+    public int getValidatedResearchResources() {
+        return validatedResearchResources;
+    }
+
+    public void setValidatedResearchResources(int validatedResearchResources) {
+        this.validatedResearchResources = validatedResearchResources;
+    }
+
+    public int getSelfAssertedResearchResources() {
+        return selfAssertedResearchResources;
+    }
+
+    public void setSelfAssertedResearchResources(int selfAssertedResearchResources) {
+        this.selfAssertedResearchResources = selfAssertedResearchResources;
+    }
+    
 }

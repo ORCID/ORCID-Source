@@ -22,6 +22,9 @@ import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.model.EducationQualification;
+import org.orcid.core.model.EducationQualifications;
 import org.orcid.core.model.Employment;
 import org.orcid.core.model.Employments;
 import org.orcid.core.model.ExternalIdentifier;
@@ -31,6 +34,7 @@ import org.orcid.core.model.PeerReviews;
 import org.orcid.core.model.ProfessionalActivities;
 import org.orcid.core.model.ProfessionalActivity;
 import org.orcid.core.model.RecordSummary;
+import org.orcid.core.model.ResearchResources;
 import org.orcid.core.model.Works;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
@@ -49,8 +53,10 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.SourceAware;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
@@ -84,6 +90,9 @@ public class SummaryManagerImpl implements SummaryManager {
 
     @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
+    
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -137,7 +146,10 @@ public class SummaryManagerImpl implements SummaryManager {
         generateFundingSummary(recordSummary, orcid);
 
         // Generate the peer review summary
-        generatePeerReviewSummary(recordSummary, orcid);        
+        generatePeerReviewSummary(recordSummary, orcid);  
+        
+        // Generate the research resources summary
+        generateResearchResourcesSummary(recordSummary, orcid); 
         
         // Set the summary in the cache
         if(isSummaryCacheEnabled) {
@@ -231,6 +243,30 @@ public class SummaryManagerImpl implements SummaryManager {
             pojo.setValidatedWorks(recordSummary.getWorks().getValidatedCount());
         }
         
+        if(recordSummary.getEducationQualifications() != null && recordSummary.getEducationQualifications().getEducationQualifications() != null) {
+            List<AffiliationSummary> educationQualifications = new ArrayList<>();
+            for(EducationQualification eq : recordSummary.getEducationQualifications().getEducationQualifications()) {
+                AffiliationSummary as = new AffiliationSummary();
+                as.setEndDate(eq.getEndDate() == null ? null : eq.getEndDate().toString());
+                as.setStartDate(eq.getStartDate() == null ? null : eq.getStartDate().toString());
+                as.setOrganizationName(eq.getOrganizationName());
+                as.setPutCode(eq.getPutCode());
+                as.setRole(eq.getRole());                
+                as.setType(eq.getType());
+                as.setUrl(eq.getUrl());
+                as.setValidated(eq.isValidated());
+                educationQualifications.add(as);
+            }
+            
+            pojo.setEducationQualifications(educationQualifications);
+            pojo.setEducationQualificationsCount(recordSummary.getEducationQualifications().getCount());            
+        }
+        
+        if(recordSummary.getResearchResources() != null) {
+            pojo.setSelfAssertedResearchResources(recordSummary.getResearchResources().getSelfAssertedCount());
+            pojo.setValidatedResearchResources(recordSummary.getResearchResources().getValidatedCount());
+        }
+        
         return pojo;
     }    
     
@@ -284,6 +320,7 @@ public class SummaryManagerImpl implements SummaryManager {
         if (affiliationsMap.containsKey(AffiliationType.SERVICE)) {
             profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.SERVICE));
         }
+        
         List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> preferredProfesionalActivities = new ArrayList<>();
         for (AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> group : profesionalActivitesGroups) {
             preferredProfesionalActivities.add(getDefaultAffiliationFromGroup(group));
@@ -317,7 +354,48 @@ public class SummaryManagerImpl implements SummaryManager {
         if(!professionalActivitiesTop3.isEmpty()) {
             pa.setProfessionalActivities(professionalActivitiesTop3);
         }
+        
         recordSummary.setProfessionalActivities(pa);
+        
+        //EDUCATION Y QUALIFICATION
+        List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>> educationQualificationsGroups = new ArrayList<>();
+        if (affiliationsMap.containsKey(AffiliationType.EDUCATION)) {
+            educationQualificationsGroups.addAll(affiliationsMap.get(AffiliationType.EDUCATION));
+        }
+        if (affiliationsMap.containsKey(AffiliationType.QUALIFICATION)) {
+            educationQualificationsGroups.addAll(affiliationsMap.get(AffiliationType.QUALIFICATION));
+        }
+        
+        List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> preferredEducationQualifications = new ArrayList<>();
+        for (AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> group : educationQualificationsGroups) {
+            preferredEducationQualifications.add(getDefaultAffiliationFromGroup(group));
+        }
+        // Sort them by end date by default
+        sortAffiliationsByEndDate(preferredEducationQualifications);
+        
+        List<EducationQualification> educationQualificationsTop3 = new ArrayList<EducationQualification>();
+        educationQualificationsTop3.stream().limit(3).forEach(t -> {
+            EducationQualification eq = new EducationQualification();
+            eq.setOrganizationName(t.getOrganizationName());
+            eq.setPutCode(t.getPutCode());
+            eq.setStartDate(t.getStartDate());
+            eq.setEndDate(t.getEndDate());
+            eq.setRole(t.getRole());
+            eq.setType(t.getType());
+            
+            eq.setUrl(t.getUrl());
+            eq.setValidated(t.isValidated());
+            educationQualificationsTop3.add(eq);
+        });
+            
+        EducationQualifications eqList = new EducationQualifications();
+        eqList.setCount(preferredEducationQualifications.size());
+        if(!educationQualificationsTop3.isEmpty()) {
+            eqList.setEducationQualifications(educationQualificationsTop3);
+        }
+        
+        
+        recordSummary.setEducationQualifications(eqList);
     }
     
     public void generateExternalIdentifiersSummary(RecordSummary recordSummary, String orcid) {
@@ -393,6 +471,16 @@ public class SummaryManagerImpl implements SummaryManager {
         pr.setSelfAssertedCount(selfAssertedPeerReviews);
         pr.setTotal(totalReviewsCount);    
         recordSummary.setPeerReviews(pr);
+    }
+    
+    public void generateResearchResourcesSummary(RecordSummary recordSummary, String orcid) {
+        org.orcid.jaxb.model.v3.release.record.summary.ResearchResources researchResourcesGroups = researchResourceManagerReadOnly.groupResearchResources(researchResourceManagerReadOnly.getResearchResourceSummaryList(orcid),true);        
+        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(researchResourcesGroups, orcid);
+
+        ResearchResources researchResourceModel = new ResearchResources();
+        researchResourceModel.setSelfAssertedCount(validAndSelfAssertedStats.getRight());
+        researchResourceModel.setValidatedCount(validAndSelfAssertedStats.getLeft());
+        recordSummary.setResearchResources(researchResourceModel);
     }
 
     private Pair<Integer, Integer> calculateSelfAssertedAndValidated(GroupsContainer c, String orcid) {
