@@ -45,9 +45,6 @@
 		</property>
 	</bean>
 
-	<bean id="sessionRegistry"
-		class="org.springframework.security.core.session.SessionRegistryImpl" />
-        
     <bean id="localeResolver"
         class="org.orcid.frontend.spring.i18n.OrcidCookieLocaleResolver">
         <property name="cookieName" value="locale_v3" /><!-- must match value in AjaxAuthenticationSuccessHandler -->
@@ -112,8 +109,52 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[x](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
-	<sec:http pattern="/.well-known/**" security="none" />		
-	
+	<sec:http pattern="/.well-known/**" security="none" />
+
+
+
+
+
+
+
+
+
+
+	<!--Endpoint that can be accessed anonymously and don't need to create a session-->
+	<sec:http pattern="/identifiers/norm/(.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/statistics/liveids.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/statistics(/)?$" security="none" create-session="stateless" />
+	<sec:http pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/messages.json(\?.*)?" security="none" create-session="stateless"  />
+	<sec:http pattern="/config.json(\?.*)?" security="none" create-session="stateless"  />
+	<sec:http pattern="/lang.json(.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/orcid-search/.*" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/validate-reset-password.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email/.*" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email-v2.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/claim/.*" security="none" create-session="stateless" />
+	<sec:http pattern="/resend-claim(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/resend-claim.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/validate-resend-claim.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email-validate-token.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/members(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/members/.*" security="none" create-session="stateless" />
+	<sec:http pattern="/consortia(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/consortia/.*" security="none" create-session="stateless" />
+	<sec:http pattern="/record-corrections" security="none" create-session="stateless" />
+	<sec:http pattern="/record-corrections/next(\/?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/record-corrections/previous(\/?.*)??" security="none" create-session="stateless" />
+	<sec:http pattern="/about/trust/integrity/record-corrections" security="none" create-session="stateless" />
+	<sec:http pattern="/assets/(.*)?" security="none" create-session="stateless" />
+
+
+
+
+
+
     <!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
     	<sec:csrf disabled="true"/>
@@ -256,22 +297,13 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/home(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/identifiers/norm/(.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/statistics/liveids.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/statistics/statistics.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/statistics(/)?$"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/disambiguated/(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />			
 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage.json(\?.*)?"
@@ -310,21 +342,11 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id.json(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	    
-		
-		<sec:intercept-url pattern="/messages.json(\?.*)?"
+		<sec:intercept-url pattern="/public/group/[0-9]+(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		 <sec:intercept-url pattern="/config.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
- 	      		      	  	 	      	 	      	
- 	    <sec:intercept-url pattern="/public/group/[0-9]+(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	      	
-		<sec:intercept-url pattern="/lang.json(.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/signin/facebook(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/google(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -335,8 +357,6 @@
 		<sec:intercept-url pattern="/progress-to-confirm-registration-details(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/confirm-registration-details(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/orcid-search/.*"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/register(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -356,28 +376,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/registerConfirm.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/claim/.*"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/resend-claim(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/resend-claim.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/validate-resend-claim.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/reset-password(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/reset-password.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/validate-reset-password.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/reset-password-email/.*"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/reset-password-email.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
-		<sec:intercept-url pattern="/reset-password-email-v2.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/reset-password-email-validate-token.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/disco(\?.*)?"
@@ -388,22 +386,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/inbox/encrypted/.*?/action?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/members(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/members/.*"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/consortia(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/consortia/.*"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/record-corrections"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/record-corrections/next(\/?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />			
-		<sec:intercept-url pattern="/record-corrections/previous(\/?.*)??"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
-		<sec:intercept-url pattern="/about/trust/integrity/record-corrections"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/unsubscribe/(.+)"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/unsubscribe/preferences.json?encryptedId=(.+)"
