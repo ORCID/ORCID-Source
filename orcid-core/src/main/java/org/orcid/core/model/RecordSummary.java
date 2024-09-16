@@ -166,7 +166,7 @@ public class RecordSummary implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(createdDate, creditName, employments, externalIdentifiers, fundings, lastModifiedDate, orcidIdentifier, orcidUrlManager, peerReviews,
-                professionalActivities, works, educationQualifications, researchResources, emailDomains);
+                professionalActivities, works, emailDomains, educationQualifications, researchResources );
     }
 
     @Override

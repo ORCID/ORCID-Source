@@ -20,6 +20,7 @@ import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
 import org.orcid.jaxb.model.v3.release.common.Month;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.Year;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.utils.DateUtils;
 
 public class RecordSummaryMarshallingTest {
@@ -29,7 +30,6 @@ public class RecordSummaryMarshallingTest {
         JAXBContext context = JAXBContext.newInstance(new Class[] { RecordSummary.class });
         Marshaller marshaller = context.createMarshaller();        
         String expectedText = IOUtils.toString(getClass().getResourceAsStream("summary-3.0.xml"), StandardCharsets.UTF_8);
-        
         RecordSummary recordSummary = getRecordSummary();
         StringWriter stringWriter = new StringWriter();
         marshaller.marshal(recordSummary, stringWriter);
@@ -93,12 +93,25 @@ public class RecordSummaryMarshallingTest {
         peerReviews.setTotal(6);
         record.setPeerReviews(peerReviews);
         
-        //Set education/qualifications
-        
-        //Set research resources
-        
         //Set email domains
+        EmailDomains emailDomains = new EmailDomains();
+        emailDomains.setCount(4);
+        emailDomains.setEmailDomains(new ArrayList<EmailDomain>());
+        emailDomains.getEmailDomains().add(getEmailDomain("sometrusted.org", getEmailDomainCreatedDate(), getEmailDomainLastModified()));
+        record.setEmailDomains(emailDomains);
         
+        //Set education/qualifications
+        EducationQualifications educationQualifications = new EducationQualifications();
+        educationQualifications.setCount(6);
+        educationQualifications.setEducationQualifications(new ArrayList<EducationQualification>());
+        educationQualifications.getEducationQualifications().add(getEducationQualification(1, "Org # 1", "Fake role title", "https://test.orcid.org/", "education", false));
+        record.setEducationQualifications(educationQualifications);
+        //Set research resources
+        ResearchResources researchResources = new ResearchResources();
+        researchResources.setSelfAssertedCount(0);
+        researchResources.setValidatedCount(1);
+        record.setResearchResources(researchResources);   
+
         return record;
     }
     
@@ -137,11 +150,41 @@ public class RecordSummaryMarshallingTest {
         return pa;
     }
     
+    private EducationQualification getEducationQualification(int putCode, String role, String org, String url, String type, boolean validated) {
+        EducationQualification eq = new EducationQualification();
+        eq.setPutCode(Long.valueOf(putCode));
+        eq.setEndDate(getEndDate());
+        eq.setStartDate(getStartDate());
+        eq.setOrganizationName(org);
+        eq.setRole(role);        
+        eq.setUrl(url);
+        eq.setValidated(validated);
+        eq.setType(type);        
+        return eq;
+    }
+    
+    private EmailDomain getEmailDomain(String domainValue, Date created, Date modified) {
+        EmailDomain emailDomain = new EmailDomain();
+        emailDomain.setValue(domainValue);
+        //emailDomain.setCreatedDate(created);
+        //emailDomain.setLastModified(modified);
+        return emailDomain;
+    }
+    
     private FuzzyDate getEndDate() {
         return new FuzzyDate(new Year(2024), new Month(12), new Day(31));
     }
     
     private FuzzyDate getStartDate() {
         return new FuzzyDate(new Year(2020), new Month(1), new Day(1));
+    }
+    
+    
+    private Date getEmailDomainCreatedDate() {
+        return Date.valueOf(new FuzzyDate(new Year(2020), new Month(1), new Day(1)));
+    }
+    
+    private Date getEmailDomainLastModified() {
+        return Date.valueOf(new FuzzyDate(new Year(2020), new Month(1), new Day(1)));
     }
 }
