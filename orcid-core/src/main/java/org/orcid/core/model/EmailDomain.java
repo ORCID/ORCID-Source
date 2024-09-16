@@ -22,7 +22,7 @@ public class EmailDomain {
     protected String value;
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected Date createdDate;
-    @XmlElement(name = "last-modified", namespace = "http://www.orcid.org/ns/common")
+    @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected Date lastModified;
 
     public String getValue() {
