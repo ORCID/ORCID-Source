@@ -80,6 +80,8 @@ public class RecordSummaryMarshallingTest {
         fundings.setValidatedCount(1);
         record.setFundings(fundings);
         
+        
+        
         Works works = new Works();
         works.setSelfAssertedCount(0);
         works.setValidatedCount(1);
@@ -90,6 +92,12 @@ public class RecordSummaryMarshallingTest {
         peerReviews.setSelfAssertedCount(0);
         peerReviews.setTotal(6);
         record.setPeerReviews(peerReviews);
+        
+        //Set education/qualifications
+        
+        //Set research resources
+        
+        //Set email domains
         
         return record;
     }

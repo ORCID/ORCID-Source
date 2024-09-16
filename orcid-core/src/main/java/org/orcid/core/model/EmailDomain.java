@@ -14,7 +14,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "putCode", "type", "organizationName", "role", "url", "startDate", "endDate", "validated" })
+@XmlType(propOrder = { "value","createdDate", "lastModified"})
 @XmlRootElement(name = "education-qualification", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Education Qualification")
 public class EmailDomain {
