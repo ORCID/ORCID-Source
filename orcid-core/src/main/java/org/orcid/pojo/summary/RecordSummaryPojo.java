@@ -31,6 +31,9 @@ public class RecordSummaryPojo {
     private int educationQualificationsCount;
     private int validatedResearchResources;
     private int selfAssertedResearchResources;
+    
+    private List<EmailDomainSummary> emailDomains;
+    private int emailDomainsCount;
 
     public String getName() {
         return name;
@@ -198,6 +201,22 @@ public class RecordSummaryPojo {
 
     public void setSelfAssertedResearchResources(int selfAssertedResearchResources) {
         this.selfAssertedResearchResources = selfAssertedResearchResources;
+    }
+
+    public List<EmailDomainSummary> getEmailDomains() {
+        return emailDomains;
+    }
+
+    public void setEmailDomains(List<EmailDomainSummary> emailDomains) {
+        this.emailDomains = emailDomains;
+    }
+
+    public int getEmailDomainsCount() {
+        return emailDomainsCount;
+    }
+
+    public void setEmailDomainsCount(int emailDomainsCount) {
+        this.emailDomainsCount = emailDomainsCount;
     }
     
 }

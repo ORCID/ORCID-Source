@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.junit.Before;
@@ -28,6 +29,7 @@ import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.model.ProfessionalActivity;
 import org.orcid.core.model.RecordSummary;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
@@ -103,6 +105,9 @@ public class SummaryManagerTest {
     
     @Mock
     private WorksCacheManager worksCacheManagerMock;
+    
+    @Mock
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
 
     @Before
     public void setUp() {

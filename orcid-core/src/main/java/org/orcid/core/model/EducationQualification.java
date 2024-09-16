@@ -116,5 +116,4 @@ public class EducationQualification {
                 && Objects.equals(role, other.role) && Objects.equals(startDate, other.startDate) && Objects.equals(type, other.type) && Objects.equals(url, other.url)
                 && validated == other.validated;
     }
-
 }
