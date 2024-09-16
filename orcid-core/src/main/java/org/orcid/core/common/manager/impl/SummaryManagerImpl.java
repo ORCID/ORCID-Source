@@ -69,6 +69,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.summary.AffiliationSummary;
+import org.orcid.pojo.summary.EmailDomainSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.orcid.utils.DateUtils;
@@ -276,6 +277,20 @@ public class SummaryManagerImpl implements SummaryManager {
         if (recordSummary.getResearchResources() != null) {
             pojo.setSelfAssertedResearchResources(recordSummary.getResearchResources().getSelfAssertedCount());
             pojo.setValidatedResearchResources(recordSummary.getResearchResources().getValidatedCount());
+        }
+
+        if (recordSummary.getEmailDomains() != null) {
+            List<EmailDomainSummary> emailDomains = new ArrayList<EmailDomainSummary>();
+            if (recordSummary.getEmailDomains() != null && recordSummary.getEmailDomains().getEmailDomains() != null) {
+                for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
+                    EmailDomainSummary eds = new EmailDomainSummary();
+                    eds.setValue(ed.getValue());
+                    eds.setCreatedDate(ed.getCreatedDate().toFuzzyDate().toString());
+                    eds.setLastModified(ed.getLastModified().toFuzzyDate().toString());
+                }
+            }
+            pojo.setEmailDomains(emailDomains);
+            pojo.setEmailDomainsCount(recordSummary.getEmailDomains().getCount());
         }
 
         return pojo;

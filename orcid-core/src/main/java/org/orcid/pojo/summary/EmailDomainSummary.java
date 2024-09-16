@@ -1,14 +1,12 @@
 package org.orcid.pojo.summary;
 
-import java.util.Date;
-
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class EmailDomainSummary {
     private String value;
-    private Date createdDate;
-    private Date lastModified;
+    private String createdDate;
+    private String lastModified;
 
     public String getValue() {
         return value;
@@ -18,19 +16,19 @@ public class EmailDomainSummary {
         this.value = value;
     }
 
-    public Date getCreatedDate() {
+    public String getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(String createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getLastModified() {
+    public String getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
     }
 
@@ -44,11 +42,11 @@ public class EmailDomainSummary {
             }
 
             if (pem.getDateCreated() != null) {
-                form.setCreatedDate(pem.getDateCreated());
+                form.setCreatedDate(org.orcid.pojo.ajaxForm.Date.valueOf(pem.getDateCreated()).toFuzzyDate().toString());
             }
 
             if (pem.getLastModified() !=null) {
-                form.setLastModified(pem.getLastModified());
+                form.setLastModified(org.orcid.pojo.ajaxForm.Date.valueOf(pem.getLastModified()).toFuzzyDate().toString());
             }
         }
         return form;

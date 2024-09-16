@@ -26,10 +26,12 @@ import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEmailDomainManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.model.EmailDomains;
 import org.orcid.core.model.ProfessionalActivity;
 import org.orcid.core.model.RecordSummary;
 import org.orcid.jaxb.model.v3.release.common.CreatedDate;
@@ -63,10 +65,13 @@ import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
+import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.summary.RecordSummaryPojo;
@@ -107,7 +112,10 @@ public class SummaryManagerTest {
     private WorksCacheManager worksCacheManagerMock;
     
     @Mock
-    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnlyMock;
+    
+    @Mock
+    private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnlyMock;
 
     @Before
     public void setUp() {
@@ -148,7 +156,20 @@ public class SummaryManagerTest {
         // Set peer reviews
         Mockito.when(peerReviewManagerReadOnlyMock.getPeerReviewMinimizedSummaryList(Mockito.eq(ORCID), Mockito.eq(true))).thenReturn(getPeerReviewSummaryList());
         ReflectionTestUtils.setField(manager, "peerReviewManagerReadOnly", peerReviewManagerReadOnlyMock);
+        
+        
+        // Set ResearchResources
+        ResearchResources researchResources = getResearchResources();
+        Mockito.when(researchResourceManagerReadOnlyMock.getResearchResourceSummaryList(Mockito.eq(ORCID))).thenReturn(new ArrayList<ResearchResourceSummary>());
+        Mockito.when(researchResourceManagerReadOnlyMock.groupResearchResources(Mockito.anyList(), Mockito.eq(true))).thenReturn(researchResources);
+        ReflectionTestUtils.setField(manager, "researchResourceManagerReadOnly", researchResourceManagerReadOnlyMock);
 
+        // Set EmailDomains
+        EmailDomains emailDomains = getEmailDomains();
+        Mockito.when(profileEmailDomainManagerReadOnlyMock.getPublicEmailDomains(Mockito.eq(ORCID))).thenReturn(new ArrayList<ProfileEmailDomainEntity>());
+        ReflectionTestUtils.setField(manager, "profileEmailDomainManagerReadOnly", profileEmailDomainManagerReadOnlyMock);
+
+        
         // Set metadata
         OrcidIdentifier oi = new OrcidIdentifier();
         oi.setUri("https://test.orcid.org/0000-0000-0000-0000");
@@ -579,6 +600,20 @@ public class SummaryManagerTest {
         peis.getExternalIdentifiers().add(pei);
         return peis;
     }
+    
+    private ResearchResources  getResearchResources() {
+        ResearchResources researchResources = new ResearchResources();
+        
+        return researchResources;
+    }
+    
+    private EmailDomains  getEmailDomains() {
+        EmailDomains emailDomains = new EmailDomains();
+        
+        return emailDomains;
+    }
+    
+     
 
     private List<AffiliationGroup<AffiliationSummary>> getAffiliations(AffiliationType affiliationType) {
         List<AffiliationGroup<AffiliationSummary>> affiliationGroups = new ArrayList<>();
