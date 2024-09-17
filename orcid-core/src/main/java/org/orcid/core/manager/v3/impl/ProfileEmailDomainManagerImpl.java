@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.impl;
 
 
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -36,8 +37,8 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     @Resource(name = "emailDaoReadOnly")
     protected EmailDao emailDaoReadOnly;
 
-    @Resource(name = "profileDaoReadOnly")
-    protected ProfileDao profileDaoReadOnly;
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Transactional
     public void updateEmailDomains(String orcid, org.orcid.pojo.ajaxForm.Emails newEmails) {
@@ -80,7 +81,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
             // ADD NEW DOMAIN IF ONE DOESN'T EXIST
             if (existingDomain == null) {
                 // Verify the user doesn't have more emails with that domain
-                ProfileEntity profile = profileDaoReadOnly.find(orcid);
+                ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                 String domainVisibility = profile.getActivitiesVisibilityDefault();
                 profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
             }
