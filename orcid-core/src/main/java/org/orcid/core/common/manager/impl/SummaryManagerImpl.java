@@ -18,10 +18,16 @@ import org.orcid.core.manager.v3.WorksCacheManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEmailDomainManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.model.EducationQualification;
+import org.orcid.core.model.EducationQualifications;
+import org.orcid.core.model.EmailDomain;
+import org.orcid.core.model.EmailDomains;
 import org.orcid.core.model.Employment;
 import org.orcid.core.model.Employments;
 import org.orcid.core.model.ExternalIdentifier;
@@ -31,7 +37,9 @@ import org.orcid.core.model.PeerReviews;
 import org.orcid.core.model.ProfessionalActivities;
 import org.orcid.core.model.ProfessionalActivity;
 import org.orcid.core.model.RecordSummary;
+import org.orcid.core.model.ResearchResources;
 import org.orcid.core.model.Works;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -49,14 +57,19 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.SourceAware;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.summary.AffiliationSummary;
+import org.orcid.pojo.summary.EmailDomainSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.orcid.utils.DateUtils;
@@ -85,33 +98,39 @@ public class SummaryManagerImpl implements SummaryManager {
     @Resource(name = "recordManagerReadOnlyV3")
     private RecordManagerReadOnly recordManagerReadOnly;
 
+    @Resource(name = "researchResourceManagerReadOnlyV3")
+    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
+
+    @Resource(name = "profileEmailDomainManagerReadOnly")
+    private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnly;
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private WorksCacheManager worksCacheManager;
-    
+
     @Resource
-    private RedisClient redisClient;    
-    
-    @Value("${org.orcid.core.utils.cache.redis.summary.enabled:false}") 
+    private RedisClient redisClient;
+
+    @Value("${org.orcid.core.utils.cache.redis.summary.enabled:false}")
     private boolean isSummaryCacheEnabled;
-    
+
     // Set the cache TTL for the summary, 1 day by default
-    @Value("${org.orcid.core.utils.cache.redis.summary.ttl:3600}") 
+    @Value("${org.orcid.core.utils.cache.redis.summary.ttl:3600}")
     private int summaryCacheTTL;
 
     @Override
     public RecordSummary getRecordSummary(String orcid) {
         String cacheKey = getCacheKey(orcid);
         // Check the cache
-        if(isSummaryCacheEnabled) {
+        if (isSummaryCacheEnabled) {
             String summaryString = redisClient.get(cacheKey);
-            if(StringUtils.isNotBlank(summaryString)) {
-                return JsonUtils.readObjectFromJsonString(summaryString, RecordSummary.class); 
+            if (StringUtils.isNotBlank(summaryString)) {
+                return JsonUtils.readObjectFromJsonString(summaryString, RecordSummary.class);
             }
         }
-        
+
         RecordSummary recordSummary = new RecordSummary();
 
         // Set ORCID identifier
@@ -137,12 +156,18 @@ public class SummaryManagerImpl implements SummaryManager {
         generateFundingSummary(recordSummary, orcid);
 
         // Generate the peer review summary
-        generatePeerReviewSummary(recordSummary, orcid);        
-        
+        generatePeerReviewSummary(recordSummary, orcid);
+
+        // Generate the research resources summary
+        generateResearchResourcesSummary(recordSummary, orcid);
+
+        // generate email domains summary
+        generateEmailDomainsSummary(recordSummary, orcid);
+
         // Set the summary in the cache
-        if(isSummaryCacheEnabled) {
+        if (isSummaryCacheEnabled) {
             redisClient.set(cacheKey, JsonUtils.convertToJsonString(recordSummary), summaryCacheTTL);
-        }        
+        }
         return recordSummary;
     }
 
@@ -151,21 +176,21 @@ public class SummaryManagerImpl implements SummaryManager {
         RecordSummary recordSummary = getRecordSummary(orcid);
         RecordSummaryPojo pojo = new RecordSummaryPojo();
         pojo.setStatus("active");
-        
+
         pojo.setOrcid(recordSummary.getOrcidIdentifier().getUri());
-        pojo.setName(recordSummary.getCreditName()); 
-        
-        if(recordSummary.getCreatedDate() != null && recordSummary.getCreatedDate().getValue() != null) {
-            pojo.setCreation(DateUtils.formatDateISO8601(recordSummary.getCreatedDate().getValue().toGregorianCalendar().getTime()));            
+        pojo.setName(recordSummary.getCreditName());
+
+        if (recordSummary.getCreatedDate() != null && recordSummary.getCreatedDate().getValue() != null) {
+            pojo.setCreation(DateUtils.formatDateISO8601(recordSummary.getCreatedDate().getValue().toGregorianCalendar().getTime()));
         }
-        
-        if(recordSummary.getLastModifiedDate() != null && recordSummary.getLastModifiedDate().getValue() != null) {
+
+        if (recordSummary.getLastModifiedDate() != null && recordSummary.getLastModifiedDate().getValue() != null) {
             pojo.setLastModified(DateUtils.formatDateISO8601(recordSummary.getLastModifiedDate().getValue().toGregorianCalendar().getTime()));
         }
-        
-        if(recordSummary.getExternalIdentifiers() != null && recordSummary.getExternalIdentifiers().getExternalIdentifiers() != null) {
+
+        if (recordSummary.getExternalIdentifiers() != null && recordSummary.getExternalIdentifiers().getExternalIdentifiers() != null) {
             List<ExternalIdentifiersSummary> externalIdentifiers = new ArrayList<>();
-            for(ExternalIdentifier ei : recordSummary.getExternalIdentifiers().getExternalIdentifiers()) {
+            for (ExternalIdentifier ei : recordSummary.getExternalIdentifiers().getExternalIdentifiers()) {
                 ExternalIdentifiersSummary eis = new ExternalIdentifiersSummary();
                 eis.setCommonName(ei.getExternalIdType());
                 eis.setId(String.valueOf(ei.getPutCode()));
@@ -176,10 +201,10 @@ public class SummaryManagerImpl implements SummaryManager {
             }
             pojo.setExternalIdentifiers(externalIdentifiers);
         }
-        
-        if(recordSummary.getEmployments() != null && recordSummary.getEmployments().getEmployments() != null) {            
+
+        if (recordSummary.getEmployments() != null && recordSummary.getEmployments().getEmployments() != null) {
             List<AffiliationSummary> affiliations = new ArrayList<>();
-            for(Employment e : recordSummary.getEmployments().getEmployments()) {
+            for (Employment e : recordSummary.getEmployments().getEmployments()) {
                 AffiliationSummary as = new AffiliationSummary();
                 as.setStartDate(e.getStartDate() == null ? null : e.getStartDate().toString());
                 as.setEndDate(e.getEndDate() == null ? null : e.getEndDate().toString());
@@ -192,51 +217,88 @@ public class SummaryManagerImpl implements SummaryManager {
                 affiliations.add(as);
             }
             pojo.setEmploymentAffiliations(affiliations);
-            pojo.setEmploymentAffiliationsCount(recordSummary.getEmployments().getCount());            
+            pojo.setEmploymentAffiliationsCount(recordSummary.getEmployments().getCount());
         }
-        
-        if(recordSummary.getProfessionalActivities() != null && recordSummary.getProfessionalActivities().getProfessionalActivities() != null) {
+
+        if (recordSummary.getProfessionalActivities() != null && recordSummary.getProfessionalActivities().getProfessionalActivities() != null) {
             List<AffiliationSummary> professionalActivities = new ArrayList<>();
-            for(ProfessionalActivity pa : recordSummary.getProfessionalActivities().getProfessionalActivities()) {
+            for (ProfessionalActivity pa : recordSummary.getProfessionalActivities().getProfessionalActivities()) {
                 AffiliationSummary as = new AffiliationSummary();
                 as.setEndDate(pa.getEndDate() == null ? null : pa.getEndDate().toString());
                 as.setStartDate(pa.getStartDate() == null ? null : pa.getStartDate().toString());
                 as.setOrganizationName(pa.getOrganizationName());
                 as.setPutCode(pa.getPutCode());
-                as.setRole(pa.getRole());                
+                as.setRole(pa.getRole());
                 as.setType(pa.getType());
                 as.setUrl(pa.getUrl());
                 as.setValidated(pa.isValidated());
                 professionalActivities.add(as);
             }
-            
+
             pojo.setProfessionalActivities(professionalActivities);
-            pojo.setProfessionalActivitiesCount(recordSummary.getProfessionalActivities().getCount());            
+            pojo.setProfessionalActivitiesCount(recordSummary.getProfessionalActivities().getCount());
         }
-        
-        
-        if(recordSummary.getFundings() != null) {
+
+        if (recordSummary.getFundings() != null) {
             pojo.setSelfAssertedFunds(recordSummary.getFundings().getSelfAssertedCount());
             pojo.setValidatedFunds(recordSummary.getFundings().getValidatedCount());
         }
-        
-        if(recordSummary.getPeerReviews() != null) {
+
+        if (recordSummary.getPeerReviews() != null) {
             pojo.setPeerReviewsTotal(recordSummary.getPeerReviews().getTotal());
             pojo.setPeerReviewPublicationGrants(recordSummary.getPeerReviews().getPeerReviewPublicationGrants());
             pojo.setSelfAssertedPeerReviews(recordSummary.getPeerReviews().getSelfAssertedCount());
         }
-        
-        if(recordSummary.getWorks() != null) {
+
+        if (recordSummary.getWorks() != null) {
             pojo.setSelfAssertedWorks(recordSummary.getWorks().getSelfAssertedCount());
             pojo.setValidatedWorks(recordSummary.getWorks().getValidatedCount());
         }
-        
+
+        if (recordSummary.getEducationQualifications() != null && recordSummary.getEducationQualifications().getEducationQualifications() != null) {
+            List<AffiliationSummary> educationQualifications = new ArrayList<>();
+            for (EducationQualification eq : recordSummary.getEducationQualifications().getEducationQualifications()) {
+                AffiliationSummary as = new AffiliationSummary();
+                as.setEndDate(eq.getEndDate() == null ? null : eq.getEndDate().toString());
+                as.setStartDate(eq.getStartDate() == null ? null : eq.getStartDate().toString());
+                as.setOrganizationName(eq.getOrganizationName());
+                as.setPutCode(eq.getPutCode());
+                as.setRole(eq.getRole());
+                as.setType(eq.getType());
+                as.setUrl(eq.getUrl());
+                as.setValidated(eq.isValidated());
+                educationQualifications.add(as);
+            }
+
+            pojo.setEducationQualifications(educationQualifications);
+            pojo.setEducationQualificationsCount(recordSummary.getEducationQualifications().getCount());
+        }
+
+        if (recordSummary.getResearchResources() != null) {
+            pojo.setSelfAssertedResearchResources(recordSummary.getResearchResources().getSelfAssertedCount());
+            pojo.setValidatedResearchResources(recordSummary.getResearchResources().getValidatedCount());
+        }
+
+        if (recordSummary.getEmailDomains() != null) {
+            List<EmailDomainSummary> emailDomains = new ArrayList<EmailDomainSummary>();
+            if (recordSummary.getEmailDomains() != null && recordSummary.getEmailDomains().getEmailDomains() != null) {
+                for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
+                    EmailDomainSummary eds = new EmailDomainSummary();
+                    eds.setValue(ed.getValue());
+                    eds.setCreatedDate(ed.getCreatedDate().toFuzzyDate().toString());
+                    eds.setLastModified(ed.getLastModified().toFuzzyDate().toString());
+                }
+            }
+            pojo.setEmailDomains(emailDomains);
+            pojo.setEmailDomainsCount(recordSummary.getEmailDomains().getCount());
+        }
+
         return pojo;
-    }    
-    
+    }
+
     public void generateAffiliationsSummary(RecordSummary recordSummary, String orcid) {
-        Map<AffiliationType, List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid,
-                true);
+        Map<AffiliationType, List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly
+                .getGroupedAffiliations(orcid, true);
 
         // EMPLOYMENT
         List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>> employmentGroups = affiliationsMap.get(AffiliationType.EMPLOYMENT);
@@ -261,15 +323,15 @@ public class SummaryManagerImpl implements SummaryManager {
             e.setValidated(!SourceUtils.isSelfAsserted(t.getSource(), orcid));
             employmentsTop3.add(e);
         });
-        
+
         Employments e = new Employments();
         e.setCount(preferredEmployments.size());
         recordSummary.setEmployments(e);
-        if(!employmentsTop3.isEmpty()) {
+        if (!employmentsTop3.isEmpty()) {
             e.setEmployments(employmentsTop3);
-        } 
+        }
         recordSummary.setEmployments(e);
-        
+
         // PROFESIONAL ACTIVITIES
         List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>> profesionalActivitesGroups = new ArrayList<>();
         if (affiliationsMap.containsKey(AffiliationType.DISTINCTION)) {
@@ -284,6 +346,7 @@ public class SummaryManagerImpl implements SummaryManager {
         if (affiliationsMap.containsKey(AffiliationType.SERVICE)) {
             profesionalActivitesGroups.addAll(affiliationsMap.get(AffiliationType.SERVICE));
         }
+
         List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> preferredProfesionalActivities = new ArrayList<>();
         for (AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> group : profesionalActivitesGroups) {
             preferredProfesionalActivities.add(getDefaultAffiliationFromGroup(group));
@@ -299,7 +362,7 @@ public class SummaryManagerImpl implements SummaryManager {
             p.setStartDate(t.getStartDate());
             p.setEndDate(t.getEndDate());
             p.setRole(t.getRoleTitle());
-            if(t instanceof DistinctionSummary) {
+            if (t instanceof DistinctionSummary) {
                 p.setType(AffiliationType.DISTINCTION.value());
             } else if (t instanceof InvitedPositionSummary) {
                 p.setType(AffiliationType.INVITED_POSITION.value());
@@ -314,20 +377,63 @@ public class SummaryManagerImpl implements SummaryManager {
         });
         ProfessionalActivities pa = new ProfessionalActivities();
         pa.setCount(preferredProfesionalActivities.size());
-        if(!professionalActivitiesTop3.isEmpty()) {
+        if (!professionalActivitiesTop3.isEmpty()) {
             pa.setProfessionalActivities(professionalActivitiesTop3);
         }
+
         recordSummary.setProfessionalActivities(pa);
+
+        // EDUCATION Y QUALIFICATION
+        List<AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary>> educationQualificationsGroups = new ArrayList<>();
+        if (affiliationsMap.containsKey(AffiliationType.EDUCATION)) {
+            educationQualificationsGroups.addAll(affiliationsMap.get(AffiliationType.EDUCATION));
+        }
+        if (affiliationsMap.containsKey(AffiliationType.QUALIFICATION)) {
+            educationQualificationsGroups.addAll(affiliationsMap.get(AffiliationType.QUALIFICATION));
+        }
+
+        List<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> preferredEducationQualifications = new ArrayList<>();
+        for (AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> group : educationQualificationsGroups) {
+            preferredEducationQualifications.add(getDefaultAffiliationFromGroup(group));
+        }
+        // Sort them by end date by default
+        sortAffiliationsByEndDate(preferredEducationQualifications);
+
+        List<EducationQualification> educationQualificationsTop3 = new ArrayList<EducationQualification>();
+        preferredEducationQualifications.stream().limit(3).forEach(t -> {
+            EducationQualification eq = new EducationQualification();
+            eq.setOrganizationName((t.getOrganization() == null || StringUtils.isBlank(t.getOrganization().getName())) ? null : t.getOrganization().getName());
+            eq.setPutCode(t.getPutCode());
+            eq.setStartDate(t.getStartDate());
+            eq.setEndDate(t.getEndDate());
+            eq.setRole(t.getRoleTitle());
+            if (t instanceof EducationSummary) {
+                eq.setType(AffiliationType.EDUCATION.value());
+            } else if (t instanceof QualificationSummary) {
+                eq.setType(AffiliationType.QUALIFICATION.value());
+            }
+            eq.setUrl((t.getUrl() == null || StringUtils.isBlank(t.getUrl().getValue())) ? null : t.getUrl().getValue());
+            eq.setValidated(!SourceUtils.isSelfAsserted(t.getSource(), orcid));
+            educationQualificationsTop3.add(eq);
+        });
+
+        EducationQualifications eqList = new EducationQualifications();
+        eqList.setCount(preferredEducationQualifications.size());
+        if (!educationQualificationsTop3.isEmpty()) {
+            eqList.setEducationQualifications(educationQualificationsTop3);
+        }
+
+        recordSummary.setEducationQualifications(eqList);
     }
-    
+
     public void generateExternalIdentifiersSummary(RecordSummary recordSummary, String orcid) {
         PersonExternalIdentifiers personExternalIdentifiers = externalIdentifierManagerReadOnly.getPublicExternalIdentifiers(orcid);
-        if(personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers().isEmpty()) {
+        if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers().isEmpty()) {
             return;
         }
         ExternalIdentifiers eis = new ExternalIdentifiers();
         eis.setExternalIdentifiers(new ArrayList<>());
-        for(PersonExternalIdentifier pei : personExternalIdentifiers.getExternalIdentifiers()) {
+        for (PersonExternalIdentifier pei : personExternalIdentifiers.getExternalIdentifiers()) {
             ExternalIdentifier ei = new ExternalIdentifier();
             ei.setExternalIdType(pei.getType());
             ei.setExternalIdUrl((pei.getUrl() == null || StringUtils.isEmpty(pei.getUrl().getValue())) ? null : pei.getUrl().getValue());
@@ -337,21 +443,21 @@ public class SummaryManagerImpl implements SummaryManager {
             eis.getExternalIdentifiers().add(ei);
         }
         recordSummary.setExternalIdentifiers(eis);
-    }   
-    
+    }
+
     public void generateWorksSummary(RecordSummary recordSummary, String orcid) {
         org.orcid.jaxb.model.v3.release.record.summary.Works works = worksCacheManager.getGroupedWorks(orcid);
         Iterator<WorkGroup> workGroupIt = works.getWorkGroup().iterator();
         while (workGroupIt.hasNext()) {
             WorkGroup workGroup = workGroupIt.next();
             Iterator<WorkSummary> summariesIt = workGroup.getWorkSummary().iterator();
-            while(summariesIt.hasNext()) {
+            while (summariesIt.hasNext()) {
                 WorkSummary w = summariesIt.next();
-                if(!Visibility.PUBLIC.equals(w.getVisibility())) {
+                if (!Visibility.PUBLIC.equals(w.getVisibility())) {
                     summariesIt.remove();
                 }
             }
-            if(workGroup.getActivities() == null || workGroup.getActivities().isEmpty()) {
+            if (workGroup.getActivities() == null || workGroup.getActivities().isEmpty()) {
                 workGroupIt.remove();
             }
         }
@@ -362,9 +468,10 @@ public class SummaryManagerImpl implements SummaryManager {
         worksModel.setValidatedCount(validAndSelfAssertedStats.getLeft());
         recordSummary.setWorks(worksModel);
     }
-    
+
     public void generateFundingSummary(RecordSummary recordSummary, String orcid) {
-        org.orcid.jaxb.model.v3.release.record.summary.Fundings fundingGroups = profileFundingManagerReadOnly.groupFundings(profileFundingManagerReadOnly.getFundingSummaryList(orcid), true);        
+        org.orcid.jaxb.model.v3.release.record.summary.Fundings fundingGroups = profileFundingManagerReadOnly
+                .groupFundings(profileFundingManagerReadOnly.getFundingSummaryList(orcid), true);
         Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(fundingGroups, orcid);
 
         Fundings fundingsModel = new Fundings();
@@ -391,8 +498,55 @@ public class SummaryManagerImpl implements SummaryManager {
         PeerReviews pr = new PeerReviews();
         pr.setPeerReviewPublicationGrants(peerReviewMinimizedSummaryList.size());
         pr.setSelfAssertedCount(selfAssertedPeerReviews);
-        pr.setTotal(totalReviewsCount);    
+        pr.setTotal(totalReviewsCount);
         recordSummary.setPeerReviews(pr);
+    }
+
+    public void generateResearchResourcesSummary(RecordSummary recordSummary, String orcid) {
+        org.orcid.jaxb.model.v3.release.record.summary.ResearchResources researchResourcesGroups = researchResourceManagerReadOnly
+                .groupResearchResources(researchResourceManagerReadOnly.getResearchResourceSummaryList(orcid), true);
+        Pair<Integer, Integer> validAndSelfAssertedStats = calculateSelfAssertedAndValidated(researchResourcesGroups, orcid);
+
+        ResearchResources researchResourceModel = new ResearchResources();
+        researchResourceModel.setSelfAssertedCount(validAndSelfAssertedStats.getRight());
+        researchResourceModel.setValidatedCount(validAndSelfAssertedStats.getLeft());
+        recordSummary.setResearchResources(researchResourceModel);
+    }
+
+    public void generateEmailDomainsSummary(RecordSummary recordSummary, String orcid) {
+        // Fill email domains
+        List<ProfileEmailDomainEntity> emailDomains = null;
+        if (Features.EMAIL_DOMAINS.isActive()) {
+            emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(orcid);
+            List<EmailDomain> edList = new ArrayList<EmailDomain>();
+            if (emailDomains != null && !emailDomains.isEmpty()) {
+
+                EmailDomain ed = null;
+                for (ProfileEmailDomainEntity ped : emailDomains) {
+                    ed = new EmailDomain();
+                    ed.setValue(ped.getEmailDomain());
+                    ed.setCreatedDate(Date.valueOf(ped.getDateCreated()));
+                    ed.setLastModified(Date.valueOf(ped.getLastModified()));
+                    edList.add(ed);
+                }
+            }
+
+            List<EmailDomain> emailDomainsTop3 = new ArrayList<EmailDomain>();
+            edList.stream().limit(3).forEach(t -> {
+                EmailDomain ed = new EmailDomain();
+                ed.setValue(t.getValue());
+                ed.setCreatedDate(t.getCreatedDate());
+                ed.setLastModified(t.getLastModified());
+                emailDomainsTop3.add(ed);
+            });
+
+            EmailDomains eds = new EmailDomains();
+            eds.setCount(edList.size());
+            if (!emailDomainsTop3.isEmpty()) {
+                eds.setEmailDomains(emailDomainsTop3);
+            }
+            recordSummary.setEmailDomains(eds);
+        }
     }
 
     private Pair<Integer, Integer> calculateSelfAssertedAndValidated(GroupsContainer c, String orcid) {
@@ -419,7 +573,8 @@ public class SummaryManagerImpl implements SummaryManager {
         return Pair.of(validated, selfAsserted);
     }
 
-    private org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary getDefaultAffiliationFromGroup(AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> group) {
+    private org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary getDefaultAffiliationFromGroup(
+            AffiliationGroup<org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary> group) {
         org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary defaultAffiliation = null;
         Long maxDisplayIndex = null;
         for (org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary as : group.getActivities()) {
@@ -456,7 +611,7 @@ public class SummaryManagerImpl implements SummaryManager {
         // Remove the end on the affiliations
         summariesWithOutEndDate.forEach(s -> s.setEndDate(null));
     }
-    
+
     private String getCacheKey(String orcid) {
         return orcid + "-summary";
     }
