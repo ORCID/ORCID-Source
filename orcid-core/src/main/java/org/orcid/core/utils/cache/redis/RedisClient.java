@@ -4,6 +4,10 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -31,7 +35,7 @@ public class RedisClient {
     private final String redisPassword;
     private final int cacheExpiryInSecs;
     private final int clientTimeoutInMillis;
-    private JedisPool pool;
+    public JedisPool pool;
     private SetParams defaultSetParams;
     
     @Resource
@@ -67,7 +71,7 @@ public class RedisClient {
     @PostConstruct
     private void init() {
         try {
-            JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis).timeoutMillis(this.clientTimeoutInMillis)
+            JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis)
                     .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();        
             pool = new JedisPool(new HostAndPort(this.redisHost, this.redisPort), config);            
             defaultSetParams = new SetParams().ex(this.cacheExpiryInSecs);  
@@ -140,5 +144,34 @@ public class RedisClient {
             }
         }
         return true;
+    }
+
+    public static void main(String [] args) {
+        RedisClient client = new RedisClient("reg-qa-redis-001.reg-qa-redis.3zksuc.use2.cache.amazonaws.com", 6379, "aVerySimpleToken");
+        client.init();
+        System.out.println("Connected");
+        Jedis r = client.pool.getResource();
+
+        Set<String> keys = r.keys("spring:session:sessions:*");
+
+        for(String key : keys) {
+            System.out.println("----------------------------------------------");
+            System.out.println(key);
+            String keyType = r.type(key);
+            System.out.println(keyType);
+            if("hash".equals(keyType)) {
+                Map<String, String> myMap = r.hgetAll(key);
+                for(String tkey : myMap.keySet()) {
+                    System.out.println(tkey + ":     " + myMap.get(tkey));
+                }
+            }
+            if("string".equals(keyType)) {
+                System.out.println(key + ":     " + r.get("key"));
+            }
+            System.out.println("----------------------------------------------");
+        }
+
+
+
     }
 }
