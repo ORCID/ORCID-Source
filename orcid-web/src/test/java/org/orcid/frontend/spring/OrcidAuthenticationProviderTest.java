@@ -61,7 +61,7 @@ public class OrcidAuthenticationProviderTest {
 
             @Override
             public UserDetails answer(InvocationOnMock invocation) throws Throwable {                
-                return new OrcidProfileUserDetails((String) invocation.getArgument(0), "user@email.com", "password");                
+                return new OrcidProfileUserDetails((String) invocation.getArgument(0), "password");
             }
             
         });
@@ -82,7 +82,7 @@ public class OrcidAuthenticationProviderTest {
             @Override
             public OrcidProfileUserDetails answer(InvocationOnMock invocation) throws Throwable {
                 ProfileEntity p = (ProfileEntity) invocation.getArgument(0);
-                return new OrcidProfileUserDetails(p.getId(), "email", p.getEncryptedPassword());                
+                return new OrcidProfileUserDetails(p.getId(), p.getEncryptedPassword());
             }
             
         });

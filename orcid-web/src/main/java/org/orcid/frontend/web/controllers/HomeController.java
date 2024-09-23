@@ -19,12 +19,14 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.UTF8Control;
 import org.orcid.jaxb.model.common.AvailableLocales;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.UserStatus;
@@ -79,7 +81,10 @@ public class HomeController extends BaseController {
     
     @Resource
     private StatisticsManager statisticsManager;
-    
+
+    @Resource(name = "emailManagerReadOnlyV3")
+    protected EmailManagerReadOnly emailManagerReadOnly;
+
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("home");
@@ -177,7 +182,8 @@ public class HomeController extends BaseController {
             // REAL_USER_ORCID = EFFECTIVE_USER_ORCID unless it is in delegation mode
             info.put("EFFECTIVE_USER_ORCID", effectiveOrcid);
             info.put("IN_DELEGATION_MODE", String.valueOf(!effectiveOrcid.equals(realUserOrcid)));
-            info.put("PRIMARY_EMAIL", userDetails.getPrimaryEmail());
+            //TODO: Do we need the primary email in the user info?
+            info.put("PRIMARY_EMAIL", emailManagerReadOnly.findPrimaryEmailValueFromCache(effectiveOrcid));
             info.put("HAS_VERIFIED_EMAIL", String.valueOf(emailManagerReadOnly.haveAnyEmailVerified(effectiveOrcid)));
             info.put("IS_PRIMARY_EMAIL_VERIFIED", String.valueOf(emailManagerReadOnly.isPrimaryEmailVerified(effectiveOrcid)));
             for(OrcidWebRole role : userDetails.getAuthorities()) {

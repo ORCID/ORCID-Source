@@ -61,8 +61,7 @@ public class ClientsControllerTest extends BaseControllerTest {
 
     @Override
     protected Authentication getAuthentication() {
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-5558", "5555-5555-5555-5558@user.com",
-                "e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=");
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-5558", "e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=");
 
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", null,
                 Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION));

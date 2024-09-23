@@ -53,12 +53,12 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
 
     @Resource
     private EmailDao emailDao;
-    
-    @Resource(name = "emailManagerReadOnlyV3")
-    protected EmailManagerReadOnly emailManagerReadOnly;
-    
+
     @Resource
     private OrcidSecurityManager securityMgr;
+
+    @Resource (name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -107,41 +107,17 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     }
 
     private OrcidProfileUserDetails createUserDetails(ProfileEntity profile) {
-        String primaryEmail = retrievePrimaryEmail(profile);
-
+        String primaryEmail = retrievePrimaryEmail(profile.getId());
         OrcidProfileUserDetails userDetails = null;
 
         if (profile.getOrcidType() != null) {
             OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
+            userDetails = new OrcidProfileUserDetails(profile.getId(), profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
         } else {
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
+            userDetails = new OrcidProfileUserDetails(profile.getId(), profile.getEncryptedPassword());
         }
                
         return userDetails;
-    }
-
-    private String retrievePrimaryEmail(ProfileEntity profile) {
-        String orcid = profile.getId();
-        try {
-            return emailDao.findPrimaryEmail(orcid).getEmail();
-        } catch (javax.persistence.NoResultException nre) {
-            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(profile.getId());
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            
-            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
-            LOGGER.error(message);
-                        
-            return alternativePrimaryEmail;
-        } catch (javax.persistence.NonUniqueResultException nure) {
-            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(profile.getId());
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            
-            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
-            LOGGER.error(message);
-            
-            return alternativePrimaryEmail;
-        }
     }
 
     private void checkStatuses(ProfileEntity profile) {
@@ -207,9 +183,25 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     }
 
     private List<OrcidWebRole> rolesAsList(OrcidWebRole... roles) {
-        // Make a mutable list
-        List<OrcidWebRole> list = new ArrayList<OrcidWebRole>(Arrays.asList(roles));
-        return list;
+        return new ArrayList<OrcidWebRole>(Arrays.asList(roles));
+    }
 
+    @Deprecated(forRemoval = true)
+    private String retrievePrimaryEmail(String orcid) {
+        try {
+            return emailDao.findPrimaryEmail(orcid).getEmail();
+        } catch (javax.persistence.NoResultException nre) {
+            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
+            LOGGER.error(message);
+            return alternativePrimaryEmail;
+        } catch (javax.persistence.NonUniqueResultException nure) {
+            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
+            LOGGER.error(message);
+            return alternativePrimaryEmail;
+        }
     }
 }

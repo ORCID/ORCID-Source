@@ -1119,7 +1119,7 @@ public class ManageProfileControllerTest {
     
     protected Authentication getAuthentication(String orcid) {
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, roles);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, roles);
         auth.setDetails(details);
         return auth;

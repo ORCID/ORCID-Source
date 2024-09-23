@@ -65,7 +65,7 @@ public class BaseControllerTest extends DBUnitTest {
         Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
-                e.getEmail(), null, roles);
+                null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);
         return auth;
