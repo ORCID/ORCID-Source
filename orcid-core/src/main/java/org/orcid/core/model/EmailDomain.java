@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
@@ -14,9 +15,9 @@ import org.orcid.pojo.ajaxForm.Date;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "value","createdDate", "lastModified"})
-@XmlRootElement(name = "education-qualification", namespace = "http://www.orcid.org/ns/summary")
-@Schema(description = "Education Qualification")
+@XmlType(propOrder = { "value"})
+@XmlRootElement(name = "email-domain", namespace = "http://www.orcid.org/ns/summary")
+@Schema(description = "Email Domain")
 public class EmailDomain {
     @XmlElement(name = "value", namespace = "http://www.orcid.org/ns/summary")
     protected String value;
@@ -32,7 +33,8 @@ public class EmailDomain {
     public void setValue(String value) {
         this.value = value;
     }
-
+    
+    @XmlTransient
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -41,6 +43,7 @@ public class EmailDomain {
         this.createdDate = createdDate;
     }
 
+    @XmlTransient
     public Date getLastModified() {
         return lastModified;
     }
