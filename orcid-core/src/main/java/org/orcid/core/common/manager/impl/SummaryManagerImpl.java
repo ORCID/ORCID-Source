@@ -524,8 +524,6 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    ed.setCreatedDate(Date.valueOf(ped.getDateCreated()));
-                    ed.setLastModified(Date.valueOf(ped.getLastModified()));
                     edList.add(ed);
                 }
             }
@@ -533,8 +531,6 @@ public class SummaryManagerImpl implements SummaryManager {
             edList.stream().limit(3).forEach(t -> {
                 EmailDomain ed = new EmailDomain();
                 ed.setValue(t.getValue());
-                ed.setCreatedDate(t.getCreatedDate());
-                ed.setLastModified(t.getLastModified());
                 emailDomainsTop3.add(ed);
             });
 
