@@ -123,7 +123,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModified
     public boolean verifyEmail(String email) {
-        Query query = entityManager.createNativeQuery("update email set is_verified = true, is_current=true, last_modified=now() where trim(lower(email)) = trim(lower(:email))");
+        Query query = entityManager.createNativeQuery("update email set is_verified = true, is_current=true, last_modified=now(), date_verified=now() where trim(lower(email)) = trim(lower(:email))");
         query.setParameter("email", email);
         return query.executeUpdate() > 0;
     }
