@@ -1,3 +1,11 @@
+## v2.65.6 - 2024-10-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.5...v2.65.6)
+
+- [#7093](https://github.com/ORCID/ORCID-Source/pull/7093): Revert "Added the code to store deleted items in panoply dw_deleted_items table"
+- [#7091](https://github.com/ORCID/ORCID-Source/pull/7091): Added the code to store deleted items in panoply dw_deleted_items table
+- [#7090](https://github.com/ORCID/ORCID-Source/pull/7090): Removed all created date, last modified  from email domain summary
+
 ## v2.65.5 - 2024-09-23
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.4...v2.65.5)
