@@ -24,7 +24,7 @@ jobs:
     - uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
       with:
         artifact: ${{ inputs.project }}
-        name: "${{ inputs.project }} Unit Tests"   # Name of the check run which will be created
+        name: "maven_test_report_${{ inputs.project }}"   # Name of the check run which will be created
         path: '*.xml'                              # Path to test results (inside artifact .zip)
         reporter: java-junit                       # Format of test results
 
