@@ -1,3 +1,11 @@
+## v2.66.0 - 2024-10-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.6...v2.66.0)
+
+### Feature
+
+- map check names to their workflow files to allow for searching
+
 ## v2.65.6 - 2024-10-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.5...v2.65.6)
