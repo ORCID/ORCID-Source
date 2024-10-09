@@ -3,6 +3,7 @@ package org.orcid.persistence.jpa.entities;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,7 +25,8 @@ public class EmailEntity extends SourceAwareEntity<String> implements OrcidAware
     private Boolean primary;
     private Boolean current;
     private Boolean verified;
-    private String visibility;    
+    private String visibility; 
+    private Date dateVerified;
     
     @Override
     @Id
@@ -90,6 +92,15 @@ public class EmailEntity extends SourceAwareEntity<String> implements OrcidAware
     public void setVisibility(String visibility) {
         this.visibility = visibility;
     }
+    
+    @Column(name = "date_verified")
+    public Date getDateVerified() {
+        return dateVerified;
+    }
+
+    public void setDateVerified(Date dateVerified) {
+        this.dateVerified = dateVerified;
+    }
 
     public static Map<String, EmailEntity> mapByLowerCaseEmail(Collection<EmailEntity> emailEntities) {
         Map<String, EmailEntity> map = new HashMap<>();
@@ -109,5 +120,6 @@ public class EmailEntity extends SourceAwareEntity<String> implements OrcidAware
         visibility= null;
         verified = null;
         visibility = null;
+        dateVerified = null;
     }     
 }
