@@ -9,8 +9,6 @@ import javax.annotation.Resource;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.orcid.utils.panoply.PanoplyDeletedItem;
-import org.orcid.utils.panoply.PanoplyRedshiftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.logging.Log;
@@ -18,6 +16,8 @@ import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.panoply.PanoplyDeletedItem;
+import org.orcid.persistence.panoply.PanoplyRedshiftClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;

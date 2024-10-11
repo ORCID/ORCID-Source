@@ -1,4 +1,4 @@
-package org.orcid.utils.panoply;
+package org.orcid.persistence.panoply;
 
 public class PanoplyDeletedItem {
     private Long id;

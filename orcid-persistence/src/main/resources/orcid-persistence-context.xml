@@ -458,6 +458,9 @@
     </bean>
     
     
+    <bean id="panoplyClient" class="org.orcid.persistence.panoply.PanoplyRedshiftClient" />
+
+    
     <!-- Panoply Redshift -->
 	<bean id="panoplyRedshiftDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<property name="driverClassName" value="\${org.orcid.core.utils.panoply.driver}" />

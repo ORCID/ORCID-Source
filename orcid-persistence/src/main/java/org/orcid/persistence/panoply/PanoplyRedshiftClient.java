@@ -1,4 +1,4 @@
-package org.orcid.utils.panoply;
+package org.orcid.persistence.panoply;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
