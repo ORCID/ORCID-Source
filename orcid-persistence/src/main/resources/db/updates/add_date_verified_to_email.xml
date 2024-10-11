@@ -6,7 +6,7 @@
 	<changeSet author="Camelia Dumitru"
 		id="ADD-DATE-VERIFIED-COLUMN-TO-EMAIL-TABLE">
 		<addColumn tableName="email">
-			<column name="date_verified" type="Timestamp">
+			<column name="date_verified" type="TIMESTAMP WITH TIME ZONE">
 				<constraints nullable="true" />
 			</column>
 		</addColumn>
