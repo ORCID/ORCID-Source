@@ -26,7 +26,7 @@ public class ProfileEmailDomain {
                 Date createdDate = new Date();
                 LocalDate date = ed.getDateCreated().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 createdDate.setYear(String.valueOf(date.getYear()));
-                createdDate.setMonth(String.valueOf(date.getMonth()));
+                createdDate.setMonth(String.valueOf(date.getMonthValue()));
                 createdDate.setDay(String.valueOf(date.getDayOfMonth()));
                 createdDate.setTimestamp(ed.getDateCreated().toInstant().toEpochMilli());
                 emailDomain.setCreatedDate(createdDate);
@@ -36,10 +36,11 @@ public class ProfileEmailDomain {
                 Date lastModifiedDate = new Date();
                 LocalDate date = ed.getLastModified().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 lastModifiedDate.setYear(String.valueOf(date.getYear()));
-                lastModifiedDate.setMonth(String.valueOf(date.getMonth()));
+                lastModifiedDate.setMonth(String.valueOf(date.getMonthValue()));
                 lastModifiedDate.setDay(String.valueOf(date.getDayOfMonth()));
                 emailDomain.setLastModified(lastModifiedDate);
             }
+
         }
         return emailDomain;
     }
