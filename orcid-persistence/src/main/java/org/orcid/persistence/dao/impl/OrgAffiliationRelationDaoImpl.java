@@ -13,7 +13,6 @@ import org.orcid.utils.panoply.PanoplyDeletedItem;
 import org.orcid.utils.panoply.PanoplyRedshiftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.logging.Log;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -23,12 +22,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliationRelationEntity, Long> implements OrgAffiliationRelationDao {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(OrgAffiliationRelationDaoImpl.class);
-    
+
     @Value("${org.orcid.persistence.panoply.cleanup.production:false}")
-    private boolean enablePanoplyCleanupInProduction; 
-    
+    private boolean enablePanoplyCleanupInProduction;
+
     private static final String AFFILIATION_TYPE_DISTINCTION = "DISTINCTION";
 
     private static final String AFFILIATION_TYPE_EDUCATION = "EDUCATION";
@@ -42,11 +41,11 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     private static final String AFFILIATION_TYPE_QUALIFICATION = "QUALIFICATION";
 
     private static final String AFFILIATION_TYPE_SERVICE = "SERVICE";
-    
+
     private static final String DW_PANOPLY_AFFILIATION_TABLE = "dw_org_affiliation_relation";
-    
+
     @Resource
-    private PanoplyRedshiftClient panoplyClient;  
+    private PanoplyRedshiftClient panoplyClient;
 
     public OrgAffiliationRelationDaoImpl() {
         super(OrgAffiliationRelationEntity.class);
@@ -69,20 +68,20 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid=:userOrcid and id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
-        if(query.executeUpdate() > 0) {
-            if(enablePanoplyCleanupInProduction) {
+        if (query.executeUpdate() > 0) {
+            if (enablePanoplyCleanupInProduction) {
                 PanoplyDeletedItem item = new PanoplyDeletedItem();
                 item.setItemId(orgAffiliationRelationId);
                 item.setDwTable(DW_PANOPLY_AFFILIATION_TABLE);
                 storeDeletedItemInPanoply(item);
-             }
+            }
             return true;
         }
-        return   false;
+        return false;
     }
-    
+
     private void storeDeletedItemInPanoply(PanoplyDeletedItem item) {
-        //Store the deleted item in panoply Db without blocking
+        // Store the deleted item in panoply Db without blocking
         CompletableFuture.supplyAsync(() -> {
             try {
                 panoplyClient.addPanoplyDeletedItem(item);
@@ -91,11 +90,11 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
                 LOG.error("Cannot store deleted affiliation in panoply ", e);
                 return false;
             }
-        }).thenAccept(result -> {            
-            if(! result) {
-                LOG.error("Async call to panoply for : " + item.toString() + " Stored: "+ result);
+        }).thenAccept(result -> {
+            if (!result) {
+                LOG.error("Async call to panoply for : " + item.toString() + " Stored: " + result);
             }
-            
+
         });
     }
 
@@ -241,13 +240,13 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         Query query = entityManager.createNativeQuery("DELETE FROM org_affiliation_relation WHERE client_source_id=:clientSourceId");
         query.setParameter("clientSourceId", clientSourceId);
         query.executeUpdate();
-        if(query.executeUpdate() > 0) {
-            if(enablePanoplyCleanupInProduction) {
+        if (query.executeUpdate() > 0) {
+            if (enablePanoplyCleanupInProduction) {
                 PanoplyDeletedItem item = new PanoplyDeletedItem();
                 item.setClientSourceId(clientSourceId);
                 item.setDwTable(DW_PANOPLY_AFFILIATION_TABLE);
                 storeDeletedItemInPanoply(item);
-             }
+            }
         }
     }
 
@@ -334,15 +333,15 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
-        if(query.executeUpdate() > 0) {
-            if(enablePanoplyCleanupInProduction) {
+        if (query.executeUpdate() > 0) {
+            if (enablePanoplyCleanupInProduction) {
                 PanoplyDeletedItem item = new PanoplyDeletedItem();
                 item.setOrcid(orcid);
                 item.setDwTable(DW_PANOPLY_AFFILIATION_TABLE);
                 storeDeletedItemInPanoply(item);
-             }
+            }
         }
-        
+
     }
 
     @Override
@@ -447,8 +446,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForUserOBORecords(int max) {
-        Query query = entityManager
-                .createNativeQuery("SELECT id FROM org_affiliation_relation WHERE assertion_origin_source_id IS NOT NULL");
+        Query query = entityManager.createNativeQuery("SELECT id FROM org_affiliation_relation WHERE assertion_origin_source_id IS NOT NULL");
         query.setMaxResults(max);
         return query.getResultList();
     }
@@ -461,14 +459,14 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setMaxResults(max);
         return query.getResultList();
     }
-    
+
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional
     public void persist(OrgAffiliationRelationEntity affiliation) {
         super.persist(affiliation);
     }
-    
+
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional
