@@ -8,7 +8,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -21,16 +20,16 @@ import org.orcid.utils.alerting.SlackManager;
 public class PanoplyRedshiftClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(PanoplyRedshiftClient.class);
-    
+
     @Autowired
     @Qualifier("panoplyJdbcTemplate")
     private JdbcTemplate panoplyJdbcTemplate;
-    
-    
+
     public int addPanoplyDeletedItem(PanoplyDeletedItem item) {
-        LOG.debug("Adding deleted item to panoply DB: " +  item.toString());
+        LOG.debug("Adding deleted item to panoply DB: " + item.toString());
         String sql = "INSERT INTO dw_deleted_items (item_id, orcid, client_source_id, date_deleted, dw_table) VALUES (?, ?, ?, ?, ?)";
-        return panoplyJdbcTemplate.update(sql, item.getItemId(), item.getOrcid(), item.getClientSourceId(), new java.sql.Timestamp(new Date().getTime()), item.getDwTable());
+        return panoplyJdbcTemplate.update(sql, item.getItemId(), item.getOrcid(), item.getClientSourceId(), new java.sql.Timestamp(new Date().getTime()),
+                item.getDwTable());
     }
-    
+
 }
