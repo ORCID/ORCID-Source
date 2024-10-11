@@ -81,9 +81,9 @@ public class Email implements ErrorsInterface {
 
             if (e.getVerificationDate() != null) {
                 Date verificationDate = new Date();
-                verificationDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
-                verificationDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
-                verificationDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
+                verificationDate.setYear(String.valueOf(e.getVerificationDate().getValue().getYear()));
+                verificationDate.setMonth(String.valueOf(e.getVerificationDate().getValue().getMonth()));
+                verificationDate.setDay(String.valueOf(e.getVerificationDate().getValue().getDay()));
                 email.setVerificationDate(verificationDate);
             }
         }
