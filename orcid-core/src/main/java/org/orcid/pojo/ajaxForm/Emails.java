@@ -33,7 +33,7 @@ public class Emails implements ErrorsInterface {
     
     public org.orcid.jaxb.model.v3.release.record.Emails toV3Emails() {
         org.orcid.jaxb.model.v3.release.record.Emails v3Emails = new org.orcid.jaxb.model.v3.release.record.Emails();
-        if(emails != null && !emails.isEmpty()) {
+        if (emails != null && !emails.isEmpty()) {
             for(Email email : emails) {
                 v3Emails.getEmails().add(email.toV3Email());
             }

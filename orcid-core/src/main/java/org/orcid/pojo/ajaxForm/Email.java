@@ -32,6 +32,8 @@ public class Email implements ErrorsInterface {
 
     private Date lastModified;
 
+    private Date verificationDate;
+
     private List<String> errors = new ArrayList<String>();
 
     public static Email valueOf(org.orcid.jaxb.model.v3.release.record.Email e) {
@@ -75,6 +77,14 @@ public class Email implements ErrorsInterface {
                 lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
                 lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
                 email.setLastModified(lastModifiedDate);
+            }
+
+            if (e.getVerificationDate() != null) {
+                Date verificationDate = new Date();
+                verificationDate.setYear(String.valueOf(e.getVerificationDate().getValue().getYear()));
+                verificationDate.setMonth(String.valueOf(e.getVerificationDate().getValue().getMonth()));
+                verificationDate.setDay(String.valueOf(e.getVerificationDate().getValue().getDay()));
+                email.setVerificationDate(verificationDate);
             }
         }
         return email;
@@ -185,6 +195,14 @@ public class Email implements ErrorsInterface {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public Date getVerificationDate() {
+        return verificationDate;
+    }
+
+    public void setVerificationDate(Date verificationDate) {
+        this.verificationDate = verificationDate;
     }
 
     public List<String> getErrors() {
