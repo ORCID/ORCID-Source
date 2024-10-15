@@ -46,7 +46,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUHT-CODE-REQ-ID">
+    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUTH-CODE-REQ-ID">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="spring_authorization_code_request_id"/>
@@ -57,7 +57,7 @@
         </addColumn>
     </changeSet>
 
-    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUHT-CODE-EXPIRES-AT">
+    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUTH-CODE-EXPIRES-AT">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_code_expires_at"/>
@@ -65,6 +65,17 @@
         </preConditions>
         <addColumn tableName="oauth2_authoriziation_code_detail">
             <column name="authorization_code_expires_at" type="TIMESTAMP WITH TIME ZONE" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-ATTRIBUTES">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="attributes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="attributes" type="VARCHAR(4000)" />
         </addColumn>
     </changeSet>
 

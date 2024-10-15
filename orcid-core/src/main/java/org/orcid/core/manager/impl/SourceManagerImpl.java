@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.SourceNameCacheManager;
@@ -50,7 +51,7 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
             return authorizationRequest.getClientId();
         }
         // Normal web user
-        return retrieveEffectiveOrcid(authentication);
+        return AuthenticationUtils.retrieveEffectiveOrcid();
     }
 
     @Override
@@ -73,7 +74,7 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
             
             return sourceEntity;
         }
-        String userOrcid = retrieveEffectiveOrcid(authentication);
+        String userOrcid = AuthenticationUtils.retrieveEffectiveOrcid();
         if(userOrcid == null){
             // Must be system role
             return null;
@@ -86,17 +87,6 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
         return sourceEntity;
     }
 
-    private String retrieveEffectiveOrcid(Authentication authentication) {
-        if (authentication.getDetails() != null && OrcidProfileUserDetails.class.isAssignableFrom(authentication.getDetails().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getDetails()).getOrcid();
-        }
-        return null;
-    }
-
-    private String retrieveEffectiveOrcid() {
-        return retrieveEffectiveOrcid(SecurityContextHolder.getContext().getAuthentication());
-    }
-
     @Override
     public boolean isInDelegationMode() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -104,7 +94,7 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
         if (realUserOrcid == null) {
             return false;
         }
-        return !retrieveEffectiveOrcid().equals(realUserOrcid);
+        return !AuthenticationUtils.retrieveEffectiveOrcid().equals(realUserOrcid);
     }
 
     @Override
@@ -124,7 +114,7 @@ public class SourceManagerImpl extends ManagerReadOnlyBaseImpl implements Source
             return realUserIfInDelegationMode;
         }
         // Normal web user
-        return retrieveEffectiveOrcid(authentication);
+        return AuthenticationUtils.retrieveEffectiveOrcid();
     }
 
     private String getRealUserIfInDelegationMode(Authentication authentication) {
