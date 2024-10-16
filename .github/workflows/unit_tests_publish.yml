@@ -1,4 +1,4 @@
-name: unit_tests_publish
+.github/workflows/azure-functions-app-java.ymlname: unit_tests_publish
 
 # full unit tests with report publishing
 
