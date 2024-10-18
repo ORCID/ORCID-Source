@@ -73,10 +73,11 @@ import org.orcid.pojo.summary.EmailDomainSummary;
 import org.orcid.pojo.summary.ExternalIdentifiersSummary;
 import org.orcid.pojo.summary.RecordSummaryPojo;
 import org.orcid.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 public class SummaryManagerImpl implements SummaryManager {
-
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
@@ -285,8 +286,7 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
                     EmailDomainSummary eds = new EmailDomainSummary();
                     eds.setValue(ed.getValue());
-                    eds.setCreatedDate(ed.getCreatedDate().toFuzzyDate().toString());
-                    eds.setLastModified(ed.getLastModified().toFuzzyDate().toString());
+                    emailDomains.add(eds);
                 }
             }
             pojo.setEmailDomains(emailDomains);
@@ -520,23 +520,17 @@ public class SummaryManagerImpl implements SummaryManager {
             emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(orcid);
             List<EmailDomain> edList = new ArrayList<EmailDomain>();
             if (emailDomains != null && !emailDomains.isEmpty()) {
-
                 EmailDomain ed = null;
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    ed.setCreatedDate(Date.valueOf(ped.getDateCreated()));
-                    ed.setLastModified(Date.valueOf(ped.getLastModified()));
                     edList.add(ed);
                 }
             }
-
             List<EmailDomain> emailDomainsTop3 = new ArrayList<EmailDomain>();
             edList.stream().limit(3).forEach(t -> {
                 EmailDomain ed = new EmailDomain();
                 ed.setValue(t.getValue());
-                ed.setCreatedDate(t.getCreatedDate());
-                ed.setLastModified(t.getLastModified());
                 emailDomainsTop3.add(ed);
             });
 
@@ -544,7 +538,9 @@ public class SummaryManagerImpl implements SummaryManager {
             eds.setCount(edList.size());
             if (!emailDomainsTop3.isEmpty()) {
                 eds.setEmailDomains(emailDomainsTop3);
+                
             }
+            
             recordSummary.setEmailDomains(eds);
         }
     }
