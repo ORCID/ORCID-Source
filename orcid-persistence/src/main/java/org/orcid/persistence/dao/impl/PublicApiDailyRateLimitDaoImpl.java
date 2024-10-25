@@ -26,7 +26,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
         Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM public_api_daily_rate_limit p client_id=:clientId and requestDate=:requestDate",
                 PublicApiDailyRateLimitEntity.class);
         nativeQuery.setParameter("clientId", clientId);
-        nativeQuery.setParameter("requestDate", requestDate.toString());
+        nativeQuery.setParameter("requestDate", requestDate);
         List<PublicApiDailyRateLimitEntity> papiRateList = (List<PublicApiDailyRateLimitEntity>) nativeQuery.getResultList();
         if (papiRateList != null && papiRateList.size() > 0) {
             if (papiRateList.size() > 1) {
@@ -59,11 +59,11 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
     public int countClientRequestsWithLimitExceeded(LocalDate requestDate, int limit) {
         Query nativeQuery = entityManager.createNativeQuery(
                 "SELECT count(*) FROM public_api_daily_rate_limit p WHERE NOT ((p.client_id = '' OR p.client_id IS NULL)) and p.request_date=:requestDate and p.request_count >=:requestCount");
-        nativeQuery.setParameter("requestDate", requestDate.toString());
+        nativeQuery.setParameter("requestDate", requestDate);
         nativeQuery.setParameter("requestCount", limit);
-        List<Integer> tsList = nativeQuery.getResultList();
+        List<java.math.BigInteger>  tsList = nativeQuery.getResultList();
         if (tsList != null && !tsList.isEmpty()) {
-            return (Integer) tsList.get(0);
+            return tsList.get(0).intValue();
         }
         return 0;
 
@@ -72,11 +72,11 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
     public int countAnonymousRequestsWithLimitExceeded(LocalDate requestDate, int limit) {
         Query nativeQuery = entityManager.createNativeQuery(
                 "SELECT count(*) FROM public_api_daily_rate_limit p WHERE ((p.client_id = '' OR p.client_id IS NULL)) and p.request_date=:requestDate and p.request_count >=:requestCount");
-        nativeQuery.setParameter("requestDate", requestDate.toString());
+        nativeQuery.setParameter("requestDate", requestDate);
         nativeQuery.setParameter("requestCount", limit);
-        List<Integer> tsList = nativeQuery.getResultList();
+        List<java.math.BigInteger> tsList = nativeQuery.getResultList();
         if (tsList != null && !tsList.isEmpty()) {
-            return (Integer) tsList.get(0);
+            return tsList.get(0).intValue();
         }
         return 0;
     }
