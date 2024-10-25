@@ -53,7 +53,10 @@ public enum Features implements Feature {
     EMAIL_DOMAINS,
 
     @Label("Enable email domains in the UI")
-    EMAIL_DOMAINS_UI;
+    EMAIL_DOMAINS_UI,
+    
+    @Label("Enable rate limiting for public API. When disabled therate monitoring is on.")
+    ENABLE_PAPI_RATE_LIMITING;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

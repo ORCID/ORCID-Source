@@ -45,6 +45,7 @@
         <task:scheduled ref="eventStats" method="saveEventStats" cron="${org.orcid.scheduler.web.saveEventStats:0 20 0 * * *}"/>
         <task:scheduled ref="eventStats" method="savePapiEventStats" cron="${org.orcid.scheduler.web.savePapiEventStats:0 55 0 * * *}"/>
         <task:scheduled ref="eventStats" method="deletePapiEvents" cron="${org.orcid.scheduler.web.deletePapiEvents:0 40 0 * * *}"/>
+        <task:scheduled ref="papiLimitReport" method="papiDailyLimitReport" cron="${org.orcid.scheduler.papiLimitReport.process:0 0 1 * * *}"/>
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:30}"/>
@@ -138,5 +139,7 @@
     <bean id="autoLockSpamRecords" class="org.orcid.scheduler.autospam.cli.AutoLockSpamRecords" />
 
     <bean id="eventStats" class="org.orcid.scheduler.web.event.impl.EventStatsImpl" />
+    
+    <bean id="papiLimitReport" class="org.orcid.scheduler.report.PapiDailyLimitReport" />
 
 </beans>

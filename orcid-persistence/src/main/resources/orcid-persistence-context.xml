@@ -482,4 +482,8 @@
     <!-- Redshift panoply -->
     <bean id="panoplyClient" class="org.orcid.utils.panoply.PanoplyRedshiftClient" />  
     
+    <!-- PublicApiDailyRate DAO's -->
+	<bean id="papiRateLimitingDao" class="org.orcid.persistence.dao.impl.PublicApiDailyRateLimitDaoImpl" />
+	
+    
 </beans>
