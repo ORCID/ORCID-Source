@@ -1,3 +1,9 @@
+## v2.66.6 - 2024-10-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.5...v2.66.6)
+
+- [#7111](https://github.com/ORCID/ORCID-Source/pull/7111): update license reference
+
 ## v2.66.5 - 2024-10-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.4...v2.66.5)
