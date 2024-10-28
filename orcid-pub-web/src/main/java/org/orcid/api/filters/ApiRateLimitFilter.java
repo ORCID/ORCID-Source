@@ -73,13 +73,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Resource
     private PanoplyRedshiftClient panoplyClient;  
 
-    @Value("${rate.limit.anonymous.requests:10000}")
+    @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
     private int anonymousRequestLimit;
 
-    @Value("${rate.limit.known.requests:40000}")
+    @Value("${org.orcid.papi.rate.limit.known.requests:40000}")
     private int knownRequestLimit;
 
-    @Value("${rate.limit.enabled:false}")
+    @Value("${org.orcid.papi.rate.limit.enabled:false}")
     private boolean enableRateLimiting;
     
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
