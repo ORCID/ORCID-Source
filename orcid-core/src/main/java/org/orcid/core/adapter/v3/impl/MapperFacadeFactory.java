@@ -500,6 +500,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         emailClassMap.field("primary", "primary");
         emailClassMap.field("verified", "verified");
         emailClassMap.fieldMap("visibility", "visibility").converter("visibilityConverter").add();
+        emailClassMap.field("verificationDate.value", "dateVerified");
         addV3DateFields(emailClassMap);
         registerSourceConverters(mapperFactory, emailClassMap);
         emailClassMap.register();

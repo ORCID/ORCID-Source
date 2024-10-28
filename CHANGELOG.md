@@ -1,3 +1,85 @@
+## v2.66.6 - 2024-10-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.5...v2.66.6)
+
+- [#7111](https://github.com/ORCID/ORCID-Source/pull/7111): update license reference
+
+## v2.66.5 - 2024-10-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.4...v2.66.5)
+
+## v2.66.4 - 2024-10-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.3...v2.66.4)
+
+## v2.66.3 - 2024-10-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.2...v2.66.3)
+
+## v2.66.2 - 2024-10-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.1...v2.66.2)
+
+## v2.66.1 - 2024-10-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.0...v2.66.1)
+
+## v2.66.0 - 2024-10-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.6...v2.66.0)
+
+### Feature
+
+- map check names to their workflow files to allow for searching
+
+## v2.65.6 - 2024-10-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.5...v2.65.6)
+
+- [#7093](https://github.com/ORCID/ORCID-Source/pull/7093): Revert "Added the code to store deleted items in panoply dw_deleted_items table"
+- [#7091](https://github.com/ORCID/ORCID-Source/pull/7091): Added the code to store deleted items in panoply dw_deleted_items table
+- [#7090](https://github.com/ORCID/ORCID-Source/pull/7090): Removed all created date, last modified  from email domain summary
+
+## v2.65.5 - 2024-09-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.4...v2.65.5)
+
+## v2.65.4 - 2024-09-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.3...v2.65.4)
+
+## v2.65.3 - 2024-09-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.2...v2.65.3)
+
+## v2.65.2 - 2024-09-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.1...v2.65.2)
+
+## v2.65.1 - 2024-09-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.0...v2.65.1)
+
+## v2.65.0 - 2024-09-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.6...v2.65.0)
+
+## v2.64.6 - 2024-09-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.5...v2.64.6)
+
+## v2.64.5 - 2024-09-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.4...v2.64.5)
+
+## v2.64.4 - 2024-09-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.3...v2.64.4)
+
+## v2.64.3 - 2024-09-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.2...v2.64.3)
+
 ## v2.64.2 - 2024-08-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.1...v2.64.2)
