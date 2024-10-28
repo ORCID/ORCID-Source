@@ -12,7 +12,7 @@ Also see our active contributors: [CREDITS.md](https://github.com/ORCID/ORCID-Wo
 >
 > Copyright (c) 2013 ORCID, Inc.    
 > Licensed under an MIT-Style License (MIT)    
-> https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md    
+> https://github.com/ORCID/ORCID-Source/blob/main/LICENSE
 > http://orcid.org/OpenSource/license
 > 
 > This copyright and license information (including a link to the full license) shall be included in its entirety in all copies or substantial portion of  the software.
