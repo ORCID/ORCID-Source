@@ -101,6 +101,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertNotNull(entity);
         assertNull(entity.getDateCreated());
         assertNull(entity.getLastModified());
+        assertNull(entity.getDateVerified());
         assertEquals("user1@email.com", entity.getEmail());
         assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.name(), entity.getVisibility());
 
@@ -119,6 +120,8 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getCreatedDate().getValue()));
         assertNotNull(email.getLastModifiedDate());
         assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getLastModifiedDate().getValue()));
+        assertNotNull(email.getVerificationDate());
+        assertEquals(DateUtils.convertToDate("2015-06-05T10:15:20"), DateUtils.convertToDate(email.getVerificationDate().getValue()));
         assertEquals("email@test.orcid.org", email.getEmail());
         assertEquals(Visibility.PRIVATE, email.getVisibility());
 
@@ -159,6 +162,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceNameCache {
         Date date = DateUtils.convertToDate("2015-06-05T10:15:20");
         EmailEntity result = new EmailEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(result, date);
+        result.setDateVerified(date);
         result.setEmail("email@test.orcid.org");
         result.setCurrent(true);
         result.setPrimary(true);

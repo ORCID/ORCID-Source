@@ -97,7 +97,7 @@ public class RecordSummaryMarshallingTest {
         EmailDomains emailDomains = new EmailDomains();
         emailDomains.setCount(4);
         emailDomains.setEmailDomains(new ArrayList<EmailDomain>());
-        emailDomains.getEmailDomains().add(getEmailDomain("sometrusted.org", getEmailDomainCreatedDate(), getEmailDomainLastModified()));
+        emailDomains.getEmailDomains().add(getEmailDomain("sometrusted.org"));
         record.setEmailDomains(emailDomains);
         
         //Set education/qualifications
@@ -163,7 +163,7 @@ public class RecordSummaryMarshallingTest {
         return eq;
     }
     
-    private EmailDomain getEmailDomain(String domainValue, Date created, Date modified) {
+    private EmailDomain getEmailDomain(String domainValue) {
         EmailDomain emailDomain = new EmailDomain();
         emailDomain.setValue(domainValue);
         //emailDomain.setCreatedDate(created);

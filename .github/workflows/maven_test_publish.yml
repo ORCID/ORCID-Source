@@ -165,7 +165,7 @@ jobs:
         uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
         if: always()
         with:
-          name: "${{ inputs.project }}: Unit tests results"
+          name: "maven_test_publish_${{ inputs.project }}"
           path: ${{ inputs.project }}/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
