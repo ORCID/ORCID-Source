@@ -124,5 +124,5 @@ Mac: ```/Applications/Firefox.app/Contents/MacOS/firefox-bin```
     [src/test/resources/test-client.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-client.properties)
 
 # License
-See [LICENSE.md](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md)
+See [LICENSE](https://github.com/ORCID/ORCID-Source/blob/main/LICENSE)
 
