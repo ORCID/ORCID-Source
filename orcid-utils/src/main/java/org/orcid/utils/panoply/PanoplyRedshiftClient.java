@@ -31,5 +31,11 @@ public class PanoplyRedshiftClient {
         return panoplyJdbcTemplate.update(sql, item.getItemId(), item.getOrcid(), item.getClientSourceId(), new java.sql.Timestamp(new Date().getTime()),
                 item.getDwTable());
     }
-
+    
+    public int addPanoplyPapiDailyRateExceeded(PanoplyPapiDailyRateExceededItem item) {
+        LOG.debug("Adding papi daily rate exceeded item to panoply DB: " + item.toString());
+        String sql = "INSERT INTO dw_papi_daily_rate_exceeded (ip_address, orcid, client_id, email, request_date) VALUES (?, ?, ?, ?, ?)";
+        return panoplyJdbcTemplate.update(sql, item.getIpAddress(), item.getOrcid(), item.getClientId(), item.getEmail(), item.getRequestDate());
+    }
+    
 }

@@ -405,4 +405,5 @@
   <include file="/db/updates/create_dw_profile_email_domain.xml" />
   <include file="/db/updates/add_unique_constraint_external_id_disambiguated_org.xml" />
   <include file="/db/updates/add_date_verified_to_email.xml" />
+  <include file="/db/updates/create_public_api_daily_rate_limit.xml" />
 </databaseChangeLog>
