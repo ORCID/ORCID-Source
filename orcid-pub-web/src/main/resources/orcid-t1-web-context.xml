@@ -16,15 +16,13 @@
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
          
-    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
+    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />  
+	
+    <bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
+	
+    <bean id="putAuthTokenActionFilter" class="org.orcid.api.filters.PutAuthTokenActionFilter" />
     
-    
-	
-	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
-	
-	<bean id="putAuthTokenActionFilter" class="org.orcid.api.filters.PutAuthTokenActionFilter" />
-	
-	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+    <bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
