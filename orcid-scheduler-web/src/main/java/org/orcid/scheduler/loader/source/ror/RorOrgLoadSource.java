@@ -281,7 +281,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
 
         // Create a new disambiguated org
-        OrgDisambiguatedEntity newOrg = createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url);
+        OrgDisambiguatedEntity newOrg = createDisambiguatedOrg(sourceId, name, orgType, country, city, region, url, locationsJson, namesJson);
         try {
             // mark group for indexing
             new OrgGrouping(newOrg, orgDisambiguatedManager).markGroupForIndexing(orgDisambiguatedDao);
@@ -394,7 +394,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
     /**
      * Creates a disambiguated ORG in the org_disambiguated table
      */
-    private OrgDisambiguatedEntity createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url) {
+    private OrgDisambiguatedEntity createDisambiguatedOrg(String sourceId, String name, String orgType, Iso3166Country country, String city, String region, String url,String locationsJson, String namesJson) {
         LOGGER.info("Creating disambiguated org {}", name);
         OrgDisambiguatedEntity orgDisambiguatedEntity = new OrgDisambiguatedEntity();
         orgDisambiguatedEntity.setName(name);
@@ -405,6 +405,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
         orgDisambiguatedEntity.setOrgType(orgType);
         orgDisambiguatedEntity.setSourceId(sourceId);
         orgDisambiguatedEntity.setSourceType(OrgDisambiguatedSourceType.ROR.name());
+        orgDisambiguatedEntity.setLocationsJson(locationsJson);
+        orgDisambiguatedEntity.setNamesJson(namesJson);
         orgDisambiguatedManager.createOrgDisambiguated(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }
