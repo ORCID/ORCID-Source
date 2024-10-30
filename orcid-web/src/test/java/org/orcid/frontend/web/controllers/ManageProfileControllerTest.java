@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,11 +41,10 @@ import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -95,6 +95,12 @@ public class ManageProfileControllerTest {
     private EmailManager mockEmailManager;
 
     @Mock
+    private EmailManagerReadOnly mockEmailManagerReadOnly;
+
+    @Mock
+    private ProfileEmailDomainManagerReadOnly mockProfileEmailDomainManagerReadOnly;
+
+    @Mock
     private LocaleManager mockLocaleManager;
 
     @Mock
@@ -127,6 +133,21 @@ public class ManageProfileControllerTest {
     @Mock(name="profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly mockProfileEntityManagerReadOnly;
 
+    @Mock
+    private PersonalDetailsManagerReadOnly mockPersonalDetailsManagerReadOnly;
+
+    @Mock
+    private AddressManagerReadOnly mockAddressManagerReadOnly;
+
+    @Mock
+    private ProfileKeywordManagerReadOnly mockKeywordManagerReadOnly;
+
+    @Mock
+    private ResearcherUrlManagerReadOnly mockResearcherUrlManagerReadOnly;
+
+    @Mock
+    private ExternalIdentifierManagerReadOnly mockExternalIdentifierManagerReadOnly;
+
     @Before
     public void initMocks() throws Exception {
         controller = new ManageProfileController();
@@ -135,7 +156,8 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(controller, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
-        TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManager);
+        TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "profileEmailDomainManagerReadOnly", mockProfileEmailDomainManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager); 
@@ -147,6 +169,12 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
         TargetProxyHelper.injectIntoProxy(controller, "recordEmailSender", mockRecordEmailSender);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManagerReadOnly", mockProfileEntityManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "personalDetailsManagerReadOnly", mockPersonalDetailsManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "addressManagerReadOnly", mockAddressManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "keywordManagerReadOnly", mockKeywordManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "researcherUrlManagerReadOnly", mockResearcherUrlManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "externalIdentifierManagerReadOnly", mockExternalIdentifierManagerReadOnly);
+
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -192,11 +220,13 @@ public class ManageProfileControllerTest {
                 Emails emails = new Emails();
                 Email email1 = new Email();
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setSource(new Source());
                 email1.setVisibility(Visibility.PUBLIC);
                 emails.getEmails().add(email1);
 
                 Email email2 = new Email();
                 email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
+                email2.setSource(new Source());
                 email2.setVisibility(Visibility.PUBLIC);
                 emails.getEmails().add(email2);
                 return emails;
@@ -1116,7 +1146,22 @@ public class ManageProfileControllerTest {
         
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
-    
+
+    @Test
+    public void testEmptyEmailSource() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
+        when(mockEmailManagerReadOnly.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+        org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
+        assertEquals(emails.getEmails().get(0).getSource(), USER_ORCID);
+        assertNull(emails.getEmails().get(0).getSourceName());
+
+    }
+
+
     protected Authentication getAuthentication(String orcid) {
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, roles);
