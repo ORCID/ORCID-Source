@@ -96,6 +96,8 @@
 		<class>org.orcid.statistics.jpa.entities.StatisticValuesEntity</class>
 		<class>org.orcid.statistics.jpa.entities.StatisticKeyEntity</class>
 		
+		<!-- PAPI Rate Limitig -->
+		<class>org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 <!--         <properties> -->
