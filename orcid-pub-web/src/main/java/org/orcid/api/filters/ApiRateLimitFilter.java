@@ -95,7 +95,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
-        LOG.info("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
+        LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
         if (enableRateLimiting) {
             String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
             String ipAddress = OrcidRequestUtil.getIpAddress(httpServletRequest);
