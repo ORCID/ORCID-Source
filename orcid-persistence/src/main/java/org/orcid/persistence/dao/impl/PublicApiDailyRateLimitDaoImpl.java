@@ -95,7 +95,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
             query.setParameter("ipAddress", papiRateLimitingEntity.getIpAddress());
         }
         query.setParameter("requestCount", papiRateLimitingEntity.getRequestCount());
-        query.setParameter("requestDate", papiRateLimitingEntity.getRequestDate().toString());
+        query.setParameter("requestDate", papiRateLimitingEntity.getRequestDate());
         return query.executeUpdate() > 0;
     }
 
