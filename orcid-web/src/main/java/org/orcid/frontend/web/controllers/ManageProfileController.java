@@ -94,9 +94,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
-    @Resource(name = "emailManagerReadOnlyV3")
-    private EmailManagerReadOnly emailManagerReadOnly;
-
     @Resource(name = "profileEmailDomainManagerReadOnly")
     private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnly;
 
