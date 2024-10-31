@@ -16,15 +16,17 @@
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
          
-    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
+    <bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />  
 	
-	<bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
+    <bean id="sanitizeAuthenticationFilter" class="org.orcid.core.web.filters.SanitizeAuthenticationFilter" />
 	
-	<bean id="putAuthTokenActionFilter" class="org.orcid.api.filters.PutAuthTokenActionFilter" />
-	
-	<bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
+    <bean id="putAuthTokenActionFilter" class="org.orcid.api.filters.PutAuthTokenActionFilter" />
+    
+    <bean id="corsFilter" class="org.orcid.core.web.filters.CorsFilter" />
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
+    
+    <bean id="rateLimitingFilter" class="org.orcid.api.filters.ApiRateLimitFilter" />
     
     <!--  Public_2 API -->
     <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
@@ -85,5 +87,7 @@
     	<constructor-arg value="${org.orcid.core.pubBaseUri}" />
     	<constructor-arg value="false" />
     </bean>
+    
+    <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
     
 </beans>
