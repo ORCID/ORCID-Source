@@ -419,16 +419,18 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getDeprecatingEmails());
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
 
         // Using orcid
@@ -441,16 +443,19 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getDeprecatingEmails());
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
+
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
         
         // Using orcid URL
@@ -463,16 +468,19 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getDeprecatingEmails());
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
+
         assertTrue(deprecateProfile.getErrors().isEmpty());
         
         // Using orcid trim space
@@ -486,16 +494,19 @@ public class ManageProfileControllerTest {
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
 
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
+
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
 
