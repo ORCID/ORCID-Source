@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -44,13 +43,10 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
-import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.*;
 import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
-import org.orcid.jaxb.model.v3.release.common.CreditName;
-import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -84,6 +80,7 @@ public class ManageProfileControllerTest {
     private static final String USER_ORCID = "0000-0000-0000-0001";
     private static final String DEPRECATED_USER_ORCID = "0000-0000-0000-0002";
     private static final String DEPRECATED_USER_ORCID_URL = "https://localhost:8443/0000-0000-0000-0002";
+    private static final String USER_CREDIT_NAME = "Credit Name";
 
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
@@ -227,8 +224,16 @@ public class ManageProfileControllerTest {
                 Email email2 = new Email();
                 email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
                 email2.setSource(new Source());
+                email2.getSource().setSourceName(new SourceName(USER_CREDIT_NAME));
                 email2.setVisibility(Visibility.PUBLIC);
                 emails.getEmails().add(email2);
+
+                Email email3 = new Email();
+                email3.setEmail(invocation.getArgument(0) + "_3@test.orcid.org");
+                email3.setSource(new Source());
+                email3.getSource().setSourceClientId(new SourceClientId(USER_ORCID));
+                email3.setVisibility(Visibility.PUBLIC);
+                emails.getEmails().add(email3);
                 return emails;
             }
 
@@ -1156,10 +1161,57 @@ public class ManageProfileControllerTest {
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
         org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
-        assertEquals(emails.getEmails().get(0).getSource(), USER_ORCID);
-        assertNull(emails.getEmails().get(0).getSourceName());
 
+        assertEquals(3, emails.getEmails().size());
+
+        org.orcid.pojo.ajaxForm.Email email1 = emails.getEmails().get(0);
+        assertEquals(email1.getValue(), USER_ORCID + "_1@test.orcid.org");
+        assertEquals(email1.getSource(), USER_ORCID);
+        assertNull(email1.getSourceName());
+
+        org.orcid.pojo.ajaxForm.Email email2 = emails.getEmails().get(1);
+        assertEquals(email2.getValue(), USER_ORCID + "_2@test.orcid.org");
+        assertNull(email2.getSource());
+        assertEquals(email2.getSourceName(), USER_CREDIT_NAME);
     }
+
+    @Test
+    public void testEmailSourceWithSourceName() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
+        when(mockEmailManagerReadOnly.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+        org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
+
+        assertEquals(3, emails.getEmails().size());
+
+        org.orcid.pojo.ajaxForm.Email email2 = emails.getEmails().get(1);
+        assertEquals(email2.getValue(), USER_ORCID + "_2@test.orcid.org");
+        assertNull(email2.getSource());
+        assertEquals(email2.getSourceName(), USER_CREDIT_NAME);
+    }
+
+    @Test
+    public void testEmailSourceWithSourceId() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
+        when(mockEmailManagerReadOnly.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+        org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
+
+        assertEquals(3, emails.getEmails().size());
+
+        org.orcid.pojo.ajaxForm.Email email3 = emails.getEmails().get(2);
+        assertEquals(email3.getValue(), USER_ORCID + "_3@test.orcid.org");
+        assertNull(email3.getSourceName());
+        assertEquals(email3.getSource(), USER_ORCID);
+    }
+
+
 
     protected Authentication getAuthentication(String orcid) {
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
