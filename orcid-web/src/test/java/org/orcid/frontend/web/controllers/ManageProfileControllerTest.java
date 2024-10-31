@@ -92,9 +92,6 @@ public class ManageProfileControllerTest {
     private EmailManager mockEmailManager;
 
     @Mock
-    private EmailManagerReadOnly mockEmailManagerReadOnly;
-
-    @Mock
     private ProfileEmailDomainManagerReadOnly mockProfileEmailDomainManagerReadOnly;
 
     @Mock
@@ -153,7 +150,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(controller, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
-        TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEmailDomainManagerReadOnly", mockProfileEmailDomainManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
@@ -1156,7 +1153,7 @@ public class ManageProfileControllerTest {
     public void testEmptyEmailSource() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
-        when(mockEmailManagerReadOnly.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        when(mockEmailManager.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
@@ -1179,7 +1176,7 @@ public class ManageProfileControllerTest {
     public void testEmailSourceWithSourceName() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
-        when(mockEmailManagerReadOnly.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        when(mockEmailManager.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
@@ -1197,7 +1194,7 @@ public class ManageProfileControllerTest {
     public void testEmailSourceWithSourceId() {
         SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
         when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
-        when(mockEmailManagerReadOnly.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        when(mockEmailManager.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
