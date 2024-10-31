@@ -40,17 +40,13 @@ import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.jaxb.model.v3.release.common.*;
 import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
-import org.orcid.jaxb.model.v3.release.common.CreditName;
-import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
-import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -84,6 +80,7 @@ public class ManageProfileControllerTest {
     private static final String USER_ORCID = "0000-0000-0000-0001";
     private static final String DEPRECATED_USER_ORCID = "0000-0000-0000-0002";
     private static final String DEPRECATED_USER_ORCID_URL = "https://localhost:8443/0000-0000-0000-0002";
+    private static final String USER_CREDIT_NAME = "Credit Name";
 
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
@@ -93,6 +90,9 @@ public class ManageProfileControllerTest {
 
     @Mock
     private EmailManager mockEmailManager;
+
+    @Mock
+    private ProfileEmailDomainManagerReadOnly mockProfileEmailDomainManagerReadOnly;
 
     @Mock
     private LocaleManager mockLocaleManager;
@@ -127,6 +127,21 @@ public class ManageProfileControllerTest {
     @Mock(name="profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly mockProfileEntityManagerReadOnly;
 
+    @Mock
+    private PersonalDetailsManagerReadOnly mockPersonalDetailsManagerReadOnly;
+
+    @Mock
+    private AddressManagerReadOnly mockAddressManagerReadOnly;
+
+    @Mock
+    private ProfileKeywordManagerReadOnly mockKeywordManagerReadOnly;
+
+    @Mock
+    private ResearcherUrlManagerReadOnly mockResearcherUrlManagerReadOnly;
+
+    @Mock
+    private ExternalIdentifierManagerReadOnly mockExternalIdentifierManagerReadOnly;
+
     @Before
     public void initMocks() throws Exception {
         controller = new ManageProfileController();
@@ -136,6 +151,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "encryptionManager", mockEncryptionManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManager", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(controller, "emailManagerReadOnly", mockEmailManager);
+        TargetProxyHelper.injectIntoProxy(controller, "profileEmailDomainManagerReadOnly", mockProfileEmailDomainManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "localeManager", mockLocaleManager);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManager", mockProfileEntityManager);
         TargetProxyHelper.injectIntoProxy(controller, "givenPermissionToManager", mockGivenPermissionToManager); 
@@ -147,6 +163,12 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
         TargetProxyHelper.injectIntoProxy(controller, "recordEmailSender", mockRecordEmailSender);
         TargetProxyHelper.injectIntoProxy(controller, "profileEntityManagerReadOnly", mockProfileEntityManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "personalDetailsManagerReadOnly", mockPersonalDetailsManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "addressManagerReadOnly", mockAddressManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "keywordManagerReadOnly", mockKeywordManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "researcherUrlManagerReadOnly", mockResearcherUrlManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "externalIdentifierManagerReadOnly", mockExternalIdentifierManagerReadOnly);
+
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
         when(mockEncryptionManager.hashMatches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
@@ -192,13 +214,23 @@ public class ManageProfileControllerTest {
                 Emails emails = new Emails();
                 Email email1 = new Email();
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
+                email1.setSource(new Source());
                 email1.setVisibility(Visibility.PUBLIC);
                 emails.getEmails().add(email1);
 
                 Email email2 = new Email();
                 email2.setEmail(invocation.getArgument(0) + "_2@test.orcid.org");
+                email2.setSource(new Source());
+                email2.getSource().setSourceName(new SourceName(USER_CREDIT_NAME));
                 email2.setVisibility(Visibility.PUBLIC);
                 emails.getEmails().add(email2);
+
+                Email email3 = new Email();
+                email3.setEmail(invocation.getArgument(0) + "_3@test.orcid.org");
+                email3.setSource(new Source());
+                email3.getSource().setSourceClientId(new SourceClientId(USER_ORCID));
+                email3.setVisibility(Visibility.PUBLIC);
+                emails.getEmails().add(email3);
                 return emails;
             }
 
@@ -387,16 +419,18 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getDeprecatingEmails());
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
 
         // Using orcid
@@ -409,16 +443,19 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getDeprecatingEmails());
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
+
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
         
         // Using orcid URL
@@ -431,16 +468,19 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getDeprecatingEmails());
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
+
         assertTrue(deprecateProfile.getErrors().isEmpty());
         
         // Using orcid trim space
@@ -454,16 +494,19 @@ public class ManageProfileControllerTest {
         assertEquals("0000-0000-0000-0002", deprecateProfile.getDeprecatingOrcid());
         assertEquals("0000-0000-0000-0002 Given Names 0000-0000-0000-0002 Family Name", deprecateProfile.getDeprecatingAccountName());
 
-        assertEquals(2, deprecateProfile.getDeprecatingEmails().size());
+        assertEquals(3, deprecateProfile.getDeprecatingEmails().size());
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_1@test.orcid.org"));
         assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getDeprecatingEmails().contains("0000-0000-0000-0002_3@test.orcid.org"));
+
 
         assertEquals("0000-0000-0000-0001", deprecateProfile.getPrimaryOrcid());
         assertEquals("0000-0000-0000-0001 Given Names 0000-0000-0000-0001 Family Name", deprecateProfile.getPrimaryAccountName());
         assertNotNull(deprecateProfile.getPrimaryEmails());
-        assertEquals(2, deprecateProfile.getPrimaryEmails().size());
+        assertEquals(3, deprecateProfile.getPrimaryEmails().size());
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_1@test.orcid.org"));
         assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_2@test.orcid.org"));
+        assertTrue(deprecateProfile.getPrimaryEmails().contains("0000-0000-0000-0001_3@test.orcid.org"));
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
 
@@ -1116,7 +1159,68 @@ public class ManageProfileControllerTest {
         
         verify(mockRecordEmailSender, Mockito.times(1)).sendVerificationEmail(eq(USER_ORCID), eq("email@orcid.org"), eq(true));
     }
-    
+
+    @Test
+    public void testEmptyEmailSource() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
+        when(mockEmailManager.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+        org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
+
+        assertEquals(3, emails.getEmails().size());
+
+        org.orcid.pojo.ajaxForm.Email email1 = emails.getEmails().get(0);
+        assertEquals(email1.getValue(), USER_ORCID + "_1@test.orcid.org");
+        assertEquals(email1.getSource(), USER_ORCID);
+        assertNull(email1.getSourceName());
+
+        org.orcid.pojo.ajaxForm.Email email2 = emails.getEmails().get(1);
+        assertEquals(email2.getValue(), USER_ORCID + "_2@test.orcid.org");
+        assertNull(email2.getSource());
+        assertEquals(email2.getSourceName(), USER_CREDIT_NAME);
+    }
+
+    @Test
+    public void testEmailSourceWithSourceName() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
+        when(mockEmailManager.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+        org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
+
+        assertEquals(3, emails.getEmails().size());
+
+        org.orcid.pojo.ajaxForm.Email email2 = emails.getEmails().get(1);
+        assertEquals(email2.getValue(), USER_ORCID + "_2@test.orcid.org");
+        assertNull(email2.getSource());
+        assertEquals(email2.getSourceName(), USER_CREDIT_NAME);
+    }
+
+    @Test
+    public void testEmailSourceWithSourceId() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        when(mockProfileEmailDomainManagerReadOnly.getEmailDomains(eq(USER_ORCID))).thenReturn(null);
+        when(mockEmailManager.getPublicEmails(eq(USER_ORCID))).thenReturn(new Emails());
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        MockHttpSession mockSession = new MockHttpSession();
+        mockRequest.setSession(mockSession);
+        org.orcid.pojo.ajaxForm.Emails emails = controller.getEmails(mockRequest);
+
+        assertEquals(3, emails.getEmails().size());
+
+        org.orcid.pojo.ajaxForm.Email email3 = emails.getEmails().get(2);
+        assertEquals(email3.getValue(), USER_ORCID + "_3@test.orcid.org");
+        assertNull(email3.getSourceName());
+        assertEquals(email3.getSource(), USER_ORCID);
+    }
+
+
+
     protected Authentication getAuthentication(String orcid) {
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, "user_1@test.orcid.org", null, roles);
