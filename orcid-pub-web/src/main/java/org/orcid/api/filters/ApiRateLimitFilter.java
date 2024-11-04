@@ -70,13 +70,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private EmailManager emailManager;
-    
+
     @Resource
-    private PanoplyRedshiftClient panoplyClient;  
+    private PanoplyRedshiftClient panoplyClient;
 
     @Autowired
     private OrcidTokenStore orcidTokenStore;
-    
+
     @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
     private int anonymousRequestLimit;
 
@@ -85,9 +85,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.papi.rate.limit.enabled:false}")
     private boolean enableRateLimiting;
-    
+
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
-    private boolean enablePanoplyPapiExceededRateInProduction; 
+    private boolean enablePanoplyPapiExceededRateInProduction;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -102,15 +102,14 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
         if (enableRateLimiting) {
             String tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
-            
+
             String ipAddress = httpServletRequest.getRemoteAddr();
-            
+
             String clientId = null;
             try {
                 clientId = orcidTokenStore.readClientId(tokenValue);
-            }
-            catch(Exception ex) {
-                LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client");
+            } catch (Exception ex) {
+                LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
             }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
@@ -176,7 +175,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
             // update the request count
             rateLimitEntity.setRequestCount(rateLimitEntity.getRequestCount() + 1);
-            papiRateLimitingDao.updatePublicApiDailyRateLimit(rateLimitEntity,true);
+            papiRateLimitingDao.updatePublicApiDailyRateLimit(rateLimitEntity, true);
 
         } else {
             // create
@@ -186,7 +185,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             rateLimitEntity.setRequestDate(today);
             papiRateLimitingDao.persist(rateLimitEntity);
         }
-        
 
     }
 
@@ -225,15 +223,14 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         }
 
         // Send the email
-        boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email , SUBJECT, body, html);
+        boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
         if (!mailSent) {
             throw new RuntimeException("Failed to send email for papi limits, orcid=" + profile.getId());
         }
     }
-    
-    
+
     private void setPapiRateExceededItemInPanoply(PanoplyPapiDailyRateExceededItem item) {
-        //Store the rate exceeded item in panoply Db without blocking
+        // Store the rate exceeded item in panoply Db without blocking
         CompletableFuture.supplyAsync(() -> {
             try {
                 panoplyClient.addPanoplyPapiDailyRateExceeded(item);
@@ -242,9 +239,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                 LOG.error("Cannot store the rateExceededItem to panoply ", e);
                 return false;
             }
-        }).thenAccept(result -> {            
-            if(! result) {
-                LOG.error("Async call to panoply for : " + item.toString() + " Stored: "+ result);
+        }).thenAccept(result -> {
+            if (!result) {
+                LOG.error("Async call to panoply for : " + item.toString() + " Stored: " + result);
             }
 
         });
