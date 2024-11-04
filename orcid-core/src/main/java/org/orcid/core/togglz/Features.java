@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("OAUTH DOMAINS INTERSTITIAL")
+    OAUTH_DOMAINS_INTERSTITIAL,
+
     @Label("New Relic Browser Monitoring")
     NEW_RELIC_BROWSER_MONITORING,
   
