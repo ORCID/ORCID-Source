@@ -25,4 +25,6 @@ public interface OrcidTokenStore extends TokenStore {
     OAuth2Authentication readAuthenticationFromCachedToken(Map<String, String> cachedTokenData);
     
     void isClientEnabled(String clientId) throws InvalidTokenException;
+    
+    String readClientId(String tokenValue);
 }
