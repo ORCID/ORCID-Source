@@ -23,7 +23,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
 
     @Override
     public PublicApiDailyRateLimitEntity findByClientIdAndRequestDate(String clientId, LocalDate requestDate) {
-        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM public_api_daily_rate_limit p client_id=:clientId and requestDate=:requestDate",
+        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM public_api_daily_rate_limit p where p.client_id=:clientId and p.request_date=:requestDate",
                 PublicApiDailyRateLimitEntity.class);
         nativeQuery.setParameter("clientId", clientId);
         nativeQuery.setParameter("requestDate", requestDate);
@@ -95,7 +95,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
             query.setParameter("ipAddress", papiRateLimitingEntity.getIpAddress());
         }
         query.setParameter("requestCount", papiRateLimitingEntity.getRequestCount());
-        query.setParameter("requestDate", papiRateLimitingEntity.getRequestDate().toString());
+        query.setParameter("requestDate", papiRateLimitingEntity.getRequestDate());
         return query.executeUpdate() > 0;
     }
 

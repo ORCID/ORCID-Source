@@ -20,6 +20,7 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.oauth.service.OrcidTokenStore;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.PublicApiDailyRateLimitDao;
@@ -73,6 +74,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Resource
     private PanoplyRedshiftClient panoplyClient;  
 
+    @Autowired
+    private OrcidTokenStore orcidTokenStore;
+    
     @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
     private int anonymousRequestLimit;
 
@@ -97,8 +101,17 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
         if (enableRateLimiting) {
-            String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-            String ipAddress = OrcidRequestUtil.getIpAddress(httpServletRequest);
+            String tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
+            
+            String ipAddress = httpServletRequest.getRemoteAddr();
+            
+            String clientId = null;
+            try {
+                clientId = orcidTokenStore.readClientId(tokenValue);
+            }
+            catch(Exception ex) {
+                LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client");
+            }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
 
@@ -169,7 +182,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             // create
             rateLimitEntity = new PublicApiDailyRateLimitEntity();
             rateLimitEntity.setClientId(clientId);
-            rateLimitEntity.setRequestCount(0L);
+            rateLimitEntity.setRequestCount(1L);
             rateLimitEntity.setRequestDate(today);
             papiRateLimitingDao.persist(rateLimitEntity);
         }
