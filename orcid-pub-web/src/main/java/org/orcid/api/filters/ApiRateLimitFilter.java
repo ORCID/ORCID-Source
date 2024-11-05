@@ -92,7 +92,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
     
-    @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:1.1.1.1 127.0.0.1}")
+    @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
     private  String papiWhiteSpaceSeparatedWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
