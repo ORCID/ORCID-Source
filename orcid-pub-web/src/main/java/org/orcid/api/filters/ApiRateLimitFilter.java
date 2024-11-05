@@ -105,7 +105,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             if (httpServletRequest.getHeader("Authorization") != null) {
                 tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
             }
-
             String ipAddress = httpServletRequest.getRemoteAddr();
 
             String clientId = null;
