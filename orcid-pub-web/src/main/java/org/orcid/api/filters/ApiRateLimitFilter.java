@@ -101,15 +101,19 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
         if (enableRateLimiting) {
-            String tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
-
+            String tokenValue = null;
+            if (httpServletRequest.getHeader("Authorization") != null) {
+                tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
+            }
             String ipAddress = httpServletRequest.getRemoteAddr();
 
             String clientId = null;
-            try {
-                clientId = orcidTokenStore.readClientId(tokenValue);
-            } catch (Exception ex) {
-                LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
+            if (tokenValue != null) {
+                try {
+                    clientId = orcidTokenStore.readClientId(tokenValue);
+                } catch (Exception ex) {
+                    LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
+                }
             }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
