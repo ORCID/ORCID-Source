@@ -126,7 +126,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
             if (isAnonymous ) {
                 if(!isWhiteListed(ipAddress)) {
-                    LOG.info("ApiRateLimitFilter anonymous request");
+                    LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
                     this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
                 }
 
