@@ -205,12 +205,15 @@ public class PublicRecordController extends BaseWorkspaceController {
 
         org.orcid.pojo.ajaxForm.Emails emails = org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails, emailDomains);
         // Old emails are missing the source name and id -- assign the user as the source
-        for (org.orcid.pojo.ajaxForm.Email email: emails.getEmails()) {
-            if (email.getSource() == null && email.getSourceName() == null) {
-                email.setSource(orcid);
-                email.setSourceName(publicRecord.getDisplayName());
+        if (emails.getEmails() != null) {
+            for (org.orcid.pojo.ajaxForm.Email email: emails.getEmails()) {
+                if (email.getSource() == null && email.getSourceName() == null) {
+                    email.setSource(orcid);
+                    email.setSourceName(publicRecord.getDisplayName());
+                }
             }
         }
+
         publicRecord.setEmails(emails);
 
         // Fill external identifiers
