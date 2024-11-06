@@ -558,7 +558,11 @@ public class SummaryManagerTest {
         // Peer review
         assertEquals(Integer.valueOf(2), rs.getPeerReviews().getSelfAssertedCount());
         assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
-        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());   
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());
+
+        // Email domains
+        assertEquals("2024-12-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
+        assertEquals(1, rs.getEmailDomains().getEmailDomains().size());
     }       
     
     /**
