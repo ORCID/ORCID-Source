@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -79,6 +80,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private OrcidTokenStore orcidTokenStore;
+    
+    @Autowired
+    private MessageSource messageSource;
 
     @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
     private int anonymousRequestLimit;
@@ -202,8 +206,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("messages", messageSource);
+        templateParams.put("messageArgs", new Object[0]);
         templateParams.put("clientId", clientId);
-        templateParams.put("clientId", clientName);
+        templateParams.put("clientName", clientName);
         templateParams.put("emailName", emailName);
         templateParams.put("locale", LocaleUtils.toLocale("en"));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -218,9 +224,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         String emailName = recordNameManager.deriveEmailFriendlyName(profile.getId());
         Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, profile.getId());
         // Generate body from template
-        String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
+        String body = templateManager.processTemplate("papi_rate_limit_email.ftl", templateParams);
         // Generate html from template
-        String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
+        String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams);
         String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
 
         LOG.info("text email={}", body);

@@ -71,8 +71,8 @@ public class PapiDailyLimitReport {
         if (enableRateLimiting) {
             LocalDate yesterday = LocalDate.now().minusDays(1);
             String mode = Features.ENABLE_PAPI_RATE_LIMITING.isActive() ? "ENFORCEMENT" : "MONITORING";
-            String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\n Current Anonymous Requests Limit: " + anonymousRequestLimit
-                    + "\nCurrent Public API Clients Limit: " + knownRequestLimit + "\n Mode: " + mode;
+            String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\nCurrent Anonymous Requests Limit: " + anonymousRequestLimit
+                    + "\nCurrent Public API Clients Limit: " + knownRequestLimit + "\nMode: " + mode;
             LOG .info(SLACK_INTRO_MSG);
             slackManager.sendAlert(SLACK_INTRO_MSG, slackChannel, webhookUrl, webhookUrl);
             
