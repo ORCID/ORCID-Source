@@ -245,7 +245,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         // Send the email
         boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
         if (!mailSent) {
-            LOG.error("Failed to send email for papi limits, orcid=" + profile.getId());
+            LOG.error("Failed to send email for papi limits, orcid=" + profile.getId() + " email: " + email);
         }
     }
 
