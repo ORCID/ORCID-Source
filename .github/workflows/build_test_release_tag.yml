@@ -80,8 +80,8 @@ jobs:
     needs:
       - seed_maven_cache
 
-  mvn_test:
-    uses: ./.github/workflows/mvn_test.yml
+  test_mvn:
+    uses: ./.github/workflows/test_mvn.yml
     with:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
@@ -98,7 +98,7 @@ jobs:
     secrets: inherit # pass all secrets for uploading assets
     needs:
       - lint
-      - mvn_test
+      - test_mvn
       - install_maven_dependencies
     permissions:
       checks: write

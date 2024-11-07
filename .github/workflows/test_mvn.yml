@@ -1,4 +1,4 @@
-name: mvn_test
+name: test_mvn
 
 permissions:
   checks: write
@@ -64,7 +64,7 @@ on:
 
 
 jobs:
-  mvn_test:
+  test_mvn:
     strategy:
       matrix:
         include:

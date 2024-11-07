@@ -20,8 +20,8 @@ jobs:
   lint:
     uses: ./.github/workflows/lint.yml
 
-  mvn_test:
-    uses: ./.github/workflows/mvn_test.yml
+  test_mvn:
+    uses: ./.github/workflows/test_mvn.yml
     with:
       seed_maven_cache: true
       install_maven_dependencies: true
