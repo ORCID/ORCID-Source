@@ -120,7 +120,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             String clientId = null;
             if (tokenValue != null) {
                 try {
-                    clientId =  orcidTokenStore.readClientId(tokenValue);
+                    clientId = orcidTokenStore.readClientId(tokenValue);
                 } catch (Exception ex) {
                     LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
                 }
