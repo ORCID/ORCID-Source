@@ -80,7 +80,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private OrcidTokenStore orcidTokenStore;
-    
+
     @Autowired
     private MessageSource messageSource;
 
@@ -95,9 +95,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
-    
+
     @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
-    private  String papiWhiteSpaceSeparatedWhiteList;
+    private String papiWhiteSpaceSeparatedWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -127,20 +127,22 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
+            try {
+                if (isAnonymous) {
+                    if (!isWhiteListed(ipAddress)) {
+                        LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
+                        this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                    }
 
-            if (isAnonymous ) {
-                if(!isWhiteListed(ipAddress)) {
-                    LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                    this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                } else {
+                    LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
+                    this.rateLimitClientRequest(clientId, today);
                 }
-
-            } else {
-                LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                this.rateLimitClientRequest(clientId, today);
+            } catch (Exception ex) {
+                LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
             }
-
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException {
@@ -243,7 +245,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         // Send the email
         boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
         if (!mailSent) {
-            throw new RuntimeException("Failed to send email for papi limits, orcid=" + profile.getId());
+            LOG.error("Failed to send email for papi limits, orcid=" + profile.getId() + " email: " + email);
         }
     }
 
@@ -264,33 +266,34 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         });
     }
-    
-    //gets actual client IP address, using the  headers that the proxy server ads
+
+    // gets actual client IP address, using the headers that the proxy server
+    // ads
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("X-REAL-IP");
         }
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getRemoteAddr();  
+            ipAddress = request.getRemoteAddr();
         }
         if (ipAddress != null && ipAddress.contains(",")) {
             ipAddress = ipAddress.split(",")[0].trim();
         }
         return ipAddress;
-    } 
-    
+    }
+
     private boolean isWhiteListed(String ipAddress) {
         List<String> papiIpWhiteList = null;
-        if(StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
+        if (StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
             papiIpWhiteList = Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s"));
         }
-       
-        if(papiIpWhiteList != null) {
+
+        if (papiIpWhiteList != null) {
             return papiIpWhiteList.contains(ipAddress);
-            
+
         }
-        return false;   
+        return false;
     }
 
 }
