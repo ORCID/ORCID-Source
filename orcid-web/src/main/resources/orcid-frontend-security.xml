@@ -249,6 +249,7 @@
 		<sec:headers>
 			<sec:frame-options policy="SAMEORIGIN" />
 		</sec:headers>
+		<sec:custom-filter position="CORS_FILTER" ref="corsFilterWeb" />
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 		<sec:intercept-url pattern="/"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
