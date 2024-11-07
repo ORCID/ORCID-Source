@@ -123,20 +123,23 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
+            try {
+                if (isAnonymous) {
+                    if (!isWhiteListed(ipAddress)) {
+                        LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
+                        this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                    }
 
-            if (isAnonymous) {
-                if (!isWhiteListed(ipAddress)) {
-                    LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                    this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                } else {
+                    LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
+                    this.rateLimitClientRequest(clientId, today);
                 }
-
-            } else {
-                LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                this.rateLimitClientRequest(clientId, today);
+            } catch (Exception ex) {
+                LOG.error("PAPI Limit filter logic cannot be applied because of an exception. Continuing with normal flow.", ex);
             }
-
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException {
