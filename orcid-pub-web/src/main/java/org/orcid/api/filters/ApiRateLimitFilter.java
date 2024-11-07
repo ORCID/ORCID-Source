@@ -91,9 +91,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
-    
+
     @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
-    private  String papiWhiteSpaceSeparatedWhiteList;
+    private String papiWhiteSpaceSeparatedWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -124,8 +124,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
 
-            if (isAnonymous ) {
-                if(!isWhiteListed(ipAddress)) {
+            if (isAnonymous) {
+                if (!isWhiteListed(ipAddress)) {
                     LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
                     this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
                 }
@@ -213,31 +213,35 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     private void sendEmail(String clientId, LocalDate requestDate) {
-        ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-        ProfileEntity profile = profileDao.find(clientDetailsEntity.getGroupProfileId());
-        String emailName = recordNameManager.deriveEmailFriendlyName(profile.getId());
-        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, profile.getId());
-        // Generate body from template
-        String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
-        // Generate html from template
-        String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
-        String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
+        try {
+            ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+            ProfileEntity profile = profileDao.find(clientDetailsEntity.getGroupProfileId());
+            String emailName = recordNameManager.deriveEmailFriendlyName(profile.getId());
+            Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, profile.getId());
+            // Generate body from template
+            String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
+            // Generate html from template
+            String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
+            String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
 
-        LOG.info("text email={}", body);
-        LOG.info("html email={}", html);
-        if (enablePanoplyPapiExceededRateInProduction) {
-            PanoplyPapiDailyRateExceededItem item = new PanoplyPapiDailyRateExceededItem();
-            item.setClientId(clientId);
-            item.setOrcid(profile.getId());
-            item.setEmail(email);
-            item.setRequestDate(requestDate);
-            setPapiRateExceededItemInPanoply(item);
-        }
+            LOG.info("text email={}", body);
+            LOG.info("html email={}", html);
+            if (enablePanoplyPapiExceededRateInProduction) {
+                PanoplyPapiDailyRateExceededItem item = new PanoplyPapiDailyRateExceededItem();
+                item.setClientId(clientId);
+                item.setOrcid(profile.getId());
+                item.setEmail(email);
+                item.setRequestDate(requestDate);
+                setPapiRateExceededItemInPanoply(item);
+            }
 
-        // Send the email
-        boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
-        if (!mailSent) {
-            throw new RuntimeException("Failed to send email for papi limits, orcid=" + profile.getId());
+            // Send the email
+            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
+            if (!mailSent) {
+                LOG.error("Failed to send email for papi limits, orcid=" + profile.getId());
+            }
+        } catch (Exception ex) {
+            LOG.error("Failed to send email for papi limits", ex);
         }
     }
 
@@ -258,33 +262,34 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         });
     }
-    
-    //gets actual client IP address, using the  headers that the proxy server ads
+
+    // gets actual client IP address, using the headers that the proxy server
+    // ads
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("X-REAL-IP");
         }
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getRemoteAddr();  
+            ipAddress = request.getRemoteAddr();
         }
         if (ipAddress != null && ipAddress.contains(",")) {
             ipAddress = ipAddress.split(",")[0].trim();
         }
         return ipAddress;
-    } 
-    
+    }
+
     private boolean isWhiteListed(String ipAddress) {
         List<String> papiIpWhiteList = null;
-        if(StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
+        if (StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
             papiIpWhiteList = Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s"));
         }
-       
-        if(papiIpWhiteList != null) {
+
+        if (papiIpWhiteList != null) {
             return papiIpWhiteList.contains(ipAddress);
-            
+
         }
-        return false;   
+        return false;
     }
 
 }
