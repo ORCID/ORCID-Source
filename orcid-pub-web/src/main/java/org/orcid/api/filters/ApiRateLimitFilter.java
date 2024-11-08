@@ -232,7 +232,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         // Generate html from template
         String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams);
         String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
-
+        LOG.info("from address={}", FROM_ADDRESS);
         LOG.info("text email={}", body);
         LOG.info("html email={}", html);
         if (enablePanoplyPapiExceededRateInProduction) {
