@@ -1,4 +1,8 @@
-nodejs 18.7.0
+# RUN export ASDF_NODEJS_AUTO_ENABLE_COREPACK=yes
+# RUN export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+nodejs 20.15.0
+# RUN corepack enable
+# RUN asdf reshim nodejs
 java temurin-11.0.15+10
 maven 3.6.3
 mvnd 0.9.0
