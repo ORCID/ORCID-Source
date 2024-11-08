@@ -1,3 +1,14 @@
+## v2.67.15 - 2024-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.14...v2.67.15)
+
+- [#7133](https://github.com/ORCID/ORCID-Source/pull/7133): lmendoza/9453-update-node-version
+- [#7130](https://github.com/ORCID/ORCID-Source/pull/7130): refactor/matrix-and-fork-detection-bldtest
+
+### Feature
+
+- helper command comments for yarn corepack install
+
 ## v2.67.14 - 2024-11-07
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.13...v2.67.14)
