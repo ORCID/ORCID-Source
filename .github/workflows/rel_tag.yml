@@ -64,7 +64,7 @@ jobs:
           ref: ${{ inputs.ref }}
 
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # token with write permissions to protected branches
           # standard github token does not allow this

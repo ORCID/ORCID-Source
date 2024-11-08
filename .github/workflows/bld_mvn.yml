@@ -1,5 +1,4 @@
-name: bld_maven
-run-name: bld-{{ inputs.project }}
+name: bld_mvn
 
 permissions:
   checks: write
@@ -10,18 +9,13 @@ permissions:
 on:
   workflow_call:
     inputs:
-      project:
-        description: 'Name of the artifact env'
-        required: false
-        default: 'prod'
-        type: string
       version_tag:
-        description: 'Name of the tag to build'
+        description: 'Version tag to use: (bump must also be set to none to keep a specific version'
         required: false
         default: 'latest'
         type: string
       bump:
-        description: 'whether to bump the version number by a major minor patch amount or none'
+        description: 'whether to bump the version number by a major minor patch'
         required: false
         default: 'patch'
         type: string
@@ -40,15 +34,14 @@ on:
         type: boolean
         required: false
         default: true
-
+      deploy:
+        description: Whether to deploy the build to artifact repo
+        type: boolean
+        required: false
+        default: true
 
   workflow_dispatch:
     inputs:
-      project:
-        description: 'Name of the artifact env'
-        required: false
-        default: 'prod'
-        type: string
       version_tag:
         description: 'Version tag to use: (bump must also be set to none to keep a specific version'
         required: false
@@ -80,10 +73,29 @@ on:
         type: boolean
         required: false
         default: true
-
+      deploy:
+        description: Whether to deploy the build to artifact repo
+        type: boolean
+        required: false
+        default: true
 
 jobs:
-  bld_maven:
+  bld_mvn:
+    strategy:
+      matrix:
+        include:
+          - project: orcid-message-listener
+          - project: orcid-activemq
+          - project: orcid-api-web
+          - project: orcid-internal-api
+          - project: orcid-pub-web
+          - project: orcid-scheduler-web
+          - project: orcid-web
+          - project: orcid-utils
+          - project: orcid-core
+          - project: orcid-persistence
+          - project: orcid-api-common
+
     runs-on: ubuntu-latest
     steps:
       - name: git-checkout-ref-action
@@ -93,7 +105,7 @@ jobs:
           default_branch: ${{ github.event.repository.default_branch }}
           ref: ${{ inputs.ref }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ steps.ref.outputs.ref }}
           # checkout some history so we can scan commits for bump messages
@@ -108,7 +120,7 @@ jobs:
           bump: ${{ inputs.bump }}
 
       - name: Set up Open JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -117,7 +129,7 @@ jobs:
 
       - name: if not installing dependencies restore special previous git_sha cache
         if: ${{ ! inputs.install_maven_dependencies }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
@@ -136,7 +148,7 @@ jobs:
 
       - name: if installing dependencies use a standard cache key name
         if: ${{ inputs.install_maven_dependencies }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
@@ -167,20 +179,20 @@ jobs:
           find . -name '*.war'
           find . -name '*.jar'
         env:
-          project: "${{ inputs.project }}"
+          project: "${{ matrix.project }}"
 
 #
 # orcid-web customization
 #
 
       - name: setup node for angular static file
-        if: ${{ inputs.project == 'orcid-web' }}
-        uses: actions/setup-node@v3
+        if: ${{ matrix.project == 'orcid-web' }}
+        uses: actions/setup-node@v4
         with:
           node-version: 18.7.0
 
       - name: build angular parts if we are building orcid-web
-        if: ${{ inputs.project == 'orcid-web' }}
+        if: ${{ matrix.project == 'orcid-web' }}
         run: |
           echo "Build angular_orcid_generated.js"
           cd orcid-nodejs
@@ -208,11 +220,12 @@ jobs:
 
         env:
           version_tag_numeric: "${{ steps.version.outputs.version_tag_numeric }}"
-          project: "${{ inputs.project }}"
+          project: "${{ matrix.project }}"
 
 ##################################################################################################################
 
       - name: deploy war file
+        if: ${{ inputs.deploy }}
         run: |
           mvn --batch-mode \
               --settings settings-deploy.xml \
@@ -227,5 +240,6 @@ jobs:
           ARTIFACT_REPO_PATH: "${{ secrets.ARTIFACT_REPO_PATH }}"
           ARTIFACT_USER: "${{ secrets.ARTIFACT_USER }}"
           ARTIFACT_PASSWORD: "${{ secrets.ARTIFACT_PASSWORD }}"
-          project: "${{ inputs.project }}"
+          project: "${{ matrix.project }}"
+
 
