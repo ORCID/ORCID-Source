@@ -104,7 +104,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/ )";
 
     private static final String SUBJECT = "[ORCID] You have exceeded the daily Public API Usage Limit - ";
-    private static final String FROM_ADDRESS = "\"Engagement Team, ORCID\" <c.dumitru@orcid.org>";
+    
+    @Value("${org.orcid.papi.rate.limit.fromEmail:notify@notify.orcid.org}")
+    private String FROM_ADDRESS;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
@@ -230,7 +232,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         // Generate html from template
         String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams);
         String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
-
+        LOG.info("from address={}", FROM_ADDRESS);
         LOG.info("text email={}", body);
         LOG.info("html email={}", html);
         if (enablePanoplyPapiExceededRateInProduction) {
