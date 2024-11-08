@@ -15,5 +15,5 @@ To minimize any disruption to your ORCID integration in the future, we would rec
 Warm Regards, 
 ORCID Support Team 
 https://support.orcid.org
-<@emailMacros.msg "email.common.you_have_received_this_email" />
+
 <#include "email_footer.ftl"/>
