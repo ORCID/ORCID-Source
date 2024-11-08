@@ -3,7 +3,9 @@ package org.orcid.api.filters;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.TemplateManager;
@@ -88,6 +91,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
+    
+    @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
+    private  String papiWhiteSpaceSeparatedWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -105,7 +111,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             if (httpServletRequest.getHeader("Authorization") != null) {
                 tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
             }
-            String ipAddress = httpServletRequest.getRemoteAddr();
+            String ipAddress = getClientIpAddress(httpServletRequest);
 
             String clientId = null;
             if (tokenValue != null) {
@@ -118,9 +124,11 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
 
-            if (isAnonymous) {
-                LOG.info("ApiRateLimitFilter anonymous request");
-                this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+            if (isAnonymous ) {
+                if(!isWhiteListed(ipAddress)) {
+                    LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
+                    this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                }
 
             } else {
                 LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
@@ -249,6 +257,34 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
 
         });
+    }
+    
+    //gets actual client IP address, using the  headers that the proxy server ads
+    private String getClientIpAddress(HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getHeader("X-REAL-IP");
+        }
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = request.getRemoteAddr();  
+        }
+        if (ipAddress != null && ipAddress.contains(",")) {
+            ipAddress = ipAddress.split(",")[0].trim();
+        }
+        return ipAddress;
+    } 
+    
+    private boolean isWhiteListed(String ipAddress) {
+        List<String> papiIpWhiteList = null;
+        if(StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
+            papiIpWhiteList = Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s"));
+        }
+       
+        if(papiIpWhiteList != null) {
+            return papiIpWhiteList.contains(ipAddress);
+            
+        }
+        return false;   
     }
 
 }
