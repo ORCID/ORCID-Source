@@ -1,22 +1,13 @@
-name: maven_test_publish
-
-# run maven tests and publish results in one step
-# run from privileged branch
+name: test_mvn
 
 permissions:
   checks: write
   contents: read
-  issues: read
-  pull-requests: write
+  actions: read
 
 on:
   workflow_call:
     inputs:
-      project:
-        description: 'Name of the artifact env'
-        required: false
-        default: 'prod'
-        type: string
       version_tag:
         description: 'Name of the tag to build'
         required: false
@@ -45,11 +36,6 @@ on:
 
   workflow_dispatch:
     inputs:
-      project:
-        description: 'Name of the artifact env'
-        required: false
-        default: 'prod'
-        type: string
       version_tag:
         description: 'Name of the tag to build'
         required: false
@@ -78,7 +64,22 @@ on:
 
 
 jobs:
-  maven_test:
+  test_mvn:
+    strategy:
+      matrix:
+        include:
+          - project: orcid-message-listener
+          - project: orcid-activemq
+          - project: orcid-api-web
+          - project: orcid-internal-api
+          - project: orcid-pub-web
+          - project: orcid-scheduler-web
+          - project: orcid-web
+          - project: orcid-utils
+          - project: orcid-core
+          - project: orcid-persistence
+          - project: orcid-api-common
+
     runs-on: ubuntu-latest
     steps:
       - name: git-checkout-ref-action
@@ -88,7 +89,7 @@ jobs:
           default_branch: ${{ github.event.repository.default_branch }}
           ref: ${{ inputs.ref }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ steps.ref.outputs.ref }}
           # checkout some history so we can scan commits for bump messages
@@ -103,7 +104,7 @@ jobs:
           bump: ${{ inputs.bump }}
 
       - name: Set up Open JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '11'
@@ -113,7 +114,7 @@ jobs:
 
       - name: if not installing dependencies restore special previous git_sha cache
         if:  ${{ ! inputs.install_maven_dependencies }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ steps.version.outputs.version_tag_numeric }}-${{ github.sha }}
@@ -132,7 +133,7 @@ jobs:
 
       - name: if installing dependencies use a standard cache key name
         if: ${{ inputs.install_maven_dependencies }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-seed-cache
@@ -154,19 +155,24 @@ jobs:
           version_tag_numeric: ${{ steps.version.outputs.version_tag_numeric }}
 
 ########################################################################################
-      - name: "Test ${{ inputs.project }}"
+      - name: "Test ${{ matrix.project }}"
         run: |
-          mvn -T 1C --batch-mode -Dmaven.test.failure.ignore=true test \
+          mvn -T 1C --batch-mode test \
               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              --projects ${{ inputs.project }}
+              --projects ${{ matrix.project }} --fail-at-end
 
-      # NOTE: if the above test fail then this step will report that failure and stop the run
-      - name: Publish Unit Test Results
-        uses: dorny/test-reporter@e9fa2f582c0ebbe2e263fd18fad744d52e0b0203
-        if: always()
+      - name: Publish unit test report for non forked repo
+        if: ${{ failure() && (github.event.pull_request.head.repo.full_name == github.repository) }} # only report if a test has failed and we are a non forked repo
+        uses: dorny/test-reporter@31a54ee7ebcacc03a09ea97a7e5465a47b84aea5 # v1.9.1
         with:
-          name: "maven_test_publish_${{ inputs.project }}"
-          path: ${{ inputs.project }}/target/surefire-reports/*.xml
+          name: "Unit test report for ${{ matrix.project }}"
+          path: ${{ matrix.project }}/target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
 
+      - name: Annotate only test report for forked repo
+        uses: mikepenz/action-junit-report@ec3a351c13e080dc4fa94c49ab7ad5bf778a9668 # v5
+        if: ${{ failure() &&  (github.event.pull_request.head.repo.full_name != github.repository) }} # only report if a test has failed and we are a forked repo
+        with:
+          report_paths: ${{ matrix.project }}/target/surefire-reports/*.xml
+          annotate_only: true # forked repo cannot write to checks so just do annotations
