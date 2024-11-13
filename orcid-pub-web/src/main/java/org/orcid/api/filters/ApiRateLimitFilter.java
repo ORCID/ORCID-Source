@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -80,6 +81,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Autowired
     private OrcidTokenStore orcidTokenStore;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
     private int anonymousRequestLimit;
 
@@ -91,16 +95,18 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
-    
+
     @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
-    private  String papiWhiteSpaceSeparatedWhiteList;
+    private String papiWhiteSpaceSeparatedWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/ )";
 
     private static final String SUBJECT = "[ORCID] You have exceeded the daily Public API Usage Limit - ";
-    private static final String FROM_ADDRESS = "\"Engagement Team, ORCID\" <c.dumitru@orcid.org>";
+    
+    @Value("${org.orcid.papi.rate.limit.fromEmail:notify@notify.orcid.org}")
+    private String FROM_ADDRESS;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
@@ -123,20 +129,22 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
+            try {
+                if (isAnonymous) {
+                    if (!isWhiteListed(ipAddress)) {
+                        LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
+                        this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                    }
 
-            if (isAnonymous ) {
-                if(!isWhiteListed(ipAddress)) {
-                    LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                    this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                } else {
+                    LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
+                    this.rateLimitClientRequest(clientId, today);
                 }
-
-            } else {
-                LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                this.rateLimitClientRequest(clientId, today);
+            } catch (Exception ex) {
+                LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
             }
-
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException {
@@ -202,8 +210,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("messages", messageSource);
+        templateParams.put("messageArgs", new Object[0]);
         templateParams.put("clientId", clientId);
-        templateParams.put("clientId", clientName);
+        templateParams.put("clientName", clientName);
         templateParams.put("emailName", emailName);
         templateParams.put("locale", LocaleUtils.toLocale("en"));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
@@ -218,11 +228,11 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         String emailName = recordNameManager.deriveEmailFriendlyName(profile.getId());
         Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, profile.getId());
         // Generate body from template
-        String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
+        String body = templateManager.processTemplate("papi_rate_limit_email.ftl", templateParams);
         // Generate html from template
-        String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
+        String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams);
         String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
-
+        LOG.info("from address={}", FROM_ADDRESS);
         LOG.info("text email={}", body);
         LOG.info("html email={}", html);
         if (enablePanoplyPapiExceededRateInProduction) {
@@ -237,7 +247,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         // Send the email
         boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
         if (!mailSent) {
-            throw new RuntimeException("Failed to send email for papi limits, orcid=" + profile.getId());
+            LOG.error("Failed to send email for papi limits, orcid=" + profile.getId() + " email: " + email);
         }
     }
 
@@ -258,33 +268,34 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         });
     }
-    
-    //gets actual client IP address, using the  headers that the proxy server ads
+
+    // gets actual client IP address, using the headers that the proxy server
+    // ads
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("X-REAL-IP");
         }
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getRemoteAddr();  
+            ipAddress = request.getRemoteAddr();
         }
         if (ipAddress != null && ipAddress.contains(",")) {
             ipAddress = ipAddress.split(",")[0].trim();
         }
         return ipAddress;
-    } 
-    
+    }
+
     private boolean isWhiteListed(String ipAddress) {
         List<String> papiIpWhiteList = null;
-        if(StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
+        if (StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
             papiIpWhiteList = Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s"));
         }
-       
-        if(papiIpWhiteList != null) {
+
+        if (papiIpWhiteList != null) {
             return papiIpWhiteList.contains(ipAddress);
-            
+
         }
-        return false;   
+        return false;
     }
 
 }
