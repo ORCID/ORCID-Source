@@ -1,3 +1,9 @@
+## v2.68.4 - 2024-11-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.3...v2.68.4)
+
+- [#7137](https://github.com/ORCID/ORCID-Source/pull/7137): Referer header is an uri not url
+
 ## v2.68.3 - 2024-11-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.2...v2.68.3)
