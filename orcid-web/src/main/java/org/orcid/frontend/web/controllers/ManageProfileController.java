@@ -535,12 +535,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         org.orcid.pojo.ajaxForm.Emails emails = org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails, emailDomains);
         // Old emails are missing the source name and id -- assign the user as the source
-        for (org.orcid.pojo.ajaxForm.Email email: emails.getEmails()) {
-            if (email.getSource() == null && email.getSourceName() == null) {
-                String orcid = getCurrentUserOrcid();
-                String displayName = getPersonDetails(orcid, true).getDisplayName();
-                email.setSource(orcid);
-                email.setSourceName(displayName);
+        if (emails.getEmails() != null) {
+            for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
+                if (email.getSource() == null && email.getSourceName() == null) {
+                    String orcid = getCurrentUserOrcid();
+                    String displayName = getPersonDetails(orcid, true).getDisplayName();
+                    email.setSource(orcid);
+                    email.setSourceName(displayName);
+                }
             }
         }
         return emails;

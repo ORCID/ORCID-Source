@@ -37,13 +37,13 @@ public class PapiDailyLimitReport {
     @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
 
-    @Value("${rate.limit.anonymous.requests}")
+    @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
     private int anonymousRequestLimit;
 
-    @Value("${rate.limit.known.requests}")
+    @Value("${org.orcid.papi.rate.limit.known.requests:40000}")
     private int knownRequestLimit;
 
-    @Value("${rate.limit.enabled:false}")
+    @Value("${org.orcid.papi.rate.limit.enabled:false}")
     private boolean enableRateLimiting;
 
     @Autowired
@@ -71,13 +71,13 @@ public class PapiDailyLimitReport {
         if (enableRateLimiting) {
             LocalDate yesterday = LocalDate.now().minusDays(1);
             String mode = Features.ENABLE_PAPI_RATE_LIMITING.isActive() ? "ENFORCEMENT" : "MONITORING";
-            String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\n Current Anonymous Requests Limit: " + anonymousRequestLimit
-                    + "\n Current Public API Clients Limit: " + knownRequestLimit + "\n Mode: " + mode;
+            String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\nCurrent Anonymous Requests Limit: " + anonymousRequestLimit
+                    + "\nCurrent Public API Clients Limit: " + knownRequestLimit + "\nMode: " + mode;
             LOG .info(SLACK_INTRO_MSG);
             slackManager.sendAlert(SLACK_INTRO_MSG, slackChannel, webhookUrl, webhookUrl);
             
             String SLACK_STATS_MSG = "Count of Anonymous IPs blocked: " + papiRateLimitingDao.countAnonymousRequestsWithLimitExceeded(yesterday, anonymousRequestLimit)
-                    + "\n Count of Public API clients that have exceeded the limit: "
+                    + "\nCount of Public API clients that have exceeded the limit: "
                     + papiRateLimitingDao.countClientRequestsWithLimitExceeded(yesterday, knownRequestLimit);           
             LOG .info(SLACK_STATS_MSG);
             slackManager.sendAlert(SLACK_STATS_MSG, slackChannel, webhookUrl, webhookUrl);

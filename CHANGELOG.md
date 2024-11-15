@@ -1,3 +1,72 @@
+## v2.68.3 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.2...v2.68.3)
+
+## v2.68.2 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.1...v2.68.2)
+
+## v2.68.1 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.0...v2.68.1)
+
+## v2.68.0 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.16...v2.68.0)
+
+## v2.67.16 - 2024-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.15...v2.67.16)
+
+## v2.67.15 - 2024-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.14...v2.67.15)
+
+- [#7133](https://github.com/ORCID/ORCID-Source/pull/7133): lmendoza/9453-update-node-version
+- [#7130](https://github.com/ORCID/ORCID-Source/pull/7130): refactor/matrix-and-fork-detection-bldtest
+
+### Feature
+
+- helper command comments for yarn corepack install
+
+## v2.67.14 - 2024-11-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.13...v2.67.14)
+
+## v2.67.13 - 2024-11-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.12...v2.67.13)
+
+## v2.67.12 - 2024-11-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.11...v2.67.12)
+
+## v2.67.11 - 2024-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.10...v2.67.11)
+
+## v2.67.10 - 2024-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.9...v2.67.10)
+
+## v2.67.9 - 2024-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.8...v2.67.9)
+
+## v2.67.8 - 2024-11-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.7...v2.67.8)
+
+## v2.67.7 - 2024-11-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.6...v2.67.7)
+
+- [#7120](https://github.com/ORCID/ORCID-Source/pull/7120): 9422-email-domains-interstitial-oauth
+
+## v2.67.6 - 2024-10-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.5...v2.67.6)
+
 ## v2.67.5 - 2024-10-30
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.4...v2.67.5)

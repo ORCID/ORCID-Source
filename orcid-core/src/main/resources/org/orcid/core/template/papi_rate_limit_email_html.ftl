@@ -25,9 +25,6 @@
 			</p>
             
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
-                <@emailMacros.msg "email.common.you_have_received_this_email" />
-            </p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 			   <#include "email_footer_html.ftl"/>
 			</p>
 		 </div>

@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.oracle.truffle.api.profiles.Profile;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -81,6 +82,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SummaryManagerTest {
     private final String ORCID = "0000-0000-0000-0000";
     private final String CLIENT1 = "APP-0000";
+    private final String EMAIL_DOMAIN = "orcid.org";
 
     public SummaryManagerImpl manager = new SummaryManagerImpl();
 
@@ -165,10 +167,9 @@ public class SummaryManagerTest {
         ReflectionTestUtils.setField(manager, "researchResourceManagerReadOnly", researchResourceManagerReadOnlyMock);
 
         // Set EmailDomains
-        EmailDomains emailDomains = getEmailDomains();
-        Mockito.when(profileEmailDomainManagerReadOnlyMock.getPublicEmailDomains(Mockito.eq(ORCID))).thenReturn(new ArrayList<ProfileEmailDomainEntity>());
+        List<ProfileEmailDomainEntity> emailDomains = getEmailDomains();
+        Mockito.when(profileEmailDomainManagerReadOnlyMock.getPublicEmailDomains(Mockito.eq(ORCID))).thenReturn(emailDomains);
         ReflectionTestUtils.setField(manager, "profileEmailDomainManagerReadOnly", profileEmailDomainManagerReadOnlyMock);
-
         
         // Set metadata
         OrcidIdentifier oi = new OrcidIdentifier();
@@ -557,7 +558,11 @@ public class SummaryManagerTest {
         // Peer review
         assertEquals(Integer.valueOf(2), rs.getPeerReviews().getSelfAssertedCount());
         assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
-        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());   
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());
+
+        // Email domains
+        assertEquals("2024-12-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
+        assertEquals(1, rs.getEmailDomains().getEmailDomains().size());
     }       
     
     /**
@@ -588,7 +593,11 @@ public class SummaryManagerTest {
         // Peer review
         assertEquals(2, rs.getSelfAssertedPeerReviews());
         assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());   
+        assertEquals(16, rs.getPeerReviewsTotal());
+        // Email domain
+        assertEquals(1, rs.getEmailDomains().size());
+        assertEquals("2024-12-20", rs.getEmailDomains().get(0).getVerificationDate());
+
     }
     
     private PersonExternalIdentifiers getPersonExternalIdentifiers() {
@@ -607,9 +616,13 @@ public class SummaryManagerTest {
         return researchResources;
     }
     
-    private EmailDomains  getEmailDomains() {
-        EmailDomains emailDomains = new EmailDomains();
-        
+    private List<ProfileEmailDomainEntity>  getEmailDomains() {
+        List<ProfileEmailDomainEntity> emailDomains = new ArrayList<ProfileEmailDomainEntity>();
+        ProfileEmailDomainEntity emailDomain = new ProfileEmailDomainEntity();
+        emailDomain.setEmailDomain(EMAIL_DOMAIN);
+        emailDomain.setOrcid(ORCID);
+        emailDomain.setDateCreated(new Date(124, 11, 20));
+        emailDomains.add(emailDomain);
         return emailDomains;
     }
     

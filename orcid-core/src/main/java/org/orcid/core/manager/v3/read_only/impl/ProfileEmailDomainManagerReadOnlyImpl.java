@@ -16,17 +16,17 @@ import java.util.List;
  */
 public class ProfileEmailDomainManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEmailDomainManagerReadOnly {
     @Resource
-    protected ProfileEmailDomainDao profileEmailDomainDao;
+    protected ProfileEmailDomainDao profileEmailDomainDaoReadOnly;
 
     public void setProfileEmailDomainDao(ProfileEmailDomainDao profileEmailDomainDao) {
-        this.profileEmailDomainDao = profileEmailDomainDao;
+        this.profileEmailDomainDaoReadOnly = profileEmailDomainDao;
     }
 
     public List<ProfileEmailDomainEntity> getEmailDomains(String orcid) {
-        return profileEmailDomainDao.findByOrcid(orcid);
+        return profileEmailDomainDaoReadOnly.findByOrcid(orcid);
     };
 
     public List<ProfileEmailDomainEntity> getPublicEmailDomains(String orcid) {
-        return profileEmailDomainDao.findPublicEmailDomains(orcid);
+        return profileEmailDomainDaoReadOnly.findPublicEmailDomains(orcid);
     };
 }
