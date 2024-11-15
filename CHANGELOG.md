@@ -1,3 +1,9 @@
+## v2.68.5 - 2024-11-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.4...v2.68.5)
+
+- [#7138](https://github.com/ORCID/ORCID-Source/pull/7138): Localhost check is useless since now we use dev.orcid.org
+
 ## v2.68.4 - 2024-11-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.3...v2.68.4)
