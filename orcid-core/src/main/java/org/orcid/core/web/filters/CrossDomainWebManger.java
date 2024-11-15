@@ -35,16 +35,6 @@ public class CrossDomainWebManger {
             if (validateDomain(request.getHeader("origin"))) {
                 return true;
             } 
-        } else {
-            // Check referer header for localhost
-            String referer = request.getHeader("referer");
-            if (!PojoUtil.isEmpty(referer)) {
-                URI uri = new URI(request.getHeader("referer"));
-                String domain = uri.getHost();
-                if (LOCALHOST.equals(domain)) {
-                    return true;
-                }
-            }
         }
 
         // If it is and invalid domain, validate the path
