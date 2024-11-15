@@ -124,7 +124,7 @@ public class SecurityContextTestUtils {
     }
     
     static public void setupSecurityContextForWebUser(String userId, String email) {
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(userId, email, "password");
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(userId, email);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, "password");
         auth.setDetails(details);
         SecurityContextImpl securityContext = new SecurityContextImpl();

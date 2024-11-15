@@ -197,7 +197,7 @@ public class AdminControllerTest extends BaseControllerTest {
         Email e = emailManager.findPrimaryEmail(orcid);
         List<OrcidWebRole> roles = getRole();
         OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
-                e.getEmail(), null, roles);
+                null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), getRole());
         auth.setDetails(details);
         return auth;

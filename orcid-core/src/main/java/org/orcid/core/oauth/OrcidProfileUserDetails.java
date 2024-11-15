@@ -13,26 +13,19 @@ public class OrcidProfileUserDetails implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private String orcid;
+    private final String orcid;
 
-    private String primaryEmail;
-
-    private String password;
+    private final String password;
 
     private Collection<OrcidWebRole> grantedAuthorities = new HashSet<>();
 
-    public OrcidProfileUserDetails() {
-    }
-
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password) {
+    public OrcidProfileUserDetails(String orcid, String password) {
         this.orcid = orcid;
-        this.primaryEmail = primaryEmail;
         this.password = password;
     }
 
-    public OrcidProfileUserDetails(String orcid, String primaryEmail, String password, Collection<OrcidWebRole> grantedAuthorities) {
+    public OrcidProfileUserDetails(String orcid, String password, Collection<OrcidWebRole> grantedAuthorities) {
         this.orcid = orcid;
-        this.primaryEmail = primaryEmail;
         this.password = password;
         this.grantedAuthorities = grantedAuthorities;
     }
@@ -122,10 +115,6 @@ public class OrcidProfileUserDetails implements UserDetails {
         return orcid;
     }
 
-    public String getPrimaryEmail() {
-        return primaryEmail;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -133,7 +122,6 @@ public class OrcidProfileUserDetails implements UserDetails {
         result = prime * result + ((grantedAuthorities == null) ? 0 : grantedAuthorities.hashCode());
         result = prime * result + ((orcid == null) ? 0 : orcid.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
-        result = prime * result + ((primaryEmail == null) ? 0 : primaryEmail.hashCode());
         return result;
     }
 
@@ -160,11 +148,6 @@ public class OrcidProfileUserDetails implements UserDetails {
             if (other.password != null)
                 return false;
         } else if (!password.equals(other.password))
-            return false;
-        if (primaryEmail == null) {
-            if (other.primaryEmail != null)
-                return false;
-        } else if (!primaryEmail.equals(other.primaryEmail))
             return false;
         return true;
     }

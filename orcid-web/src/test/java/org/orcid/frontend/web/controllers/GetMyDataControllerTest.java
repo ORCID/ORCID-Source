@@ -475,7 +475,7 @@ public class GetMyDataControllerTest {
 
     private Authentication getAuthentication() {
         List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(ORCID, "user_1@test.orcid.org", null, roles);
+        OrcidProfileUserDetails details = new OrcidProfileUserDetails(ORCID, null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ORCID, null, roles);
         auth.setDetails(details);
         return auth;
