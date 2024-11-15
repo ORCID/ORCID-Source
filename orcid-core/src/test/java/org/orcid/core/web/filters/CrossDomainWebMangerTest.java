@@ -2,8 +2,9 @@ package org.orcid.core.web.filters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
 
@@ -33,7 +34,7 @@ public class CrossDomainWebMangerTest {
             "/userStatus.jsonwhatever/test","/userStatus.json/whatever","/userStatus.jsonwhatever","/userStatus.jsonwhatever/test"};
     
     @Test
-    public void testDomains() throws MalformedURLException {
+    public void testDomains() throws URISyntaxException {
         for(String allowed : allowedDomains) {            
             assertTrue("testing: " +  allowed, crossDomainWebManger.validateDomain(allowed));
         }  
@@ -44,7 +45,7 @@ public class CrossDomainWebMangerTest {
     }
     
     @Test
-    public void testPaths() throws MalformedURLException {
+    public void testPaths() throws URISyntaxException {
         for(String allowed : allowedPaths) {            
             assertTrue("testing: " +  allowed, crossDomainWebManger.validatePath(allowed));
         }  
@@ -52,5 +53,10 @@ public class CrossDomainWebMangerTest {
         for(String forbidden : forbiddenPaths) {
             assertFalse("Testing: " + forbidden, crossDomainWebManger.validatePath(forbidden));
         }
+    }
+
+    @Test
+    public void failTest() {
+        fail();
     }
 }
