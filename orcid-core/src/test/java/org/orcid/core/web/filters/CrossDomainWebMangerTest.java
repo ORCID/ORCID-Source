@@ -26,7 +26,7 @@ public class CrossDomainWebMangerTest {
     CrossDomainWebManger crossDomainWebManger;
     
     String [] allowedDomains = {"http://localhost", "https://localhost"};
-    String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.ihateorcid.org", "http://qa.ihateorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.ihateorcid.org", "https://qa.ihateorcid.org"};
+    String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.testorcid.org", "http://qa.testorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.testorcid.org", "https://qa.testorcid.org"};
     
     String [] allowedPaths = {"/lang.json","/userStatus.json","/oauth/userinfo","/oauth/jwks","/.well-known/openid-configuration"};
     String [] forbiddenPaths = {"/oauth","/whatever/oauth","/whatever/oauth/","/whatever/oauth/other",
@@ -53,10 +53,5 @@ public class CrossDomainWebMangerTest {
         for(String forbidden : forbiddenPaths) {
             assertFalse("Testing: " + forbidden, crossDomainWebManger.validatePath(forbidden));
         }
-    }
-
-    @Test
-    public void failTest() {
-        fail();
     }
 }

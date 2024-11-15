@@ -58,9 +58,11 @@ public class CrossDomainWebManger {
     public boolean validateDomain(String url) throws URISyntaxException {
         URI uri = new URI(url);
         String domain = uri.getHost();
-        for (String allowedDomain : getAllowedDomainsRegex()) {
-            if (domain.matches(allowedDomain)) {
-                return true;
+        if(domain != null) {
+            for (String allowedDomain : getAllowedDomainsRegex()) {
+                if (domain.matches(allowedDomain)) {
+                    return true;
+                }
             }
         }
         return false;
