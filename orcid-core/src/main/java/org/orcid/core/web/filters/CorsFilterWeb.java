@@ -29,7 +29,7 @@ public class CorsFilterWeb extends OncePerRequestFilter {
     @Resource
     CrossDomainWebManger crossDomainWebManger;
 
-    @Value("${org.orcid.core.web.filters}")
+    @Value("${org.orcid.core.baseUri}")
     private String baseUri;
 
     @Override
