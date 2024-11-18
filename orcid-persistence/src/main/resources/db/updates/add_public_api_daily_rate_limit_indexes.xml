@@ -1,0 +1,32 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+    
+	<changeSet id="ADD-PAPI-LIMIT-INDEXES" author="Camelia Dumitru">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="idx_ip_address" tableName="public_api_daily_rate_limit" />
+			</not>
+			<not>
+				<indexExists indexName="idx_client_id" tableName="public_api_daily_rate_limit" />
+			</not>
+			<not>
+				<indexExists indexName="idx_request_date" tableName="public_api_daily_rate_limit" />
+			</not>
+		</preConditions>
+		<!-- Add indexes -->
+	    <createIndex indexName="idx_ip_address" tableName="public_api_daily_rate_limit">
+	        <column name="ip_address"/>
+	    </createIndex>
+	
+	    <createIndex indexName="idx_client_id" tableName="public_api_daily_rate_limit">
+	        <column name="client_id"/>
+	    </createIndex>
+	
+	    <createIndex indexName="idx_request_date" tableName="public_api_daily_rate_limit">
+	        <column name="request_date"/>
+	    </createIndex>
+	</changeSet>
+	
+</databaseChangeLog>
