@@ -14,6 +14,9 @@
 			<not>
 				<indexExists indexName="idx_request_date" tableName="public_api_daily_rate_limit" />
 			</not>
+			<not>
+            	<indexExists indexName="idx_client_ip_date" tableName="public_api_daily_rate_limit" />
+        	</not>
 		</preConditions>
 		<!-- Add indexes -->
 	    <createIndex indexName="idx_ip_address" tableName="public_api_daily_rate_limit">
@@ -27,6 +30,12 @@
 	    <createIndex indexName="idx_request_date" tableName="public_api_daily_rate_limit">
 	        <column name="request_date"/>
 	    </createIndex>
+	    
+	    <createIndex indexName="idx_client_ip_date" tableName="public_api_daily_rate_limit">
+        	<column name="client_id"/>
+        	<column name="ip_address"/>
+        	<column name="request_date"/>
+        </createIndex>
 	</changeSet>
 	
 </databaseChangeLog>
