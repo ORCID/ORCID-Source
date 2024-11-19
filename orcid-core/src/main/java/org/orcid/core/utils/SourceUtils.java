@@ -54,12 +54,14 @@ public class SourceUtils {
             if (source != null) {
                 String sourceId = source.retrieveSourcePath();
                 String providedSourceName = source.getSourceName().getContent();
-                if (!PojoUtil.isEmpty(sourceId) && !providedSourceName.equals(ORCID_EMAIL_VALIDATION)) {
-                    String sourceName = sourceNameCacheManager.retrieve(sourceId);
-                    if (!PojoUtil.isEmpty(sourceName)) {
-                        source.setSourceName(new SourceName(sourceName));
-                    } else {
-                        source.setSourceName(null);
+                if (!PojoUtil.isEmpty(sourceId)) {
+                    if (providedSourceName != null && !providedSourceName.equals(ORCID_EMAIL_VALIDATION)) {
+                        String sourceName = sourceNameCacheManager.retrieve(sourceId);
+                        if (!PojoUtil.isEmpty(sourceName)) {
+                            source.setSourceName(new SourceName(sourceName));
+                        } else {
+                            source.setSourceName(null);
+                        }
                     }
                 }
             }
