@@ -73,6 +73,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import static org.orcid.core.constants.EmailConstants.VERIFICATION_DATE_CUTOFF;
+
 public class SummaryManagerImpl implements SummaryManager {
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
@@ -282,7 +284,9 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
                     EmailDomainSummary eds = new EmailDomainSummary();
                     eds.setValue(ed.getValue());
-                    eds.setVerificationDate(ed.getVerificationDate().toString());
+                    if (ed.getVerificationDate() != null && ed.getVerificationDate().after(VERIFICATION_DATE_CUTOFF)) {
+                        eds.setVerificationDate(ed.getVerificationDate().toString());
+                    }
                     emailDomains.add(eds);
                 }
             }
@@ -521,7 +525,10 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    ed.setVerificationDate( new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated())));
+                    VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
+                    if (verificationDate.after(VERIFICATION_DATE_CUTOFF)) {
+                        ed.setVerificationDate(verificationDate);
+                    }
                     edList.add(ed);
                 }
             }
@@ -529,7 +536,9 @@ public class SummaryManagerImpl implements SummaryManager {
             edList.stream().limit(3).forEach(t -> {
                 EmailDomain ed = new EmailDomain();
                 ed.setValue(t.getValue());
-                ed.setVerificationDate(t.getVerificationDate());
+                if (t.getVerificationDate() != null) {
+                    ed.setVerificationDate(t.getVerificationDate());
+                }
                 emailDomainsTop3.add(ed);
             });
 
