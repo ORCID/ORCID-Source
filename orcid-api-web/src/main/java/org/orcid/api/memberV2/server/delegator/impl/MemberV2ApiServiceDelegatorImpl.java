@@ -1,6 +1,7 @@
 package org.orcid.api.memberV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
+import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATION;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -98,6 +100,7 @@ import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -230,6 +233,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
     
     @Resource
     private ApiUtils apiUtils;
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
 
     @Override
     public Response viewStatusText() {
@@ -785,6 +791,17 @@ public class MemberV2ApiServiceDelegatorImpl implements
             // Filter just in case client doesn't have the /email/read-private
             // scope
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
+        }
+
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.getSource().getSourceName().setContent(ORCID_EMAIL_VALIDATION);
+                }
+            }
         }
 
         ElementUtils.setPathToEmail(emails, orcid);

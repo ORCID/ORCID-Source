@@ -251,6 +251,7 @@
 		<property name="emailManager" ref="emailManagerReadOnly"/>
 		<property name="recordNameManager" ref="recordNameManagerReadOnly"/>
 		<property name="biographyManager" ref="biographyManagerReadOnly"/>
+		<property name="emailDomainManager" ref="emailDomainManager"/>
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 	
@@ -599,6 +600,7 @@
         <property name="emailManager" ref="emailManagerReadOnlyV3"/>
         <property name="recordNameManager" ref="recordNameManagerReadOnlyV3"/>
         <property name="biographyManager" ref="biographyManagerReadOnlyV3"/>
+		<property name="emailDomainManager" ref="emailDomainManager"/>
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
     </bean>
     
