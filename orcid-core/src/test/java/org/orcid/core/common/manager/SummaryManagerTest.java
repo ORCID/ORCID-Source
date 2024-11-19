@@ -600,7 +600,6 @@ public class SummaryManagerTest {
         assertEquals("2024-12-20", rs.getEmailDomains().get(0).getVerificationDate());
         assertEquals(null, rs.getEmailDomains().get(1).getVerificationDate());
 
-
     }
 
     private PersonExternalIdentifiers getPersonExternalIdentifiers() {
