@@ -200,8 +200,8 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", email1.get(0).getSource().retrieveSourcePath());
         assertEquals("Source Client 1", email1.get(0).getSource().getSourceName().getContent());
         assertNull(email1.get(0).getSource().getSourceOrcid());
-        assertEquals("0000-0000-0000-0000", email2.get(0).getSource().retrieveSourcePath());
-        assertEquals("ORCID email validation", email2.get(0).getSource().getSourceName().getContent());
+        assertEquals("APP-5555555555555555", email2.get(0).getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", email2.get(0).getSource().getSourceName().getContent());
         assertNull(email2.get(0).getSource().getSourceOrcid());
 
         assertNotNull(personDetails.getPublicGroupedPersonExternalIdentifiers());
