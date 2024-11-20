@@ -115,7 +115,7 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
         assertNotNull(record.getEmails());
         assertEquals(2, record.getEmails().getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", record.getEmails().getEmails().get(0).getValue());
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", record.getEmails().getEmails().get(1).getValue());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", record.getEmails().getEmails().get(1).getValue());
         assertEquals(Visibility.PUBLIC, record.getEmails().getEmails().get(0).getVisibility());
         assertEquals(Visibility.PUBLIC, record.getEmails().getEmails().get(1).getVisibility());
 
