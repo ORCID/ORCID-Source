@@ -200,9 +200,9 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", email1.get(0).getSource().retrieveSourcePath());
         assertEquals("Source Client 1", email1.get(0).getSource().getSourceName().getContent());
         assertNull(email1.get(0).getSource().getSourceOrcid());
-        assertEquals("APP-5555555555555555", email2.get(0).getSource().retrieveSourcePath());
-        assertEquals("Source Client 1", email2.get(0).getSource().getSourceName().getContent());
-        assertNull(email2.get(0).getSource().getSourceOrcid());
+        assertEquals("0000-0000-0000-0003", email2.get(0).getSource().retrieveSourcePath());
+        assertEquals("Credit Name", email2.get(0).getSource().getSourceName().getContent());
+        assertNotNull(email2.get(0).getSource().getSourceOrcid());
 
         assertNotNull(personDetails.getPublicGroupedPersonExternalIdentifiers());
         Map<String, List<PersonExternalIdentifier>> extIds = personDetails.getPublicGroupedPersonExternalIdentifiers();        
