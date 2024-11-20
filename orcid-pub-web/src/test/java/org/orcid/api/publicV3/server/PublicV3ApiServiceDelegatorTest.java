@@ -598,6 +598,11 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC.value(), email2.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/email", emails.getPath());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
+        assertNull(email.getSource().getSourceOrcid());
+        assertEquals("0000-0000-0000-0000", email2.getSource().retrieveSourcePath());
+        assertEquals("ORCID email validation", email2.getSource().getSourceName().getContent());
+        assertNull(email2.getSource().getSourceOrcid());
     }
 
     @Test
@@ -1832,6 +1837,11 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(email2.getLastModifiedDate());
         assertNotNull(email2.getLastModifiedDate().getValue());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertNull(email.getSource().getSourceOrcid());
+        assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
+        assertEquals("0000-0000-0000-0000", email2.getSource().retrieveSourcePath());
+        assertNull(email2.getSource().getSourceOrcid());
+        assertEquals("ORCID email validation", email2.getSource().getSourceName().getContent());
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
         assertEquals(Visibility.PUBLIC.value(), email2.getVisibility().value());
         assertNotNull(person.getExternalIdentifiers());
