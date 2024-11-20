@@ -143,7 +143,8 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             } else {
                 filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
             }
-            person.setEmails(processProfessionalEmails(filteredEmails));
+            processProfessionalEmails(filteredEmails);
+            person.setEmails(filteredEmails);
         }
         return person;
     }
