@@ -99,10 +99,11 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertNotNull(email);
         assertEquals("/0000-0000-0000-0003/email", email.getPath());
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(3, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
         boolean found1 = false;
         boolean found2 = false;
         boolean found3 = false;
+        boolean found4 = false;
         for (Email element : email.getEmails()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -111,6 +112,8 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
+            } if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found4 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -119,6 +122,7 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
     }
 
     @Test
