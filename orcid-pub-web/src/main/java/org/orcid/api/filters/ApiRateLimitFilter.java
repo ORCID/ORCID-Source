@@ -98,6 +98,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
     private String papiWhiteSpaceSeparatedWhiteList;
+    
+    @Value("${org.orcid.papi.rate.limit.clientId.whiteSpaceSeparatedWhiteList}")
+    private String papiClientIdWhiteSpaceSeparatedWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -137,8 +140,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     }
 
                 } else {
-                    LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                    this.rateLimitClientRequest(clientId, today);
+                    if (!isClientIdWhiteListed(clientId)) {
+                        LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
+                        this.rateLimitClientRequest(clientId, today);
+                    }
                 }
             } catch (Exception ex) {
                 LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
@@ -293,6 +298,19 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         if (papiIpWhiteList != null) {
             return papiIpWhiteList.contains(ipAddress);
+
+        }
+        return false;
+    }
+    
+    private boolean isClientIdWhiteListed(String clientId) {
+        List<String> papiClientIdWhiteList = null;
+        if (StringUtils.isNotBlank(papiClientIdWhiteSpaceSeparatedWhiteList)) {
+            papiClientIdWhiteList = Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s"));
+        }
+
+        if (papiClientIdWhiteList != null) {
+            return papiClientIdWhiteList.contains(clientId);
 
         }
         return false;
