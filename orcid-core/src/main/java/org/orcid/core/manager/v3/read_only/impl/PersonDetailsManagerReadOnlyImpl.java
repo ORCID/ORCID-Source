@@ -143,17 +143,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             } else {
                 filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
             }
-            for (Email email : filteredEmails.getEmails()) {
-                if (email.isVerified()) {
-                    String domain = email.getEmail().split("@")[1];
-                    EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                    // Set appropriate source name and source id for professional emails
-                    if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                    }
-                }
-            }
-            person.setEmails(filteredEmails);
+            person.setEmails(processProfessionalEmails(filteredEmails));
         }
         return person;
     }
@@ -211,9 +201,23 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
             filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
 
         return person;
+    }
+
+    private void processProfessionalEmails(Emails emails) {
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name and source id for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
+            }
+        }
     }
 }
