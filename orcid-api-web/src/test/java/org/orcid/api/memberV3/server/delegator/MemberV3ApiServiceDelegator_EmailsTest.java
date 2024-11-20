@@ -112,7 +112,7 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
-            } if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
                 found4 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
