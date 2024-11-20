@@ -133,8 +133,6 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
-import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATION;
-
 @Component
 public class MemberV3ApiServiceDelegatorImpl implements
         MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> {
@@ -278,6 +276,9 @@ public class MemberV3ApiServiceDelegatorImpl implements
 
     @Resource
     private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     public Boolean getFilterVersionOfIdentifiers() {
         return filterVersionOfIdentifiers;
@@ -888,9 +889,9 @@ public class MemberV3ApiServiceDelegatorImpl implements
             if (email.isVerified()) {
                 String domain = email.getEmail().split("@")[1];
                 EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name for professional emails
+                // Set appropriate source name and source id for professional emails
                 if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    email.getSource().getSourceName().setContent(ORCID_EMAIL_VALIDATION);
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
                 }
             }
         }

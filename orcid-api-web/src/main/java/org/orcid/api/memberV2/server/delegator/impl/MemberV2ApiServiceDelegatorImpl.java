@@ -1,7 +1,6 @@
 package org.orcid.api.memberV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
-import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATION;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +58,7 @@ import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
@@ -236,6 +236,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
 
     @Resource
     private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     @Override
     public Response viewStatusText() {
@@ -797,9 +800,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
             if (email.isVerified()) {
                 String domain = email.getEmail().split("@")[1];
                 EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name for professional emails
+                // Set appropriate source name and source id for professional emails
                 if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    email.getSource().getSourceName().setContent(ORCID_EMAIL_VALIDATION);
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
                 }
             }
         }

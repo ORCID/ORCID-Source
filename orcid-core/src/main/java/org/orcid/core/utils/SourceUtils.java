@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
-import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATION;
+import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATOR_CLIENT_NAME;
 
 public class SourceUtils {
     private SourceNameCacheManager sourceNameCacheManager;
@@ -55,7 +55,7 @@ public class SourceUtils {
                 String sourceId = source.retrieveSourcePath();
                 String providedSourceName = source.getSourceName().getContent();
                 if (!PojoUtil.isEmpty(sourceId)) {
-                    if (providedSourceName != null && !providedSourceName.equals(ORCID_EMAIL_VALIDATION)) {
+                    if (providedSourceName != null && !providedSourceName.equals(ORCID_EMAIL_VALIDATOR_CLIENT_NAME)) {
                         String sourceName = sourceNameCacheManager.retrieve(sourceId);
                         if (!PojoUtil.isEmpty(sourceName)) {
                             source.setSourceName(new SourceName(sourceName));

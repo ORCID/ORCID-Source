@@ -13,6 +13,7 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -31,7 +32,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 
-import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATION;
+import javax.annotation.Resource;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
@@ -52,6 +53,9 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     protected BiographyManagerReadOnly biographyManager;
 
     protected EmailDomainManager emailDomainManager;
+
+    @Resource
+    protected SourceEntityUtils sourceEntityUtils;
 
     public void setAddressManager(AddressManagerReadOnly addressManager) {
         this.addressManager = addressManager;
@@ -143,9 +147,9 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
                 if (email.isVerified()) {
                     String domain = email.getEmail().split("@")[1];
                     EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                    // Set appropriate source name for professional emails
+                    // Set appropriate source name and source id for professional emails
                     if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                        email.getSource().getSourceName().setContent(ORCID_EMAIL_VALIDATION);
+                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
                     }
                 }
             }
