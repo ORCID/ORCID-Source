@@ -148,13 +148,12 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(4, email.getEmails().size());
+        assertEquals(5, email.getEmails().size());
 
         found1 = false;
         found2 = false;
         found3 = false;
         found4 = false;
-        found5 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -360,12 +359,14 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(3, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", email.getEmails().get(1).getEmail());
 
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -374,6 +375,8 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found4 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -382,6 +385,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
 
         // External identifiers
         assertNotNull(p.getExternalIdentifiers());
@@ -518,7 +522,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(4, email.getEmails().size());
+        assertEquals(5, email.getEmails().size());
 
         boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
 
