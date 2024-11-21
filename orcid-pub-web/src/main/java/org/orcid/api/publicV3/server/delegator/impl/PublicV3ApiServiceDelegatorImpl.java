@@ -16,6 +16,7 @@ import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
@@ -48,6 +49,7 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidRequestUtil;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.version.impl.Api3_0LastModifiedDatesHelper;
@@ -56,34 +58,7 @@ import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
-import org.orcid.jaxb.model.v3.release.record.Address;
-import org.orcid.jaxb.model.v3.release.record.Addresses;
-import org.orcid.jaxb.model.v3.release.record.Biography;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Emails;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.ExternalID;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Keywords;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.OtherNames;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.Person;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.Record;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
@@ -109,6 +84,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -216,11 +192,17 @@ public class PublicV3ApiServiceDelegatorImpl
     @Resource
     private EventManager eventManager;
 
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
     private Boolean filterVersionOfIdentifiers = false;
-    
+
     public Boolean getFilterVersionOfIdentifiers() {
         return filterVersionOfIdentifiers;
     }
@@ -512,6 +494,7 @@ public class PublicV3ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         checkProfileStatus(orcid);
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
+        processProfessionalEmails(emails);
         publicAPISecurityManagerV3.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(emails);
@@ -730,6 +713,19 @@ public class PublicV3ApiServiceDelegatorImpl
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
+        }
+    }
+
+    private void processProfessionalEmails(Emails emails) {
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name and source id for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
+            }
         }
     }
 

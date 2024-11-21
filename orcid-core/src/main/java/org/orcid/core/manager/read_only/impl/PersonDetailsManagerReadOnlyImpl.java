@@ -3,6 +3,7 @@ package org.orcid.core.manager.read_only.impl;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
@@ -12,6 +13,7 @@ import org.orcid.core.manager.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
@@ -28,6 +30,9 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+
+import javax.annotation.Resource;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
@@ -46,6 +51,11 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     protected RecordNameManagerReadOnly recordNameManager;
 
     protected BiographyManagerReadOnly biographyManager;
+
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     public void setAddressManager(AddressManagerReadOnly addressManager) {
         this.addressManager = addressManager;
@@ -77,6 +87,10 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
 
     public void setBiographyManager(BiographyManagerReadOnly biographyManager) {
         this.biographyManager = biographyManager;
+    }
+
+    public void setEmailDomainManager(EmailDomainManager emailDomainManager) {
+        this.emailDomainManager = emailDomainManager;
     }
 
     @Override
@@ -124,6 +138,7 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
             filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
+            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
         return person;
@@ -182,9 +197,23 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
             filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
+            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
 
         return person;
+    }
+
+    private void processProfessionalEmails(Emails emails) {
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name and source id for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
+            }
+        }
     }
 }

@@ -1826,7 +1826,7 @@
         client_source_id="APP-5555555555555555"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />  
+    /> 
       
 	<email
         orcid="0000-0000-0000-0003"
@@ -1839,7 +1839,20 @@
         client_source_id="APP-5555555555555555"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />  
+    />
+
+	<email
+        orcid="0000-0000-0000-0003"
+        email="public_0000-0000-0000-0003@orcid.org"
+        email_hash="f936d182c82f831ccee9667ac7f8fc6b9107fa5647b0c4a8250759462d5707d0"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PUBLIC"
+        source_id="0000-0000-0000-0003"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />	
 
 	<email
         orcid="0000-0000-0000-0003"
@@ -2272,4 +2285,10 @@
     	last_modified="2020-01-01 15:00:00.00"
     	date_created="2020-01-01 15:00:00.00"
     />    
+	
+	<email_domain
+        id="0"
+        email_domain="orcid.org"
+        category="PROFESSIONAL"
+    />
 </dataset>
