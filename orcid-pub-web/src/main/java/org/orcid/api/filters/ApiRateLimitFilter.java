@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,17 +97,30 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
 
-    @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:127.0.0.1}")
+    @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:192.168.65.1 127.0.0.1}")
     private String papiWhiteSpaceSeparatedWhiteList;
+
+    @Value("${org.orcid.papi.rate.limit.clientId.whiteSpaceSeparatedWhiteList}")
+    private String papiClientIdWhiteSpaceSeparatedWhiteList;
+
+    private List<String> papiIpWhiteList;
+    private List<String> papiClientIdWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/ )";
 
     private static final String SUBJECT = "[ORCID] You have exceeded the daily Public API Usage Limit - ";
-    
+
     @Value("${org.orcid.papi.rate.limit.fromEmail:notify@notify.orcid.org}")
     private String FROM_ADDRESS;
+
+    @Override
+    public void afterPropertiesSet() throws ServletException {
+        super.afterPropertiesSet();
+        papiIpWhiteList = StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
+        papiClientIdWhiteList = StringUtils.isNotBlank(papiClientIdWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiClientIdWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
@@ -137,8 +151,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     }
 
                 } else {
-                    LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                    this.rateLimitClientRequest(clientId, today);
+                    if (!isClientIdWhiteListed(clientId)) {
+                        LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
+                        this.rateLimitClientRequest(clientId, today);
+                    }
                 }
             } catch (Exception ex) {
                 LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
@@ -269,8 +285,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         });
     }
 
-    // gets actual client IP address, using the headers that the proxy server
-    // ads
+    // gets actual client IP address, using the headers that the proxy server adds
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
@@ -286,16 +301,11 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     private boolean isWhiteListed(String ipAddress) {
-        List<String> papiIpWhiteList = null;
-        if (StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList)) {
-            papiIpWhiteList = Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s"));
-        }
+        return (papiIpWhiteList != null)?papiIpWhiteList.contains(ipAddress): false;
+    }
 
-        if (papiIpWhiteList != null) {
-            return papiIpWhiteList.contains(ipAddress);
-
-        }
-        return false;
+    private boolean isClientIdWhiteListed(String clientId) {
+        return (papiClientIdWhiteList != null)?papiClientIdWhiteList.contains(clientId):false;
     }
 
 }
