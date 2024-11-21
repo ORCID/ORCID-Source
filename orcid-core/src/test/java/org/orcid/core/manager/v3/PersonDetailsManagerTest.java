@@ -99,7 +99,7 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        assertEquals(5, person.getEmails().getEmails().size());
+        assertEquals(6, person.getEmails().getEmails().size());
     }
 
     @Test
@@ -136,8 +136,9 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        assertEquals(1, person.getEmails().getEmails().size());
+        assertEquals(2, person.getEmails().getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", person.getEmails().getEmails().get(0).getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", person.getEmails().getEmails().get(1).getEmail());
         
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
