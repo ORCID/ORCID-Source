@@ -76,7 +76,7 @@ public class RecordManagerTest extends DBUnitTest {
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
         
-        assertEquals(4, person.getEmails().getEmails().size());
+        assertEquals(5, person.getEmails().getEmails().size());
         
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());

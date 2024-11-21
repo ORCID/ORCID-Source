@@ -239,6 +239,7 @@
 		<property name="emailManager" ref="emailManagerReadOnly"/>
 		<property name="recordNameManager" ref="recordNameManager"/>
 		<property name="biographyManager" ref="biographyManager"/>
+		<property name="emailDomainManager" ref="emailDomainManager"/>
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
