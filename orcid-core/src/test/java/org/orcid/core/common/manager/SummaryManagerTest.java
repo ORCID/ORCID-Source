@@ -562,7 +562,8 @@ public class SummaryManagerTest {
 
         // Email domains
         assertEquals("2024-12-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
-        assertEquals(1, rs.getEmailDomains().getEmailDomains().size());
+        assertEquals(null, rs.getEmailDomains().getEmailDomains().get(1).getVerificationDate());
+        assertEquals(2, rs.getEmailDomains().getEmailDomains().size());
     }       
     
     /**
@@ -595,11 +596,12 @@ public class SummaryManagerTest {
         assertEquals(4, rs.getPeerReviewPublicationGrants());
         assertEquals(16, rs.getPeerReviewsTotal());
         // Email domain
-        assertEquals(1, rs.getEmailDomains().size());
+        assertEquals(2, rs.getEmailDomains().size());
         assertEquals("2024-12-20", rs.getEmailDomains().get(0).getVerificationDate());
+        assertEquals(null, rs.getEmailDomains().get(1).getVerificationDate());
 
     }
-    
+
     private PersonExternalIdentifiers getPersonExternalIdentifiers() {
         PersonExternalIdentifiers peis = new PersonExternalIdentifiers();
         PersonExternalIdentifier pei = new PersonExternalIdentifier();
@@ -623,6 +625,13 @@ public class SummaryManagerTest {
         emailDomain.setOrcid(ORCID);
         emailDomain.setDateCreated(new Date(124, 11, 20));
         emailDomains.add(emailDomain);
+
+        ProfileEmailDomainEntity emailDomain2 = new ProfileEmailDomainEntity();
+        emailDomain2.setEmailDomain(EMAIL_DOMAIN + "2");
+        emailDomain2.setOrcid(ORCID);
+        emailDomain2.setDateCreated(new Date(124, 9, 20));
+        emailDomains.add(emailDomain2);
+
         return emailDomains;
     }
     
