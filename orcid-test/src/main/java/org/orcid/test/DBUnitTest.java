@@ -39,7 +39,7 @@ public class DBUnitTest {
     private static final String TEST_CORE_CONTEXT = "classpath:test-core-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
-            "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
+            "given_permission_to", "external_identifier", "email", "email_domain", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
             "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes",
@@ -134,6 +134,7 @@ public class DBUnitTest {
         dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
         dataSet.addTable("email");
+        dataSet.addTable("email_domain");
         dataSet.addTable("email_event");
         dataSet.addTable("external_identifier");
         dataSet.addTable("org");

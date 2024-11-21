@@ -16,6 +16,7 @@ import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.SummaryManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
@@ -128,6 +129,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -271,7 +273,13 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Resource
     private SummaryManager summaryManager;
-    
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     public Boolean getFilterVersionOfIdentifiers() {
         return filterVersionOfIdentifiers;
     }
@@ -877,6 +885,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         }
 
+        processProfessionalEmails(emails);
+
         ElementUtils.setPathToEmail(emails, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -1214,6 +1224,19 @@ public class MemberV3ApiServiceDelegatorImpl implements
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
+        }
+    }
+
+    private void processProfessionalEmails(Emails emails) {
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name and source id for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
+            }
         }
     }
 

@@ -1,9 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -191,12 +188,22 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertNotNull(personDetails.getPublicGroupedEmails());
         Map<String, List<Email>> emails = personDetails.getPublicGroupedEmails();        
         assertNotNull(emails);
-        assertEquals(1, emails.keySet().size());
-        assertTrue(emails.containsKey("public_0000-0000-0000-0003@test.orcid.org"));        
-        List<Email> publicEmails = emails.get("public_0000-0000-0000-0003@test.orcid.org");
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", publicEmails.get(0).getEmail());
-        assertEquals(Visibility.PUBLIC, publicEmails.get(0).getVisibility());
-        
+        assertEquals(2, emails.keySet().size());
+        assertTrue(emails.containsKey("public_0000-0000-0000-0003@test.orcid.org"));
+        assertTrue(emails.containsKey("public_0000-0000-0000-0003@orcid.org"));
+        List<Email> email1 = emails.get("public_0000-0000-0000-0003@test.orcid.org");
+        List<Email> email2 = emails.get("public_0000-0000-0000-0003@orcid.org");
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email1.get(0).getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", email2.get(0).getEmail());
+        assertEquals(Visibility.PUBLIC, email1.get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, email2.get(0).getVisibility());
+        assertEquals("APP-5555555555555555", email1.get(0).getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", email1.get(0).getSource().getSourceName().getContent());
+        assertNull(email1.get(0).getSource().getSourceOrcid());
+        assertEquals("0000-0000-0000-0003", email2.get(0).getSource().retrieveSourcePath());
+        assertEquals("Credit Name", email2.get(0).getSource().getSourceName().getContent());
+        assertNotNull(email2.get(0).getSource().getSourceOrcid());
+
         assertNotNull(personDetails.getPublicGroupedPersonExternalIdentifiers());
         Map<String, List<PersonExternalIdentifier>> extIds = personDetails.getPublicGroupedPersonExternalIdentifiers();        
         assertNotNull(extIds);

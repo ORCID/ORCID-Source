@@ -14,7 +14,11 @@ public class EmailConstants {
      * session attribute that is used to see if we should check and notify the
      * user if their primary email isn't verified.
      */
-    public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";    
+    public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
+
+    public static final String ORCID_EMAIL_VALIDATOR_CLIENT_NAME = "ORCID email validation";
+
+    public static final String ORCID_EMAIL_VALIDATOR_CLIENT_ID = "0000-0000-0000-0000";
     
     public static final int MAX_EMAIL_COUNT = 30;
     

@@ -18,6 +18,7 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -57,6 +58,7 @@ import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
@@ -98,6 +100,7 @@ import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -230,6 +233,12 @@ public class MemberV2ApiServiceDelegatorImpl implements
     
     @Resource
     private ApiUtils apiUtils;
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     @Override
     public Response viewStatusText() {
@@ -787,6 +796,8 @@ public class MemberV2ApiServiceDelegatorImpl implements
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         }
 
+        processProfessionalEmails(emails);
+
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -1098,6 +1109,19 @@ public class MemberV2ApiServiceDelegatorImpl implements
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
+        }
+    }
+
+    private void processProfessionalEmails(Emails emails) {
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name and source id for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
+            }
         }
     }
 

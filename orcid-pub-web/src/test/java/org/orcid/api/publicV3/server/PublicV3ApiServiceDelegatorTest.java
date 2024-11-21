@@ -579,17 +579,30 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(emails.getLastModifiedDate());
         assertNotNull(emails.getLastModifiedDate().getValue());
         assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());
+        assertEquals(2, emails.getEmails().size());
         Email email = emails.getEmails().get(0);
+        Email email2 = emails.getEmails().get(1);
         assertNotNull(email.getLastModifiedDate());
         assertNotNull(email.getLastModifiedDate().getValue());
+        assertNotNull(email2.getLastModifiedDate());
+        assertNotNull(email2.getLastModifiedDate().getValue());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", email2.getEmail());
         assertTrue(email.isCurrent());
         assertTrue(email.isPrimary());
         assertTrue(email.isVerified());
+        assertTrue(email2.isCurrent());
+        assertFalse(email2.isPrimary());
+        assertTrue(email2.isVerified());
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+        assertEquals(Visibility.PUBLIC.value(), email2.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/email", emails.getPath());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
+        assertNull(email.getSource().getSourceOrcid());
+        assertEquals("0000-0000-0000-0000", email2.getSource().retrieveSourcePath());
+        assertEquals("ORCID email validation", email2.getSource().getSourceName().getContent());
+        assertNull(email2.getSource().getSourceOrcid());
     }
 
     @Test
@@ -1814,13 +1827,23 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getLastModifiedDate());
         assertNotNull(person.getEmails().getLastModifiedDate().getValue());
-        assertEquals(1, person.getEmails().getEmails().size());
+        assertEquals(2, person.getEmails().getEmails().size());
         Email email = person.getEmails().getEmails().get(0);
+        Email email2 = person.getEmails().getEmails().get(1);
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", email2.getEmail());
         assertNotNull(email.getLastModifiedDate());
         assertNotNull(email.getLastModifiedDate().getValue());
+        assertNotNull(email2.getLastModifiedDate());
+        assertNotNull(email2.getLastModifiedDate().getValue());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertNull(email.getSource().getSourceOrcid());
+        assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
+        assertEquals("0000-0000-0000-0000", email2.getSource().retrieveSourcePath());
+        assertNull(email2.getSource().getSourceOrcid());
+        assertEquals("ORCID email validation", email2.getSource().getSourceName().getContent());
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+        assertEquals(Visibility.PUBLIC.value(), email2.getVisibility().value());
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());

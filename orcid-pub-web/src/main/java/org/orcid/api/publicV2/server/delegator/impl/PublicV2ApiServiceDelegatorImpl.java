@@ -15,6 +15,7 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
@@ -46,6 +47,7 @@ import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ContributorUtils;
 import org.orcid.core.utils.OrcidRequestUtil;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
@@ -63,28 +65,9 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.Person;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.PersonalDetails;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.jaxb.model.record_v2.*;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -194,6 +177,12 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -437,6 +426,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
         publicAPISecurityManagerV2.filter(emails);
+        processProfessionalEmails(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
@@ -628,6 +618,19 @@ public class PublicV2ApiServiceDelegatorImpl
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
+        }
+    }
+
+    private void processProfessionalEmails(Emails emails) {
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                String domain = email.getEmail().split("@")[1];
+                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                // Set appropriate source name and source id for professional emails
+                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
+            }
         }
     }
 
