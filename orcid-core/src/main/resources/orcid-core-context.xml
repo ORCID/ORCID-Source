@@ -588,6 +588,7 @@
         <property name="emailManager" ref="emailManagerV3"/>
         <property name="recordNameManager" ref="recordNameManagerV3"/>
         <property name="biographyManager" ref="biographyManagerV3"/>
+		<property name="emailDomainManager" ref="emailDomainManager"/>
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     

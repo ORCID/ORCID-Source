@@ -72,7 +72,7 @@ public class PersonDetailsManagerTest extends DBUnitTest {
         
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getEmails());
-        assertEquals(4, person.getEmails().getEmails().size());
+        assertEquals(5, person.getEmails().getEmails().size());
 
         for (Email email : person.getEmails().getEmails()) {
             assertTrue(email.isVerified());
