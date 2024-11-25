@@ -1,3 +1,9 @@
+## v2.68.10 - 2024-11-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.9...v2.68.10)
+
+- [#7144](https://github.com/ORCID/ORCID-Source/pull/7144): 9499-email-domains-interstitial-registry-sign-in
+
 ## v2.68.9 - 2024-11-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.8...v2.68.9)
