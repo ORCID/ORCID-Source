@@ -241,7 +241,14 @@ public class SourceEntityUtils {
      */
     public Source convertEmailSourceToOrcidValidator(Source source) {
         source.setSourceOrcid(null);
-        source.getSourceName().setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+        SourceName sourceName = source.getSourceName();
+        if (sourceName != null) {
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+        } else {
+            sourceName = new SourceName();
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+            source.setSourceName(sourceName);
+        }
         SourceClientId sourceClientId = new SourceClientId(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
         sourceClientId.setPath(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
         sourceClientId.setHost(orcidUrlManager.getBaseHost());
@@ -258,7 +265,14 @@ public class SourceEntityUtils {
      */
     public org.orcid.jaxb.model.common_v2.Source convertEmailSourceToOrcidValidator(org.orcid.jaxb.model.common_v2.Source source) {
         source.setSourceOrcid(null);
-        source.getSourceName().setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+        org.orcid.jaxb.model.common_v2.SourceName sourceName = source.getSourceName();
+        if (sourceName != null) {
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+        } else {
+            sourceName = new org.orcid.jaxb.model.common_v2.SourceName();
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+            source.setSourceName(sourceName);
+        }
         org.orcid.jaxb.model.common_v2.SourceClientId sourceClientId = new org.orcid.jaxb.model.common_v2.SourceClientId(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
         sourceClientId.setPath(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
         sourceClientId.setHost(orcidUrlManager.getBaseHost());
