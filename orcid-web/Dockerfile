@@ -96,5 +96,5 @@ COPY orcid-web/*.j2 .
 
 COPY orcid-web/log4j2.xml .
 
-ENTRYPOINT ./entrypoint.sh
+ENTRYPOINT [ "./entrypoint.sh" ]
 
