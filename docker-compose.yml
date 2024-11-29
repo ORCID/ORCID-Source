@@ -1,0 +1,112 @@
+version: '2'
+services:
+  dependencies:
+    image: orcid/registry-dependencies:${TAG:-0.0.1}
+    entrypoint: sleep infinity
+    build:
+      context: .
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    # stop dependencies from being started with a compose up
+    profiles:
+      - build
+
+  redis:
+    image: orcid/registry/redis:7.2.5-alpine
+    ports:
+      - '6379:6379'
+    build:
+      context: .
+      dockerfile: redis/Dockerfile
+    profiles:
+      - database
+      - dev
+
+  postgres:
+    image: postgres:13.13-alpine3.19
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - '5432:5432'
+    profiles:
+      - database
+      - dev
+
+  lb:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-lb:${TAG:-0.0.1}
+    # entrypoint: sleep infinity
+    build:
+      context: .
+      dockerfile: orcid-lb/Dockerfile
+    ports:
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+    profiles:
+      - dev
+
+  # orcid-angular project
+  frontend:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-qa:${TAG:-0.0.1}
+    # entrypoint: sleep infinity
+    build:
+      context: .
+      dockerfile: 'FIXME: must build in the orcid-angular project first Dockerfile.build'
+    ports:
+      - 0.0.0.0:13106:80
+    profiles:
+      - dev
+      - ui
+
+  web_proxy:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
+    # entrypoint: sleep infinity
+    build:
+      context: .
+      dockerfile: orcid-web-proxy/Dockerfile
+    ports:
+      - 0.0.0.0:13107:80
+      - 0.0.0.0:13108:443
+    volumes:
+      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem
+      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem
+      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem
+    profiles:
+      - dev
+      - ui
+
+  web:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web:${TAG:-0.0.1}
+    # entrypoint: sleep infinity
+    build:
+      cache_from:
+        - orcid/registry-dependencies:${TAG:-0.0.1}
+      context: .
+      dockerfile: orcid-web/Dockerfile
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    env_file:
+      # defaults and dev config for all apps
+      - default.env
+      - properties/default.orcid_core.env
+      - properties/default.misc.env
+      - properties/default.frontend.env
+      - properties/default.persistence.env
+      # defaults and dev config per app
+      - orcid-web/default.env
+      # config written out by our deployment system
+      - orcid-web/deployment.env
+      # anything secure that is non prod separated goes here
+      - ${DOCKER_DEV_ENV_FILE:-empty.env}
+    ports:
+      - 0.0.0.0:13100:8080
+    profiles:
+      - dev
+      - ui
+
+volumes:
+  postgres_data:
