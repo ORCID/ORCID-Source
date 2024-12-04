@@ -72,9 +72,9 @@ services:
       - 0.0.0.0:13107:80
       - 0.0.0.0:13108:443
     volumes:
-      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem
-      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem
-      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem
+      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem:ro
+      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem:ro
+      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem:ro
     profiles:
       - dev
       - ui
