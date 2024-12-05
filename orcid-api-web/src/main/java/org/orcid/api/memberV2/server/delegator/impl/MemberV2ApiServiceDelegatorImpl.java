@@ -1116,10 +1116,13 @@ public class MemberV2ApiServiceDelegatorImpl implements
         for (Email email : emails.getEmails()) {
             if (email.isVerified()) {
                 String domain = email.getEmail().split("@")[1];
-                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                List<EmailDomainEntity> domainInfos = emailDomainManager.findByEmailDomain(domain);
                 // Set appropriate source name and source id for professional emails
-                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                for(EmailDomainEntity domainInfo: domainInfos) {
+                    if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                        break;
+                    }
                 }
             }
         }
