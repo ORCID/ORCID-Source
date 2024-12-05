@@ -1,6 +1,7 @@
 package org.orcid.core.manager.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.orcid.core.common.manager.EmailDomainManager;
@@ -31,6 +32,8 @@ import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -208,10 +211,19 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         for (Email email : emails.getEmails()) {
             if (email.isVerified()) {
                 String domain = email.getEmail().split("@")[1];
-                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
+                List<EmailDomainEntity> domainsInfo = emailDomainManager.findByEmailDomain(domain);
+                String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
                 // Set appropriate source name and source id for professional emails
-                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                if (domainsInfo != null) {
+                    for(EmailDomainEntity domainInfo: domainsInfo) {
+                        category = domainInfo.getCategory().name();
+                        if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                            break;
+                        }
+                    }
+                    if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
                     email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                }
                 }
             }
         }

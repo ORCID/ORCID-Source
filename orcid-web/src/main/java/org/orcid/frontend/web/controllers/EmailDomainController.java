@@ -1,5 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 @Controller("emailDomainController")
 @RequestMapping(value = { "/email-domain" })
@@ -36,15 +40,26 @@ public class EmailDomainController {
             return response;
         }
         domain = OrcidStringUtils.stripHtml(domain);
-        EmailDomainEntity ede = emailDomainManager.findByEmailDomain(domain);
+        List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(domain);
+        String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
         if(ede == null) {
             ObjectNode response = mapper.createObjectNode();
             response.put("category", EmailDomainEntity.DomainCategory.UNDEFINED.name());
             return response;
         } else {
-            ObjectNode response = mapper.createObjectNode();
-            response.put("category", ede.getCategory().name());
-            response.put("rorId", ede.getRorId());
+            ObjectNode response = mapper.createObjectNode();            
+            if(ede.size() == 1) {
+                response.put("rorId", ede.get(0).getRorId());
+                response.put("category", ede.get(0).getCategory().name());
+            } else {
+                for(EmailDomainEntity ed:ede) {
+                    category = ed.getCategory().name();
+                    if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                        break;
+                    }
+                }
+                response.put("category", category);
+            }
 
             return response;
         }
@@ -60,9 +75,10 @@ public class EmailDomainController {
         }
         domain = OrcidStringUtils.stripHtml(domain);
         
-        EmailDomainEntity ede = emailDomainManager.findByEmailDomain(domain);
-        if(ede != null) {
-            String rorId = ede.getRorId();
+        List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(domain);
+        //return the org if there was exactly one match
+        if(ede != null && ede.size()== 1) {
+            String rorId = ede.get(0).getRorId();
             if(rorId != null && !rorId.isBlank()) {
                 OrgDisambiguatedSolrDocument orgInfo = orcidSolrOrgsClient.getOrgByRorId(rorId);
                 if(orgInfo != null) {
