@@ -1,4 +1,3 @@
-version: '2'
 services:
   dependencies:
     image: orcid/registry-dependencies:${TAG:-0.0.1}
@@ -7,9 +6,16 @@ services:
       context: .
       args:
         tag_numeric: ${TAG:-0.0.1}
-    # stop dependencies from being started with a compose up
     profiles:
       - build
+    networks:
+      custom_network:
+        ipv4_address: 10.20.0.2
+    extra_hosts:
+      - "dependencies:10.20.0.2"
+      - "redis:10.20.0.3"
+      - "postgres:10.20.0.4"
+      - "haprouter:10.20.0.5"
 
   redis:
     image: orcid/registry/redis:7.2.5-alpine
@@ -19,8 +25,16 @@ services:
       context: .
       dockerfile: redis/Dockerfile
     profiles:
-      - database
+      - db
       - dev
+    networks:
+      custom_network:
+        ipv4_address: 10.20.0.3
+    extra_hosts:
+      - "dependencies:10.20.0.2"
+      - "redis:10.20.0.3"
+      - "postgres:10.20.0.4"
+      - "haprouter:10.20.0.5"
 
   postgres:
     image: postgres:13.13-alpine3.19
@@ -34,12 +48,55 @@ services:
     ports:
       - '5432:5432'
     profiles:
-      - database
+      - db
+      - dev
+    networks:
+      custom_network:
+        ipv4_address: 10.20.0.4
+    extra_hosts:
+      - "dependencies:10.20.0.2"
+      - "redis:10.20.0.3"
+      - "postgres:10.20.0.4"
+      - "haprouter:10.20.0.5"
+
+  haprouter:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-haprouter:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-haprouter/Dockerfile
+    extra_hosts:
+      - "nowhere:127.0.0.1"
+      - "dependencies:10.20.0.2"
+      - "redis:10.20.0.3"
+      - "postgres:10.20.0.4"
+      - "haprouter:10.20.0.5"
+    environment:
+      POSTGRES_READ_FQDN_A: postgres
+      POSTGRES_READ_FQDN_B: nowhere
+      POSTGRES_READ_FQDN_C: nowhere
+      POSTGRES_WRITE_FQDN_A: postgres
+      POSTGRES_WRITE_FQDN_B: nowhere
+      POSTGRES_WRITE_FQDN_C: nowhere
+      SOLR_READ_FQDN_A: solr
+      SOLR_READ_FQDN_B: nowhere
+      SOLR_READ_FQDN_C: nowhere
+      SOLR_WRITE_FQDN_A: solr
+      SOLR_WRITE_FQDN_B: nowhere.local
+      SOLR_WRITE_FQDN_C: nowhere.local
+    ports:
+      - 0.0.0.0:8888:1936 # stats
+      - 0.0.0.0:7432:7432 # solr read
+      - 0.0.0.0:7983:7983 # solr write
+      - 0.0.0.0:7432:7432 # postgres read
+      - 0.0.0.0:6432:6432 # postgres write
+    networks:
+      custom_network:
+        ipv4_address: 10.20.0.5
+    profiles:
       - dev
 
   lb:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-lb:${TAG:-0.0.1}
-    # entrypoint: sleep infinity
     build:
       context: .
       dockerfile: orcid-lb/Dockerfile
@@ -49,10 +106,8 @@ services:
     profiles:
       - dev
 
-  # orcid-angular project
   frontend:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
-    # entrypoint: sleep infinity
     build:
       context: .
       dockerfile: 'FIXME: must build in the orcid-angular project first Dockerfile.build'
@@ -64,7 +119,6 @@ services:
 
   web_proxy:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
-    # entrypoint: sleep infinity
     build:
       context: .
       dockerfile: orcid-web-proxy/Dockerfile
@@ -81,7 +135,6 @@ services:
 
   web:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web:${TAG:-0.0.1}
-    # entrypoint: sleep infinity
     build:
       cache_from:
         - orcid/registry-dependencies:${TAG:-0.0.1}
@@ -90,23 +143,26 @@ services:
       args:
         tag_numeric: ${TAG:-0.0.1}
     env_file:
-      # defaults and dev config for all apps
       - default.env
       - properties/default.orcid_core.env
       - properties/default.misc.env
       - properties/default.frontend.env
       - properties/default.persistence.env
-      # defaults and dev config per app
       - orcid-web/default.env
-      # config written out by our deployment system
       - orcid-web/deployment.env
-      # anything secure that is non prod separated goes here
       - ${DOCKER_DEV_ENV_FILE:-empty.env}
     ports:
       - 0.0.0.0:13100:8080
     profiles:
       - dev
       - ui
+
+networks:
+  custom_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.20.0.0/16
 
 volumes:
   postgres_data:
