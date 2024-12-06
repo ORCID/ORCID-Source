@@ -9,13 +9,7 @@ services:
     profiles:
       - build
     networks:
-      custom_network:
-        ipv4_address: 10.20.0.2
-    extra_hosts:
-      - "dependencies:10.20.0.2"
-      - "redis:10.20.0.3"
-      - "postgres:10.20.0.4"
-      - "haprouter:10.20.0.5"
+      app:
 
   redis:
     image: orcid/registry/redis:7.2.5-alpine
@@ -28,13 +22,7 @@ services:
       - db
       - dev
     networks:
-      custom_network:
-        ipv4_address: 10.20.0.3
-    extra_hosts:
-      - "dependencies:10.20.0.2"
-      - "redis:10.20.0.3"
-      - "postgres:10.20.0.4"
-      - "haprouter:10.20.0.5"
+      app:
 
   postgres:
     image: postgres:13.13-alpine3.19
@@ -51,38 +39,26 @@ services:
       - db
       - dev
     networks:
-      custom_network:
-        ipv4_address: 10.20.0.4
-    extra_hosts:
-      - "dependencies:10.20.0.2"
-      - "redis:10.20.0.3"
-      - "postgres:10.20.0.4"
-      - "haprouter:10.20.0.5"
+      app:
 
   haprouter:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-haprouter:${TAG:-0.0.1}
     build:
       context: .
       dockerfile: orcid-haprouter/Dockerfile
-    extra_hosts:
-      - "nowhere:127.0.0.1"
-      - "dependencies:10.20.0.2"
-      - "redis:10.20.0.3"
-      - "postgres:10.20.0.4"
-      - "haprouter:10.20.0.5"
     environment:
       POSTGRES_READ_FQDN_A: postgres
-      POSTGRES_READ_FQDN_B: nowhere
-      POSTGRES_READ_FQDN_C: nowhere
+      POSTGRES_READ_FQDN_B: localhost
+      POSTGRES_READ_FQDN_C: localhost
       POSTGRES_WRITE_FQDN_A: postgres
-      POSTGRES_WRITE_FQDN_B: nowhere
-      POSTGRES_WRITE_FQDN_C: nowhere
+      POSTGRES_WRITE_FQDN_B: localhost
+      POSTGRES_WRITE_FQDN_C: localhost
       SOLR_READ_FQDN_A: solr
-      SOLR_READ_FQDN_B: nowhere
-      SOLR_READ_FQDN_C: nowhere
+      SOLR_READ_FQDN_B: localhost
+      SOLR_READ_FQDN_C: localhost
       SOLR_WRITE_FQDN_A: solr
-      SOLR_WRITE_FQDN_B: nowhere.local
-      SOLR_WRITE_FQDN_C: nowhere.local
+      SOLR_WRITE_FQDN_B: localhost
+      SOLR_WRITE_FQDN_C: localhost
     ports:
       - 0.0.0.0:8888:1936 # stats
       - 0.0.0.0:7432:7432 # solr read
@@ -90,10 +66,10 @@ services:
       - 0.0.0.0:7432:7432 # postgres read
       - 0.0.0.0:6432:6432 # postgres write
     networks:
-      custom_network:
-        ipv4_address: 10.20.0.5
+      app:
     profiles:
       - dev
+      - ui
 
   lb:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-lb:${TAG:-0.0.1}
@@ -103,6 +79,8 @@ services:
     ports:
       - 0.0.0.0:80:80
       - 0.0.0.0:443:443
+    networks:
+      app:
     profiles:
       - dev
 
@@ -116,6 +94,8 @@ services:
     profiles:
       - dev
       - ui
+    networks:
+      app:
 
   web_proxy:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
@@ -129,6 +109,8 @@ services:
       - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem:ro
       - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem:ro
       - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem:ro
+    networks:
+      app:
     profiles:
       - dev
       - ui
@@ -153,16 +135,15 @@ services:
       - ${DOCKER_DEV_ENV_FILE:-empty.env}
     ports:
       - 0.0.0.0:13100:8080
+    networks:
+      app:
     profiles:
       - dev
       - ui
 
 networks:
-  custom_network:
+  app:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 10.20.0.0/16
 
 volumes:
   postgres_data:
