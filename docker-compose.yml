@@ -61,8 +61,8 @@ services:
       SOLR_WRITE_FQDN_C: localhost
     ports:
       - 0.0.0.0:8888:1936 # stats
-      - 0.0.0.0:7432:7432 # solr read
-      - 0.0.0.0:7983:7983 # solr write
+      - 0.0.0.0:7983:7983 # solr read
+      - 0.0.0.0:6983:6983 # solr write
       - 0.0.0.0:7432:7432 # postgres read
       - 0.0.0.0:6432:6432 # postgres write
     networks:
@@ -77,6 +77,7 @@ services:
       context: .
       dockerfile: orcid-lb/Dockerfile
     ports:
+      - 0.0.0.0:9999:1936 # stats
       - 0.0.0.0:80:80
       - 0.0.0.0:443:443
     networks:
