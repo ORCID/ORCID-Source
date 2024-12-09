@@ -47,7 +47,7 @@ services:
       context: .
       dockerfile: orcid-haprouter/Dockerfile
     env_file:
-      - orcid-haprouter/dev.env
+      - orcid-haprouter/default.env
       - orcid-haprouter/deployment.env
     ports:
       - 0.0.0.0:8888:1936 # stats
