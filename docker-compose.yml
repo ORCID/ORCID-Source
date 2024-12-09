@@ -46,19 +46,9 @@ services:
     build:
       context: .
       dockerfile: orcid-haprouter/Dockerfile
-    environment:
-      POSTGRES_READ_FQDN_A: postgres
-      POSTGRES_READ_FQDN_B: localhost
-      POSTGRES_READ_FQDN_C: localhost
-      POSTGRES_WRITE_FQDN_A: postgres
-      POSTGRES_WRITE_FQDN_B: localhost
-      POSTGRES_WRITE_FQDN_C: localhost
-      SOLR_READ_FQDN_A: solr
-      SOLR_READ_FQDN_B: localhost
-      SOLR_READ_FQDN_C: localhost
-      SOLR_WRITE_FQDN_A: solr
-      SOLR_WRITE_FQDN_B: localhost
-      SOLR_WRITE_FQDN_C: localhost
+    env_file:
+      - orcid-haprouter/dev.env
+      - orcid-haprouter/deployment.env
     ports:
       - 0.0.0.0:8888:1936 # stats
       - 0.0.0.0:7983:7983 # solr read
