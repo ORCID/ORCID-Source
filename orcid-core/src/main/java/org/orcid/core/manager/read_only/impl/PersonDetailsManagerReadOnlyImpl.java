@@ -14,6 +14,7 @@ import org.orcid.core.manager.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.record_v2.Address;
 import org.orcid.jaxb.model.record_v2.Addresses;
@@ -211,6 +212,9 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
                 EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
                 // Set appropriate source name and source id for professional emails
                 if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                    if(email.getSource() == null) {
+                        email.setSource(new Source());
+                    }
                     email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
                 }
             }
