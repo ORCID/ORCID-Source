@@ -74,6 +74,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 /**
  * <p/>
@@ -157,7 +158,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
@@ -169,10 +170,10 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
-    
+
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
-    
+
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
@@ -184,7 +185,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
-    
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -218,7 +219,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(w);
-        contributorUtilsReadOnly.filterContributorPrivateData(w);        
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
 
@@ -228,10 +229,10 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorks(String orcid) {
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);       
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV2.filter(publicWorks);
-        
+
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicWorks);
@@ -570,7 +571,7 @@ public class PublicV2ApiServiceDelegatorImpl
         }
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV2.filter(workBulk);
-        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
+        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
@@ -584,7 +585,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     private void validateStart(Map<String, List<String>> queryMap) {
         String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        if (clientId == null) { 
+        if (clientId == null) {
             // only validate start param where no client credentials
             List<String> startList = queryMap.get("start");
             if (startList != null && !startList.isEmpty()) {
@@ -626,13 +627,23 @@ public class PublicV2ApiServiceDelegatorImpl
         for (Email email : emails.getEmails()) {
             if (email.isVerified()) {
                 String domain = email.getEmail().split("@")[1];
-                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name and source id for professional emails
-                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    if(email.getSource() == null) {
-                        email.setSource(new Source());
+                List<EmailDomainEntity> domainsInfo = emailDomainManager.findByEmailDomain(domain);
+                String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
+                // Set appropriate source name and source id for professional
+                // emails
+                if (domainsInfo != null) {
+                    for (EmailDomainEntity domainInfo : domainsInfo) {
+                        category = domainInfo.getCategory().name();
+                        if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                            break;
+                        }
                     }
-                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                    if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                        if(email.getSource() == null) {
+                            email.setSource(new Source());
+                        }
+                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
+                    }
                 }
             }
         }

@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -83,9 +85,19 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
         }
 
         String domain = email.split("@")[1];
-        EmailDomainEntity domainInfo = emailDomainDao.findByEmailDomain(domain);
+        List<EmailDomainEntity> domainsInfo = emailDomainDao.findByEmailDomain(domain);
+        String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
+        
+        
         // Check if email is professional
-        if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+        if (domainsInfo != null) {
+            for(EmailDomainEntity domainInfo: domainsInfo) {
+                category = domainInfo.getCategory().name();
+                if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                    break;
+                }
+            }
+             if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
             ProfileEmailDomainEntity existingDomain = profileEmailDomainDao.findByEmailDomain(orcid, domain);
             // ADD NEW DOMAIN IF ONE DOESN'T EXIST
             if (existingDomain == null) {
@@ -94,6 +106,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
                 String domainVisibility = profile.getActivitiesVisibilityDefault();
                 profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
             }
+             }
         }
     }
 }
