@@ -62,6 +62,7 @@ import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -1120,6 +1121,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
                 // Set appropriate source name and source id for professional emails
                 for(EmailDomainEntity domainInfo: domainInfos) {
                     if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
+                        if (email.getSource() == null) {
+                            email.setSource(new Source());
+                        }
                         email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
                         break;
                     }
