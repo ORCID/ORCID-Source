@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +85,22 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/person", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-        fail("TEST EMAILS");
+        assertNotNull(element.getEmails());
+        assertEquals(4, element.getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
+        emails.add("private_0000-0000-0000-0003@test.orcid.org");
+
+        for(Email e : element.getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+
+        assertTrue(emails.isEmpty());
     }
 
     @Test

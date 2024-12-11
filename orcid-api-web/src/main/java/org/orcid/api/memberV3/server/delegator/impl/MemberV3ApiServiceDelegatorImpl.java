@@ -307,6 +307,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Record record = recordManagerReadOnly.getRecord(orcid, filterVersionOfIdentifiers);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV3API(record.getPerson().getEmails());
             sourceUtils.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -90,7 +91,46 @@ public class MemberV3ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/person", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
-        fail("Process emails");
+        assertNotNull(element.getEmails());
+        assertNotNull(element.getEmails().getEmails());
+        assertEquals(4, element.getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
+        emails.add("private_0000-0000-0000-0003@test.orcid.org");
+
+        for(Email e : element.getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+        assertTrue(emails.isEmpty());
+    }
+
+    @Test
+    public void testViewPersonReadPublic_ClientNotSourceOfAnyEmail() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555556", ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewPerson(ORCID);
+        Person element = (Person) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/person", element.getPath());
+        Utils.assertIsPublicOrSource(element, "APP-5555555555555556");
+        assertNotNull(element.getEmails());
+        assertNotNull(element.getEmails().getEmails());
+        assertEquals(2, element.getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+
+        for(Email e : element.getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+        assertTrue(emails.isEmpty());
     }
 
     @Test
