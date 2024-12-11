@@ -142,7 +142,6 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
             filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
-            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
         return person;
@@ -201,35 +200,9 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
             filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
-            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
 
         return person;
-    }
-
-    private void processProfessionalEmails(Emails emails) {
-        for (Email email : emails.getEmails()) {
-            if (email.isVerified()) {
-                String domain = email.getEmail().split("@")[1];
-                List<EmailDomainEntity> domainsInfo = emailDomainManager.findByEmailDomain(domain);
-                String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
-                // Set appropriate source name and source id for professional emails
-                if (domainsInfo != null) {
-                    for(EmailDomainEntity domainInfo: domainsInfo) {
-                        category = domainInfo.getCategory().name();
-                        if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
-                            break;
-                        }
-                    }
-                    if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
-                        if(email.getSource() == null) {
-                            email.setSource(new Source());
-                        }
-                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                    }
-                }
-            }
-        }
     }
 }

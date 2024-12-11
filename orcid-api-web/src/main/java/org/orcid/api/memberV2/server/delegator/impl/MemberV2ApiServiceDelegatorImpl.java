@@ -257,6 +257,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             sourceUtils.setSourceName(record.getActivitiesSummary());
         }
+        if(record.getPerson() != null && record.getPerson().getEmails() != null) {
+            processProfessionalEmails(record.getPerson().getEmails());
+        }
         ElementUtils.setPathToRecord(record, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
         return Response.ok(record).build();
@@ -1066,6 +1069,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPersonDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, person);
+        processProfessionalEmails(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);
@@ -1114,6 +1118,9 @@ public class MemberV2ApiServiceDelegatorImpl implements
     }
 
     private void processProfessionalEmails(Emails emails) {
+        if(emails == null || emails.getEmails() == null) {
+            return;
+        }
         for (Email email : emails.getEmails()) {
             if (email.isVerified()) {
                 String domain = email.getEmail().split("@")[1];
