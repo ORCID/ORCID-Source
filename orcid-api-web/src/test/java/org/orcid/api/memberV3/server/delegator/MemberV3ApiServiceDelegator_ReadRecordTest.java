@@ -1,11 +1,5 @@
 package org.orcid.api.memberV3.server.delegator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -77,6 +71,8 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.Assert.*;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
@@ -1349,5 +1345,21 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, ru.getResearcherUrls().get(0).getVisibility());
+    }
+
+    @Test
+    public void viewNonProfessionalEmailsOnRecord() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewRecord(orcid);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record);
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        assertEquals(1, record.getPerson().getEmails().getEmails().size());
+        Email e = record.getPerson().getEmails().getEmails().get(0);
+        assertTrue(e.isVerified());
+        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
     }
 }

@@ -1534,5 +1534,20 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("self_public_user_obo_type",doc.identifier.get(0).propertyID);
         assertEquals( "self_public_user_obo_ref",doc.identifier.get(0).value);
     }
-    
+
+    @Test
+    public void viewNonProfessionalEmailsOnRecord() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewRecord(orcid);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record);
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        assertEquals(1, record.getPerson().getEmails().getEmails().size());
+        Email e = record.getPerson().getEmails().getEmails().get(0);
+        assertTrue(e.isVerified());
+        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+    }
 }
