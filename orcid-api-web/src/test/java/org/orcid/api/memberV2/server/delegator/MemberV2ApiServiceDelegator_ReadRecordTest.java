@@ -102,7 +102,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
         assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
-        
+
     }
 
     @Test

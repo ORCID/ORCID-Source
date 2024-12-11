@@ -251,14 +251,12 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Record record = recordManagerReadOnly.getRecord(orcid);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV2API(record.getPerson().getEmails());
             sourceUtils.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             sourceUtils.setSourceName(record.getActivitiesSummary());
-        }
-        if(record.getPerson() != null && record.getPerson().getEmails() != null) {
-            processProfessionalEmails(record.getPerson().getEmails());
         }
         ElementUtils.setPathToRecord(record, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(record);
@@ -800,8 +798,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         }
 
-        processProfessionalEmails(emails);
-
+        emailDomainManager.processProfessionalEmailsForV2API(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -1069,7 +1066,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPersonDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, person);
-        processProfessionalEmails(person.getEmails());
+        emailDomainManager.processProfessionalEmailsForV2API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);
@@ -1114,28 +1111,6 @@ public class MemberV2ApiServiceDelegatorImpl implements
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
-        }
-    }
-
-    private void processProfessionalEmails(Emails emails) {
-        if(emails == null || emails.getEmails() == null) {
-            return;
-        }
-        for (Email email : emails.getEmails()) {
-            if (email.isVerified()) {
-                String domain = email.getEmail().split("@")[1];
-                List<EmailDomainEntity> domainInfos = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name and source id for professional emails
-                for(EmailDomainEntity domainInfo: domainInfos) {
-                    if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                        if (email.getSource() == null) {
-                            email.setSource(new Source());
-                        }
-                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                        break;
-                    }
-                }
-            }
         }
     }
 

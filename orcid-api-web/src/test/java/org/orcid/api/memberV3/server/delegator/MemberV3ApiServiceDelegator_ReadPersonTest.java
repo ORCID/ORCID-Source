@@ -90,6 +90,7 @@ public class MemberV3ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/person", element.getPath());
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        fail("Process emails");
     }
 
     @Test

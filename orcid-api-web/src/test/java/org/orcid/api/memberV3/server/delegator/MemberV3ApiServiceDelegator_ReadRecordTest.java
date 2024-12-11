@@ -114,6 +114,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
         assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
+        fail("Process emails");
     }
 
     @Test
@@ -127,6 +128,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555555");
         assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555555");
+        fail("Process emails");
     }
 
     @Test(expected = OrcidUnauthorizedException.class)

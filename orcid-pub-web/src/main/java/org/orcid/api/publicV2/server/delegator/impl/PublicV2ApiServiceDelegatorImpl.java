@@ -183,9 +183,6 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private EmailDomainManager emailDomainManager;
 
-    @Resource
-    private SourceEntityUtils sourceEntityUtils;
-
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -428,7 +425,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
         publicAPISecurityManagerV2.filter(emails);
-        processProfessionalEmails(emails);
+        emailDomainManager.processProfessionalEmailsForV2API(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
@@ -534,6 +531,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
+        emailDomainManager.processProfessionalEmailsForV2API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
@@ -545,6 +543,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
         publicAPISecurityManagerV2.filter(record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV2API(record.getPerson().getEmails());
             sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
@@ -620,32 +619,6 @@ public class PublicV2ApiServiceDelegatorImpl
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
-        }
-    }
-
-    private void processProfessionalEmails(Emails emails) {
-        for (Email email : emails.getEmails()) {
-            if (email.isVerified()) {
-                String domain = email.getEmail().split("@")[1];
-                List<EmailDomainEntity> domainsInfo = emailDomainManager.findByEmailDomain(domain);
-                String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
-                // Set appropriate source name and source id for professional
-                // emails
-                if (domainsInfo != null) {
-                    for (EmailDomainEntity domainInfo : domainsInfo) {
-                        category = domainInfo.getCategory().name();
-                        if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
-                            break;
-                        }
-                    }
-                    if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
-                        if(email.getSource() == null) {
-                            email.setSource(new Source());
-                        }
-                        email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                    }
-                }
-            }
         }
     }
 

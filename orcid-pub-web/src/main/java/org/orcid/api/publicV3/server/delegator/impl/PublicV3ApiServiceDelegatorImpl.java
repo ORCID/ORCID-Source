@@ -613,6 +613,7 @@ public class PublicV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid);
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV3.filter(person);
+        emailDomainManager.processProfessionalEmailsForV3API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
@@ -625,6 +626,7 @@ public class PublicV3ApiServiceDelegatorImpl implements
         Record record = recordManagerReadOnly.getPublicRecord(orcid, filterVersionOfIdentifiers);
         publicAPISecurityManagerV3.filter(record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV3API(record.getPerson().getEmails());
             sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
