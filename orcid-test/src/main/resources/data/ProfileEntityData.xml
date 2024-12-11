@@ -1813,7 +1813,20 @@
         client_source_id="APP-5555555555555555"        
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />        
+    />
+
+    <email
+        orcid="0000-0000-0000-0001"
+        email="verified_non_professional@non.professional.org"
+        email_hash="bb24ead143f1a58f97394436a0548e7bc3d30a539188accd5d82a28af4345778"
+        is_primary="true"
+        is_current="false"
+        is_verified="true"
+        visibility="PUBLIC"
+        client_source_id="APP-5555555555555555"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />
       
 	<email
         orcid="0000-0000-0000-0002"
@@ -1955,8 +1968,8 @@
         source_id="0000-0000-0000-0004"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />  
-    
+    />
+
     <email
         orcid="4444-4444-4444-4497"
         email="public_4444-4444-4444-4497@test.orcid.org"

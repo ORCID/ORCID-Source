@@ -197,4 +197,17 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals(true, email.isVerified());
         assertEquals(false, email.isPrimary());       
     }
+
+    @Test
+    public void viewNonProfessionalEmailsOnEmail() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewEmails(orcid);
+        Emails p = (Emails) r.getEntity();
+        assertEquals(1, p.getEmails().size());
+        Email e = p.getEmails().get(0);
+        assertTrue(e.isVerified());
+        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+    }
 }

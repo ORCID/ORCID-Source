@@ -2203,4 +2203,32 @@ public class PublicV3ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
         assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
     }
+
+    @Test
+    public void viewNonProfessionalEmailsOnPerson() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewPerson(orcid);
+        Person p = (Person) r.getEntity();
+        assertNotNull(p);
+        assertNotNull(p.getEmails());
+        assertEquals(1, p.getEmails().getEmails().size());
+        Email e = p.getEmails().getEmails().get(0);
+        assertTrue(e.isVerified());
+        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+    }
+
+    @Test
+    public void viewNonProfessionalEmailsOnEmail() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewEmails(orcid);
+        Emails p = (Emails) r.getEntity();
+        assertEquals(1, p.getEmails().size());
+        Email e = p.getEmails().get(0);
+        assertTrue(e.isVerified());
+        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+    }
 }
