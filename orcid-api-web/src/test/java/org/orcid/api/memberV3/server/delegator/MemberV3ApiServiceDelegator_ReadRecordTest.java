@@ -1348,18 +1348,32 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
     }
 
     @Test
-    public void viewNonProfessionalEmailsOnRecord() {
+    public void checkSourceOnEmail_RecordEndpointTest() {
         String orcid = "0000-0000-0000-0001";
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.EMAIL_READ_PRIVATE);
         Response r = serviceDelegator.viewRecord(orcid);
         Record record = (Record) r.getEntity();
-        assertNotNull(record);
         assertNotNull(record.getPerson());
         assertNotNull(record.getPerson().getEmails());
-        assertEquals(1, record.getPerson().getEmails().getEmails().size());
-        Email e = record.getPerson().getEmails().getEmails().get(0);
-        assertTrue(e.isVerified());
-        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+        checkEmails(record.getPerson().getEmails());
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non verified professional email addresses should not change
+                assertEquals("0000-0000-0000-0000", e.getSource().retrieveSourcePath());
+                assertEquals("ORCID email validation", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
+            }
+        }
     }
 }

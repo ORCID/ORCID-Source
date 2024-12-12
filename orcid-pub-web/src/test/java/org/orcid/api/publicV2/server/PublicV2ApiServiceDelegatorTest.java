@@ -1536,46 +1536,51 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void viewNonProfessionalEmailsOnRecord() {
+    public void checkSourceOnEmail_RecordEndpointTest() {
         String orcid = "0000-0000-0000-0001";
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
         Response r = serviceDelegator.viewRecord(orcid);
         Record record = (Record) r.getEntity();
-        assertNotNull(record);
         assertNotNull(record.getPerson());
         assertNotNull(record.getPerson().getEmails());
-        assertEquals(1, record.getPerson().getEmails().getEmails().size());
-        Email e = record.getPerson().getEmails().getEmails().get(0);
-        assertTrue(e.isVerified());
-        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+        checkEmails(record.getPerson().getEmails());
     }
 
     @Test
-    public void viewNonProfessionalEmailsOnPerson() {
+    public void checkSourceOnEmail_PersonEndpointTest() {
         String orcid = "0000-0000-0000-0001";
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
         Response r = serviceDelegator.viewPerson(orcid);
         Person p = (Person) r.getEntity();
-        assertNotNull(p);
         assertNotNull(p.getEmails());
-        assertEquals(1, p.getEmails().getEmails().size());
-        Email e = p.getEmails().getEmails().get(0);
-        assertTrue(e.isVerified());
-        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+        checkEmails(p.getEmails());
     }
 
     @Test
-    public void viewNonProfessionalEmailsOnEmail() {
+    public void checkSourceOnEmail_EmailEndpointTest() {
         String orcid = "0000-0000-0000-0001";
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
         Response r = serviceDelegator.viewEmails(orcid);
-        Emails p = (Emails) r.getEntity();
-        assertEquals(1, p.getEmails().size());
-        Email e = p.getEmails().get(0);
-        assertTrue(e.isVerified());
-        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+        Emails emails = (Emails) r.getEntity();
+        checkEmails(emails);
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("public_0000-0000-0000-0001@test.orcid.org")) {
+                assertFalse(e.isVerified());
+                // The source and name on non verified professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
+            }
+        }
     }
 }

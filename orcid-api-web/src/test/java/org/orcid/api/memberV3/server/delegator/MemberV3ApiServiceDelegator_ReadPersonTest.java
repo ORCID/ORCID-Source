@@ -1,10 +1,5 @@
 package org.orcid.api.memberV3.server.delegator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,6 +22,8 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
 import org.springframework.test.context.ContextConfiguration;
+
+import static org.junit.Assert.*;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
@@ -643,17 +640,31 @@ public class MemberV3ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
     }
 
     @Test
-    public void viewNonProfessionalEmailsOnPerson() {
+    public void checkSourceOnEmail_PersonEndpointTest() {
         String orcid = "0000-0000-0000-0001";
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.EMAIL_READ_PRIVATE);
         Response r = serviceDelegator.viewPerson(orcid);
         Person p = (Person) r.getEntity();
-        assertNotNull(p);
         assertNotNull(p.getEmails());
-        assertEquals(1, p.getEmails().getEmails().size());
-        Email e = p.getEmails().getEmails().get(0);
-        assertTrue(e.isVerified());
-        assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-        assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+        checkEmails(p.getEmails());
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non verified professional email addresses should not change
+                assertEquals("0000-0000-0000-0000", e.getSource().retrieveSourcePath());
+                assertEquals("ORCID email validation", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
+            }
+        }
     }
 }
