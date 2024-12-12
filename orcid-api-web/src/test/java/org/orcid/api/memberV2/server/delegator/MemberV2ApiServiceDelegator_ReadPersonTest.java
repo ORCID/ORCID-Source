@@ -633,7 +633,7 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
     }
 
     @Test
-    public void checkSourceOnEmail_EmailEndpointTest() {
+    public void checkSourceOnEmail_PersonEndpointTest() {
         String orcid = "0000-0000-0000-0001";
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
         Response r = serviceDelegator.viewPerson(orcid);
@@ -645,11 +645,11 @@ public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
     private void checkEmails(Emails emails) {
         assertEquals(2, emails.getEmails().size());
         for(Email e : emails.getEmails()) {
-            if(e.getEmail().equals("public_0000-0000-0000-0001@test.orcid.org")) {
-                assertFalse(e.isVerified());
-                // The source and name on non verified professional email addresses should not change
-                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
-                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on verified professional email addresses should change
+                assertEquals("0000-0000-0000-0000", e.getSource().retrieveSourcePath());
+                assertEquals("ORCID email validation", e.getSource().getSourceName().getContent());
             } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
                 assertTrue(e.isVerified());
                 // The source and name on non professional email addresses should not change

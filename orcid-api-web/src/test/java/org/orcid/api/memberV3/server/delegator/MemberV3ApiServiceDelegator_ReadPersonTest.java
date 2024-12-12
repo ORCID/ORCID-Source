@@ -642,7 +642,7 @@ public class MemberV3ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
     @Test
     public void checkSourceOnEmail_PersonEndpointTest() {
         String orcid = "0000-0000-0000-0001";
-        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.EMAIL_READ_PRIVATE);
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
         Response r = serviceDelegator.viewPerson(orcid);
         Person p = (Person) r.getEntity();
         assertNotNull(p.getEmails());
