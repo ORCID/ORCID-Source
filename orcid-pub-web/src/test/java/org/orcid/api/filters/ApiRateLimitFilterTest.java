@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.oauth.service.OrcidTokenStore;
 import org.orcid.persistence.dao.PublicApiDailyRateLimitDao;
+import org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -39,19 +41,57 @@ public class ApiRateLimitFilterTest {
     @Mock
     private PublicApiDailyRateLimitDao papiRateLimitingDaoMock;
 
-    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+    MockHttpServletRequest httpServletRequestMock = new MockHttpServletRequest();
 
-    MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+    MockHttpServletResponse httpServletResponseMock = new MockHttpServletResponse();
 
     @Test
-    public void enableRateLimitingDisabledTest() throws ServletException, IOException {
+    public void doFilterInternal_rateLimitingDisabledTest() throws ServletException, IOException {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", false);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        apiRateLimitFilter.doFilterInternal(mockHttpServletRequest, mockHttpServletResponse, filterChainMock);
-        verify(filterChainMock, times(1)).doFilter(eq(mockHttpServletRequest), eq(mockHttpServletResponse));
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(filterChainMock, times(1)).doFilter(eq(httpServletRequestMock), eq(httpServletResponseMock));
         verify(orcidTokenStoreMock, never()).readClientId(anyString());
         verify(papiRateLimitingDaoMock, never()).findByIpAddressAndRequestDate(anyString(), any());
         verify(papiRateLimitingDaoMock, never()).persist(any());
+    }
+
+    @Test
+    public void doFilterInternal_annonymousRequest_newEntryTest() throws ServletException, IOException {
+        String ip = "127.0.0.1";
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", false);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+
+        PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
+        e.setId(1000L);
+        e.setIpAddress(ip);
+        e.setRequestCount(100L);
+
+        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(e);
+        httpServletRequestMock.setAttribute("X-FORWARDED-FOR", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(), eq(false));
+    }
+
+    @Test
+    public void doFilterInternal_annonymousRequest_existingEntryTest() throws ServletException, IOException {
+       fail();
+    }
+
+    @Test
+    public void doFilterInternal_clientRequest_newEntryTest() throws ServletException, IOException {
+        fail();
+    }
+
+    @Test
+    public void doFilterInternal_clientRequest_existingEntryTest() throws ServletException, IOException {
+        fail();
     }
 }

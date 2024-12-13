@@ -47,7 +47,7 @@ import org.orcid.core.togglz.Features;
 
 @Component
 public class ApiRateLimitFilter extends OncePerRequestFilter {
-    private static Logger LOG = LoggerFactory.getLogger(ApiRateLimitFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ApiRateLimitFilter.class);
 
     @Autowired
     private PublicApiDailyRateLimitDao papiRateLimitingDao;
@@ -60,9 +60,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private MailGunManager mailGunManager;
-
-    @Autowired
-    private ProfileDao profileDao;
 
     @Autowired
     private OrcidUrlManager orcidUrlManager;
@@ -242,21 +239,21 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     private void sendEmail(String clientId, LocalDate requestDate) {
         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-        ProfileEntity profile = profileDao.find(clientDetailsEntity.getGroupProfileId());
-        String emailName = recordNameManager.deriveEmailFriendlyName(profile.getId());
-        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, profile.getId());
+        String memberId = clientDetailsEntity.getGroupProfileId();
+        String emailName = recordNameManager.deriveEmailFriendlyName(memberId);
+        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, memberId);
         // Generate body from template
         String body = templateManager.processTemplate("papi_rate_limit_email.ftl", templateParams);
         // Generate html from template
         String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams);
-        String email = emailManager.findPrimaryEmail(profile.getId()).getEmail();
+        String email = emailManager.findPrimaryEmail(memberId).getEmail();
         LOG.info("from address={}", FROM_ADDRESS);
         LOG.info("text email={}", body);
         LOG.info("html email={}", html);
         if (enablePanoplyPapiExceededRateInProduction) {
             PanoplyPapiDailyRateExceededItem item = new PanoplyPapiDailyRateExceededItem();
             item.setClientId(clientId);
-            item.setOrcid(profile.getId());
+            item.setOrcid(memberId);
             item.setEmail(email);
             item.setRequestDate(requestDate);
             setPapiRateExceededItemInPanoply(item);
@@ -265,7 +262,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         // Send the email
         boolean mailSent = mailGunManager.sendEmailWithCC(FROM_ADDRESS, email, CC_ADDRESS, SUBJECT, body, html);
         if (!mailSent) {
-            LOG.error("Failed to send email for papi limits, orcid=" + profile.getId() + " email: " + email);
+            LOG.error("Failed to send email for papi limits, orcid=" + memberId + " email: " + email);
         }
     }
 
