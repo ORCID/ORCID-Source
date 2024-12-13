@@ -10,9 +10,13 @@ public interface EmailDomainManager {
     
     boolean updateCategory(long id, EmailDomainEntity.DomainCategory category);
 
-    EmailDomainEntity findByEmailDomain(String emailDomain);
+    List<EmailDomainEntity>  findByEmailDomain(String emailDomain);
 
     List<EmailDomainEntity> findByCategory(EmailDomainEntity.DomainCategory category);
     
     STATUS createOrUpdateEmailDomain(String emailDomain, String rorId);
+
+    void processProfessionalEmailsForV2API(org.orcid.jaxb.model.record_v2.Emails emails);
+
+    void processProfessionalEmailsForV3API(org.orcid.jaxb.model.v3.release.record.Emails emails);
 }

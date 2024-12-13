@@ -71,7 +71,7 @@ public class EmailManagerReadOnlyTest extends BaseTest {
     public void haveAnyEmailVerifiedTest() {
         assertTrue(emailManagerReadOnly.haveAnyEmailVerified("0000-0000-0000-0003"));
         assertTrue(emailManagerReadOnly.haveAnyEmailVerified("4444-4444-4444-4442"));
-        assertFalse(emailManagerReadOnly.haveAnyEmailVerified("0000-0000-0000-0001"));
+        assertTrue(emailManagerReadOnly.haveAnyEmailVerified("0000-0000-0000-0001"));
         assertFalse(emailManagerReadOnly.haveAnyEmailVerified("4444-4444-4444-4445"));
     }
     

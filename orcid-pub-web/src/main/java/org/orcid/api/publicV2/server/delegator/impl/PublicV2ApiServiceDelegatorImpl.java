@@ -74,6 +74,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 /**
  * <p/>
@@ -157,7 +158,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
@@ -169,10 +170,10 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
-    
+
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
-    
+
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
 
@@ -182,9 +183,6 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private EmailDomainManager emailDomainManager;
 
-    @Resource
-    private SourceEntityUtils sourceEntityUtils;
-    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -218,7 +216,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(w);
-        contributorUtilsReadOnly.filterContributorPrivateData(w);        
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
 
@@ -228,10 +226,10 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorks(String orcid) {
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);       
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV2.filter(publicWorks);
-        
+
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicWorks);
@@ -427,7 +425,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
         publicAPISecurityManagerV2.filter(emails);
-        processProfessionalEmails(emails);
+        emailDomainManager.processProfessionalEmailsForV2API(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
@@ -533,6 +531,7 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
+        emailDomainManager.processProfessionalEmailsForV2API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
@@ -544,6 +543,7 @@ public class PublicV2ApiServiceDelegatorImpl
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
         publicAPISecurityManagerV2.filter(record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV2API(record.getPerson().getEmails());
             sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
@@ -570,7 +570,7 @@ public class PublicV2ApiServiceDelegatorImpl
         }
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV2.filter(workBulk);
-        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
+        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
@@ -584,7 +584,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     private void validateStart(Map<String, List<String>> queryMap) {
         String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        if (clientId == null) { 
+        if (clientId == null) {
             // only validate start param where no client credentials
             List<String> startList = queryMap.get("start");
             if (startList != null && !startList.isEmpty()) {
@@ -619,22 +619,6 @@ public class PublicV2ApiServiceDelegatorImpl
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
-        }
-    }
-
-    private void processProfessionalEmails(Emails emails) {
-        for (Email email : emails.getEmails()) {
-            if (email.isVerified()) {
-                String domain = email.getEmail().split("@")[1];
-                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name and source id for professional emails
-                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    if(email.getSource() == null) {
-                        email.setSource(new Source());
-                    }
-                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                }
-            }
         }
     }
 
