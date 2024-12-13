@@ -110,10 +110,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             + "You can increase your daily quota by registering for and using Public API client credentials "
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/ )";
 
-    private static final String SUBJECT = "[ORCID] You have exceeded the daily Public API Usage Limit - ";
+    private static final String SUBJECT = "[ORCID-API] WARNING! You have exceeded the daily Public API Usage Limit - ";
 
-    @Value("${org.orcid.papi.rate.limit.fromEmail:notify@notify.orcid.org}")
+    @Value("${org.orcid.papi.rate.limit.fromEmail:apiusage@orcid.org}")
     private String FROM_ADDRESS;
+
+    @Value("${org.orcid.papi.rate.limit.ccAddress:membersupport@orcid.org}")
+    private String CC_ADDRESS;
 
     @Override
     public void afterPropertiesSet() throws ServletException {
@@ -123,7 +126,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
+    public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
         LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
         if (enableRateLimiting) {
@@ -197,7 +200,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         }
         return;
-
     }
 
     private void rateLimitClientRequest(String clientId, LocalDate today) {
@@ -261,7 +263,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         }
 
         // Send the email
-        boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, email, SUBJECT, body, html);
+        boolean mailSent = mailGunManager.sendEmailWithCC(FROM_ADDRESS, email, CC_ADDRESS, SUBJECT, body, html);
         if (!mailSent) {
             LOG.error("Failed to send email for papi limits, orcid=" + profile.getId() + " email: " + email);
         }
@@ -281,7 +283,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             if (!result) {
                 LOG.error("Async call to panoply for : " + item.toString() + " Stored: " + result);
             }
-
         });
     }
 
@@ -307,5 +308,4 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     private boolean isClientIdWhiteListed(String clientId) {
         return (papiClientIdWhiteList != null)?papiClientIdWhiteList.contains(clientId):false;
     }
-
 }
