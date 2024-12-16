@@ -1,6 +1,5 @@
 package org.orcid.api.filters;
 
-import org.apache.commons.math3.stat.inference.TestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -10,18 +9,13 @@ import org.orcid.persistence.dao.PublicApiDailyRateLimitDao;
 import org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
-
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -60,38 +54,129 @@ public class ApiRateLimitFilterTest {
     }
 
     @Test
-    public void doFilterInternal_annonymousRequest_newEntryTest() throws ServletException, IOException {
-        String ip = "127.0.0.1";
+    public void doFilterInternal_annonymousRequest_newEntry_X_FORWARDED_FOR_header_Test() throws ServletException, IOException {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", false);
+        String ip = "127.0.0.2";
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(null);
+        httpServletRequestMock.addHeader("X-FORWARDED-FOR", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
+        verify(papiRateLimitingDaoMock, times(1)).persist(any(PublicApiDailyRateLimitEntity.class));
+    }
+
+    @Test
+    public void doFilterInternal_annonymousRequest_newEntry_X_REAL_IP_header_Test() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip = "127.0.0.2";
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(null);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
+        verify(papiRateLimitingDaoMock, times(1)).persist(any(PublicApiDailyRateLimitEntity.class));
+    }
+
+    @Test
+    public void doFilterInternal_annonymousRequest_newEntry_whitelisted_IP_Test() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip = "127.0.0.1";
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(null);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
+        verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
+    }
+
+    @Test
+    public void doFilterInternal_annonymousRequest_existingEntryTest() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip = "127.0.0.2";
+        PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
+        e.setId(1000L);
+        e.setIpAddress(ip);
+        e.setRequestCount(100L);
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(e);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), eq(false));
+        verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
+    }
+
+    @Test
+    public void doFilterInternal_clientRequest_newEntryTest() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip = "127.0.0.2";
+        String clientId = "clientId1";
+
+        httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
+        when(orcidTokenStoreMock.readClientId(eq("TEST_TOKEN"))).thenReturn(clientId);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByClientIdAndRequestDate(eq(ip), any())).thenReturn(null);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
+        verify(papiRateLimitingDaoMock, times(1)).persist(any(PublicApiDailyRateLimitEntity.class));
+    }
+
+    @Test
+    public void doFilterInternal_clientRequest_existingEntryTest() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip = "127.0.0.2";
+        String clientId = "clientId1";
 
         PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
         e.setId(1000L);
         e.setIpAddress(ip);
         e.setRequestCount(100L);
 
-        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(e);
-        httpServletRequestMock.setAttribute("X-FORWARDED-FOR", ip);
+        httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
+        when(orcidTokenStoreMock.readClientId(eq("TEST_TOKEN"))).thenReturn(clientId);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByClientIdAndRequestDate(eq(clientId), any())).thenReturn(e);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
-        verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(), eq(false));
-    }
-
-    @Test
-    public void doFilterInternal_annonymousRequest_existingEntryTest() throws ServletException, IOException {
-       fail();
-    }
-
-    @Test
-    public void doFilterInternal_clientRequest_newEntryTest() throws ServletException, IOException {
-        fail();
-    }
-
-    @Test
-    public void doFilterInternal_clientRequest_existingEntryTest() throws ServletException, IOException {
-        fail();
+        verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), eq(true));
+        verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
     }
 }

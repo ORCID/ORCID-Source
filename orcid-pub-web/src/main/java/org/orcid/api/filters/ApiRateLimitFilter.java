@@ -299,10 +299,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     private boolean isWhiteListed(String ipAddress) {
-        return (papiIpWhiteList != null)?papiIpWhiteList.contains(ipAddress): false;
+        return (papiIpWhiteList != null) ? papiIpWhiteList.contains(ipAddress) : false;
     }
 
     private boolean isClientIdWhiteListed(String clientId) {
-        return (papiClientIdWhiteList != null)?papiClientIdWhiteList.contains(clientId):false;
+        return (papiClientIdWhiteList != null) ? papiClientIdWhiteList.contains(clientId) :false;
     }
 }
