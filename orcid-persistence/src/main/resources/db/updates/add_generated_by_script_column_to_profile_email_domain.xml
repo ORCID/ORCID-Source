@@ -15,7 +15,7 @@
 
 	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE" dbms="postgresql">
 			<sql>
-				UPDATE profile_email_domain SET generated_by_script = true WHERE created_date &lt; '2024-10-28';
+				UPDATE profile_email_domain SET generated_by_script = true WHERE date_created &lt; '2024-10-28';
 			</sql>
 	</changeSet>
 </databaseChangeLog>	
