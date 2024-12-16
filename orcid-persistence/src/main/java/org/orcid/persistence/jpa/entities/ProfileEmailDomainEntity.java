@@ -18,6 +18,7 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
     private String emailDomain;
     private String visibility;
     private Date dateCreated;
+    private Boolean generatedByScript;
 
     @Id
     @Column(name = "id")
@@ -65,6 +66,15 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    @Column(name = "generated_by_script")
+    public Boolean getGeneratedByScript() {
+        return generatedByScript;
+    }
+
+    public void setGeneratedByScript(Boolean generatedByScript) {
+        this.generatedByScript = generatedByScript;
     }
 
 
