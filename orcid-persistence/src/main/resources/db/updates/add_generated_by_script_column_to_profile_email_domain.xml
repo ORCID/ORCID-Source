@@ -11,7 +11,7 @@
 		<sql>ALTER TABLE profile_email_domain ADD generated_by_script boolean default false;</sql>
     </changeSet>
 
-	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE">
+	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE" dbms="postgresql">
 			<sql>
 				UPDATE profile_email_domain SET generated_by_script = true WHERE date_created &lt; '2024-10-28';
 			</sql>
