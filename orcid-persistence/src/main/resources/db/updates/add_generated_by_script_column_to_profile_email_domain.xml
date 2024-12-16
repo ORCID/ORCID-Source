@@ -3,15 +3,19 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 	<changeSet author="Andrej Romanov" id="ADD-GENERATED-BY-SCRIPT-TO-PROFILE-EMAIL-DOMAIN-TABLE">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="profile_email_domain" columnName="generated_by_script"/>
+			</not>
+		</preConditions>
 	    <addColumn tableName="profile_email_domain">
 				<column name="generated_by_script" type="BOOLEAN" defaultValue="false"/>
 		</addColumn>
     </changeSet>
 
-	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE">
-		<update tableName="profile_email_domain">
-			<column name="generated_by_script" value="true"/>
-			<where>date_created &lt; '2024-10-28'</where>
-		</update>
+	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE" dbms="postgresql">
+			<sql>
+				UPDATE profile_email_domain SET generated_by_script = true WHERE created_date &lt; '2024-10-28';
+			</sql>
 	</changeSet>
 </databaseChangeLog>	
