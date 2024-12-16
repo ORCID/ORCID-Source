@@ -8,9 +8,7 @@
 				<columnExists tableName="profile_email_domain" columnName="generated_by_script"/>
 			</not>
 		</preConditions>
-	    <addColumn tableName="profile_email_domain">
-				<column name="generated_by_script" type="BOOLEAN" defaultValue="false"/>
-		</addColumn>
+		<sql>ALTER TABLE profile_email_domain ADD generated_by_script boolean default false;</sql>
     </changeSet>
 
 	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE" dbms="postgresql">
