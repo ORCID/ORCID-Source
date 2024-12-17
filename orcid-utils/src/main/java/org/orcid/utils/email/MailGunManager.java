@@ -82,7 +82,7 @@ public class MailGunManager {
             apiUrl = getMarketingApiUrl();
         else if (fromEmail.endsWith("@verify.orcid.org"))
             apiUrl = getVerifyApiUrl();
-        else if (fromEmail.endsWith("@notify.orcid.org"))
+        else if (fromEmail.endsWith("@notify.orcid.org") || fromEmail.endsWith("@orcid.org"))
             apiUrl = getNotifyApiUrl();
         else
             apiUrl = getApiUrl();        
