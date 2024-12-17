@@ -562,7 +562,7 @@ public class SummaryManagerTest {
 
         // Email domains
         assertEquals("2024-12-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
-        assertEquals(null, rs.getEmailDomains().getEmailDomains().get(1).getVerificationDate());
+        assertNull(rs.getEmailDomains().getEmailDomains().get(1).getVerificationDate());
         assertEquals(2, rs.getEmailDomains().getEmailDomains().size());
     }       
     
@@ -624,12 +624,14 @@ public class SummaryManagerTest {
         emailDomain.setEmailDomain(EMAIL_DOMAIN);
         emailDomain.setOrcid(ORCID);
         emailDomain.setDateCreated(new Date(124, 11, 20));
+        emailDomain.setGeneratedByScript(false);
         emailDomains.add(emailDomain);
 
         ProfileEmailDomainEntity emailDomain2 = new ProfileEmailDomainEntity();
         emailDomain2.setEmailDomain(EMAIL_DOMAIN + "2");
         emailDomain2.setOrcid(ORCID);
         emailDomain2.setDateCreated(new Date(124, 9, 20));
+        emailDomain2.setGeneratedByScript(true);
         emailDomains.add(emailDomain2);
 
         return emailDomains;
