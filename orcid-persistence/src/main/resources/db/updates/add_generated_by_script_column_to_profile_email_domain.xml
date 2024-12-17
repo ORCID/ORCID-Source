@@ -12,8 +12,11 @@
     </changeSet>
 
 	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE" dbms="postgresql">
-			<sql>
-				UPDATE profile_email_domain SET generated_by_script = true WHERE date_created &lt; '2024-10-28';
-			</sql>
+		<sql>UPDATE profile_email_domain SET generated_by_script = true WHERE date_created &lt; '2024-10-28';</sql>
 	</changeSet>
+
+	<changeSet author="Angel Montenegro" id="SET-FALSE-TO-NULL" dbms="postgresql">
+		<sql>UPDATE profile_email_domain SET generated_by_script = false WHERE generated_by_script is null;</sql>
+	</changeSet>
+
 </databaseChangeLog>	
