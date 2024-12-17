@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -178,5 +180,29 @@ public class ApiRateLimitFilterTest {
 
         verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), eq(true));
         verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
+    }
+
+    @Test
+    public void doFilterInternal_checkLimitReachedTest() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip = "127.0.0.2";
+
+        PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
+        e.setId(1000L);
+        e.setIpAddress(ip);
+        e.setRequestCount(10001L);
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+
+        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(e);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        assertEquals(429, httpServletResponseMock.getStatus());
+        String content = httpServletResponseMock.getContentAsString();
+        assertEquals("Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \\nYou can increase your daily quota by registering for and using Public API client credentials (https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)", content);
     }
 }

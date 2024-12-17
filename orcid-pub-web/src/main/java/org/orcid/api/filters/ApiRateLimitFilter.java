@@ -103,9 +103,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     private List<String> papiIpWhiteList;
     private List<String> papiClientIdWhiteList;
 
-    private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests - You have exceeded the daily allowance of API calls.\\n"
+    private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \\n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
-            + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/ )";
+            + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)";
 
     private static final String SUBJECT = "[ORCID-API] WARNING! You have exceeded the daily Public API Usage Limit - ";
 
@@ -211,7 +211,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             // update the request count
             rateLimitEntity.setRequestCount(rateLimitEntity.getRequestCount() + 1);
             papiRateLimitingDao.updatePublicApiDailyRateLimit(rateLimitEntity, true);
-
         } else {
             // create
             rateLimitEntity = new PublicApiDailyRateLimitEntity();
