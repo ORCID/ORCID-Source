@@ -73,7 +73,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import static org.orcid.core.constants.EmailConstants.VERIFICATION_DATE_CUTOFF;
 
 public class SummaryManagerImpl implements SummaryManager {
     @Resource(name = "recordNameManagerReadOnlyV3")
@@ -284,7 +283,7 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
                     EmailDomainSummary eds = new EmailDomainSummary();
                     eds.setValue(ed.getValue());
-                    if (ed.getVerificationDate() != null && ed.getVerificationDate().after(VERIFICATION_DATE_CUTOFF)) {
+                    if (ed.getVerificationDate() != null) {
                         eds.setVerificationDate(ed.getVerificationDate().toString());
                     }
                     emailDomains.add(eds);
@@ -525,8 +524,8 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
-                    if (verificationDate.after(VERIFICATION_DATE_CUTOFF)) {
+                    if (!ped.getGeneratedByScript()) {
+                        VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
                         ed.setVerificationDate(verificationDate);
                     }
                     edList.add(ed);
