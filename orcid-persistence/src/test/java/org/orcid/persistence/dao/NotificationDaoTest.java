@@ -242,7 +242,6 @@ public class NotificationDaoTest extends DBUnitTest {
         for (Long id : ids) {
             notificationDao.remove(id);
         }
-
     }
 
     private Long createNotification(String orcid, Date sentDate) {
