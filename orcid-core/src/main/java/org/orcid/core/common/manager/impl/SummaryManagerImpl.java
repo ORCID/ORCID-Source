@@ -283,7 +283,7 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
                     EmailDomainSummary eds = new EmailDomainSummary();
                     eds.setValue(ed.getValue());
-                    if (ed.getVerificationDate() != null) {
+                    if (ed.getVerificationDate() != null && ed.getVerificationDate().getValue() != null) {
                         eds.setVerificationDate(ed.getVerificationDate().toString());
                     }
                     emailDomains.add(eds);
@@ -524,7 +524,7 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    if (!ped.getGeneratedByScript()) {
+                    if (!ped.getGeneratedByScript() && ped.getDateCreated() != null) {
                         VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
                         ed.setVerificationDate(verificationDate);
                     }
