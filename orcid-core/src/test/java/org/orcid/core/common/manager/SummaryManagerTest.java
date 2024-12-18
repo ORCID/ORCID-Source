@@ -109,6 +109,12 @@ public class SummaryManagerTest {
     
     @Mock
     private ProfileEntity profileEntityMock;
+
+    @Mock
+    private ProfileEmailDomainEntity profileEmailDomainEntityMock;
+
+    @Mock
+    private ProfileEmailDomainEntity profileEmailDomainEntityTwoMock;
     
     @Mock
     private WorksCacheManager worksCacheManagerMock;
@@ -561,7 +567,7 @@ public class SummaryManagerTest {
         assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());
 
         // Email domains
-        assertEquals("2024-12-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
+        assertEquals("2024-10-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
         assertNull(rs.getEmailDomains().getEmailDomains().get(1).getVerificationDate());
         assertEquals(2, rs.getEmailDomains().getEmailDomains().size());
     }       
@@ -597,7 +603,7 @@ public class SummaryManagerTest {
         assertEquals(16, rs.getPeerReviewsTotal());
         // Email domain
         assertEquals(2, rs.getEmailDomains().size());
-        assertEquals("2024-12-20", rs.getEmailDomains().get(0).getVerificationDate());
+        assertEquals("2024-10-20", rs.getEmailDomains().get(0).getVerificationDate());
         assertEquals(null, rs.getEmailDomains().get(1).getVerificationDate());
 
     }
@@ -619,20 +625,16 @@ public class SummaryManagerTest {
     }
     
     private List<ProfileEmailDomainEntity>  getEmailDomains() {
-        List<ProfileEmailDomainEntity> emailDomains = new ArrayList<ProfileEmailDomainEntity>();
-        ProfileEmailDomainEntity emailDomain = new ProfileEmailDomainEntity();
-        emailDomain.setEmailDomain(EMAIL_DOMAIN);
-        emailDomain.setOrcid(ORCID);
-        emailDomain.setDateCreated(new Date(124, 11, 20));
-        emailDomain.setGeneratedByScript(false);
-        emailDomains.add(emailDomain);
+        List<ProfileEmailDomainEntity> emailDomains = new ArrayList<>();
+        Mockito.when(profileEmailDomainEntityMock.getEmailDomain()).thenReturn(EMAIL_DOMAIN);
+        Mockito.when(profileEmailDomainEntityMock.getGeneratedByScript()).thenReturn(false);
+        Mockito.when(profileEmailDomainEntityMock.getDateCreated()).thenReturn(new Date(124, 9, 20));
+        Mockito.when(profileEmailDomainEntityTwoMock.getEmailDomain()).thenReturn(EMAIL_DOMAIN + "2");
+        Mockito.when(profileEmailDomainEntityTwoMock.getGeneratedByScript()).thenReturn(true);
+        Mockito.when(profileEmailDomainEntityTwoMock.getDateCreated()).thenReturn(new Date(124, 11, 20));
 
-        ProfileEmailDomainEntity emailDomain2 = new ProfileEmailDomainEntity();
-        emailDomain2.setEmailDomain(EMAIL_DOMAIN + "2");
-        emailDomain2.setOrcid(ORCID);
-        emailDomain2.setDateCreated(new Date(124, 9, 20));
-        emailDomain2.setGeneratedByScript(true);
-        emailDomains.add(emailDomain2);
+        emailDomains.add(profileEmailDomainEntityMock);
+        emailDomains.add(profileEmailDomainEntityTwoMock);
 
         return emailDomains;
     }
