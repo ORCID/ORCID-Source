@@ -21,7 +21,7 @@
 
 	<changeSet author="Angel Montenegro" id="SET-FIELD-NOT-NULLABLE" dbms="postgresql">
 		<preConditions onFail="MARK_RAN">
-			<sqlCheck  expectedResult="YES">select is_nullable from information_schema.columns where table_name = 'peer_review' and column_name = 'org_id';</sqlCheck>
+			<sqlCheck  expectedResult="YES">select is_nullable from information_schema.columns where table_name = 'profile_email_domain' and column_name = 'generated_by_script';</sqlCheck>
 		</preConditions>
 		<addNotNullConstraint
 				columnName="generated_by_script"
