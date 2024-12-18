@@ -28,6 +28,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
         e.setEmailDomain(emailDomain);
         e.setOrcid(orcid);
         e.setVisibility(visibility);
+        e.setGeneratedByScript(false);
         entityManager.persist(e);
         return e;
     }
