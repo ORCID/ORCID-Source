@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.cache.redis.RedisClient;
@@ -50,6 +51,9 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     public OrcidOauth2TokenDetail findNonDisabledByTokenValue(String token) {
+        if(StringUtils.isBlank(token)) {
+            return null;
+        }
         try {
             return orcidOauth2TokenDetailDaoReadOnly.findNonDisabledByTokenValue(token);
         } catch (NoResultException e) {

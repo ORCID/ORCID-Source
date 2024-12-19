@@ -70,6 +70,11 @@ public class OrcidJacksonJaxbJsonProvider extends JacksonJaxbJsonProvider {
             params.put("error", e.getMessage());
             throw new InvalidJSONException(params);
         }
+        if(o == null) {
+            Map<String, String> params = new HashMap<>();
+            params.put("error", "Couldn't read object, data seems to be empty or invalid");
+            throw new InvalidJSONException(params);
+        }
         if (jsonInputValidator.canValidate(o.getClass())) {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
             String apiVersion = (String) requestAttributes.getAttribute(ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);

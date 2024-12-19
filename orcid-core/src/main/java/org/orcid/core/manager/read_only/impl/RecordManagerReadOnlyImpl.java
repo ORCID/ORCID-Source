@@ -117,7 +117,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
             }
             return preferences;
         } catch(Exception e) {
-            LOGGER.error("Exception loading preferences for " + orcid, e);
+            LOGGER.info("Locale for user " + orcid + " is not valid for V2.0/V2.1 API");
         }
         return null;
     }
