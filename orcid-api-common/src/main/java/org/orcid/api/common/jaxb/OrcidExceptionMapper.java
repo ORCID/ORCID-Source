@@ -16,6 +16,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException;
 import org.jbibtex.TokenMgrError;
 import org.orcid.api.common.filter.ApiVersionFilter;
@@ -132,8 +133,19 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof MismatchedPutCodeException) {
             logShortError(t, clientId);
+        } else if (t instanceof WrongSourceException) {
+            logShortError(t, clientId);
+        } else if (t instanceof InvalidDisambiguatedOrgException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidWebhookNotFoundException) {
+            logShortError(t, clientId);
         } else {
-            LOGGER.error("An exception has occured processing request from client " + clientId, t);
+            Throwable rootCause = ExceptionUtils.getRootCause(t);
+            if(rootCause != null) {
+                LOGGER.error("An exception has occurred processing request from client " + clientId, rootCause);
+            } else {
+                LOGGER.error("An exception has occurred processing request from client " + clientId, t);
+            }
         }
 
         if (isOAuthTokenRequest()) {
