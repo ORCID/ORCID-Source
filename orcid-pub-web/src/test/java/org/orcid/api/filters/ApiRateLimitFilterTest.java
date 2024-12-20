@@ -203,6 +203,6 @@ public class ApiRateLimitFilterTest {
 
         assertEquals(429, httpServletResponseMock.getStatus());
         String content = httpServletResponseMock.getContentAsString();
-        assertEquals("Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \\nYou can increase your daily quota by registering for and using Public API client credentials (https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)", content);
+        assertEquals("Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \nYou can increase your daily quota by registering for and using Public API client credentials (https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)", content);
     }
 }
