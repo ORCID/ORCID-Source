@@ -132,31 +132,26 @@ public class JSONInputValidator {
             if(validator != null) {
                 validator.validate(source);
             } else {
-                LOGGER.error("Unable to find validator for class " + clazz.getName());
-                Map<String, String> params = new HashMap<>();
-                params.put("error", "Unable to find validator for class " + clazz.getName());
-                throw new InvalidJSONException(params);
+                throw new InvalidJSONException("Unable to find validator for class " + clazz.getName());
             }
         } catch (SAXException e) {
             Map<String, String> params = new HashMap<>();
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             if(rootCause != null) {
-                params.put("error", rootCause.getMessage());
+                throw new InvalidJSONException(rootCause.getMessage(), e);
             } else {
                 // For SAXException, the message is usually 2 levels deep
-                params.put("error", e.getCause().getCause().getMessage());
+                throw new InvalidJSONException(e.getCause().getCause().getMessage(), e);
             }
-            throw new InvalidJSONException(params);
         } catch (Exception e) {
             LOGGER.error("Unable to find validator for class " + clazz.getName());
             Map<String, String> params = new HashMap<>();
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             if(rootCause != null) {
-                params.put("error", rootCause.getMessage());
+                throw new InvalidJSONException(rootCause.getMessage(), e);
             } else {
-                params.put("error", e.getMessage());
+                throw new InvalidJSONException(e.getMessage(), e);
             }
-            throw new InvalidJSONException(params);
         }
     }
     
@@ -174,8 +169,13 @@ public class JSONInputValidator {
             VALIDATORS_2_1_API.get(clazz).validate(source);
         } catch (SAXException e) {
             Map<String, String> params = new HashMap<>();
-            params.put("error", e.getCause().getCause().getMessage());
-            throw new InvalidJSONException(params);
+            Throwable rootCause = ExceptionUtils.getRootCause(e);
+            if(rootCause != null) {
+                throw new InvalidJSONException(rootCause.getMessage(), e);
+            } else {
+                // For SAXException, the message is usually 2 levels deep
+                throw new InvalidJSONException(e.getCause().getCause().getMessage(), e);
+            }
         } catch (Exception e) {
             throw new ApplicationException(e);
         } 
