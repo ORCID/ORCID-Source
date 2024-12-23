@@ -304,7 +304,7 @@ public class NotificationDaoTest extends DBUnitTest {
             if (lastId == null) {
                 lastId = freshFromDB.getId();
             } else {
-                assertTrue(lastId < freshFromDB.getId());
+                assertTrue(lastId + " is not less than " + freshFromDB.getId(), lastId < freshFromDB.getId());
                 lastId = freshFromDB.getId();
             }
         }
