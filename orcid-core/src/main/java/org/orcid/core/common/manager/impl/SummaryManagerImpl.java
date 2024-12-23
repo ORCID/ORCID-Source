@@ -524,9 +524,13 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    if (!ped.getGeneratedByScript() && ped.getDateCreated() != null) {
-                        VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
-                        ed.setVerificationDate(verificationDate);
+                    if (!ped.getGeneratedByScript()) {
+                        //TODO: There is a bug where the date_created is null for some records, so, we need to add this one meanwhile we fix this card https://trello.com/c/qh1uioKO/9557-qa-verified-date-not-displayed-for-new-email-domains
+                        //Remove this if statement once that card get to PROD
+                        if(ped.getDateCreated() != null) {
+                            VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
+                            ed.setVerificationDate(verificationDate);
+                        }
                     }
                     edList.add(ed);
                 }

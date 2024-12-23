@@ -3,10 +3,7 @@ package org.orcid.api.filters;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Resource;
@@ -103,7 +100,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     private List<String> papiIpWhiteList;
     private List<String> papiClientIdWhiteList;
 
-    private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \\n"
+    private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)";
 
@@ -160,6 +157,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                 LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
             }
         }
+
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
