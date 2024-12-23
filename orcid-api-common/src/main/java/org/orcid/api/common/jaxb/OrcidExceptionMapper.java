@@ -89,21 +89,18 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
         String clientId = securityManager.getClientIdFromAPIRequest();
-        if (t instanceof NotFoundException) {
-            logShortError(t, clientId);
-        } else if (t instanceof NoResultException) {
-            logShortError(t, clientId); 
-        } else if (t instanceof OrcidDeprecatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof LockedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof DeactivatedException) {
-            logShortError(t, clientId);
+        if(t instanceof OrcidDeprecatedException
+                || t instanceof LockedException
+                || t instanceof DeactivatedException
+                || t instanceof OrcidNoBioException
+                || t instanceof OrcidNonPublicElementException
+                || t instanceof OrcidNoResultException
+                || t instanceof NoResultException
+                || t instanceof NotFoundException) {
+            // Do not log any of these exceptions
         } else if (t instanceof DisabledException) {
             logShortError(t, clientId);
         } else if (t instanceof ClientDeactivatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidNonPublicElementException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidBadRequestException) {
             logShortError(t, clientId);
@@ -117,15 +114,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof OrcidNotificationException) {
             logShortError(t, clientId);
-        } else if (t instanceof OrcidNoBioException) {
-            logShortError(t, clientId);
         } else if (t instanceof RemoteSolrException) {
             logShortError(t, clientId);
         } else if (t instanceof WebApplicationException) {
             logShortError(t, clientId);
         } else if (t instanceof TokenMgrError) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidNoResultException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidUnauthorizedException) {
             logShortError(t, clientId);
