@@ -152,19 +152,15 @@ public class PeerReviewsController extends BaseWorkspaceController {
     /**
      * updates visibility of a peer review
      */
-    @RequestMapping(value = "/{peerReviewIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
-    public @ResponseBody ArrayList<Long> updateVisibilitys(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr,
+    @RequestMapping(value = "/{groupIdValue}/visibility/{visibilityStr}", method = RequestMethod.POST)
+    public @ResponseBody boolean updateVisibilitys(@PathVariable("groupIdValue") String groupIdValue,
             @PathVariable("visibilityStr") String visibilityStr) {
-        ArrayList<Long> peerReviewIds = new ArrayList<Long>();
-        if (PojoUtil.isEmpty(peerReviewIdsStr)) {
-            return peerReviewIds;
+        if (PojoUtil.isEmpty(groupIdValue)) {
+            return false;
         }
         // make sure this is a users work
         String orcid = getEffectiveUserOrcid();
-        for (String peerReviewId : peerReviewIdsStr.split(","))
-            peerReviewIds.add(new Long(peerReviewId));
-        peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
-        return peerReviewIds;
+        return peerReviewManager.updateVisibilitiesByGroupId(orcid, groupIdValue, Visibility.fromValue(visibilityStr));
     }
 
     private List<PeerReviewGroup> getPeerReviewsGrouped(List<PeerReviewSummary> summaries) {

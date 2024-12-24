@@ -95,6 +95,18 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public boolean updateVisibilityByGroupId(String orcid, String groupId, String visibility) {
+        Query query = entityManager
+                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where groupId=:groupId and  orcid=:orcid");
+        query.setParameter("groupId", groupId);
+        query.setParameter("visibility", visibility);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0 ? true : false;
+    }
     
     /**
      * Returns a list of  ids of peer reviews that still have old external identifiers

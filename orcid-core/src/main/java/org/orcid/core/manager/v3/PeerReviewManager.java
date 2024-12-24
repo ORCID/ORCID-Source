@@ -79,7 +79,18 @@ public interface PeerReviewManager extends PeerReviewManagerReadOnly {
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, Visibility visibility);
-    
+
+    /**
+     * Updates the visibility of a list of existing peer review based on the group id
+     *
+     * @param groupId
+     *            The group id of the peerReview that will be updated
+     * @param visibility
+     *            The new visibility value for the peer review
+     * @return true if the relationship was updated
+     * */
+    public boolean updateVisibilitiesByGroupId(String orcid, String groupId, Visibility visibility);
+
     /**
      * Removes all peer reviews that belongs to a given record. Careful!
      * 
