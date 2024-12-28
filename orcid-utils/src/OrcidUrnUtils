@@ -1,0 +1,72 @@
+import java.util.regex.*;
+
+public class OrcidURN {
+
+    /**
+     * Converts a valid ORCID identifier to its URN representation.
+     *
+     * @param orcid The ORCID identifier (e.g., "0000-0002-1825-0097").
+     * @return The URN representation (e.g., "urn:orcid:0000-0002-1825-0097").
+     * @throws IllegalArgumentException If the input is not a valid ORCID identifier.
+     */
+    public static String orcidToURN(String orcid) {
+        if (!validateOrcid(orcid)) {
+            throw new IllegalArgumentException("Invalid ORCID: " + orcid);
+        }
+        return "urn:orcid:" + orcid;
+    }
+
+    /**
+     * Validates an ORCID identifier.
+     *
+     * @param orcid The ORCID identifier to validate.
+     * @return True if the ORCID is valid, false otherwise.
+     */
+    public static boolean validateOrcid(String orcid) {
+        String pattern = "^\\d{4}-\\d{4}-\\d{4}-\\d{3}[\\dX]$";
+        if (!orcid.matches(pattern)) {
+            return false;
+        }
+
+        // Verify the checksum using the MOD 11-2 algorithm
+        String digitsOnly = orcid.replace("-", "");
+        int total = 0;
+        for (int i = 0; i < digitsOnly.length() - 1; i++) {
+            total += Character.getNumericValue(digitsOnly.charAt(i)) * (2 + i);
+        }
+        int remainder = total % 11;
+        int checksum = (12 - remainder) % 11;
+        char checksumChar = checksum == 10 ? 'X' : Character.forDigit(checksum, 10);
+
+        return digitsOnly.charAt(digitsOnly.length() - 1) == checksumChar;
+    }
+
+    /**
+     * Extracts the ORCID identifier from its URN representation.
+     *
+     * @param urn The URN representation (e.g., "urn:orcid:0000-0002-1825-0097").
+     * @return The ORCID identifier (e.g., "0000-0002-1825-0097").
+     * @throws IllegalArgumentException If the input is not a valid URN.
+     */
+    public static String urnToOrcid(String urn) {
+        String pattern = "^urn:orcid:(\\d{4}-\\d{4}-\\d{4}-\\d{3}[\\dX])$";
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher = regex.matcher(urn);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid URN: " + urn);
+        }
+        return matcher.group(1);
+    }
+
+    public static void main(String[] args) {
+        String exampleOrcid = "0000-0002-1825-0097";
+        try {
+            String urn = orcidToURN(exampleOrcid);
+            System.out.println("URN: " + urn);
+            String extractedOrcid = urnToOrcid(urn);
+            System.out.println("Extracted ORCID: " + extractedOrcid);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+}
