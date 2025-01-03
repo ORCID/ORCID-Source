@@ -16,6 +16,7 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
     private String orcid;
     private String emailDomain;
     private String visibility;
+    private Boolean generatedByScript;
 
     @Id
     @Column(name = "id")
@@ -54,6 +55,15 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
 
     public void setVisibility(String visibility) {
         this.visibility = visibility;
+    }
+
+    @Column(name = "generated_by_script")
+    public Boolean getGeneratedByScript() {
+        return generatedByScript;
+    }
+
+    public void setGeneratedByScript(Boolean generatedByScript) {
+        this.generatedByScript = generatedByScript;
     }
 
 

@@ -1,25 +1,11 @@
 package org.orcid.frontend.web.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.BibtexManager;
-import org.orcid.core.manager.v3.GroupingSuggestionManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ExternalIdentifierFundedByHelper;
@@ -29,25 +15,15 @@ import org.orcid.frontend.web.pagination.Page;
 import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.Relationship;
-import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
-import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
-import org.orcid.pojo.ajaxForm.Citation;
-import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
-import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.WorkForm;
+import org.orcid.pojo.ajaxForm.*;
 import org.orcid.pojo.grouping.WorkGroup;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.orcid.pojo.grouping.WorkGroupingSuggestions;
@@ -56,12 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author rcpeters
@@ -221,13 +197,6 @@ public class WorksController extends BaseWorkspaceController {
             Text jt = new Text();
             jt.setRequired(false);
             w.setJournalTitle(jt);
-        }
-
-        if (PojoUtil.isEmpty(w.getWorkCategory())) {
-            Text wCategoryText = new Text();
-            wCategoryText.setValue(new String());
-            wCategoryText.setRequired(true);
-            w.setWorkCategory(wCategoryText);
         }
 
         if (PojoUtil.isEmpty(w.getWorkType())) {
@@ -613,8 +582,6 @@ public class WorksController extends BaseWorkspaceController {
             workdescriptionValidate(work);
             copyErrors(work.getShortDescription(), work);
         }
-        if (work.getWorkCategory() != null)
-            workWorkCategoryValidate(work);
 
         workWorkTypeValidate(work);
         copyErrors(work.getWorkType(), work);
@@ -747,16 +714,6 @@ public class WorksController extends BaseWorkspaceController {
         if (work.getShortDescription().getValue() != null && work.getShortDescription().getValue().length() > 5000) {
             setError(work.getShortDescription(), "manualWork.length_less_5000");
         }
-        return work;
-    }
-
-    @RequestMapping(value = "/work/workCategoryValidate.json", method = RequestMethod.POST)
-    public @ResponseBody WorkForm workWorkCategoryValidate(@RequestBody WorkForm work) {
-        work.getWorkCategory().setErrors(new ArrayList<String>());
-        if (work.getWorkCategory().getValue() == null || work.getWorkCategory().getValue().trim().length() == 0) {
-            setError(work.getWorkCategory(), "NotBlank.manualWork.workCategory");
-        }
-
         return work;
     }
 
@@ -921,41 +878,6 @@ public class WorksController extends BaseWorkspaceController {
             workIds.add(new Long(workId));
         workManager.updateVisibilities(orcid, workIds, org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(visibilityStr));
         return workIds;
-    }
-
-    /**
-     * Return a list of work types based on the work category provided as a
-     * parameter
-     * 
-     * @param workCategoryName
-     * @return a map containing the list of types associated with that type and
-     *         his localized name
-     */
-    @RequestMapping(value = "/loadWorkTypes.json", method = RequestMethod.GET)
-    public @ResponseBody List<KeyValue> retriveWorkTypes(@RequestParam(value = "workCategory") String workCategoryName) {
-        List<KeyValue> types = new ArrayList<KeyValue>();
-
-        WorkCategory workCategory = null;
-        if (!PojoUtil.isEmpty(workCategoryName))
-            workCategory = WorkCategory.fromValue(workCategoryName);
-        // Get work types based on category
-        if (workCategory != null) {
-            for (WorkType workType : workCategory.getSubTypes()) {
-                // Dont put work type UNDEFINED
-                if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
-                }
-            }
-        } else {
-            // Get all work types
-            for (WorkType workType : WorkType.values()) {
-                // Dont put work type UNDEFINED
-                if (!workType.equals(WorkType.UNDEFINED)) {
-                    types.add(new KeyValue(workType.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkType.").append(workType.value()).toString())));
-                }
-            }
-        }
-        return types;
     }
 
     /**

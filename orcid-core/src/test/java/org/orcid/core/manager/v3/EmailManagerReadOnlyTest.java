@@ -71,7 +71,7 @@ public class EmailManagerReadOnlyTest extends BaseTest {
     public void haveAnyEmailVerifiedTest() {
         assertTrue(emailManagerReadOnly.haveAnyEmailVerified("0000-0000-0000-0003"));
         assertTrue(emailManagerReadOnly.haveAnyEmailVerified("4444-4444-4444-4442"));
-        assertFalse(emailManagerReadOnly.haveAnyEmailVerified("0000-0000-0000-0001"));
+        assertTrue(emailManagerReadOnly.haveAnyEmailVerified("0000-0000-0000-0001"));
         assertFalse(emailManagerReadOnly.haveAnyEmailVerified("4444-4444-4444-4445"));
     }
     
@@ -80,8 +80,8 @@ public class EmailManagerReadOnlyTest extends BaseTest {
         Emails emails = emailManagerReadOnly.getEmails("0000-0000-0000-0003");
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
-        assertEquals(5, emails.getEmails().size());
-        boolean found1 = false, found2 = false, found3 = false, found4=false, found5 = false;
+        assertEquals(6, emails.getEmails().size());
+        boolean found1 = false, found2 = false, found3 = false, found4=false, found5 = false, found6 = false;
         for(Email email : emails.getEmails()) {
             if(email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
                 found1 = true;
@@ -93,6 +93,8 @@ public class EmailManagerReadOnlyTest extends BaseTest {
                 found4 = true;
             } else if(email.getEmail().equals("self_private_0000-0000-0000-0003@test.orcid.org")) {
                 found5 = true;
+            } else if(email.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found6 = true;
             } else {
                 fail("Invalid email found: " + email.getEmail());
             }
@@ -102,6 +104,7 @@ public class EmailManagerReadOnlyTest extends BaseTest {
         assertTrue(found3);
         assertTrue(found4);
         assertTrue(found5);
+        assertTrue(found6);
     }
     
     @Test
@@ -109,8 +112,9 @@ public class EmailManagerReadOnlyTest extends BaseTest {
         Emails emails = emailManagerReadOnly.getPublicEmails("0000-0000-0000-0003");
         assertNotNull(emails);
         assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());
+        assertEquals(2, emails.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", emails.getEmails().get(1).getEmail());
     }       
     
     @Test

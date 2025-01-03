@@ -18,6 +18,7 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidAccessControlException;
@@ -57,9 +58,11 @@ import org.orcid.core.manager.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.utils.ContributorUtils;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -98,6 +101,7 @@ import org.orcid.jaxb.model.record_v2.SourceAware;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -231,6 +235,12 @@ public class MemberV2ApiServiceDelegatorImpl implements
     @Resource
     private ApiUtils apiUtils;
 
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -241,6 +251,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
         Record record = recordManagerReadOnly.getRecord(orcid);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV2API(record.getPerson().getEmails());
             sourceUtils.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
@@ -787,6 +798,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         }
 
+        emailDomainManager.processProfessionalEmailsForV2API(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -1054,6 +1066,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPersonDetails(orcid);
         orcidSecurityManager.checkAndFilter(orcid, person);
+        emailDomainManager.processProfessionalEmailsForV2API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);

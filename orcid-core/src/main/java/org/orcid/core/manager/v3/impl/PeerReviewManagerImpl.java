@@ -218,6 +218,11 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility.name());
     }
 
+    @Override
+    public boolean updateVisibilitiesByGroupId(String orcid, String groupId, Visibility visibility) {
+        return peerReviewDao.updateVisibilityByGroupId(orcid, groupId, visibility.name());
+    }
+
     private void validateGroupId(PeerReview peerReview) {
         if (!PojoUtil.isEmpty(peerReview.getGroupId())) {
             if (!groupIdRecordManager.exists(peerReview.getGroupId())) {

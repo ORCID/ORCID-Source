@@ -43,11 +43,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.SourceUtils;
-import org.orcid.jaxb.model.v3.release.common.CreatedDate;
-import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.release.common.Source;
-import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.common.*;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Group;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
@@ -76,6 +72,7 @@ import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
 
 public class SummaryManagerImpl implements SummaryManager {
     @Resource(name = "recordNameManagerReadOnlyV3")
@@ -286,6 +283,9 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
                     EmailDomainSummary eds = new EmailDomainSummary();
                     eds.setValue(ed.getValue());
+                    if (ed.getVerificationDate() != null && ed.getVerificationDate().getValue() != null) {
+                        eds.setVerificationDate(ed.getVerificationDate().toString());
+                    }
                     emailDomains.add(eds);
                 }
             }
@@ -524,6 +524,14 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
+                    if (!ped.getGeneratedByScript()) {
+                        //TODO: There is a bug where the date_created is null for some records, so, we need to add this one meanwhile we fix this card https://trello.com/c/qh1uioKO/9557-qa-verified-date-not-displayed-for-new-email-domains
+                        //Remove this if statement once that card get to PROD
+                        if(ped.getDateCreated() != null) {
+                            VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
+                            ed.setVerificationDate(verificationDate);
+                        }
+                    }
                     edList.add(ed);
                 }
             }
@@ -531,6 +539,9 @@ public class SummaryManagerImpl implements SummaryManager {
             edList.stream().limit(3).forEach(t -> {
                 EmailDomain ed = new EmailDomain();
                 ed.setValue(t.getValue());
+                if (t.getVerificationDate() != null) {
+                    ed.setVerificationDate(t.getVerificationDate());
+                }
                 emailDomainsTop3.add(ed);
             });
 
@@ -538,7 +549,6 @@ public class SummaryManagerImpl implements SummaryManager {
             eds.setCount(edList.size());
             if (!emailDomainsTop3.isEmpty()) {
                 eds.setEmailDomains(emailDomainsTop3);
-                
             }
             
             recordSummary.setEmailDomains(eds);

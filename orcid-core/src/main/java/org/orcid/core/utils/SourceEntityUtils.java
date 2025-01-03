@@ -17,10 +17,16 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
+import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATOR_CLIENT_ID;
+import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATOR_CLIENT_NAME;
+
 public class SourceEntityUtils {
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     public String getSourceName(SourceEntity sourceEntity) {
         if (sourceEntity.getCachedSourceName() != null) {
@@ -225,5 +231,53 @@ public class SourceEntityUtils {
             ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
         Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
         return existing.equals(activeSource);
+    }
+
+    /**
+     * Convert source-orcid to source-client-id populated with ORCID email validator details
+     *
+     * @param source
+     * @return
+     */
+    public Source convertEmailSourceToOrcidValidator(Source source) {
+        source.setSourceOrcid(null);
+        SourceName sourceName = source.getSourceName();
+        if (sourceName != null) {
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+        } else {
+            sourceName = new SourceName();
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+            source.setSourceName(sourceName);
+        }
+        SourceClientId sourceClientId = new SourceClientId(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
+        sourceClientId.setPath(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
+        sourceClientId.setHost(orcidUrlManager.getBaseHost());
+        sourceClientId.setUri(orcidUrlManager.getBaseUrl() + "/client/" + ORCID_EMAIL_VALIDATOR_CLIENT_ID);
+        source.setSourceClientId(sourceClientId);
+        return source;
+    }
+
+    /**
+     * Convert source-orcid to source-client-id populated with ORCID email validator details
+     *
+     * @param source
+     * @return
+     */
+    public org.orcid.jaxb.model.common_v2.Source convertEmailSourceToOrcidValidator(org.orcid.jaxb.model.common_v2.Source source) {
+        source.setSourceOrcid(null);
+        org.orcid.jaxb.model.common_v2.SourceName sourceName = source.getSourceName();
+        if (sourceName != null) {
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+        } else {
+            sourceName = new org.orcid.jaxb.model.common_v2.SourceName();
+            sourceName.setContent(ORCID_EMAIL_VALIDATOR_CLIENT_NAME);
+            source.setSourceName(sourceName);
+        }
+        org.orcid.jaxb.model.common_v2.SourceClientId sourceClientId = new org.orcid.jaxb.model.common_v2.SourceClientId(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
+        sourceClientId.setPath(ORCID_EMAIL_VALIDATOR_CLIENT_ID);
+        sourceClientId.setHost(orcidUrlManager.getBaseHost());
+        sourceClientId.setUri(orcidUrlManager.getBaseUrl() + "/client/" + ORCID_EMAIL_VALIDATOR_CLIENT_ID);
+        source.setSourceClientId(sourceClientId);
+        return source;
     }
 }

@@ -16,6 +16,7 @@ import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.SummaryManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
@@ -128,6 +129,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -271,7 +273,13 @@ public class MemberV3ApiServiceDelegatorImpl implements
     
     @Resource
     private SummaryManager summaryManager;
-    
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     public Boolean getFilterVersionOfIdentifiers() {
         return filterVersionOfIdentifiers;
     }
@@ -299,6 +307,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Record record = recordManagerReadOnly.getRecord(orcid, filterVersionOfIdentifiers);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
+            emailDomainManager.processProfessionalEmailsForV3API(record.getPerson().getEmails());
             sourceUtils.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
@@ -877,6 +886,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         }
 
+        emailDomainManager.processProfessionalEmailsForV3API(emails);
+
         ElementUtils.setPathToEmail(emails, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -1155,6 +1166,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, true);
         Person person = personDetailsManagerReadOnly.getPersonDetails(orcid, false);
         orcidSecurityManager.checkAndFilter(orcid, person);
+        emailDomainManager.processProfessionalEmailsForV3API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);

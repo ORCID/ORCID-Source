@@ -48,6 +48,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import java.util.List;
 
+import static org.orcid.core.constants.EmailConstants.ORCID_EMAIL_VALIDATOR_CLIENT_NAME;
+
 public class SourceUtils {
     private SourceNameCacheManager sourceNameCacheManager;
 
@@ -56,19 +58,30 @@ public class SourceUtils {
     }
 
     public void setSourceName(SourceAware sourceAware) {
-        if (sourceAware != null) {
-            Source source = sourceAware.getSource();
-            if (source != null) {
-                String sourceId = source.retrieveSourcePath();
-                if (!PojoUtil.isEmpty(sourceId)) {
-                    String sourceName = sourceNameCacheManager.retrieve(sourceId);
-                    if (!PojoUtil.isEmpty(sourceName)) {
-                        source.setSourceName(new SourceName(sourceName));
-                    } else {
-                        source.setSourceName(null);
-                    }
-                }
-            }
+        if (sourceAware == null) {
+            return;
+        }
+
+        Source source = sourceAware.getSource();
+        if (source == null) {
+            return;
+        }
+
+        String sourceId = source.retrieveSourcePath();
+        if (PojoUtil.isEmpty(sourceId)) {
+            return;
+        }
+
+        String providedSourceName = source.getSourceName() != null ? source.getSourceName().getContent() : null;
+        if (providedSourceName != null && providedSourceName.equals(ORCID_EMAIL_VALIDATOR_CLIENT_NAME)) {
+            return;
+        }
+
+        String sourceName = sourceNameCacheManager.retrieve(sourceId);
+        if (!PojoUtil.isEmpty(sourceName)) {
+            source.setSourceName(new SourceName(sourceName));
+        } else {
+            source.setSourceName(null);
         }
     }
 

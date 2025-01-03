@@ -70,10 +70,8 @@ public class OrcidJacksonJaxbJsonProviderPretty extends JacksonJaxbJsonProvider 
         Object o = null;
         try{
             o = super.readFrom(arg0, arg1, arg2, arg3, arg4, arg5);
-        }catch(JsonMappingException e){
-            Map<String, String> params = new HashMap<>();
-            params.put("error", e.getMessage());
-            throw new InvalidJSONException(params);
+        } catch(JsonMappingException e){
+            throw new InvalidJSONException(e.getMessage(), e);
         }
         if (jsonInputValidator.canValidate(o.getClass())){
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();

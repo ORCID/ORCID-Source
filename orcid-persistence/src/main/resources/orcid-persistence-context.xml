@@ -460,13 +460,13 @@
     
     <!-- Panoply Redshift -->
 	<bean id="panoplyRedshiftDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-		<property name="driverClassName" value="\${org.orcid.core.utils.panoply.driver:com.amazon.redshift.jdbc.Driver}" />
-        <property name="jdbcUrl" value="\${org.orcid.core.utils.panoply.jdbcUrl}" />
-        <property name="username" value="\${org.orcid.core.utils.panoply.username}" />
-        <property name="password" value="\${org.orcid.core.utils.panoply.password}" />
-        <property name="maximumPoolSize" value="\${org.orcid.core.utils.panoply.maxPoolSize:5}" />
-        <property name="idleTimeout" value="\${org.orcid.core.utils.panoply.idleConnectionTimeout:3600}" />
-        <property name="connectionTimeout" value="\${org.orcid.core.utils.panoply.connectionTimeout:3600}" />
+		<property name="driverClassName" value="${org.orcid.core.utils.panoply.driver:com.amazon.redshift.jdbc.Driver}" />
+        <property name="jdbcUrl" value="${org.orcid.core.utils.panoply.jdbcUrl}" />
+        <property name="username" value="${org.orcid.core.utils.panoply.username}" />
+        <property name="password" value="${org.orcid.core.utils.panoply.password}" />
+        <property name="maximumPoolSize" value="${org.orcid.core.utils.panoply.maxPoolSize:5}" />
+        <property name="idleTimeout" value="${org.orcid.core.utils.panoply.idleConnectionTimeout:3600}" />
+        <property name="connectionTimeout" value="${org.orcid.core.utils.panoply.connectionTimeout:3600}" />
 	</bean>
 	
 	<!-- Panoply JdbcTemplate Bean Definition -->

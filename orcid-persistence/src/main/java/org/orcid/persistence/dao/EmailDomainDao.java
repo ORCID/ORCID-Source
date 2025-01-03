@@ -13,7 +13,7 @@ public interface EmailDomainDao extends GenericDao<EmailDomainEntity, Long> {
     
     boolean updateRorId(long id, String rorId);
 
-    EmailDomainEntity findByEmailDomain(String emailDomain);
+    List<EmailDomainEntity>  findByEmailDomain(String emailDomain);
 
     List<EmailDomainEntity> findByCategory(EmailDomainEntity.DomainCategory category);
 }

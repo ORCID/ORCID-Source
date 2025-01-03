@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.oracle.truffle.api.profiles.Profile;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -81,6 +82,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SummaryManagerTest {
     private final String ORCID = "0000-0000-0000-0000";
     private final String CLIENT1 = "APP-0000";
+    private final String EMAIL_DOMAIN = "orcid.org";
 
     public SummaryManagerImpl manager = new SummaryManagerImpl();
 
@@ -107,6 +109,12 @@ public class SummaryManagerTest {
     
     @Mock
     private ProfileEntity profileEntityMock;
+
+    @Mock
+    private ProfileEmailDomainEntity profileEmailDomainEntityMock;
+
+    @Mock
+    private ProfileEmailDomainEntity profileEmailDomainEntityTwoMock;
     
     @Mock
     private WorksCacheManager worksCacheManagerMock;
@@ -165,10 +173,9 @@ public class SummaryManagerTest {
         ReflectionTestUtils.setField(manager, "researchResourceManagerReadOnly", researchResourceManagerReadOnlyMock);
 
         // Set EmailDomains
-        EmailDomains emailDomains = getEmailDomains();
-        Mockito.when(profileEmailDomainManagerReadOnlyMock.getPublicEmailDomains(Mockito.eq(ORCID))).thenReturn(new ArrayList<ProfileEmailDomainEntity>());
+        List<ProfileEmailDomainEntity> emailDomains = getEmailDomains();
+        Mockito.when(profileEmailDomainManagerReadOnlyMock.getPublicEmailDomains(Mockito.eq(ORCID))).thenReturn(emailDomains);
         ReflectionTestUtils.setField(manager, "profileEmailDomainManagerReadOnly", profileEmailDomainManagerReadOnlyMock);
-
         
         // Set metadata
         OrcidIdentifier oi = new OrcidIdentifier();
@@ -557,7 +564,12 @@ public class SummaryManagerTest {
         // Peer review
         assertEquals(Integer.valueOf(2), rs.getPeerReviews().getSelfAssertedCount());
         assertEquals(Integer.valueOf(4), rs.getPeerReviews().getPeerReviewPublicationGrants());
-        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());   
+        assertEquals(Integer.valueOf(16), rs.getPeerReviews().getTotal());
+
+        // Email domains
+        assertEquals("2024-10-20", rs.getEmailDomains().getEmailDomains().get(0).getVerificationDate().toString());
+        assertNull(rs.getEmailDomains().getEmailDomains().get(1).getVerificationDate());
+        assertEquals(2, rs.getEmailDomains().getEmailDomains().size());
     }       
     
     /**
@@ -588,9 +600,14 @@ public class SummaryManagerTest {
         // Peer review
         assertEquals(2, rs.getSelfAssertedPeerReviews());
         assertEquals(4, rs.getPeerReviewPublicationGrants());
-        assertEquals(16, rs.getPeerReviewsTotal());   
+        assertEquals(16, rs.getPeerReviewsTotal());
+        // Email domain
+        assertEquals(2, rs.getEmailDomains().size());
+        assertEquals("2024-10-20", rs.getEmailDomains().get(0).getVerificationDate());
+        assertEquals(null, rs.getEmailDomains().get(1).getVerificationDate());
+
     }
-    
+
     private PersonExternalIdentifiers getPersonExternalIdentifiers() {
         PersonExternalIdentifiers peis = new PersonExternalIdentifiers();
         PersonExternalIdentifier pei = new PersonExternalIdentifier();
@@ -607,9 +624,18 @@ public class SummaryManagerTest {
         return researchResources;
     }
     
-    private EmailDomains  getEmailDomains() {
-        EmailDomains emailDomains = new EmailDomains();
-        
+    private List<ProfileEmailDomainEntity>  getEmailDomains() {
+        List<ProfileEmailDomainEntity> emailDomains = new ArrayList<>();
+        Mockito.when(profileEmailDomainEntityMock.getEmailDomain()).thenReturn(EMAIL_DOMAIN);
+        Mockito.when(profileEmailDomainEntityMock.getGeneratedByScript()).thenReturn(false);
+        Mockito.when(profileEmailDomainEntityMock.getDateCreated()).thenReturn(new Date(124, 9, 20));
+        Mockito.when(profileEmailDomainEntityTwoMock.getEmailDomain()).thenReturn(EMAIL_DOMAIN + "2");
+        Mockito.when(profileEmailDomainEntityTwoMock.getGeneratedByScript()).thenReturn(true);
+        Mockito.when(profileEmailDomainEntityTwoMock.getDateCreated()).thenReturn(new Date(124, 11, 20));
+
+        emailDomains.add(profileEmailDomainEntityMock);
+        emailDomains.add(profileEmailDomainEntityTwoMock);
+
         return emailDomains;
     }
     

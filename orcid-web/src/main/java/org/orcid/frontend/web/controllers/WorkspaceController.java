@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
@@ -134,17 +133,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
-    }    
-
-    @ModelAttribute("workCategories")
-    public Map<String, String> retrieveWorkCategoriesAsMap() {
-        Map<String, String> workCategories = new LinkedHashMap<String, String>();
-
-        for (WorkCategory workCategory : WorkCategory.values()) {
-            workCategories.put(workCategory.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkCategory.").append(workCategory.value()).toString()));
-        }
-
-        return workCategories;
     }
 
     @ModelAttribute("citationTypes")

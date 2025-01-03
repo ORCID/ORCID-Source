@@ -17,8 +17,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  unit_tests_artifact:
-    uses: ./.github/workflows/unit_tests_artifact.yml
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  test_mvn:
+    uses: ./.github/workflows/test_mvn.yml
     with:
       seed_maven_cache: true
       install_maven_dependencies: true

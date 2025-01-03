@@ -1800,9 +1800,9 @@
         source_id="4444-4444-4444-4441"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />        
-      
-	<email
+    />
+
+    <email
         orcid="0000-0000-0000-0001"
         email="public_0000-0000-0000-0001@test.orcid.org"
         email_hash="8f649f6d12203f020ee26467547432add46bc5395ff8dd72242fa2d7aa4fc04a"
@@ -1813,7 +1813,33 @@
         client_source_id="APP-5555555555555555"        
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />        
+    />
+
+    <email
+        orcid="0000-0000-0000-0001"
+        email="limited_verified_0000-0000-0000-0001@test.orcid.org"
+        email_hash="afcsd87b8547a96sdfba9g7sfdbba87asdf542q7aqw4fxsd5d4g77g5s1a4fx1bbc"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="LIMITED"
+        client_source_id="APP-5555555555555555"
+        date_created="2018-01-01 00:00:00.00"
+        last_modified="2018-01-01 00:00:00.00"
+    />
+
+    <email
+        orcid="0000-0000-0000-0001"
+        email="verified_non_professional@nonprofessional.org"
+        email_hash="bb24ead143f1a58f97394436a0548e7bc3d30a539188accd5d82a28af4345778"
+        is_primary="false"
+        is_current="false"
+        is_verified="true"
+        visibility="PUBLIC"
+        client_source_id="APP-5555555555555555"
+        date_created="2024-01-01 00:00:00.00"
+        last_modified="2024-01-01 00:00:00.00"
+    />
       
 	<email
         orcid="0000-0000-0000-0002"
@@ -1826,7 +1852,7 @@
         client_source_id="APP-5555555555555555"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />  
+    /> 
       
 	<email
         orcid="0000-0000-0000-0003"
@@ -1839,7 +1865,20 @@
         client_source_id="APP-5555555555555555"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />  
+    />
+
+	<email
+        orcid="0000-0000-0000-0003"
+        email="public_0000-0000-0000-0003@orcid.org"
+        email_hash="f936d182c82f831ccee9667ac7f8fc6b9107fa5647b0c4a8250759462d5707d0"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PUBLIC"
+        source_id="0000-0000-0000-0003"
+        date_created="2016-01-01 00:00:00.00"
+        last_modified="2016-01-01 00:00:00.00"
+    />	
 
 	<email
         orcid="0000-0000-0000-0003"
@@ -1942,8 +1981,8 @@
         source_id="0000-0000-0000-0004"
         date_created="2016-01-01 00:00:00.00"
         last_modified="2016-01-01 00:00:00.00"
-    />  
-    
+    />
+
     <email
         orcid="4444-4444-4444-4497"
         email="public_4444-4444-4444-4497@test.orcid.org"
@@ -2272,4 +2311,10 @@
     	last_modified="2020-01-01 15:00:00.00"
     	date_created="2020-01-01 15:00:00.00"
     />    
+	
+	<email_domain
+        id="0"
+        email_domain="orcid.org"
+        category="PROFESSIONAL"
+    />
 </dataset>

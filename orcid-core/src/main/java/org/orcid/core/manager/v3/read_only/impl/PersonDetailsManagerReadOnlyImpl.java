@@ -1,8 +1,10 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.BiographyManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -12,6 +14,7 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -28,6 +31,11 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Resource;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 
@@ -46,6 +54,11 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     protected RecordNameManagerReadOnly recordNameManager;
 
     protected BiographyManagerReadOnly biographyManager;
+
+    protected EmailDomainManager emailDomainManager;
+
+    @Resource
+    protected SourceEntityUtils sourceEntityUtils;
 
     public void setAddressManager(AddressManagerReadOnly addressManager) {
         this.addressManager = addressManager;
@@ -77,6 +90,10 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
 
     public void setBiographyManager(BiographyManagerReadOnly biographyManager) {
         this.biographyManager = biographyManager;
+    }
+
+    public void setEmailDomainManager(EmailDomainManager emailDomainManager) {
+        this.emailDomainManager = emailDomainManager;
     }
 
     @Override

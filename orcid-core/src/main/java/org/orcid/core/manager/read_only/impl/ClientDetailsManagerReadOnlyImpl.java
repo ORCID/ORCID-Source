@@ -88,7 +88,7 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
                     LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + result.getId());
             }
         } catch (NoResultException nre) {
-            LOGGER.error("Error getting client by id:" + clientId, nre);
+            LOGGER.error("Client not found: '" + clientId + "'");
         }
         return result;
     }    

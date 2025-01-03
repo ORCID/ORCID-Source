@@ -23,7 +23,7 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
 
     @Override
     public PublicApiDailyRateLimitEntity findByClientIdAndRequestDate(String clientId, LocalDate requestDate) {
-        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM public_api_daily_rate_limit p client_id=:clientId and requestDate=:requestDate",
+        Query nativeQuery = entityManager.createNativeQuery("SELECT * FROM public_api_daily_rate_limit p where p.client_id=:clientId and p.request_date=:requestDate",
                 PublicApiDailyRateLimitEntity.class);
         nativeQuery.setParameter("clientId", clientId);
         nativeQuery.setParameter("requestDate", requestDate);
@@ -112,6 +112,19 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
         query.setParameter("requestDate", papiRateLimitingEntity.getRequestDate());
         query.executeUpdate();
         return;
+    }
+
+    @Override
+    @Transactional
+    public int cleanup(int daysToKeep) {
+        if(daysToKeep <= 1) {
+            throw new IllegalArgumentException("daysToKeep must be greater than 1");
+        }
+        LocalDate lastDayToKeep = LocalDate.now().minusDays(daysToKeep);
+        LOG.info("About to remove public_api_daily_rate_limit older than {}", lastDayToKeep);
+        Query query = entityManager.createNativeQuery("DELETE FROM public_api_daily_rate_limit WHERE date_created < :lastDayToKeep");
+        query.setParameter("lastDayToKeep", lastDayToKeep);
+        return query.executeUpdate();
     }
 
     private static String logQueryWithParams(String baseQuery, Map<String, Object> params) {

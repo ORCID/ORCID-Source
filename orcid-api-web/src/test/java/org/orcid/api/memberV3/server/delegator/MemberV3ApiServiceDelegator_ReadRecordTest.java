@@ -1,11 +1,6 @@
 package org.orcid.api.memberV3.server.delegator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +72,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.Assert.*;
+
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
 public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
@@ -103,20 +100,6 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewRecordWrongScope() {
-        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        Response response = serviceDelegator.viewRecord(ORCID);
-        // Verify everything inside is public
-        Record record = (Record) response.getEntity();
-        assertNotNull(record);
-        assertEquals("/0000-0000-0000-0003", record.getPath());
-        assertEquals("/0000-0000-0000-0003/activities", record.getActivitiesSummary().getPath());
-        Utils.assertIsPublicOrSource(record.getActivitiesSummary(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
-        assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
-        Utils.assertIsPublicOrSource(record.getPerson(), SecurityContextTestUtils.DEFAULT_CLIENT_ID);
-    }
-
-    @Test
     public void testViewRecordReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
         Response r = serviceDelegator.viewRecord(ORCID);
@@ -127,6 +110,51 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555555");
         assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555555");
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        assertNotNull(record.getPerson().getEmails().getEmails());
+        assertEquals(4, record.getPerson().getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
+        emails.add("private_0000-0000-0000-0003@test.orcid.org");
+
+        for(Email e : record.getPerson().getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+        assertTrue(emails.isEmpty());
+    }
+
+    @Test
+    public void testViewRecordReadPublic_ClientNotSourceOfAnyEmail() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555556", ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewRecord(ORCID);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record);
+        assertEquals("/0000-0000-0000-0003", record.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", record.getActivitiesSummary().getPath());
+        Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555556");
+        assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
+        Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555556");
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        assertNotNull(record.getPerson().getEmails().getEmails());
+        assertEquals(2, record.getPerson().getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+
+        for(Email e : record.getPerson().getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+        assertTrue(emails.isEmpty());
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
@@ -235,21 +263,29 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(person.getEmails());
         Utils.verifyLastModified(person.getEmails().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/email", person.getEmails().getPath());
-        assertEquals(4, person.getEmails().getEmails().size());
+        assertEquals(5, person.getEmails().getEmails().size());
         for (Email email : person.getEmails().getEmails()) {
             Utils.verifyLastModified(email.getLastModifiedDate());
             if (email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("0000-0000-0000-0000", email.getSource().retrieveSourcePath());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("ORCID email validation", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("0000-0000-0000-0000", email.getSource().retrieveSourcePath());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("ORCID email validation", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PRIVATE.value(), email.getVisibility().value());
+                assertEquals("0000-0000-0000-0000", email.getSource().retrieveSourcePath());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.value(), email.getVisibility().value());
+                assertEquals("ORCID email validation", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                assertEquals("0000-0000-0000-0003", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("0000-0000-0000-0000", email.getSource().retrieveSourcePath());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("ORCID email validation", email.getSource().getSourceName().getContent());
+            } else if (email.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                assertEquals("0000-0000-0000-0000", email.getSource().retrieveSourcePath());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("ORCID email validation", email.getSource().getSourceName().getContent());
             } else {
                 fail("Invalid email found: " + email.getEmail());
             }
@@ -1050,12 +1086,13 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(3, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
 
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -1064,6 +1101,8 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found4 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -1072,6 +1111,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
 
         // External identifiers
         assertNotNull(p.getExternalIdentifiers());
@@ -1211,9 +1251,9 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
         
-        assertEquals(4, email.getEmails().size());
+        assertEquals(5, email.getEmails().size());
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -1224,6 +1264,8 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 found3 = true;
             } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
                 found4 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found5 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -1233,6 +1275,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
+        assertTrue(found5);
         this.assertAllPublicButEmails(p);
     }
     
@@ -1302,5 +1345,35 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, ru.getResearcherUrls().get(0).getVisibility());
+    }
+
+    @Test
+    public void checkSourceOnEmail_RecordEndpointTest() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.EMAIL_READ_PRIVATE);
+        Response r = serviceDelegator.viewRecord(orcid);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        checkEmails(record.getPerson().getEmails());
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non verified professional email addresses should not change
+                assertEquals("0000-0000-0000-0000", e.getSource().retrieveSourcePath());
+                assertEquals("ORCID email validation", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
+            }
+        }
     }
 }

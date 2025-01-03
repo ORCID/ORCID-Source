@@ -1,0 +1,18 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+	<changeSet id="ADD-PAPI-LIMIT-INDEXES-IP-ADDRESS" author="Camelia Dumitru" runInTransaction="false" dbms="postgresql">
+		<sql>create index concurrently if not exists idx_ip_address on public_api_daily_rate_limit(ip_address);</sql>
+	</changeSet>
+	<changeSet id="ADD-PAPI-LIMIT-INDEXES-CLIENT-ID" author="Camelia Dumitru" runInTransaction="false" dbms="postgresql">
+		<sql>create index concurrently if not exists idx_client_id on public_api_daily_rate_limit(client_id);</sql>
+	</changeSet>
+	<changeSet id="ADD-PAPI-LIMIT-INDEXES-REQUEST-DATE" author="Camelia Dumitru" runInTransaction="false" dbms="postgresql">
+		<sql>create index concurrently if not exists idx_request_date on public_api_daily_rate_limit(request_date);</sql>
+	</changeSet>
+	<changeSet id="ADD-PAPI-LIMIT-INDEXES-COMPOSITE" author="Camelia Dumitru" runInTransaction="false" dbms="postgresql">
+		<sql>create index concurrently if not exists idx_client_ip_date on public_api_daily_rate_limit(client_id, ip_address, request_date);</sql>
+	</changeSet>
+	
+</databaseChangeLog>

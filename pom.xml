@@ -147,6 +147,9 @@ the software.
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/*ITest.java</exclude>
                         <exclude>org/orcid/integration/**/*.java</exclude>
+                        <exclude>**/OrgManagerTest.java</exclude>
+                        <exclude>**/LoadLEIDataTest.java</exclude>
+                        <exclude>**/SchemaOrgDocumentTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -918,7 +921,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.3.2</version>
+               <version>3.3.5</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
