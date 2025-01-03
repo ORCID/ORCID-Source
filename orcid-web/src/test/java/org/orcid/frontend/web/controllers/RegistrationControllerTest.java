@@ -163,7 +163,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(orcidUserDetailsServiceMock.loadUserByProfile(Mockito.any(ProfileEntity.class))).thenAnswer(new Answer<OrcidProfileUserDetails>() {
             @Override
             public OrcidProfileUserDetails answer(InvocationOnMock invocation) throws Throwable {
-                return new OrcidProfileUserDetails("0000-0000-0000-0000", "user_1@test.orcid.org", "pwd");
+                return new OrcidProfileUserDetails("0000-0000-0000-0000", "pwd");
             }
         });
         
@@ -171,7 +171,7 @@ public class RegistrationControllerTest extends DBUnitTest {
             @Override
             public UsernamePasswordAuthenticationToken answer(InvocationOnMock invocation) throws Throwable {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("0000-0000-0000-0000", "pwd", Arrays.asList(OrcidWebRole.ROLE_USER));
-                auth.setDetails(new OrcidProfileUserDetails("0000-0000-0000-0000", "user_1@test.orcid.org", "pwd"));
+                auth.setDetails(new OrcidProfileUserDetails("0000-0000-0000-0000", "pwd"));
                 return auth;
             }
         });

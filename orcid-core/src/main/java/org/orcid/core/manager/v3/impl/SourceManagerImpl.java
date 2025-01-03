@@ -5,6 +5,7 @@ import java.util.Collection;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
@@ -68,7 +69,7 @@ public class SourceManagerImpl implements SourceManager {
             return authorizationRequest.getClientId();
         }
         // Normal web user
-        return retrieveEffectiveOrcid(authentication);
+        return AuthenticationUtils.retrieveEffectiveOrcid();
     }
 
     /** This should be used by managers that need active Source information, including OBO.
@@ -106,7 +107,7 @@ public class SourceManagerImpl implements SourceManager {
             }
             return source;
         }
-        String userOrcid = retrieveEffectiveOrcid(authentication);
+        String userOrcid = AuthenticationUtils.retrieveEffectiveOrcid();
         if(userOrcid == null){
             // Must be system role
             return null;
@@ -137,7 +138,7 @@ public class SourceManagerImpl implements SourceManager {
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));            
             return sourceEntity;
         }
-        String userOrcid = retrieveEffectiveOrcid(authentication);
+        String userOrcid = AuthenticationUtils.retrieveEffectiveOrcid();
         if(userOrcid == null){
             // Must be system role
             return null;
@@ -150,17 +151,6 @@ public class SourceManagerImpl implements SourceManager {
         return sourceEntity;
     }
 
-    private String retrieveEffectiveOrcid(Authentication authentication) {
-        if (authentication.getDetails() != null && OrcidProfileUserDetails.class.isAssignableFrom(authentication.getDetails().getClass())) {
-            return ((OrcidProfileUserDetails) authentication.getDetails()).getOrcid();
-        }
-        return null;
-    }
-
-    private String retrieveEffectiveOrcid() {
-        return retrieveEffectiveOrcid(SecurityContextHolder.getContext().getAuthentication());
-    }
-
     @Override
     public boolean isInDelegationMode() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -168,7 +158,7 @@ public class SourceManagerImpl implements SourceManager {
         if (realUserOrcid == null) {
             return false;
         }
-        return !retrieveEffectiveOrcid().equals(realUserOrcid);
+        return !AuthenticationUtils.retrieveEffectiveOrcid().equals(realUserOrcid);
     }
 
     @Override
@@ -188,7 +178,7 @@ public class SourceManagerImpl implements SourceManager {
             return realUserIfInDelegationMode;
         }
         // Normal web user
-        return retrieveEffectiveOrcid(authentication);
+        return AuthenticationUtils.retrieveEffectiveOrcid();
     }
 
     private String getRealUserIfInDelegationMode(Authentication authentication) {

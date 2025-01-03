@@ -1,0 +1,82 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="Angel Montenegro" id="ADD-SCOPES">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="scopes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="scopes" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORITIES">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorities"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorities" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-STATE-ATTRIBUTE">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_state_attribute"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorization_state_attribute" type="VARCHAR(500)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-AUTHORIZATION-URI">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_request_uri"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorization_request_uri" type="VARCHAR(2500)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUTH-CODE-REQ-ID">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="spring_authorization_code_request_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="spring_authorization_code_request_id" type="VARCHAR(255)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-SPRING-AUTH-CODE-EXPIRES-AT">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="authorization_code_expires_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="authorization_code_expires_at" type="TIMESTAMP WITH TIME ZONE" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="Angel Montenegro" id="ADD-ATTRIBUTES">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="oauth2_authoriziation_code_detail" columnName="attributes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="oauth2_authoriziation_code_detail">
+            <column name="attributes" type="VARCHAR(4000)" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

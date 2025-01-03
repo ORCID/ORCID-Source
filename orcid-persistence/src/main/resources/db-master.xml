@@ -408,4 +408,5 @@
   <include file="/db/updates/create_public_api_daily_rate_limit.xml" />
   <include file="/db/updates/add_public_api_daily_rate_limit_indexes.xml" />
   <include file="/db/updates/add_generated_by_script_column_to_profile_email_domain.xml" />
+  <include file="/db/updates/oauth2_authoriziation_code_detail_improvements.xml" />
 </databaseChangeLog>
