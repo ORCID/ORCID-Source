@@ -104,7 +104,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             + "You can increase your daily quota by registering for and using Public API client credentials "
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)";
 
-    private static final String SUBJECT = "[ORCID-API] WARNING! You have exceeded the daily Public API Usage Limit - ";
+    private static final String SUBJECT = "[ORCID-API] WARNING! You have exceeded the daily Public API Usage Limit - ({ORCID-ID})";
 
     @Value("${org.orcid.papi.rate.limit.fromEmail:apiusage@orcid.org}")
     private String FROM_ADDRESS;
@@ -230,7 +230,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         templateParams.put("locale", LocaleUtils.toLocale("en"));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", SUBJECT + orcidId);
+        templateParams.put("subject", SUBJECT.replace("{ORCID-ID}", orcidId));
         return templateParams;
     }
 
@@ -256,8 +256,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             setPapiRateExceededItemInPanoply(item);
         }
 
+        String subject = templateParams.containsKey("subject") ? ((String) templateParams.get("subject")) : SUBJECT;
         // Send the email
-        boolean mailSent = mailGunManager.sendEmailWithCC(FROM_ADDRESS, email, CC_ADDRESS, SUBJECT, body, html);
+        boolean mailSent = mailGunManager.sendEmailWithCC(FROM_ADDRESS, email, CC_ADDRESS, subject, body, html);
         if (!mailSent) {
             LOG.error("Failed to send email for papi limits, orcid=" + memberId + " email: " + email);
         }
