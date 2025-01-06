@@ -8,7 +8,6 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,17 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.service.OrcidTokenStore;
-import org.orcid.core.utils.OrcidRequestUtil;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.PublicApiDailyRateLimitDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity;
 import org.orcid.utils.email.MailGunManager;
 import org.orcid.utils.panoply.PanoplyPapiDailyRateExceededItem;
@@ -36,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -48,9 +44,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private PublicApiDailyRateLimitDao papiRateLimitingDao;
-
-    @Autowired
-    private OrcidSecurityManager orcidSecurityManager;
 
     @Autowired
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -96,9 +89,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.papi.rate.limit.clientId.whiteSpaceSeparatedWhiteList}")
     private String papiClientIdWhiteSpaceSeparatedWhiteList;
+    
+    @Value("${org.orcid.papi.rate.limit.referrer.whiteSpaceSeparatedWhiteList}")
+    private String papiReferrerWhiteSpaceSeparatedWhiteList;
 
     private List<String> papiIpWhiteList;
     private List<String> papiClientIdWhiteList;
+    private List<String> papiReferrerWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -117,16 +114,18 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         super.afterPropertiesSet();
         papiIpWhiteList = StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
         papiClientIdWhiteList = StringUtils.isNotBlank(papiClientIdWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiClientIdWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
+        papiReferrerWhiteList = StringUtils.isNotBlank(papiReferrerWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiReferrerWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
     }
 
     @Override
     public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
         LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
-        if (enableRateLimiting) {
+
+        if (enableRateLimiting && !isReferrerWhiteListed(httpServletRequest.getHeader(HttpHeaders.REFERER))) {
             String tokenValue = null;
-            if (httpServletRequest.getHeader("Authorization") != null) {
-                tokenValue = httpServletRequest.getHeader("Authorization").replaceAll("Bearer|bearer", "").trim();
+            if (httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION) != null) {
+                tokenValue = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION).replaceAll("Bearer|bearer", "").trim();
             }
             String ipAddress = getClientIpAddress(httpServletRequest);
 
@@ -302,5 +301,12 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     private boolean isClientIdWhiteListed(String clientId) {
         return (papiClientIdWhiteList != null) ? papiClientIdWhiteList.contains(clientId) :false;
+    }
+    
+    private boolean isReferrerWhiteListed(String referrer) {
+        if (referrer == null)
+            return false;
+        else
+            return (papiReferrerWhiteList != null) ? papiReferrerWhiteList.contains(referrer) :false;
     }
 }
