@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "creditName", "orcidIdentifier", "externalIdentifiers", "employments", "professionalActivities", "fundings",
-        "works", "peerReviews" })
+        "works", "peerReviews", "emailDomains", "educationQualifications", "researchResources" })
 @XmlRootElement(name = "record-summary", namespace = "http://www.orcid.org/ns/summary")
 @Schema(description = "Record summary")
 public class RecordSummary implements Serializable {
@@ -51,6 +51,13 @@ public class RecordSummary implements Serializable {
     private Works works;
     @XmlElement(name = "peer-reviews", namespace = "http://www.orcid.org/ns/summary")
     private PeerReviews peerReviews;
+
+    @XmlElement(name = "education-qualifications", namespace = "http://www.orcid.org/ns/summary")
+    private EducationQualifications educationQualifications;
+    @XmlElement(name = "research-resources", namespace = "http://www.orcid.org/ns/summary")
+    private ResearchResources researchResources;
+    @XmlElement(name = "email-domains", namespace = "http://www.orcid.org/ns/summary")
+    private EmailDomains emailDomains;
 
     public OrcidIdentifier getOrcidIdentifier() {
         return orcidIdentifier;
@@ -132,10 +139,34 @@ public class RecordSummary implements Serializable {
         this.peerReviews = peerReviews;
     }
 
+    public EducationQualifications getEducationQualifications() {
+        return educationQualifications;
+    }
+
+    public void setEducationQualifications(EducationQualifications educationQualifications) {
+        this.educationQualifications = educationQualifications;
+    }
+
+    public ResearchResources getResearchResources() {
+        return researchResources;
+    }
+
+    public void setResearchResources(ResearchResources researchResources) {
+        this.researchResources = researchResources;
+    }
+
+    public EmailDomains getEmailDomains() {
+        return emailDomains;
+    }
+
+    public void setEmailDomains(EmailDomains emailDomains) {
+        this.emailDomains = emailDomains;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(createdDate, creditName, employments, externalIdentifiers, fundings, lastModifiedDate, orcidIdentifier, orcidUrlManager, peerReviews,
-                professionalActivities, works);
+                professionalActivities, works, emailDomains, educationQualifications, researchResources );
     }
 
     @Override
@@ -151,6 +182,8 @@ public class RecordSummary implements Serializable {
                 && Objects.equals(externalIdentifiers, other.externalIdentifiers) && Objects.equals(fundings, other.fundings)
                 && Objects.equals(lastModifiedDate, other.lastModifiedDate) && Objects.equals(orcidIdentifier, other.orcidIdentifier)
                 && Objects.equals(orcidUrlManager, other.orcidUrlManager) && Objects.equals(peerReviews, other.peerReviews)
-                && Objects.equals(professionalActivities, other.professionalActivities) && Objects.equals(works, other.works);
-    }    
+                && Objects.equals(professionalActivities, other.professionalActivities) && Objects.equals(works, other.works) 
+                && Objects.equals(educationQualifications, other.educationQualifications) && Objects.equals(researchResources, other.researchResources) 
+                && Objects.equals(emailDomains, other.emailDomains) ;
+    }
 }

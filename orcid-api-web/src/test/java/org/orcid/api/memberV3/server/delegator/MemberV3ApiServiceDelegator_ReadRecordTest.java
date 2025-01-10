@@ -235,21 +235,34 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(person.getEmails());
         Utils.verifyLastModified(person.getEmails().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/email", person.getEmails().getPath());
-        assertEquals(4, person.getEmails().getEmails().size());
+        assertEquals(5, person.getEmails().getEmails().size());
         for (Email email : person.getEmails().getEmails()) {
             Utils.verifyLastModified(email.getLastModifiedDate());
             if (email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertNull(email.getSource().getSourceOrcid());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+                assertNull(email.getSource().getSourceOrcid());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PRIVATE.value(), email.getVisibility().value());
+                assertNull(email.getSource().getSourceOrcid());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.value(), email.getVisibility().value());
+                assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("0000-0000-0000-0003", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+                assertNotNull(email.getSource().getSourceOrcid());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("Credit Name", email.getSource().getSourceName().getContent());
+            } else if (email.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                assertEquals("0000-0000-0000-0000", email.getSource().retrieveSourcePath());
+                assertNull(email.getSource().getSourceOrcid());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("ORCID email validation", email.getSource().getSourceName().getContent());
             } else {
                 fail("Invalid email found: " + email.getEmail());
             }
@@ -1050,12 +1063,13 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(3, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
 
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -1064,6 +1078,8 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found4 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -1072,6 +1088,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
 
         // External identifiers
         assertNotNull(p.getExternalIdentifiers());
@@ -1211,9 +1228,9 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
         
-        assertEquals(4, email.getEmails().size());
+        assertEquals(5, email.getEmails().size());
 
-        boolean found1 = false, found2 = false, found3 = false, found4 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -1224,6 +1241,8 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 found3 = true;
             } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
                 found4 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found5 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -1233,6 +1252,7 @@ public class MemberV3ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertTrue(found2);
         assertTrue(found3);
         assertTrue(found4);
+        assertTrue(found5);
         this.assertAllPublicButEmails(p);
     }
     

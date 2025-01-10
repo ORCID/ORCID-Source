@@ -94,9 +94,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
-    @Resource(name = "emailManagerReadOnlyV3")
-    private EmailManagerReadOnly emailManagerReadOnly;
-
     @Resource(name = "profileEmailDomainManagerReadOnly")
     private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnly;
 
@@ -536,7 +533,19 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (Features.EMAIL_DOMAINS.isActive()) {
             emailDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
-        return org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails, emailDomains);
+        org.orcid.pojo.ajaxForm.Emails emails = org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails, emailDomains);
+        // Old emails are missing the source name and id -- assign the user as the source
+        if (emails.getEmails() != null) {
+            for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
+                if (email.getSource() == null && email.getSourceName() == null) {
+                    String orcid = getCurrentUserOrcid();
+                    String displayName = getPersonDetails(orcid, true).getDisplayName();
+                    email.setSource(orcid);
+                    email.setSourceName(displayName);
+                }
+            }
+        }
+        return emails;
     }
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)

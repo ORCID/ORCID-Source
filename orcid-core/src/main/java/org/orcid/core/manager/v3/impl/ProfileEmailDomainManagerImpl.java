@@ -1,15 +1,18 @@
 package org.orcid.core.manager.v3.impl;
 
 
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailDomainDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +37,14 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     @Resource(name = "emailDaoReadOnly")
     protected EmailDao emailDaoReadOnly;
 
-    private static final String DEFAULT_DOMAIN_VISIBILITY = Visibility.PRIVATE.toString().toUpperCase();
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Transactional
     public void updateEmailDomains(String orcid, org.orcid.pojo.ajaxForm.Emails newEmails) {
+        if (orcid == null || orcid.isBlank()) {
+            throw new IllegalArgumentException("ORCID must not be empty");
+        }
         List<ProfileEmailDomainEntity> existingEmailDomains = profileEmailDomainDao.findByOrcid(orcid);
 
         if (existingEmailDomains != null) {
@@ -51,7 +58,6 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
                     }
                 }
             }
-
             // REMOVE DOMAINS
             for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
                 boolean deleteEmail = true;
@@ -69,49 +75,25 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
     }
 
     public void processDomain(String orcid, String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+        if (orcid == null || orcid.isBlank()) {
+            throw new IllegalArgumentException("ORCID must not be empty");
+        }
+
         String domain = email.split("@")[1];
         EmailDomainEntity domainInfo = emailDomainDao.findByEmailDomain(domain);
-        String domainVisibility = DEFAULT_DOMAIN_VISIBILITY;
         // Check if email is professional
         if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
             ProfileEmailDomainEntity existingDomain = profileEmailDomainDao.findByEmailDomain(orcid, domain);
             // ADD NEW DOMAIN IF ONE DOESN'T EXIST
             if (existingDomain == null) {
                 // Verify the user doesn't have more emails with that domain
-                List<EmailEntity> existingEmails = emailDaoReadOnly.findByOrcid(orcid, System.currentTimeMillis());
-                if(existingEmails != null && existingEmails.size() > 1) {
-                    for(EmailEntity emailEntity : existingEmails) {
-                        //If it is not the same emails that is being verified and it is verified
-                        if(!email.equals(emailEntity.getEmail()) && emailEntity.getVerified()) {
-                            try {
-                                String emailEntityDomain = (emailEntity.getEmail() == null) ? null : (email.split("@")[1]);
-                                // If one of the existing emails have the same domain as the email being verified check the visibility and select the less restrictive
-                                if(domain.equals(emailEntityDomain)){
-                                    String entityVisibility = emailEntity.getVisibility();
-                                    domainVisibility = getLessRestrictiveVisibility(domainVisibility, entityVisibility);
-                                }
-                            } catch (Exception e) {
-                                LOGGER.warn("Could not get email domain from email entity " + emailEntity.getEmail(), e);
-                            }
-                        }
-                    }
-                }
+                ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                String domainVisibility = profile.getActivitiesVisibilityDefault();
                 profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
             }
         }
-    }
-
-    private String getLessRestrictiveVisibility(String a, String b) {
-        String visibility = DEFAULT_DOMAIN_VISIBILITY;
-        if(Visibility.PUBLIC.name().equals(a) || Visibility.PUBLIC.name().equals(b)) {
-            visibility = Visibility.PUBLIC.name();
-        } else if(a.equals(b)) {
-            visibility = a;
-        } else if(Visibility.PRIVATE.name().equals(a)) {
-            visibility = b;
-        } else if(Visibility.PRIVATE.name().equals(b)) {
-            visibility = a;
-        }
-        return visibility;
     }
 }

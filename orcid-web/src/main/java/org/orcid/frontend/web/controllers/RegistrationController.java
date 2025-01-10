@@ -328,7 +328,7 @@ public class RegistrationController extends BaseController {
         regEmailValidate(request, reg, false, false);
         registerTermsOfUseValidate(reg);
 
-        if (Features.REGISTRATION_2_0.isActive() && reg.getAffiliationForm() != null) {
+        if (reg.getAffiliationForm() != null) {
             AffiliationForm affiliationForm = reg.getAffiliationForm();
             if (!AffiliationType.EMPLOYMENT.equals(AffiliationType.fromValue(affiliationForm.getAffiliationType().getValue()))) {
                 setError(affiliationForm.getAffiliationType(), "Invalid affiliation type");
@@ -551,7 +551,7 @@ public class RegistrationController extends BaseController {
         String unencryptedPassword = registration.getPassword().getValue();
         String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
         logUserIn(request, response, orcidId, unencryptedPassword);
-        if (Features.REGISTRATION_2_0.isActive() && registration.getAffiliationForm() != null) {
+        if (registration.getAffiliationForm() != null) {
             createAffiliation(registration, orcidId);
         }
     }

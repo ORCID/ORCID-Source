@@ -1,0 +1,54 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-PUBLIC_API-DAILY-LIMIT-TABLE" author="Camelia Dumitru">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="public_api_daily_rate_limit" />
+			</not>
+		</preConditions>	
+		<createTable tableName="public_api_daily_rate_limit">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="public_api_limit_daily_pkey" />
+			</column>
+			<column name="client_id" type="VARCHAR(255)">
+				<constraints nullable="true" />
+			</column>
+			<column name="ip_address" type="VARCHAR(200)"/>
+			<column name="request_count" type="bigint" >
+				<constraints nullable="false" />
+            </column>	
+            <column name="request_date" type="DATE">
+           		 <constraints nullable="false" />
+            </column>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
+		</createTable>
+		
+		<addForeignKeyConstraint 
+			constraintName="public_api_rate_limiting_client_id_fk" 
+			baseTableName="public_api_daily_rate_limit" baseColumnNames="client_id" 
+			referencedTableName="client_details" referencedColumnNames="client_details_id" />
+			
+		<!-- Add a unique constraint for the combination of client_id, ip_address, and request_date -->
+		<addUniqueConstraint 
+            constraintName="uc_client_ip_date" 
+            tableName="public_api_daily_rate_limit" 
+            columnNames="client_id, ip_address, request_date" />
+            
+        <createSequence
+        	sequenceName="papi_daily_limit_seq"
+        	startValue="1"
+        	incrementBy="1" />
+	</changeSet>
+	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-PAPI-DAILY-LIMIT-TABLE" author="Camelia Dumitru" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON public_api_daily_rate_limit TO orcidro;</sql>
+	</changeSet>
+	
+</databaseChangeLog>

@@ -7,26 +7,17 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
-    @Label("Public record header with summary")
-    NEW_RECORD_HEADER_WITH_SUMMARY,
+    @Label("OAUTH DOMAINS INTERSTITIAL")
+    OAUTH_DOMAINS_INTERSTITIAL,
 
-    @Label("Sign in updates V1")
-    SIGN_IN_UPDATES_V1,
-
+    @Label("New Relic Browser Monitoring")
+    NEW_RELIC_BROWSER_MONITORING,
+  
     @Label("Homepage Headless WordPress")
     WORDPRESS_HOME_PAGE,
 
-    @Label("Registration 2.1: Add affiliations on registration")
-    REGISTRATION_2_1,
-   
-    @Label("Registration 2.0")
-    REGISTRATION_2_0,
-
     @Label("Track user events")
     EVENTS,
-
-    @Label("Professional activities")
-    PROFESSIONAL_ACTIVITIES,
 
     @Label("Redirect PUT token actions from *.pub.orcid.org to *.orcid.org")
     REDIRECT_PUT_TOKEN_ENDPOINT,
@@ -65,7 +56,10 @@ public enum Features implements Feature {
     EMAIL_DOMAINS,
 
     @Label("Enable email domains in the UI")
-    EMAIL_DOMAINS_UI;
+    EMAIL_DOMAINS_UI,
+    
+    @Label("Enforce rate limiting for public API when disabled the rate monitoring is on. When disabled is the mode is monitoring only.")
+    ENABLE_PAPI_RATE_LIMITING;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

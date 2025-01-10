@@ -72,6 +72,16 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         return orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(token);
     }
     
+    @Override
+    public String readClientId(String token) {
+        String clientId = null;
+        OrcidOauth2TokenDetail orcidTokenDetail = orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(token);
+        if(orcidTokenDetail != null) {
+            clientId = orcidTokenDetail.getClientDetailsId();
+        }
+        return clientId;
+    }
+    
     /**
      * Read the authentication stored under the specified token value.
      * 

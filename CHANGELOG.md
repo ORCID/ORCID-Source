@@ -1,3 +1,202 @@
+## v2.68.9 - 2024-11-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.8...v2.68.9)
+
+## v2.68.8 - 2024-11-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.7...v2.68.8)
+
+## v2.68.7 - 2024-11-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.6...v2.68.7)
+
+## v2.68.6 - 2024-11-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.5...v2.68.6)
+
+## v2.68.5 - 2024-11-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.4...v2.68.5)
+
+- [#7138](https://github.com/ORCID/ORCID-Source/pull/7138): Localhost check is useless since now we use dev.orcid.org
+
+## v2.68.4 - 2024-11-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.3...v2.68.4)
+
+- [#7137](https://github.com/ORCID/ORCID-Source/pull/7137): Referer header is an uri not url
+
+## v2.68.3 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.2...v2.68.3)
+
+## v2.68.2 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.1...v2.68.2)
+
+## v2.68.1 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.0...v2.68.1)
+
+## v2.68.0 - 2024-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.16...v2.68.0)
+
+## v2.67.16 - 2024-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.15...v2.67.16)
+
+## v2.67.15 - 2024-11-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.14...v2.67.15)
+
+- [#7133](https://github.com/ORCID/ORCID-Source/pull/7133): lmendoza/9453-update-node-version
+- [#7130](https://github.com/ORCID/ORCID-Source/pull/7130): refactor/matrix-and-fork-detection-bldtest
+
+### Feature
+
+- helper command comments for yarn corepack install
+
+## v2.67.14 - 2024-11-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.13...v2.67.14)
+
+## v2.67.13 - 2024-11-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.12...v2.67.13)
+
+## v2.67.12 - 2024-11-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.11...v2.67.12)
+
+## v2.67.11 - 2024-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.10...v2.67.11)
+
+## v2.67.10 - 2024-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.9...v2.67.10)
+
+## v2.67.9 - 2024-11-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.8...v2.67.9)
+
+## v2.67.8 - 2024-11-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.7...v2.67.8)
+
+## v2.67.7 - 2024-11-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.6...v2.67.7)
+
+- [#7120](https://github.com/ORCID/ORCID-Source/pull/7120): 9422-email-domains-interstitial-oauth
+
+## v2.67.6 - 2024-10-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.5...v2.67.6)
+
+## v2.67.5 - 2024-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.4...v2.67.5)
+
+## v2.67.4 - 2024-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.3...v2.67.4)
+
+## v2.67.3 - 2024-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.2...v2.67.3)
+
+## v2.67.2 - 2024-10-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.1...v2.67.2)
+
+## v2.67.1 - 2024-10-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.67.0...v2.67.1)
+
+## v2.67.0 - 2024-10-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.6...v2.67.0)
+
+## v2.66.6 - 2024-10-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.5...v2.66.6)
+
+- [#7111](https://github.com/ORCID/ORCID-Source/pull/7111): update license reference
+
+## v2.66.5 - 2024-10-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.4...v2.66.5)
+
+## v2.66.4 - 2024-10-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.3...v2.66.4)
+
+## v2.66.3 - 2024-10-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.2...v2.66.3)
+
+## v2.66.2 - 2024-10-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.1...v2.66.2)
+
+## v2.66.1 - 2024-10-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.66.0...v2.66.1)
+
+## v2.66.0 - 2024-10-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.6...v2.66.0)
+
+### Feature
+
+- map check names to their workflow files to allow for searching
+
+## v2.65.6 - 2024-10-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.5...v2.65.6)
+
+- [#7093](https://github.com/ORCID/ORCID-Source/pull/7093): Revert "Added the code to store deleted items in panoply dw_deleted_items table"
+- [#7091](https://github.com/ORCID/ORCID-Source/pull/7091): Added the code to store deleted items in panoply dw_deleted_items table
+- [#7090](https://github.com/ORCID/ORCID-Source/pull/7090): Removed all created date, last modified  from email domain summary
+
+## v2.65.5 - 2024-09-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.4...v2.65.5)
+
+## v2.65.4 - 2024-09-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.3...v2.65.4)
+
+## v2.65.3 - 2024-09-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.2...v2.65.3)
+
+## v2.65.2 - 2024-09-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.1...v2.65.2)
+
+## v2.65.1 - 2024-09-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.65.0...v2.65.1)
+
+## v2.65.0 - 2024-09-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.6...v2.65.0)
+
+## v2.64.6 - 2024-09-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.5...v2.64.6)
+
+## v2.64.5 - 2024-09-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.4...v2.64.5)
+
+## v2.64.4 - 2024-09-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.3...v2.64.4)
+
 ## v2.64.3 - 2024-09-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.64.2...v2.64.3)
