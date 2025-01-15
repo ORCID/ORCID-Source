@@ -98,10 +98,13 @@
             </bean>
         </property>
     </bean>
-    
-    <bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" factory-method="withHttpOnlyFalse" />
-    	
-    	<sec:http-firewall ref="httpFirewall"/>
+
+	<bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository">
+		<property name="cookieHttpOnly" value="false" />
+		<property name="cookieDomain" value="${org.orcid.core.csrf.domain}" />
+	</bean>
+
+	<sec:http-firewall ref="httpFirewall"/>
     	
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
 	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
