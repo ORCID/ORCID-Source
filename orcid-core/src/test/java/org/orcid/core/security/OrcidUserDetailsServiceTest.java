@@ -217,7 +217,6 @@ public class OrcidUserDetailsServiceTest {
                         
         assertNotNull(opud);
         opud.getUsername();
-        assertEquals(email, opud.getPrimaryEmail());
         assertEquals(ORCID, opud.getUsername());
     }
 
@@ -233,7 +232,6 @@ public class OrcidUserDetailsServiceTest {
         
         assertNotNull(opud);
         opud.getUsername();
-        assertEquals(email, opud.getPrimaryEmail());
         assertEquals(ORCID, opud.getUsername());
     }
     

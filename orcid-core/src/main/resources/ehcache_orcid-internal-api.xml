@@ -262,6 +262,13 @@
             <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache>
+
+    <ehcache:cache alias="primary-email-value" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:tti unit="minutes">10</ehcache:tti>
+        </ehcache:expiry>
+    </ehcache:cache>
     
     <ehcache:cache alias="count-tokens" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
