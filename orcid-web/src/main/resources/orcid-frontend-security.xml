@@ -99,8 +99,7 @@
         </property>
     </bean>
 
-	<bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository">
-		<property name="cookieHttpOnly" value="false" />
+	<bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" factory-method="withHttpOnlyFalse">
 		<property name="cookieDomain" value="${org.orcid.core.csrf.domain}" />
 	</bean>
 
