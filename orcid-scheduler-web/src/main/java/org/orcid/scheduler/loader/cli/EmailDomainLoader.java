@@ -76,7 +76,7 @@ public class EmailDomainLoader {
             for (List<String> row : emailDomainData) {
                 String elementDomain = row.get(0);
                 String elementCategory = row.get(1);
-                EmailDomainEntity ede = emailDomainManager.findByEmailDomain(elementDomain);
+                List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(elementDomain);
                 EmailDomainEntity.DomainCategory category = EmailDomainEntity.DomainCategory.valueOf(elementCategory.toUpperCase());
                 if(ede == null) {
                     try {
@@ -86,12 +86,6 @@ public class EmailDomainLoader {
                     } catch(IllegalArgumentException iae) {
                         LOG.error("Invalid domain: {}", elementDomain);
                         invalidDomains.add(elementDomain);
-                    }
-                } else if(!elementCategory.equalsIgnoreCase(ede.getCategory().toString())) {  
-                    boolean updated = emailDomainManager.updateCategory(ede.getId(), category);
-                    if(updated) {
-                        LOG.info("Email category has been update for email domain {} from {} to {}", elementDomain, ede.getCategory(), elementCategory);
-                        updatedEntities += 1;
                     }
                 }
                 total += 1;

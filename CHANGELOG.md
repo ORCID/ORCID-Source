@@ -1,3 +1,121 @@
+## v2.69.23 - 2025-01-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.22...v2.69.23)
+
+## v2.69.22 - 2025-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.21...v2.69.22)
+
+## v2.69.21 - 2025-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.20...v2.69.21)
+
+## v2.69.20 - 2025-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.19...v2.69.20)
+
+## v2.69.19 - 2025-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.18...v2.69.19)
+
+## v2.69.18 - 2025-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.17...v2.69.18)
+
+## v2.69.17 - 2024-12-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.16...v2.69.17)
+
+## v2.69.16 - 2024-12-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.15...v2.69.16)
+
+## v2.69.15 - 2024-12-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.14...v2.69.15)
+
+## v2.69.14 - 2024-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.13...v2.69.14)
+
+## v2.69.13 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.12...v2.69.13)
+
+## v2.69.12 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.11...v2.69.12)
+
+## v2.69.11 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.10...v2.69.11)
+
+## v2.69.10 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.9...v2.69.10)
+
+## v2.69.9 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.8...v2.69.9)
+
+## v2.69.8 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.7...v2.69.8)
+
+## v2.69.7 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.6...v2.69.7)
+
+## v2.69.6 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.5...v2.69.6)
+
+## v2.69.5 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.4...v2.69.5)
+
+## v2.69.4 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.3...v2.69.4)
+
+## v2.69.3 - 2024-12-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.2...v2.69.3)
+
+## v2.69.2 - 2024-12-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.1...v2.69.2)
+
+## v2.69.1 - 2024-12-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.0...v2.69.1)
+
+## v2.69.0 - 2024-12-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.14...v2.69.0)
+
+## v2.68.14 - 2024-12-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.13...v2.68.14)
+
+## v2.68.13 - 2024-12-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.12...v2.68.13)
+
+## v2.68.12 - 2024-11-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.11...v2.68.12)
+
+## v2.68.11 - 2024-11-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.10...v2.68.11)
+
+## v2.68.10 - 2024-11-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.9...v2.68.10)
+
+- [#7144](https://github.com/ORCID/ORCID-Source/pull/7144): 9499-email-domains-interstitial-registry-sign-in
+
 ## v2.68.9 - 2024-11-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.8...v2.68.9)

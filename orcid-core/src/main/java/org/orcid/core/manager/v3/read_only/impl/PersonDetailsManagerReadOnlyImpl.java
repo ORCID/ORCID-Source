@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.orcid.core.common.manager.EmailDomainManager;
@@ -31,6 +32,8 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -143,7 +146,6 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             } else {
                 filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
             }
-            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
         return person;
@@ -202,23 +204,9 @@ public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
         if (emails.getEmails() != null) {
             Emails filteredEmails = new Emails();
             filteredEmails.setEmails(new ArrayList<Email>(emails.getEmails()));
-            processProfessionalEmails(filteredEmails);
             person.setEmails(filteredEmails);
         }
 
         return person;
-    }
-
-    private void processProfessionalEmails(Emails emails) {
-        for (Email email : emails.getEmails()) {
-            if (email.isVerified()) {
-                String domain = email.getEmail().split("@")[1];
-                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name and source id for professional emails
-                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                }
-            }
-        }
     }
 }

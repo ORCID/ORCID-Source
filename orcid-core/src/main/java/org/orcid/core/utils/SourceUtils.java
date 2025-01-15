@@ -64,7 +64,7 @@ public class SourceUtils {
         }
 
         String providedSourceName = source.getSourceName() != null ? source.getSourceName().getContent() : null;
-        if (providedSourceName == null || providedSourceName.equals(ORCID_EMAIL_VALIDATOR_CLIENT_NAME)) {
+        if (providedSourceName != null && providedSourceName.equals(ORCID_EMAIL_VALIDATOR_CLIENT_NAME)) {
             return;
         }
 

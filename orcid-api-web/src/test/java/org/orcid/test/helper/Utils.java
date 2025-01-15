@@ -151,12 +151,12 @@ public class Utils {
         }
         assertIsPublicOrSource(p.getAddresses(), sourceId);
         assertIsPublicOrSource(p.getBiography(), sourceId);
-        assertIsPublicOrSource(p.getEmails(), sourceId);
         assertIsPublicOrSource(p.getExternalIdentifiers(), sourceId);
         assertIsPublicOrSource(p.getKeywords(), sourceId);
         assertIsPublicOrSource(p.getName(), sourceId);
         assertIsPublicOrSource(p.getOtherNames(), sourceId);
         assertIsPublicOrSource(p.getResearcherUrls(), sourceId);
+        // EMAILS ARE NOT TESTED! Source on professional emails is overwritten, so, you must verify the email on each test!
     }
 
     public static void verifyLastModified(LastModifiedDate l) {

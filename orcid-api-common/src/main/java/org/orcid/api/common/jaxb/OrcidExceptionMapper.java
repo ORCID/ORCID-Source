@@ -5,10 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -16,8 +13,10 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException;
 import org.jbibtex.TokenMgrError;
+import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
@@ -42,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.stereotype.Component;
@@ -88,21 +88,20 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
         String clientId = securityManager.getClientIdFromAPIRequest();
-        if (t instanceof NotFoundException) {
-            logShortError(t, clientId);
-        } else if (t instanceof NoResultException) {
-            logShortError(t, clientId); 
-        } else if (t instanceof OrcidDeprecatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof LockedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof DeactivatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof DisabledException) {
-            logShortError(t, clientId);
+        if(t instanceof OrcidDeprecatedException
+                || t instanceof LockedException
+                || t instanceof DeactivatedException
+                || t instanceof OrcidNoBioException
+                || t instanceof OrcidNonPublicElementException
+                || t instanceof OrcidNoResultException
+                || t instanceof NoResultException
+                || t instanceof NotFoundException
+                || t instanceof OrcidUnauthorizedException
+                || t instanceof DisabledException
+                || t instanceof OrcidDuplicatedActivityException
+                || t instanceof OrcidDuplicatedElementException) {
+            // Do not log any of these exceptions
         } else if (t instanceof ClientDeactivatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidNonPublicElementException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidBadRequestException) {
             logShortError(t, clientId);
@@ -110,13 +109,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof DuplicatedGroupIdRecordException) {
             logShortError(t, clientId);
-        } else if (t instanceof OrcidDuplicatedActivityException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidDuplicatedElementException) {
-            logShortError(t, clientId);
         } else if (t instanceof OrcidNotificationException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidNoBioException) {
             logShortError(t, clientId);
         } else if (t instanceof RemoteSolrException) {
             logShortError(t, clientId);
@@ -124,16 +117,31 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof TokenMgrError) {
             logShortError(t, clientId);
-        } else if (t instanceof OrcidNoResultException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidUnauthorizedException) {
-            logShortError(t, clientId);
-        }  else if (t instanceof InvalidPutCodeException) {
+        } else if (t instanceof InvalidPutCodeException) {
             logShortError(t, clientId);
         } else if (t instanceof MismatchedPutCodeException) {
             logShortError(t, clientId);
+        } else if (t instanceof WrongSourceException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidWebhookNotFoundException) {
+            logShortError(t, clientId);
+        } else if(t instanceof OrcidAccessControlException) {
+            logShortError(t, clientId);
+        } else if (t instanceof InvalidJSONException) {
+            logShortError(t, clientId);
+        } else if(t instanceof StartDateAfterEndDateException) {
+            logShortError(t, clientId);
+        } else if(t instanceof InvalidClientException) {
+            logShortError(t, clientId);
+        } else if (t instanceof InvalidDisambiguatedOrgException) {
+            LOGGER.error("Error for client ID: " + clientId + "InvalidDisambiguatedOrgException: Disambiguated org is empty or null");
         } else {
-            LOGGER.error("An exception has occured processing request from client " + clientId, t);
+            Throwable rootCause = ExceptionUtils.getRootCause(t);
+            if(rootCause != null) {
+                LOGGER.error("An exception has occurred processing request from client " + clientId, rootCause);
+            } else {
+                LOGGER.error("An exception has occurred processing request from client " + clientId, t);
+            }
         }
 
         if (isOAuthTokenRequest()) {
@@ -166,8 +174,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private void logShortError(Throwable t, String clientId) {
-        StringBuffer temp = new StringBuffer(t.getClass().getSimpleName() + " exception from client: ").append(clientId).append(". ").append(t.getMessage());
-        LOGGER.error(temp.toString());
+        LOGGER.error(t.getClass().getSimpleName() + " exception from client: " + clientId + ((t.getMessage() == null) ? "." : "." + t.getMessage()));
     }
 
     private Response oAuthErrorResponse(Throwable t) {

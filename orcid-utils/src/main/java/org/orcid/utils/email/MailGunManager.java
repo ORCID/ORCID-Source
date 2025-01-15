@@ -4,6 +4,7 @@ import java.util.AbstractMap.SimpleEntry;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.utils.jersey.JerseyClientHelper;
 import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
@@ -63,27 +64,34 @@ public class MailGunManager {
     }
     
     public boolean sendMarketingEmail(String from, String to, String subject, String text, String html) {
-        return sendEmail(from, to, subject, text, html, true);
+        return sendEmail(from, to, null, subject, text, html, true);
     }
     
     public boolean sendEmail(String from, String to, String subject, String text, String html) {
-        return sendEmail(from, to, subject, text, html, false);
+        return sendEmail(from, to, null, subject, text, html, false);
     }
-    
-    public boolean sendEmail(String from, String to, String subject, String text, String html, boolean marketing) {
+
+    public boolean sendEmailWithCC(String from, String to, String cc, String subject, String text, String html) {
+        return sendEmail(from, to, cc, subject, text, html, false);
+    }
+
+    private boolean sendEmail(String from, String to, String cc, String subject, String text, String html, boolean marketing) {
         String fromEmail = getFromEmail(from);
         String apiUrl;
         if(marketing)
             apiUrl = getMarketingApiUrl();
         else if (fromEmail.endsWith("@verify.orcid.org"))
             apiUrl = getVerifyApiUrl();
-        else if (fromEmail.endsWith("@notify.orcid.org"))
+        else if (fromEmail.endsWith("@notify.orcid.org") || fromEmail.endsWith("@orcid.org"))
             apiUrl = getNotifyApiUrl();
         else
             apiUrl = getApiUrl();        
         Form formData = new Form();
         formData.param("from", from);
         formData.param("to", to);
+        if(StringUtils.isNotBlank(cc)) {
+            formData.param("cc", cc);
+        }
         formData.param("subject", subject);
         formData.param("text", text);
         if (html != null) {
