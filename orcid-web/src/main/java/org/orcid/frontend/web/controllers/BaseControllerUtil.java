@@ -21,6 +21,7 @@ public class BaseControllerUtil {
         Authentication authentication = context.getAuthentication();
         Object details = authentication.getDetails();
         if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)) {
+            //TODO: The IF will be deprecated once we move to the authorization server
             if(authentication.getDetails() instanceof OrcidProfileUserDetails) {
                 return ((OrcidProfileUserDetails) authentication.getDetails());
             } else {
