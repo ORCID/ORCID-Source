@@ -27,7 +27,7 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
 
     List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult);
     
-    List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult);
+    List<Long> findOrgsPendingIndexing(int maxResult);
 
     void updateIndexingStatus(Long orgDisambiguatedId, IndexingStatus indexingStatus);
 
