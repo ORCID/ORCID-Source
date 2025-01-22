@@ -14,15 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.api.rate_limit.PapiRateLimitRedisClient;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.service.OrcidTokenStore;
-import org.orcid.persistence.dao.PublicApiDailyRateLimitDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity;
 import org.orcid.utils.email.MailGunManager;
 import org.orcid.utils.panoply.PanoplyPapiDailyRateExceededItem;
 import org.orcid.utils.panoply.PanoplyRedshiftClient;
@@ -41,9 +42,6 @@ import org.orcid.core.togglz.Features;
 @Component
 public class ApiRateLimitFilter extends OncePerRequestFilter {
     private static final Logger LOG = LoggerFactory.getLogger(ApiRateLimitFilter.class);
-
-    @Autowired
-    private PublicApiDailyRateLimitDao papiRateLimitingDao;
 
     @Autowired
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -66,6 +64,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Resource
     private PanoplyRedshiftClient panoplyClient;
 
+    @Resource
+    private PapiRateLimitRedisClient papiRedisClient;
+
     @Autowired
     private OrcidTokenStore orcidTokenStore;
 
@@ -84,12 +85,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Value("${org.orcid.persistence.panoply.papiExceededRate.production:false}")
     private boolean enablePanoplyPapiExceededRateInProduction;
 
+    // :192.168.65.1 127.0.0.1
     @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:192.168.65.1 127.0.0.1}")
     private String papiWhiteSpaceSeparatedWhiteList;
 
     @Value("${org.orcid.papi.rate.limit.clientId.whiteSpaceSeparatedWhiteList}")
     private String papiClientIdWhiteSpaceSeparatedWhiteList;
-    
+
     @Value("${org.orcid.papi.rate.limit.referrer.whiteSpaceSeparatedWhiteList}")
     private String papiReferrerWhiteSpaceSeparatedWhiteList;
 
@@ -113,14 +115,16 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
         papiIpWhiteList = StringUtils.isNotBlank(papiWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
-        papiClientIdWhiteList = StringUtils.isNotBlank(papiClientIdWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiClientIdWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
-        papiReferrerWhiteList = StringUtils.isNotBlank(papiReferrerWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiReferrerWhiteSpaceSeparatedWhiteList.split("\\s")) : null;
+        papiClientIdWhiteList = StringUtils.isNotBlank(papiClientIdWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiClientIdWhiteSpaceSeparatedWhiteList.split("\\s"))
+                : null;
+        papiReferrerWhiteList = StringUtils.isNotBlank(papiReferrerWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiReferrerWhiteSpaceSeparatedWhiteList.split("\\s"))
+                : null;
     }
 
     @Override
     public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
-        LOG.trace("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
+        LOG.warn("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
 
         if (enableRateLimiting && !isReferrerWhiteListed(httpServletRequest.getHeader(HttpHeaders.REFERER))) {
             String tokenValue = null;
@@ -160,61 +164,51 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException {
-        PublicApiDailyRateLimitEntity rateLimitEntity = papiRateLimitingDao.findByIpAddressAndRequestDate(ipAddress, today);
-        if (rateLimitEntity != null) {
-            // update the request count only when limit not exceeded ?
-            rateLimitEntity.setRequestCount(rateLimitEntity.getRequestCount() + 1);
-            papiRateLimitingDao.updatePublicApiDailyRateLimit(rateLimitEntity, false);
-            if (rateLimitEntity.getRequestCount() == knownRequestLimit && enablePanoplyPapiExceededRateInProduction) {
-                PanoplyPapiDailyRateExceededItem item = new PanoplyPapiDailyRateExceededItem();
-                item.setIpAddress(ipAddress);
-                item.setRequestDate(rateLimitEntity.getRequestDate());
-                setPapiRateExceededItemInPanoply(item);
-            }
-            if (Features.ENABLE_PAPI_RATE_LIMITING.isActive()) {
-                if (rateLimitEntity.getRequestCount() >= anonymousRequestLimit) {
-                    httpServletResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-                    if (!httpServletResponse.isCommitted()) {
-                        try (PrintWriter writer = httpServletResponse.getWriter()) {
-                            writer.write(TOO_MANY_REQUESTS_MSG);
-                            writer.flush();
-                        }
-                        return;
-                    }
-                }
-            }
+    private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException, JSONException {
+        JSONObject dailyLimitsObj = papiRedisClient.getTodayDailyLimitsForClient(ipAddress);
+        long limitValue = 0l;
+        if (dailyLimitsObj != null) {
+            limitValue = dailyLimitsObj.getLong(PapiRateLimitRedisClient.KEY_REQUEST_COUNT);
         } else {
-            // create
-            rateLimitEntity = new PublicApiDailyRateLimitEntity();
-            rateLimitEntity.setIpAddress(ipAddress);
-            rateLimitEntity.setRequestCount(1L);
-            rateLimitEntity.setRequestDate(today);
-            papiRateLimitingDao.persist(rateLimitEntity);
-
+            dailyLimitsObj = new JSONObject();
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, true);
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_DATE, today.toString());
         }
-        return;
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_CLIENT, ipAddress);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, limitValue + 1);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
+        papiRedisClient.setTodayLimitsForClient(ipAddress, dailyLimitsObj);
+        if (Features.ENABLE_PAPI_RATE_LIMITING.isActive() && (limitValue + 1) >= anonymousRequestLimit) {
+            httpServletResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+            if (!httpServletResponse.isCommitted()) {
+                try (PrintWriter writer = httpServletResponse.getWriter()) {
+                    writer.write(TOO_MANY_REQUESTS_MSG);
+                    writer.flush();
+                }
+                return;
+            }
+        }
     }
 
-    private void rateLimitClientRequest(String clientId, LocalDate today) {
-        PublicApiDailyRateLimitEntity rateLimitEntity = papiRateLimitingDao.findByClientIdAndRequestDate(clientId, today);
-        if (rateLimitEntity != null) {
-            if (Features.ENABLE_PAPI_RATE_LIMITING.isActive()) {
-                // email the client first time the limit is reached
-                if (rateLimitEntity.getRequestCount() == knownRequestLimit) {
-                    sendEmail(clientId, rateLimitEntity.getRequestDate());
-                }
-            }
-            // update the request count
-            rateLimitEntity.setRequestCount(rateLimitEntity.getRequestCount() + 1);
-            papiRateLimitingDao.updatePublicApiDailyRateLimit(rateLimitEntity, true);
+    private void rateLimitClientRequest(String clientId, LocalDate today) throws JSONException {
+        JSONObject dailyLimitsObj = papiRedisClient.getTodayDailyLimitsForClient(clientId);
+        long limitValue = 0l;
+        if (dailyLimitsObj != null) {
+            limitValue = dailyLimitsObj.getLong(PapiRateLimitRedisClient.KEY_REQUEST_COUNT);
         } else {
-            // create
-            rateLimitEntity = new PublicApiDailyRateLimitEntity();
-            rateLimitEntity.setClientId(clientId);
-            rateLimitEntity.setRequestCount(1L);
-            rateLimitEntity.setRequestDate(today);
-            papiRateLimitingDao.persist(rateLimitEntity);
+            dailyLimitsObj = new JSONObject();
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, true);
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_DATE, today.toString());
+        }
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_CLIENT, clientId);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, limitValue + 1);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
+
+        papiRedisClient.setTodayLimitsForClient(clientId, dailyLimitsObj);
+        if (Features.ENABLE_PAPI_RATE_LIMITING.isActive() && (limitValue == knownRequestLimit)) {
+            sendEmail(clientId, LocalDate.now());
         }
 
     }
@@ -280,7 +274,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         });
     }
 
-    // gets actual client IP address, using the headers that the proxy server adds
+    // gets actual client IP address, using the headers that the proxy server
+    // adds
     private String getClientIpAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
@@ -300,13 +295,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     private boolean isClientIdWhiteListed(String clientId) {
-        return (papiClientIdWhiteList != null) ? papiClientIdWhiteList.contains(clientId) :false;
+        return (papiClientIdWhiteList != null) ? papiClientIdWhiteList.contains(clientId) : false;
     }
-    
+
     private boolean isReferrerWhiteListed(String referrer) {
         if (referrer == null)
             return false;
         else
-            return (papiReferrerWhiteList != null) ? papiReferrerWhiteList.contains(referrer) :false;
+            return (papiReferrerWhiteList != null) ? papiReferrerWhiteList.contains(referrer) : false;
     }
 }
