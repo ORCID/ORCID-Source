@@ -1,49 +1,28 @@
 package org.orcid.core.adapter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
-import org.orcid.jaxb.model.v3.release.common.Country;
-import org.orcid.jaxb.model.v3.release.common.CreatedDate;
-import org.orcid.jaxb.model.v3.release.common.CreditName;
-import org.orcid.jaxb.model.v3.release.common.Day;
-import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
-import org.orcid.jaxb.model.v3.release.common.Month;
-import org.orcid.jaxb.model.v3.release.common.PublicationDate;
-import org.orcid.jaxb.model.v3.release.common.Subtitle;
-import org.orcid.jaxb.model.v3.release.common.Title;
-import org.orcid.jaxb.model.v3.release.common.Url;
-import org.orcid.jaxb.model.v3.release.common.Year;
+import org.orcid.jaxb.model.v3.release.common.*;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
-import org.orcid.pojo.ajaxForm.Citation;
 import org.orcid.pojo.ajaxForm.Contributor;
-import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
-import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
-import org.orcid.pojo.ajaxForm.WorkForm;
-import org.springframework.test.context.ContextConfiguration;
+import org.orcid.pojo.ajaxForm.*;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * 
@@ -194,8 +173,6 @@ public class WorkFormTest {
         extIds.add(extId);
         form.setWorkExternalIdentifiers(extIds);
         form.setWorkType(Text.valueOf("artistic-performance"));
-        WorkCategory category = WorkCategory.fromWorkType(WorkType.fromValue(form.getWorkType().getValue()));
-        form.setWorkCategory(Text.valueOf(category.value()));
         return form;
     }
 }

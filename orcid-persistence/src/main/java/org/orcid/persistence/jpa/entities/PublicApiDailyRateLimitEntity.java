@@ -93,7 +93,7 @@ public class PublicApiDailyRateLimitEntity implements OrcidEntity<Long>{
         return dateCreated;
     }    
 
-    void setDateCreated(Date date) {
+    public void setDateCreated(Date date) {
         this.dateCreated = date;
     }
     
@@ -101,7 +101,7 @@ public class PublicApiDailyRateLimitEntity implements OrcidEntity<Long>{
         return lastModified;
     }
 
-    void setLastModified(Date lastModified) {
+    public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
     

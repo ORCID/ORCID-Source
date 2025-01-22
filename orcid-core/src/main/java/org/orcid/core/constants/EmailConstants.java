@@ -28,8 +28,6 @@ public class EmailConstants {
     
     public static final String DO_NOT_REPLY_VERIFY_ORCID_ORG = "ORCID - Do not reply <DoNotReply@verify.orcid.org>";
 
-    public static final VerificationDate VERIFICATION_DATE_CUTOFF;
-
     static {
         XMLGregorianCalendar gregorianCutoffDate = null;
         VerificationDate verificationDate = null;
@@ -46,6 +44,5 @@ public class EmailConstants {
             throw new RuntimeException("Error initializing XMLGregorianCalendar", e);
         }
 
-        VERIFICATION_DATE_CUTOFF = verificationDate;
     }
 }

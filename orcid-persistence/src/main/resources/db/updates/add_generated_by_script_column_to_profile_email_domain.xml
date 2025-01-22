@@ -1,0 +1,32 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+				   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet author="Andrej Romanov" id="ADD-GENERATED-BY-SCRIPT-TO-PROFILE-EMAIL-DOMAIN-TABLE">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="profile_email_domain" columnName="generated_by_script"/>
+			</not>
+		</preConditions>
+		<sql>ALTER TABLE profile_email_domain ADD generated_by_script boolean default false;</sql>
+	</changeSet>
+
+	<changeSet author="Andrej Romanov" id="UPDATE-GENERATED-BY-SCRIPT-BASED-ON-CREATED-DATE" dbms="postgresql">
+		<sql>UPDATE profile_email_domain SET generated_by_script = true WHERE date_created &lt; '2024-10-28';</sql>
+	</changeSet>
+
+	<changeSet author="Angel Montenegro" id="SET-FALSE-TO-NULL-VALUES" dbms="postgresql">
+		<sql>UPDATE profile_email_domain SET generated_by_script = false WHERE generated_by_script is null;</sql>
+	</changeSet>
+
+	<changeSet author="Angel Montenegro" id="SET-FIELD-NOT-NULLABLE" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck  expectedResult="YES">select is_nullable from information_schema.columns where table_name = 'profile_email_domain' and column_name = 'generated_by_script';</sqlCheck>
+		</preConditions>
+		<addNotNullConstraint
+				columnName="generated_by_script"
+				tableName="profile_email_domain"
+				defaultNullValue="false"/>
+	</changeSet>
+
+</databaseChangeLog>

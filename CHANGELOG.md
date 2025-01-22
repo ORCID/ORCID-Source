@@ -1,3 +1,135 @@
+## v2.70.5 - 2025-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.4...v2.70.5)
+
+- [#7188](https://github.com/ORCID/ORCID-Source/pull/7188): RateLimitig with Redis Implementation
+
+## v2.70.4 - 2025-01-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.3...v2.70.4)
+
+- [#7186](https://github.com/ORCID/ORCID-Source/pull/7186): Fetch only the org id in the initial search
+
+## v2.70.3 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.2...v2.70.3)
+
+## v2.70.2 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.1...v2.70.2)
+
+## v2.70.1 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.0...v2.70.1)
+
+## v2.70.0 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.24...v2.70.0)
+
+## v2.69.24 - 2025-01-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.23...v2.69.24)
+
+## v2.69.23 - 2025-01-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.22...v2.69.23)
+
+## v2.69.22 - 2025-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.21...v2.69.22)
+
+## v2.69.21 - 2025-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.20...v2.69.21)
+
+## v2.69.20 - 2025-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.19...v2.69.20)
+
+## v2.69.19 - 2025-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.18...v2.69.19)
+
+## v2.69.18 - 2025-01-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.17...v2.69.18)
+
+## v2.69.17 - 2024-12-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.16...v2.69.17)
+
+## v2.69.16 - 2024-12-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.15...v2.69.16)
+
+## v2.69.15 - 2024-12-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.14...v2.69.15)
+
+## v2.69.14 - 2024-12-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.13...v2.69.14)
+
+## v2.69.13 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.12...v2.69.13)
+
+## v2.69.12 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.11...v2.69.12)
+
+## v2.69.11 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.10...v2.69.11)
+
+## v2.69.10 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.9...v2.69.10)
+
+## v2.69.9 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.8...v2.69.9)
+
+## v2.69.8 - 2024-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.7...v2.69.8)
+
+## v2.69.7 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.6...v2.69.7)
+
+## v2.69.6 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.5...v2.69.6)
+
+## v2.69.5 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.4...v2.69.5)
+
+## v2.69.4 - 2024-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.3...v2.69.4)
+
+## v2.69.3 - 2024-12-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.2...v2.69.3)
+
+## v2.69.2 - 2024-12-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.1...v2.69.2)
+
+## v2.69.1 - 2024-12-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.0...v2.69.1)
+
+## v2.69.0 - 2024-12-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.14...v2.69.0)
+
+## v2.68.14 - 2024-12-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.13...v2.68.14)
+
 ## v2.68.13 - 2024-12-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.68.12...v2.68.13)

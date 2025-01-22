@@ -1,7 +1,6 @@
 package org.orcid.persistence.jpa.entities;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -17,7 +16,7 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
     private String orcid;
     private String emailDomain;
     private String visibility;
-    private Date dateCreated;
+    private Boolean generatedByScript;
 
     @Id
     @Column(name = "id")
@@ -58,13 +57,13 @@ public class ProfileEmailDomainEntity extends BaseEntity<Long>  {
         this.visibility = visibility;
     }
 
-    @Column(name = "date_created")
-    public Date getDateCreated() {
-        return dateCreated;
+    @Column(name = "generated_by_script")
+    public Boolean getGeneratedByScript() {
+        return generatedByScript;
     }
 
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+    public void setGeneratedByScript(Boolean generatedByScript) {
+        this.generatedByScript = generatedByScript;
     }
 
 
