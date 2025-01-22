@@ -1,3 +1,9 @@
+## v2.70.5 - 2025-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.4...v2.70.5)
+
+- [#7188](https://github.com/ORCID/ORCID-Source/pull/7188): RateLimitig with Redis Implementation
+
 ## v2.70.4 - 2025-01-17
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.3...v2.70.4)
