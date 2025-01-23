@@ -1,3 +1,9 @@
+## v2.70.6 - 2025-01-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.5...v2.70.6)
+
+- [#7189](https://github.com/ORCID/ORCID-Source/pull/7189): Added the check for existent entries
+
 ## v2.70.5 - 2025-01-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.4...v2.70.5)
