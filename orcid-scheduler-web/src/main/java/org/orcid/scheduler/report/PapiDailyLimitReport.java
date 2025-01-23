@@ -75,22 +75,23 @@ public class PapiDailyLimitReport {
         if (enableRateLimiting) {
             try
             {
-            LocalDate yesterday = LocalDate.now().minusDays(1);
-            // save redis cached data to DB
-            papiRedisClient.saveRedisPapiLimitDateToDB(yesterday);
-            
-            //Report to Slack Channel
-            String mode = Features.ENABLE_PAPI_RATE_LIMITING.isActive() ? "ENFORCEMENT" : "MONITORING";
-            String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\nCurrent Anonymous Requests Limit: " + anonymousRequestLimit
-                    + "\nCurrent Public API Clients Limit: " + knownRequestLimit + "\nMode: " + mode;
-            LOG .info(SLACK_INTRO_MSG);
-            slackManager.sendAlert(SLACK_INTRO_MSG, slackChannel, webhookUrl, webhookUrl);
-            
-            String SLACK_STATS_MSG = "Count of Anonymous IPs blocked: " + papiRateLimitingDao.countAnonymousRequestsWithLimitExceeded(yesterday, anonymousRequestLimit)
-                    + "\nCount of Public API clients that have exceeded the limit: "
-                    + papiRateLimitingDao.countClientRequestsWithLimitExceeded(yesterday, knownRequestLimit);           
-            LOG .info(SLACK_STATS_MSG);
-            slackManager.sendAlert(SLACK_STATS_MSG, slackChannel, webhookUrl, webhookUrl);
+                LocalDate yesterday = LocalDate.now().minusDays(1);
+                // save redis cached data to DB
+                papiRedisClient.saveRedisPapiLimitDateToDB(yesterday);
+                String SLACK_DB_MSG = "Public Api Stats from Redis saved in Postgres for the request date: " + yesterday.toString();
+                slackManager.sendAlert(SLACK_DB_MSG, slackChannel, webhookUrl, webhookUrl);
+                //Report to Slack Channel
+                String mode = Features.ENABLE_PAPI_RATE_LIMITING.isActive() ? "ENFORCEMENT" : "MONITORING";
+                String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\nCurrent Anonymous Requests Limit: " + anonymousRequestLimit
+                        + "\nCurrent Public API Clients Limit: " + knownRequestLimit + "\nMode: " + mode;
+                LOG .info(SLACK_INTRO_MSG);
+                slackManager.sendAlert(SLACK_INTRO_MSG, slackChannel, webhookUrl, webhookUrl);
+                
+                String SLACK_STATS_MSG = "Count of Anonymous IPs blocked: " + papiRateLimitingDao.countAnonymousRequestsWithLimitExceeded(yesterday, anonymousRequestLimit)
+                        + "\nCount of Public API clients that have exceeded the limit: "
+                        + papiRateLimitingDao.countClientRequestsWithLimitExceeded(yesterday, knownRequestLimit);           
+                LOG .info(SLACK_STATS_MSG);
+                slackManager.sendAlert(SLACK_STATS_MSG, slackChannel, webhookUrl, webhookUrl);
             }
             catch (Exception ex) {
                 slackManager.sendAlert("!!!!! Exception when storing papi limit redis data to DB. Check the logs" + "\n" + ex.toString() , slackChannel, webhookUrl, webhookUrl);
