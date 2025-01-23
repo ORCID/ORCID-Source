@@ -28,6 +28,9 @@ public class PapiRateLimitRedisClient {
     @Value("${org.orcid.papi.rate.limit.redisCacheExpiryInSec:172800}")
     private int CASH_EXPIRY_IN_SECONDS; // caching for 2 days to have time to
                                         // synch with DB
+    
+    @Value("${org.orcid.papi.rate.limit.checkExistentEntries:false}")
+    private boolean CHECK_DUPLICATES ; // if the scheduled job is less than one day, or we run the job twice we need to check for duplicates.
 
     @Autowired
     private PublicApiDailyRateLimitDao papiRateLimitingDao;
@@ -71,8 +74,24 @@ public class PapiRateLimitRedisClient {
     public void saveRedisPapiLimitDateToDB(LocalDate requestDate) throws JSONException {
         // returns all the keys for requestDate
         HashMap<String, JSONObject> allValuesForKey = redisClient.getAllValuesForKeyPattern("*" + requestDate.toString());
-        for (String key : allValuesForKey.keySet()) {           
-            papiRateLimitingDao.persist(redisObjJsonToEntity(allValuesForKey.get(key)));
+        for (String key : allValuesForKey.keySet()) {
+            PublicApiDailyRateLimitEntity redisRateLimitEntity = redisObjJsonToEntity(allValuesForKey.get(key));
+            PublicApiDailyRateLimitEntity pgRateLimitEntity = null;
+            boolean isClient = false;
+            if(CHECK_DUPLICATES) {
+                if(StringUtils.isNotEmpty(redisRateLimitEntity.getIpAddress())) {
+                    pgRateLimitEntity  = papiRateLimitingDao.findByIpAddressAndRequestDate(redisRateLimitEntity.getIpAddress(), requestDate);
+                }
+                else if(StringUtils.isNotEmpty(redisRateLimitEntity.getClientId())){
+                    pgRateLimitEntity  = papiRateLimitingDao.findByClientIdAndRequestDate(redisRateLimitEntity.getClientId(), requestDate);
+                    isClient = true;
+                }
+            }
+            if(pgRateLimitEntity != null) {
+                papiRateLimitingDao.updatePublicApiDailyRateLimit(pgRateLimitEntity, isClient);
+            } else {
+                papiRateLimitingDao.persist(redisObjJsonToEntity(allValuesForKey.get(key)));
+            }
             redisClient.remove(key);
         }
     }
