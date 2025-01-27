@@ -76,6 +76,10 @@ public class MailGunManager {
     }
 
     private boolean sendEmail(String from, String to, String cc, String subject, String text, String html, boolean marketing) {
+        System.out.println("!!!!! Subject: " +  subject);
+        System.out.println("!!!!! Text: " +  text);
+        System.out.println("!!!!! Html: " +  html); 
+        
         String fromEmail = getFromEmail(from);
         String apiUrl;
         if(marketing)
@@ -101,7 +105,7 @@ public class MailGunManager {
 
         // the filter is used to prevent sending email to users in qa and
         // sandbox
-        if (to.matches(filter)) {            
+       /* if (to.matches(filter)) {            
             JerseyClientResponse<String, String> cr = jerseyClientHelper.executePostRequest(apiUrl, MediaType.APPLICATION_FORM_URLENCODED_TYPE, formData, String.class, String.class);
             if (cr.getStatus() != 200) {
                 LOGGER.warn("Post MailGunManager.sendEmail to {} not accepted\nstatus: {}\nbody: {}", 
@@ -112,7 +116,8 @@ public class MailGunManager {
         } else {
             LOGGER.debug("Email not sent to {} due to regex mismatch", to);
             return false;
-        }
+        }*/
+        return true;
     }
 
     public String getApiUrl() {
