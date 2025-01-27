@@ -78,8 +78,10 @@ public class PapiDailyLimitReport {
                 LocalDate yesterday = LocalDate.now().minusDays(1);
                 // save redis cached data to DB
                 papiRedisClient.saveRedisPapiLimitDateToDB(yesterday);
-                String SLACK_DB_MSG = "Public Api Stats from Redis saved in Postgres for the request date: " + yesterday.toString();
-                slackManager.sendAlert(SLACK_DB_MSG, slackChannel, webhookUrl, webhookUrl);
+                String SLACK_SAVE_DB_MSG = "Public API Rate DB Sync - Date: " + yesterday.toString() + ". Redis entries synched in Postgres." ;
+                LOG .info(SLACK_SAVE_DB_MSG);
+                slackManager.sendAlert(SLACK_SAVE_DB_MSG, slackChannel, webhookUrl, webhookUrl);
+              
                 //Report to Slack Channel
                 String mode = Features.ENABLE_PAPI_RATE_LIMITING.isActive() ? "ENFORCEMENT" : "MONITORING";
                 String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\nCurrent Anonymous Requests Limit: " + anonymousRequestLimit
