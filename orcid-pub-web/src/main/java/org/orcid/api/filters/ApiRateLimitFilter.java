@@ -23,7 +23,9 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.oauth.service.OrcidTokenStore;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.email.MailGunManager;
 import org.orcid.utils.panoply.PanoplyPapiDailyRateExceededItem;
 import org.orcid.utils.panoply.PanoplyRedshiftClient;
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import org.orcid.core.togglz.Features;
+import org.orcid.jaxb.model.common.AvailableLocales;
 
 @Component
 public class ApiRateLimitFilter extends OncePerRequestFilter {
@@ -45,6 +48,9 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Autowired
+    private ProfileDao profileDao;
 
     @Autowired
     private MailGunManager mailGunManager;
@@ -103,7 +109,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             + "You can increase your daily quota by registering for and using Public API client credentials "
             + "(https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)";
 
-    private static final String SUBJECT = "[ORCID-API] WARNING! You have exceeded the daily Public API Usage Limit - ({ORCID-ID})";
+    private static final String SUBJECT = "[ORCID-API] WARNING! You have exceeded the daily Public API Usage Limit - ({0})";
 
     @Value("${org.orcid.papi.rate.limit.fromEmail:apiusage@orcid.org}")
     private String FROM_ADDRESS;
@@ -152,6 +158,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
                 } else {
                     if (!isClientIdWhiteListed(clientId)) {
+                        //Get the locale for the clientID
                         LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
                         this.rateLimitClientRequest(clientId, today);
                     }
@@ -213,29 +220,33 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     }
 
-    private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId) {
+    private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId, Locale locale) {
+        String subject = messageSource.getMessage("papi.rate.limit.subject", new String[] { orcidId }, locale);;
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("messages", messageSource);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("clientId", clientId);
         templateParams.put("clientName", clientName);
         templateParams.put("emailName", emailName);
-        templateParams.put("locale", LocaleUtils.toLocale("en"));
+        templateParams.put("locale", locale);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("subject", SUBJECT.replace("{ORCID-ID}", orcidId));
+        templateParams.put("subject", subject);
         return templateParams;
     }
 
     private void sendEmail(String clientId, LocalDate requestDate) {
         ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
         String memberId = clientDetailsEntity.getGroupProfileId();
+        ProfileEntity memberProfile = profileDao.find(memberId);
         String emailName = recordNameManager.deriveEmailFriendlyName(memberId);
-        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, memberId);
+        Locale locale = getUserLocaleFromProfileEntity(memberProfile);
+        
+        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, memberId, getUserLocaleFromProfileEntity(memberProfile));
         // Generate body from template
-        String body = templateManager.processTemplate("papi_rate_limit_email.ftl", templateParams);
+        String body = templateManager.processTemplate("papi_rate_limit_email.ftl", templateParams, locale);
         // Generate html from template
-        String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams);
+        String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams, locale );
         String email = emailManager.findPrimaryEmail(memberId).getEmail();
         LOG.info("from address={}", FROM_ADDRESS);
         LOG.info("text email={}", body);
@@ -304,4 +315,17 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         else
             return (papiReferrerWhiteList != null) ? papiReferrerWhiteList.contains(referrer) : false;
     }
+    
+    private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
+        String locale = profile.getLocale();
+        try {
+            if (locale != null) {
+                return LocaleUtils.toLocale(AvailableLocales.valueOf(locale).value());
+            }
+        }
+        catch(Exception ex) {
+            LOG.error("Locale is not supported in the available locales, defaulting to en", ex);
+        }
+        return LocaleUtils.toLocale("en");
+    } 
 }
