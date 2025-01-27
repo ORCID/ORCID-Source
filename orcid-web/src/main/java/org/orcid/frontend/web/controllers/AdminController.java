@@ -94,6 +94,7 @@ public class AdminController extends BaseController {
     private static final String DEACTIVATED = "(deactivated)";
     private static final String DEPRECATED = "(deprecated)";
     private static final String UNCLAIMED = "(unclaimed)";
+    private static final String ENABLED_2FA = "2FAEnabled";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
@@ -438,6 +439,11 @@ public class AdminController extends BaseController {
                             if (recordName.getCreditName() != null && !PojoUtil.isEmpty(recordName.getCreditName().getContent())) {
                                 builder.append("(").append(recordName.getCreditName().getContent()).append(")");
                             }
+                        }
+
+                        boolean twoFactorAuthenticationEnabled = twoFactorAuthenticationManager.userUsing2FA(orcid);
+                        if (twoFactorAuthenticationEnabled) {
+                            builder.append(OUT_STRING_SEPARATOR).append(ENABLED_2FA);
                         }
 
                     } else {

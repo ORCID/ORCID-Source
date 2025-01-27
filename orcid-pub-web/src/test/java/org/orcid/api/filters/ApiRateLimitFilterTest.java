@@ -1,9 +1,12 @@
 package org.orcid.api.filters;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.api.rate_limit.PapiRateLimitRedisClient;
 import org.orcid.core.oauth.service.OrcidTokenStore;
 import org.orcid.persistence.dao.PublicApiDailyRateLimitDao;
 import org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity;
@@ -16,6 +19,7 @@ import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -35,7 +39,7 @@ public class ApiRateLimitFilterTest {
     private OrcidTokenStore orcidTokenStoreMock;
 
     @Mock
-    private PublicApiDailyRateLimitDao papiRateLimitingDaoMock;
+    private PapiRateLimitRedisClient papiRateLimitRedisMock;
 
     MockHttpServletRequest httpServletRequestMock = new MockHttpServletRequest();
 
@@ -46,13 +50,15 @@ public class ApiRateLimitFilterTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", false);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         verify(filterChainMock, times(1)).doFilter(eq(httpServletRequestMock), eq(httpServletResponseMock));
         verify(orcidTokenStoreMock, never()).readClientId(anyString());
-        verify(papiRateLimitingDaoMock, never()).findByIpAddressAndRequestDate(anyString(), any());
-        verify(papiRateLimitingDaoMock, never()).persist(any());
+
+        verify(papiRateLimitRedisMock, never()).getDailyLimitsForClient(anyString(), any());
+        verify(papiRateLimitRedisMock, never()).setTodayLimitsForClient(anyString(), any());
     }
 
     @Test
@@ -62,16 +68,15 @@ public class ApiRateLimitFilterTest {
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(null);
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-FORWARDED-FOR", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         verify(orcidTokenStoreMock, never()).readClientId(anyString());
-        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
-        verify(papiRateLimitingDaoMock, times(1)).persist(any(PublicApiDailyRateLimitEntity.class));
+        verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
     }
 
     @Test
@@ -81,16 +86,17 @@ public class ApiRateLimitFilterTest {
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(null);
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         verify(orcidTokenStoreMock, never()).readClientId(anyString());
-        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
-        verify(papiRateLimitingDaoMock, times(1)).persist(any(PublicApiDailyRateLimitEntity.class));
+
+        verify(papiRateLimitRedisMock, never()).getDailyLimitsForClient(anyString(), any());
+        verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
     }
 
     @Test
@@ -100,39 +106,41 @@ public class ApiRateLimitFilterTest {
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(null);
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         verify(orcidTokenStoreMock, never()).readClientId(anyString());
-        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
-        verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
+        verify(papiRateLimitRedisMock, never()).setTodayLimitsForClient(eq(ip), any());
     }
 
     @Test
-    public void doFilterInternal_annonymousRequest_existingEntryTest() throws ServletException, IOException {
+    public void doFilterInternal_annonymousRequest_existingEntryTest() throws ServletException, IOException, JSONException {
         MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
-        PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
-        e.setId(1000L);
-        e.setIpAddress(ip);
-        e.setRequestCount(100L);
+        JSONObject dailyLimitsObj = new JSONObject();
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, true);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_DATE, LocalDate.now().toString());
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_CLIENT, ip);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, 1);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(e);
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(dailyLimitsObj);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         verify(orcidTokenStoreMock, never()).readClientId(anyString());
-        verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), eq(false));
-        verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
+        verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
+
     }
 
     @Test
@@ -145,64 +153,70 @@ public class ApiRateLimitFilterTest {
         when(orcidTokenStoreMock.readClientId(eq("TEST_TOKEN"))).thenReturn(clientId);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByClientIdAndRequestDate(eq(ip), any())).thenReturn(null);
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(papiRateLimitingDaoMock, never()).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), anyBoolean());
-        verify(papiRateLimitingDaoMock, times(1)).persist(any(PublicApiDailyRateLimitEntity.class));
+        verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
     }
 
     @Test
-    public void doFilterInternal_clientRequest_existingEntryTest() throws ServletException, IOException {
+    public void doFilterInternal_clientRequest_existingEntryTest() throws ServletException, IOException, JSONException {
         MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
         String clientId = "clientId1";
 
-        PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
-        e.setId(1000L);
-        e.setIpAddress(ip);
-        e.setRequestCount(100L);
+        JSONObject dailyLimitsObj = new JSONObject();
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, true);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_DATE, LocalDate.now().toString());
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_CLIENT, clientId);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, 100L);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
         when(orcidTokenStoreMock.readClientId(eq("TEST_TOKEN"))).thenReturn(clientId);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByClientIdAndRequestDate(eq(clientId), any())).thenReturn(e);
+        when(papiRateLimitRedisMock.getDailyLimitsForClient(eq(clientId), any())).thenReturn(dailyLimitsObj);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(papiRateLimitingDaoMock, times(1)).updatePublicApiDailyRateLimit(any(PublicApiDailyRateLimitEntity.class), eq(true));
-        verify(papiRateLimitingDaoMock, never()).persist(any(PublicApiDailyRateLimitEntity.class));
+        verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
     }
 
     @Test
-    public void doFilterInternal_checkLimitReachedTest() throws ServletException, IOException {
+    public void doFilterInternal_checkLimitReachedTest() throws ServletException, IOException, JSONException {
         MockitoAnnotations.initMocks(this);
         String ip = "127.0.0.2";
 
-        PublicApiDailyRateLimitEntity e = new PublicApiDailyRateLimitEntity();
-        e.setId(1000L);
-        e.setIpAddress(ip);
-        e.setRequestCount(10001L);
+        JSONObject dailyLimitsObj = new JSONObject();
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, true);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_DATE, LocalDate.now().toString());
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_CLIENT, ip);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_COUNT, 100000001L);
+        dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRateLimitingDao", papiRateLimitingDaoMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
-        when(papiRateLimitingDaoMock.findByIpAddressAndRequestDate(eq(ip), any())).thenReturn(e);
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(dailyLimitsObj);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         assertEquals(429, httpServletResponseMock.getStatus());
         String content = httpServletResponseMock.getContentAsString();
-        assertEquals("Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \nYou can increase your daily quota by registering for and using Public API client credentials (https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)", content);
+        assertEquals(
+                "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \nYou can increase your daily quota by registering for and using Public API client credentials (https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)",
+                content);
     }
 }

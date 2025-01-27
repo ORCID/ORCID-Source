@@ -1,3 +1,37 @@
+## v2.70.6 - 2025-01-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.5...v2.70.6)
+
+- [#7189](https://github.com/ORCID/ORCID-Source/pull/7189): Added the check for existent entries
+
+## v2.70.5 - 2025-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.4...v2.70.5)
+
+- [#7188](https://github.com/ORCID/ORCID-Source/pull/7188): RateLimitig with Redis Implementation
+
+## v2.70.4 - 2025-01-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.3...v2.70.4)
+
+- [#7186](https://github.com/ORCID/ORCID-Source/pull/7186): Fetch only the org id in the initial search
+
+## v2.70.3 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.2...v2.70.3)
+
+## v2.70.2 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.1...v2.70.2)
+
+## v2.70.1 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.0...v2.70.1)
+
+## v2.70.0 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.24...v2.70.0)
+
 ## v2.69.24 - 2025-01-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.23...v2.69.24)
