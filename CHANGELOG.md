@@ -1,3 +1,9 @@
+## v2.70.10 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.9...v2.70.10)
+
+- [#7193](https://github.com/ORCID/ORCID-Source/pull/7193): Add affiliation after reactivation
+
 ## v2.70.9 - 2025-01-27
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.8...v2.70.9)
