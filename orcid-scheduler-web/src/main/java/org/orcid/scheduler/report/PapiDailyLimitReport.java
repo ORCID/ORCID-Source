@@ -81,6 +81,7 @@ public class PapiDailyLimitReport {
                 String SLACK_SAVE_DB_MSG = "Public API Rate DB Sync - Date: " + yesterday.toString() + ". Redis entries synched in Postgres." ;
                 LOG .info(SLACK_SAVE_DB_MSG);
                 slackManager.sendAlert(SLACK_SAVE_DB_MSG, slackChannel, webhookUrl, webhookUrl);
+              
                 //Report to Slack Channel
                 String mode = Features.ENABLE_PAPI_RATE_LIMITING.isActive() ? "ENFORCEMENT" : "MONITORING";
                 String SLACK_INTRO_MSG = "Public API Rate limit report - Date: " + yesterday.toString() + "\nCurrent Anonymous Requests Limit: " + anonymousRequestLimit
