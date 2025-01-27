@@ -76,7 +76,6 @@ public class MailGunManager {
     }
 
     private boolean sendEmail(String from, String to, String cc, String subject, String text, String html, boolean marketing) {
-     
         String fromEmail = getFromEmail(from);
         String apiUrl;
         if(marketing)
