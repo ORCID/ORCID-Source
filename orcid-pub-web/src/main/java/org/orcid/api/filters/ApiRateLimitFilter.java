@@ -199,7 +199,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         } else {
             dailyLimitsObj = new JSONObject();
             dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_DATE_CREATED, System.currentTimeMillis());
-            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, true);
+            dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_IS_ANONYMOUS, false);
             dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_DATE, today.toString());
         }
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_REQUEST_CLIENT, clientId);
