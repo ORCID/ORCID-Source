@@ -149,7 +149,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
             boolean isAnonymous = (clientId == null);
             LocalDate today = LocalDate.now();
-            Locale locale = LocaleUtils.toLocale("en");
             try {
                 if (isAnonymous) {
                     if (!isWhiteListed(ipAddress)) {
@@ -161,7 +160,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     if (!isClientIdWhiteListed(clientId)) {
                         //Get the locale for the clientID
                         LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                        this.rateLimitClientRequest(clientId, today, locale);
+                        this.rateLimitClientRequest(clientId, today);
                     }
                 }
             } catch (Exception ex) {
@@ -199,7 +198,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         }
     }
 
-    private void rateLimitClientRequest(String clientId, LocalDate today, Locale locale) throws JSONException {
+    private void rateLimitClientRequest(String clientId, LocalDate today) throws JSONException {
         JSONObject dailyLimitsObj = papiRedisClient.getTodayDailyLimitsForClient(clientId);
         long limitValue = 0l;
         if (dailyLimitsObj != null) {
