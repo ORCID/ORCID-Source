@@ -85,21 +85,20 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     @Override
     synchronized public void processOrgsForIndexing() {
         LOGGER.info("About to process disambiguated orgs for indexing");
-        List<OrgDisambiguatedEntity> entities = null;
-        int startIndex = 0;
+        List<Long> orgIdsToIndex = new ArrayList<Long>();
         do {
-            entities = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(startIndex, indexingBatchSize);
-            LOGGER.info("Found chunk of {} disambiguated orgs for indexing", entities.size());
-            for (OrgDisambiguatedEntity entity : entities) {
+            LOGGER.info("Gettings orgs to index");
+            orgIdsToIndex = orgDisambiguatedDaoReadOnly.findOrgsPendingIndexing(indexingBatchSize);
+            LOGGER.info("Found chunk of {} disambiguated orgs for indexing", orgIdsToIndex.size());
+            for (Long orgId : orgIdsToIndex) {
                 try {
-                    processDisambiguatedOrgInTransaction(entity);
+                    processDisambiguatedOrgInTransaction(orgId);
                 }
                 catch(Exception ex) {
-                    LOGGER.error("@@@FAILED to process the disambiguated org" + entity.getId() + " source id: " + entity.getSourceId(), ex);
+                    LOGGER.error("@@@FAILED to process the disambiguated org with id" + orgId, ex);
                 }
             }
-            startIndex = startIndex + indexingBatchSize;
-        } while (!entities.isEmpty());
+        } while (!orgIdsToIndex.isEmpty());
 
     }
 
@@ -122,11 +121,11 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
 
     }
 
-    private void processDisambiguatedOrgInTransaction(final OrgDisambiguatedEntity entity) {
+    private void processDisambiguatedOrgInTransaction(final Long orgId) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus arg0) {
-                processDisambiguatedOrg(orgDisambiguatedDaoReadOnly.find(entity.getId()));
+                processDisambiguatedOrg(orgDisambiguatedDaoReadOnly.find(orgId));
             }
         });
     }

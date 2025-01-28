@@ -17,9 +17,12 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.EmailConstants;
@@ -35,6 +38,7 @@ import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
@@ -56,6 +60,8 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.jersey.JerseyClientHelper;
+import org.orcid.utils.jersey.JerseyClientResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -142,6 +148,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private JerseyClientHelper jerseyClientHelper;
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -556,17 +565,17 @@ public class RegistrationController extends BaseController {
         }
     }
 
-    public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
-        UsernamePasswordAuthenticationToken token = null;
+    public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) throws JSONException {
         try {
-            token = new UsernamePasswordAuthenticationToken(orcidId, password);
-            token.setDetails(new WebAuthenticationDetails(request));
-            Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);            
-        } catch (AuthenticationException e) {
-            // this should never happen
-            SecurityContextHolder.getContext().setAuthentication(null);
-            LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
+            JSONObject obj = new JSONObject();
+            obj.put("username", orcidId);
+            obj.put("password", password);
+            String userToken = JsonUtils.convertToJsonString(obj);
+            String encryptedUserToken = encryptionManager.encryptForInternalUse(userToken);
+            JerseyClientResponse<String, String> signInResponse = jerseyClientHelper.executePostRequest("https://auth.dev.orcid.org/postRegistrationSignIn", MediaType.TEXT_PLAIN_TYPE, encryptedUserToken, String.class, String.class);
+            System.out.println(signInResponse.getStatus());
+        } catch (JSONException e) {
+            LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, orcidId);
         }
     }
 
