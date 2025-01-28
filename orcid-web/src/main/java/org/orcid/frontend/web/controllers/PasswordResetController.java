@@ -511,5 +511,9 @@ public class PasswordResetController extends BaseController {
         
         // Log user in
         registrationController.logUserIn(request, response, orcid, password);
+
+        if (reactivation.getAffiliationForm() != null) {
+            registrationManager.createAffiliation(reactivation, orcid);
+        }
     }
 }
