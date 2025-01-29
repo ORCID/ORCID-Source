@@ -35,7 +35,7 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
     @Autowired
     private RedisClient redisClient;
 
-    @Value("${org.orcid.core.utils.cache.redis.enabled}")
+    @Value("${org.orcid.core.utils.cache.redis.enabled:true}")
     private boolean isTokenCacheEnabled;
 
     @Override
