@@ -225,7 +225,7 @@ public class RecordEmailSender {
         // Generate body from template
         String body = templateManager.processTemplate("reactivation_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reactivation_email_html.ftl", templateParams);
-        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reactivation", locale), body, htmlBody);
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reactivatingAccount", locale), body, htmlBody);
     }
 
     public void sendClaimReminderEmail(String userOrcid, int daysUntilActivation, String email) {
