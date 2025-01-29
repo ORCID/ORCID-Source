@@ -213,7 +213,7 @@ public class RecordEmailSender {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("emailName", recordNameManager.deriveEmailFriendlyName(userOrcid));
         templateParams.put("orcid", userOrcid);
-        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.reactivation", locale));
+        templateParams.put("subject", verifyEmailUtils.getSubject("email.subject.reactivatingAccount", locale));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
