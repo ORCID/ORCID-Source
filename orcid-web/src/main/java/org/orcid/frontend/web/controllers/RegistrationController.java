@@ -445,7 +445,7 @@ public class RegistrationController extends BaseController {
             return reg;
         }
 
-        if (emailManager.emailExists(emailAddress)) {
+        if (!reg.isReactivation() && emailManager.emailExists(emailAddress)) {
             String orcid = emailManager.findOrcidIdByEmail(emailAddress);
 
             if (profileEntityManager.isDeactivated(orcid)) {
