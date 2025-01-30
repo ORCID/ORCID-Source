@@ -20,13 +20,11 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.UTF8Control;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.UserStatus;
@@ -36,7 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -174,7 +174,7 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/userInfo.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getUserInfo(HttpServletRequest request) {
         Map<String, String> info = new HashMap<String, String>();        
-        OrcidProfileUserDetails userDetails = getCurrentUser();
+        UserDetails userDetails = getCurrentUser();
         if(userDetails != null) {
             String effectiveOrcid = getEffectiveUserOrcid();
             String realUserOrcid = getRealUserOrcid();
@@ -186,9 +186,10 @@ public class HomeController extends BaseController {
             info.put("PRIMARY_EMAIL", emailManagerReadOnly.findPrimaryEmailValueFromCache(effectiveOrcid));
             info.put("HAS_VERIFIED_EMAIL", String.valueOf(emailManagerReadOnly.haveAnyEmailVerified(effectiveOrcid)));
             info.put("IS_PRIMARY_EMAIL_VERIFIED", String.valueOf(emailManagerReadOnly.isPrimaryEmailVerified(effectiveOrcid)));
-            for(OrcidWebRole role : userDetails.getAuthorities()) {
-                switch (role) {
-                case ROLE_USER: 
+            for(GrantedAuthority role : userDetails.getAuthorities()) {
+                OrcidRoles orcidRole = OrcidRoles.valueOf(role.getAuthority());
+                switch (orcidRole) {
+                case ROLE_USER:
                     break;
                 case ROLE_ADMIN:
                     info.put("ADMIN_MENU", String.valueOf(true));

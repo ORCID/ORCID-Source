@@ -1,26 +1,128 @@
 package org.orcid.core.common.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.OrcidRoles;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
+
+import java.util.Collection;
 
 public class AuthenticationUtils {
+
+    public static final GrantedAuthority adminAuthority = new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name());
 
     public static String retrieveEffectiveOrcid() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getDetails() != null) {
-            if(OrcidProfileUserDetails.class.isAssignableFrom(authentication.getDetails().getClass())) {
-                return ((OrcidProfileUserDetails) authentication.getDetails()).getOrcid();
-            } else {
-                // From the authorization server we will get the effective user from authentication.getName()
-                String orcid = authentication.getName();
-                if(StringUtils.isNotBlank(orcid)) {
-                    return orcid;
+            // From the authorization server we will get the effective user from authentication.getName()
+            String orcid = authentication.getName();
+            if(StringUtils.isNotBlank(orcid)) {
+                return orcid;
+            }
+        }
+        return null;
+    }
+
+    public static String retrieveActiveSourceId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        } else if (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
+            // Token endpoint
+            return ((UsernamePasswordAuthenticationToken) authentication).getName();
+        } else if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            // API
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
+            return authorizationRequest.getClientId();
+        } else {
+            // Normal web user
+            return AuthenticationUtils.retrieveEffectiveOrcid();
+        }
+    }
+
+    public static boolean isInDelegationMode() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String realUserOrcid = getRealUserIfInDelegationMode(authentication);
+        if (realUserOrcid == null) {
+            return false;
+        }
+        return !AuthenticationUtils.retrieveEffectiveOrcid().equals(realUserOrcid);
+    }
+
+    public static String retrieveRealUserOrcid() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        } else if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            // API
+            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
+            return authorizationRequest.getClientId();
+        }
+        // Delegation mode
+        String realUserIfInDelegationMode = getRealUserIfInDelegationMode(authentication);
+        if (realUserIfInDelegationMode != null) {
+            return realUserIfInDelegationMode;
+        }
+        // Normal web user
+        return AuthenticationUtils.retrieveEffectiveOrcid();
+    }
+
+    public static boolean isDelegatedByAnAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            if (authorities != null) {
+                for (GrantedAuthority authority : authorities) {
+                    if (authority instanceof SwitchUserGrantedAuthority) {
+                        SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
+                        Authentication sourceAuthentication = suga.getSource();
+                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof UserDetails) {
+                            return ((UserDetails) sourceAuthentication.getDetails()).getAuthorities().contains(adminAuthority);
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static String getRealUserIfInDelegationMode(Authentication authentication) {
+        if (authentication != null) {
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            if (authorities != null) {
+                for (GrantedAuthority authority : authorities) {
+                    if (authority instanceof SwitchUserGrantedAuthority) {
+                        SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
+                        Authentication sourceAuthentication = suga.getSource();
+                        if ((sourceAuthentication instanceof UsernamePasswordAuthenticationToken || sourceAuthentication instanceof PreAuthenticatedAuthenticationToken)
+                                && sourceAuthentication.getDetails() instanceof UserDetails) {
+                            return sourceAuthentication.getName();
+                        }
+                    }
                 }
             }
         }
         return null;
     }
 
+    public static UserDetails getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken) {
+            // From the authorization server we will get a
+            String orcid = authentication.getName();
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            return new User(orcid, null, authorities);
+        } else {
+            return null;
+        }
+    }
 }

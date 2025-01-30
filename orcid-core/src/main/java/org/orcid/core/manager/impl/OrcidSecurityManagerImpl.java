@@ -27,8 +27,8 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_v2.Filterable;
@@ -103,25 +103,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
+
     @Override
     public boolean isAdmin() {
-        Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Object details = authentication.getDetails();
-            if (details instanceof OrcidProfileUserDetails) {
-                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
-                return userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
-            }
-        }
-        return false;
-    }
-
-    private Authentication getAuthentication() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null && context.getAuthentication() != null) {
-            return context.getAuthentication();
-        }
-        return null;
+        return orcidUserDetailsService.isAdmin();
     }
 
     @Override

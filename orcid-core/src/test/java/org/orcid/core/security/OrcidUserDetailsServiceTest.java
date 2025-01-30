@@ -19,7 +19,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.EmailDao;
@@ -84,7 +83,7 @@ public class OrcidUserDetailsServiceTest {
         UserDetails details = service.loadUserByUsername(ORCID);
         assertNotNull(details);
         assertEquals(1, details.getAuthorities().size());
-        assertTrue(details.getAuthorities().contains(OrcidWebRole.ROLE_USER));
+        assertTrue(details.getAuthorities().contains(OrcidRoles.ROLE_USER));
         assertEquals(ORCID, details.getUsername());
         assertEquals("PWD", details.getPassword());
     }
@@ -94,7 +93,7 @@ public class OrcidUserDetailsServiceTest {
         UserDetails details = service.loadUserByUsername(EMAIL);
         assertNotNull(details);
         assertEquals(1, details.getAuthorities().size());
-        assertTrue(details.getAuthorities().contains(OrcidWebRole.ROLE_USER));
+        assertTrue(details.getAuthorities().contains(OrcidRoles.ROLE_USER));
         assertEquals(ORCID, details.getUsername());
         assertEquals("PWD", details.getPassword());
     }
@@ -152,7 +151,7 @@ public class OrcidUserDetailsServiceTest {
         UserDetails details = service.loadUserByProfile(getProfileEntity());
         assertNotNull(details);
         assertEquals(1, details.getAuthorities().size());
-        assertTrue(details.getAuthorities().contains(OrcidWebRole.ROLE_USER));
+        assertTrue(details.getAuthorities().contains(OrcidRoles.ROLE_USER));
         assertEquals(ORCID, details.getUsername());
         assertEquals("PWD", details.getPassword());
     }
@@ -211,7 +210,7 @@ public class OrcidUserDetailsServiceTest {
         when(emailDao.findPrimaryEmail(anyString())).thenThrow(NonUniqueResultException.class);
         when(emailDao.findNewestPrimaryEmail(anyString())).thenReturn(email);
         
-        OrcidProfileUserDetails opud = service.loadUserByProfile(profile);
+        UserDetails opud = service.loadUserByProfile(profile);
         
         Mockito.verify(emailDao, Mockito.times(1)).updatePrimary(Mockito.matches(ORCID), Mockito.matches(email));  
                         
@@ -226,7 +225,7 @@ public class OrcidUserDetailsServiceTest {
         when(emailDao.findPrimaryEmail(anyString())).thenThrow(NoResultException.class);
         when(emailDao.findNewestVerifiedOrNewestEmail(anyString())).thenReturn(email);
         
-        OrcidProfileUserDetails opud = service.loadUserByProfile(profile);
+        UserDetails opud = service.loadUserByProfile(profile);
         
         Mockito.verify(emailDao, Mockito.times(1)).updatePrimary(Mockito.matches(ORCID), Mockito.matches(email));     
         

@@ -54,10 +54,9 @@ import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -82,7 +81,11 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -195,16 +198,16 @@ public class AdminControllerTest extends BaseControllerTest {
         String orcid = "4444-4444-4444-4440";
         ProfileEntity p = profileEntityManager.findByOrcid(orcid);
         Email e = emailManager.findPrimaryEmail(orcid);
-        List<OrcidWebRole> roles = getRole();
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
+        List<GrantedAuthority> roles = getRole();
+        UserDetails details = new User(orcid,
                 null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), getRole());
         auth.setDetails(details);
         return auth;
     }
 
-    protected List<OrcidWebRole> getRole() {
-        return Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+    protected List<GrantedAuthority> getRole() {
+        return Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name()));
     }
 
     @Test

@@ -41,8 +41,7 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.v3.release.common.*;
 import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -68,7 +67,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
@@ -1222,8 +1225,8 @@ public class ManageProfileControllerTest {
 
 
     protected Authentication getAuthentication(String orcid) {
-        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid, null, roles);
+        List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
+        UserDetails details = new User(orcid, null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, roles);
         auth.setDetails(details);
         return auth;

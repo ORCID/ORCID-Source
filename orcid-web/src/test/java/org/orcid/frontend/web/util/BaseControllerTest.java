@@ -12,9 +12,8 @@ import org.junit.Ignore;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -22,7 +21,11 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
@@ -63,8 +66,8 @@ public class BaseControllerTest extends DBUnitTest {
     protected Authentication getAuthentication(String orcid) {
         ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
         Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
-        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
+        List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
+        UserDetails details = new User(orcid,
                 null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);

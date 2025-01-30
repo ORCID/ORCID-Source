@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -32,6 +30,7 @@ import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -180,10 +179,10 @@ public class NotificationController extends BaseController {
         ActionableNotificationEntity notification = (ActionableNotificationEntity) notificationManager.findActionableNotificationEntity(id);
         String redirectUrl = notification.getAuthorizationUrl();
         String notificationOrcid = notification.getOrcid();
-        OrcidProfileUserDetails user = getCurrentUser();
+        UserDetails user = getCurrentUser();
         if (user != null) {
             // The user is logged in
-            if (!user.getOrcid().equals(notificationOrcid)) {
+            if (!user.getUsername().equals(notificationOrcid)) {
                 return new ModelAndView("wrong_user");
             }
         } else {

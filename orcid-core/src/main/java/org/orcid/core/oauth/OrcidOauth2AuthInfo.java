@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
@@ -36,8 +37,8 @@ public class OrcidOauth2AuthInfo {
                 if (principal != null) {
                     if (ProfileEntity.class.isAssignableFrom(principal.getClass())) {
                         userOrcid = ((ProfileEntity) principal).getId();
-                    } else if (OrcidProfileUserDetails.class.isAssignableFrom(principal.getClass())) {
-                        userOrcid = ((OrcidProfileUserDetails) principal).getUsername();
+                    } else if (UserDetails.class.isAssignableFrom(principal.getClass())) {
+                        userOrcid = ((UserDetails) principal).getUsername();
                     }
                 }
             }

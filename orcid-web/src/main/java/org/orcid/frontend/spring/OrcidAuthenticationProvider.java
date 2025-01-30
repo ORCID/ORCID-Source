@@ -2,7 +2,6 @@ package org.orcid.frontend.spring;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -13,7 +12,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;

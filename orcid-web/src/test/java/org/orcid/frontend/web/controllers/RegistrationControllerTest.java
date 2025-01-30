@@ -44,10 +44,9 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -64,6 +63,9 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.ModelAndView;
@@ -160,18 +162,18 @@ public class RegistrationControllerTest extends DBUnitTest {
             }
         });
         
-        when(orcidUserDetailsServiceMock.loadUserByProfile(Mockito.any(ProfileEntity.class))).thenAnswer(new Answer<OrcidProfileUserDetails>() {
+        when(orcidUserDetailsServiceMock.loadUserByProfile(Mockito.any(ProfileEntity.class))).thenAnswer(new Answer<UserDetails>() {
             @Override
-            public OrcidProfileUserDetails answer(InvocationOnMock invocation) throws Throwable {
-                return new OrcidProfileUserDetails("0000-0000-0000-0000", "pwd");
+            public UserDetails answer(InvocationOnMock invocation) throws Throwable {
+                return new User("0000-0000-0000-0000", "pwd", List.of());
             }
         });
         
         when(authenticationManagerMock.authenticate(Mockito.any())).thenAnswer(new Answer<UsernamePasswordAuthenticationToken>() {
             @Override
             public UsernamePasswordAuthenticationToken answer(InvocationOnMock invocation) throws Throwable {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("0000-0000-0000-0000", "pwd", Arrays.asList(OrcidWebRole.ROLE_USER));
-                auth.setDetails(new OrcidProfileUserDetails("0000-0000-0000-0000", "pwd"));
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("0000-0000-0000-0000", "pwd", Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name())));
+                auth.setDetails(new User("0000-0000-0000-0000", "pwd", List.of()));
                 return auth;
             }
         });

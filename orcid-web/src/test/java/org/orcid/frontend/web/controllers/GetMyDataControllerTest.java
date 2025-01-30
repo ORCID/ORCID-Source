@@ -30,8 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -54,8 +52,7 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.Amount;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
@@ -92,7 +89,11 @@ import org.orcid.test.TargetProxyHelper;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class GetMyDataControllerTest {
 
@@ -474,8 +475,8 @@ public class GetMyDataControllerTest {
     }
 
     private Authentication getAuthentication() {
-        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(ORCID, null, roles);
+        List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
+        UserDetails details = new User(ORCID, null, roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ORCID, null, roles);
         auth.setDetails(details);
         return auth;

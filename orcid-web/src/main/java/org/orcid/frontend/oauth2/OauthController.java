@@ -268,7 +268,7 @@ public class OauthController {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             String maxAge = request.getParameter(OrcidOauth2Constants.MAX_AGE);
             if (baseControllerUtil.getCurrentUser(sci) != null) {
-                String orcid = baseControllerUtil.getCurrentUser(sci).getOrcid();
+                String orcid = baseControllerUtil.getCurrentUser(sci).getUsername();
                 if (maxAge != null) {
                     //if maxAge+lastlogin > now, force login.  max_age is in seconds.
                     java.util.Date authTime = profileEntityManager.getLastLogin(orcid); //is also on the entity.
@@ -298,7 +298,7 @@ public class OauthController {
         }
 
         if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
-            boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
+            boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getUsername(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {                 
                 setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
