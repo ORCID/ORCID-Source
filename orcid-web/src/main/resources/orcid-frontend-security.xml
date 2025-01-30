@@ -481,7 +481,7 @@
 
 	<bean id="orcidAccessDeniedHandler"
 		class="org.orcid.frontend.spring.OrcidAccessDeniedHandler">
-		<property name="errorPage" value="/404" />
+		<property name="errorPage" value="/signin" />
 	</bean>
 	
 	<bean id="corsFilterWeb" class="org.orcid.core.web.filters.CorsFilterWeb" />
