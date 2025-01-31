@@ -267,8 +267,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
         }
         entity.setPrimary(true);
         entity.setVerified(true);
-        entity.setDateVerified(new Date());
-        emailDao.merge(entity);  
+        if (entity.getDateVerified() == null) {
+            entity.setDateVerified(new Date());
+        }
+        emailDao.merge(entity);
         emailDao.flush();
     }
 
