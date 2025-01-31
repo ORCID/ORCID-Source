@@ -27,6 +27,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class OrcidUserDetailsServiceTest {
@@ -83,7 +84,7 @@ public class OrcidUserDetailsServiceTest {
         UserDetails details = service.loadUserByUsername(ORCID);
         assertNotNull(details);
         assertEquals(1, details.getAuthorities().size());
-        assertTrue(details.getAuthorities().contains(OrcidRoles.ROLE_USER));
+        assertTrue(details.getAuthorities().contains(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name())));
         assertEquals(ORCID, details.getUsername());
         assertEquals("PWD", details.getPassword());
     }
@@ -93,7 +94,7 @@ public class OrcidUserDetailsServiceTest {
         UserDetails details = service.loadUserByUsername(EMAIL);
         assertNotNull(details);
         assertEquals(1, details.getAuthorities().size());
-        assertTrue(details.getAuthorities().contains(OrcidRoles.ROLE_USER));
+        assertTrue(details.getAuthorities().contains(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name())));
         assertEquals(ORCID, details.getUsername());
         assertEquals("PWD", details.getPassword());
     }
@@ -151,7 +152,7 @@ public class OrcidUserDetailsServiceTest {
         UserDetails details = service.loadUserByProfile(getProfileEntity());
         assertNotNull(details);
         assertEquals(1, details.getAuthorities().size());
-        assertTrue(details.getAuthorities().contains(OrcidRoles.ROLE_USER));
+        assertTrue(details.getAuthorities().contains(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name())));
         assertEquals(ORCID, details.getUsername());
         assertEquals("PWD", details.getPassword());
     }
