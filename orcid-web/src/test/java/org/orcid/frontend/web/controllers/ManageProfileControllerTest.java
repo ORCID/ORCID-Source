@@ -1227,7 +1227,7 @@ public class ManageProfileControllerTest {
     protected Authentication getAuthentication(String orcid) {
         List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
         UserDetails details = new User(orcid, "password", roles);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, null, roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, "password", roles);
         auth.setDetails(details);
         return auth;
     }

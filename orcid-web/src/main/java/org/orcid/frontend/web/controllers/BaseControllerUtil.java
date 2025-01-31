@@ -24,11 +24,12 @@ public class BaseControllerUtil {
         if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)) {
             // From the authorization server we will get a
             String orcid = authentication.getName();
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            return new User(orcid, (String) authentication.getCredentials(), authorities);
-        } else {
-            return null;
+            if(orcid != null) {
+                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+                return new User(orcid, (String) authentication.getCredentials(), authorities);
+            }
         }
+        return null;
     }
 
 }
