@@ -266,7 +266,8 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             entity.setEmail(emailKeys.get(FILTERED_EMAIL));
         }
         entity.setPrimary(true);
-        entity.setVerified(true);        
+        entity.setVerified(true);
+        entity.setDateVerified(new Date());
         emailDao.merge(entity);  
         emailDao.flush();
     }
