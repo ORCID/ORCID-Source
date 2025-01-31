@@ -64,7 +64,7 @@ public class ClientsControllerTest extends BaseControllerTest {
     protected Authentication getAuthentication() {
         UserDetails details = new User("5555-5555-5555-5558", "e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", List.of());
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", null,
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", details.getPassword(),
                 Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_PREMIUM_INSTITUTION.name())));
         auth.setDetails(details);
         return auth;

@@ -65,7 +65,6 @@ public class BaseControllerTest extends DBUnitTest {
 
     protected Authentication getAuthentication(String orcid) {
         ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
-        Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
         List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
         UserDetails details = new User(orcid,
                 "password", roles);
