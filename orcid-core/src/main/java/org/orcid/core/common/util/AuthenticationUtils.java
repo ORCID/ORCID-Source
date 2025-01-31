@@ -119,10 +119,15 @@ public class AuthenticationUtils {
         if (authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken) {
             // From the authorization server we will get a
             String orcid = authentication.getName();
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            return new User(orcid, (String) authentication.getCredentials(), authorities);
-        } else {
-            return null;
+            if(orcid != null) {
+                Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+                String password = (String) authentication.getCredentials();
+                // This is a hack, password cannot be null on the constructor, but, will be erased anyway, so, we can set any password here
+                User user = new User(orcid, password == null ? "DUMMY_PASSWORD" : password, authorities);
+                user.eraseCredentials();
+                return user;
+            }
         }
+        return null;
     }
 }

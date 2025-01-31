@@ -26,7 +26,11 @@ public class BaseControllerUtil {
             String orcid = authentication.getName();
             if(orcid != null) {
                 Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-                return new User(orcid, (String) authentication.getCredentials(), authorities);
+                String password = (String) authentication.getCredentials();
+                // This is a hack, password cannot be null on the constructor, but, will be erased anyway, so, we can set any password here
+                User user = new User(orcid, password == null ? "DUMMY_PASSWORD" : password, authorities);
+                user.eraseCredentials();
+                return user;
             }
         }
         return null;

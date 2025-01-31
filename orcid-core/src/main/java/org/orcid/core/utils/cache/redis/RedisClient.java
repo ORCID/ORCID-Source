@@ -185,7 +185,7 @@ public class RedisClient {
     }
 
     public static void main(String [] args) {
-        RedisClient client = new RedisClient("reg-qa-redis-001.reg-qa-redis.3zksuc.use2.cache.amazonaws.com", 6379, "aVerySimpleToken");
+        RedisClient client = new RedisClient("xxxxx", 6379, "xxxxxxx");
         client.init();
         System.out.println("Connected");
         Jedis r = client.pool.getResource();
