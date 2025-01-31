@@ -25,7 +25,7 @@ public class BaseControllerUtil {
             // From the authorization server we will get a
             String orcid = authentication.getName();
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            return new User(orcid, "", authorities);
+            return new User(orcid, (String) authentication.getCredentials(), authorities);
         } else {
             return null;
         }

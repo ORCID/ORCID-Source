@@ -123,11 +123,11 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(new User("", null, List.of()));
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 

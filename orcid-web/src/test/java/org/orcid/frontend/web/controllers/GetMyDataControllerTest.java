@@ -476,8 +476,8 @@ public class GetMyDataControllerTest {
 
     private Authentication getAuthentication() {
         List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
-        UserDetails details = new User(ORCID, null, roles);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ORCID, null, roles);
+        UserDetails details = new User(ORCID, "password", roles);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(ORCID, "password", roles);
         auth.setDetails(details);
         return auth;
     }

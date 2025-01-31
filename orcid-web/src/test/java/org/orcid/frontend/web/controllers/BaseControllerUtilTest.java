@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import java.util.List;
+
 /**
  * @author rcpeters
  */
@@ -51,7 +53,9 @@ public class BaseControllerUtilTest {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = mock(UsernamePasswordAuthenticationToken.class);
         UserDetails userDetails = mock(UserDetails.class);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(userDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
+        when(usernamePasswordAuthenticationToken.getAuthorities()).thenReturn(List.of());
         assertNotNull(baseControllerUtil.getCurrentUser(context));
     }
     
@@ -59,9 +63,10 @@ public class BaseControllerUtilTest {
     public void getCurrentUserPreAuthenticatedAuthenticationToken() {
         SecurityContext context = mock(SecurityContext.class);
         PreAuthenticatedAuthenticationToken usernamePasswordAuthenticationToken = mock(PreAuthenticatedAuthenticationToken.class);
-        UserDetails userDetails = mock(UserDetails.class);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(userDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
+        when(usernamePasswordAuthenticationToken.getAuthorities()).thenReturn(List.of());
         assertNotNull(baseControllerUtil.getCurrentUser(context));
     }
 
