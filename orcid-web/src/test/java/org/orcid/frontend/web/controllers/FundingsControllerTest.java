@@ -94,7 +94,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
         List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
         UserDetails details = new User(orcid,
-                null, roles);
+                "", roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);
         return auth;

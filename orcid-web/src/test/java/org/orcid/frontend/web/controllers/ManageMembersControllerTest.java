@@ -130,7 +130,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     protected Authentication getAuthentication() {    
         String orcid = "4444-4444-4444-4440";
         UserDetails details = new User(orcid,
-                null, Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name())));
+                "", Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name())));
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, "password", details.getAuthorities());
         auth.setDetails(details);
         return auth;

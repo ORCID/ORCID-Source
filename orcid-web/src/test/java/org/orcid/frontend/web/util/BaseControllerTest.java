@@ -68,7 +68,7 @@ public class BaseControllerTest extends DBUnitTest {
         Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
         List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
         UserDetails details = new User(orcid,
-                null, roles);
+                "password", roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);
         return auth;

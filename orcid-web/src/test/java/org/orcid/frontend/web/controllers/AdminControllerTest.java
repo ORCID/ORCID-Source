@@ -200,7 +200,7 @@ public class AdminControllerTest extends BaseControllerTest {
         Email e = emailManager.findPrimaryEmail(orcid);
         List<GrantedAuthority> roles = getRole();
         UserDetails details = new User(orcid,
-                null, roles);
+                "", roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), getRole());
         auth.setDetails(details);
         return auth;
