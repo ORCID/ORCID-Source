@@ -2,6 +2,7 @@ package org.orcid.frontend.spring;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -27,6 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 
 public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -144,7 +146,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 }
             }
         }
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile.getId(), result.getCredentials(), result.getAuthorities());
+        User user = new User(profile.getId(), (String) auth.getCredentials(), result.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
         authentication.setDetails(orcidUserDetailsService.loadUserByProfile(profile));
         return authentication;
     }

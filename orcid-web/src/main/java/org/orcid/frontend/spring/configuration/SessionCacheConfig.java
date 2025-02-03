@@ -12,11 +12,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.FlushMode;
 import org.springframework.session.SaveMode;
+import org.springframework.session.SessionRepository;
 import org.springframework.session.data.redis.RedisSessionRepository;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.session.web.http.SessionRepositoryFilter;
 
+import javax.servlet.ServletContext;
 import java.time.Duration;
 
 @Configuration
@@ -38,6 +43,9 @@ public class SessionCacheConfig extends AbstractHttpSessionApplicationInitialize
     private String password;
     @Value("${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}")
     private int connectionTimeoutMillis;
+
+    @Value("${org.orcid.core.session.cookie.domain:dev.orcid.org}")
+    private String cookieDomain;
 
     @Bean
     public JedisConnectionFactory connectionFactory() {
@@ -62,5 +70,14 @@ public class SessionCacheConfig extends AbstractHttpSessionApplicationInitialize
     @Bean
     public static ConfigureRedisAction configureRedisAction() {
         return ConfigureRedisAction.NO_OP;
+    }
+
+    //TODO ... how do we put the cookie on the . domain
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setDomainName(cookieDomain);
+        serializer.setCookiePath("/");
+        return serializer;
     }
 }
