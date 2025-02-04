@@ -103,8 +103,8 @@ public class AuthenticationUtils {
                     if (authority instanceof SwitchUserGrantedAuthority) {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
-                        if ((sourceAuthentication instanceof UsernamePasswordAuthenticationToken || sourceAuthentication instanceof PreAuthenticatedAuthenticationToken)
-                                && sourceAuthentication.getDetails() instanceof UserDetails) {
+                        if ((sourceAuthentication instanceof UsernamePasswordAuthenticationToken
+                                || sourceAuthentication instanceof PreAuthenticatedAuthenticationToken)) {
                             return sourceAuthentication.getName();
                         }
                     }
