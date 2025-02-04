@@ -508,12 +508,12 @@ public class PasswordResetController extends BaseController {
                 recordEmailSender.sendVerificationEmail(orcid, emailToNotify, isPrimaryEmail);
             }
         }
-        
-        // Log user in
-        registrationController.logUserIn(request, response, orcid, password);
 
         if (reactivation.getAffiliationForm() != null) {
             registrationManager.createAffiliation(reactivation, orcid);
         }
+
+        // Log user in
+        registrationController.logUserIn(request, response, orcid, password);
     }
 }

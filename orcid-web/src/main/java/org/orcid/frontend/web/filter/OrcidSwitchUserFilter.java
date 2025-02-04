@@ -139,7 +139,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         newAuths.add(switchAuthority);
 
         // create the new authentication token
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(targetUser.getUsername(), null, newAuths);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(targetUser, null, newAuths);
         authentication.setDetails(generateOrcidProfileUserDetails(targetUser.getUsername()));
         return authentication;
     }
