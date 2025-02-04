@@ -19,23 +19,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.v3.AddressManager;
-import org.orcid.core.manager.v3.AffiliationsManager;
-import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
-import org.orcid.core.manager.v3.GivenPermissionToManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.OtherNameManager;
-import org.orcid.core.manager.v3.PeerReviewManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.manager.v3.ResearchResourceManager;
-import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -175,6 +159,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private ProfileLastModifiedDao profileLastModifiedDao;
+
+    @Resource
+    private ProfileEmailDomainManager profileEmailDomainManager;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -492,6 +479,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // Populate primary email
                 String primaryEmailTrim = primaryEmail.trim();
                 emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim);
+                profileEmailDomainManager.processDomain(orcid, primaryEmailTrim);
                 if (reactivation == null) {
                     // Delete any non primary email
                     emailManager.clearEmailsAfterReactivation(orcid);
