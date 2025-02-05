@@ -1,3 +1,79 @@
+## v2.70.15 - 2025-01-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.14...v2.70.15)
+
+## v2.70.14 - 2025-01-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.13...v2.70.14)
+
+## v2.70.13 - 2025-01-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.12...v2.70.13)
+
+## v2.70.12 - 2025-01-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.11...v2.70.12)
+
+## v2.70.11 - 2025-01-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.10...v2.70.11)
+
+## v2.70.10 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.9...v2.70.10)
+
+- [#7193](https://github.com/ORCID/ORCID-Source/pull/7193): Add affiliation after reactivation
+
+## v2.70.9 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.8...v2.70.9)
+
+## v2.70.8 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.7...v2.70.8)
+
+## v2.70.7 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.6...v2.70.7)
+
+## v2.70.6 - 2025-01-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.5...v2.70.6)
+
+- [#7189](https://github.com/ORCID/ORCID-Source/pull/7189): Added the check for existent entries
+
+## v2.70.5 - 2025-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.4...v2.70.5)
+
+- [#7188](https://github.com/ORCID/ORCID-Source/pull/7188): RateLimitig with Redis Implementation
+
+## v2.70.4 - 2025-01-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.3...v2.70.4)
+
+- [#7186](https://github.com/ORCID/ORCID-Source/pull/7186): Fetch only the org id in the initial search
+
+## v2.70.3 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.2...v2.70.3)
+
+## v2.70.2 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.1...v2.70.2)
+
+## v2.70.1 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.0...v2.70.1)
+
+## v2.70.0 - 2025-01-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.24...v2.70.0)
+
+## v2.69.24 - 2025-01-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.23...v2.69.24)
+
 ## v2.69.23 - 2025-01-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.69.22...v2.69.23)
