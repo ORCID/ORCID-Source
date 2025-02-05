@@ -46,8 +46,8 @@ tx pull --force --all
 wait
 
 # Perform tx pull operations for specified languages
-tx_operations "tr_TR" "tr"
-tx_operations "pl_PL" "pl"
+# tx_operations "tr_TR" "tr"
+# tx_operations "pl_PL" "pl"
 
 # Find all .properties files and process them
 # find . -type f -name "*.properties" -exec bash -c 'process_file "$0"' {} \;
