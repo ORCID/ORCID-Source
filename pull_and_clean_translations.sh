@@ -33,21 +33,21 @@ tx_operations() {
   echo ">>>>>>>>>>>>>>>>>>>>> Finished processing $lang files."
 }
 
-# # Perform git operations
-# echo "Checking out to main and pulling latest changes..."
-# git checkout main
-# git pull
+# Perform git operations
+echo "Checking out to main and pulling latest changes..."
+git checkout main
+git pull
 
-# echo "Checking out to transifex and pulling latest changes..."
-# git checkout transifex
-# git pull
+echo "Checking out to transifex and pulling latest changes..."
+git checkout transifex
+git pull
 
-# echo "Merging transifex branch with main branch..."
-# git merge main
+echo "Merging transifex branch with main branch..."
+git merge main
 
-# echo ">>>>>>>>>>>>>>>>>>>>> Pulling general translations..."
-# tx pull --force --all
-# wait
+echo ">>>>>>>>>>>>>>>>>>>>> Pulling general translations..."
+tx pull --force --all
+wait
 
 # Perform tx pull operations for specified languages
 tx_operations "tr_TR" "tr"
