@@ -25,29 +25,33 @@ tx_operations() {
   echo ">>>>>>>>>>>>>>>>>>>>> Pulling translations for $lang"
   tx pull --force -l "$lang"
   wait
-  find . -type f -name "*_${lang}.properties" -exec sh -c 'mv "$0" "${0%_${lang}.properties}_${ext}.properties"' {} \;
+  find . -type f -name "*_${lang}.properties" -exec sh -c '
+    for file; do
+      mv "$file" "${file%_'$lang'.properties}_'$ext'.properties"
+    done
+  ' sh {} +
   echo ">>>>>>>>>>>>>>>>>>>>> Finished processing $lang files."
 }
 
-# Perform git operations
-echo "Checking out to main and pulling latest changes..."
-git checkout main
-git pull
+# # Perform git operations
+# echo "Checking out to main and pulling latest changes..."
+# git checkout main
+# git pull
 
-echo "Checking out to transifex and pulling latest changes..."
-git checkout transifex
-git pull
+# echo "Checking out to transifex and pulling latest changes..."
+# git checkout transifex
+# git pull
 
-echo "Merging transifex branch with main branch..."
-git merge main
+# echo "Merging transifex branch with main branch..."
+# git merge main
 
-echo ">>>>>>>>>>>>>>>>>>>>> Pulling general translations..."
-tx pull --force --all
-wait
+# echo ">>>>>>>>>>>>>>>>>>>>> Pulling general translations..."
+# tx pull --force --all
+# wait
 
 # Perform tx pull operations for specified languages
-# tx_operations "tr_TR" "tr"
-# tx_operations "pl_PL" "pl"
+tx_operations "tr_TR" "tr"
+tx_operations "pl_PL" "pl"
 
 # Find all .properties files and process them
 # find . -type f -name "*.properties" -exec bash -c 'process_file "$0"' {} \;
