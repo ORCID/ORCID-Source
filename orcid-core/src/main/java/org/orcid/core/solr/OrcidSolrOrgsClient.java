@@ -67,6 +67,7 @@ public class OrcidSolrOrgsClient {
         
         // Set the preserveMulti parameter
         query.setParam("preserveMulti", "true");
+        query.setParam("lowercaseOperators", "true");
         
         if(fundersOnly) {
             query.addFilterQuery(String.format("(%s:(%s OR %s))", SolrConstants.ORG_DISAMBIGUATED_ID_SOURCE_TYPE, "ROR", "FUNDREF"));
