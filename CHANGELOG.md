@@ -1,3 +1,9 @@
+## v2.71.3 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.2...v2.71.3)
+
+- [#7205](https://github.com/ORCID/ORCID-Source/pull/7205): Revert "Update the cached token info so it indicate if the token is an OBO one"
+
 ## v2.71.2 - 2025-02-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.1...v2.71.2)
