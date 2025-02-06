@@ -13,7 +13,6 @@ public class OrcidOauth2Constants {
     public static final String GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials";
     public static final String DATE_CREATED = "date_created";
     public static final String CLIENT_ID = "client_id";
-    public static final String IS_OBO_TOKEN = "is_obo_token";
     public static final String ORCID = "orcid";
     public static final String NAME = "name";
     public static final String CLIENT_ID_PARAM = "client_id";
