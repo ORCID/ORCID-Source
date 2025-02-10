@@ -116,4 +116,12 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
         }
         profileEmailDomainDao.removeAllEmailDomains(orcid);
     }
+
+    @Transactional
+    public void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid) {
+        ProfileEmailDomainEntity existingEmailDomain = getEmailDomain(primaryOrcid, emailDomain);
+        if (existingEmailDomain == null) {
+            profileEmailDomainDao.moveEmailDomainToAnotherAccount(emailDomain, deprecatedOrcid, primaryOrcid);
+        }
+    }
 }

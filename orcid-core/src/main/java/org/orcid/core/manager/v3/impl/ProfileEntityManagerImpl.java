@@ -49,10 +49,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.BackupCodeDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -200,6 +197,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                             // profile
                             LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] { email.getEmail(), deprecatedOrcid, primaryOrcid });
                             emailManager.moveEmailToOtherAccount(email.getEmail(), deprecatedOrcid, primaryOrcid);
+                        }
+                    }
+
+                    List<ProfileEmailDomainEntity> deprecatedEmailDomains = profileEmailDomainManager.getEmailDomains(deprecatedOrcid);
+                    if (deprecatedEmailDomains != null && !deprecatedEmailDomains.isEmpty()) {
+                        for (ProfileEmailDomainEntity emailDomain : deprecatedEmailDomains) {
+                            profileEmailDomainManager.moveEmailDomainToAnotherAccount(emailDomain.getEmailDomain(), deprecatedOrcid, primaryOrcid);
                         }
                     }
 

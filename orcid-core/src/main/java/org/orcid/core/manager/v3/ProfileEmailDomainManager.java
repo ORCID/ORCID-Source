@@ -14,4 +14,5 @@ public interface ProfileEmailDomainManager extends ProfileEmailDomainManagerRead
     void updateEmailDomains(String orcid, org.orcid.pojo.ajaxForm.Emails emails);
     void processDomain(String orcid, String email);
     void removeAllEmailDomains(String orcid);
+    void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid);
 }

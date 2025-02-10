@@ -98,4 +98,15 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
         }
         return null;
     }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_email_domain SET orcid=:primaryOrcid, last_modified = now() WHERE orcid = :deprecatedOrcid and email_domain = :emailDomain");
+        query.setParameter("primaryOrcid", primaryOrcid);
+        query.setParameter("emailDomain", emailDomain);
+        query.setParameter("deprecatedOrcid", deprecatedOrcid);
+        query.executeUpdate();
+    }
 }
