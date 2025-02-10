@@ -1,9 +1,11 @@
 package org.orcid.frontend.spring.configuration;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.orcid.frontend.spring.session.redis.OrcidEnableRedisHttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -13,6 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.FlushMode;
 import org.springframework.session.SaveMode;
 import org.springframework.session.SessionRepository;
+import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.session.data.redis.RedisSessionRepository;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
@@ -25,7 +28,10 @@ import javax.servlet.ServletContext;
 import java.time.Duration;
 
 @Configuration
-@EnableRedisHttpSession
+//TODO: Trying to make a custom Redis http session configuration to filter the number of times we commit the transaction
+//Remove this comment once it is working!
+//@EnableRedisHttpSession
+@OrcidEnableRedisHttpSession
 public class SessionCacheConfig extends AbstractHttpSessionApplicationInitializer {
 
     @Value("${org.orcid.core.utils.cache.redis.pool.idle.max:30}")
