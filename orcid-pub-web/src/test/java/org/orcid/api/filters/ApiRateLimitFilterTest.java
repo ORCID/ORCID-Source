@@ -219,4 +219,40 @@ public class ApiRateLimitFilterTest {
                 "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \nYou can increase your daily quota by registering for and using Public API client credentials (https://info.orcid.org/documentation/integration-guide/registering-a-public-api-client/)",
                 content);
     }
+    
+    @Test
+    public void doFilterInternal_annonymousRequest_whitelisted_cidr_IP_Test() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip_in_cidr = "10.0.0.0";
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip_in_cidr))).thenReturn(null);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip_in_cidr);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitRedisMock, never()).setTodayLimitsForClient(eq(ip_in_cidr), any());
+    }
+    
+    @Test
+    public void doFilterInternal_annonymousRequest_not_whitelisted_cidr_IP_Test() throws ServletException, IOException {
+        MockitoAnnotations.initMocks(this);
+        String ip_not_cidr = "20.0.0.0";
+
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
+        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
+
+        when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip_not_cidr))).thenReturn(null);
+        httpServletRequestMock.addHeader("X-REAL-IP", ip_not_cidr);
+
+        apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
+
+        verify(orcidTokenStoreMock, never()).readClientId(anyString());
+        verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(eq(ip_not_cidr), any(JSONObject.class));
+    }
 }
