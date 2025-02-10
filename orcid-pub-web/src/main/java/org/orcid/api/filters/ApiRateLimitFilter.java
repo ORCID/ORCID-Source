@@ -352,17 +352,19 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     private boolean isIpInCidrRange(String ipAddress, String cidr) {
+        LOG.info("ip Address: " + ipAddress + " cidr: " + cidr);
         IPAddressString ipStr = new IPAddressString(ipAddress);
         IPAddressString cidrStr = new IPAddressString(cidr);
 
         IPAddress ip = ipStr.getAddress();
         IPAddress subnet = cidrStr.getAddress();
-
+        
         if (ip == null || subnet == null) {
             // Invalid IP or CIDR notation
+            LOG.info("IP or cidr null returning false"); 
             return false;
         }
-
+        LOG.info("ip Address: " + ipAddress + " cidr: " + cidr + " is in ip range? " + subnet.contains(ip));
         return subnet.contains(ip);
     }
 }
