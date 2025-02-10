@@ -338,7 +338,7 @@ public class PasswordResetController extends BaseController {
     }
 
     private boolean isTokenExpired(PasswordResetToken passwordResetToken) {
-        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 4);
+        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), passwordResetToken.getDurationInHours());
         Date now = new Date();
         return (expiryDateOfOneHourFromIssueDate.getTime() < now.getTime());
     }
