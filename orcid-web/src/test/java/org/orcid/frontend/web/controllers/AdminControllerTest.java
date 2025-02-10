@@ -26,7 +26,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,7 +47,9 @@ import org.orcid.core.admin.LockReason;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
@@ -58,6 +63,8 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -73,6 +80,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.AdminResetPasswordLink;
 import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -80,6 +88,7 @@ import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.DateUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -147,6 +156,17 @@ public class AdminControllerTest extends BaseControllerTest {
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+    
+    @Mock
+    private OrcidUrlManager mockOrcidUrlManager;
+    
+    @Mock
+    private VerifyEmailUtils mockVerifyEmailUtils;
+    
+    @Mock
+    private EncryptionManager mockEncryptionManager;
+    
+    
     
     @Captor
     private ArgumentCaptor<String> adminUser;
@@ -1401,6 +1421,50 @@ public class AdminControllerTest extends BaseControllerTest {
         assertTrue(data.isSuccess());
 
         Mockito.verify(clientDetailsManager).convertPublicClientToMember(Mockito.eq("public-client"), Mockito.eq("legal-group"));
+    }
+    
+    @Test
+    public void resetPasswordLink() throws Exception {
+       VerifyEmailUtils verifyEmailUtils = Mockito.mock(VerifyEmailUtils.class);
+       EncryptionManager encryptionManager= Mockito.mock(EncryptionManager.class);  
+       OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+       AdminController adminController = new AdminController();
+       EmailManager emailManager = Mockito.mock(EmailManager.class);    
+       LocaleManager localeManager = Mockito.mock(LocaleManager.class);  
+
+               
+       ReflectionTestUtils.setField(adminController, "verifyEmailUtils", verifyEmailUtils);
+       ReflectionTestUtils.setField(adminController, "encryptionManager", encryptionManager);
+       ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+       ReflectionTestUtils.setField(adminController, "localeManager", localeManager);
+       ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        
+       Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        
+       Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
+       Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
+       Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                            
+        
+       Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("That email address is not on our records");       
+       Mockito.when(verifyEmailUtils.createResetLinkForAdmin(Mockito.anyString(), Mockito.any())).thenReturn("xyz"); 
+       
+
+      
+       AdminResetPasswordLink adminResetPasswordLink = new AdminResetPasswordLink();
+       adminResetPasswordLink.setEmail("not-found-email1@test.com");
+        
+       adminResetPasswordLink = adminController.resetPasswordLink(mockRequest, mockResponse, adminResetPasswordLink);
+        
+       assertEquals("That email address is not on our records", adminResetPasswordLink.getError());
+        
+       adminResetPasswordLink = new AdminResetPasswordLink();
+       adminResetPasswordLink.setEmail("existent_email@test.com");
+       XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
+       Mockito.when(encryptionManager.decryptForExternalUse(Mockito.anyString())).thenReturn("email=existent_email@test.com&issueDate="+ date.toXMLFormat()+ "&h=24"); 
+       adminResetPasswordLink = adminController.resetPasswordLink(mockRequest, mockResponse, adminResetPasswordLink);
+       assertNotNull(adminResetPasswordLink.getResetLink());
+       assertEquals(24,adminResetPasswordLink.getDurationInHours());
+       
     }
     
 }
