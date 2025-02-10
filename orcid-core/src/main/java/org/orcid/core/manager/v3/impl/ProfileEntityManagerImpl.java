@@ -187,7 +187,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // If it was successfully deprecated
                 if (wasDeprecated) {
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-                    clearRecord(deprecatedOrcid, false);
                     // Move all email's to the primary record
                     Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
                     if (deprecatedAccountEmails != null) {
@@ -199,13 +198,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                             emailManager.moveEmailToOtherAccount(email.getEmail(), deprecatedOrcid, primaryOrcid);
                         }
                     }
-
                     List<ProfileEmailDomainEntity> deprecatedEmailDomains = profileEmailDomainManager.getEmailDomains(deprecatedOrcid);
                     if (deprecatedEmailDomains != null && !deprecatedEmailDomains.isEmpty()) {
                         for (ProfileEmailDomainEntity emailDomain : deprecatedEmailDomains) {
                             profileEmailDomainManager.moveEmailDomainToAnotherAccount(emailDomain.getEmailDomain(), deprecatedOrcid, primaryOrcid);
                         }
                     }
+                    clearRecord(deprecatedOrcid, false);
 
                     profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
                     return true;
