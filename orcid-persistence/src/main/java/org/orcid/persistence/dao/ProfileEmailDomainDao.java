@@ -9,6 +9,8 @@ public interface ProfileEmailDomainDao extends GenericDao<ProfileEmailDomainEnti
 
     void removeEmailDomain(String orcid, String emailDomain);
 
+    void removeAllEmailDomains(String orcid);
+
     boolean updateVisibility(String orcid, String emailDomain, String visibility);
 
     List<ProfileEmailDomainEntity> findByOrcid(String orcid);

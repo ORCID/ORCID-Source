@@ -48,6 +48,17 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     @Override
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
+    public void removeAllEmailDomains(String orcid) {
+        String deleteEmail = "delete from profile_email_domain where orcid = :orcid";
+
+        Query query = entityManager.createNativeQuery(deleteEmail);
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibility(String orcid, String emailDomain, String visibility) {
         Query query = entityManager.createNativeQuery("UPDATE profile_email_domain SET visibility=:visibility, last_modified = now() WHERE orcid = :orcid and email_domain = :emailDomain");
         query.setParameter("orcid", orcid);

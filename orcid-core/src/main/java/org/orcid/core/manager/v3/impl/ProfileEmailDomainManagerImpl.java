@@ -109,4 +109,11 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
              }
         }
     }
+
+    public void removeAllEmailDomains(String orcid) {
+        if (orcid == null || orcid.isBlank()) {
+            throw new IllegalArgumentException("ORCID must not be empty");
+        }
+        profileEmailDomainDao.removeAllEmailDomains(orcid);
+    }
 }

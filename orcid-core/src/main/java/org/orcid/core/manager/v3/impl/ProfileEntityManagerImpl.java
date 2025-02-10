@@ -640,6 +640,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         // remove trusted individuals
         givenPermissionToManager.removeAllForProfile(orcid);
 
+        // remove email domains
+        profileEmailDomainManager.removeAllEmailDomains(orcid);
+
         // Remove biography
         if (biographyManager.exists(orcid)) {
             Biography deprecatedBio = new Biography();
