@@ -25,6 +25,7 @@ import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,6 +192,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 tokenData.put(OrcidOauth2Constants.CLIENT_ID, clientId);
                 tokenData.put(OrcidOauth2Constants.RESOURCE_IDS, OrcidOauth2Constants.ORCID);
                 tokenData.put(OrcidOauth2Constants.APPROVED, Boolean.TRUE.toString());
+                if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.IS_OBO_TOKEN)) {
+                    tokenData.put(OrcidOauth2Constants.IS_OBO_TOKEN, Boolean.TRUE.toString());
+                }
                 redisClient.set(tokenValue, JsonUtils.convertToJsonString(tokenData));
             } catch(Exception e) {
                 LOGGER.info("Unable to set token in Redis cache", e);

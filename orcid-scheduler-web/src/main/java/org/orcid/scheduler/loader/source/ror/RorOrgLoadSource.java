@@ -215,6 +215,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
                                 if (country != null) {
                                     break;
                                 }
+                                region = geoDetailsNode.get("country_subdivision_name").isNull() ? null : geoDetailsNode.get("country_subdivision_name").asText();
                             }
 
                         }
