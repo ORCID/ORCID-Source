@@ -12,5 +12,6 @@ import java.util.List;
  */
 public interface ProfileEmailDomainManagerReadOnly {
     List<ProfileEmailDomainEntity> getEmailDomains(String orcid);
+    ProfileEmailDomainEntity getEmailDomain(String orcid, String emailDomain);
     List<ProfileEmailDomainEntity> getPublicEmailDomains(String orcid);
 }
