@@ -104,7 +104,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Value("${org.orcid.papi.rate.limit.referrer.whiteSpaceSeparatedWhiteList}")
     private String papiReferrerWhiteSpaceSeparatedWhiteList;
 
-    @Value("${org.orcid.papi.rate.limit.cidrRange.whiteSpaceSeparatedWhiteList}")
+    @Value("${org.orcid.papi.rate.limit.cidrRange.whiteSpaceSeparatedWhiteList:10.0.0.0/8}}")
     private String papiCidrRangeWhiteSpaceSeparatedWhiteList;
 
     private List<String> papiIpWhiteList;
