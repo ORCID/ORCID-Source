@@ -187,4 +187,16 @@ public class ProfileEmailDomainManagerTest {
         verify(profileEmailDomainDaoMock, times(1)).removeEmailDomain(ORCID, EMAIL_DOMAIN);
         verify(profileEmailDomainDaoMock, times(1)).removeEmailDomain(ORCID, EMAIL_DOMAIN_TWO);
     }
+
+    @Test
+    public void moveEmailDomainToAnotherAccount() {
+        pedm.moveEmailDomainToAnotherAccount(EMAIL_DOMAIN, ORCID, ORCID_TWO);
+        verify(profileEmailDomainDaoMock, never()).moveEmailDomainToAnotherAccount(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void moveEmailDomainToAnotherAccount_AlreadyExists() {
+        pedm.moveEmailDomainToAnotherAccount(EMAIL_DOMAIN_THREE, ORCID_TWO, ORCID);
+        verify(profileEmailDomainDaoMock, times(1)).moveEmailDomainToAnotherAccount(EMAIL_DOMAIN_THREE, ORCID_TWO, ORCID);
+    }
 }
