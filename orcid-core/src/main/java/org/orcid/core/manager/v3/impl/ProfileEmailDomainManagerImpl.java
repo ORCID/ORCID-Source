@@ -47,7 +47,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
         if (orcid == null || orcid.isBlank()) {
             throw new IllegalArgumentException("ORCID must not be empty");
         }
-        List<ProfileEmailDomainEntity> existingEmailDomains = profileEmailDomainDao.findByOrcid(orcid);
+        List<ProfileEmailDomainEntity> existingEmailDomains = profileEmailDomainDaoReadOnly.findByOrcid(orcid);
 
         if (existingEmailDomains != null) {
             // VISIBILITY UPDATE FOR EXISTING DOMAINS
@@ -98,7 +98,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
                 }
             }
              if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
-            ProfileEmailDomainEntity existingDomain = profileEmailDomainDao.findByEmailDomain(orcid, domain);
+            ProfileEmailDomainEntity existingDomain = profileEmailDomainDaoReadOnly.findByEmailDomain(orcid, domain);
             // ADD NEW DOMAIN IF ONE DOESN'T EXIST
             if (existingDomain == null) {
                 // Verify the user doesn't have more emails with that domain
