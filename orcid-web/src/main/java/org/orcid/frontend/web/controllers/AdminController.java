@@ -15,8 +15,10 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
@@ -24,6 +26,8 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -37,6 +41,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.AdminResetPasswordLink;
 import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -45,6 +50,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,6 +86,12 @@ public class AdminController extends BaseController {
 
     @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
+    
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+    
+    @Resource
+    private EncryptionManager encryptionManager;
 
     @Resource(name = "spamManager")
     SpamManager spamManager;
@@ -89,6 +101,10 @@ public class AdminController extends BaseController {
     
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+    
+  
+    @Value("${org.orcid.admin.registry.url:https://orcid.org}")
+    private String registryUrl;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -621,6 +637,31 @@ public class AdminController extends BaseController {
             }
         } else {
             form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+        }
+        return form;
+    }
+    
+    /**
+     * Reset password validate
+     * 
+     * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException
+     */
+    @RequestMapping(value = "/reset-password-link", method = RequestMethod.POST)
+    public @ResponseBody AdminResetPasswordLink resetPasswordLink(HttpServletRequest serverRequest, HttpServletResponse response,
+            @RequestBody AdminResetPasswordLink form) throws IllegalAccessException, UnsupportedEncodingException {
+        isAdmin(serverRequest, response);
+        form.setError(null);
+        String email = URLDecoder.decode(form.getEmail(), "UTF-8").trim();
+        if (OrcidStringUtils.isEmailValid(email) && emailManager.emailExists(email)) {
+            String resetLink = verifyEmailUtils.createResetLinkForAdmin(email, registryUrl);
+            form.setResetLink(resetLink);
+            //need issue date as well
+            PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetLink);
+            form.setIssueDate(passwordResetToken.getIssueDate());
+            form.setDurationInHours(passwordResetToken.getDurationInHours()); 
+        } else {
+            form.setError(getMessage("admin.errors.unexisting_email"));
         }
         return form;
     }
@@ -1159,6 +1200,16 @@ public class AdminController extends BaseController {
             data.setSuccess(false);
             data.setError(e.getMessage());
             return data;
+        }
+    }
+    
+    private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
+        try {           
+            String paramsString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedLink), "UTF-8"));
+            return new PasswordResetToken(paramsString);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Could not decrypt " + encryptedLink);
+            throw new RuntimeException(getMessage("web.orcid.decrypt_passwordreset.exception"));
         }
     }
 }

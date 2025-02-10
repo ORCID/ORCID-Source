@@ -80,6 +80,12 @@ public class VerifyEmailUtils {
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
         return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
     }
+    
+    public String createResetLinkForAdmin(String userEmail, String baseUri) {
+        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
+        String resetParams = MessageFormat.format("email={0}&issueDate={1}&h=24", new Object[] { userEmail, date.toXMLFormat() });
+        return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
+    }
 
     public String createReactivationUrl(String userEmail, String baseUri) {
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
