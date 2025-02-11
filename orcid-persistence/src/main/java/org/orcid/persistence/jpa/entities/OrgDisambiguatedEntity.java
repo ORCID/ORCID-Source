@@ -129,10 +129,12 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.city = city;
     }
 
+    @Column(name = "region")
     public String getRegion() {
         return region;
     }
-
+    
+    @Column(name = "region")
     public void setRegion(String region) {
         this.region = region;
     }
