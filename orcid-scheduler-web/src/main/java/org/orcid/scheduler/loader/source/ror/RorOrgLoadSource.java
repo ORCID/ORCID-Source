@@ -211,11 +211,14 @@ public class RorOrgLoadSource implements OrgLoadSource {
                                 country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
                                 // for now storing just the first location
                                 city = geoDetailsNode.get("name").isNull() ? null : geoDetailsNode.get("name").asText();
-                                region = geoDetailsNode.get("country_subdivision_name").isNull() ? null : geoDetailsNode.get("country_subdivision_name").asText();
+                                if(geoDetailsNode.get("country_subdivision_name") != null ) {
+                                    region = geoDetailsNode.get("country_subdivision_name").isNull() ? null : geoDetailsNode.get("country_subdivision_name").asText();
+                                }
                                 if (country != null) {
                                     break;
                                 }
                             }
+                                
 
                         }
                         locationsJson = locationsNode.toString();
@@ -256,6 +259,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
             String region, String url, String orgType, String locationsJson, String namesJson) {
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
+        
         if (existingBySourceId != null) {
             boolean entityChanged = entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType, locationsJson, namesJson);
             if (entityChanged || indexAllEnabled) {
