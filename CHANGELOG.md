@@ -1,3 +1,9 @@
+## v2.71.10 - 2025-02-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.9...v2.71.10)
+
+- [#7215](https://github.com/ORCID/ORCID-Source/pull/7215): Lmendoza/9623 prod professional personal email detection is case sensitive
+
 ## v2.71.9 - 2025-02-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.8...v2.71.9)
