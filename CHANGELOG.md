@@ -1,3 +1,51 @@
+## v2.71.9 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.8...v2.71.9)
+
+## v2.71.8 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.7...v2.71.8)
+
+## v2.71.7 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.6...v2.71.7)
+
+## v2.71.6 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.5...v2.71.6)
+
+## v2.71.5 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.4...v2.71.5)
+
+## v2.71.4 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.3...v2.71.4)
+
+- [#7206](https://github.com/ORCID/ORCID-Source/pull/7206): Revert "Revert "Update the cached token info so it indicate if the token is an OBO one""
+
+## v2.71.3 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.2...v2.71.3)
+
+- [#7205](https://github.com/ORCID/ORCID-Source/pull/7205): Revert "Update the cached token info so it indicate if the token is an OBO one"
+
+## v2.71.2 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.1...v2.71.2)
+
+## v2.71.1 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.0...v2.71.1)
+
+## v2.71.0 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.16...v2.71.0)
+
+## v2.70.16 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.15...v2.70.16)
+
 ## v2.70.15 - 2025-01-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.14...v2.70.15)

@@ -73,20 +73,20 @@ public class ProfileEmailDomainManagerTest {
         ped3.setOrcid(ORCID_TWO);
         ped3.setVisibility(Visibility.PUBLIC.value());
 
-        when(profileEmailDomainDaoMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN))).thenReturn(ped1);
-        when(profileEmailDomainDaoMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_TWO))).thenReturn(ped2);
-        when(profileEmailDomainDaoMock.findByEmailDomain(eq(ORCID_TWO), eq(EMAIL_DOMAIN))).thenReturn(ped3);
-        when(profileEmailDomainDaoMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_THREE))).thenReturn(null);
+        when(profileEmailDomainDaoReadOnlyMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN))).thenReturn(ped1);
+        when(profileEmailDomainDaoReadOnlyMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_TWO))).thenReturn(ped2);
+        when(profileEmailDomainDaoReadOnlyMock.findByEmailDomain(eq(ORCID_TWO), eq(EMAIL_DOMAIN))).thenReturn(ped3);
+        when(profileEmailDomainDaoReadOnlyMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_THREE))).thenReturn(null);
 
-        when(profileEmailDomainDaoMock.findByOrcid(eq(ORCID))).thenReturn(List.of(ped1, ped2));
-        when(profileEmailDomainDaoMock.findByOrcid(eq(ORCID_TWO))).thenReturn(List.of(ped3));
+        when(profileEmailDomainDaoReadOnlyMock.findByOrcid(eq(ORCID))).thenReturn(List.of(ped1, ped2));
+        when(profileEmailDomainDaoReadOnlyMock.findByOrcid(eq(ORCID_TWO))).thenReturn(List.of(ped3));
 
-        when(profileEmailDomainDaoMock.findPublicEmailDomains(eq(ORCID))).thenReturn(List.of(ped1));
-        when(profileEmailDomainDaoMock.findPublicEmailDomains(eq(ORCID_TWO))).thenReturn(List.of(ped2));
+        when(profileEmailDomainDaoReadOnlyMock.findPublicEmailDomains(eq(ORCID))).thenReturn(List.of(ped1));
+        when(profileEmailDomainDaoReadOnlyMock.findPublicEmailDomains(eq(ORCID_TWO))).thenReturn(List.of(ped2));
 
-        when(profileEmailDomainDaoReadOnlyMock.addEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_TWO), eq(Visibility.LIMITED.value()))).thenReturn(ped2);
+        when(profileEmailDomainDaoMock.addEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_TWO), eq(Visibility.LIMITED.value()))).thenReturn(ped2);
 
-        when(profileEmailDomainDaoReadOnlyMock.updateVisibility(eq(ORCID), eq(EMAIL_DOMAIN_TWO), eq(Visibility.LIMITED.value()))).thenReturn(true);
+        when(profileEmailDomainDaoMock.updateVisibility(eq(ORCID), eq(EMAIL_DOMAIN_TWO), eq(Visibility.LIMITED.value()))).thenReturn(true);
 
         ProfileEntity profile = new ProfileEntity();
         profile.setActivitiesVisibilityDefault(Visibility.PUBLIC.value());
@@ -110,7 +110,7 @@ public class ProfileEmailDomainManagerTest {
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN);
         when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
         pedm.processDomain(ORCID, "email@orcid.org");
-        verify(profileEmailDomainDaoMock, times(1)).findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN));
+        verify(profileEmailDomainDaoReadOnlyMock, times(1)).findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN));
         verify(profileEmailDomainDaoMock, never()).addEmailDomain(anyString(), anyString(), anyString());
     }
 
@@ -118,7 +118,7 @@ public class ProfileEmailDomainManagerTest {
     public void processDomain_doNotAddUnknownDomain() {
         when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(null);
         pedm.processDomain(ORCID, "email@orcid.org");
-        verify(profileEmailDomainDaoMock, never()).findByEmailDomain(anyString(), anyString());
+        verify(profileEmailDomainDaoReadOnlyMock, never()).findByEmailDomain(anyString(), anyString());
         verify(profileEmailDomainDaoMock, never()).addEmailDomain(anyString(), anyString(), anyString());
     }
 
@@ -129,7 +129,7 @@ public class ProfileEmailDomainManagerTest {
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN);
         when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
         pedm.processDomain(ORCID, "email@orcid.org");
-        verify(profileEmailDomainDaoMock, never()).findByEmailDomain(anyString(), anyString());
+        verify(profileEmailDomainDaoReadOnlyMock, never()).findByEmailDomain(anyString(), anyString());
         verify(profileEmailDomainDaoMock, never()).addEmailDomain(anyString(), anyString(), anyString());
     }
 
@@ -140,7 +140,7 @@ public class ProfileEmailDomainManagerTest {
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN_THREE);
         when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN_THREE))).thenReturn(List.of(professionalEmailDomain));
         pedm.processDomain(ORCID, "email@domain.net");
-        verify(profileEmailDomainDaoMock, times(1)).findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_THREE));
+        verify(profileEmailDomainDaoReadOnlyMock, times(1)).findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_THREE));
         verify(profileEmailDomainDaoMock, times(1)).addEmailDomain(ORCID, EMAIL_DOMAIN_THREE, Visibility.PUBLIC.value());
     }
 
@@ -186,5 +186,17 @@ public class ProfileEmailDomainManagerTest {
         verify(profileEmailDomainDaoMock, never()).updateVisibility(anyString(), anyString(), anyString());
         verify(profileEmailDomainDaoMock, times(1)).removeEmailDomain(ORCID, EMAIL_DOMAIN);
         verify(profileEmailDomainDaoMock, times(1)).removeEmailDomain(ORCID, EMAIL_DOMAIN_TWO);
+    }
+
+    @Test
+    public void moveEmailDomainToAnotherAccount() {
+        pedm.moveEmailDomainToAnotherAccount(EMAIL_DOMAIN, ORCID, ORCID_TWO);
+        verify(profileEmailDomainDaoMock, never()).moveEmailDomainToAnotherAccount(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void moveEmailDomainToAnotherAccount_AlreadyExists() {
+        pedm.moveEmailDomainToAnotherAccount(EMAIL_DOMAIN_THREE, ORCID_TWO, ORCID);
+        verify(profileEmailDomainDaoMock, times(1)).moveEmailDomainToAnotherAccount(EMAIL_DOMAIN_THREE, ORCID_TWO, ORCID);
     }
 }
