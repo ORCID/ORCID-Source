@@ -102,62 +102,81 @@
 
 	<sec:http-firewall ref="httpFirewall"/>
     	
-	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
-	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
-	<sec:http pattern="/webStatus.json" security="none" create-session="stateless" />
+	<sec:http pattern="/robots\.txt" security="none" create-session="stateless" />
+	<sec:http pattern="/tomcatUp\.json" security="none" create-session="stateless" />
+	<sec:http pattern="/webStatus\.json" security="none" create-session="stateless" />
 	<sec:http pattern="/error" security="none" />
-	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
+	<sec:http pattern="/favicon\.ico" security="none" create-session="stateless" />
 	<sec:http pattern="/static/**" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[x](\?.*)?" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
 	<sec:http pattern="/.well-known/**" security="none" />
-
-
-
-
-
-
-
-
-
+	<sec:http pattern="/assets/(.*)?" security="none" create-session="stateless" />
 
 	<!--Endpoint that can be accessed anonymously and don't need to create a session-->
+	<sec:http pattern="/" security="none" create-session="stateless" />
+	<sec:http pattern="/not-found" security="none" create-session="stateless" />
+	<sec:http pattern="/home(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/identifiers/norm/(.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/statistics/liveids.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/statistics/liveids\.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/statistics(/)?$" security="none" create-session="stateless" />
-	<sec:http pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/messages.json(\?.*)?" security="none" create-session="stateless"  />
 	<sec:http pattern="/config.json(\?.*)?" security="none" create-session="stateless"  />
 	<sec:http pattern="/lang.json(.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/orcid-search/.*" security="none" create-session="stateless" />
 	<sec:http pattern="/reset-password(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/validate-reset-password.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/validate-reset-password.\json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/reset-password-email/.*" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email-v2.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email-v2\.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/claim/.*" security="none" create-session="stateless" />
 	<sec:http pattern="/resend-claim(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/resend-claim.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/validate-resend-claim.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email-validate-token.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/resend-claim\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/validate-resend-claim\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reset-password-email-validate-token\.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/members(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/members/.*" security="none" create-session="stateless" />
 	<sec:http pattern="/consortia(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/consortia/.*" security="none" create-session="stateless" />
 	<sec:http pattern="/record-corrections" security="none" create-session="stateless" />
 	<sec:http pattern="/record-corrections/next(\/?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/record-corrections/previous(\/?.*)??" security="none" create-session="stateless" />
+	<sec:http pattern="/record-corrections/previous(\/?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/about/trust/integrity/record-corrections" security="none" create-session="stateless" />
-	<sec:http pattern="/assets/(.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reactivation/.*?" security="none" create-session="stateless"/>
+	<sec:http pattern="/reactivationConfirm\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/reactivationData\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/sendReactivation\.json" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/orgs/disambiguated/(.+)\?(.+)?" security="none" create-session="stateless" />
 
+	<!-- Registration endpoints -->
+	<sec:http pattern="/register.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/email-domain/find-category(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/email-domain/find-org(\?.*)?" security="none" create-session="stateless" />
+	<sec:http pattern="/registerConfirm\.json(\?.*)?" security="none" create-session="stateless" />
 
+	<!-- Public Record page endpoints -->
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationDetails\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationGroups\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingDetails\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingGroups\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-review\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-minimized\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/person\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/public-record\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResource\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResourcePage\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/summary\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage\.json(\?.*)?" security="none" create-session="stateless" />
 
-
-
-
-    <!-- Authenticate the client before reaching the token endpoint -->
+	<!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
     	<sec:csrf disabled="true"/>
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
@@ -282,8 +301,8 @@
 			username-parameter="userId" password-parameter="password" 
 			default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
-	</sec:http> 
-	
+	</sec:http>
+
 	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 		request-matcher="regex">
 		<sec:request-cache ref="orcidRequestCache"/>
@@ -294,57 +313,13 @@
 		</sec:headers>
 		<sec:custom-filter position="CORS_FILTER" ref="corsFilterWeb" />
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
-		<sec:intercept-url pattern="/"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/not-found"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/home(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/orgs/disambiguated/(.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/person.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/public-record.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/summary.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliations.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationDetails.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />		
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/affiliationGroups.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/affiliations/disambiguated/name/(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingDetails.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />				
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/fundingGroups.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />						
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/getWorkInfo.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 
- 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResourcePage.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
- 	    <sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/researchResource.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />  	      	 	      	
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-review.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-minimized.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id.json(\?.*)?"
- 	      	access="IS_AUTHENTICATED_ANONYMOUSLY" /> 	    
 		<sec:intercept-url pattern="/public/group/[0-9]+(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"
@@ -353,8 +328,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/google(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/userStatus.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/session-expired(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/progress-to-confirm-registration-details(\?.*)?"
@@ -362,8 +335,6 @@
 		<sec:intercept-url pattern="/confirm-registration-details(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/register(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/register.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/password-reset.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -376,8 +347,6 @@
 		<sec:intercept-url pattern="/reactivateAdditionalEmailsValidate.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/claim(.*)Validate.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/registerConfirm.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -395,23 +364,12 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/spam/report-spam.json"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/orgs/.*" 
-			access="ROLE_USER"/>
-        <sec:intercept-url pattern="/reactivation/.*?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/reactivationConfirm.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/reactivationData.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/sendReactivation.json"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/countryNamesToCountryCodes.json(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />            
-        <sec:intercept-url pattern="/email-domain/find-category(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/email-domain/find-org(\?.*)?"
-            access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/developer-tools" 
+		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<sec:intercept-url pattern="/developer-tools"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*" 
 			access="ROLE_USER"/>
@@ -436,11 +394,7 @@
 		<sec:intercept-url pattern="/works/countries.json(\?.*)?" 
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/get-my-data" 
-			access="ROLE_USER"/>		
-		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/userInfo.json(\?.*)?"
-			access="ROLE_USER" />
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/person.json(\?.*)?"
             access="ROLE_USER" />
 		<sec:intercept-url pattern="/2FA/authenticationCode.json(\?.*)?"
