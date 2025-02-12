@@ -1,3 +1,9 @@
+## v2.71.11 - 2025-02-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.10...v2.71.11)
+
+- [#7216](https://github.com/ORCID/ORCID-Source/pull/7216): pull tx
+
 ## v2.71.10 - 2025-02-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.9...v2.71.10)
