@@ -69,7 +69,7 @@
         class="org.orcid.frontend.spring.AjaxAuthenticationFailureHandler" />
         
     <bean id="authenticationDetailsSource" 
-        class="org.orcid.frontend.spring.OrcidAuthenticationDetailsSource" />
+        class="org.orcid.authorization.authentication.MFAAuthenticationDetailsSource" />
 
 	<sec:authentication-manager id="authenticationManager">
 		<sec:authentication-provider ref="authenticationProvider" />

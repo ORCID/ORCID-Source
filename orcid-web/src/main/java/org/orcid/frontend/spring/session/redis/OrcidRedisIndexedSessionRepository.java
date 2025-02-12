@@ -54,7 +54,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     private FlushMode flushMode;
     private SaveMode saveMode;
     private final String PUBLIC_ORCID_PAGE_REGEX = "/(\\d{4}-){3,}\\d{3}[\\dX](/.+)";
-    private final List<String> urisToSkip = List.of("/2FA/status.json", "/account/", "/account/biographyForm.json", "/account/countryForm.json", "/account/delegates.json", "/account/emails.json",
+    private final List<String> urisToSkipOnGet = List.of("/2FA/status.json", "/account/", "/account/biographyForm.json", "/account/countryForm.json", "/account/delegates.json", "/account/emails.json",
             "/account/get-trusted-orgs.json", "/account/nameForm.json", "/account/preferences.json", "/account/socialAccounts.json", "/affiliations/affiliationDetails.json", "/affiliations/affiliationGroups.json",
             "/assets/vectors/orcid.logo.icon.svg", "/config.json", "/delegators/delegators-and-me.json", "/fundings/fundingDetails.json", "/fundings/fundingGroups.json", "/inbox/notifications.json",
             "/inbox/totalCount.json", "/inbox/unreadCount.json", "/my-orcid/externalIdentifiers.json", "/my-orcid/keywordsForms.json", "/my-orcid/otherNamesForms.json", "/my-orcid/websitesForms.json",
@@ -62,7 +62,9 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
             "/orgs/disambiguated/ROR", "/peer-reviews/peer-review.json", "/peer-reviews/peer-reviews-by-group-id.json", "/peer-reviews/peer-reviews-minimized.json", "/qr-code.png",
             "/research-resources/researchResource.json", "/research-resources/researchResourcePage.json", "/works/getWorkInfo.json", "/works/groupingSuggestions.json", "/works/idTypes.json", "/works/work.json",
             "/works/worksExtendedPage.json");
-    private final Set<String> SKIP_SAVE_SESSION = new HashSet<>(urisToSkip);
+    private final List<String> urisToSkipAlways = List.of("/oauth/custom/register/validatePassword.json");
+    private final Set<String> GET_SKIP_SAVE_SESSION = new HashSet<>(urisToSkipOnGet);
+    private final Set<String> ALWAYS_SKIP_SAVE_SESSION = new HashSet<>(urisToSkipAlways);
 
     public OrcidRedisIndexedSessionRepository(RedisOperations<Object, Object> sessionRedisOperations) {
         this.flushMode = FlushMode.ON_SAVE;
@@ -363,11 +365,10 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     private boolean updateSession() {
         ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = att.getRequest();
-        if(request.getMethod().equals("GET")) {
-            String url = request.getRequestURI().substring(request.getContextPath().length());
-            if(SKIP_SAVE_SESSION.contains(url) || url.matches(PUBLIC_ORCID_PAGE_REGEX)) {
-                return false;
-            }
+        String url = request.getRequestURI().substring(request.getContextPath().length());
+        if((request.getMethod().equals("GET") && (GET_SKIP_SAVE_SESSION.contains(url) || url.matches(PUBLIC_ORCID_PAGE_REGEX)))
+                || ALWAYS_SKIP_SAVE_SESSION.contains(url)) {
+            return false;
         }
         return true;
     }
@@ -409,7 +410,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
                 // TODO: REMOVE THIS BEFORE GOING LIVE!!!!
                 ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
                 HttpServletRequest request = att.getRequest();
-                System.out.println("REDIS_SESSION: setLastAccessedTime: " + request.getRequestURI().toString() + " - " + request.getMethod());
+                logger.info("REDIS_SESSION: setLastAccessedTime: " + request.getRequestURI().toString() + " - " + request.getMethod());
 
                 this.cached.setLastAccessedTime(lastAccessedTime);
                 this.delta.put("lastAccessedTime", this.getLastAccessedTime().toEpochMilli());

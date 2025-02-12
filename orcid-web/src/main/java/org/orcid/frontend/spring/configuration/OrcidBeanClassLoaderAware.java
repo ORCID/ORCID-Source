@@ -3,6 +3,8 @@ package org.orcid.frontend.spring.configuration;
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
+import org.orcid.frontend.web.util.MFAWebAuthenticationDetailsDeserializer;
 import org.orcid.frontend.web.util.SwitchUserGrantedAuthorityDeserializer;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,7 @@ public class OrcidBeanClassLoaderAware implements BeanClassLoaderAware {
         mapper.registerModules(new CoreJackson2Module());
         mapper.addMixIn(String[].class, StringArrayMixin.class);
         mapper.addMixIn(SwitchUserGrantedAuthority.class, SwitchUserGrantedAuthorityMixin.class);
+        mapper.addMixIn(MFAWebAuthenticationDetails.class, MFAWebAuthenticationDetailsMixin.class);
         return mapper;
     }
 
@@ -66,5 +69,16 @@ public class OrcidBeanClassLoaderAware implements BeanClassLoaderAware {
         public SwitchUserGrantedAuthorityMixin(@JsonProperty("authority") String role, @JsonProperty("source") Authentication authentication) {
         }
 
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+            getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE, creatorVisibility = JsonAutoDetect.Visibility.ANY)
+    @JsonDeserialize(using = MFAWebAuthenticationDetailsDeserializer.class)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    abstract class MFAWebAuthenticationDetailsMixin {
+        @JsonCreator
+        MFAWebAuthenticationDetailsMixin(@JsonProperty("remoteAddress") String remoteAddress, @JsonProperty("sessionId") String sessionId, @JsonProperty("verificationCode") String verificationCode, @JsonProperty("recoveryCode") String recoveryCode) {
+        }
     }
 }

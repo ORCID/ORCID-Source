@@ -2,12 +2,12 @@ package org.orcid.frontend.spring;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
@@ -130,13 +130,13 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         }
 
         if (profile.getUsing2FA()) {
-            String recoveryCode = ((OrcidWebAuthenticationDetails) auth.getDetails()).getRecoveryCode();
+            String recoveryCode = ((MFAWebAuthenticationDetails) auth.getDetails()).getRecoveryCode();
             if (recoveryCode != null && !recoveryCode.isEmpty()) {
                 if (!backupCodeManager.verify(profile.getId(), recoveryCode)) {
                     throw new Bad2FARecoveryCodeException();
                 }
             } else {
-                String verificationCode = ((OrcidWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
+                String verificationCode = ((MFAWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
                 if (verificationCode == null || verificationCode.isEmpty()) {
                     throw new VerificationCodeFor2FARequiredException();
                 }
