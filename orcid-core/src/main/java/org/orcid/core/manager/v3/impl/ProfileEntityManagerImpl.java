@@ -204,6 +204,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                             profileEmailDomainManager.moveEmailDomainToAnotherAccount(emailDomain.getEmailDomain(), deprecatedOrcid, primaryOrcid);
                         }
                     }
+                    // important to run this after moving domains, as this function will delete the domains from the database
                     clearRecord(deprecatedOrcid, false);
 
                     profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
@@ -644,6 +645,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         givenPermissionToManager.removeAllForProfile(orcid);
 
         // remove email domains
+        // NOTE: when deprecating, the domains get moved to the other record before this code is executed
         profileEmailDomainManager.removeAllEmailDomains(orcid);
 
         // Remove biography
