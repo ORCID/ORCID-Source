@@ -293,6 +293,17 @@
         <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
       </analyzer>
     </fieldType>
+    
+    <fieldType name="case_insensitive_exact" class="solr.TextField">
+		  <analyzer type="index">
+		    <tokenizer class="solr.KeywordTokenizerFactory"/> <!-- Treats the entire field as a single token -->
+		    <filter class="solr.LowerCaseFilterFactory"/> <!-- Converts to lowercase during indexing -->
+		  </analyzer>
+		  <analyzer type="query">
+		    <tokenizer class="solr.KeywordTokenizerFactory"/> <!-- Treats the query as a single token -->
+		    <filter class="solr.LowerCaseFilterFactory"/> <!-- Converts the query to lowercase -->
+		  </analyzer>
+	</fieldType>
 
     
     <!-- SortableTextField generaly functions exactly like TextField,
@@ -1008,6 +1019,10 @@
 	<copyField source="org-disambiguated-name" dest="org-disambiguated-name-string" />
 	<!-- Non tokenized field -->
 	<field name="org-disambiguated-name-string" type="string" indexed="true" stored="false"
+		multiValued="false" />
+	<copyField source="org-disambiguated-name" dest="org-disambiguated-name-case-insensitive" />
+	<!-- Non tokenized field -->
+	<field name="org-disambiguated-name-case-insensitive" type="case_insensitive_exact" indexed="true" stored="false"
 		multiValued="false" />		
 	<field name="org-disambiguated-city" type="text_general" indexed="true" stored="true"
 		multiValued="false" />
