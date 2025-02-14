@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,6 +17,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
@@ -49,6 +52,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RorOrgLoadSource.class);
 
     private static final String WIKIPEDIA_URL = "wikipedia_url";
+            
 
     @Value("${org.orcid.core.orgs.ror.enabled:true}")
     private boolean enabled;
@@ -104,8 +108,10 @@ public class RorOrgLoadSource implements OrgLoadSource {
         try {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
-
-            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl + "&sort=mostrecent&size=1", userAgent, ZenodoRecords.class);
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.USER_AGENT, userAgent);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
+            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl + "&sort=mostrecent&size=1", headers, ZenodoRecords.class);
             ZenodoRecordsHit zenodoHit = zenodoRecords.getHits().getHits().get(0);
 
             boolean success = false;
