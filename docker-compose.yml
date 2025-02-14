@@ -128,6 +128,8 @@ services:
       - 0.0.0.0:13100:8080
     networks:
       app:
+    volumes:
+      - /opt/docker/logs/reg-ui:/usr/local/tomcat/logs
     profiles:
       - dev
       - ui
