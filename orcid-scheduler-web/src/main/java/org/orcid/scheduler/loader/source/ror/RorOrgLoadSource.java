@@ -162,7 +162,6 @@ public class RorOrgLoadSource implements OrgLoadSource {
     private boolean loadData() {
         try {
             LOGGER.info("Loading ROR data...");
-            System.out.println("Loading ROR data...");
             Instant start = Instant.now();
             File fileToLoad = new File(localDataPath);
             if (!fileToLoad.exists()) {
