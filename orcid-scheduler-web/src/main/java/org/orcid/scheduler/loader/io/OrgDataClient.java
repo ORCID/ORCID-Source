@@ -56,7 +56,7 @@ public class OrgDataClient {
         int status = response.getStatus();      
         String error = response.getError();   
         if (status != 200) {
-            LOGGER.debug("Jersey URL request: " + url + " response " + response.toString());
+            LOGGER.warn("Jersey URL request: " + url + " response " + response.toString());
             LOGGER.error("Unable to fetch file {}: {} {}", new Object[] { url, status , error });
             return null;
         }
@@ -74,6 +74,7 @@ public class OrgDataClient {
         JerseyClientResponse<InputStream, String> response = jerseyClientHelperForOrgLoaders.executeGetRequest(url, null, null, false, Map.of(), headers, InputStream.class, String.class);
         int status = response.getStatus();
         if (status != 200) {
+            LOGGER.warn("Response for download file: " + response.toString());
             LOGGER.warn("Unable to fetch file {}: {}", new Object[] { url, status });
             return false;
         }

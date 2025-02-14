@@ -121,7 +121,10 @@ public class RorOrgLoadSource implements OrgLoadSource {
             // get the last element in the list that has the last version
             String zenodoUrl = zenodoHit.getFiles().get(zenodoHit.getFiles().size() > 0 ? zenodoHit.getFiles().size() - 1 : 0).getLinks().getSelf();
             LOGGER.info("Retrieving ROR data from: " + zenodoUrl);
-            success = orgDataClient.downloadFile(zenodoUrl, userAgent, zipFilePath);
+            headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.USER_AGENT, userAgent);
+            headers.put(HttpHeaders.ACCEPT, MediaType.MEDIA_TYPE_WILDCARD);
+            success = orgDataClient.downloadFile(zenodoUrl, zipFilePath, headers);
 
             try {
                 LOGGER.info("Unzipping  ROR ....");
