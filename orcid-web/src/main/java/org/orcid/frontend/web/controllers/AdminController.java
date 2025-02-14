@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -118,6 +120,8 @@ public class AdminController extends BaseController {
     private static final String OUT_NOT_AVAILABLE = "N/A";
     private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
+    
+    private static final int RESET_PASSWORD_LINK_DURATION = 24;
 
     private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
         if (!orcidSecurityManager.isAdmin()) {
@@ -647,19 +651,20 @@ public class AdminController extends BaseController {
      * @throws IllegalAccessException
      * @throws UnsupportedEncodingException
      */
-    @RequestMapping(value = "/reset-password-link", method = RequestMethod.POST)
+    @RequestMapping(value = "/reset-password-link.json", method = RequestMethod.POST)
     public @ResponseBody AdminResetPasswordLink resetPasswordLink(HttpServletRequest serverRequest, HttpServletResponse response,
             @RequestBody AdminResetPasswordLink form) throws IllegalAccessException, UnsupportedEncodingException {
         isAdmin(serverRequest, response);
         form.setError(null);
         String email = URLDecoder.decode(form.getEmail(), "UTF-8").trim();
+        LOGGER.debug("The email to reset password link to is: " + email);
         if (OrcidStringUtils.isEmailValid(email) && emailManager.emailExists(email)) {
-            String resetLink = verifyEmailUtils.createResetLinkForAdmin(email, registryUrl);
-            form.setResetLink(resetLink);
-            //need issue date as well
-            PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetLink);
-            form.setIssueDate(passwordResetToken.getIssueDate());
-            form.setDurationInHours(passwordResetToken.getDurationInHours()); 
+            Pair<String, Date> resetLinkData = verifyEmailUtils.createResetLinkForAdmin(email, registryUrl);
+            LOGGER.debug("Reset link to be sent to the client: " + resetLinkData.getKey());
+            
+            form.setResetLink(resetLinkData.getKey());
+            form.setIssueDate(resetLinkData.getValue());
+            form.setDurationInHours(RESET_PASSWORD_LINK_DURATION); 
         } else {
             form.setError(getMessage("admin.errors.unexisting_email"));
         }
@@ -1200,16 +1205,6 @@ public class AdminController extends BaseController {
             data.setSuccess(false);
             data.setError(e.getMessage());
             return data;
-        }
-    }
-    
-    private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
-        try {           
-            String paramsString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedLink), "UTF-8"));
-            return new PasswordResetToken(paramsString);
-        } catch (UnsupportedEncodingException e) {
-            LOGGER.error("Could not decrypt " + encryptedLink);
-            throw new RuntimeException(getMessage("web.orcid.decrypt_passwordreset.exception"));
         }
     }
 }
