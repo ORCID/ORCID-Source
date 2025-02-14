@@ -1,3 +1,27 @@
+## v2.70.10 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.9...v2.70.10)
+
+- [#7193](https://github.com/ORCID/ORCID-Source/pull/7193): Add affiliation after reactivation
+
+## v2.70.9 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.8...v2.70.9)
+
+## v2.70.8 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.7...v2.70.8)
+
+## v2.70.7 - 2025-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.6...v2.70.7)
+
+## v2.70.6 - 2025-01-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.5...v2.70.6)
+
+- [#7189](https://github.com/ORCID/ORCID-Source/pull/7189): Added the check for existent entries
+
 ## v2.70.5 - 2025-01-22
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.4...v2.70.5)
