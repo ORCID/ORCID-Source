@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.math3.util.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -1443,7 +1444,7 @@ public class AdminControllerTest extends BaseControllerTest {
        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                            
         
        Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("That email address is not on our records");       
-       Mockito.when(verifyEmailUtils.createResetLinkForAdmin(Mockito.anyString(), Mockito.any())).thenReturn("xyz"); 
+       Mockito.when(verifyEmailUtils.createResetLinkForAdmin(Mockito.anyString(), Mockito.any())).thenReturn(new Pair<String, Date>("xyz", new Date())); 
        
 
       
