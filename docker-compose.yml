@@ -75,7 +75,7 @@ services:
     profiles:
       - dev
 
-  frontend:
+  ui_frontend:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
     build:
       context: .
@@ -88,7 +88,7 @@ services:
     networks:
       app:
 
-  web_proxy:
+  ui_proxy:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
     build:
       context: .
@@ -106,7 +106,7 @@ services:
       - dev
       - ui
 
-  web:
+  ui:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web:${TAG:-0.0.1}
     build:
       cache_from:
