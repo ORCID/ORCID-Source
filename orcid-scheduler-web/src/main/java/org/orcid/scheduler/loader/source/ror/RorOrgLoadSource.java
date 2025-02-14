@@ -123,7 +123,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             LOGGER.info("Retrieving ROR data from: " + zenodoUrl);
             headers = new HashMap<String, String>();
             headers.put(HttpHeaders.USER_AGENT, userAgent);
-            headers.put(HttpHeaders.ACCEPT, MediaType.MEDIA_TYPE_WILDCARD);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM);
             success = orgDataClient.downloadFile(zenodoUrl, zipFilePath, headers);
 
             try {
