@@ -1,3 +1,9 @@
+## v2.71.19 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.18...v2.71.19)
+
+- [#7222](https://github.com/ORCID/ORCID-Source/pull/7222): Changed Accept type from wild card to octet stream, logging error
+
 ## v2.71.18 - 2025-02-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.17...v2.71.18)
