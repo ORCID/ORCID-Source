@@ -110,7 +110,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             fileRotator.removeFileIfExists(localDataPath);
             Map<String, String> headers = new HashMap<String, String>();
             headers.put(HttpHeaders.USER_AGENT, userAgent);
-            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl + "&sort=mostrecent&size=1", headers, ZenodoRecords.class);
             ZenodoRecordsHit zenodoHit = zenodoRecords.getHits().getHits().get(0);
 
@@ -123,7 +123,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
             LOGGER.info("Retrieving ROR data from: " + zenodoUrl);
             headers = new HashMap<String, String>();
             headers.put(HttpHeaders.USER_AGENT, userAgent);
-            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_OCTET_STREAM);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
             success = orgDataClient.downloadFile(zenodoUrl, zipFilePath, headers);
 
             try {
