@@ -147,11 +147,9 @@
 	<sec:http pattern="/sendReactivation\.json" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/orgs/disambiguated/(.+)\?(.+)?" security="none" create-session="stateless" />
 
-	<!-- Registration endpoints -->
-	<sec:http pattern="/register.json(\?.*)?" security="none" create-session="stateless" />
+	<!-- Endpoints used during registration -->
 	<sec:http pattern="/email-domain/find-category(\?.*)?" security="none" create-session="stateless" />
 	<sec:http pattern="/email-domain/find-org(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/registerConfirm\.json(\?.*)?" security="none" create-session="stateless" />
 
 	<!-- Public Record page endpoints -->
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
@@ -314,6 +312,10 @@
 		<sec:custom-filter position="CORS_FILTER" ref="corsFilterWeb" />
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 
+		<sec:intercept-url pattern="/register.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/registerConfirm\.json(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies.json(\?.*)?"

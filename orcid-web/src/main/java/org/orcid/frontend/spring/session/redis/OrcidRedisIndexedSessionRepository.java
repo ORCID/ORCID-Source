@@ -59,7 +59,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
             "/assets/vectors/orcid.logo.icon.svg", "/config.json", "/delegators/delegators-and-me.json", "/fundings/fundingDetails.json", "/fundings/fundingGroups.json", "/inbox/notifications.json",
             "/inbox/totalCount.json", "/inbox/unreadCount.json", "/my-orcid/externalIdentifiers.json", "/my-orcid/keywordsForms.json", "/my-orcid/otherNamesForms.json", "/my-orcid/websitesForms.json",
             "/ng-cli-ws", "/not-found", "/notifications/frequencies/view", "/orgs/disambiguated/FUNDREF", "/orgs/disambiguated/GRID", "/orgs/disambiguated/LEI", "/orgs/disambiguated/RINGGOLD",
-            "/orgs/disambiguated/ROR", "/peer-reviews/peer-review.json", "/peer-reviews/peer-reviews-by-group-id.json", "/peer-reviews/peer-reviews-minimized.json", "/qr-code.png",
+            "/orgs/disambiguated/ROR", "/peer-reviews/peer-review.json", "/peer-reviews/peer-reviews-by-group-id.json", "/peer-reviews/peer-reviews-minimized.json", "/qr-code.png", "/register.json",
             "/research-resources/researchResource.json", "/research-resources/researchResourcePage.json", "/works/getWorkInfo.json", "/works/groupingSuggestions.json", "/works/idTypes.json", "/works/work.json",
             "/works/worksExtendedPage.json");
     private final List<String> urisToSkipAlways = List.of("/oauth/custom/register/validatePassword.json");
