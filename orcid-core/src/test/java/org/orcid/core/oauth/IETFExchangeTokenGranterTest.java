@@ -319,7 +319,7 @@ public class IETFExchangeTokenGranterTest {
         try {
             tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
         } catch(OrcidInvalidScopeException e) {
-            assertEquals("The id_token is disabled and does not contain any valid scope", e.getMessage());
+            assertEquals("The id_token is disabled", e.getMessage());
         } catch(Exception e) {
             fail("Unhandled exception:" + e.getMessage());
         }
@@ -335,7 +335,7 @@ public class IETFExchangeTokenGranterTest {
         try {
             tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
         } catch(OrcidInvalidScopeException e) {
-            assertEquals("The id_token is disabled and does not contain any valid scope", e.getMessage());
+            assertEquals("The id_token is disabled", e.getMessage());
         } catch(Exception e) {
             fail("Unhandled exception:" + e.getMessage());
         }
