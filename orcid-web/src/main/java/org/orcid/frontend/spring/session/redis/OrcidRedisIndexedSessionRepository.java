@@ -132,7 +132,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
 
         if(updateSession()) {
             //TODO: REMOVE THIS LOG ENTRY BEFORE GOING LIVE!!!!
-            logger.info("Saving session for " + request.getRequestURI() + " - " + request.getMethod());
+            logger.debug("Saving session for " + request.getRequestURI() + " - " + request.getMethod());
             session.save();
             if (session.isNew) {
                 String sessionCreatedKey = this.getSessionCreatedChannel(session.getId());
@@ -141,7 +141,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
             }
         } else {
             //TODO: REMOVE THIS LOG ENTRY BEFORE GOING LIVE!!!!
-            logger.info("Skip save session id " + request.getRequestURI() + " - " + request.getMethod());
+            logger.debug("Skip save session id " + request.getRequestURI() + " - " + request.getMethod());
         }
     }
 
@@ -208,11 +208,11 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
                 ///////////////////////////////////////////////
                 if(updateSession()) {
                     // TODO: REMOVE THIS LOG ENTRY BEFORE GOING LIVE!!!
-                    logger.info("Updating last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
+                    logger.debug("Updating last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
                     loaded.setLastAccessedTime(Instant.ofEpochMilli((Long) entry.getValue()));
                 } else {
                     // TODO: REMOVE THIS LOG ENTRY BEFORE GOING LIVE!!!
-                    logger.info("Ignoring last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
+                    logger.debug("Ignoring last accessed time for " + request.getRequestURI() + " - " + request.getMethod());
                 }
             } else if (key.startsWith("sessionAttr:")) {
                 loaded.setAttribute(key.substring("sessionAttr:".length()), entry.getValue());
@@ -410,7 +410,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
                 // TODO: REMOVE THIS BEFORE GOING LIVE!!!!
                 ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
                 HttpServletRequest request = att.getRequest();
-                logger.info("REDIS_SESSION: setLastAccessedTime: " + request.getRequestURI().toString() + " - " + request.getMethod());
+                logger.debug("REDIS_SESSION: setLastAccessedTime: " + request.getRequestURI().toString() + " - " + request.getMethod());
 
                 this.cached.setLastAccessedTime(lastAccessedTime);
                 this.delta.put("lastAccessedTime", this.getLastAccessedTime().toEpochMilli());
@@ -481,8 +481,6 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
         }
 
         private void save() {
-            // TODO: REMOVE THIS LOG ENTRY BEFORE GOING LIVE!!!!
-            logger.info("REDIS_SESSION: save");
             this.saveChangeSessionId();
             this.saveDelta();
         }

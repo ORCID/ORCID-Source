@@ -101,55 +101,56 @@
 	</bean>
 
 	<sec:http-firewall ref="httpFirewall"/>
-    	
-	<sec:http pattern="/robots\.txt" security="none" create-session="stateless" />
-	<sec:http pattern="/tomcatUp\.json" security="none" create-session="stateless" />
-	<sec:http pattern="/webStatus\.json" security="none" create-session="stateless" />
-	<sec:http pattern="/error" security="none" />
-	<sec:http pattern="/favicon\.ico" security="none" create-session="stateless" />
+
 	<sec:http pattern="/static/**" security="none" create-session="stateless" />
 	<sec:http pattern="/.well-known/**" security="none" />
-	<sec:http pattern="/assets/(.*)?" security="none" create-session="stateless" />
+
+	<sec:http request-matcher="regex" pattern="/robots\.txt" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/tomcatUp\.json" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/webStatus\.json" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/error" security="none" />
+	<sec:http request-matcher="regex" pattern="/favicon\.ico" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/assets/(.*)?" security="none" create-session="stateless" />
 
 	<!--Endpoint that can be accessed anonymously and don't need to create a session-->
-	<sec:http pattern="/" security="none" create-session="stateless" />
-	<sec:http pattern="/not-found" security="none" create-session="stateless" />
-	<sec:http pattern="/home(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/identifiers/norm/(.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/statistics/liveids\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/statistics(/)?$" security="none" create-session="stateless" />
-	<sec:http pattern="/messages.json(\?.*)?" security="none" create-session="stateless"  />
-	<sec:http pattern="/config.json(\?.*)?" security="none" create-session="stateless"  />
-	<sec:http pattern="/lang.json(.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/orcid-search/.*" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/validate-reset-password.\json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email/.*" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email-v2\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/claim/.*" security="none" create-session="stateless" />
-	<sec:http pattern="/resend-claim(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/resend-claim\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/validate-resend-claim\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reset-password-email-validate-token\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/members(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/members/.*" security="none" create-session="stateless" />
-	<sec:http pattern="/consortia(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/consortia/.*" security="none" create-session="stateless" />
-	<sec:http pattern="/record-corrections" security="none" create-session="stateless" />
-	<sec:http pattern="/record-corrections/next(\/?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/record-corrections/previous(\/?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/about/trust/integrity/record-corrections" security="none" create-session="stateless" />
-	<sec:http pattern="/reactivation/.*?" security="none" create-session="stateless"/>
-	<sec:http pattern="/reactivationConfirm\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/reactivationData\.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/sendReactivation\.json" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/not-found" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/home(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/identifiers/norm/(.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/statistics/liveids\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/statistics(/)?$" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/messages.json(\?.*)?" security="none" create-session="stateless"  />
+	<sec:http request-matcher="regex" pattern="/config\.json(\?.*)?" security="none" create-session="stateless"  />
+	<sec:http request-matcher="regex" pattern="/lang.json(.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/orcid-search/.*" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reset-password(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reset-password\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/validate-reset-password\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reset-password-email/.*" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reset-password-email\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reset-password-email-v2\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/claim/.*" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/resend-claim(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/resend-claim\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/validate-resend-claim\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reset-password-email-validate-token\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/members(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/members/.*" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/consortia(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/consortia/.*" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/record-corrections" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/record-corrections/next(\/?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/record-corrections/previous(\/?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/about/trust/integrity/record-corrections" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reactivation/.*?" security="none" create-session="stateless"/>
+	<sec:http request-matcher="regex" pattern="/reactivationConfirm\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/reactivationData\.json(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/sendReactivation\.json" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/orgs/disambiguated/(.+)\?(.+)?" security="none" create-session="stateless" />
 
 	<!-- Endpoints used during registration -->
-	<sec:http pattern="/email-domain/find-category(\?.*)?" security="none" create-session="stateless" />
-	<sec:http pattern="/email-domain/find-org(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/email-domain/find-category(\?.*)?" security="none" create-session="stateless" />
+	<sec:http request-matcher="regex" pattern="/email-domain/find-org(\?.*)?" security="none" create-session="stateless" />
 
 	<!-- Public Record page endpoints -->
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
@@ -413,7 +414,7 @@
 		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 			authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-			username-parameter="userId" password-parameter="password" />
+			username-parameter="username" password-parameter="password" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 
