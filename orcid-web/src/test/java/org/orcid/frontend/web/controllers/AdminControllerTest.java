@@ -1449,14 +1449,14 @@ public class AdminControllerTest extends BaseControllerTest {
 
       
        AdminResetPasswordLink adminResetPasswordLink = new AdminResetPasswordLink();
-       adminResetPasswordLink.setEmail("not-found-email1@test.com");
+       adminResetPasswordLink.setOrcidOrEmail("not-found-email1@test.com");
         
        adminResetPasswordLink = adminController.resetPasswordLink(mockRequest, mockResponse, adminResetPasswordLink);
         
        assertEquals("That email address is not on our records", adminResetPasswordLink.getError());
         
        adminResetPasswordLink = new AdminResetPasswordLink();
-       adminResetPasswordLink.setEmail("existent_email@test.com");
+       adminResetPasswordLink.setOrcidOrEmail("existent_email@test.com");
        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
        Mockito.when(encryptionManager.decryptForExternalUse(Mockito.anyString())).thenReturn("email=existent_email@test.com&issueDate="+ date.toXMLFormat()+ "&h=24"); 
        adminResetPasswordLink = adminController.resetPasswordLink(mockRequest, mockResponse, adminResetPasswordLink);
