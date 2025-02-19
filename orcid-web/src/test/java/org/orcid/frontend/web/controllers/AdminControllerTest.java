@@ -1429,6 +1429,7 @@ public class AdminControllerTest extends BaseControllerTest {
        AdminController adminController = new AdminController();
        EmailManager emailManager = Mockito.mock(EmailManager.class);    
        LocaleManager localeManager = Mockito.mock(LocaleManager.class);  
+       ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
 
                
        ReflectionTestUtils.setField(adminController, "verifyEmailUtils", verifyEmailUtils);
@@ -1436,6 +1437,7 @@ public class AdminControllerTest extends BaseControllerTest {
        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
        ReflectionTestUtils.setField(adminController, "localeManager", localeManager);
        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+       ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         
        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
         
@@ -1445,7 +1447,8 @@ public class AdminControllerTest extends BaseControllerTest {
         
        Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("That email address is not on our records");       
        Mockito.when(verifyEmailUtils.createResetLinkForAdmin(Mockito.anyString(), Mockito.any())).thenReturn(new Pair<String, Date>("xyz", new Date())); 
-       
+       Mockito.when(localeManager.resolveMessage(Mockito.anyString(), Mockito.any())).thenReturn("That email address is not on our records"); 
+       Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
 
       
        AdminResetPasswordLink adminResetPasswordLink = new AdminResetPasswordLink();
@@ -1456,6 +1459,7 @@ public class AdminControllerTest extends BaseControllerTest {
        assertEquals("That email address is not on our records", adminResetPasswordLink.getError());
         
        adminResetPasswordLink = new AdminResetPasswordLink();
+       Mockito.when(emailManager.findOrcidIdByEmail(Mockito.anyString())).thenReturn("0000-0002-0551-5914"); 
        adminResetPasswordLink.setOrcidOrEmail("existent_email@test.com");
        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
        Mockito.when(encryptionManager.decryptForExternalUse(Mockito.anyString())).thenReturn("email=existent_email@test.com&issueDate="+ date.toXMLFormat()+ "&h=24"); 
