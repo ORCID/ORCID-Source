@@ -48,31 +48,34 @@ public class PIDResolverService {
         }
 
         // populate lookup maps for link checking
-        for (LinkResolver n : linkResolvers) {
-            List<String> supported = n.canHandle();
-            if (supported.equals(LinkResolver.CAN_HANDLE_EVERYTHING)) {
-                for (String type : linkResolverMap.keySet())
-                    linkResolverMap.get(type).add(n);
-            } else {
-                for (String type : supported) {
-                    linkResolverMap.get(type).add(n);
+        if(!linkResolverMap.isEmpty()) {
+            for (LinkResolver n : linkResolvers) {
+                List<String> supported = n.canHandle();
+                if (supported.equals(LinkResolver.CAN_HANDLE_EVERYTHING)) {
+                    for (String type : linkResolverMap.keySet())
+                        linkResolverMap.get(type).add(n);
+                } else {
+                    for (String type : supported) {
+                        linkResolverMap.get(type).add(n);
+                    }
                 }
             }
         }
 
         // populate lookup maps for metadata resolution
-        for (MetadataResolver n : metaResolvers) {
-            List<String> supported = n.canHandle();
-            if (supported.equals(MetadataResolver.CAN_HANDLE_EVERYTHING)) {
-                for (String type : metaResolverMap.keySet())
-                    metaResolverMap.get(type).add(n);
-            } else {
-                for (String type : supported) {
-                    metaResolverMap.get(type).add(n);
+        if(!metaResolverMap.isEmpty()) {
+            for (MetadataResolver n : metaResolvers) {
+                List<String> supported = n.canHandle();
+                if (supported.equals(MetadataResolver.CAN_HANDLE_EVERYTHING)) {
+                    for (String type : metaResolverMap.keySet())
+                        metaResolverMap.get(type).add(n);
+                } else {
+                    for (String type : supported) {
+                        metaResolverMap.get(type).add(n);
+                    }
                 }
             }
         }
-
     }
 
     /**
