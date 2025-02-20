@@ -671,7 +671,7 @@ public class AdminController extends BaseController {
             orcid = orcidOrEmail;
         }
 
-        if (!PojoUtil.isEmpty(orcid) || profileEntityManager.orcidExists(orcid)) {
+        if (!PojoUtil.isEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
             Pair<String, Date> resetLinkData = verifyEmailUtils.createResetLinkForAdmin(orcid, registryUrl);
             LOGGER.debug("Reset link to be sent to the client: " + resetLinkData.getKey());
 
