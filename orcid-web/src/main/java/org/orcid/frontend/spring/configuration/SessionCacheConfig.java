@@ -22,20 +22,20 @@ import java.time.Duration;
 @OrcidEnableRedisHttpSession
 public class SessionCacheConfig extends AbstractHttpSessionApplicationInitializer {
 
-    @Value("${org.orcid.core.utils.cache.redis.pool.idle.max:30}")
+    @Value("${org.orcid.core.utils.cache.session.redis.pool.idle.max:30}")
     private int poolIdleMax;
-    @Value("${org.orcid.core.utils.cache.redis.pool.max:300}")
+    @Value("${org.orcid.core.utils.cache.session.redis.pool.max:300}")
     private int poolMax;
-    @Value("${org.orcid.core.utils.cache.redis.pool.wait.millis:2000}")
+    @Value("${org.orcid.core.utils.cache.session.redis.pool.wait.millis:1500}")
     private int poolWaitMillis;
 
-    @Value("${org.orcid.core.utils.cache.redis.host}")
+    @Value("${org.orcid.core.utils.cache.session.redis.host}")
     private String host;
-    @Value("${org.orcid.core.utils.cache.redis.port}")
+    @Value("${org.orcid.core.utils.cache.session.redis.port}")
     private int port;
-    @Value("${org.orcid.core.utils.cache.redis.password}")
+    @Value("${org.orcid.core.utils.cache.session.redis.password}")
     private String password;
-    @Value("${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}")
+    @Value("${org.orcid.core.utils.cache.session.redis.connection_timeout_millis:2000}")
     private int connectionTimeoutMillis;
 
     @Value("${org.orcid.core.session.cookie.domain:dev.orcid.org}")
