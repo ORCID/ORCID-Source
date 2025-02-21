@@ -282,7 +282,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         
         if (scopesOBO.isEmpty()) {
             if (isRevoked) {
-                throw new OrcidInvalidScopeException("The id_token is disabled");
+                throw new OrcidInvalidScopeException("There are no active tokens with valid scopes for this account");
             }
             throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
         }
