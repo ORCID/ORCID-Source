@@ -38,6 +38,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml"})
+@ActiveProfiles("unitTests")
 public class ClaimControllerTest {
 
     @Resource

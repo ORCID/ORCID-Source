@@ -47,15 +47,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.common.collect.Lists;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-public class OauthRegistrationControllerTest extends DBUnitTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-    
-    @Resource
-    OauthRegistrationController oauthRegistrationController;
+public class OauthRegistrationControllerTest {
+    OauthRegistrationController oauthRegistrationController = new OauthRegistrationController();
     
     @Mock
     RegistrationController registrationController;
@@ -72,16 +65,6 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
     @Mock
     private HttpServletResponse servletResponse;
     
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-    
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
-    
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
@@ -89,8 +72,7 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
         oauthRegistrationController.setAuthorizationEndpoint(authorizationEndpoint);
         oauthRegistrationController.setAuthenticationManager(authenticationManager);
     }
-    
-    @SuppressWarnings("unchecked")
+
     @Test
     public void testStripHtmlFromNames() throws UnsupportedEncodingException {
         HttpSession session = mock(HttpSession.class);
