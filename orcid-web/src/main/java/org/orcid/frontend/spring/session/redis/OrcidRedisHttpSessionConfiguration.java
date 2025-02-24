@@ -12,6 +12,7 @@ import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportAware;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
 @Configuration(
         proxyBeanMethods = false
 )
+@Profile("!unitTests")
 public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfiguration implements BeanClassLoaderAware, EmbeddedValueResolverAware, ImportAware {
 
     static final String DEFAULT_CLEANUP_CRON = "0 * * * * *";

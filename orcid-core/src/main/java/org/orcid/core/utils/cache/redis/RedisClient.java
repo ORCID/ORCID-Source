@@ -183,30 +183,4 @@ public class RedisClient {
 
         return mappedValuesForKey;
     }
-
-    public static void main(String [] args) {
-        RedisClient client = new RedisClient("xxxxx", 6379, "xxxxxxx");
-        client.init();
-        System.out.println("Connected");
-        Jedis r = client.pool.getResource();
-
-        Set<String> keys = r.keys("spring:session:sessions:*");
-
-        for (String key : keys) {
-            System.out.println("----------------------------------------------");
-            System.out.println(key);
-            String keyType = r.type(key);
-            System.out.println(keyType);
-            if ("hash".equals(keyType)) {
-                Map<String, String> myMap = r.hgetAll(key);
-                for (String tkey : myMap.keySet()) {
-                    System.out.println(tkey + ":     " + myMap.get(tkey));
-                }
-            }
-            if ("string".equals(keyType)) {
-                System.out.println(key + ":     " + r.get("key"));
-            }
-            System.out.println("----------------------------------------------");
-        }
-    }
 }

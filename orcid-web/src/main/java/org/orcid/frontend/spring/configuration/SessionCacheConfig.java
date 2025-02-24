@@ -5,6 +5,7 @@ import org.orcid.frontend.spring.session.redis.OrcidEnableRedisHttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -16,10 +17,8 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 import java.time.Duration;
 
 @Configuration
-//TODO: Trying to make a custom Redis http session configuration to filter the number of times we commit the transaction
-//Remove this comment once it is working!
-//@EnableRedisHttpSession
 @OrcidEnableRedisHttpSession
+@Profile("!unitTests")
 public class SessionCacheConfig extends AbstractHttpSessionApplicationInitializer {
 
     @Value("${org.orcid.core.utils.cache.session.redis.pool.idle.max:30}")
@@ -29,9 +28,9 @@ public class SessionCacheConfig extends AbstractHttpSessionApplicationInitialize
     @Value("${org.orcid.core.utils.cache.session.redis.pool.wait.millis:1500}")
     private int poolWaitMillis;
 
-    @Value("${org.orcid.core.utils.cache.session.redis.host}")
+    @Value("${org.orcid.core.utils.cache.session.redis.host:localhost}")
     private String host;
-    @Value("${org.orcid.core.utils.cache.session.redis.port}")
+    @Value("${org.orcid.core.utils.cache.session.redis.port:6379}")
     private int port;
     @Value("${org.orcid.core.utils.cache.session.redis.password}")
     private String password;
@@ -66,7 +65,6 @@ public class SessionCacheConfig extends AbstractHttpSessionApplicationInitialize
         return ConfigureRedisAction.NO_OP;
     }
 
-    //TODO ... how do we put the cookie on the . domain
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
