@@ -39,6 +39,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import inet.ipaddr.IPAddress;
+import inet.ipaddr.IPAddressString;
+
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.AvailableLocales;
 
@@ -48,7 +51,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Autowired
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-    
+
     @Autowired
     private ProfileDao profileDao;
 
@@ -101,9 +104,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     @Value("${org.orcid.papi.rate.limit.referrer.whiteSpaceSeparatedWhiteList}")
     private String papiReferrerWhiteSpaceSeparatedWhiteList;
 
+    @Value("${org.orcid.papi.rate.limit.cidrRange.whiteSpaceSeparatedWhiteList:10.0.0.0/8}")
+    private String papiCidrRangeWhiteSpaceSeparatedWhiteList;
+
     private List<String> papiIpWhiteList;
     private List<String> papiClientIdWhiteList;
     private List<String> papiReferrerWhiteList;
+    private List<String> papiCidrRangeWhiteList;
 
     private static final String TOO_MANY_REQUESTS_MSG = "Too Many Requests. You have exceeded the daily quota for anonymous usage of this API. \n"
             + "You can increase your daily quota by registering for and using Public API client credentials "
@@ -125,6 +132,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                 : null;
         papiReferrerWhiteList = StringUtils.isNotBlank(papiReferrerWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiReferrerWhiteSpaceSeparatedWhiteList.split("\\s"))
                 : null;
+        papiCidrRangeWhiteList = StringUtils.isNotBlank(papiCidrRangeWhiteSpaceSeparatedWhiteList) ? Arrays.asList(papiCidrRangeWhiteSpaceSeparatedWhiteList.split("\\s"))
+                : null;
     }
 
     @Override
@@ -139,32 +148,35 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             }
             String ipAddress = getClientIpAddress(httpServletRequest);
 
-            String clientId = null;
-            if (tokenValue != null) {
-                try {
-                    clientId = orcidTokenStore.readClientId(tokenValue);
-                } catch (Exception ex) {
-                    LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
-                }
-            }
-            boolean isAnonymous = (clientId == null);
-            LocalDate today = LocalDate.now();
-            try {
-                if (isAnonymous) {
-                    if (!isWhiteListed(ipAddress)) {
-                        LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                        this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
-                    }
+            if (!isIPInCidrWhiteListRange(ipAddress)) {
 
-                } else {
-                    if (!isClientIdWhiteListed(clientId)) {
-                        //Get the locale for the clientID
-                        LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
-                        this.rateLimitClientRequest(clientId, today);
+                String clientId = null;
+                if (tokenValue != null) {
+                    try {
+                        clientId = orcidTokenStore.readClientId(tokenValue);
+                    } catch (Exception ex) {
+                        LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
                     }
                 }
-            } catch (Exception ex) {
-                LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
+                boolean isAnonymous = (clientId == null);
+                LocalDate today = LocalDate.now();
+                try {
+                    if (isAnonymous) {
+                        if (!isWhiteListed(ipAddress)) {
+                            LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
+                            this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                        }
+
+                    } else {
+                        if (!isClientIdWhiteListed(clientId)) {
+                            // Get the locale for the clientID
+                            LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
+                            this.rateLimitClientRequest(clientId, today);
+                        }
+                    }
+                } catch (Exception ex) {
+                    LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
+                }
             }
         }
 
@@ -221,7 +233,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     }
 
     private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId, Locale locale) {
-        String subject = messageSource.getMessage("papi.rate.limit.subject", new String[] { orcidId }, locale);;
+        String subject = messageSource.getMessage("papi.rate.limit.subject", new String[] { orcidId }, locale);
+        ;
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("messages", messageSource);
         templateParams.put("messageArgs", new Object[0]);
@@ -241,12 +254,13 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         ProfileEntity memberProfile = profileDao.find(memberId);
         String emailName = recordNameManager.deriveEmailFriendlyName(memberId);
         Locale locale = getUserLocaleFromProfileEntity(memberProfile);
-        
-        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, memberId, getUserLocaleFromProfileEntity(memberProfile));
+
+        Map<String, Object> templateParams = this.createTemplateParams(clientId, clientDetailsEntity.getClientName(), emailName, memberId,
+                getUserLocaleFromProfileEntity(memberProfile));
         // Generate body from template
         String body = templateManager.processTemplate("papi_rate_limit_email.ftl", templateParams, locale);
         // Generate html from template
-        String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams, locale );
+        String html = templateManager.processTemplate("papi_rate_limit_email_html.ftl", templateParams, locale);
         String email = emailManager.findPrimaryEmail(memberId).getEmail();
         LOG.info("from address={}", FROM_ADDRESS);
         LOG.info("text email={}", body);
@@ -315,17 +329,42 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         else
             return (papiReferrerWhiteList != null) ? papiReferrerWhiteList.contains(referrer) : false;
     }
-    
+
+    private boolean isIPInCidrWhiteListRange(String ipAddress) {
+        for (String cidr : papiCidrRangeWhiteList) {
+            if (isIpInCidrRange(ipAddress, cidr)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private Locale getUserLocaleFromProfileEntity(ProfileEntity profile) {
         String locale = profile.getLocale();
         try {
             if (locale != null) {
                 return LocaleUtils.toLocale(AvailableLocales.valueOf(locale).value());
             }
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             LOG.error("Locale is not supported in the available locales, defaulting to en", ex);
         }
         return LocaleUtils.toLocale("en");
-    } 
+    }
+
+    private boolean isIpInCidrRange(String ipAddress, String cidr) {
+        LOG.info("ip Address: " + ipAddress + " cidr: " + cidr);
+        IPAddressString ipStr = new IPAddressString(ipAddress);
+        IPAddressString cidrStr = new IPAddressString(cidr);
+
+        IPAddress ip = ipStr.getAddress();
+        IPAddress subnet = cidrStr.getAddress();
+        
+        if (ip == null || subnet == null) {
+            // Invalid IP or CIDR notation
+            LOG.info("IP or cidr null returning false"); 
+            return false;
+        }
+        LOG.info("ip Address: " + ipAddress + " cidr: " + cidr + " is in ip range? " + subnet.contains(ip));
+        return subnet.contains(ip);
+    }
 }

@@ -283,7 +283,22 @@ public class PasswordResetController extends BaseController {
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         
-        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        String orcid = null;
+        //check first if valid orcid as the admin portal can send either and email or an orcid
+        if(OrcidStringUtils.isValidOrcid(passwordResetToken.getEmail()) ){
+            if(profileEntityManager.orcidExists(passwordResetToken.getEmail())) {
+                orcid = passwordResetToken.getEmail();
+            }
+            else {
+                String message = "invalidPasswordResetToken";
+                oneTimeResetPasswordForm.getErrors().add(message);
+                return oneTimeResetPasswordForm;
+            }
+        }
+        else {
+            orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        }
+
         Emails emails = emailManager.getEmails(orcid);
         
         passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
@@ -338,7 +353,7 @@ public class PasswordResetController extends BaseController {
     }
 
     private boolean isTokenExpired(PasswordResetToken passwordResetToken) {
-        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 4);
+        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), passwordResetToken.getDurationInHours());
         Date now = new Date();
         return (expiryDateOfOneHourFromIssueDate.getTime() < now.getTime());
     }

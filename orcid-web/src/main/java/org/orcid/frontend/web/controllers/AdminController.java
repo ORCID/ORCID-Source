@@ -3,6 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,8 +16,11 @@ import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
@@ -24,6 +28,8 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.utils.PasswordResetToken;
+import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -37,6 +43,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.AdminResetPasswordLink;
 import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
@@ -45,6 +52,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,14 +89,23 @@ public class AdminController extends BaseController {
     @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
 
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+
+    @Resource
+    private EncryptionManager encryptionManager;
+
     @Resource(name = "spamManager")
     SpamManager spamManager;
-    
-    @Resource 
+
+    @Resource
     private RecordEmailSender recordEmailSender;
-    
+
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+
+    @Value("${org.orcid.admin.registry.url:https://orcid.org}")
+    private String registryUrl;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -102,6 +119,8 @@ public class AdminController extends BaseController {
     private static final String OUT_NOT_AVAILABLE = "N/A";
     private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
+
+    private static final int RESET_PASSWORD_LINK_DURATION = 24;
 
     private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
         if (!orcidSecurityManager.isAdmin()) {
@@ -327,7 +346,8 @@ public class AdminController extends BaseController {
         }
 
         if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0) {
-            // Return a list of email addresses that should be notified by this change
+            // Return a list of email addresses that should be notified by this
+            // change
             List<String> emailsToNotify = profileEntityManager.reactivate(orcid, email, null);
             // Notify any new email address
             if (!emailsToNotify.isEmpty()) {
@@ -626,6 +646,48 @@ public class AdminController extends BaseController {
     }
 
     /**
+     * Reset password validate
+     * 
+     * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException
+     */
+    @RequestMapping(value = "/reset-password-link.json", method = RequestMethod.POST)
+    public @ResponseBody AdminResetPasswordLink resetPasswordLink(HttpServletRequest serverRequest, HttpServletResponse response,
+            @RequestBody AdminResetPasswordLink form) throws IllegalAccessException, UnsupportedEncodingException {
+        isAdmin(serverRequest, response);
+        form.setError(null);
+        String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(), "UTF-8").trim();
+        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
+        String orcid = null;
+        // If it is not an orcid, check the value from the emails table
+        if (!isOrcid) {
+            if (OrcidStringUtils.isEmailValid(orcidOrEmail) && emailManager.emailExists(orcidOrEmail)) {
+                orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
+            } else {
+                form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+                return form;
+            }
+        } else {
+            orcid = orcidOrEmail;
+        }
+
+        if (!PojoUtil.isEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
+            Pair<String, Date> resetLinkData = verifyEmailUtils.createResetLinkForAdmin(orcid, registryUrl);
+            LOGGER.debug("Reset link to be sent to the client: " + resetLinkData.getKey());
+
+            form.setResetLink(resetLinkData.getKey());
+            form.setIssueDate(resetLinkData.getValue());
+            form.setDurationInHours(RESET_PASSWORD_LINK_DURATION);
+
+        } else {
+            form.setError(getMessage("admin.errors.unexisting_orcid"));
+            return form;
+        }
+
+        return form;
+    }
+
+    /**
      * Admin switch user
      * 
      * @throws IllegalAccessException
@@ -816,10 +878,11 @@ public class AdminController extends BaseController {
                         } else if (lockAccounts.getDescription() == null || lockAccounts.getDescription().isEmpty()) {
                             descriptionMissing.add(nextToken);
                         } else {
-                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
+                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(),
+                                    getCurrentUserOrcid());
                             if (wasLocked) {
                                 recordEmailSender.sendOrcidLockedEmail(orcidId);
-                            }                            
+                            }
                             successIds.add(nextToken);
                         }
                     }
@@ -1007,7 +1070,7 @@ public class AdminController extends BaseController {
                         } else {
                             email = emailOrOrcid;
                         }
-                        recordEmailSender.sendClaimReminderEmail(orcidId,0,email);
+                        recordEmailSender.sendClaimReminderEmail(orcidId, 0, email);
                         successIds.add(emailOrOrcid);
                     }
                 }
@@ -1048,7 +1111,7 @@ public class AdminController extends BaseController {
 
                     if (entity.getUsing2FA()) {
                         twoFactorAuthenticationManager.adminDisable2FA(orcidId, getCurrentUserOrcid());
-                        recordEmailSender.send2FADisabledEmail(orcidId);                        
+                        recordEmailSender.send2FADisabledEmail(orcidId);
                         disabledIds.add(emailOrOrcid);
                     } else {
                         without2FAs.add(emailOrOrcid);
@@ -1071,8 +1134,6 @@ public class AdminController extends BaseController {
         data.setClientNotFound(false);
         data.setAlreadyMember(false);
         data.setClientDeactivated(false);
-
-
 
         isAdmin(serverRequest, response);
         if (PojoUtil.isEmpty(data.getClientId()) || !clientDetailsManager.exists(data.getClientId())) {
@@ -1098,14 +1159,14 @@ public class AdminController extends BaseController {
                 ProfileEntity group = profileEntityCacheManager.retrieve(data.getGroupId());
                 if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
                     data.setGroupIdNotFound(true);
-                } else { 
+                } else {
                     if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
                         data.setGroupIdDeactivated(true);
-                    } else {                    
+                    } else {
                         ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
                         data.setTargetClientType(clientType.name());
                     }
-                    
+
                 }
 
             } catch (IllegalArgumentException e) {
@@ -1114,13 +1175,12 @@ public class AdminController extends BaseController {
             }
         }
 
-
         return data;
     }
 
     @RequestMapping(value = "/convert-client.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient convertClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
-            throws IllegalAccessException {        
+            throws IllegalAccessException {
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
         if (data.isClientNotFound() || data.isAlreadyMember() || data.isGroupIdNotFound()) {
@@ -1150,7 +1210,7 @@ public class AdminController extends BaseController {
             data.setSuccess(false);
             return data;
         }
-            
+
         try {
             clientDetailsManager.moveClientGroupId(data.getClientId(), data.getGroupId());
             data.setSuccess(true);

@@ -1,3 +1,109 @@
+## v2.71.22 - 2025-02-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.21...v2.71.22)
+
+## v2.71.21 - 2025-02-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.20...v2.71.21)
+
+## v2.71.20 - 2025-02-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.19...v2.71.20)
+
+## v2.71.19 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.18...v2.71.19)
+
+- [#7222](https://github.com/ORCID/ORCID-Source/pull/7222): Changed Accept type from wild card to octet stream, logging error
+
+## v2.71.18 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.17...v2.71.18)
+
+## v2.71.17 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.16...v2.71.17)
+
+## v2.71.16 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.15...v2.71.16)
+
+## v2.71.15 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.14...v2.71.15)
+
+## v2.71.14 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.13...v2.71.14)
+
+## v2.71.13 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.12...v2.71.13)
+
+## v2.71.12 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.11...v2.71.12)
+
+## v2.71.11 - 2025-02-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.10...v2.71.11)
+
+- [#7216](https://github.com/ORCID/ORCID-Source/pull/7216): pull tx
+
+## v2.71.10 - 2025-02-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.9...v2.71.10)
+
+- [#7215](https://github.com/ORCID/ORCID-Source/pull/7215): Lmendoza/9623 prod professional personal email detection is case sensitive
+
+## v2.71.9 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.8...v2.71.9)
+
+## v2.71.8 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.7...v2.71.8)
+
+## v2.71.7 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.6...v2.71.7)
+
+## v2.71.6 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.5...v2.71.6)
+
+## v2.71.5 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.4...v2.71.5)
+
+## v2.71.4 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.3...v2.71.4)
+
+- [#7206](https://github.com/ORCID/ORCID-Source/pull/7206): Revert "Revert "Update the cached token info so it indicate if the token is an OBO one""
+
+## v2.71.3 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.2...v2.71.3)
+
+- [#7205](https://github.com/ORCID/ORCID-Source/pull/7205): Revert "Update the cached token info so it indicate if the token is an OBO one"
+
+## v2.71.2 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.1...v2.71.2)
+
+## v2.71.1 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.0...v2.71.1)
+
+## v2.71.0 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.16...v2.71.0)
+
+## v2.70.16 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.15...v2.70.16)
+
 ## v2.70.15 - 2025-01-31
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.14...v2.70.15)

@@ -49,10 +49,7 @@ import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.BackupCodeDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -190,7 +187,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // If it was successfully deprecated
                 if (wasDeprecated) {
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-                    clearRecord(deprecatedOrcid, false);
                     // Move all email's to the primary record
                     Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
                     if (deprecatedAccountEmails != null) {
@@ -202,6 +198,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                             emailManager.moveEmailToOtherAccount(email.getEmail(), deprecatedOrcid, primaryOrcid);
                         }
                     }
+                    List<ProfileEmailDomainEntity> deprecatedEmailDomains = profileEmailDomainManager.getEmailDomains(deprecatedOrcid);
+                    if (deprecatedEmailDomains != null && !deprecatedEmailDomains.isEmpty()) {
+                        for (ProfileEmailDomainEntity emailDomain : deprecatedEmailDomains) {
+                            profileEmailDomainManager.moveEmailDomainToAnotherAccount(emailDomain.getEmailDomain(), deprecatedOrcid, primaryOrcid);
+                        }
+                    }
+                    // important to run this after moving domains, as this function will delete the domains from the database
+                    clearRecord(deprecatedOrcid, false);
 
                     profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
                     return true;
@@ -639,6 +643,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // remove trusted individuals
         givenPermissionToManager.removeAllForProfile(orcid);
+
+        // remove email domains
+        // NOTE: when deprecating, the domains get moved to the other record before this code is executed
+        profileEmailDomainManager.removeAllEmailDomains(orcid);
 
         // Remove biography
         if (biographyManager.exists(orcid)) {

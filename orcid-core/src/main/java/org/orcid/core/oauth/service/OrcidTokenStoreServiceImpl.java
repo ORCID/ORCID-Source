@@ -145,6 +145,9 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         orcidOauthTokenDetailService.createNew(detail);
         // Set the token id in the additional details
         token.getAdditionalInformation().put(OrcidOauth2Constants.TOKEN_ID, detail.getId());
+        if(detail.getOboClientDetailsId() != null) {
+            token.getAdditionalInformation().put(OrcidOauth2Constants.IS_OBO_TOKEN, "true");
+        }
     }
 
     /**
