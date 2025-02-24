@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -25,10 +26,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class OAuthAuthorizeNotSignedInFilterTest {
 
@@ -57,7 +59,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
 
     @Mock
-    OrcidProfileUserDetails orcidProfileUserDetails;
+    UserDetails orcidProfileUserDetails;
     
     @Mock
     OauthHelper oauthHelper;
@@ -121,11 +123,11 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(new OrcidProfileUserDetails());
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 

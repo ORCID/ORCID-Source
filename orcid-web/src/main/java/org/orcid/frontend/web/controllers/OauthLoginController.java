@@ -15,7 +15,7 @@ import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.utils.OrcidRequestUtil;
-import org.orcid.frontend.spring.OrcidWebAuthenticationDetails;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
@@ -195,11 +195,11 @@ public class OauthLoginController extends OauthControllerBase {
 
     private void copy2FAFields(OauthAuthorizeForm form, HttpServletRequest request) {
         if (form.getVerificationCode() != null) {
-            request.setAttribute(OrcidWebAuthenticationDetails.VERIFICATION_CODE_PARAMETER, form.getVerificationCode().getValue());
+            request.setAttribute(MFAWebAuthenticationDetails.VERIFICATION_CODE_PARAMETER, form.getVerificationCode().getValue());
         }
         
         if (form.getRecoveryCode() != null) {
-            request.setAttribute(OrcidWebAuthenticationDetails.RECOVERY_CODE_PARAMETER, form.getRecoveryCode().getValue());
+            request.setAttribute(MFAWebAuthenticationDetails.RECOVERY_CODE_PARAMETER, form.getRecoveryCode().getValue());
         }
     }
 

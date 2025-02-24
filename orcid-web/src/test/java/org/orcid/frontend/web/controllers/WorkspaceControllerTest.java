@@ -11,12 +11,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+@ActiveProfiles("unitTests")
 public class WorkspaceControllerTest {
 
     private String tenCharsStr = "0123456789";

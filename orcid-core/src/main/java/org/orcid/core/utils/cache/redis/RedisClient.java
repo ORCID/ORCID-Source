@@ -5,6 +5,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -21,9 +24,9 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.params.SetParams;
-import redis.clients.jedis.resps.ScanResult;
+import redis.clients.jedis.ScanResult;
 
 public class RedisClient {
 
@@ -38,7 +41,7 @@ public class RedisClient {
     private final String redisPassword;
     private final int cacheExpiryInSecs;
     private final int clientTimeoutInMillis;
-    private JedisPool pool;
+    public JedisPool pool;
     private SetParams defaultSetParams;
 
     @Resource
@@ -74,7 +77,7 @@ public class RedisClient {
     @PostConstruct
     private void init() {
         try {
-            JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis).timeoutMillis(this.clientTimeoutInMillis)
+            JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis)
                     .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();
             pool = new JedisPool(new HostAndPort(this.redisHost, this.redisPort), config);
             defaultSetParams = new SetParams().ex(this.cacheExpiryInSecs);

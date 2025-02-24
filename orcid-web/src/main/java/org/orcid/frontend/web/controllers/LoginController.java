@@ -19,7 +19,6 @@ import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
@@ -44,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -179,7 +179,7 @@ public class LoginController extends OauthControllerBase {
 
         // Check if user is already logged in, if so, redirect it to
         // oauth/authorize
-        OrcidProfileUserDetails userDetails = getCurrentUser();
+        UserDetails userDetails = getCurrentUser();
         if (!forceLogin && userDetails != null) {
             redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
             queryString = queryString.replace("oauth&", "");

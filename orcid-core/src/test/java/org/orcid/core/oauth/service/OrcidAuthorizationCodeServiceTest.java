@@ -16,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -24,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -119,8 +119,8 @@ public class OrcidAuthorizationCodeServiceTest extends DBUnitTest {
     }
     
     private Authentication getUserAuthentication(String orcid) {
-        OrcidProfileUserDetails details = (OrcidProfileUserDetails) orcidUserDetailsService.loadUserByUsername(orcid);
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details.getOrcid(), "password");
+        UserDetails details = (UserDetails) orcidUserDetailsService.loadUserByUsername(orcid);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details.getUsername(), "password");
         auth.setDetails(details);
         return auth;
     }

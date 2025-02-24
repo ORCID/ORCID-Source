@@ -14,7 +14,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.RegistrationController;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Component;
 
@@ -252,11 +252,11 @@ public class OauthHelper {
     }
 
     private String getEffectiveUserOrcid() {
-        OrcidProfileUserDetails currentUser = baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
+        UserDetails currentUser = baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
         if (currentUser == null) {
             return null;
         }
-        return currentUser.getOrcid();
+        return currentUser.getUsername();
     }
     
     public String getMessage(String messageCode, Object... messageParams) {

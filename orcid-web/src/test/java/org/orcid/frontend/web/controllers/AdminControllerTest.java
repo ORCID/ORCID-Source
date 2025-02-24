@@ -3,43 +3,11 @@ package org.orcid.frontend.web.controllers;
 /**
  * @author Angel Montenegro (amontenegro) Date: 29/08/2013
  */
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.math3.util.Pair;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.admin.LockReason;
@@ -48,20 +16,11 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.v3.ClientDetailsManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.SpamManager;
+import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.BaseControllerTest;
@@ -76,23 +35,35 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.AdminChangePassword;
-import org.orcid.pojo.AdminDelegatesRequest;
-import org.orcid.pojo.AdminResetPasswordLink;
-import org.orcid.pojo.ConvertClient;
-import org.orcid.pojo.LockAccounts;
-import org.orcid.pojo.ProfileDeprecationRequest;
-import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.DateUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(OrcidJUnit4ClassRunner.class)
@@ -110,10 +81,7 @@ public class AdminControllerTest extends BaseControllerTest {
     private ProfileDao profileDao;
 
     @Resource(name = "emailManagerV3")
-    private EmailManager emailManager;    
-    
-    @Resource
-    private OrcidUserDetailsService orcidUserDetailsService;
+    private EmailManager emailManager;
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
@@ -133,15 +101,6 @@ public class AdminControllerTest extends BaseControllerTest {
     @Mock
     private OrcidSecurityManager mockOrcidSecurityManager;
     
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-    
-    @Resource(name = "clientDetailsManagerV3")
-    private ClientDetailsManager clientDetailsManager;
-    
-    @Resource
-    private EmailFrequencyManager emailFrequencyManager;
-    
     @Resource
     private RecordNameDao recordNameDao;
     
@@ -154,18 +113,7 @@ public class AdminControllerTest extends BaseControllerTest {
     HttpServletRequest mockRequest = mock(HttpServletRequest.class);
     
     HttpServletResponse mockResponse = mock(HttpServletResponse.class);
-    
-    @Mock
-    private OrcidUrlManager mockOrcidUrlManager;
-    
-    @Mock
-    private VerifyEmailUtils mockVerifyEmailUtils;
-    
-    @Mock
-    private EncryptionManager mockEncryptionManager;
-    
-    
-    
+
     @Captor
     private ArgumentCaptor<String> adminUser;
     
@@ -213,16 +161,16 @@ public class AdminControllerTest extends BaseControllerTest {
         String orcid = "4444-4444-4444-4440";
         ProfileEntity p = profileEntityManager.findByOrcid(orcid);
         Email e = emailManager.findPrimaryEmail(orcid);
-        List<OrcidWebRole> roles = getRole();
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
-                e.getEmail(), null, roles);
+        List<GrantedAuthority> roles = getRole();
+        UserDetails details = new User(orcid,
+                "password", roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), getRole());
         auth.setDetails(details);
         return auth;
     }
 
-    protected List<OrcidWebRole> getRole() {
-        return Arrays.asList(OrcidWebRole.ROLE_ADMIN);
+    protected List<GrantedAuthority> getRole() {
+        return Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name()));
     }
 
     @Test
@@ -376,9 +324,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
 
     }
-    
-   
-    
+
     @Test
     public void addANewEmailToARecordThatIsDuplicated() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManagerMock = Mockito.mock(ProfileEntityCacheManager.class);
@@ -428,8 +374,6 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(adminController.getMessage("admin.error_other_account_has_this_email"), result.getErrors().get(0));
 
     }   
-   
-    
 
     @Test
     public void deactivateAndReactivateProfileTest() throws Exception {

@@ -312,7 +312,7 @@ public class RegistrationController extends BaseController {
         String redirectUrl = calculateRedirectUrl(request, response, true);
         if (request.getQueryString() == null || request.getQueryString().isEmpty()) {
             redirectUrl = calculateRedirectUrl(request, response, true, true);
-        } 
+        }
         r.setUrl(redirectUrl);
         return r;
     }
@@ -493,7 +493,7 @@ public class RegistrationController extends BaseController {
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
-            RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+                                    RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
         if (PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
             LOGGER.error("Error decypting verify email from the verify email link: {} ", encryptedEmail);
             redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
@@ -541,13 +541,13 @@ public class RegistrationController extends BaseController {
             sb.append("invalidVerifyUrl=true");
             redirect = "redirect:" + calculateRedirectUrl("/signin?" + sb.toString());
             SecurityContextHolder.clearContext();
-        }       
+        }
 
         return new ModelAndView(redirect);
-    }    
+    }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
-            boolean usedCaptchaVerification, Locale locale, String ip) {
+                                                       boolean usedCaptchaVerification, Locale locale, String ip) {
         String unencryptedPassword = registration.getPassword().getValue();
         String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
         logUserIn(request, response, orcidId, unencryptedPassword);
@@ -562,7 +562,7 @@ public class RegistrationController extends BaseController {
             token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);
@@ -588,7 +588,7 @@ public class RegistrationController extends BaseController {
     private void createAffiliation(Registration registration, String newUserOrcid) {
         registrationManager.createAffiliation(registration, newUserOrcid);
     }
-    
+
     private void processProfileHistoryEvents(Registration registration, String newUserOrcid) {
         // t&cs must be accepted but check just in case!
         if (registration.getTermsOfUse().getValue()) {
@@ -611,8 +611,8 @@ public class RegistrationController extends BaseController {
                         .toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
-        String dateString = date.getYear();        
-        
+        String dateString = date.getYear();
+
         // If year is blank and month or day is not, then it is invalid
         if (StringUtils.isBlank(date.getYear())) {
             if (!StringUtils.isBlank(date.getMonth()) || !StringUtils.isBlank(date.getDay())) {
@@ -637,10 +637,10 @@ public class RegistrationController extends BaseController {
                 try {
                     LocalDate.parse(dateString, formatter);
                     return true;
-                } catch (DateTimeParseException e) {                    
+                } catch (DateTimeParseException e) {
                 }
             }
-        } 
+        }
         return false;
     }
 

@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.frontend.web.exception.SwitchUserAuthenticationException;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -140,7 +139,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         newAuths.add(switchAuthority);
 
         // create the new authentication token
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(targetUser.getUsername(), null, newAuths);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(targetUser, null, newAuths);
         authentication.setDetails(generateOrcidProfileUserDetails(targetUser.getUsername()));
         return authentication;
     }
@@ -151,7 +150,7 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
         return targetUserOrcid.equals(realUser);
     }
 
-    private OrcidProfileUserDetails generateOrcidProfileUserDetails(String orcid) {
+    private UserDetails generateOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileDao.find(orcid);
         return orcidUserDetailsService.loadUserByProfile(profileEntity);
     }

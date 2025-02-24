@@ -16,7 +16,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -25,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -106,7 +106,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     }
     
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
-
         OAuth2Request oAuth2Request = authentication.getOAuth2Request();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
         Map<String, String> requestParameters = oAuth2Request.getRequestParameters();
@@ -134,12 +133,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         Authentication userAuthentication = authentication.getUserAuthentication();
         Object principal = userAuthentication.getDetails();
 
-        String orcid = null;
-
-        if (principal instanceof OrcidProfileUserDetails) {
-            OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-            orcid = userDetails.getOrcid();
-        }
+        String orcid = userAuthentication.getName();
 
         if (orcid == null) {
             return null;
