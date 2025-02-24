@@ -5,7 +5,7 @@ import java.util.Date;
 public class AdminResetPasswordLink {
     private String resetLink;
 
-    private String email;
+    private String orcidOrEmail;
 
     private String error;
     
@@ -21,12 +21,12 @@ public class AdminResetPasswordLink {
         this.resetLink = resetLink;
     }
 
-    public String getEmail() {
-        return email;
+    public String getOrcidOrEmail() {
+        return orcidOrEmail;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setOrcidOrEmail(String orcidOrEmail) {
+        this.orcidOrEmail = orcidOrEmail;
     }
 
     public String getError() {
