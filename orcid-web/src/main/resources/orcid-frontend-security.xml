@@ -237,8 +237,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/init.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/custom/requestInfoForm.*?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />	
@@ -313,6 +311,9 @@
 		<sec:custom-filter position="CORS_FILTER" ref="corsFilterWeb" />
 		<sec:custom-filter position="SWITCH_USER_FILTER" ref="switchUserProcessingFilter" />
 
+		<sec:intercept-url pattern="/login(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/signin(\?.*)?" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
 		<sec:intercept-url pattern="/register.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/registerConfirm\.json(\?.*)?"
@@ -325,10 +326,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/public/group/[0-9]+(\?.*)?"
  	      	access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/login(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/signin(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/google(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/session-expired(\?.*)?"
@@ -371,7 +368,6 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
 		<sec:intercept-url pattern="/developer-tools"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*" 
@@ -404,12 +400,7 @@
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
 			access="ROLE_USER" />
-					
-		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>  
-		
-		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
-			login-processing-url="/signin/auth" -->
-		<!-- username-parameter="userId" password-parameter="password" default-target-url="/my-orcid"/> -->
+		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>
 
 		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 			login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
