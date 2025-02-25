@@ -20,10 +20,16 @@ import org.orcid.core.manager.v3.BiographyManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEmailDomainManagerReadOnly;
 import org.orcid.core.togglz.OrcidTogglzConfiguration;
 import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Email;
+import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.scheduler.autospam.AutospamEmailSender;
 import org.orcid.utils.OrcidStringUtils;
@@ -113,8 +119,10 @@ public class AutoLockSpamRecords {
     @Resource(name = "researcherUrlManagerV3")
     private ResearcherUrlManager researcherUrlManager;
     
+    @Resource(name = "profileEmailDomainManagerReadOnly")
+    private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnly;
+    
    
-
     // for running spam manually
     public static void main(String[] args) {
         AutoLockSpamRecords autolockSpamRecords = new AutoLockSpamRecords();
@@ -141,9 +149,11 @@ public class AutoLockSpamRecords {
                 if (OrcidStringUtils.isValidOrcid(orcidId)) {
                     ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcidId);
                     // only lock account was not reviewed and not already locked
-                    // and not have an auth token
+                    // and not have an auth token and doesn't have professional email domains
+                    boolean hasVerifiedEmailDomains = hasVerifiedProfessionalEmailDomain(orcidId);
+                    LOG.info("Orcid: " +  orcidId + " Has verified email domain? " + hasVerifiedEmailDomains);
 
-                    if (profileEntity != null && !profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId)) {
+                    if (profileEntity != null && !profileEntity.isReviewed() && profileEntity.isAccountNonLocked() && !orcidOauthDao.hasToken(orcidId) && ! hasVerifiedEmailDomains) {
                         //check if it has biography
                     	Biography bio= biographyManager.getBiography(orcidId);
                     	ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcidId);
@@ -209,6 +219,7 @@ public class AutoLockSpamRecords {
         orcidOauthDao = (OrcidOauth2TokenDetailDao) context.getBean("orcidOauth2TokenDetailDao");
         biographyManager = (BiographyManager) context.getBean("biographyManagerV3");
         researcherUrlManager = (ResearcherUrlManager) context.getBean("researcherUrlManagerV3");
+        profileEmailDomainManagerReadOnly =(ProfileEmailDomainManagerReadOnly) context.getBean("profileEmailDomainManagerReadOnly");
         bootstrapTogglz(context.getBean(OrcidTogglzConfiguration.class));
     }
 
@@ -249,6 +260,15 @@ public class AutoLockSpamRecords {
     private static void bootstrapTogglz(OrcidTogglzConfiguration togglzConfig) {
         FeatureManager featureManager = new FeatureManagerBuilder().togglzConfig(togglzConfig).build();
         ContextClassLoaderFeatureManagerProvider.bind(featureManager);
+    }
+    
+    /*
+     * Check if the orcid has professional email domain, for now it is enough if it has entries in profile email domain table
+     * Later on we might add other checks
+     */
+    private boolean hasVerifiedProfessionalEmailDomain(String orcid) {
+        List<ProfileEmailDomainEntity> emailDomains = profileEmailDomainManagerReadOnly.getEmailDomains(orcid);                    
+        return (emailDomains!= null && ! emailDomains.isEmpty()) ? true:false;
     }
 
 }
