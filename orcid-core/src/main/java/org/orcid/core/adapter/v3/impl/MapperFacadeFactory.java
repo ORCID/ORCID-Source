@@ -1221,7 +1221,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 if (b.getClientSecrets() != null) {
                     for (ClientSecretEntity entity : b.getClientSecrets()) {
                         if (entity.isPrimary()) {
-                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getId().getClientSecret()));
+                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
                         }
                     }
                 }
@@ -1229,8 +1229,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     a.setClientRedirectUris(new HashSet<ClientRedirectUri>());
                     for (ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
                         ClientRedirectUri element = new ClientRedirectUri();
-                        element.setRedirectUri(entity.getId().getRedirectUri());
-                        element.setRedirectUriType(entity.getId().getRedirectUriType());
+                        element.setRedirectUri(entity.getRedirectUri());
+                        element.setRedirectUriType(entity.getRedirectUriType());
                         element.setUriActType(entity.getUriActType());
                         element.setUriGeoArea(entity.getUriGeoArea());
                         element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope()));
