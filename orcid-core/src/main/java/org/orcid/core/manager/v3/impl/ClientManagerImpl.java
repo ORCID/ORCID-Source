@@ -36,6 +36,7 @@ import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.keys.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -130,8 +131,10 @@ public class ClientManagerImpl implements ClientManager {
         // Set ClientResourceIdEntity
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
-        clientResourceIdEntity.setClientDetailsEntity(newEntity);
-        clientResourceIdEntity.setResourceId("orcid");
+        ClientResourceIdPk pk = new ClientResourceIdPk();
+        pk.setClientId(newEntity.getClientId());
+        pk.setResourceId("orcid");
+        clientResourceIdEntity.setId(pk);
         clientResourceIdEntities.add(clientResourceIdEntity);
         newEntity.setClientResourceIds(clientResourceIdEntities);
 
@@ -139,8 +142,10 @@ public class ClientManagerImpl implements ClientManager {
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token", "implicit")) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
-            grantTypeEntity.setClientDetailsEntity(newEntity);
-            grantTypeEntity.setGrantType(clientAuthorisedGrantType);
+            ClientAuthorisedGrantTypePk pk1 = new ClientAuthorisedGrantTypePk();
+            pk1.setClientId(newEntity.getClientId());
+            pk1.setGrantType(clientAuthorisedGrantType);
+            grantTypeEntity.setId(pk1);
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
         }
         newEntity.setClientAuthorizedGrantTypes(clientAuthorisedGrantTypeEntities);
@@ -148,12 +153,14 @@ public class ClientManagerImpl implements ClientManager {
         // Set ClientGrantedAuthorityEntity
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
-        clientGrantedAuthorityEntity.setClientDetailsEntity(newEntity);
+        ClientGrantedAuthorityPk pk1 = new ClientGrantedAuthorityPk();
+        pk1.setClientId(newEntity.getClientId());
         if (publicClient) {
-            clientGrantedAuthorityEntity.setAuthority("ROLE_PUBLIC");
+            pk1.setAuthority("ROLE_PUBLIC");
         } else {
-            clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
+            pk1.setAuthority("ROLE_CLIENT");
         }
+        clientGrantedAuthorityEntity.setId(pk1);
         clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         newEntity.setClientGrantedAuthorities(clientGrantedAuthorityEntities);
 
@@ -161,8 +168,10 @@ public class ClientManagerImpl implements ClientManager {
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>();
         for (String clientScope : ClientType.getScopes(ClientType.valueOf(newEntity.getClientType()))) {
             ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-            clientScopeEntity.setClientDetailsEntity(newEntity);
-            clientScopeEntity.setScopeType(clientScope);
+            ClientScopePk pk2 = new ClientScopePk();
+            pk2.setClientId(newEntity.getClientId());
+            pk2.setScopeType(clientScope);
+            clientScopeEntity.setId(pk2);
             clientScopeEntities.add(clientScopeEntity);
         }
         newEntity.setClientScopes(clientScopeEntities);
@@ -243,7 +252,7 @@ public class ClientManagerImpl implements ClientManager {
         Iterator<ClientAuthorisedGrantTypeEntity> grantTypes = clientDetails.getClientAuthorizedGrantTypes().iterator();
         while (grantTypes.hasNext()) {
             ClientAuthorisedGrantTypeEntity g = grantTypes.next();
-            if (OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getGrantType())) {
+            if (g != null && OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getId().getGrantType())) {
                 oboAlreadyEnabled = true;
                 if (!enableObo) {
                     grantTypes.remove();                    
@@ -254,8 +263,10 @@ public class ClientManagerImpl implements ClientManager {
         
         if (!oboAlreadyEnabled && enableObo) {
             ClientAuthorisedGrantTypeEntity obo = new ClientAuthorisedGrantTypeEntity();
-            obo.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
-            obo.setClientDetailsEntity(clientDetails);
+            ClientAuthorisedGrantTypePk pk = new ClientAuthorisedGrantTypePk();
+            pk.setClientId(clientDetails.getClientId());
+            pk.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
+            obo.setId(pk);
             clientDetails.getClientAuthorizedGrantTypes().add(obo);            
         }
     }

@@ -40,6 +40,7 @@ import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.keys.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,8 +140,10 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>(clientScopeStrings.size());
         for (String clientScope : clientScopeStrings) {
             ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-            clientScopeEntity.setClientDetailsEntity(clientDetailsEntity);
-            clientScopeEntity.setScopeType(clientScope);
+            ClientScopePk pk = new ClientScopePk();
+            pk.setClientId(clientDetailsEntity.getClientId());
+            pk.setScopeType(clientScope);
+            clientScopeEntity.setId(pk);
             clientScopeEntities.add(clientScopeEntity);
         }
         return clientScopeEntities;
@@ -150,8 +153,10 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>(clientResourceIds.size());
         for (String clientResourceId : clientResourceIds) {
             ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
-            clientResourceIdEntity.setClientDetailsEntity(clientDetailsEntity);
-            clientResourceIdEntity.setResourceId(clientResourceId);
+            ClientResourceIdPk pk = new ClientResourceIdPk();
+            pk.setClientId(clientDetailsEntity.getClientId());
+            pk.setResourceId(clientResourceId);
+            clientResourceIdEntity.setId(pk);
             clientResourceIdEntities.add(clientResourceIdEntity);
         }
         return clientResourceIdEntities;
@@ -161,8 +166,10 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>(clientGrantedAuthorities.size());
         for (String clientGrantedAuthority : clientGrantedAuthorities) {
             ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
-            clientGrantedAuthorityEntity.setClientDetailsEntity(clientDetailsEntity);
-            clientGrantedAuthorityEntity.setAuthority(clientGrantedAuthority);
+            ClientGrantedAuthorityPk pk = new ClientGrantedAuthorityPk();
+            pk.setClientId(clientDetailsEntity.getClientId());
+            pk.setAuthority(clientGrantedAuthority);
+            clientGrantedAuthorityEntity.setId(pk);
             clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         }
         return clientGrantedAuthorityEntities;
@@ -172,9 +179,11 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = new TreeSet<ClientRedirectUriEntity>();
         for (RedirectUri clientRegisteredRedirectUri : clientRegisteredRedirectUris) {
             ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity();
-            clientRedirectUriEntity.setClientDetailsEntity(clientDetailsEntity);
-            clientRedirectUriEntity.setRedirectUri(clientRegisteredRedirectUri.getValue());
-            clientRedirectUriEntity.setRedirectUriType(clientRegisteredRedirectUri.getType().value());
+            ClientRedirectUriPk pk = new ClientRedirectUriPk();
+            pk.setClientId(clientDetailsEntity.getClientId());
+            pk.setRedirectUri(clientRegisteredRedirectUri.getValue());
+            pk.setRedirectUriType(clientRegisteredRedirectUri.getType().value());
+            clientRedirectUriEntity.setId(pk);
             List<ScopePathType> scopesForRedirect = clientRegisteredRedirectUri.getScope();
             String clientPredefinedScopes = scopesForRedirect != null ? ScopePathType.getScopesAsSingleString(scopesForRedirect) : null;
             clientRedirectUriEntity.setPredefinedClientScope(clientPredefinedScopes);
@@ -189,8 +198,10 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>(clientAuthorizedGrantTypes.size());
         for (String clientAuthorisedGrantType : clientAuthorizedGrantTypes) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
-            grantTypeEntity.setClientDetailsEntity(clientDetailsEntity);
-            grantTypeEntity.setGrantType(clientAuthorisedGrantType);
+            ClientAuthorisedGrantTypePk pk = new ClientAuthorisedGrantTypePk();
+            pk.setClientId(clientDetailsEntity.getClientId());
+            pk.setGrantType(clientAuthorisedGrantType);
+            grantTypeEntity.setId(pk);
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
         }
         return clientAuthorisedGrantTypeEntities;

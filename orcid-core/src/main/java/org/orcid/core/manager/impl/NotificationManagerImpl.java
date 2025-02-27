@@ -375,7 +375,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             return null;
         }
         String urlEncodedScopes = URLEncoder.encode(rUri.getPredefinedClientScope(), "UTF-8");
-        String urlEncodedRedirectUri = URLEncoder.encode(rUri.getRedirectUri(), "UTF-8");
+        String urlEncodedRedirectUri = URLEncoder.encode(rUri.getId().getRedirectUri(), "UTF-8");
         return MessageFormat.format(AUTHORIZATION_END_POINT, orcidUrlManager.getBaseUrl(), clientDetails.getClientId(), urlEncodedScopes, urlEncodedRedirectUri);
     }
 
@@ -393,7 +393,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         // Look for the redirect uri of INSTITUTIONAL_SIGN_IN type or if none if
         // found, return the first DEFAULT one
         for (ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
-            if (RedirectUriType.INSTITUTIONAL_SIGN_IN.value().equals(redirectUri.getRedirectUriType())) {
+            if (RedirectUriType.INSTITUTIONAL_SIGN_IN.value().equals(redirectUri.getId().getRedirectUriType())) {
                 result = redirectUri;
                 break;
             }

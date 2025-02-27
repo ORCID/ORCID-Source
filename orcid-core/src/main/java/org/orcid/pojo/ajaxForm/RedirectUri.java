@@ -26,8 +26,8 @@ public class RedirectUri implements ErrorsInterface, Serializable, Comparable<Re
     @Deprecated
     public static RedirectUri valueOf(ClientRedirectUriEntity rUri) {
         RedirectUri redirectUri = new RedirectUri();
-        redirectUri.setValue(Text.valueOf(rUri.getRedirectUri()));
-        redirectUri.setType(Text.valueOf(rUri.getRedirectUriType()));
+        redirectUri.setValue(Text.valueOf(rUri.getId().getRedirectUri()));
+        redirectUri.setType(Text.valueOf(rUri.getId().getRedirectUriType()));
          
         if(!PojoUtil.isEmpty(rUri.getPredefinedClientScope())) {
             for(String scope : rUri.getPredefinedClientScope().split(" ")) {

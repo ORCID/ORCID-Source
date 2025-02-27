@@ -43,12 +43,6 @@ public class ClientSecretDaoTest extends DBUnitTest {
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml"));
     }
-    
-    @Before
-    @Transactional
-    public void setUp() {
-        clientSecretDao.updateLastModified(CLIENT_ID, "DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx");
-    }
 
     @Test
     public void testGetNonPrimaryKeys() {
@@ -58,7 +52,7 @@ public class ClientSecretDaoTest extends DBUnitTest {
             assertNotNull(secret.getDateCreated());
             assertNotNull(secret.getLastModified());
             assertEquals(secret.getDateCreated(), secret.getLastModified());
-            assertEquals(secret.getClientSecret(), CLIENT_SECRET);
+            assertEquals(secret.getId().getClientSecret(), CLIENT_SECRET);
         }
     }
 
@@ -70,7 +64,7 @@ public class ClientSecretDaoTest extends DBUnitTest {
             assertNotNull(secret.getDateCreated());
             assertNotNull(secret.getLastModified());
             assertEquals(secret.getDateCreated(), secret.getLastModified());
-            assertEquals(secret.getClientSecret(), CLIENT_SECRET);
+            assertEquals(secret.getId().getClientSecret(), CLIENT_SECRET);
         }
     }
     

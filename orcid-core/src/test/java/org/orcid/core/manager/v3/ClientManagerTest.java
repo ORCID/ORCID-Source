@@ -112,32 +112,32 @@ public class ClientManagerTest extends BaseTest {
         assertEquals(3, newEntity.getClientRegisteredRedirectUris().size());
         boolean found1 = false, found2 = false, found3 = false;
         for(ClientRedirectUriEntity rUri : newEntity.getClientRegisteredRedirectUris()) {
-            assertNotNull(rUri.getRedirectUri());
+            assertNotNull(rUri.getId().getRedirectUri());
             assertNotNull(rUri.getDateCreated());
             assertNotNull(rUri.getLastModified());            
-            if(rUri.getRedirectUri().equals("redirect-uri-1 " + seed)) {
+            if(rUri.getId().getRedirectUri().equals("redirect-uri-1 " + seed)) {
                 assertEquals(ScopePathType.ACTIVITIES_READ_LIMITED.value(), rUri.getPredefinedClientScope());
-                assertEquals("type-1 " + seed, rUri.getRedirectUriType());
+                assertEquals("type-1 " + seed, rUri.getId().getRedirectUriType());
                 assertEquals("uri-act-type-1 " + seed, rUri.getUriActType());
                 assertEquals("uri-geo-area-1 " + seed, rUri.getUriGeoArea());
                 assertEquals(ClientRedirectUriStatus.OK, rUri.getStatus());
                 found1 = true;
-            } else if(rUri.getRedirectUri().equals("redirect-uri-2 " + seed)) {
+            } else if(rUri.getId().getRedirectUri().equals("redirect-uri-2 " + seed)) {
                 assertEquals(ScopePathType.ACTIVITIES_UPDATE.value(), rUri.getPredefinedClientScope());
-                assertEquals("type-2 " + seed, rUri.getRedirectUriType());
+                assertEquals("type-2 " + seed, rUri.getId().getRedirectUriType());
                 assertEquals("uri-act-type-2 " + seed, rUri.getUriActType());
                 assertEquals("uri-geo-area-2 " + seed, rUri.getUriGeoArea());
                 assertEquals(ClientRedirectUriStatus.OK, rUri.getStatus());
                 found2 = true;
-            } else if(rUri.getRedirectUri().equals("redirect-uri-3 " + seed)) {
+            } else if(rUri.getId().getRedirectUri().equals("redirect-uri-3 " + seed)) {
                 assertEquals(ScopePathType.AFFILIATIONS_CREATE.value(), rUri.getPredefinedClientScope());
-                assertEquals("type-3 " + seed, rUri.getRedirectUriType());
+                assertEquals("type-3 " + seed, rUri.getId().getRedirectUriType());
                 assertEquals("uri-act-type-3 " + seed, rUri.getUriActType());
                 assertEquals("uri-geo-area-3 " + seed, rUri.getUriGeoArea());
                 assertEquals(ClientRedirectUriStatus.RETIRED, rUri.getStatus());
                 found3 = true;
             } else {
-                fail("Invalid redirect uri: " + rUri.getRedirectUri());
+                fail("Invalid redirect uri: " + rUri.getId().getRedirectUri());
             }
         }
         assertTrue(found1);
@@ -396,16 +396,16 @@ public class ClientManagerTest extends BaseTest {
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cagt.getDateCreated()));
             assertNotNull(cagt.getLastModified());
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cagt.getLastModified()));
-            if(cagt.getGrantType().equals("authorization_code")) {
+            if(cagt.getId().getGrantType().equals("authorization_code")) {
                 found1 = true;
-            } else if(cagt.getGrantType().equals("client_credentials")) {
+            } else if(cagt.getId().getGrantType().equals("client_credentials")) {
                 found2 = true;
-            } else if (cagt.getGrantType().equals("refresh_token")) {
+            } else if (cagt.getId().getGrantType().equals("refresh_token")) {
                 found3 = true;
-            } else if(cagt.getGrantType().equals("implicit")) {
+            } else if(cagt.getId().getGrantType().equals("implicit")) {
                 found4 = true;
             } else {
-                fail("Invalid authorized grant type: " + cagt.getGrantType());
+                fail("Invalid authorized grant type: " + cagt.getId().getGrantType());
             }
         }
         assertTrue(found1);
@@ -429,7 +429,7 @@ public class ClientManagerTest extends BaseTest {
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cri.getLastModified()));
             assertNotNull(cri.getLastModified());
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cri.getLastModified()));
-            assertEquals("orcid", cri.getResourceId());
+            assertEquals("orcid", cri.getId().getResourceId());
         }
         
         Set<String> scopes = ClientType.getScopes(ClientType.valueOf(entity.getClientType()));
@@ -440,9 +440,9 @@ public class ClientManagerTest extends BaseTest {
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
             assertNotNull(cs.getLastModified());
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
-            assertTrue(scopes.contains(cs.getScopeType()));
+            assertTrue(scopes.contains(cs.getId().getScopeType()));
             // Remove it after finding it so we check there are no duplicates as well
-            scopes.remove(cs.getScopeType());
+            scopes.remove(cs.getId().getScopeType());
         }
         assertTrue(scopes.isEmpty());
         
@@ -454,10 +454,9 @@ public class ClientManagerTest extends BaseTest {
             assertNotNull(cs.getLastModified());
             assertTrue(lastTimeEntityWasModified == null ? true : lastTimeEntityWasModified.after(cs.getLastModified()));
             assertTrue(cs.isPrimary());
-            assertFalse(PojoUtil.isEmpty(cs.getClientSecret()));
+            assertFalse(PojoUtil.isEmpty(cs.getId().getClientSecret()));
         }
-        
-        assertNotNull(entity.getCustomEmails());       
+
     }
     
     private Client getClient(String randomString, String memberId) {

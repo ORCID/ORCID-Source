@@ -15,6 +15,8 @@ import org.orcid.core.togglz.Features;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientAuthorisedGrantTypePk;
+import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
@@ -51,7 +53,7 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setGrantType("other");
+        gte1.setId(new ClientAuthorisedGrantTypePk("id", "other"));
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
         try {
             resolver.resolveRedirect("", clientDetails);
@@ -65,7 +67,7 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setGrantType("authorization_code");
+        gte1.setId(new ClientAuthorisedGrantTypePk("id", "authorization_code"));
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
         // Null redirect uris
         try {
@@ -87,16 +89,11 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setGrantType("authorization_code");
+        gte1.setId(new ClientAuthorisedGrantTypePk("id", "authorization_code"));
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
 
         TreeSet<ClientRedirectUriEntity> redirectUris = new TreeSet<ClientRedirectUriEntity>();
-        ClientRedirectUriEntity r1 = new ClientRedirectUriEntity("https://qa.orcid.org/1", clientDetails);
-        ClientRedirectUriEntity r2 = new ClientRedirectUriEntity("https://qa.orcid.org/2", clientDetails);
-        ClientRedirectUriEntity r3 = new ClientRedirectUriEntity("https://qa.orcid.org/3", clientDetails);
-        redirectUris.add(r1);
-        redirectUris.add(r2);
-        redirectUris.add(r3);
+        setRedirectUris("id", redirectUris);
         clientDetails.setClientRegisteredRedirectUris(redirectUris);
 
         // Root url should not match if it is not registered
@@ -140,16 +137,11 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setGrantType("authorization_code");
+        gte1.getId().setGrantType("authorization_code");
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
 
         TreeSet<ClientRedirectUriEntity> redirectUris = new TreeSet<ClientRedirectUriEntity>();
-        ClientRedirectUriEntity r1 = new ClientRedirectUriEntity("https://qa.orcid.org/1", clientDetails);
-        ClientRedirectUriEntity r2 = new ClientRedirectUriEntity("https://qa.orcid.org/2", clientDetails);
-        ClientRedirectUriEntity r3 = new ClientRedirectUriEntity("https://qa.orcid.org/3", clientDetails);
-        redirectUris.add(r1);
-        redirectUris.add(r2);
-        redirectUris.add(r3);
+        setRedirectUris("id", redirectUris);
         clientDetails.setClientRegisteredRedirectUris(redirectUris);
 
         assertEquals("https://qa.orcid.org/1", resolver.resolveRedirect("https://qa.orcid.org/1", clientDetails));
@@ -227,5 +219,21 @@ public class OrcidOauthRedirectResolverTest {
         assertFalse(resolver.redirectMatches("https://subdomain.example.com/subdirectory", "https://example.com"));
         assertFalse(resolver.redirectMatches("https://www.example.com", "https://example.com"));
     }
-    
+
+    private void setRedirectUris(String clientId, TreeSet<ClientRedirectUriEntity> redirectUris) {
+        ClientRedirectUriEntity r1 = new ClientRedirectUriEntity();
+        ClientRedirectUriPk pk1 = new ClientRedirectUriPk(clientId, "https://qa.orcid.org/1", "type-1");
+        r1.setId(pk1);
+
+        ClientRedirectUriEntity r2 = new ClientRedirectUriEntity();
+        ClientRedirectUriPk pk2 = new ClientRedirectUriPk(clientId, "https://qa.orcid.org/2", "type-1");
+        r1.setId(pk2);
+
+        ClientRedirectUriEntity r3 = new ClientRedirectUriEntity();
+        ClientRedirectUriPk pk3 = new ClientRedirectUriPk(clientId, "https://qa.orcid.org/3", "type-1");
+        r1.setId(pk3);
+        redirectUris.add(r1);
+        redirectUris.add(r2);
+        redirectUris.add(r3);
+    }
 }

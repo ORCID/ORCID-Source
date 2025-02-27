@@ -137,9 +137,9 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         boolean foundFirstScope = false;
         boolean foundSecondScope = false;
         for (ClientScopeEntity clientScope : updated.getClientScopes()) {
-            if ("some-scope".equals(clientScope.getScopeType())) {
+            if ("some-scope".equals(clientScope.getId().getScopeType())) {
                 foundFirstScope = true;
-            } else if ("another-scope".equals(clientScope.getScopeType())) {
+            } else if ("another-scope".equals(clientScope.getId().getScopeType())) {
                 foundSecondScope = true;
             } 
         }

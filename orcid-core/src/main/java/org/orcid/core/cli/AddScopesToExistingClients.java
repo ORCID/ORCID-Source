@@ -12,6 +12,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -119,7 +120,7 @@ public class AddScopesToExistingClients {
         for(ScopePathType scope : scopes) {            
             boolean alreadyHaveScope = false;
             for (ClientScopeEntity existingScope : clientDetails.getClientScopes()) {
-                if (scope.value().equals(existingScope.getScopeType())) {
+                if (scope.value().equals(existingScope.getId().getScopeType())) {
                     alreadyHaveScope = true;
                     break;
                 }
@@ -127,8 +128,10 @@ public class AddScopesToExistingClients {
 
             if (!alreadyHaveScope) {
                 ClientScopeEntity clientScope = new ClientScopeEntity();
-                clientScope.setClientDetailsEntity(clientDetails);
-                clientScope.setScopeType(scope.value());
+                ClientScopePk pk = new ClientScopePk();
+                pk.setClientId(clientDetails.getClientId());
+                pk.setScopeType(scope.value());
+                clientScope.setId(pk);
                 clientDetails.getClientScopes().add(clientScope);
                 clientDetailsManager.merge(clientDetails);
                 clientsUpdated += 1;

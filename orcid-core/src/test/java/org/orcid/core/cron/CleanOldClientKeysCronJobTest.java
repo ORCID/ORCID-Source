@@ -68,8 +68,8 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         // populate list of client secret entities for removeWithCustomCondition
         ClientDetailsEntity client = new ClientDetailsEntity(clientId, "clientName");
         ClientSecretEntity entity = new ClientSecretEntity();
-        entity.setClientSecret("clientSecret");
-        entity.setClientDetailsEntity(client);
+        entity.getId().setClientSecret("clientSecret");
+        entity.getId().setClientId(client.getClientId());
         secretList.add(entity);
 
         Mockito.when(mockClientSecretDao.getNonPrimaryKeys(100)).thenReturn(secretList);
@@ -98,11 +98,11 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         ClientDetailsEntity client = new ClientDetailsEntity(clientId, "clientName");
         ClientDetailsEntity clientTwo = new ClientDetailsEntity(clientIdTwo, "clientNameTwo");
         ClientSecretEntity entityOne = new ClientSecretEntity();
-        entityOne.setClientSecret("clientSecret");
-        entityOne.setClientDetailsEntity(client);
+        entityOne.getId().setClientSecret("clientSecret");
+        entityOne.getId().setClientId(client.getClientId());
         ClientSecretEntity entityTwo = new ClientSecretEntity();
-        entityTwo.setClientSecret("clientSecretTwo");
-        entityTwo.setClientDetailsEntity(clientTwo);
+        entityTwo.getId().setClientSecret("clientSecretTwo");
+        entityTwo.getId().setClientId(clientTwo.getClientId());
         secretList.add(entityOne);
         secretList.add(entityTwo);
 

@@ -7,6 +7,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.TransactionStatus;
@@ -62,7 +63,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
         String readPublicScope = ScopePathType.READ_PUBLIC.value();
         boolean alreadyHaveReadPublicScope = false;
         for (ClientScopeEntity scope : clientDetails.getClientScopes()) {
-            if (readPublicScope.equals(scope.getScopeType())) {
+            if (readPublicScope.equals(scope.getId().getScopeType())) {
                 alreadyHaveReadPublicScope = true;
                 break;
             }
@@ -70,8 +71,9 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
 
         if (!alreadyHaveReadPublicScope) {
             ClientScopeEntity clientScope = new ClientScopeEntity();
-            clientScope.setClientDetailsEntity(clientDetails);
-            clientScope.setScopeType(ScopePathType.READ_PUBLIC.value());
+            ClientScopePk pk = new ClientScopePk();
+            pk.setClientId(clientDetails.getClientId());
+            pk.setScopeType(ScopePathType.READ_PUBLIC.value());
             clientDetails.getClientScopes().add(clientScope);
             clientDetailsManager.merge(clientDetails);
             clientsUpdated += 1;

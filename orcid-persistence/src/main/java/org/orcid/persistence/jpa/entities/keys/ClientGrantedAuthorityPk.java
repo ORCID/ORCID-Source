@@ -1,5 +1,6 @@
 package org.orcid.persistence.jpa.entities.keys;
 
+import javax.persistence.Column;
 import java.io.Serializable;
 
 /**
@@ -11,23 +12,25 @@ public class ClientGrantedAuthorityPk implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private String clientDetailsEntity;
+    @Column(name = "client_details_id")
+    private String clientId;
+    @Column(name = "granted_authority")
     private String authority;
 
     public ClientGrantedAuthorityPk() {
     }
 
     public ClientGrantedAuthorityPk(String clientDetailsEntity, String authority) {
-        this.clientDetailsEntity = clientDetailsEntity;
+        this.clientId = clientDetailsEntity;
         this.authority = authority;
     }
 
-    public String getClientDetailsEntity() {
-        return this.clientDetailsEntity;
+    public String getClientId() {
+        return this.clientId;
     }
 
-    public void setClientDetailsEntity(String clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public String getAuthority() {
@@ -49,7 +52,7 @@ public class ClientGrantedAuthorityPk implements Serializable {
 
         if (!authority.equals(that.authority))
             return false;
-        if (!clientDetailsEntity.equals(that.clientDetailsEntity))
+        if (!clientId.equals(that.clientId))
             return false;
 
         return true;
@@ -57,7 +60,7 @@ public class ClientGrantedAuthorityPk implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = clientDetailsEntity.hashCode();
+        int result = clientId.hashCode();
         result = 31 * result + authority.hashCode();
         return result;
     }

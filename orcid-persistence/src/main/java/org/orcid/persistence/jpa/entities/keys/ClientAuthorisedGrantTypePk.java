@@ -1,17 +1,22 @@
 package org.orcid.persistence.jpa.entities.keys;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
  * @author Declan Newman (declan) Date: 13/02/2012
  */
+@Embeddable
 public class ClientAuthorisedGrantTypePk implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
+    @Column(name = "client_details_id")
     private String clientId;
+    @Column(name = "grant_type")
     private String grantType;
 
     public ClientAuthorisedGrantTypePk() {
@@ -22,11 +27,11 @@ public class ClientAuthorisedGrantTypePk implements Serializable {
         this.grantType = authorisedGrantType;
     }
 
-    public String getClientDetailsEntity() {
+    public String getClientId() {
         return clientId;
     }
 
-    public void setClientDetailsEntity(String clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 

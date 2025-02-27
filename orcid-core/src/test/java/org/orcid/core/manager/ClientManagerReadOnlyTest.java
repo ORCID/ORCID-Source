@@ -40,6 +40,7 @@ import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
+import org.orcid.persistence.jpa.entities.keys.*;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
@@ -184,16 +185,13 @@ public class ClientManagerReadOnlyTest {
         HashSet<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         ClientAuthorisedGrantTypeEntity cagt1 = new ClientAuthorisedGrantTypeEntity();
         setDateFields(cagt1);
-        cagt1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt1.setGrantType("grant-type-1 " + randomString);
+        cagt1.setId(new ClientAuthorisedGrantTypePk(randomString, "grant-type-1 " + randomString));
         ClientAuthorisedGrantTypeEntity cagt2 = new ClientAuthorisedGrantTypeEntity();
         setDateFields(cagt2);
-        cagt2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt2.setGrantType("grant-type-2 " + randomString);
+        cagt2.setId(new ClientAuthorisedGrantTypePk(randomString, "grant-type-2 " + randomString));
         ClientAuthorisedGrantTypeEntity cagt3 = new ClientAuthorisedGrantTypeEntity();
         setDateFields(cagt3);
-        cagt3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cagt3.setGrantType("grant-type-3 " + randomString);
+        cagt3.setId(new ClientAuthorisedGrantTypePk(randomString, "grant-type-3 " + randomString));
         clientAuthorisedGrantTypeEntities.add(cagt1);
         clientAuthorisedGrantTypeEntities.add(cagt2);
         clientAuthorisedGrantTypeEntities.add(cagt3);
@@ -202,18 +200,15 @@ public class ClientManagerReadOnlyTest {
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity cga1 = new ClientGrantedAuthorityEntity();
         setDateFields(cga1);
-        cga1.setAuthority("authority-1 " + randomString);
-        cga1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        
+        cga1.setId(new ClientGrantedAuthorityPk(randomString, "authority-1 " + randomString));
+
         ClientGrantedAuthorityEntity cga2 = new ClientGrantedAuthorityEntity();
         setDateFields(cga2);
-        cga2.setAuthority("authority-2 " + randomString);
-        cga2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
+        cga2.setId(new ClientGrantedAuthorityPk(randomString, "authority-2 " + randomString));
         
         ClientGrantedAuthorityEntity cga3 = new ClientGrantedAuthorityEntity();
         setDateFields(cga3);
-        cga3.setAuthority("authority-3 " + randomString);
-        cga3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
+        cga3.setId(new ClientGrantedAuthorityPk(randomString, "authority-3 " + randomString));
         
         clientGrantedAuthorityEntities.add(cga1);
         clientGrantedAuthorityEntities.add(cga2);
@@ -223,28 +218,22 @@ public class ClientManagerReadOnlyTest {
         SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris = new TreeSet<ClientRedirectUriEntity>();
         ClientRedirectUriEntity rUri1 = new ClientRedirectUriEntity();
         setDateFields(rUri1);
-        rUri1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
+        rUri1.setId(new ClientRedirectUriPk(randomString, "redirect-uri-1 " + randomString, "type-1 " + randomString));
         rUri1.setPredefinedClientScope(ScopePathType.ACTIVITIES_READ_LIMITED.value());
-        rUri1.setRedirectUri("redirect-uri-1 " + randomString);
-        rUri1.setRedirectUriType("type-1 " + randomString);
         rUri1.setUriActType("uri-act-type-1 " + randomString);
         rUri1.setUriGeoArea("uri-geo-area-1 " + randomString);
         
         ClientRedirectUriEntity rUri2 = new ClientRedirectUriEntity();
         setDateFields(rUri2);
-        rUri2.setClientDetailsEntity(new ClientDetailsEntity(randomString));        
+        rUri2.setId(new ClientRedirectUriPk(randomString, "redirect-uri-2 " + randomString, "type-2 " + randomString));
         rUri2.setPredefinedClientScope(ScopePathType.ACTIVITIES_UPDATE.value());
-        rUri2.setRedirectUri("redirect-uri-2 " + randomString);
-        rUri2.setRedirectUriType("type-2 " + randomString);
         rUri2.setUriActType("uri-act-type-2 " + randomString);
         rUri2.setUriGeoArea("uri-geo-area-2 " + randomString);
         
         ClientRedirectUriEntity rUri3 = new ClientRedirectUriEntity();
         setDateFields(rUri3);
-        rUri3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
+        rUri3.setId(new ClientRedirectUriPk(randomString, "redirect-uri-3 " + randomString, "type-3 " + randomString));
         rUri3.setPredefinedClientScope(ScopePathType.AFFILIATIONS_CREATE.value());
-        rUri3.setRedirectUri("redirect-uri-3 " + randomString);
-        rUri3.setRedirectUriType("type-3 " + randomString);
         rUri3.setUriActType("uri-act-type-3 " + randomString);
         rUri3.setUriGeoArea("uri-geo-area-3 " + randomString);
         clientRegisteredRedirectUris.add(rUri1);
@@ -255,18 +244,15 @@ public class ClientManagerReadOnlyTest {
         Set<ClientResourceIdEntity> clientResourceIds = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity cri1 = new ClientResourceIdEntity();
         setDateFields(cri1);
-        cri1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cri1.setResourceId("resource-id-1 " + randomString);
+        cri1.setId(new ClientResourceIdPk(randomString, "resource-1 " + randomString));
         
         ClientResourceIdEntity cri2 = new ClientResourceIdEntity();
         setDateFields(cri2);
-        cri2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cri2.setResourceId("resource-id-2 " + randomString);
+        cri2.setId(new ClientResourceIdPk(randomString, "resource-2 " + randomString));
         
         ClientResourceIdEntity cri3 = new ClientResourceIdEntity();
         setDateFields(cri3);
-        cri3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cri3.setResourceId("resource-id-3 " + randomString);
+        cri3.setId(new ClientResourceIdPk(randomString, "resource-3 " + randomString));
         clientResourceIds.add(cri1);
         clientResourceIds.add(cri2);
         clientResourceIds.add(cri3);
@@ -275,54 +261,20 @@ public class ClientManagerReadOnlyTest {
         Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         ClientScopeEntity cs1 = new ClientScopeEntity();
         setDateFields(cs1);
-        cs1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cs1.setScopeType("scope-type-1 " + randomString);
+        cs1.setId(new ClientScopePk(randomString, "scope-type-1 " + randomString));
         
         ClientScopeEntity cs2 = new ClientScopeEntity();
         setDateFields(cs2);
-        cs2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cs2.setScopeType("scope-type-2 " + randomString);
+        cs2.setId(new ClientScopePk(randomString, "scope-type-2 " + randomString));
         
         ClientScopeEntity cs3 = new ClientScopeEntity();
         setDateFields(cs3);
-        cs3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        cs3.setScopeType("scope-type-3 " + randomString);
+        cs3.setId(new ClientScopePk(randomString, "scope-type-3 " + randomString));
         clientScopes.add(cs1);
         clientScopes.add(cs2);
         clientScopes.add(cs3);
         entity.setClientScopes(clientScopes);
 
-        Set<CustomEmailEntity> customEmails = new HashSet<CustomEmailEntity>();
-        CustomEmailEntity ce1 = new CustomEmailEntity();
-        setDateFields(ce1);
-        ce1.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        ce1.setContent("content-1 " + randomString);
-        ce1.setEmailType(EmailType.ACCOUNT_DEPRECATED);
-        ce1.setHtml(true);
-        ce1.setSender("sender-1 " + randomString);
-        ce1.setSubject("subject-1 " + randomString);
-        
-        CustomEmailEntity ce2 = new CustomEmailEntity();
-        setDateFields(ce2);
-        ce2.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        ce2.setContent("content-2 " + randomString);
-        ce2.setEmailType(EmailType.ACCOUNT_DEPRECATED);
-        ce2.setHtml(true);
-        ce2.setSender("sender-2 " + randomString);
-        ce2.setSubject("subject-2 " + randomString);
-        
-        CustomEmailEntity ce3 = new CustomEmailEntity();
-        setDateFields(ce3);
-        ce3.setClientDetailsEntity(new ClientDetailsEntity(randomString));
-        ce3.setContent("content-3 " + randomString);
-        ce3.setEmailType(EmailType.ACCOUNT_DEPRECATED);
-        ce3.setHtml(true);
-        ce3.setSender("sender-3 " + randomString);
-        ce3.setSubject("subject-3 " + randomString);
-        customEmails.add(ce1);
-        customEmails.add(ce2);
-        customEmails.add(ce3);
-        entity.setCustomEmails(customEmails);
         return entity;
     }
     

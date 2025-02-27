@@ -19,6 +19,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
@@ -89,9 +90,18 @@ public class OrcidClientCredentialsCheckerTest {
     private void setupMocks(String clientId, String memberId) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         Set<ClientScopeEntity> scopes = new HashSet<ClientScopeEntity>(3);
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_WORKS_UPDATE.value()));
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_BIO_READ_LIMITED.value()));
-        scopes.add(new ClientScopeEntity(ScopePathType.ORCID_PROFILE_CREATE.value()));
+        ClientScopeEntity c1 = new ClientScopeEntity();
+        c1.setId(new ClientScopePk(clientId, ScopePathType.ORCID_WORKS_UPDATE.value()));
+        scopes.add(c1);
+
+        ClientScopeEntity c2 = new ClientScopeEntity();
+        c2.setId(new ClientScopePk(clientId, ScopePathType.ORCID_BIO_READ_LIMITED.value()));
+        scopes.add(c2);
+
+        ClientScopeEntity c3 = new ClientScopeEntity();
+        c3.setId(new ClientScopePk(clientId, ScopePathType.ORCID_PROFILE_CREATE.value()));
+        scopes.add(c3);
+
         clientDetailsEntity.setClientScopes(scopes);
         clientDetailsEntity.setGroupProfileId(memberId);
         ProfileEntity profile = new ProfileEntity(memberId);

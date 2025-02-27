@@ -30,6 +30,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.EventType;
+import org.orcid.persistence.jpa.entities.keys.ClientGrantedAuthorityPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.core.context.SecurityContext;
@@ -371,8 +372,8 @@ public class OauthController {
         
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
         ClientGrantedAuthorityEntity cgae = new ClientGrantedAuthorityEntity();
-        cgae.setClientDetailsEntity(clientDetails);
-        cgae.setAuthority(clientDetails.getClientGrantedAuthorities().isEmpty() ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
+        ClientGrantedAuthorityPk cgaePk = new ClientGrantedAuthorityPk(clientDetails.getClientId(), (clientDetails.getClientGrantedAuthorities().isEmpty()) ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
+        cgae.setId(cgaePk);
         authorizationRequestMap.put(OrcidOauth2Constants.AUTHORITIES, Set.of(cgae));        
         
         if(requestInfoForm.getStateParam() != null) {

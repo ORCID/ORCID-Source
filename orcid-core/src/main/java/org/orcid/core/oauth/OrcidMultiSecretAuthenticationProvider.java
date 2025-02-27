@@ -42,7 +42,7 @@ public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationPro
             if(!presentedPassword.startsWith("{noop}")){
                 presentedPassword = "{noop}" + presentedPassword;
             }
-            if (getPasswordEncoder().matches(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword)) {
+            if (getPasswordEncoder().matches(encryptionManager.decryptForInternalUse(clientSecretEntity.getId().getClientSecret()), presentedPassword)) {
                 return;
             }
         }

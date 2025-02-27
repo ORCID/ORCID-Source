@@ -109,6 +109,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
@@ -1040,10 +1041,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             b.getClientRegisteredRedirectUris().add(existingEntity);
                         } else {
                             ClientRedirectUriEntity newEntity = new ClientRedirectUriEntity();
-                            newEntity.setClientDetailsEntity(b);
+                            ClientRedirectUriPk pk = new ClientRedirectUriPk();
+                            pk.setClientId(b.getClientId());
+                            pk.setRedirectUri(cru.getRedirectUri());
+                            pk.setRedirectUriType(cru.getRedirectUriType());
+                            newEntity.setId(pk);
                             newEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
-                            newEntity.setRedirectUri(cru.getRedirectUri());
-                            newEntity.setRedirectUriType(cru.getRedirectUriType());
                             newEntity.setUriActType(cru.getUriActType());
                             newEntity.setUriGeoArea(cru.getUriGeoArea());
                             b.getClientRegisteredRedirectUris().add(newEntity);
@@ -1062,7 +1065,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 if (b.getClientSecrets() != null) {
                     for (ClientSecretEntity entity : b.getClientSecrets()) {
                         if (entity.isPrimary()) {
-                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
+                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getId().getClientSecret()));
                         }
                     }
                 }
@@ -1070,8 +1073,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                     a.setClientRedirectUris(new HashSet<ClientRedirectUri>());
                     for (ClientRedirectUriEntity entity : b.getClientRegisteredRedirectUris()) {
                         ClientRedirectUri element = new ClientRedirectUri();
-                        element.setRedirectUri(entity.getRedirectUri());
-                        element.setRedirectUriType(entity.getRedirectUriType());
+                        element.setRedirectUri(entity.getId().getRedirectUri());
+                        element.setRedirectUriType(entity.getId().getRedirectUriType());
                         element.setUriActType(entity.getUriActType());
                         element.setUriGeoArea(entity.getUriGeoArea());
                         element.setPredefinedClientScopes(ScopePathType.getScopesFromSpaceSeparatedString(entity.getPredefinedClientScope()));

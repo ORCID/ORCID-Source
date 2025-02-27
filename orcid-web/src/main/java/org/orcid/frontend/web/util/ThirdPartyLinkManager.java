@@ -7,8 +7,10 @@ import java.util.Locale;
 import javax.annotation.Resource;
 
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -25,6 +27,9 @@ public class ThirdPartyLinkManager {
 
     @Resource(name = "clientRedirectDaoReadOnly")
     private ClientRedirectDao clientRedirectDaoReadOnly;
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -57,12 +62,13 @@ public class ThirdPartyLinkManager {
         List<ClientRedirectUriEntity> entitiesWithRedirectUriType = clientRedirectDaoReadOnly.findClientDetailsWithRedirectScope(rut.value());
         List<ImportWizzardClientForm> clients = new ArrayList<ImportWizzardClientForm>();
         for (ClientRedirectUriEntity entity : entitiesWithRedirectUriType) {
-            ClientDetailsEntity clientDetails = entity.getClientDetailsEntity();
+            String clientId = entity.getId().getClientId();
+            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
             ImportWizzardClientForm clientForm = new ImportWizzardClientForm();
             clientForm.setId(clientDetails.getId());
             clientForm.setName(clientDetails.getClientName());
             clientForm.setDescription(clientDetails.getClientDescription());
-            clientForm.setRedirectUri(entity.getRedirectUri());
+            clientForm.setRedirectUri(entity.getId().getRedirectUri());
             clientForm.setScopes(entity.getPredefinedClientScope());
             clientForm.setStatus(entity.getStatus().name());
             clientForm.setClientWebsite(clientDetails.getClientWebsite());
