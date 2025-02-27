@@ -79,7 +79,6 @@ public class OauthRegistrationControllerTest {
         RequestInfoForm rf = new RequestInfoForm();                
         RedirectView mv = new RedirectView();
         when(servletRequest.getSession()).thenReturn(session);
-        when(servletRequest.getSession().getAttribute("requestInfoForm")).thenReturn(rf);
         when(authorizationEndpoint.approveOrDeny(Matchers.anyMap(), Matchers.anyMap(), Matchers.any(SessionStatus.class), Matchers.any(Principal.class))).thenReturn(mv);
         when(authenticationManager.authenticate(Matchers.any(Authentication.class))).thenAnswer(new Answer<Authentication>(){
             @Override

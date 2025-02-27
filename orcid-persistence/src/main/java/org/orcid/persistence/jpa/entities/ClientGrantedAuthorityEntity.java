@@ -31,13 +31,12 @@ public class ClientGrantedAuthorityEntity extends BaseEntity<ClientGrantedAuthor
 
     @Id
     @Column(name = "granted_authority")
-    public void setAuthority(String authority) {
-        this.authority = authority;
+    public String getAuthority() {
+        return this.authority;
     }
 
-    @Override
-    public String getAuthority() {
-        return this.getAuthority();
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
     @Override

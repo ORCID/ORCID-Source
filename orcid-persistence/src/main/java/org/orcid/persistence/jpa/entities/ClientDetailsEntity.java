@@ -208,9 +208,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         Set<String> rids = new HashSet<String>();
         if (clientResourceIds != null && !clientResourceIds.isEmpty()) {
             for (ClientResourceIdEntity resourceIdEntity : clientResourceIds) {
-                if(resourceIdEntity.getId() != null) {
-                    rids.add(resourceIdEntity.getId().getResourceId());
-                }
+                rids.add(resourceIdEntity.getResourceId());
             }
         }
         return rids;
@@ -277,7 +275,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         if (clientSecrets == null || clientSecrets.isEmpty()) {
             return null;
         }
-        return clientSecrets.first().getId().getClientSecret();
+        return clientSecrets.first().getClientSecret();
     }
 
     public void setClientSecretForJpa(String clientSecret) {
@@ -327,7 +325,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         Set<String> sps = new HashSet<String>();
         if (clientScopes != null && !clientScopes.isEmpty()) {
             for (ClientScopeEntity cse : clientScopes) {
-                sps.add(cse.getId().getScopeType());
+                sps.add(cse.getScopeType());
             }
         }
         return sps;
@@ -344,9 +342,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         Set<String> grants = new HashSet<String>();
         if (clientAuthorizedGrantTypes != null && !clientAuthorizedGrantTypes.isEmpty()) {
             for (ClientAuthorisedGrantTypeEntity cagt : clientAuthorizedGrantTypes) {
-                if(cagt.getId() != null) {
-                    grants.add(cagt.getId().getGrantType());
-                }
+                grants.add(cagt.getGrantType());
             }
         }
         return grants;
@@ -365,9 +361,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         if (clientRegisteredRedirectUris != null && !clientRegisteredRedirectUris.isEmpty()) {
             redirects = new HashSet<String>();
             for (ClientRedirectUriEntity cru : clientRegisteredRedirectUris) {
-                if(cru.getId() != null) {
-                    redirects.add(cru.getId().getRedirectUri());
-                }
+                redirects.add(cru.getRedirectUri());
             }
         }
         return redirects;

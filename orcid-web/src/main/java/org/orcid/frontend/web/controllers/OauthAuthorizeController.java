@@ -15,6 +15,9 @@ import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.togglz.Features;
+import org.orcid.frontend.util.AuthorizationRequestLocalCache;
+import org.orcid.frontend.util.OriginalAuthorizationRequestLocalCache;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -49,9 +52,6 @@ public class OauthAuthorizeController extends OauthControllerBase {
     @Resource
     protected OrcidRandomValueTokenServices tokenServices;
     
-    @Resource 
-    private OauthLoginController oauthLoginController;
-    
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
     
@@ -60,7 +60,16 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
     @Resource
     private EventManager eventManager;
-    
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
+
+    @Resource
+    private AuthorizationRequestLocalCache authorizationRequestLocalCache;
+
+    @Resource
+    private OriginalAuthorizationRequestLocalCache originalAuthorizationRequestLocalCache;
+
     /** This is called if user is already logged in.  
      * Checks permissions have been granted to client and generates access code.
      * 
@@ -76,7 +85,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
         String queryString = request.getQueryString();
         RequestInfoForm requestInfoForm = oauthHelper.generateRequestInfoForm(queryString);
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+
+        // Store the request info form in the cache
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
 
         boolean usePersistentTokens = false;
 
@@ -149,7 +160,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         if (!forceConfirm && usePersistentTokens) {
             boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {
-                AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
+                AuthorizationRequest authorizationRequest = authorizationRequestLocalCache.get(request.getSession().getId());
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 Map<String, String> requestParams = new HashMap<String, String>();
                 copyRequestParameters(request, requestParams);
@@ -209,9 +220,9 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
+        AuthorizationRequest authorizationRequest = authorizationRequestLocalCache.get(request.getSession().getId());
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
         Map<String, String> approvalParams = new HashMap<String, String>();
 
@@ -244,7 +255,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         // Authorization request model
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("authorizationRequest", authorizationRequest);
-        Map<String, Object> originalRequest = (Map<String, Object>) request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST);
+        Map<String, Object> originalRequest = originalAuthorizationRequestLocalCache.get(request.getSession().getId());
         if(originalRequest != null) {
             model.put(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalRequest);
         }
@@ -281,7 +292,10 @@ public class OauthAuthorizeController extends OauthControllerBase {
             new HttpSessionRequestCache().removeRequest(request, response);
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
         //Oauth has been finalized, hence, remove the oauth flag from the session
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
+
+        // Remove the request info form from the cache
+        requestInfoFormLocalCache.remove(request.getSession().getId());
+
         request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
         return requestInfoForm;
     }

@@ -40,6 +40,7 @@ import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
@@ -101,9 +102,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;
 
-    @Resource(name = "orcidSearchManagerV3")
-    private OrcidSearchManager orcidSearchManager;
-
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -119,20 +117,11 @@ public class RegistrationController extends BaseController {
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
-    @Resource(name = "affiliationsManagerReadOnlyV3")
-    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
-
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
-    @Resource
-    private OrcidUserDetailsService orcidUserDetailsService;
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
@@ -142,6 +131,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -173,7 +165,7 @@ public class RegistrationController extends BaseController {
 
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
 
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
         if (requestInfoForm != null) {
             if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
                 reg.getEmail().setValue(requestInfoForm.getUserEmail());
