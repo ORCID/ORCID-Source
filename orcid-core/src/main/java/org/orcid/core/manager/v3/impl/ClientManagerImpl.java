@@ -30,12 +30,7 @@ import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
-import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
-import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
-import org.orcid.persistence.jpa.entities.ClientScopeEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.persistence.jpa.entities.keys.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,6 +131,10 @@ public class ClientManagerImpl implements ClientManager {
         clientResourceIdEntities.add(clientResourceIdEntity);
         newEntity.setClientResourceIds(clientResourceIdEntities);
 
+        for(ClientRedirectUriEntity rUri : newEntity.getClientRegisteredRedirectUris()) {
+            rUri.setClientId(newEntity.getClientId());
+        }
+
         // Set ClientAuthorisedGrantTypeEntity
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token", "implicit")) {
@@ -175,7 +174,8 @@ public class ClientManagerImpl implements ClientManager {
             throw e;
         }
 
-        return jpaJaxbClientAdapter.toClient(newEntity);
+        Client theNewClient = jpaJaxbClientAdapter.toClient(newEntity);
+        return theNewClient;
     }
 
     @Override
@@ -244,7 +244,7 @@ public class ClientManagerImpl implements ClientManager {
         Iterator<ClientAuthorisedGrantTypeEntity> grantTypes = clientDetails.getClientAuthorizedGrantTypes().iterator();
         while (grantTypes.hasNext()) {
             ClientAuthorisedGrantTypeEntity g = grantTypes.next();
-            if (g != null && OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getId().getGrantType())) {
+            if (g != null && OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getGrantType())) {
                 oboAlreadyEnabled = true;
                 if (!enableObo) {
                     grantTypes.remove();                    

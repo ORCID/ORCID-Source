@@ -48,6 +48,10 @@ public class OauthRegistrationController extends OauthControllerBase {
         return registrationController;
     }
 
+    public void setRequestInfoFormLocalCache(RequestInfoFormLocalCache requestInfoFormLocalCache) {
+        this.requestInfoFormLocalCache = requestInfoFormLocalCache;
+    }
+
     public void setRegistrationController(RegistrationController registrationController) {
         this.registrationController = registrationController;
     }
