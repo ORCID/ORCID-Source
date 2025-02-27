@@ -1,6 +1,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -13,35 +14,49 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "client_secret")
+@IdClass(ClientSecretPk.class)
 public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Comparable<ClientSecretEntity> {
 
     private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    private ClientSecretPk id;
-    private String decryptedClientSecret;
+    private String clientId;
+    private String clientSecret;
     private boolean primary;
+    private String decryptedClientSecret;
     
     public ClientSecretEntity() {
         super();
     }
 
     public ClientSecretEntity(String clientSecret, String clientDetailsId) {
-        this.id = new ClientSecretPk(clientSecret, clientDetailsId);
+        this.clientSecret = clientSecret;
+        this.clientId = clientDetailsId;
     }
     
     public ClientSecretEntity(String clientSecret, String clientDetailsId, boolean primary) {
-        this.id = new ClientSecretPk(clientSecret, clientDetailsId);
+        this.clientSecret = clientSecret;
+        this.clientId = clientDetailsId;
         this.primary = primary;
     }
 
-    @Override
-    public ClientSecretPk getId() {
-        return id;
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setId(ClientSecretPk id) {
-        this.id = id;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Id
+    @Column(name = "client_secret")
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 
     @Column(name = "is_primary")
@@ -75,43 +90,30 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
             return -1;
         }
 
-        String secret = (id == null) ? null : id.getClientSecret();
-        String otherSecret = (other.id == null) ? null : other.id.getClientSecret();
-        return NullUtils.compareObjectsNullSafe(secret, otherSecret);
+        return NullUtils.compareObjectsNullSafe(clientSecret, other.clientSecret);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientSecretEntity that = (ClientSecretEntity) o;
+        return primary == that.primary && Objects.equals(clientId, that.clientId) && Objects.equals(clientSecret, that.clientSecret) && Objects.equals(decryptedClientSecret, that.decryptedClientSecret);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
-        result = prime * result + (primary ? 1231 : 1237);
-        return result;
+        return Objects.hash(clientId, clientSecret, primary, decryptedClientSecret);
     }
 
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ClientSecretEntity other = (ClientSecretEntity) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (decryptedClientSecret == null) {
-            if (other.decryptedClientSecret != null)
-                return false;
-        } else if (!decryptedClientSecret.equals(other.decryptedClientSecret))
-            return false;
-        if (primary != other.primary)
-            return false;
-        return true;
-    }        
-
+    @Transient
+    public ClientSecretPk getId() {
+        return null;
+    }
 }

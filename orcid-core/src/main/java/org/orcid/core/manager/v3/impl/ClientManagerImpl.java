@@ -131,10 +131,8 @@ public class ClientManagerImpl implements ClientManager {
         // Set ClientResourceIdEntity
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
-        ClientResourceIdPk pk = new ClientResourceIdPk();
-        pk.setClientId(newEntity.getClientId());
-        pk.setResourceId("orcid");
-        clientResourceIdEntity.setId(pk);
+        clientResourceIdEntity.setClientId(newEntity.getClientId());
+        clientResourceIdEntity.setResourceId("orcid");
         clientResourceIdEntities.add(clientResourceIdEntity);
         newEntity.setClientResourceIds(clientResourceIdEntities);
 
@@ -142,10 +140,8 @@ public class ClientManagerImpl implements ClientManager {
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token", "implicit")) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
-            ClientAuthorisedGrantTypePk pk1 = new ClientAuthorisedGrantTypePk();
-            pk1.setClientId(newEntity.getClientId());
-            pk1.setGrantType(clientAuthorisedGrantType);
-            grantTypeEntity.setId(pk1);
+            grantTypeEntity.setClientId(newEntity.getClientId());
+            grantTypeEntity.setGrantType(clientAuthorisedGrantType);
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
         }
         newEntity.setClientAuthorizedGrantTypes(clientAuthorisedGrantTypeEntities);
@@ -153,14 +149,12 @@ public class ClientManagerImpl implements ClientManager {
         // Set ClientGrantedAuthorityEntity
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
-        ClientGrantedAuthorityPk pk1 = new ClientGrantedAuthorityPk();
-        pk1.setClientId(newEntity.getClientId());
+        clientGrantedAuthorityEntity.setClientId(newEntity.getClientId());
         if (publicClient) {
-            pk1.setAuthority("ROLE_PUBLIC");
+            clientGrantedAuthorityEntity.setAuthority("ROLE_PUBLIC");
         } else {
-            pk1.setAuthority("ROLE_CLIENT");
+            clientGrantedAuthorityEntity.setAuthority("ROLE_CLIENT");
         }
-        clientGrantedAuthorityEntity.setId(pk1);
         clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         newEntity.setClientGrantedAuthorities(clientGrantedAuthorityEntities);
 
@@ -168,10 +162,8 @@ public class ClientManagerImpl implements ClientManager {
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>();
         for (String clientScope : ClientType.getScopes(ClientType.valueOf(newEntity.getClientType()))) {
             ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-            ClientScopePk pk2 = new ClientScopePk();
-            pk2.setClientId(newEntity.getClientId());
-            pk2.setScopeType(clientScope);
-            clientScopeEntity.setId(pk2);
+            clientScopeEntity.setClientId(newEntity.getClientId());
+            clientScopeEntity.setScopeType(clientScope);
             clientScopeEntities.add(clientScopeEntity);
         }
         newEntity.setClientScopes(clientScopeEntities);
@@ -263,11 +255,9 @@ public class ClientManagerImpl implements ClientManager {
         
         if (!oboAlreadyEnabled && enableObo) {
             ClientAuthorisedGrantTypeEntity obo = new ClientAuthorisedGrantTypeEntity();
-            ClientAuthorisedGrantTypePk pk = new ClientAuthorisedGrantTypePk();
-            pk.setClientId(clientDetails.getClientId());
-            pk.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
-            obo.setId(pk);
-            clientDetails.getClientAuthorizedGrantTypes().add(obo);            
+            obo.setClientId(clientDetails.getClientId());
+            obo.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
+            clientDetails.getClientAuthorizedGrantTypes().add(obo);
         }
     }
     

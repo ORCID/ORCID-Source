@@ -173,13 +173,16 @@ public class JpaJaxbClientAdapterTest {
 
         HashSet<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         ClientAuthorisedGrantTypeEntity cagt1 = new ClientAuthorisedGrantTypeEntity();
-        cagt1.setId(new ClientAuthorisedGrantTypePk("id", "grant-type-1"));
+        cagt1.setClientId("id");
+        cagt1.setGrantType("grant-type-1");
         DateFieldsOnBaseEntityUtils.setDateFields(cagt1, now);
         ClientAuthorisedGrantTypeEntity cagt2 = new ClientAuthorisedGrantTypeEntity();
-        cagt2.setId(new ClientAuthorisedGrantTypePk("id", "grant-type-2"));
+        cagt2.setClientId("id");
+        cagt2.setGrantType("grant-type-2");
         DateFieldsOnBaseEntityUtils.setDateFields(cagt2, now);
         ClientAuthorisedGrantTypeEntity cagt3 = new ClientAuthorisedGrantTypeEntity();
-        cagt3.setId(new ClientAuthorisedGrantTypePk("id", "grant-type-3"));
+        cagt3.setClientId("id");
+        cagt3.setGrantType("grant-type-3");
         DateFieldsOnBaseEntityUtils.setDateFields(cagt3, now);
         clientAuthorisedGrantTypeEntities.add(cagt1);
         clientAuthorisedGrantTypeEntities.add(cagt2);
@@ -189,15 +192,18 @@ public class JpaJaxbClientAdapterTest {
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity cga1 = new ClientGrantedAuthorityEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cga1, now);
-        cga1.setId(new ClientGrantedAuthorityPk("id", "authority-1"));
+        cga1.setClientId("id");
+        cga1.setAuthority("authority-1");
 
         ClientGrantedAuthorityEntity cga2 = new ClientGrantedAuthorityEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cga2, now);
-        cga2.setId(new ClientGrantedAuthorityPk("id", "authority-2"));
+        cga2.setClientId("id");
+        cga2.setAuthority("authority-2");
         
         ClientGrantedAuthorityEntity cga3 = new ClientGrantedAuthorityEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cga3, now);
-        cga3.setId(new ClientGrantedAuthorityPk("id", "authority-3"));
+        cga3.setClientId("id");
+        cga3.setAuthority("authority-3");
         clientGrantedAuthorityEntities.add(cga1);
         clientGrantedAuthorityEntities.add(cga2);
         clientGrantedAuthorityEntities.add(cga3);
@@ -205,22 +211,28 @@ public class JpaJaxbClientAdapterTest {
 
         SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris = new TreeSet<ClientRedirectUriEntity>();
         ClientRedirectUriEntity rUri1 = new ClientRedirectUriEntity();
-        DateFieldsOnBaseEntityUtils.setDateFields(rUri1, now); 
-        rUri1.setId(new ClientRedirectUriPk("id", "redirect-uri-1", "type-1"));
+        DateFieldsOnBaseEntityUtils.setDateFields(rUri1, now);
+        rUri1.setClientId("id");
+        rUri1.setRedirectUri("redirect-uri-1");
+        rUri1.setRedirectUriType("type-1");
         rUri1.setPredefinedClientScope(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         rUri1.setUriActType("uri-act-type-1");
         rUri1.setUriGeoArea("uri-geo-area-1");
         
         ClientRedirectUriEntity rUri2 = new ClientRedirectUriEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(rUri2, now);
-        rUri2.setId(new ClientRedirectUriPk("id", "redirect-uri-2", "type-2"));
+        rUri2.setClientId("id");
+        rUri2.setRedirectUri("redirect-uri-2");
+        rUri2.setRedirectUriType("type-2");
         rUri2.setPredefinedClientScope(ScopePathType.ACTIVITIES_UPDATE.value());
         rUri2.setUriActType("uri-act-type-2");
         rUri2.setUriGeoArea("uri-geo-area-2");
         
         ClientRedirectUriEntity rUri3 = new ClientRedirectUriEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(rUri3, now);
-        rUri3.setId(new ClientRedirectUriPk("id", "redirect-uri-3", "type-3"));
+        rUri3.setClientId("id");
+        rUri3.setRedirectUri("redirect-uri-3");
+        rUri3.setRedirectUriType("type-3");
         rUri3.setPredefinedClientScope(ScopePathType.AFFILIATIONS_CREATE.value());
         rUri3.setUriActType("uri-act-type-3");
         rUri3.setUriGeoArea("uri-geo-area-3");
@@ -232,13 +244,16 @@ public class JpaJaxbClientAdapterTest {
         Set<ClientResourceIdEntity> clientResourceIds = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity cri1 = new ClientResourceIdEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cri1, now);
-        cri1.setId(new ClientResourceIdPk("id", "resource-id-1"));
+        cri1.setClientId("id");
+        cri1.setResourceId("resource-id-1");
         ClientResourceIdEntity cri2 = new ClientResourceIdEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cri2, now);
-        cri2.setId(new ClientResourceIdPk("id", "resource-id-2"));
+        cri2.setClientId("id");
+        cri2.setResourceId("resource-id-2");
         ClientResourceIdEntity cri3 = new ClientResourceIdEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cri3, now);
-        cri3.setId(new ClientResourceIdPk("id", "resource-id-3"));
+        cri3.setClientId("id");
+        cri3.setResourceId("resource-id-3");
         clientResourceIds.add(cri1);
         clientResourceIds.add(cri2);
         clientResourceIds.add(cri3);
@@ -247,13 +262,19 @@ public class JpaJaxbClientAdapterTest {
         Set<ClientScopeEntity> clientScopes = new HashSet<ClientScopeEntity>();
         ClientScopeEntity cs1 = new ClientScopeEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cs1, now);
-        cs1.setId(new ClientScopePk("id", "scope-type-1"));
+        cs1.setClientId("id");
+        cs1.setScopeType("scope-type-1");
+
         ClientScopeEntity cs2 = new ClientScopeEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cs2, now);
-        cs1.setId(new ClientScopePk("id", "scope-type-2"));
+        cs2.setClientId("id");
+        cs2.setScopeType("scope-type-2");
+
         ClientScopeEntity cs3 = new ClientScopeEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(cs3, now);
-        cs1.setId(new ClientScopePk("id", "scope-type-3"));
+        cs3.setClientId("id");
+        cs3.setScopeType("scope-type-3");
+
         clientScopes.add(cs1);
         clientScopes.add(cs2);
         clientScopes.add(cs3);

@@ -7,16 +7,13 @@ import java.io.Serializable;
 /**
  * @author Declan Newman (declan) Date: 13/02/2012
  */
-@Embeddable
 public class ClientAuthorisedGrantTypePk implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @Column(name = "client_details_id")
     private String clientId;
-    @Column(name = "grant_type")
     private String grantType;
 
     public ClientAuthorisedGrantTypePk() {

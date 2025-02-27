@@ -12,19 +12,32 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "client_authorised_grant_type")
+@IdClass(ClientAuthorisedGrantTypePk.class)
 public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorisedGrantTypePk> {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    private ClientAuthorisedGrantTypePk id;
 
-    @Override
-    public ClientAuthorisedGrantTypePk getId() {
-        return id;
+    private String clientId;
+    private String grantType;
+
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setId(ClientAuthorisedGrantTypePk id) {
-        this.id = id;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Id
+    @Column(name = "grant_type")
+    public String getGrantType() {
+        return grantType;
+    }
+
+    public void setGrantType(String grantType) {
+        this.grantType = grantType;
     }
 
     @Override
@@ -32,11 +45,22 @@ public class ClientAuthorisedGrantTypeEntity extends BaseEntity<ClientAuthorised
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientAuthorisedGrantTypeEntity that = (ClientAuthorisedGrantTypeEntity) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(clientId, that.clientId) && Objects.equals(grantType, that.grantType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(clientId, grantType);
+    }
+
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
+    @Override
+    @Transient
+    public ClientAuthorisedGrantTypePk getId() {
+        return null;
     }
 }

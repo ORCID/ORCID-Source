@@ -338,10 +338,8 @@ public class MembersManagerImpl implements MembersManager {
             // Insert the new scopes
             for (String newScope : newSetOfScopes) {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-                ClientScopePk pk = new ClientScopePk();
-                pk.setClientId(client.getClientId());
-                pk.setScopeType(newScope);
-                clientScopeEntity.setId(pk);
+                clientScopeEntity.setClientId(client.getClientId());
+                clientScopeEntity.setScopeType(newScope);
                 clientScopeDao.persist(clientScopeEntity);
             }
 

@@ -1198,11 +1198,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             b.getClientRegisteredRedirectUris().add(existingEntity);
                         } else {
                             ClientRedirectUriEntity newEntity = new ClientRedirectUriEntity();
-                            ClientRedirectUriPk pk = new ClientRedirectUriPk();
-                            pk.setClientId(b.getClientId());
-                            pk.setRedirectUri(cru.getRedirectUri());
-                            pk.setRedirectUriType(cru.getRedirectUriType());
-                            newEntity.setId(pk);
+                            newEntity.setClientId(b.getClientId());
+                            newEntity.setRedirectUri(cru.getRedirectUri());
+                            newEntity.setRedirectUriType(cru.getRedirectUriType());
                             newEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
                             newEntity.setUriActType(cru.getUriActType());
                             newEntity.setUriGeoArea(cru.getUriGeoArea());

@@ -1,6 +1,7 @@
 package org.orcid.persistence.jpa.entities.keys;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
@@ -12,9 +13,7 @@ public class ClientGrantedAuthorityPk implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @Column(name = "client_details_id")
     private String clientId;
-    @Column(name = "granted_authority")
     private String authority;
 
     public ClientGrantedAuthorityPk() {

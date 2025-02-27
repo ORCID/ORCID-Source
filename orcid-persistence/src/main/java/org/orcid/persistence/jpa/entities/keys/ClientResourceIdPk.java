@@ -7,16 +7,13 @@ import java.io.Serializable;
 /**
  * @author Declan Newman (declan) Date: 13/02/2012
  */
-@Embeddable
 public class ClientResourceIdPk implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @Column(name = "client_details_id")
     private String clientId;
-    @Column(name = "resource_id")
     private String resourceId;
 
     public ClientResourceIdPk() {

@@ -11,19 +11,33 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "client_granted_authority")
+@IdClass(ClientGrantedAuthorityPk.class)
 public class ClientGrantedAuthorityEntity extends BaseEntity<ClientGrantedAuthorityPk> implements GrantedAuthority {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    private ClientGrantedAuthorityPk id;
 
-    @Override
-    public ClientGrantedAuthorityPk getId() {
-        return id;
+    private String clientId;
+    private String authority;
+
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setId(ClientGrantedAuthorityPk id) {
-        this.id = id;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Id
+    @Column(name = "granted_authority")
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.getAuthority();
     }
 
     @Override
@@ -31,16 +45,22 @@ public class ClientGrantedAuthorityEntity extends BaseEntity<ClientGrantedAuthor
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientGrantedAuthorityEntity that = (ClientGrantedAuthorityEntity) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(clientId, that.clientId) && Objects.equals(authority, that.authority);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(clientId, authority);
     }
 
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
     @Override
-    public String getAuthority() {
-        return (this.getId() == null) ? null : this.getId().getAuthority();
+    @Transient
+    public ClientGrantedAuthorityPk getId() {
+        return null;
     }
 }

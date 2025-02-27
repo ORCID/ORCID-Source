@@ -129,7 +129,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientWebsite = clientWebsite;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "id.clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientScopeEntity> getClientScopes() {
         return clientScopes;
     }
@@ -138,7 +138,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientScopes = clientScopes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "id.clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientResourceIdEntity> getClientResourceIds() {
         return clientResourceIds;
     }
@@ -147,7 +147,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientResourceIds = clientResourceIds;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "id.clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientAuthorisedGrantTypeEntity> getClientAuthorizedGrantTypes() {
         return clientAuthorizedGrantTypes;
     }
@@ -156,7 +156,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientAuthorizedGrantTypes = clientAuthorizedGrantTypes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "id.clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris() {
         return clientRegisteredRedirectUris;
@@ -166,7 +166,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientRegisteredRedirectUris = clientRegisteredRedirectUris;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "id.clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities() {
         return clientGrantedAuthorities;
     }
@@ -239,7 +239,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return getDecryptedClientSecret();
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "id.clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public Set<ClientSecretEntity> getClientSecrets() {
         return clientSecrets;

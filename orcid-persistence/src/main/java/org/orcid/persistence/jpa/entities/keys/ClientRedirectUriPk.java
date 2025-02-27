@@ -1,6 +1,7 @@
 package org.orcid.persistence.jpa.entities.keys;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import java.io.Serializable;
 
@@ -13,11 +14,8 @@ public class ClientRedirectUriPk implements Serializable {
      * 
      */
     private static final long serialVersionUID = -3948069038449324678L;
-    @JoinColumn(name = "client_details_id")
     private String clientId;
-    @Column(name = "redirect_uri")
     private String redirectUri;
-    @Column(name = "redirect_uri_type")
     private String redirectUriType;
 
     public ClientRedirectUriPk() {

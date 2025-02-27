@@ -2,6 +2,7 @@ package org.orcid.persistence.jpa.entities;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -14,17 +15,50 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "client_redirect_uri")
+@IdClass(ClientRedirectUriPk.class)
 public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> implements Comparable<ClientRedirectUriEntity> {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    private ClientRedirectUriPk id;
+
+    private String clientId;
+    private String redirectUri;
+    private String redirectUriType;
     private String predefinedClientScope;
     private String uriActType;
     private String uriGeoArea;
     private ClientRedirectUriStatus status = ClientRedirectUriStatus.OK;
 
     public ClientRedirectUriEntity() {
+    }
+
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Id
+    @Column(name = "redirect_uri")
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
+
+    @Id
+    @Column(name = "redirect_uri_type")
+    public String getRedirectUriType() {
+        return redirectUriType;
+    }
+
+    public void setRedirectUriType(String redirectUriType) {
+        this.redirectUriType = redirectUriType;
     }
 
     @Column(name = "predefined_client_redirect_scope", length = 150)
@@ -34,22 +68,6 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
 
     public void setPredefinedClientScope(String predefinedClientScope) {
         this.predefinedClientScope = predefinedClientScope;
-    }
-
-    public static Map<String, ClientRedirectUriEntity> mapByUriAndType(Set<ClientRedirectUriEntity> clientRedirectUriEntities) {
-        Map<String, ClientRedirectUriEntity> map = new HashMap<String, ClientRedirectUriEntity>();
-        for (ClientRedirectUriEntity clientRedirectUriEntity : clientRedirectUriEntities) {
-            map.put(getUriAndTypeKey(clientRedirectUriEntity), clientRedirectUriEntity);
-        }
-        return map;
-    }
-
-    public static String getUriAndTypeKey(ClientRedirectUriEntity rUri) {
-        return rUri.getId().getRedirectUri() + '-' + rUri.getId().getRedirectUriType();
-    }
-    
-    public static String getUriAndTypeKey(String redirectUri, String redirectUriType) {
-        return redirectUri + '-' + redirectUriType;
     }
 
     @Column(name = "uri_act_type")
@@ -81,15 +99,42 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
         this.status = status;
     }
 
+    public static Map<String, ClientRedirectUriEntity> mapByUriAndType(Set<ClientRedirectUriEntity> clientRedirectUriEntities) {
+        Map<String, ClientRedirectUriEntity> map = new HashMap<String, ClientRedirectUriEntity>();
+        for (ClientRedirectUriEntity clientRedirectUriEntity : clientRedirectUriEntities) {
+            map.put(getUriAndTypeKey(clientRedirectUriEntity), clientRedirectUriEntity);
+        }
+        return map;
+    }
+
+    public static String getUriAndTypeKey(ClientRedirectUriEntity rUri) {
+        return rUri.getId().getRedirectUri() + '-' + rUri.getId().getRedirectUriType();
+    }
+
+    public static String getUriAndTypeKey(String redirectUri, String redirectUriType) {
+        return redirectUri + '-' + redirectUriType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientRedirectUriEntity that = (ClientRedirectUriEntity) o;
+        return Objects.equals(clientId, that.clientId) && Objects.equals(redirectUri, that.redirectUri) && Objects.equals(redirectUriType, that.redirectUriType) && Objects.equals(predefinedClientScope, that.predefinedClientScope) && Objects.equals(uriActType, that.uriActType) && Objects.equals(uriGeoArea, that.uriGeoArea) && status == that.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(clientId, redirectUri, redirectUriType, predefinedClientScope, uriActType, uriGeoArea, status);
+    }
+
     @Override
     public int compareTo(ClientRedirectUriEntity o) {
         if (o == null) {
             return 1;
         }
-        String uri = (this.getId() == null) ? null : this.getId().getRedirectUri();
-        String otherUri = (o.getId() == null) ? null : o.getId().getRedirectUri();
 
-        int uriComparison = NullUtils.compareObjectsNullSafe(uri, otherUri);
+        int uriComparison = NullUtils.compareObjectsNullSafe(this.getRedirectUri(), o.getRedirectUri());
         if (uriComparison != 0) {
             return -uriComparison;
         }
@@ -97,12 +142,15 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
         return 0;
     }
 
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
     @Override
+    @Transient
     public ClientRedirectUriPk getId() {
-        return id;
+        return null;
     }
 
-    public void setId(ClientRedirectUriPk id) {
-        this.id = id;
-    }
 }

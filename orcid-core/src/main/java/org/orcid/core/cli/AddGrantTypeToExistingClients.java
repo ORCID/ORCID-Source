@@ -105,10 +105,8 @@ public class AddGrantTypeToExistingClients {
 
             if (!alreadyHaveGrantType) {
                 ClientAuthorisedGrantTypeEntity newGrantType = new ClientAuthorisedGrantTypeEntity();
-                ClientAuthorisedGrantTypePk pk = new ClientAuthorisedGrantTypePk();
-                pk.setGrantType(grantType);
-                pk.setClientId(clientDetails.getClientId());
-                newGrantType.setId(pk);
+                newGrantType.setGrantType(grantType);
+                newGrantType.setClientId(clientDetails.getClientId());
                 clientDetails.getClientAuthorizedGrantTypes().add(newGrantType);
                 
                 clientDetailsManager.merge(clientDetails);

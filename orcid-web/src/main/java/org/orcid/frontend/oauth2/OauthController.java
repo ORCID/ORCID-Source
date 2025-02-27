@@ -372,8 +372,8 @@ public class OauthController {
         
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
         ClientGrantedAuthorityEntity cgae = new ClientGrantedAuthorityEntity();
-        ClientGrantedAuthorityPk cgaePk = new ClientGrantedAuthorityPk(clientDetails.getClientId(), (clientDetails.getClientGrantedAuthorities().isEmpty()) ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
-        cgae.setId(cgaePk);
+        cgae.setClientId(clientDetails.getClientId());
+        cgae.setAuthority((clientDetails.getClientGrantedAuthorities().isEmpty()) ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
         authorizationRequestMap.put(OrcidOauth2Constants.AUTHORITIES, Set.of(cgae));        
         
         if(requestInfoForm.getStateParam() != null) {

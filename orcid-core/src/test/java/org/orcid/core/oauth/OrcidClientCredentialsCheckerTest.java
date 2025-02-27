@@ -91,15 +91,18 @@ public class OrcidClientCredentialsCheckerTest {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
         Set<ClientScopeEntity> scopes = new HashSet<ClientScopeEntity>(3);
         ClientScopeEntity c1 = new ClientScopeEntity();
-        c1.setId(new ClientScopePk(clientId, ScopePathType.ORCID_WORKS_UPDATE.value()));
+        c1.setClientId(clientId);
+        c1.setScopeType(ScopePathType.ORCID_WORKS_UPDATE.value());
         scopes.add(c1);
 
         ClientScopeEntity c2 = new ClientScopeEntity();
-        c2.setId(new ClientScopePk(clientId, ScopePathType.ORCID_BIO_READ_LIMITED.value()));
+        c2.setClientId(clientId);
+        c2.setScopeType(ScopePathType.ORCID_BIO_READ_LIMITED.value());
         scopes.add(c2);
 
         ClientScopeEntity c3 = new ClientScopeEntity();
-        c3.setId(new ClientScopePk(clientId, ScopePathType.ORCID_PROFILE_CREATE.value()));
+        c3.setClientId(clientId);
+        c3.setScopeType(ScopePathType.ORCID_PROFILE_CREATE.value());
         scopes.add(c3);
 
         clientDetailsEntity.setClientScopes(scopes);

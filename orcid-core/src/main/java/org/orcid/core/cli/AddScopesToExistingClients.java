@@ -128,10 +128,8 @@ public class AddScopesToExistingClients {
 
             if (!alreadyHaveScope) {
                 ClientScopeEntity clientScope = new ClientScopeEntity();
-                ClientScopePk pk = new ClientScopePk();
-                pk.setClientId(clientDetails.getClientId());
-                pk.setScopeType(scope.value());
-                clientScope.setId(pk);
+                clientScope.setClientId(clientDetails.getClientId());
+                clientScope.setScopeType(scope.value());
                 clientDetails.getClientScopes().add(clientScope);
                 clientDetailsManager.merge(clientDetails);
                 clientsUpdated += 1;

@@ -53,7 +53,8 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setId(new ClientAuthorisedGrantTypePk("id", "other"));
+        gte1.setClientId("id");
+        gte1.setGrantType("other");
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
         try {
             resolver.resolveRedirect("", clientDetails);
@@ -67,7 +68,8 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setId(new ClientAuthorisedGrantTypePk("id", "authorization_code"));
+        gte1.setClientId("id");
+        gte1.setGrantType("authorization_code");
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
         // Null redirect uris
         try {
@@ -89,7 +91,8 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.setId(new ClientAuthorisedGrantTypePk("id", "authorization_code"));
+        gte1.setClientId("id");
+        gte1.setGrantType("authorization_code");
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
 
         TreeSet<ClientRedirectUriEntity> redirectUris = new TreeSet<ClientRedirectUriEntity>();
@@ -222,16 +225,19 @@ public class OrcidOauthRedirectResolverTest {
 
     private void setRedirectUris(String clientId, TreeSet<ClientRedirectUriEntity> redirectUris) {
         ClientRedirectUriEntity r1 = new ClientRedirectUriEntity();
-        ClientRedirectUriPk pk1 = new ClientRedirectUriPk(clientId, "https://qa.orcid.org/1", "type-1");
-        r1.setId(pk1);
+        r1.setClientId(clientId);
+        r1.setRedirectUri("https://qa.orcid.org/1");
+        r1.setRedirectUriType("type-1");
 
         ClientRedirectUriEntity r2 = new ClientRedirectUriEntity();
-        ClientRedirectUriPk pk2 = new ClientRedirectUriPk(clientId, "https://qa.orcid.org/2", "type-1");
-        r1.setId(pk2);
+        r2.setClientId(clientId);
+        r2.setRedirectUri("https://qa.orcid.org/2");
+        r2.setRedirectUriType("type-1");
 
         ClientRedirectUriEntity r3 = new ClientRedirectUriEntity();
-        ClientRedirectUriPk pk3 = new ClientRedirectUriPk(clientId, "https://qa.orcid.org/3", "type-1");
-        r1.setId(pk3);
+        r3.setClientId(clientId);
+        r3.setRedirectUri("https://qa.orcid.org/3");
+        r3.setRedirectUriType("type-1");
         redirectUris.add(r1);
         redirectUris.add(r2);
         redirectUris.add(r3);

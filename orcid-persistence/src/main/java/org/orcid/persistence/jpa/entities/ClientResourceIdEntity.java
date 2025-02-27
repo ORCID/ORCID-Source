@@ -10,19 +10,32 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "client_resource_id")
+@IdClass(ClientResourceIdPk.class)
 public class ClientResourceIdEntity extends BaseEntity<ClientResourceIdPk> {
 
     private static final long serialVersionUID = 1L;
-    @EmbeddedId
-    private ClientResourceIdPk id;
 
-    @Override
-    public ClientResourceIdPk getId() {
-        return id;
+    private String clientId;
+    private String resourceId;
+
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setId(ClientResourceIdPk id) {
-        this.id = id;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Id
+    @Column(name = "resource_id")
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
     }
 
     @Override
@@ -30,11 +43,22 @@ public class ClientResourceIdEntity extends BaseEntity<ClientResourceIdPk> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientResourceIdEntity that = (ClientResourceIdEntity) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(clientId, that.clientId) && Objects.equals(resourceId, that.resourceId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(clientId, resourceId);
+    }
+
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
+    @Override
+    @Transient
+    public ClientResourceIdPk getId() {
+        return null;
     }
 }

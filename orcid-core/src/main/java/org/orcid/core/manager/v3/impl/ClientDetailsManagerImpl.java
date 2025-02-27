@@ -140,10 +140,8 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>(clientScopeStrings.size());
         for (String clientScope : clientScopeStrings) {
             ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-            ClientScopePk pk = new ClientScopePk();
-            pk.setClientId(clientDetailsEntity.getClientId());
-            pk.setScopeType(clientScope);
-            clientScopeEntity.setId(pk);
+            clientScopeEntity.setClientId(clientDetailsEntity.getClientId());
+            clientScopeEntity.setScopeType(clientScope);
             clientScopeEntities.add(clientScopeEntity);
         }
         return clientScopeEntities;
@@ -153,10 +151,8 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>(clientResourceIds.size());
         for (String clientResourceId : clientResourceIds) {
             ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
-            ClientResourceIdPk pk = new ClientResourceIdPk();
-            pk.setClientId(clientDetailsEntity.getClientId());
-            pk.setResourceId(clientResourceId);
-            clientResourceIdEntity.setId(pk);
+            clientResourceIdEntity.setClientId(clientDetailsEntity.getClientId());
+            clientResourceIdEntity.setResourceId(clientResourceId);
             clientResourceIdEntities.add(clientResourceIdEntity);
         }
         return clientResourceIdEntities;
@@ -166,10 +162,8 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>(clientGrantedAuthorities.size());
         for (String clientGrantedAuthority : clientGrantedAuthorities) {
             ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
-            ClientGrantedAuthorityPk pk = new ClientGrantedAuthorityPk();
-            pk.setClientId(clientDetailsEntity.getClientId());
-            pk.setAuthority(clientGrantedAuthority);
-            clientGrantedAuthorityEntity.setId(pk);
+            clientGrantedAuthorityEntity.setClientId(clientDetailsEntity.getClientId());
+            clientGrantedAuthorityEntity.setAuthority(clientGrantedAuthority);
             clientGrantedAuthorityEntities.add(clientGrantedAuthorityEntity);
         }
         return clientGrantedAuthorityEntities;
@@ -179,11 +173,9 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         SortedSet<ClientRedirectUriEntity> clientRedirectUriEntities = new TreeSet<ClientRedirectUriEntity>();
         for (RedirectUri clientRegisteredRedirectUri : clientRegisteredRedirectUris) {
             ClientRedirectUriEntity clientRedirectUriEntity = new ClientRedirectUriEntity();
-            ClientRedirectUriPk pk = new ClientRedirectUriPk();
-            pk.setClientId(clientDetailsEntity.getClientId());
-            pk.setRedirectUri(clientRegisteredRedirectUri.getValue());
-            pk.setRedirectUriType(clientRegisteredRedirectUri.getType().value());
-            clientRedirectUriEntity.setId(pk);
+            clientRedirectUriEntity.setClientId(clientDetailsEntity.getClientId());
+            clientRedirectUriEntity.setRedirectUri(clientRegisteredRedirectUri.getValue());
+            clientRedirectUriEntity.setRedirectUriType(clientRegisteredRedirectUri.getType().value());
             List<ScopePathType> scopesForRedirect = clientRegisteredRedirectUri.getScope();
             String clientPredefinedScopes = scopesForRedirect != null ? ScopePathType.getScopesAsSingleString(scopesForRedirect) : null;
             clientRedirectUriEntity.setPredefinedClientScope(clientPredefinedScopes);
@@ -198,10 +190,8 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>(clientAuthorizedGrantTypes.size());
         for (String clientAuthorisedGrantType : clientAuthorizedGrantTypes) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
-            ClientAuthorisedGrantTypePk pk = new ClientAuthorisedGrantTypePk();
-            pk.setClientId(clientDetailsEntity.getClientId());
-            pk.setGrantType(clientAuthorisedGrantType);
-            grantTypeEntity.setId(pk);
+            grantTypeEntity.setClientId(clientDetailsEntity.getClientId());
+            grantTypeEntity.setGrantType(clientAuthorisedGrantType);
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
         }
         return clientAuthorisedGrantTypeEntities;

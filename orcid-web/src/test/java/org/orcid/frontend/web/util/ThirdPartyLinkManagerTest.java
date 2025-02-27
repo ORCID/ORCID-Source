@@ -61,11 +61,15 @@ public class ThirdPartyLinkManagerTest {
     
     private void initRedirectUriData(Boolean isWorksWizzard, RedirectUriType rut) {
         ClientRedirectUriEntity r1 = new ClientRedirectUriEntity();
-        r1.setId(new ClientRedirectUriPk(clientId, "https://test.orcid.org/ruri/1", "import-works-wizard"));
+        r1.setClientId(clientId);
+        r1.setRedirectUri("https://test.orcid.org/ruri/1");
+        r1.setRedirectUriType("import-works-wizard");
         r1.setPredefinedClientScope("/read-limited /activities/update");
         
         ClientRedirectUriEntity r2 = new ClientRedirectUriEntity();
-        r1.setId(new ClientRedirectUriPk(clientId, "https://test.orcid.org/ruri/2", "import-works-wizard"));
+        r2.setClientId(clientId);
+        r2.setRedirectUri("https://test.orcid.org/ruri/2");
+        r2.setRedirectUriType("import-works-wizard");
         r2.setPredefinedClientScope("/activities/update /activities/create /authenticate");
         
         if(isWorksWizzard) {
