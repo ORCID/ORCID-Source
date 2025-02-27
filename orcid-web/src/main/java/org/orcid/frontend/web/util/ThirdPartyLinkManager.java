@@ -62,13 +62,13 @@ public class ThirdPartyLinkManager {
         List<ClientRedirectUriEntity> entitiesWithRedirectUriType = clientRedirectDaoReadOnly.findClientDetailsWithRedirectScope(rut.value());
         List<ImportWizzardClientForm> clients = new ArrayList<ImportWizzardClientForm>();
         for (ClientRedirectUriEntity entity : entitiesWithRedirectUriType) {
-            String clientId = entity.getId().getClientId();
+            String clientId = entity.getClientId();
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
             ImportWizzardClientForm clientForm = new ImportWizzardClientForm();
             clientForm.setId(clientDetails.getId());
             clientForm.setName(clientDetails.getClientName());
             clientForm.setDescription(clientDetails.getClientDescription());
-            clientForm.setRedirectUri(entity.getId().getRedirectUri());
+            clientForm.setRedirectUri(entity.getRedirectUri());
             clientForm.setScopes(entity.getPredefinedClientScope());
             clientForm.setStatus(entity.getStatus().name());
             clientForm.setClientWebsite(clientDetails.getClientWebsite());

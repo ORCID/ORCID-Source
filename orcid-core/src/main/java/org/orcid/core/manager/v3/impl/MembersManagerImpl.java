@@ -328,10 +328,10 @@ public class MembersManagerImpl implements MembersManager {
             Iterator<ClientScopeEntity> scopesIterator = existingScopes.iterator();
             while (scopesIterator.hasNext()) {
                 ClientScopeEntity clientScopeEntity = scopesIterator.next();
-                if (newSetOfScopes.contains(clientScopeEntity.getId().getScopeType())) {
-                    newSetOfScopes.remove(clientScopeEntity.getId().getScopeType());
+                if (newSetOfScopes.contains(clientScopeEntity.getScopeType())) {
+                    newSetOfScopes.remove(clientScopeEntity.getScopeType());
                 } else {
-                    clientScopeDao.deleteScope(client.getClientId(), clientScopeEntity.getId().getScopeType());
+                    clientScopeDao.deleteScope(client.getClientId(), clientScopeEntity.getScopeType());
                 }
             }
 
