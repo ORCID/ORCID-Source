@@ -29,7 +29,8 @@ public class ClientSecretDaoTest extends DBUnitTest {
     private static String CLIENT_ID = "APP-5555555555555557";
     private static String CLIENT_ID_TWO = "APP-5555555555555558";
     private static String CLIENT_SECRET = "DaVVhgVl3ab+6HYDyGCBbg==";
-    private static String CONDITION = String.format("(client_details_id = '%1$s' and client_secret = '%2$s') or (client_details_id = '%3$s' and client_secret = '%2$s')", CLIENT_ID, CLIENT_SECRET, CLIENT_ID_TWO);
+    private static String CLIENT_SECRET_TWO ="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx";
+    private static String CONDITION = String.format("(client_details_id = '%1$s' and client_secret = '%2$s') or (client_details_id = '%3$s' and client_secret = '%4$s')", CLIENT_ID, CLIENT_SECRET_TWO, CLIENT_ID_TWO, CLIENT_SECRET);
 
     @Resource
     ClientSecretDao clientSecretDao;
@@ -47,30 +48,24 @@ public class ClientSecretDaoTest extends DBUnitTest {
     @Test
     public void testGetNonPrimaryKeys() {
         List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(100);
-        assertEquals(nonPrimaryKeys.size(), 2);
+        assertEquals(nonPrimaryKeys.size(), 3);
         for (ClientSecretEntity secret : nonPrimaryKeys) {           
             assertNotNull(secret.getDateCreated());
             assertNotNull(secret.getLastModified());
             assertEquals(secret.getDateCreated(), secret.getLastModified());
-            assertEquals(secret.getId().getClientSecret(), CLIENT_SECRET);
         }
-    }
 
-    @Test
-    public void testLimitedNonPrimaryKeys() {
-        List<ClientSecretEntity> nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(1);
-        assertEquals(nonPrimaryKeys.size(), 1);
-        for (ClientSecretEntity secret : nonPrimaryKeys) {           
-            assertNotNull(secret.getDateCreated());
-            assertNotNull(secret.getLastModified());
-            assertEquals(secret.getDateCreated(), secret.getLastModified());
-            assertEquals(secret.getId().getClientSecret(), CLIENT_SECRET);
-        }
-    }
-    
-    @Test
-    public void testRemoveWithCustomCondition() {
+        // Delete one for client one and one for client two
         boolean removeNonPrimaryKeys = clientSecretDao.removeWithCustomCondition(CONDITION);
         assertTrue(removeNonPrimaryKeys);
+
+        // Now there should be only 1
+        nonPrimaryKeys = clientSecretDao.getNonPrimaryKeys(100);
+        assertEquals(1, nonPrimaryKeys.size());
+        assertNotNull(nonPrimaryKeys.get(0).getDateCreated());
+        assertNotNull(nonPrimaryKeys.get(0).getLastModified());
+        assertEquals(nonPrimaryKeys.get(0).getDateCreated(), nonPrimaryKeys.get(0).getLastModified());
+        assertEquals(nonPrimaryKeys.get(0).getClientId(), CLIENT_ID);
+        assertEquals(nonPrimaryKeys.get(0).getClientSecret(), CLIENT_SECRET);
     }
 }
