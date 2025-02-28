@@ -106,8 +106,8 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         //return uris
         ClientDetailsEntity cd = new ClientDetailsEntity();
         ClientRedirectUriEntity uri = new ClientRedirectUriEntity();
-        uri.getId().setRedirectUri("https://example.com/");
-        uri.getId().setRedirectUriType(RedirectUriType.FIND_MY_STUFF.value());
+        uri.setRedirectUri("https://example.com/");
+        uri.setRedirectUriType(RedirectUriType.FIND_MY_STUFF.value());
         uri.setPredefinedClientScope("/authenticate");
         SortedSet<ClientRedirectUriEntity> s = Sets.newTreeSet();
         s.add(uri);

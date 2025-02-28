@@ -46,8 +46,9 @@ public class JpaJaxbClientAdapterTest {
     @Test
     public void toClientTest() throws IllegalAccessException {
         ClientDetailsEntity entity = getClientDetailsEntity();
-        Client client = adapter.toClient(entity);        
-        assertEquals(getClient(), client);
+        Client client = adapter.toClient(entity);
+        Client theClient = getClient();
+        assertEquals(theClient, client);
     }
 
     @Test
@@ -129,6 +130,7 @@ public class JpaJaxbClientAdapterTest {
         rUri1.setUriActType("uri-act-type-1");
         rUri1.setUriGeoArea("uri-geo-area-1");
         rUri1.setStatus("OK");
+
         ClientRedirectUri rUri2 = new ClientRedirectUri();
         Set<ScopePathType> scopes2 = new HashSet<ScopePathType>();
         scopes2.add(ScopePathType.ACTIVITIES_UPDATE);
@@ -147,6 +149,7 @@ public class JpaJaxbClientAdapterTest {
         rUri3.setUriActType("uri-act-type-3");
         rUri3.setUriGeoArea("uri-geo-area-3");
         rUri3.setStatus("RETIRED");
+
         clientRedirectUris.add(rUri1);
         clientRedirectUris.add(rUri2);
         clientRedirectUris.add(rUri3);
@@ -224,17 +227,17 @@ public class JpaJaxbClientAdapterTest {
         DateFieldsOnBaseEntityUtils.setDateFields(rUri1, now);
         rUri1.setClientId("id");
         rUri1.setRedirectUri("redirect-uri-1");
-        rUri1.setRedirectUriType("redirect-uri-type-1");
+        rUri1.setRedirectUriType("type-1");
         rUri1.setPredefinedClientScope(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         rUri1.setUriActType("uri-act-type-1");
         rUri1.setUriGeoArea("uri-geo-area-1");
         rUri1.setStatus(ClientRedirectUriStatus.OK);
-        
+
         ClientRedirectUriEntity rUri2 = new ClientRedirectUriEntity();
         DateFieldsOnBaseEntityUtils.setDateFields(rUri2, now);
         rUri2.setClientId("id");
         rUri2.setRedirectUri("redirect-uri-2");
-        rUri2.setRedirectUriType("redirect-uri-type-2");
+        rUri2.setRedirectUriType("type-2");
         rUri2.setPredefinedClientScope(ScopePathType.ACTIVITIES_UPDATE.value());
         rUri2.setUriActType("uri-act-type-2");
         rUri2.setUriGeoArea("uri-geo-area-2");
@@ -244,11 +247,12 @@ public class JpaJaxbClientAdapterTest {
         DateFieldsOnBaseEntityUtils.setDateFields(rUri3, now);
         rUri3.setClientId("id");
         rUri3.setRedirectUri("redirect-uri-3");
-        rUri3.setRedirectUriType("redirect-uri-type-3");
+        rUri3.setRedirectUriType("type-3");
         rUri3.setPredefinedClientScope(ScopePathType.AFFILIATIONS_CREATE.value());
         rUri3.setUriActType("uri-act-type-3");
         rUri3.setUriGeoArea("uri-geo-area-3");
         rUri3.setStatus(ClientRedirectUriStatus.RETIRED);
+
         clientRegisteredRedirectUris.add(rUri1);
         clientRegisteredRedirectUris.add(rUri2);
         clientRegisteredRedirectUris.add(rUri3);

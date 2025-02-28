@@ -98,11 +98,11 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         ClientDetailsEntity client = new ClientDetailsEntity(clientId, "clientName");
         ClientDetailsEntity clientTwo = new ClientDetailsEntity(clientIdTwo, "clientNameTwo");
         ClientSecretEntity entityOne = new ClientSecretEntity();
-        entityOne.getId().setClientSecret("clientSecret");
-        entityOne.getId().setClientId(client.getClientId());
+        entityOne.setClientSecret("clientSecret");
+        entityOne.setClientId(client.getClientId());
         ClientSecretEntity entityTwo = new ClientSecretEntity();
-        entityTwo.getId().setClientSecret("clientSecretTwo");
-        entityTwo.getId().setClientId(clientTwo.getClientId());
+        entityTwo.setClientSecret("clientSecretTwo");
+        entityTwo.setClientId(clientTwo.getClientId());
         secretList.add(entityOne);
         secretList.add(entityTwo);
 

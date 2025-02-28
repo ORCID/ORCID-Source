@@ -179,14 +179,14 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         ClientRedirectUriEntity result = null;
         // found, return the first DEFAULT one
         for (ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
-            if (RedirectUriType.FIND_MY_STUFF.value().equals(redirectUri.getId().getRedirectUriType())) {
+            if (RedirectUriType.FIND_MY_STUFF.value().equals(redirectUri.getRedirectUriType())) {
                 result = redirectUri;
                 break;
             }
         }
         try {
             String urlEncodedScopes = URLEncoder.encode(result.getPredefinedClientScope(), "UTF-8");
-            String urlEncodedRedirectUri = URLEncoder.encode(result.getId().getRedirectUri(), "UTF-8");
+            String urlEncodedRedirectUri = URLEncoder.encode(result.getRedirectUri(), "UTF-8");
             return MessageFormat.format(AUTHORIZATION_END_POINT, orcidUrlManager.getBaseUrl(), clientDetails.getClientId(), urlEncodedScopes, urlEncodedRedirectUri);
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);

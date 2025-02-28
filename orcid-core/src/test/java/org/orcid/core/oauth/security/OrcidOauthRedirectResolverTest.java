@@ -140,7 +140,7 @@ public class OrcidOauthRedirectResolverTest {
         ClientDetailsEntity clientDetails = new ClientDetailsEntity();
         // Empty authorized grant types should fail
         ClientAuthorisedGrantTypeEntity gte1 = new ClientAuthorisedGrantTypeEntity();
-        gte1.getId().setGrantType("authorization_code");
+        gte1.setGrantType("authorization_code");
         clientDetails.setClientAuthorizedGrantTypes(Set.of(gte1));
 
         TreeSet<ClientRedirectUriEntity> redirectUris = new TreeSet<ClientRedirectUriEntity>();

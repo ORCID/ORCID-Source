@@ -37,8 +37,8 @@ public class CleanOldClientKeysCronJob {
             List<String> clientIds = new ArrayList<String>();
             for (ClientSecretEntity e : nonPrimaryKeys) {
                 i++;
-                String clientId = e.getId().getClientId();
-                String key = e.getId().getClientSecret();
+                String clientId = e.getClientId();
+                String key = e.getClientSecret();
                 // build string for the condition in the db delete query
                 String s = String.format("(client_details_id = '%1$s' and client_secret = '%2$s')", clientId, key);
                 queryCondition.append(s);
