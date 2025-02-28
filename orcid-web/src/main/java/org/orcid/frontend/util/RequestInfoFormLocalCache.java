@@ -34,7 +34,7 @@ public class RequestInfoFormLocalCache {
     @PostConstruct
     public void initCache() {
         cache = cacheManager
-                .createCache("squaredNumber", CacheConfigurationBuilder
+                .createCache("requestInfoFormLocalCache", CacheConfigurationBuilder
                         .newCacheConfigurationBuilder(
                                 String.class, RequestInfoForm.class,
                                 ResourcePoolsBuilder.heap(heapSize)).withExpiry(Expirations.timeToLiveExpiration(Duration.of(cacheTTLInSeconds, TimeUnit.SECONDS))));

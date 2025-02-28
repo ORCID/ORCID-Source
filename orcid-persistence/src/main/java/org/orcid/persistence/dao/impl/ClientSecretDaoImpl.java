@@ -88,8 +88,8 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     public boolean setAsPrimary(ClientSecretEntity clientSecret) {
         Query query = entityManager
                 .createNativeQuery("UPDATE client_secret SET is_primary=true WHERE client_details_id=:clientDetailsId AND client_secret=:clientSecret");
-        query.setParameter("clientDetailsId", clientSecret.getId().getClientId());
-        query.setParameter("clientSecret", clientSecret.getId().getClientSecret());
+        query.setParameter("clientDetailsId", clientSecret.getClientId());
+        query.setParameter("clientSecret", clientSecret.getClientSecret());
         return query.executeUpdate() > 0;
     }
     

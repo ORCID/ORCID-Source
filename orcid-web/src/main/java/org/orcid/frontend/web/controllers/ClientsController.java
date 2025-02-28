@@ -172,8 +172,6 @@ public class ClientsController extends BaseWorkspaceController {
                 newClient = clientManager.create(newClient);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
-                System.out.println(e.getMessage());
-                System.out.println(e.getCause());
                 String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
                 client.setErrors(new ArrayList<String>());
                 client.getErrors().add(errorDesciption);

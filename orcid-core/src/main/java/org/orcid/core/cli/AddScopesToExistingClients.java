@@ -120,7 +120,7 @@ public class AddScopesToExistingClients {
         for(ScopePathType scope : scopes) {            
             boolean alreadyHaveScope = false;
             for (ClientScopeEntity existingScope : clientDetails.getClientScopes()) {
-                if (scope.value().equals(existingScope.getId().getScopeType())) {
+                if (scope.value().equals(existingScope.getScopeType())) {
                     alreadyHaveScope = true;
                     break;
                 }

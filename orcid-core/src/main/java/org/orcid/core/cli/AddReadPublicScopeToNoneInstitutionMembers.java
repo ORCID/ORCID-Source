@@ -63,7 +63,7 @@ public class AddReadPublicScopeToNoneInstitutionMembers {
         String readPublicScope = ScopePathType.READ_PUBLIC.value();
         boolean alreadyHaveReadPublicScope = false;
         for (ClientScopeEntity scope : clientDetails.getClientScopes()) {
-            if (readPublicScope.equals(scope.getId().getScopeType())) {
+            if (readPublicScope.equals(scope.getScopeType())) {
                 alreadyHaveReadPublicScope = true;
                 break;
             }

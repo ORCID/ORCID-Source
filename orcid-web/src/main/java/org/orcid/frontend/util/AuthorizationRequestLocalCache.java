@@ -35,7 +35,7 @@ public class AuthorizationRequestLocalCache {
     @PostConstruct
     public void initCache() {
         cache = cacheManager
-                .createCache("squaredNumber", CacheConfigurationBuilder
+                .createCache("authorizationRequestLocalCache", CacheConfigurationBuilder
                         .newCacheConfigurationBuilder(
                                 String.class, AuthorizationRequest.class,
                                 ResourcePoolsBuilder.heap(heapSize)).withExpiry(Expirations.timeToLiveExpiration(Duration.of(cacheTTLInSeconds, TimeUnit.SECONDS))));

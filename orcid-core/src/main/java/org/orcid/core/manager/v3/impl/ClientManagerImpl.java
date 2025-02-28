@@ -174,8 +174,7 @@ public class ClientManagerImpl implements ClientManager {
             throw e;
         }
 
-        Client theNewClient = jpaJaxbClientAdapter.toClient(newEntity);
-        return theNewClient;
+        return jpaJaxbClientAdapter.toClient(newEntity);
     }
 
     @Override
