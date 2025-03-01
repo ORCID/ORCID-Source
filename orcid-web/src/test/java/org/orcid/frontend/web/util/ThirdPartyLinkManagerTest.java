@@ -3,6 +3,7 @@ package org.orcid.frontend.web.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,10 +16,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
 
 public class ThirdPartyLinkManagerTest {
@@ -27,43 +30,47 @@ public class ThirdPartyLinkManagerTest {
     private ClientRedirectDao clientRedirectDaoReadOnly;
 
     @Mock
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
+    @Mock
     private LocaleManager localeManager;
     
     @InjectMocks
     private ThirdPartyLinkManager thirdPartyLinkManager;
-    
-    private static final ClientDetailsEntity client = new ClientDetailsEntity("APP-00001");
+
+    private static final String clientId = "APP-00001";
+    private static final ClientDetailsEntity client = new ClientDetailsEntity(clientId);
     
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         
-        Mockito.doReturn("Articles").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.work_type.articles"), Mockito.any(Locale.class));
-        Mockito.doReturn("Books").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.work_type.books"), Mockito.any(Locale.class));
-        Mockito.doReturn("Data").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.work_type.data"), Mockito.any(Locale.class));
-        Mockito.doReturn("Student Publications").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.work_type.student_publications"), Mockito.any(Locale.class));
+        Mockito.doReturn("Articles").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.work_type.articles"), Mockito.any(Locale.class));
+        Mockito.doReturn("Books").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.work_type.books"), Mockito.any(Locale.class));
+        Mockito.doReturn("Data").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.work_type.data"), Mockito.any(Locale.class));
+        Mockito.doReturn("Student Publications").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.work_type.student_publications"), Mockito.any(Locale.class));
         
-        Mockito.doReturn("Africa").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.africa"), Mockito.any(Locale.class));
-        Mockito.doReturn("Asia").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.asia"), Mockito.any(Locale.class));
-        Mockito.doReturn("Australia").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.australia"), Mockito.any(Locale.class));
-        Mockito.doReturn("Europe").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.europe"), Mockito.any(Locale.class));
-        Mockito.doReturn("Global").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.global"), Mockito.any(Locale.class));
-        Mockito.doReturn("North America").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.north_america"), Mockito.any(Locale.class));
-        Mockito.doReturn("South America").when(localeManager).resolveMessage(Mockito.eq("workspace.works.import_wizzard.geo_area.south_america"), Mockito.any(Locale.class));
+        Mockito.doReturn("Africa").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.africa"), Mockito.any(Locale.class));
+        Mockito.doReturn("Asia").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.asia"), Mockito.any(Locale.class));
+        Mockito.doReturn("Australia").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.australia"), Mockito.any(Locale.class));
+        Mockito.doReturn("Europe").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.europe"), Mockito.any(Locale.class));
+        Mockito.doReturn("Global").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.global"), Mockito.any(Locale.class));
+        Mockito.doReturn("North America").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.north_america"), Mockito.any(Locale.class));
+        Mockito.doReturn("South America").when(localeManager).resolveMessage(eq("workspace.works.import_wizzard.geo_area.south_america"), Mockito.any(Locale.class));
     }
     
     private void initRedirectUriData(Boolean isWorksWizzard, RedirectUriType rut) {
         ClientRedirectUriEntity r1 = new ClientRedirectUriEntity();
-        r1.setClientDetailsEntity(client);
-        r1.setPredefinedClientScope("/read-limited /activities/update");
+        r1.setClientId(clientId);
         r1.setRedirectUri("https://test.orcid.org/ruri/1");
         r1.setRedirectUriType("import-works-wizard");
+        r1.setPredefinedClientScope("/read-limited /activities/update");
         
         ClientRedirectUriEntity r2 = new ClientRedirectUriEntity();
-        r2.setClientDetailsEntity(client);
-        r2.setPredefinedClientScope("/activities/update /activities/create /authenticate");
+        r2.setClientId(clientId);
         r2.setRedirectUri("https://test.orcid.org/ruri/2");
         r2.setRedirectUriType("import-works-wizard");
+        r2.setPredefinedClientScope("/activities/update /activities/create /authenticate");
         
         if(isWorksWizzard) {
             r1.setUriActType("{\"import-works-wizard\":[\"Articles\",\"Books\"]}");
@@ -75,7 +82,14 @@ public class ThirdPartyLinkManagerTest {
         
         List<ClientRedirectUriEntity> rUris = Arrays.asList(r1, r2);
         
-        Mockito.doReturn(rUris).when(clientRedirectDaoReadOnly).findClientDetailsWithRedirectScope(Mockito.eq(rut.value()));
+        Mockito.doReturn(rUris).when(clientRedirectDaoReadOnly).findClientDetailsWithRedirectScope(eq(rut.value()));
+
+        ClientDetailsEntity clientDetailsMock = Mockito.mock(ClientDetailsEntity.class);
+        Mockito.when(clientDetailsMock.getClientId()).thenReturn(clientId);
+        Mockito.when(clientDetailsMock.getClientName()).thenReturn("ClientName");
+        Mockito.when(clientDetailsMock.getClientDescription()).thenReturn("ClientDescription");
+        Mockito.when(clientDetailsMock.getClientWebsite()).thenReturn("http://test.orcid.org");
+        Mockito.when(clientDetailsEntityCacheManager.retrieve(eq(clientId))).thenReturn(clientDetailsMock);
     }
     
     @Test

@@ -6,8 +6,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
@@ -90,7 +88,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
     public boolean setAsPrimary(ClientSecretEntity clientSecret) {
         Query query = entityManager
                 .createNativeQuery("UPDATE client_secret SET is_primary=true WHERE client_details_id=:clientDetailsId AND client_secret=:clientSecret");
-        query.setParameter("clientDetailsId", clientSecret.getClientDetailsEntity().getId());
+        query.setParameter("clientDetailsId", clientSecret.getClientId());
         query.setParameter("clientSecret", clientSecret.getClientSecret());
         return query.executeUpdate() > 0;
     }
@@ -112,13 +110,5 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
         Query query = entityManager.createNativeQuery("delete from client_secret WHERE " + condition);
         return query.executeUpdate() > 0;
     }
-    
-    @Override
-    @Transactional
-    public boolean updateLastModified(String clientId, String clientSecret) {
-        Query updateQuery = entityManager.createQuery("update ClientSecretEntity set lastModified = now() where client_details_id = :clientId AND client_secret = :clientSecret");
-        updateQuery.setParameter("clientId", clientId);
-        updateQuery.setParameter("clientSecret", clientSecret);
-        return updateQuery.executeUpdate() > 0;
-    }
+
 }
