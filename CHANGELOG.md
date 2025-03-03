@@ -1,3 +1,9 @@
+## v2.72.4 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.3...v2.72.4)
+
+- [#7235](https://github.com/ORCID/ORCID-Source/pull/7235): Fix switch user role
+
 ## v2.72.3 - 2025-03-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.2...v2.72.3)
