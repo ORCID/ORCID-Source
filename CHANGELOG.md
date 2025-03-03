@@ -1,3 +1,9 @@
+## v2.72.3 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.2...v2.72.3)
+
+- [#7234](https://github.com/ORCID/ORCID-Source/pull/7234): Do not save the session on email verification events
+
 ## v2.72.2 - 2025-03-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.1...v2.72.2)
