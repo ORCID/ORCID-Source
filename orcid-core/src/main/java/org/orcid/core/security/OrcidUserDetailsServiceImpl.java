@@ -114,6 +114,8 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     }
 
     private UserDetails createUserDetails(ProfileEntity profile) {
+        // Fix the case when the entity does not have a primary email address
+        setPrimaryEmailIfMissing(profile.getId());
         OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
         String id = profile.getId();
         String encryptedPassword = profile.getEncryptedPassword();
@@ -214,4 +216,21 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         return false;
     }
 
+    private String setPrimaryEmailIfMissing(String orcid) {
+        try {
+            return emailDao.findPrimaryEmail(orcid).getEmail();
+        } catch (javax.persistence.NoResultException nre) {
+            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
+            LOGGER.error(message);
+            return alternativePrimaryEmail;
+        } catch (javax.persistence.NonUniqueResultException nure) {
+            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
+            LOGGER.error(message);
+            return alternativePrimaryEmail;
+        }
+    }
 }
