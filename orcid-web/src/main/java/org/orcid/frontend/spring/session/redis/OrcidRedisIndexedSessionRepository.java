@@ -54,6 +54,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     private FlushMode flushMode;
     private SaveMode saveMode;
     private final String PUBLIC_ORCID_PAGE_REGEX = "/(\\d{4}-){3,}\\d{3}[\\dX](/.+)";
+    private final String VERIFY_EMAIL_REGEX = "/verify-email/[a-zA-Z0-9]+";
     private final List<String> urisToSkipOnGet = List.of("/2FA/status.json", "/account/", "/account/biographyForm.json", "/account/countryForm.json", "/account/delegates.json", "/account/emails.json",
             "/account/get-trusted-orgs.json", "/account/nameForm.json", "/account/preferences.json", "/account/socialAccounts.json", "/affiliations/affiliationDetails.json", "/affiliations/affiliationGroups.json",
             "/assets/vectors/orcid.logo.icon.svg", "/config.json", "/delegators/delegators-and-me.json", "/fundings/fundingDetails.json", "/fundings/fundingGroups.json", "/inbox/notifications.json",
@@ -363,11 +364,16 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     }
 
     private boolean updateSession() {
-        ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes att = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        // It is unlikely that `att` will ever be null, but let's add a catch for it
+        if(att == null) {
+            logger.warn("ServletRequestAttributes were null");
+            return false;
+        }
         HttpServletRequest request = att.getRequest();
         String url = request.getRequestURI().substring(request.getContextPath().length());
         if((request.getMethod().equals("GET") && (GET_SKIP_SAVE_SESSION.contains(url) || url.matches(PUBLIC_ORCID_PAGE_REGEX)))
-                || ALWAYS_SKIP_SAVE_SESSION.contains(url)) {
+                || ALWAYS_SKIP_SAVE_SESSION.contains(url) || url.matches(VERIFY_EMAIL_REGEX)) {
             return false;
         }
         return true;
@@ -411,6 +417,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
                 ServletRequestAttributes att = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
                 HttpServletRequest request = att.getRequest();
                 logger.debug("REDIS_SESSION: setLastAccessedTime: " + request.getRequestURI().toString() + " - " + request.getMethod());
+                ///////////////////////////////////////////
 
                 this.cached.setLastAccessedTime(lastAccessedTime);
                 this.delta.put("lastAccessedTime", this.getLastAccessedTime().toEpochMilli());
