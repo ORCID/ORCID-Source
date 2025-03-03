@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
@@ -113,9 +114,16 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     }
 
     private UserDetails createUserDetails(ProfileEntity profile) {
-        String primaryEmail = retrievePrimaryEmail(profile.getId());
         OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
-        return new User(profile.getId(), profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
+        String id = profile.getId();
+        String encryptedPassword = profile.getEncryptedPassword();
+        if(OrcidType.GROUP.equals(orcidType)) {
+            LOGGER.warn("GROUP with id " + id + " is signin in");
+            // Members does not have password, so, we need to set one as placeholder
+            encryptedPassword = RandomStringUtils.randomAlphanumeric(5);
+        }
+
+        return new User(id, encryptedPassword, buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
     }
 
     private void checkStatuses(ProfileEntity profile) {
@@ -186,25 +194,6 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             result.add(new SimpleGrantedAuthority(r.name()));
         }
         return result;
-    }
-
-    @Deprecated(forRemoval = true)
-    private String retrievePrimaryEmail(String orcid) {
-        try {
-            return emailDao.findPrimaryEmail(orcid).getEmail();
-        } catch (javax.persistence.NoResultException nre) {
-            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
-            LOGGER.error(message);
-            return alternativePrimaryEmail;
-        } catch (javax.persistence.NonUniqueResultException nure) {
-            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
-            LOGGER.error(message);
-            return alternativePrimaryEmail;
-        }
     }
 
     @Override
