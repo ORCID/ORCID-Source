@@ -63,6 +63,10 @@ public class OrcidSwitchUserFilter extends SwitchUserFilter {
     @Override
     protected Authentication attemptSwitchUser(HttpServletRequest request) throws AuthenticationException {
         String targetUserOrcid = request.getParameter(SPRING_SECURITY_SWITCH_USERNAME_KEY);
+
+        //TODO Remove this!
+        request.getParameterNames().asIterator().forEachRemaining(x -> LOGGER.warn("Parameters in request: id " + x + "value " + request.getParameter(x)));
+
         ProfileEntity profileEntity = sourceManager.retrieveSourceProfileEntity();
         if (OrcidType.ADMIN.name().equals(profileEntity.getOrcidType())) {
             return switchUser(request);
