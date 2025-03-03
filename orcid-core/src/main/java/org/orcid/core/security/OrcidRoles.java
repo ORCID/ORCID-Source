@@ -12,7 +12,9 @@ public enum OrcidRoles {
     // Client roles
     ROLE_CREATOR, ROLE_PREMIUM_CREATOR, ROLE_UPDATER, ROLE_PREMIUM_UPDATER,
     // Additional roles
-    ROLE_SELF_SERVICE;
+    ROLE_SELF_SERVICE,
+    // Switch user role
+    ROLE_PREVIOUS_ADMINISTRATOR;
             
     public String getAuthority() {
         return this.toString();
