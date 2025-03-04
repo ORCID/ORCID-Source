@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
@@ -432,9 +433,12 @@ public class OauthController {
                         requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
                     }   
                 }
-                
-                AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
-                authorizationRequestLocalCache.put(request.getSession().getId(), authRequest);
+
+                // If there are not errors, store the authorizationRequest in the local cache
+                if(StringUtils.isEmpty(requestInfoForm.getError())) {
+                    AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
+                    authorizationRequestLocalCache.put(request.getSession().getId(), authRequest);
+                }
             } catch (RedirectMismatchException e ) {
                 requestInfoForm.setError("invalid_grant");
                 requestInfoForm.setErrorDescription("Redirect URI doesn't match your registered redirect URIs.");
