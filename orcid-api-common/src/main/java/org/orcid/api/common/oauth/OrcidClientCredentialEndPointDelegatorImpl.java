@@ -131,7 +131,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     if(scopeType.isInternalScope()) {
                         // You should not allow any internal scope here! go away!
                         String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
-                        throw new OrcidInvalidScopeException(message);
+                        throw new OrcidInvalidScopeException(message, clientId, scope);
                     } else if(OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
                         if(!scopeType.isClientCreditalScope())
                             toRemove.add(scope);
@@ -147,7 +147,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             }                        
         } catch (IllegalArgumentException iae) {
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
-            throw new OrcidInvalidScopeException(message);
+            if(scopes != null) {
+                message += " Provided scopes: " + String.join(",", scopes);
+            }
+            throw new OrcidInvalidScopeException(message, clientId, iae.getMessage());
         }
                 
         try{
