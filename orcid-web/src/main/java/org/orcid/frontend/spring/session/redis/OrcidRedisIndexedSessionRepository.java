@@ -63,7 +63,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
             "/orgs/disambiguated/ROR", "/peer-reviews/peer-review.json", "/peer-reviews/peer-reviews-by-group-id.json", "/peer-reviews/peer-reviews-minimized.json", "/qr-code.png", "/register.json",
             "/research-resources/researchResource.json", "/research-resources/researchResourcePage.json", "/userInfo.json", "/works/getWorkInfo.json", "/works/groupingSuggestions.json", "/works/idTypes.json", "/works/work.json",
             "/works/worksExtendedPage.json");
-    private final List<String> urisToSkipAlways = List.of("/oauth/custom/register/validatePassword.json");
+    private final List<String> urisToSkipAlways = List.of("/oauth/custom/register/validatePassword.json", "/oauth/custom/init.json");
     private final Set<String> GET_SKIP_SAVE_SESSION = new HashSet<>(urisToSkipOnGet);
     private final Set<String> ALWAYS_SKIP_SAVE_SESSION = new HashSet<>(urisToSkipAlways);
 
