@@ -1,0 +1,36 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DW-PROFILE-INFO-SPAM-CHECK" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not><viewExists viewName="dw_profile_info_for_spam_check"/></not>
+        </preConditions>
+        <createView viewName="dw_profile_info_for_spam_check">
+			SELECT dw_profile.orcid, dw_record_name.given_names, dw_record_name.family_name, dw_record_name.credit_name, urls, keywords, other_names,
+	 			   dw_biography.biography, emails, '?' as spam 
+	  		FROM dw_profile 
+	  		LEFT JOIN dw_record_name ON dw_record_name.orcid=dw_profile.orcid 
+	  		LEFT JOIN (SELECT distinct dw_researcher_url.orcid, count(dw_researcher_url.db_id) AS url_count, 
+	   			STRING_AGG(dw_researcher_url.url_name, '|') AS urls  FROM dw_researcher_url GROUP BY dw_researcher_url.orcid) x_urls ON x_urls.orcid=dw_profile.orcid 
+	   		LEFT JOIN (SELECT distinct dw_profile_keyword.profile_orcid, count(dw_profile_keyword.db_id) AS keyword_count, STRING_AGG(dw_profile_keyword.keyword, '|') AS keywords 
+	   			FROM dw_profile_keyword GROUP BY profile_orcid) x_keywords ON x_keywords.profile_orcid=dw_profile.orcid 
+	   		LEFT JOIN (SELECT distinct dw_other_name.orcid, count(dw_other_name.display_name) AS other_name_count, STRING_AGG(dw_other_name.display_name, '|') 
+	   			AS other_names, max(char_length(dw_other_name.display_name)) AS max_other_name_length 
+	   		FROM dw_other_name GROUP BY dw_other_name.orcid) x_other ON x_other.orcid=dw_profile.orcid 
+	   		LEFT JOIN(select distinct dw_email.orcid, count(dw_email.email) AS email_count, STRING_AGG(dw_email.email, '|') as emails from dw_email group by dw_email.orcid) x_email ON x_email.orcid=dw_profile.orcid 
+	   		LEFT JOIN dw_biography on dw_biography.orcid=dw_profile.orcid 
+	   		WHERE NOT EXISTS(select dw_work.orcid from dw_work where dw_work.orcid=dw_profile.orcid) 
+	   		and dw_profile.record_locked !='t' and reviewed !='t'
+	   		and dw_profile.last_modified > date_trunc('day',(now() - interval '1 month'))
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW_USER-TO-DW-PROFILE-INFO-SPAM-CHECK" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_info_for_spam_check to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
