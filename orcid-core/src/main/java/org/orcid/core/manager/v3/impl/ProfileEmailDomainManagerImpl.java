@@ -1,9 +1,10 @@
 package org.orcid.core.manager.v3.impl;
 
-
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl;
+import org.orcid.core.utils.emailDomain.EmailDomainValidator;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailDomainDao;
@@ -41,6 +42,9 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
 
     @Transactional
     public void updateEmailDomains(String orcid, org.orcid.pojo.ajaxForm.Emails newEmails) {
@@ -85,28 +89,27 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
         }
 
         String domain = email.split("@")[1];
-        List<EmailDomainEntity> domainsInfo = emailDomainDao.findByEmailDomain(domain);
+        List<EmailDomainEntity> domainsInfo = emailDomainManager.findByEmailDomain(domain);
         String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
-        
-        
+
         // Check if email is professional
         if (domainsInfo != null) {
-            for(EmailDomainEntity domainInfo: domainsInfo) {
+            for (EmailDomainEntity domainInfo : domainsInfo) {
                 category = domainInfo.getCategory().name();
-                if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
                     break;
                 }
             }
-             if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
-            ProfileEmailDomainEntity existingDomain = profileEmailDomainDaoReadOnly.findByEmailDomain(orcid, domain);
-            // ADD NEW DOMAIN IF ONE DOESN'T EXIST
-            if (existingDomain == null) {
-                // Verify the user doesn't have more emails with that domain
-                ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                String domainVisibility = profile.getActivitiesVisibilityDefault();
-                profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
+            if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
+                ProfileEmailDomainEntity existingDomain = profileEmailDomainDaoReadOnly.findByEmailDomain(orcid, domain);
+                // ADD NEW DOMAIN IF ONE DOESN'T EXIST
+                if (existingDomain == null) {
+                    // Verify the user doesn't have more emails with that domain
+                    ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                    String domainVisibility = profile.getActivitiesVisibilityDefault();
+                    profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
+                }
             }
-             }
         }
     }
 
