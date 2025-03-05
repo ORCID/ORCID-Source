@@ -524,11 +524,12 @@ public class PasswordResetController extends BaseController {
             }
         }
 
+        // Log user in
+        registrationController.logUserIn(request, response, orcid, password);
+
+        // Add the affiliation
         if (reactivation.getAffiliationForm() != null) {
             registrationManager.createAffiliation(reactivation, orcid);
         }
-
-        // Log user in
-        registrationController.logUserIn(request, response, orcid, password);
     }
 }

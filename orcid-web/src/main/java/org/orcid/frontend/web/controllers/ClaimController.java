@@ -172,12 +172,14 @@ public class ClaimController extends BaseController {
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
         if (!claimed) {
             throw new IllegalStateException("Unable to claim record " + orcid);
-        }                    
-                
+        }
+
+        // Log user in
+        automaticallyLogin(request, claim.getPassword().getValue(), orcid);
+
         // Notify
         notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-        // Log user in 
-        automaticallyLogin(request, claim.getPassword().getValue(), orcid);
+
         // detech this situation
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         if (targetUrl == null)
