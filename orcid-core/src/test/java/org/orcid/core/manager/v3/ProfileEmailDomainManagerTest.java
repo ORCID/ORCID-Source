@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.impl.ProfileEmailDomainManagerImpl;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -38,6 +39,9 @@ public class ProfileEmailDomainManagerTest {
 
     @Mock
     private EmailDomainDao emailDomainDaoMock;
+    
+    @Mock
+    private EmailDomainManager emailDomainManagerMock;
 
     ProfileEmailDomainManager pedm = new ProfileEmailDomainManagerImpl();
 
@@ -56,6 +60,7 @@ public class ProfileEmailDomainManagerTest {
         TargetProxyHelper.injectIntoProxy(pedm, "profileEmailDomainDaoReadOnly", profileEmailDomainDaoReadOnlyMock);
         TargetProxyHelper.injectIntoProxy(pedm, "emailDomainDao", emailDomainDaoMock);
         TargetProxyHelper.injectIntoProxy(pedm, "profileEntityCacheManager", profileEntityCacheManagerMock);
+        TargetProxyHelper.injectIntoProxy(pedm, "emailDomainManager", emailDomainManagerMock);
 
         ProfileEmailDomainEntity ped1 = new ProfileEmailDomainEntity();
         ProfileEmailDomainEntity ped2 = new ProfileEmailDomainEntity();
@@ -108,7 +113,7 @@ public class ProfileEmailDomainManagerTest {
         EmailDomainEntity professionalEmailDomain = new EmailDomainEntity();
         professionalEmailDomain.setCategory(DomainCategory.PROFESSIONAL);
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN);
-        when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
+        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
         pedm.processDomain(ORCID, "email@orcid.org");
         verify(profileEmailDomainDaoReadOnlyMock, times(1)).findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN));
         verify(profileEmailDomainDaoMock, never()).addEmailDomain(anyString(), anyString(), anyString());
@@ -116,7 +121,7 @@ public class ProfileEmailDomainManagerTest {
 
     @Test
     public void processDomain_doNotAddUnknownDomain() {
-        when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(null);
+        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(null);
         pedm.processDomain(ORCID, "email@orcid.org");
         verify(profileEmailDomainDaoReadOnlyMock, never()).findByEmailDomain(anyString(), anyString());
         verify(profileEmailDomainDaoMock, never()).addEmailDomain(anyString(), anyString(), anyString());
@@ -127,7 +132,7 @@ public class ProfileEmailDomainManagerTest {
         EmailDomainEntity professionalEmailDomain = new EmailDomainEntity();
         professionalEmailDomain.setCategory(DomainCategory.PERSONAL);
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN);
-        when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
+        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
         pedm.processDomain(ORCID, "email@orcid.org");
         verify(profileEmailDomainDaoReadOnlyMock, never()).findByEmailDomain(anyString(), anyString());
         verify(profileEmailDomainDaoMock, never()).addEmailDomain(anyString(), anyString(), anyString());
@@ -138,7 +143,7 @@ public class ProfileEmailDomainManagerTest {
         EmailDomainEntity professionalEmailDomain = new EmailDomainEntity();
         professionalEmailDomain.setCategory(DomainCategory.PROFESSIONAL);
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN_THREE);
-        when(emailDomainDaoMock.findByEmailDomain(eq(EMAIL_DOMAIN_THREE))).thenReturn(List.of(professionalEmailDomain));
+        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN_THREE))).thenReturn(List.of(professionalEmailDomain));
         pedm.processDomain(ORCID, "email@domain.net");
         verify(profileEmailDomainDaoReadOnlyMock, times(1)).findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN_THREE));
         verify(profileEmailDomainDaoMock, times(1)).addEmailDomain(ORCID, EMAIL_DOMAIN_THREE, Visibility.PUBLIC.value());
