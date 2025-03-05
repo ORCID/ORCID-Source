@@ -117,10 +117,6 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
-        /* Disable referential integrity
-        Statement stmt = connection.getConnection().createStatement();
-        stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-        stmt.close(); */
         
         QueryDataSet grandChildTableSet = new QueryDataSet(connection);
         grandChildTableSet.addTable("research_resource_item_org");
@@ -178,10 +174,6 @@ public class DBUnitTest {
         theRest.addTable("custom_email");
         DatabaseOperation.DELETE.execute(connection, theRest);
         
-        /* Re-enable referential integrity
-        stmt = connection.getConnection().createStatement();
-        stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-        stmt.close();*/
     }
 
     private static void cleanAll(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {
