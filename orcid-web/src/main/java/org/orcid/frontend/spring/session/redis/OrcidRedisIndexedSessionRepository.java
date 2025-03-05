@@ -372,8 +372,10 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
         }
         HttpServletRequest request = att.getRequest();
         String url = request.getRequestURI().substring(request.getContextPath().length());
-        if((request.getMethod().equals("GET") && (GET_SKIP_SAVE_SESSION.contains(url) || url.matches(PUBLIC_ORCID_PAGE_REGEX)))
-                || ALWAYS_SKIP_SAVE_SESSION.contains(url) || url.matches(VERIFY_EMAIL_REGEX)) {
+        if((request.getMethod().equals("GET") && GET_SKIP_SAVE_SESSION.contains(url))
+                || ALWAYS_SKIP_SAVE_SESSION.contains(url)
+                || url.matches(VERIFY_EMAIL_REGEX)
+                || url.matches(PUBLIC_ORCID_PAGE_REGEX)) {
             return false;
         }
         return true;
