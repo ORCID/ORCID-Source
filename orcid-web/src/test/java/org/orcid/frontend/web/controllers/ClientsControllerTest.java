@@ -265,7 +265,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         Client client = new Client();
         client.setAllowAutoDeprecate(Checkbox.valueOf(true));
         client.setType(Text.valueOf(ClientType.CREATOR.name()));
-        client.setClientId(Text.valueOf("XXXXXX"));
         client.setDisplayName(Text.valueOf("My client name"));
         client.setMemberId(Text.valueOf("0000-0000-0000-0000"));
         client.setMemberName(Text.valueOf("My member name"));

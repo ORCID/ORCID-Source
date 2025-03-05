@@ -20,7 +20,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EventEntity;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.RequestInfoForm;
 
 /**
  *
@@ -45,11 +44,7 @@ public class EventManagerImpl implements EventManager {
 
         if (request != null) {
             Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-            RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute("requestInfoForm");
-            if (requestInfoForm != null) {
-                clientId = requestInfoForm.getClientId();
-                label = "OAuth " + requestInfoForm.getMemberName() + " " + requestInfoForm.getClientName();
-            } else if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+            if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
                 String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
                 clientId = getParameterValue(queryString, "client_id");
                 ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);

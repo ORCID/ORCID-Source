@@ -43,6 +43,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -337,7 +338,7 @@ public class MembersManagerImpl implements MembersManager {
             // Insert the new scopes
             for (String newScope : newSetOfScopes) {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-                clientScopeEntity.setClientDetailsEntity(client);
+                clientScopeEntity.setClientId(client.getClientId());
                 clientScopeEntity.setScopeType(newScope);
                 clientScopeDao.persist(clientScopeEntity);
             }

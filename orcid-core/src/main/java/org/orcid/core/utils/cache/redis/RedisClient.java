@@ -19,6 +19,8 @@ import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import redis.clients.jedis.DefaultJedisClientConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
@@ -80,7 +82,8 @@ public class RedisClient {
             JedisClientConfig config = DefaultJedisClientConfig.builder().connectionTimeoutMillis(this.clientTimeoutInMillis)
                     .socketTimeoutMillis(this.clientTimeoutInMillis).password(this.redisPassword).ssl(true).build();
             pool = new JedisPool(new HostAndPort(this.redisHost, this.redisPort), config);
-            defaultSetParams = new SetParams().ex(this.cacheExpiryInSecs);
+            defaultSetParams = new SetParams();
+            defaultSetParams.ex(Long.valueOf(this.cacheExpiryInSecs));
             // Pool test
             try (Jedis jedis = pool.getResource()) {
                 if (jedis.isConnected()) {
@@ -183,4 +186,5 @@ public class RedisClient {
 
         return mappedValuesForKey;
     }
+
 }

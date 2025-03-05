@@ -308,7 +308,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     public void editMemberWithInvalidEmailTest() throws Exception {
         //Create one member
         Member group = new Member();
-        String email = "group" + System.currentTimeMillis() + "@email.com";
+        String email = "group1" + System.currentTimeMillis() + "@email.com";
         group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));
