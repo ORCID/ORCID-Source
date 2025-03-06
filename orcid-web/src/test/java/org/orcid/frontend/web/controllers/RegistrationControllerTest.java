@@ -45,7 +45,6 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
@@ -113,12 +112,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     private EmailManagerReadOnly emailManagerReadOnlyMock;
     
     @Mock
-    private ProfileEntityCacheManager profileEntityCacheManagerMock;
-    
-    @Mock
-    private OrcidUserDetailsService orcidUserDetailsServiceMock;
-    
-    @Mock
     private AuthenticationManager authenticationManagerMock; 
     
     @Rule
@@ -142,8 +135,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
-        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityCacheManager", profileEntityCacheManagerMock); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "orcidUserDetailsService", orcidUserDetailsServiceMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
         TargetProxyHelper.injectIntoProxy(registrationController, "recordEmailSender", recordEmailSender);         
@@ -152,22 +143,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
-        
-        when(profileEntityCacheManagerMock.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
-            @Override
-            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
-                ProfileEntity p = new ProfileEntity(invocation.getArgument(0));
-                p.setClaimed(true);
-                return p;
-            }
-        });
-        
-        when(orcidUserDetailsServiceMock.loadUserByProfile(Mockito.any(ProfileEntity.class))).thenAnswer(new Answer<UserDetails>() {
-            @Override
-            public UserDetails answer(InvocationOnMock invocation) throws Throwable {
-                return new User("0000-0000-0000-0000", "pwd", List.of());
-            }
-        });
         
         when(authenticationManagerMock.authenticate(Mockito.any())).thenAnswer(new Answer<UsernamePasswordAuthenticationToken>() {
             @Override

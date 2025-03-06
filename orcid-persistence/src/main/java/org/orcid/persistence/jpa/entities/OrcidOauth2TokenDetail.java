@@ -139,7 +139,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements OrcidAwa
         this.responseType = responseType;
     }
 
-
+    @Column(name = "state", length = 40)
     public String getState() {
         return state;
     }

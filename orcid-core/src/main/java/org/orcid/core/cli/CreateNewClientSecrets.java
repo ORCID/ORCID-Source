@@ -146,7 +146,7 @@ public class CreateNewClientSecrets {
 
     private void createNewClientSecret(ClientDetailsEntity clientDetails) {
         String clientSecret = UUID.randomUUID().toString();
-        clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails));
+        clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails.getClientId()));
         clientDetailsManager.merge(clientDetails);
         String output = String.format("%s\t%s\t%s\n", clientDetails.getId(), clientDetails.getClientName(), clientSecret);
         output(output);

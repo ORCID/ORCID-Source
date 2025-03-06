@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientSecretDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +25,7 @@ public class CleanOldClientKeysCronJob {
 
     /**
      * Removes all non primary client secret keys
-     * 
-     * @param clientId
+     *
      */
     @Transactional
     public void cleanOldClientKeys() {
@@ -39,8 +37,7 @@ public class CleanOldClientKeysCronJob {
             List<String> clientIds = new ArrayList<String>();
             for (ClientSecretEntity e : nonPrimaryKeys) {
                 i++;
-                ClientDetailsEntity clientDetails = e.getClientDetailsEntity();
-                String clientId = clientDetails.getId();
+                String clientId = e.getClientId();
                 String key = e.getClientSecret();
                 // build string for the condition in the db delete query
                 String s = String.format("(client_details_id = '%1$s' and client_secret = '%2$s')", clientId, key);
