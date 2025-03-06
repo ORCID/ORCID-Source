@@ -232,11 +232,12 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         // get list of all tokens for original client. We have to base this on
         // previous tokens, as you can't revoke a code.
         // this means only "token id_token" requests will work (not code
-        // id_token). Balls. Just means we must never enable "code id_token".
+        // id_token). Just means we must never enable "code id_token".
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(OBOClient, OBOOrcid);
         Set<ScopePathType> activeScopesOBO = Sets.newHashSet();
         Set<ScopePathType> inactiveScopesOBO = Sets.newHashSet();
         boolean issueRevokedToken = false;
+        boolean isRevoked = false;
         RevokeReason revokeReason = null;
         // Lets consider token expiration time anything that goes beyond this date
         Date now = new Date();
@@ -256,10 +257,10 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                             //In case a weird revoke reason was added or is empty, leave the revoke reason null                            
                         }
                         // Keep only the /activities/update scope if the token was not revoked by a client or staff member
-                        if(revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
+                        if (revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
                             inactiveScopesOBO.add(ScopePathType.ACTIVITIES_UPDATE);
                         } else {
-                            throw new OrcidInvalidScopeException("The id_token is disabled and does not contain any valid scope");
+                            isRevoked = true;
                         }
                     } else {
                         throw new OrcidInvalidScopeException("The id_token is disabled and does not contain any valid scope");
@@ -280,6 +281,9 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         }        
         
         if (scopesOBO.isEmpty()) {
+            if (isRevoked) {
+                throw new OrcidInvalidScopeException("There are no active tokens with valid scopes for this account");
+            }
             throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
         }
         Set<ScopePathType> combinedOBOScopes = new HashSet<ScopePathType>();
