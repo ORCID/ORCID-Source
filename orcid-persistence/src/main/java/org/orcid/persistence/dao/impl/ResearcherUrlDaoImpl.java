@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ResearcherUrlDao;
@@ -196,7 +197,16 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         query.setMaxResults(max);
         return query.getResultList();
     }
-    
+
+    @Override
+    @Transactional
+    public boolean updateVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager.createNativeQuery("UPDATE researcher_url SET visibility = :visbility WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility.name());
+        return query.executeUpdate() > 0;
+    }
+
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional

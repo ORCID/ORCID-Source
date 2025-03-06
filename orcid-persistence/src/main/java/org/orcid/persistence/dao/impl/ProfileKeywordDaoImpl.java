@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
@@ -196,7 +197,16 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         query.setMaxResults(max);
         return query.getResultList();
     }
-    
+
+    @Override
+    @Transactional
+    public boolean updateVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_keyword SET visibility = :visbility WHERE profile_orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility.name());
+        return query.executeUpdate() > 0;
+    }
+
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional

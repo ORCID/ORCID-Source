@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -197,7 +198,16 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         query.setMaxResults(max);
         return query.getResultList();
     }
-    
+
+    @Override
+    @Transactional
+    public boolean updateVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager.createNativeQuery("UPDATE other_name SET visibility = :visbility WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility.name());
+        return query.executeUpdate() > 0;
+    }
+
     @Override
     @UpdateProfileLastModifiedAndIndexingStatus
     @Transactional

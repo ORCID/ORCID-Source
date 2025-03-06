@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -51,6 +52,15 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified) {
         return getExternalIdentifiers(orcid, PUBLIC_VISIBILITY);
+    }
+
+    @Override
+    @Transactional
+    public boolean updateVisibility(String orcid, Visibility visibility) {
+        Query query = entityManager.createNativeQuery("UPDATE external_identifier SET visibility = :visbility WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility.name());
+        return query.executeUpdate() > 0;
     }
 
     @SuppressWarnings("unchecked")
