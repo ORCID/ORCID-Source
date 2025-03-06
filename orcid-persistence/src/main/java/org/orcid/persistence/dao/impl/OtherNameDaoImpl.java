@@ -202,7 +202,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @Transactional
     public boolean updateVisibility(String orcid, Visibility visibility) {
-        Query query = entityManager.createNativeQuery("UPDATE other_name SET visibility = :visbility WHERE orcid = :orcid");
+        Query query = entityManager.createNativeQuery("UPDATE other_name SET visibility = :visibility WHERE orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility.name());
         return query.executeUpdate() > 0;

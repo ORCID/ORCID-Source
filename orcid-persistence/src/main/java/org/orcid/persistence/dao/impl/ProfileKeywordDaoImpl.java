@@ -201,7 +201,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @Transactional
     public boolean updateVisibility(String orcid, Visibility visibility) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_keyword SET visibility = :visbility WHERE profile_orcid = :orcid");
+        Query query = entityManager.createNativeQuery("UPDATE profile_keyword SET visibility = :visibility WHERE profile_orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility.name());
         return query.executeUpdate() > 0;
