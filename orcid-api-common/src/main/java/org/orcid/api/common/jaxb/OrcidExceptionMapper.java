@@ -88,7 +88,14 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
         String clientId = securityManager.getClientIdFromAPIRequest();
-        if(t instanceof OrcidDeprecatedException
+        if(t instanceof OrcidInvalidScopeException) {
+            // This exception happens on client_credentials grant, so, the security manager doesn't have the client id info
+            OrcidInvalidScopeException ex = (OrcidInvalidScopeException) t;
+            if(clientId == null) {
+                clientId = ex.getClientId();
+            }
+            logShortError(t, clientId);
+        } else if(t instanceof OrcidDeprecatedException
                 || t instanceof LockedException
                 || t instanceof DeactivatedException
                 || t instanceof OrcidNoBioException
