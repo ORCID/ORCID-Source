@@ -161,7 +161,7 @@ public class AdminManagerImpl implements AdminManager {
         // If both users exists
         if (deprecated != null && primary != null) {
             // If account is already deprecated
-            if (deprecate && deprecated.getDeprecatedDate() == null) {
+            if (deprecate && deprecated.getDeprecatedDate() != null) {
                 result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.already_deprecated", deprecatedOrcid));
             } else if (!deprecate && deprecated.getDeprecatedDate() == null) {
                 // If account is not deprecated
