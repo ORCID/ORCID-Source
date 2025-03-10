@@ -524,6 +524,9 @@ public class PasswordResetController extends BaseController {
             }
         }
 
+        // Clear the profile entity cache so the new password is loaded
+        LOGGER.info("Clearing profile cache for orcid id: " + orcid);
+        profileEntityCacheManager.remove(orcid);
         // Log user in
         registrationController.logUserIn(request, response, orcid, password);
 

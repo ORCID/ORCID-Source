@@ -553,7 +553,7 @@ public class RegistrationController extends BaseController {
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);
-            LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
+            LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
         }
     }
 
