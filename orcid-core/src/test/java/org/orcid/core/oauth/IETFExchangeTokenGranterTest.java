@@ -319,7 +319,7 @@ public class IETFExchangeTokenGranterTest {
         try {
             tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
         } catch(OrcidInvalidScopeException e) {
-            assertEquals("The id_token is disabled and does not contain any valid scope", e.getMessage());
+            assertEquals("There are no active tokens with valid scopes for this account", e.getMessage());
         } catch(Exception e) {
             fail("Unhandled exception:" + e.getMessage());
         }
@@ -335,10 +335,25 @@ public class IETFExchangeTokenGranterTest {
         try {
             tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
         } catch(OrcidInvalidScopeException e) {
-            assertEquals("The id_token is disabled and does not contain any valid scope", e.getMessage());
+            assertEquals("There are no active tokens with valid scopes for this account", e.getMessage());
         } catch(Exception e) {
             fail("Unhandled exception:" + e.getMessage());
         }
+    }
+
+    @Test
+    public void grantTokenWhenAMemberRevokedTokenIsPresentTest()
+            throws NoSuchAlgorithmException, IOException, ParseException, URISyntaxException, JOSEException {
+        OrcidOauth2TokenDetail token1 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, true);
+        OrcidOauth2TokenDetail token2 = getOrcidOauth2TokenDetail(true, "/activities/update", System.currentTimeMillis() + 60000, false);
+        token1.setRevokeReason(RevokeReason.STAFF_REVOKED.name());
+
+        when(orcidOauthTokenDetailServiceMock.findByClientIdAndUserName(any(), any())).thenReturn(List.of(token1, token2));
+        tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/activities/update")));
+        // Verify revoke token was never created
+        verify(tokenServicesMock, never()).createRevokedAccessToken(any(), any());
+        // Verify regular token was created
+        verify(tokenServicesMock, times(1)).createAccessToken(any());
     }
 
     @Test
