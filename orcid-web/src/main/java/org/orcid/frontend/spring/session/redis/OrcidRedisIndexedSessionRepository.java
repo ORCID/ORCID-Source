@@ -55,6 +55,7 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
     private SaveMode saveMode;
     private final String PUBLIC_ORCID_PAGE_REGEX = "/(\\d{4}-){3,}\\d{3}[\\dX](/.+)";
     private final String VERIFY_EMAIL_REGEX = "/verify-email/[a-zA-Z0-9]+";
+    private final String AFFILIATIONS_ORG_SEARCH = "/(affiliations|fundings)/disambiguated/name/.+";
     private final List<String> urisToSkipOnGet = List.of("/2FA/status.json", "/account/", "/account/biographyForm.json", "/account/countryForm.json", "/account/delegates.json", "/account/emails.json",
             "/account/get-trusted-orgs.json", "/account/nameForm.json", "/account/preferences.json", "/account/socialAccounts.json", "/affiliations/affiliationDetails.json", "/affiliations/affiliationGroups.json",
             "/assets/vectors/orcid.logo.icon.svg", "/config.json", "/delegators/delegators-and-me.json", "/fundings/fundingDetails.json", "/fundings/fundingGroups.json", "/inbox/notifications.json",
@@ -375,7 +376,8 @@ public class OrcidRedisIndexedSessionRepository implements FindByIndexNameSessio
         if((request.getMethod().equals("GET") && GET_SKIP_SAVE_SESSION.contains(url))
                 || ALWAYS_SKIP_SAVE_SESSION.contains(url)
                 || url.matches(VERIFY_EMAIL_REGEX)
-                || url.matches(PUBLIC_ORCID_PAGE_REGEX)) {
+                || url.matches(PUBLIC_ORCID_PAGE_REGEX)
+                || url.matches(AFFILIATIONS_ORG_SEARCH)) {
             return false;
         }
         return true;
