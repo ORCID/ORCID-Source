@@ -21,4 +21,7 @@ public interface AdminManager {
     AdminDelegatesRequest startDelegationProcess(AdminDelegatesRequest request, String trusted, String managed);
 
     List<String> getLockReasons();
+
+    boolean updateDeprecation(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid);
+
 }

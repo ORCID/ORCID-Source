@@ -578,6 +578,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getSigninLock(orcid);
     }
 
+    @Override
+    public boolean updateDeprecation(String deprecated, String primary) {
+        return profileDao.updateDeprecation(deprecated, primary);
+    }
+
     /**
      * Clears all record info but the email addresses, that stay unmodified
      */
