@@ -181,10 +181,9 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) {
+    public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
         if (isTokenExpired(passwordResetToken)) {
-            redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
             return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
         }
         ModelAndView result = new ModelAndView("password_one_time_reset");
