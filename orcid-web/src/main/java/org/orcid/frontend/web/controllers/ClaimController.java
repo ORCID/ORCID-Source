@@ -64,11 +64,11 @@ public class ClaimController extends BaseController {
     @Resource 
     private RecordEmailSender recordEmailSender;
     
-    @Resource
-    private AuthenticationManager authenticationManager;
-
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private RegistrationController registrationController;
 
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
@@ -174,8 +174,12 @@ public class ClaimController extends BaseController {
             throw new IllegalStateException("Unable to claim record " + orcid);
         }
 
+        // Clear the profile entity cache so the new password is loaded
+        LOGGER.info("Clearing profile cache for orcid id: " + orcid);
+        profileEntityCacheManager.remove(orcid);
+
         // Log user in
-        automaticallyLogin(request, claim.getPassword().getValue(), orcid);
+        registrationController.logUserIn(request, response, orcid, claim.getPassword().getValue());
 
         // Notify
         notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
@@ -250,19 +254,5 @@ public class ClaimController extends BaseController {
         recordEmailSender.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays), email);
         resendClaimRequest.setSuccessMessage(getMessage("resend_claim.successful_resend"));
         return resendClaimRequest;
-    }
-
-    private void automaticallyLogin(HttpServletRequest request, String password, String orcid) {
-        UsernamePasswordAuthenticationToken token = null;
-        try {
-            token = new UsernamePasswordAuthenticationToken(orcid, password);
-            token.setDetails(new WebAuthenticationDetails(request));
-            Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (AuthenticationException e) {
-            // this should never happen
-            SecurityContextHolder.getContext().setAuthentication(null);
-            LOGGER.warn("User " + orcid + " should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
-        }
     }
 }
