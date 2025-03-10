@@ -66,29 +66,7 @@ public class AdminManagerImpl implements AdminManager {
     }
     
     private boolean deprecateProfile(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid, String deprecationMethod, String adminUser) {
-        // Get deprecated profile
-        ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
-        ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);        
-        
-        // If both users exists
-        if (deprecated != null && primary != null) {
-            // If account is already deprecated
-            if (deprecated.getDeprecatedDate() != null) {
-                result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.already_deprecated", deprecatedOrcid));
-            } else if (primary.getDeprecatedDate() != null) {
-                // If primary is deprecated
-                result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_deprecated", primaryOrcid));
-            } else {
-                // If the primary account is deactivated, return an error
-                if (primary.getDeactivationDate() != null) {
-                    result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", primaryOrcid));
-                } else {                    
-                    return profileEntityManager.deprecateProfile(deprecatedOrcid, primaryOrcid, deprecationMethod, adminUser);
-                }
-            }
-        }
-        
-        return false;
+        return handleDeprecation(result, deprecatedOrcid, primaryOrcid, deprecationMethod, adminUser, true);
     }
     
     public AdminDelegatesRequest startDelegationProcess(AdminDelegatesRequest request, String trusted, String managed) {
@@ -167,5 +145,42 @@ public class AdminManagerImpl implements AdminManager {
     @Override
     public List<String> getLockReasons() {
         return Arrays.asList(LockReason.values()).stream().map(lr -> lr.getLabel()).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public boolean updateDeprecation(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid) {
+        return handleDeprecation(result, deprecatedOrcid, primaryOrcid, null, null, false);
+    }
+
+    private boolean handleDeprecation(ProfileDeprecationRequest result, String deprecatedOrcid, String primaryOrcid, String deprecationMethod, String adminUser, boolean deprecate) {
+        // Get deprecated profile
+        ProfileEntity deprecated = profileEntityCacheManager.retrieve(deprecatedOrcid);
+        ProfileEntity primary = profileEntityCacheManager.retrieve(primaryOrcid);
+
+        // If both users exists
+        if (deprecated != null && primary != null) {
+            // If account is already deprecated
+            if (deprecate && deprecated.getDeprecatedDate() == null) {
+                result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.already_deprecated", deprecatedOrcid));
+            } else if (!deprecate && deprecated.getDeprecatedDate() == null) {
+                // If account is not deprecated
+                result.getErrors().add(localeManager.resolveMessage("admin.update_deprecation.errors.not_deprecated", deprecatedOrcid));
+            } else if (primary.getDeprecatedDate() != null) {
+                // If primary is deprecated
+                result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_deprecated", primaryOrcid));
+            } else {
+                // If the primary account is deactivated, return an error
+                if (primary.getDeactivationDate() != null) {
+                    result.getErrors().add(localeManager.resolveMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", primaryOrcid));
+                } else {
+                    if (deprecate) {
+                        return profileEntityManager.deprecateProfile(deprecatedOrcid, primaryOrcid, deprecationMethod, adminUser);
+                    }
+                    return profileEntityManager.updateDeprecation(deprecatedOrcid, primaryOrcid);
+                }
+            }
+        }
+        return false;
     }
 }

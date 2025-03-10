@@ -406,7 +406,16 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertNotNull(applications);
         assertEquals(0, applications.size());
     }
-    
+
+    @Test
+    public void testUpdateDeprecation() throws Exception {
+        boolean result = profileEntityManager.updateDeprecation("0000-0000-0000-0004","4444-4444-4444-4441");
+        assertTrue(result);
+
+        ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0004");
+        assertEquals("4444-4444-4444-4441", profile.getPrimaryRecord().getId());
+    }
+
     @Transactional
     private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();

@@ -80,4 +80,6 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     void updateSigninLock(String orcid, Integer count);
     
     List<Object[]> getSigninLock(String orcid);
+
+    boolean updateDeprecation(String deprecated, String primary);
 }
