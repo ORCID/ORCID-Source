@@ -479,11 +479,9 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
-                                    RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
         if (PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
             LOGGER.error("Error decypting verify email from the verify email link: {} ", encryptedEmail);
-            redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             return new ModelAndView("redirect:" + calculateRedirectUrl("/signin"));
         }
         String redirect = "redirect:" + calculateRedirectUrl("/signin");
@@ -501,18 +499,15 @@ public class RegistrationController extends BaseController {
                 boolean verified = emailManager.verifyEmail(orcid, decryptedEmail);
                 if (verified) {
                     profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
-                    redirectAttributes.addFlashAttribute("emailVerified", true);
                     sb.append("emailVerified=true");
 
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
-                            redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
                             sb.append("&");
                             sb.append("primaryEmailUnverified=true");
                         }
                     }
                 } else {
-                    redirectAttributes.addFlashAttribute("emailVerified", false);
                     sb.append("emailVerified=false");
                 }
 
@@ -524,7 +519,6 @@ public class RegistrationController extends BaseController {
             }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
-            redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             sb.append("invalidVerifyUrl=true");
             redirect = "redirect:" + calculateRedirectUrl("/signin?" + sb.toString());
             SecurityContextHolder.clearContext();
