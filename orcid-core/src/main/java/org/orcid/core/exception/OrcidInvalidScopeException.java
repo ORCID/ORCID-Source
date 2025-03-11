@@ -11,11 +11,28 @@ public class OrcidInvalidScopeException extends ApplicationException {
 
     private static final long serialVersionUID = 1L;
 
+    private String clientId;
+    private String scope;
+
     public OrcidInvalidScopeException() {
         super();
     }
 
     public OrcidInvalidScopeException(String message) {
         super(message);
+    }
+
+    public OrcidInvalidScopeException(String message, String clientId, String scope) {
+        super(message);
+        this.clientId = clientId;
+        this.scope = scope;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public String getScope() {
+        return scope;
     }
 }
