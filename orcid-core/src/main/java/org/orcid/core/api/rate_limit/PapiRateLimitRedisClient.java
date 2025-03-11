@@ -28,6 +28,12 @@ public class PapiRateLimitRedisClient {
     @Value("${org.orcid.papi.rate.limit.redisCacheExpiryInSec:172800}")
     private int CASH_EXPIRY_IN_SECONDS; // caching for 2 days to have time to
                                         // synch with DB
+    
+    @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
+    private int anonymousRequestLimit;
+
+    @Value("${org.orcid.papi.rate.limit.known.requests:40000}")
+    private int knownRequestLimit;
 
     @Autowired
     private PublicApiDailyRateLimitDao papiRateLimitingDao;
@@ -82,10 +88,15 @@ public class PapiRateLimitRedisClient {
                 pgRateLimitEntity  = papiRateLimitingDao.findByClientIdAndRequestDate(redisRateLimitEntity.getClientId(), requestDate);
                 isClient = true;
             }
+            //only save the exceeded limits
             if(pgRateLimitEntity != null) {
-                papiRateLimitingDao.updatePublicApiDailyRateLimit(pgRateLimitEntity, isClient);
+                if(((pgRateLimitEntity.getRequestCount() > knownRequestLimit) && isClient) || ((pgRateLimitEntity.getRequestCount() > anonymousRequestLimit) && !isClient)) {
+                    papiRateLimitingDao.updatePublicApiDailyRateLimit(pgRateLimitEntity, isClient);
+                }
             } else {
-                papiRateLimitingDao.persist(redisObjJsonToEntity(allValuesForKey.get(key)));
+                if(((redisRateLimitEntity.getRequestCount() > knownRequestLimit) && isClient) || ((redisRateLimitEntity.getRequestCount() > anonymousRequestLimit) && !isClient)) {         
+                  papiRateLimitingDao.persist(redisRateLimitEntity);
+                }
             }
             redisClient.remove(key);
         }
