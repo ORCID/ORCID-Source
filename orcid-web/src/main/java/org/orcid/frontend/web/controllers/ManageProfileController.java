@@ -564,7 +564,6 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // VISIBILITY UPDATE
                     if (!newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
                         updateEmailVisibility(newJsonEmail);
-                        System.out.println("IN WEB - Update visibility for: " + newJsonEmail.getValue());
                     }
                     // Primary email UPDATE
                     if (newJsonEmail.isPrimary() != null &&  newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
@@ -610,7 +609,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
             deleteEmailJson ( deletedEmail.getEmail() );    
-            System.out.println("IN WEB - Delete email " + deletedEmail.getEmail());
         }
         
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
