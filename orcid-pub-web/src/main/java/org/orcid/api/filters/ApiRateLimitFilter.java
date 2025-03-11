@@ -199,6 +199,12 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
         papiRedisClient.setTodayLimitsForClient(ipAddress, dailyLimitsObj);
         if (Features.ENABLE_PAPI_RATE_LIMITING.isActive() && (limitValue + 1) >= anonymousRequestLimit) {
+            if (enablePanoplyPapiExceededRateInProduction) {
+                PanoplyPapiDailyRateExceededItem item = new PanoplyPapiDailyRateExceededItem();
+                item.setIpAddress(ipAddress);
+                item.setRequestDate(today);
+                setPapiRateExceededItemInPanoply(item);
+            }
             httpServletResponse.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             if (!httpServletResponse.isCommitted()) {
                 try (PrintWriter writer = httpServletResponse.getWriter()) {
