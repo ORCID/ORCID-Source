@@ -15,7 +15,8 @@ import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.utils.OrcidRequestUtil;
-import org.orcid.frontend.spring.OrcidWebAuthenticationDetails;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
@@ -53,12 +54,16 @@ public class OauthLoginController extends OauthControllerBase {
     @Resource
     private OauthHelper oauthHelper;
 
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
+
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         String url = request.getQueryString();
         // Get and save the request information form
         RequestInfoForm requestInfoForm = oauthHelper.generateRequestInfoForm(url);
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        // Store the request info form in the cache
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
 
         // Check that the client have the required permissions
         // Get client name
@@ -105,7 +110,7 @@ public class OauthLoginController extends OauthControllerBase {
     public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
 
         boolean willBeRedirected = false;
         if (form.getApproved()) {
@@ -195,11 +200,11 @@ public class OauthLoginController extends OauthControllerBase {
 
     private void copy2FAFields(OauthAuthorizeForm form, HttpServletRequest request) {
         if (form.getVerificationCode() != null) {
-            request.setAttribute(OrcidWebAuthenticationDetails.VERIFICATION_CODE_PARAMETER, form.getVerificationCode().getValue());
+            request.setAttribute(MFAWebAuthenticationDetails.VERIFICATION_CODE_PARAMETER, form.getVerificationCode().getValue());
         }
         
         if (form.getRecoveryCode() != null) {
-            request.setAttribute(OrcidWebAuthenticationDetails.RECOVERY_CODE_PARAMETER, form.getRecoveryCode().getValue());
+            request.setAttribute(MFAWebAuthenticationDetails.RECOVERY_CODE_PARAMETER, form.getRecoveryCode().getValue());
         }
     }
 

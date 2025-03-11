@@ -23,6 +23,7 @@ import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Base class for testing using DBUnit.
@@ -33,6 +34,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  */
 
 @Ignore
+@ActiveProfiles("unitTests")
 public class DBUnitTest {
 
     private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -25,10 +26,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class OAuthAuthorizeNotSignedInFilterTest {
 
@@ -57,10 +60,13 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
 
     @Mock
-    OrcidProfileUserDetails orcidProfileUserDetails;
+    UserDetails orcidProfileUserDetails;
     
     @Mock
     OauthHelper oauthHelper;
+
+    @Mock
+    RequestInfoFormLocalCache requestInfoFormLocalCache;
     
     @Before
     public void setup() {
@@ -71,6 +77,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>());
         when(request.getScheme()).thenReturn("i hate you with all my heart spring mvc");
         when(request.getRequestURL()).thenReturn(new StringBuffer("really, we should break up"));
+        when(session.getId()).thenReturn("ID1");
     }
 
     @Test
@@ -121,11 +128,11 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(new OrcidProfileUserDetails());
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
 
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
@@ -148,7 +155,6 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     
     @Test
     public void oauth2ScreensFeatureEnabledTest() throws IOException, ServletException {
-        
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");

@@ -1,11 +1,9 @@
 package org.orcid.core.security;
 
-import org.springframework.security.core.GrantedAuthority;
-
 /**
  * @author Declan Newman (declan) Date: 15/02/2012
  */
-public enum OrcidWebRole implements GrantedAuthority {
+public enum OrcidRoles {
     
     // User role
     ROLE_USER, ROLE_ADMIN, ROLE_GROUP,
@@ -14,7 +12,9 @@ public enum OrcidWebRole implements GrantedAuthority {
     // Client roles
     ROLE_CREATOR, ROLE_PREMIUM_CREATOR, ROLE_UPDATER, ROLE_PREMIUM_UPDATER,
     // Additional roles
-    ROLE_SELF_SERVICE;
+    ROLE_SELF_SERVICE,
+    // Switch user role
+    ROLE_PREVIOUS_ADMINISTRATOR;
             
     public String getAuthority() {
         return this.toString();

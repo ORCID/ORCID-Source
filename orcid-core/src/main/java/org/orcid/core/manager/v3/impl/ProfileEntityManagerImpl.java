@@ -46,9 +46,7 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.persistence.dao.BackupCodeDao;
-import org.orcid.persistence.dao.ProfileLastModifiedDao;
-import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.dao.*;
 import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -91,20 +89,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource(name = "addressManagerV3")
-    private AddressManager addressManager;
+    @Resource(name = "addressDao")
+    protected AddressDao addressDao;
 
-    @Resource(name = "externalIdentifierManagerV3")
-    private ExternalIdentifierManager externalIdentifierManager;
+    @Resource(name = "externalIdentifierDao")
+    private ExternalIdentifierDao externalIdentifierDao;
 
-    @Resource(name = "profileKeywordManagerV3")
-    private ProfileKeywordManager profileKeywordManager;
+    @Resource(name = "profileKeywordDao")
+    private ProfileKeywordDao profileKeywordDao;
 
-    @Resource(name = "otherNameManagerV3")
-    private OtherNameManager otherNameManager;
+    @Resource(name = "otherNameDao")
+    private OtherNameDao otherNameDao;
 
-    @Resource(name = "researcherUrlManagerV3")
-    private ResearcherUrlManager researcherUrlManager;
+    @Resource(name = "researcherUrlDao")
+    private ResearcherUrlDao researcherUrlDao;
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
@@ -402,39 +400,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         Visibility defaultVisibility = claim.getActivitiesVisibilityDefault().getVisibility();
         
         // Update address
-        Addresses addresses = addressManager.getAddresses(orcid);
-        for(Address address : addresses.getAddress()) {
-            address.setVisibility(defaultVisibility);
-            addressManager.updateAddress(orcid, address.getPutCode(), address, false);
-        }        
+        addressDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the keywords
-        Keywords keywords = profileKeywordManager.getKeywords(orcid); 
-        for(Keyword keyword : keywords.getKeywords()) {
-            keyword.setVisibility(defaultVisibility);
-            profileKeywordManager.updateKeyword(orcid, keyword.getPutCode(), keyword, false);
-        }
+        profileKeywordDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the other names
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
-        for(OtherName otherName : otherNames.getOtherNames()) {
-            otherName.setVisibility(defaultVisibility);
-            otherNameManager.updateOtherName(orcid, otherName.getPutCode(), otherName, false);
-        }
+        otherNameDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the researcher urls
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid);
-        for(ResearcherUrl researcherUrl : researcherUrls.getResearcherUrls()) {
-            researcherUrl.setVisibility(defaultVisibility);
-            researcherUrlManager.updateResearcherUrl(orcid, researcherUrl, false);
-        }
+        researcherUrlDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the external identifiers
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid);
-        for(PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
-            extId.setVisibility(defaultVisibility);
-            externalIdentifierManager.updateExternalIdentifier(orcid, extId, false);
-        }        
+        externalIdentifierDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the biography
         if (biographyManager.exists(orcid)) {
@@ -620,19 +598,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         researchResourceManager.removeAllResearchResources(orcid);
 
         // Remove addresses
-        addressManager.removeAllAddress(orcid);
+        addressDao.removeAllAddress(orcid);
 
         // Remove external identifiers
-        externalIdentifierManager.removeAllExternalIdentifiers(orcid);
+        externalIdentifierDao.removeAllExternalIdentifiers(orcid);
 
         // Remove researcher urls
-        researcherUrlManager.removeAllResearcherUrls(orcid);
+        researcherUrlDao.removeAllResearcherUrls(orcid);
 
         // Remove other names
-        otherNameManager.removeAllOtherNames(orcid);
+        otherNameDao.removeAllOtherNames(orcid);
 
         // Remove keywords
-        profileKeywordManager.removeAllKeywords(orcid);
+        profileKeywordDao.removeAllKeywords(orcid);
 
         // Admin disabling 2FA, so, we should not notify the user
         profileDao.disable2FA(orcid);

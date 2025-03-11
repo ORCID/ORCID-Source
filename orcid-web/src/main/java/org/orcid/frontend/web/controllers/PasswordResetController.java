@@ -181,10 +181,9 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) {
+    public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
         if (isTokenExpired(passwordResetToken)) {
-            redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
             return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
         }
         ModelAndView result = new ModelAndView("password_one_time_reset");
@@ -523,10 +522,14 @@ public class PasswordResetController extends BaseController {
                 recordEmailSender.sendVerificationEmail(orcid, emailToNotify, isPrimaryEmail);
             }
         }
-        
+
+        // Clear the profile entity cache so the new password is loaded
+        LOGGER.info("Clearing profile cache for orcid id: " + orcid);
+        profileEntityCacheManager.remove(orcid);
         // Log user in
         registrationController.logUserIn(request, response, orcid, password);
 
+        // Add the affiliation
         if (reactivation.getAffiliationForm() != null) {
             registrationManager.createAffiliation(reactivation, orcid);
         }

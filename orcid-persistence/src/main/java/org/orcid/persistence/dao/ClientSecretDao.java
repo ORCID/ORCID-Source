@@ -63,13 +63,4 @@ public interface ClientSecretDao extends GenericDao<ClientSecretEntity, ClientSe
      * @return true if the condition was met and all keys were removed
      * */
     boolean removeWithCustomCondition(String condition);
-    
-    /**
-     * Update the last_modified date of a given client secret
-     * 
-     * @param clientId
-     * @param clientSecret
-     * @return true if the condition was met and the key's last_modified date was updated
-     * */
-    boolean updateLastModified(String clientId, String clientSecret);
 }

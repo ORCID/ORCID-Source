@@ -1,3 +1,75 @@
+## v2.72.15 - 2025-03-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.14...v2.72.15)
+
+## v2.72.14 - 2025-03-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.13...v2.72.14)
+
+## v2.72.13 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.12...v2.72.13)
+
+## v2.72.12 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.11...v2.72.12)
+
+## v2.72.11 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.10...v2.72.11)
+
+## v2.72.10 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.9...v2.72.10)
+
+## v2.72.9 - 2025-03-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.8...v2.72.9)
+
+## v2.72.8 - 2025-03-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.7...v2.72.8)
+
+## v2.72.7 - 2025-03-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.6...v2.72.7)
+
+## v2.72.6 - 2025-03-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.5...v2.72.6)
+
+## v2.72.5 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.4...v2.72.5)
+
+## v2.72.4 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.3...v2.72.4)
+
+- [#7235](https://github.com/ORCID/ORCID-Source/pull/7235): Fix switch user role
+
+## v2.72.3 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.2...v2.72.3)
+
+- [#7234](https://github.com/ORCID/ORCID-Source/pull/7234): Do not save the session on email verification events
+
+## v2.72.2 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.1...v2.72.2)
+
+## v2.72.1 - 2025-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.0...v2.72.1)
+
+## v2.72.0 - 2025-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.22...v2.72.0)
+
+## v2.71.23 - 2025-02-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.22...v2.71.23)
+
 ## v2.71.22 - 2025-02-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.21...v2.71.22)

@@ -19,7 +19,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
@@ -38,6 +37,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -172,7 +172,6 @@ public class ShibbolethController extends BaseController {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
                 processAuthentication(remoteUser, userConnectionEntity);
                 if (Features.EVENTS.isActive()) {
-                    OrcidProfileUserDetails orcidProfileUserDetails = getOrcidProfileUserDetails(userConnectionEntity.getOrcid());
                     eventManager.createEvent(EventType.SIGN_IN, request);
                 }
             } catch (AuthenticationException e) {
@@ -277,7 +276,7 @@ public class ShibbolethController extends BaseController {
         }
     }
     
-    private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
+    private UserDetails getOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         return orcidUserDetailsService.loadUserByProfile(profileEntity);
     }

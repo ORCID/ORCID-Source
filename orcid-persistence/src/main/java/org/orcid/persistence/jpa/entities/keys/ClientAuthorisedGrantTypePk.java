@@ -1,5 +1,7 @@
 package org.orcid.persistence.jpa.entities.keys;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
@@ -22,11 +24,11 @@ public class ClientAuthorisedGrantTypePk implements Serializable {
         this.grantType = authorisedGrantType;
     }
 
-    public String getClientDetailsEntity() {
+    public String getClientId() {
         return clientId;
     }
 
-    public void setClientDetailsEntity(String clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
