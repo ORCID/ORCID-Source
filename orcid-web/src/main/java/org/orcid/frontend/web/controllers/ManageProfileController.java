@@ -606,13 +606,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson ( deletedEmail.getEmail() );            
+            deleteEmailJson ( deletedEmail.getEmail() );    
         }
         
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         List<ProfileEmailDomainEntity> updatedDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
-            profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet);
+            profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet, updatedSet);
             updatedDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
         org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet, updatedDomains);

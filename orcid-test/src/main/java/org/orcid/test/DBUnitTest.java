@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.dbunit.DatabaseUnitException;
@@ -116,13 +117,18 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
+        
         QueryDataSet grandChildTableSet = new QueryDataSet(connection);
         grandChildTableSet.addTable("research_resource_item_org");
+        grandChildTableSet.addTable("client_secret");
+        grandChildTableSet.addTable("external_identifier");
+        grandChildTableSet.addTable("email");
         DatabaseOperation.DELETE.execute(connection, grandChildTableSet);
         
         QueryDataSet childTableSet = new QueryDataSet(connection);
         childTableSet.addTable("research_resource_item");
         childTableSet.addTable("research_resource_org");
+        childTableSet.addTable("profile_email_domain");
         DatabaseOperation.DELETE.execute(connection, childTableSet);
 
         QueryDataSet dataSet = new QueryDataSet(connection);
@@ -135,7 +141,6 @@ public class DBUnitTest {
         dataSet.addTable("work");
         dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
-        dataSet.addTable("email");
         dataSet.addTable("email_domain");
         dataSet.addTable("email_event");
         dataSet.addTable("external_identifier");
@@ -168,6 +173,7 @@ public class DBUnitTest {
         theRest.addTable("client_secret");
         theRest.addTable("custom_email");
         DatabaseOperation.DELETE.execute(connection, theRest);
+        
     }
 
     private static void cleanAll(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {
