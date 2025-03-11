@@ -13,6 +13,17 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+/**
+ * This code is an adaptation from the original Spring Session Data Redis (https://spring.io/projects/spring-session,
+ * source code https://github.com/spring-projects/spring-session/tree/main/spring-session-data-redis)
+ * And has been modified to meet ORCID requirements.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  https://www.apache.org/licenses/LICENSE-2.0
+ * */
 public class OrcidRedisSessionExpirationPolicy {
     private static final Log logger = LogFactory.getLog(OrcidRedisSessionExpirationPolicy.class);
     private static final String SESSION_EXPIRES_PREFIX = "expires:";
