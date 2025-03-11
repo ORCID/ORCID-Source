@@ -54,6 +54,11 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+/**
+ * This code is an adaptation from the original Spring Session Data Redis (https://spring.io/projects/spring-session,
+ * source code https://github.com/spring-projects/spring-session/tree/main/spring-session-data-redis)
+ * and has been modified to meet ORCID requirements.
+ * */
 @Configuration(
         proxyBeanMethods = false
 )
