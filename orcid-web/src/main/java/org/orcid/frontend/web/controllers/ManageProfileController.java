@@ -564,6 +564,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     // VISIBILITY UPDATE
                     if (!newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
                         updateEmailVisibility(newJsonEmail);
+                        System.out.println("IN WEB - Update visibility for: " + newJsonEmail.getValue());
                     }
                     // Primary email UPDATE
                     if (newJsonEmail.isPrimary() != null &&  newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
@@ -608,13 +609,14 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson ( deletedEmail.getEmail() );            
+            deleteEmailJson ( deletedEmail.getEmail() );    
+            System.out.println("IN WEB - Delete email " + deletedEmail.getEmail());
         }
         
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         List<ProfileEmailDomainEntity> updatedDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
-            profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet);
+            profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet, updatedSet);
             updatedDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
         org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet, updatedDomains);
