@@ -64,8 +64,6 @@ import java.util.stream.Collectors;
 )
 @Profile("!unitTests")
 public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfiguration implements BeanClassLoaderAware, EmbeddedValueResolverAware, ImportAware {
-
-    static final String DEFAULT_CLEANUP_CRON = "0 * * * * *";
     private Integer maxInactiveIntervalInSeconds = 1800;
     private String redisNamespace = "spring:session";
     private FlushMode flushMode;
@@ -82,10 +80,10 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
     private ClassLoader classLoader;
     private StringValueResolver embeddedValueResolver;
 
-    public OrcidRedisHttpSessionConfiguration() {
+    public OrcidRedisHttpSessionConfiguration(@Value("${org.orcid.core.utils.cache.session.redis.cleanup.cron:5 */5 * * * *}") String cleanupCron) {
         this.flushMode = FlushMode.ON_SAVE;
         this.saveMode = SaveMode.ON_SET_ATTRIBUTE;
-        this.cleanupCron = "0 * * * * *";
+        this.cleanupCron = cleanupCron;
         this.configureRedisAction = new ConfigureNotifyKeyspaceEventsAction();
     }
 
@@ -161,10 +159,6 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
 
     public void setSaveMode(SaveMode saveMode) {
         this.saveMode = saveMode;
-    }
-
-    public void setCleanupCron(String cleanupCron) {
-        this.cleanupCron = cleanupCron;
     }
 
     @Autowired(
@@ -252,11 +246,6 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
 
         this.flushMode = flushMode;
         this.saveMode = (SaveMode)attributes.getEnum("saveMode");
-        String cleanupCron = attributes.getString("cleanupCron");
-        if (StringUtils.hasText(cleanupCron)) {
-            this.cleanupCron = cleanupCron;
-        }
-
     }
 
     private RedisTemplate<Object, Object> createRedisTemplate() {

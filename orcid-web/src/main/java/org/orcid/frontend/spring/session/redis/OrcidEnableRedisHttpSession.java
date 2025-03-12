@@ -32,7 +32,5 @@ public @interface OrcidEnableRedisHttpSession {
 
     FlushMode flushMode() default FlushMode.ON_SAVE;
 
-    String cleanupCron() default "0 * * * * *";
-
     SaveMode saveMode() default SaveMode.ON_SET_ATTRIBUTE;
 }
