@@ -165,4 +165,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId);
 
     public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo);
+
+    public boolean isReviewed(String orcid);
+
 }

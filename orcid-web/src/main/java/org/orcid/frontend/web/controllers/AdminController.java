@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,6 +113,7 @@ public class AdminController extends BaseController {
     private static final String DEPRECATED = "(deprecated)";
     private static final String UNCLAIMED = "(unclaimed)";
     private static final String ENABLED_2FA = "2FAEnabled";
+    private static final String REVIEWED = "reviewed";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
@@ -390,11 +392,11 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
-            throws IllegalAccessException, UnsupportedEncodingException {
+            throws IllegalAccessException {
         isAdmin(serverRequest, response);
         List<String> idEmailList = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
-        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, "UTF-8");
+        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, StandardCharsets.UTF_8);
         if (StringUtils.isNotBlank(csvIdOrEmails)) {
             StringTokenizer tokenizer = new StringTokenizer(csvIdOrEmails, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
@@ -407,7 +409,7 @@ public class AdminController extends BaseController {
                 if (OrcidStringUtils.getOrcidNumber(idEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(idEmail))) {
                     isOrcid = true;
                 }
-                String orcid = idEmail;
+                String orcid;
                 if (!isOrcid) {
                     Map<String, String> email = findIdByEmailHelper(idEmail);
                     orcid = email.get(idEmail);
@@ -438,7 +440,7 @@ public class AdminController extends BaseController {
                         }
 
                         Emails emails = emailManagerReadOnly.getEmails(orcid);
-                        if (emails.getEmails().size() > 0) {
+                        if (!emails.getEmails().isEmpty()) {
                             for (Email email : emails.getEmails()) {
                                 if (!email.isPrimary()) {
                                     builder.append(email.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
@@ -464,6 +466,10 @@ public class AdminController extends BaseController {
                         boolean twoFactorAuthenticationEnabled = twoFactorAuthenticationManager.userUsing2FA(orcid);
                         if (twoFactorAuthenticationEnabled) {
                             builder.append(OUT_STRING_SEPARATOR).append(ENABLED_2FA);
+                        }
+
+                        if (profileEntityManager.isReviewed(orcid)) {
+                            builder.append(OUT_STRING_SEPARATOR).append(REVIEWED);
                         }
 
                     } else {

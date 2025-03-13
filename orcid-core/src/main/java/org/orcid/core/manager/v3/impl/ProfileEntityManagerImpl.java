@@ -288,6 +288,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    public boolean isReviewed(String orcid) {
+        return profileDao.isReviewed(orcid);
+    }
+
+    @Override
     public boolean reviewProfile(String orcid) {
         return profileDao.reviewProfile(orcid);
     }
