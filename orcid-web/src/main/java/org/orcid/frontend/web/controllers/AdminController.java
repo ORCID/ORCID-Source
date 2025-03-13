@@ -114,10 +114,12 @@ public class AdminController extends BaseController {
     private static final String UNCLAIMED = "(unclaimed)";
     private static final String ENABLED_2FA = "2FAEnabled";
     private static final String REVIEWED = "reviewed";
+    private static final String PRIMARY_EMAIL = "primaryEmail";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_STRING_SEPARATOR_SINGLE_SPACE = " ";
+    private static final String OUT_STRING_ASSIGNMENT_OPERATOR = "=";
     private static final String OUT_NOT_AVAILABLE = "N/A";
     private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
@@ -470,6 +472,13 @@ public class AdminController extends BaseController {
 
                         if (profileEntityManager.isReviewed(orcid)) {
                             builder.append(OUT_STRING_SEPARATOR).append(REVIEWED);
+                        }
+
+                        if (profileEntityManager.isProfileDeprecated(orcid)) {
+                            ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
+
+                            builder.append(OUT_STRING_SEPARATOR).append(PRIMARY_EMAIL);
+                            builder.append(OUT_STRING_ASSIGNMENT_OPERATOR).append(e.getPrimaryRecord().getId());
                         }
 
                     } else {
