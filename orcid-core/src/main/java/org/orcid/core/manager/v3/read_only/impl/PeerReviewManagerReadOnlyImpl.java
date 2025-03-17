@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbPeerReviewAdapter;
+import org.orcid.core.manager.impl.ClientDetailsManagerImpl;
 import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
@@ -28,9 +29,13 @@ import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
-   
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewManagerReadOnlyImpl.class);
+
     @Resource(name = "jpaJaxbPeerReviewAdapterV3")
     protected JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
 
@@ -99,9 +104,13 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
                     String groupIdValue = peerReviewGroup.getIdentifiers().getExternalIdentifier().get(0).getValue();
                     s1.setGroupIdValue(groupIdValue);
                     // Set group name
-                    GroupIdRecordEntity groupIdRecord = groupIdRecordDao.findByGroupId(groupIdValue);
-                    s1.setName(groupIdRecord.getGroupName());
-                    s1.setGroupId(BigInteger.valueOf(groupIdRecord.getId()));
+                    try {
+                        GroupIdRecordEntity groupIdRecord = groupIdRecordDao.findByGroupId(groupIdValue);
+                        s1.setName(groupIdRecord.getGroupName());
+                        s1.setGroupId(BigInteger.valueOf(groupIdRecord.getId()));
+                    } catch(Exception e) {
+                        LOGGER.warn("Unable to find groupIdRecord for group id value '{}'", groupIdValue);
+                    }
                 }
 
                 // This is a group of duplicate peer reviews, we need to extract the information from the first one and, if there are more than one element, validate the visibility.
