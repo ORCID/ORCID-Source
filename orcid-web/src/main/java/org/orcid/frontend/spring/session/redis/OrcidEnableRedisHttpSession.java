@@ -22,8 +22,6 @@ import java.lang.annotation.*;
         proxyBeanMethods = false
 )
 public @interface OrcidEnableRedisHttpSession {
-    int maxInactiveIntervalInSeconds() default 1800;
-
     String redisNamespace() default "spring:session";
 
     /** @deprecated */

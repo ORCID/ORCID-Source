@@ -1,5 +1,6 @@
 package org.orcid.frontend.spring.session.redis;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -64,7 +65,8 @@ import java.util.stream.Collectors;
 )
 @Profile("!unitTests")
 public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfiguration implements BeanClassLoaderAware, EmbeddedValueResolverAware, ImportAware {
-    private Integer maxInactiveIntervalInSeconds = 1800;
+    private static final Log logger = LogFactory.getLog(OrcidRedisHttpSessionConfiguration.class);
+    private final Integer maxInactiveIntervalInSeconds;
     private String redisNamespace = "spring:session";
     private FlushMode flushMode;
     private SaveMode saveMode;
@@ -80,10 +82,12 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
     private ClassLoader classLoader;
     private StringValueResolver embeddedValueResolver;
 
-    public OrcidRedisHttpSessionConfiguration(@Value("${org.orcid.core.utils.cache.session.redis.cleanup.cron:5 */5 * * * *}") String cleanupCron) {
+    public OrcidRedisHttpSessionConfiguration(@Value("${org.orcid.core.utils.cache.session.redis.cleanup.cron:5 */5 * * * *}") String cleanupCron,
+                                              @Value("${org.orcid.core.utils.cache.session.redis.session.timeout:3600}") Integer sessionTimeout) {
         this.flushMode = FlushMode.ON_SAVE;
         this.saveMode = SaveMode.ON_SET_ATTRIBUTE;
         this.cleanupCron = cleanupCron;
+        this.maxInactiveIntervalInSeconds = sessionTimeout;
         this.configureRedisAction = new ConfigureNotifyKeyspaceEventsAction();
     }
 
@@ -100,6 +104,7 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
             sessionRepository.setDefaultSerializer(this.defaultRedisSerializer);
         }
 
+        logger.info("Setting session timeout to " + this.maxInactiveIntervalInSeconds + " seconds");
         sessionRepository.setDefaultMaxInactiveInterval(this.maxInactiveIntervalInSeconds);
         if (StringUtils.hasText(this.redisNamespace)) {
             sessionRepository.setRedisKeyNamespace(this.redisNamespace);
@@ -135,10 +140,6 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
     @Bean
     public InitializingBean enableRedisKeyspaceNotificationsInitializer() {
         return new OrcidRedisHttpSessionConfiguration.EnableRedisKeyspaceNotificationsInitializer(this.redisConnectionFactory, this.configureRedisAction);
-    }
-
-    public void setMaxInactiveIntervalInSeconds(int maxInactiveIntervalInSeconds) {
-        this.maxInactiveIntervalInSeconds = maxInactiveIntervalInSeconds;
     }
 
     public void setRedisNamespace(String namespace) {
@@ -232,7 +233,6 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
     public void setImportMetadata(AnnotationMetadata importMetadata) {
         Map<String, Object> attributeMap = importMetadata.getAnnotationAttributes(OrcidEnableRedisHttpSession.class.getName());
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(attributeMap);
-        this.maxInactiveIntervalInSeconds = (Integer)attributes.getNumber("maxInactiveIntervalInSeconds");
         String redisNamespaceValue = attributes.getString("redisNamespace");
         if (StringUtils.hasText(redisNamespaceValue)) {
             this.redisNamespace = this.embeddedValueResolver.resolveStringValue(redisNamespaceValue);
