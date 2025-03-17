@@ -95,36 +95,38 @@ public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
             for(PeerReviewGroup peerReviewGroup : peerReviewGroups.getPeerReviewGroup()) {
                 PeerReviewMinimizedSummary s1 = new PeerReviewMinimizedSummary();
                 s1.setOrcid(orcid);
-                String groupIdValue = null;
                 if(peerReviewGroup.getIdentifiers() != null && peerReviewGroup.getIdentifiers().getExternalIdentifier() != null && !peerReviewGroup.getIdentifiers().getExternalIdentifier().isEmpty()) {
-                    groupIdValue = peerReviewGroup.getIdentifiers().getExternalIdentifier().get(0).getValue();
+                    String groupIdValue = peerReviewGroup.getIdentifiers().getExternalIdentifier().get(0).getValue();
+                    s1.setGroupIdValue(groupIdValue);
+                    // Set group name
+                    GroupIdRecordEntity groupIdRecord = groupIdRecordDao.findByGroupId(groupIdValue);
+                    s1.setName(groupIdRecord.getGroupName());
+                    s1.setGroupId(BigInteger.valueOf(groupIdRecord.getId()));
                 }
-                s1.setGroupIdValue(groupIdValue);
+
                 // This is a group of duplicate peer reviews, we need to extract the information from the first one and, if there are more than one element, validate the visibility.
-                PeerReviewDuplicateGroup group1 = peerReviewGroup.getPeerReviewGroup().get(0);
-                PeerReviewSummary firstElement = group1.getPeerReviewSummary().get(0);
-                s1.getPutCodes().add(BigInteger.valueOf(firstElement.getPutCode()));
-                Visibility mainVisibility = firstElement.getVisibility();
-                s1.setVisibility(mainVisibility);
-                // If there are more than one element, validate there are no visibility inconsistencies
-                if(group1.getPeerReviewSummary().size() > 1) {
-                    PeerReviewSummary summaryWithDifferentVisibility = group1.getPeerReviewSummary().stream().filter(pr -> !pr.getVisibility().equals(mainVisibility)).findFirst().orElse(null);
-                    s1.setVisibilityError(summaryWithDifferentVisibility != null);
+                for(PeerReviewDuplicateGroup dupGroup : peerReviewGroup.getPeerReviewGroup()) {
+                    s1.setDuplicated(s1.getDuplicated() + 1);
+                    Visibility v = null;
+                    for(PeerReviewSummary summary : dupGroup.getPeerReviewSummary()){
+                        s1.getPutCodes().add(BigInteger.valueOf(summary.getPutCode()));
+                        if(v == null) {
+                            v = summary.getVisibility();
+                            s1.setVisibility(v);
+                        } else {
+                            if(!v.equals(summary.getVisibility())) {
+                                s1.setVisibilityError(true);
+                            }
+                        }
+                        if(summary.getSource() != null) {
+                            Source s = summary.getSource();
+                            s1.setSourceId(s.getSourceOrcid() != null ? s.getSourceOrcid().getPath() : null);
+                            s1.setClientSourceId(s.getSourceClientId() != null ? s.getSourceClientId().getPath() : null);
+                            s1.setAssertionOriginSourceId(s.getAssertionOriginClientId() != null ? s.getAssertionOriginClientId().getPath() : null);
+                        }
+                    }
                 }
-                Source firstElementSource = firstElement.getSource();
-                if(firstElementSource.getSourceOrcid() != null) {
-                    s1.setSourceId(firstElementSource.getSourceOrcid().getPath());
-                }
-                if(firstElementSource.getSourceClientId() != null) {
-                    s1.setClientSourceId(firstElementSource.getSourceClientId().getPath());
-                }
-                if(firstElementSource.getAssertionOriginClientId() != null) {
-                    s1.setAssertionOriginSourceId(firstElementSource.getAssertionOriginClientId().getPath());
-                }
-                // Set group name
-                GroupIdRecordEntity groupIdRecord = groupIdRecordDao.findByGroupId(groupIdValue);
-                s1.setName(groupIdRecord.getGroupName());
-                s1.setGroupId(BigInteger.valueOf(groupIdRecord.getId()));
+
                 summaryList.add(s1);
             }
         }
