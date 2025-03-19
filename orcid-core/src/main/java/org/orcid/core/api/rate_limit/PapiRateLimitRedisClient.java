@@ -29,6 +29,12 @@ public class PapiRateLimitRedisClient {
     private int CASH_EXPIRY_IN_SECONDS; // caching for 2 days to have time to
                                         // synch with DB
 
+    @Value("${org.orcid.papi.rate.limit.anonymous.requests:10000}")
+    private int anonymousRequestLimit;
+
+    @Value("${org.orcid.papi.rate.limit.known.requests:40000}")
+    private int knownRequestLimit;
+
     @Autowired
     private PublicApiDailyRateLimitDao papiRateLimitingDao;
 
@@ -46,7 +52,7 @@ public class PapiRateLimitRedisClient {
     }
 
     public String getRequestDateKeyByClient(String client, LocalDate requestDate) {
-        return client + KEY_DELIMITATOR + requestDate.toString()  ;
+        return client + KEY_DELIMITATOR + requestDate.toString();
     }
 
     public JSONObject getDailyLimitsForClient(String client, LocalDate requestDate) {
@@ -75,17 +81,23 @@ public class PapiRateLimitRedisClient {
             PublicApiDailyRateLimitEntity redisRateLimitEntity = redisObjJsonToEntity(allValuesForKey.get(key));
             PublicApiDailyRateLimitEntity pgRateLimitEntity = null;
             boolean isClient = false;
-            if(StringUtils.isNotEmpty(redisRateLimitEntity.getIpAddress())) {
-                pgRateLimitEntity  = papiRateLimitingDao.findByIpAddressAndRequestDate(redisRateLimitEntity.getIpAddress(), requestDate);
-            }
-            else if(StringUtils.isNotEmpty(redisRateLimitEntity.getClientId())){
-                pgRateLimitEntity  = papiRateLimitingDao.findByClientIdAndRequestDate(redisRateLimitEntity.getClientId(), requestDate);
+            if (StringUtils.isNotEmpty(redisRateLimitEntity.getIpAddress())) {
+                pgRateLimitEntity = papiRateLimitingDao.findByIpAddressAndRequestDate(redisRateLimitEntity.getIpAddress(), requestDate);
+            } else if (StringUtils.isNotEmpty(redisRateLimitEntity.getClientId())) {
+                pgRateLimitEntity = papiRateLimitingDao.findByClientIdAndRequestDate(redisRateLimitEntity.getClientId(), requestDate);
                 isClient = true;
             }
-            if(pgRateLimitEntity != null) {
-                papiRateLimitingDao.updatePublicApiDailyRateLimit(pgRateLimitEntity, isClient);
+            // only save the exceeded limits
+            if (pgRateLimitEntity != null) {
+                if (((pgRateLimitEntity.getRequestCount() > knownRequestLimit) && isClient)
+                        || ((pgRateLimitEntity.getRequestCount() > anonymousRequestLimit) && !isClient)) {
+                    papiRateLimitingDao.updatePublicApiDailyRateLimit(pgRateLimitEntity, isClient);
+                }
             } else {
-                papiRateLimitingDao.persist(redisObjJsonToEntity(allValuesForKey.get(key)));
+                if (((redisRateLimitEntity.getRequestCount() > knownRequestLimit) && isClient)
+                        || ((redisRateLimitEntity.getRequestCount() > anonymousRequestLimit) && !isClient)) {
+                    papiRateLimitingDao.persist(redisRateLimitEntity);
+                }
             }
             redisClient.remove(key);
         }
