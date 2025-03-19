@@ -22,9 +22,6 @@ public class SwitchUserGrantedAuthorityDeserializer extends JsonDeserializer<Swi
         String role = authorityNode.asText();
         UsernamePasswordAuthenticationToken authentication = mapper.convertValue(sourceNode, UsernamePasswordAuthenticationToken.class);
 
-        System.out.println(sourceNode.asText());
-        System.out.println(authorityNode.asText());
-
         return new SwitchUserGrantedAuthority(role, authentication);
     }
 }

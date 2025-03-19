@@ -22,8 +22,6 @@ import java.lang.annotation.*;
         proxyBeanMethods = false
 )
 public @interface OrcidEnableRedisHttpSession {
-    int maxInactiveIntervalInSeconds() default 1800;
-
     String redisNamespace() default "spring:session";
 
     /** @deprecated */
@@ -31,8 +29,6 @@ public @interface OrcidEnableRedisHttpSession {
     RedisFlushMode redisFlushMode() default RedisFlushMode.ON_SAVE;
 
     FlushMode flushMode() default FlushMode.ON_SAVE;
-
-    String cleanupCron() default "0 * * * * *";
 
     SaveMode saveMode() default SaveMode.ON_SET_ATTRIBUTE;
 }
