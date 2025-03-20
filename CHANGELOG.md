@@ -1,3 +1,23 @@
+## v2.73.4 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.3...v2.73.4)
+
+### Feature
+
+- Add new endpoint `update deprecation` (#7243)
+
+## v2.73.3 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.2...v2.73.3)
+
+## v2.73.2 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.1...v2.73.2)
+
+## v2.73.1 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.0...v2.73.1)
+
 ## v2.73.0 - 2025-03-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.20...v2.73.0)

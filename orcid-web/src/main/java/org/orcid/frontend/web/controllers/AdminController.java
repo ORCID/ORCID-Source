@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,10 +113,13 @@ public class AdminController extends BaseController {
     private static final String DEPRECATED = "(deprecated)";
     private static final String UNCLAIMED = "(unclaimed)";
     private static final String ENABLED_2FA = "2FAEnabled";
+    private static final String REVIEWED = "reviewed";
+    private static final String PRIMARY_EMAIL = "primaryEmail";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_STRING_SEPARATOR_SINGLE_SPACE = " ";
+    private static final String OUT_STRING_ASSIGNMENT_OPERATOR = "=";
     private static final String OUT_NOT_AVAILABLE = "N/A";
     private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
@@ -146,38 +150,11 @@ public class AdminController extends BaseController {
      */
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.POST)
     public @ResponseBody ProfileDeprecationRequest deprecateProfile(HttpServletRequest serverRequest, HttpServletResponse response,
-            @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
-        isAdmin(serverRequest, response);
-        // Cleanup
-        request.setErrors(new ArrayList<String>());
-        request.setSuccessMessage(null);
+                                                                    @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        initializeDeprecation(serverRequest, response, request);
 
-        if (request.getDeprecatedAccount() != null) {
-            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
-        }
-
-        if (request.getPrimaryAccount() != null) {
-            request.getPrimaryAccount().setErrors(new ArrayList<String>());
-        }
-
-        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
-        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
-
-        if (deprecatedOrcid != null) {
-            ProfileDetails pd = request.getDeprecatedAccount();
-            pd.setOrcid(deprecatedOrcid);
-            request.setDeprecatedAccount(pd);
-        } else {
-            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
-        }
-
-        if (primaryOrcid != null) {
-            ProfileDetails pd = request.getPrimaryAccount();
-            pd.setOrcid(primaryOrcid);
-            request.setPrimaryAccount(pd);
-        } else {
-            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
-        }
+        String deprecatedOrcid = getDeprecateOrcid(request);
+        String primaryOrcid = getPrimaryOrcid(request);
 
         // Check for errors
         if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
@@ -212,41 +189,14 @@ public class AdminController extends BaseController {
      */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.POST)
     public @ResponseBody ProfileDeprecationRequest checkOrcidToDeprecate(HttpServletRequest serverRequest, HttpServletResponse response,
-            @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
-        isAdmin(serverRequest, response);
-        // Cleanup
-        request.setErrors(new ArrayList<String>());
-        request.setSuccessMessage(null);
+                                                                         @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        initializeDeprecation(serverRequest, response, request);
 
-        if (request.getDeprecatedAccount() != null) {
-            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
-        }
-
-        if (request.getPrimaryAccount() != null) {
-            request.getPrimaryAccount().setErrors(new ArrayList<String>());
-        }
-
-        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
-        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
-
-        if (deprecatedOrcid != null) {
-            ProfileDetails pd = request.getDeprecatedAccount();
-            pd.setOrcid(deprecatedOrcid);
-            request.setDeprecatedAccount(pd);
-        } else {
-            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
-        }
-
-        if (primaryOrcid != null) {
-            ProfileDetails pd = request.getPrimaryAccount();
-            pd.setOrcid(primaryOrcid);
-            request.setPrimaryAccount(pd);
-        } else {
-            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
-        }
+        String deprecatedOrcid = getDeprecateOrcid(request);
+        String primaryOrcid = getPrimaryOrcid(request);
 
         if (deprecatedOrcid.equals(primaryOrcid)) {
-            request.getPrimaryAccount().getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
+            request.getPrimaryAccount().getErrors().add(getMessage("admin.update_deprecation.errors.deprecated_equals_primary"));
         } else {
             if (request.getDeprecatedAccount() != null) {
                 request.getDeprecatedAccount().setErrors(new ArrayList<String>());
@@ -269,6 +219,82 @@ public class AdminController extends BaseController {
         }
 
         return request;
+    }
+
+    /**
+     * Get a deprecate profile request and process it.
+     *
+     * @param deprecatedOrcid Orcid to deprecate
+     * @param primaryOrcid    Orcid to use as a primary account
+     * @throws IllegalAccessException
+     */
+    @RequestMapping(value = {"/deprecate-profile/update-deprecation.json"}, method = RequestMethod.POST)
+    public @ResponseBody ProfileDeprecationRequest updateDeprecation(HttpServletRequest serverRequest, HttpServletResponse response,
+                                                                     @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        initializeDeprecation(serverRequest, response, request);
+
+        String deprecatedOrcid = getDeprecateOrcid(request);
+        String primaryOrcid = getPrimaryOrcid(request);
+
+        // Check for errors
+        if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
+        } else if (!OrcidStringUtils.isValidOrcid(primaryOrcid)) {
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", primaryOrcid));
+        } else if (deprecatedOrcid.equals(primaryOrcid)) {
+            request.getErrors().add(getMessage("admin.update_deprecation.errors.deprecated_equals_primary"));
+        } else {
+            try {
+                boolean wasDeprecated = adminManager.updateDeprecation(request, deprecatedOrcid, primaryOrcid);
+                if (wasDeprecated) {
+                    request.setSuccessMessage(getMessage("admin.update_deprecation.success_message", deprecatedOrcid, primaryOrcid));
+                }
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                request.getErrors().add(getMessage("admin.update_deprecation.errors.internal_error", deprecatedOrcid));
+            }
+        }
+
+        return request;
+    }
+
+    private void initializeDeprecation(HttpServletRequest serverRequest, HttpServletResponse response, ProfileDeprecationRequest request) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        // Cleanup
+        request.setErrors(new ArrayList<String>());
+        request.setSuccessMessage(null);
+
+        if (request.getDeprecatedAccount() != null) {
+            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
+        }
+
+        if (request.getPrimaryAccount() != null) {
+            request.getPrimaryAccount().setErrors(new ArrayList<String>());
+        }
+    }
+
+    private String getDeprecateOrcid(ProfileDeprecationRequest request) {
+        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
+        if (deprecatedOrcid != null) {
+            ProfileDetails pd = request.getDeprecatedAccount();
+            pd.setOrcid(deprecatedOrcid);
+            request.setDeprecatedAccount(pd);
+        } else {
+            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
+        }
+        return deprecatedOrcid;
+    }
+
+    private String getPrimaryOrcid(ProfileDeprecationRequest request) {
+        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
+        if (primaryOrcid != null) {
+            ProfileDetails pd = request.getPrimaryAccount();
+            pd.setOrcid(primaryOrcid);
+            request.setPrimaryAccount(pd);
+        } else {
+            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
+        }
+        return primaryOrcid;
     }
 
     private void validateIdForDeprecation(ProfileDetails details) {
@@ -390,11 +416,11 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
-            throws IllegalAccessException, UnsupportedEncodingException {
+            throws IllegalAccessException {
         isAdmin(serverRequest, response);
         List<String> idEmailList = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
-        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, "UTF-8");
+        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, StandardCharsets.UTF_8);
         if (StringUtils.isNotBlank(csvIdOrEmails)) {
             StringTokenizer tokenizer = new StringTokenizer(csvIdOrEmails, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
@@ -407,7 +433,7 @@ public class AdminController extends BaseController {
                 if (OrcidStringUtils.getOrcidNumber(idEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(idEmail))) {
                     isOrcid = true;
                 }
-                String orcid = idEmail;
+                String orcid;
                 if (!isOrcid) {
                     Map<String, String> email = findIdByEmailHelper(idEmail);
                     orcid = email.get(idEmail);
@@ -438,7 +464,7 @@ public class AdminController extends BaseController {
                         }
 
                         Emails emails = emailManagerReadOnly.getEmails(orcid);
-                        if (emails.getEmails().size() > 0) {
+                        if (!emails.getEmails().isEmpty()) {
                             for (Email email : emails.getEmails()) {
                                 if (!email.isPrimary()) {
                                     builder.append(email.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
@@ -464,6 +490,17 @@ public class AdminController extends BaseController {
                         boolean twoFactorAuthenticationEnabled = twoFactorAuthenticationManager.userUsing2FA(orcid);
                         if (twoFactorAuthenticationEnabled) {
                             builder.append(OUT_STRING_SEPARATOR).append(ENABLED_2FA);
+                        }
+
+                        if (profileEntityManager.isReviewed(orcid)) {
+                            builder.append(OUT_STRING_SEPARATOR).append(REVIEWED);
+                        }
+
+                        if (profileEntityManager.isProfileDeprecated(orcid)) {
+                            ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
+
+                            builder.append(OUT_STRING_SEPARATOR).append(PRIMARY_EMAIL);
+                            builder.append(OUT_STRING_ASSIGNMENT_OPERATOR).append(e.getPrimaryRecord().getId());
                         }
 
                     } else {

@@ -288,6 +288,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    public boolean isReviewed(String orcid) {
+        return profileDao.isReviewed(orcid);
+    }
+
+    @Override
     public boolean reviewProfile(String orcid) {
         return profileDao.reviewProfile(orcid);
     }
@@ -576,6 +581,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     public List<Object[]> getSigninLock(String orcid) {
         return profileDao.getSigninLock(orcid);
+    }
+
+    @Override
+    public boolean updateDeprecation(String deprecated, String primary) {
+        return profileDao.updateDeprecation(deprecated, primary);
     }
 
     /**
