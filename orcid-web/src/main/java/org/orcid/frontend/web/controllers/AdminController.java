@@ -456,6 +456,13 @@ public class AdminController extends BaseController {
                             builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(CLAIMED).append(OUT_STRING_SEPARATOR);
                         }
 
+                        if (profileEntityManager.isProfileDeprecated(orcid)) {
+                            ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
+
+                            builder.append(PRIMARY_EMAIL);
+                            builder.append(OUT_STRING_ASSIGNMENT_OPERATOR).append(e.getPrimaryRecord().getId());
+                        }
+
                         Email primary = emailManager.findPrimaryEmail(orcid);
                         if (primary != null) {
                             builder.append(OUT_EMAIL_PRIMARY).append(primary.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
@@ -494,13 +501,6 @@ public class AdminController extends BaseController {
 
                         if (profileEntityManager.isReviewed(orcid)) {
                             builder.append(OUT_STRING_SEPARATOR).append(REVIEWED);
-                        }
-
-                        if (profileEntityManager.isProfileDeprecated(orcid)) {
-                            ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
-
-                            builder.append(OUT_STRING_SEPARATOR).append(PRIMARY_EMAIL);
-                            builder.append(OUT_STRING_ASSIGNMENT_OPERATOR).append(e.getPrimaryRecord().getId());
                         }
 
                     } else {
