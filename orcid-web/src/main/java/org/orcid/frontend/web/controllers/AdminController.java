@@ -114,7 +114,7 @@ public class AdminController extends BaseController {
     private static final String UNCLAIMED = "(unclaimed)";
     private static final String ENABLED_2FA = "2FAEnabled";
     private static final String REVIEWED = "reviewed";
-    private static final String PRIMARY_EMAIL = "primaryEmail";
+    private static final String PRIMARY_RECORD = "primaryRecord";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
@@ -459,7 +459,7 @@ public class AdminController extends BaseController {
                         if (profileEntityManager.isProfileDeprecated(orcid)) {
                             ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
 
-                            builder.append(PRIMARY_EMAIL);
+                            builder.append(PRIMARY_RECORD);
                             builder.append(OUT_STRING_ASSIGNMENT_OPERATOR).append(e.getPrimaryRecord().getId());
                         }
 

@@ -1557,7 +1557,7 @@ public class AdminControllerTest extends BaseControllerTest {
         Mockito.when(profileEntityCacheManager.retrieve(orcidId)).thenReturn(profileEntity);
 
         String expectedOutput = String.format(
-                "%s (deprecated)\t\tprimaryEmail=%s\n",
+                "%s (deprecated)\t\tprimaryRecord=%s\n",
                 orcidId, primaryRecord
         );
 
