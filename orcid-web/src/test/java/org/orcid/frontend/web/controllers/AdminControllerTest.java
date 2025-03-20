@@ -16,9 +16,11 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.impl.ProfileHistoryEventManagerImpl;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.utils.VerifyEmailUtils;
@@ -29,6 +31,9 @@ import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
+import org.orcid.jaxb.model.v3.release.record.FamilyName;
+import org.orcid.jaxb.model.v3.release.record.GivenNames;
+import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -1479,4 +1484,60 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
     }
     
+    @Test
+    public void testLookupIdOrEmails_ShouldReturnFormattedUserDetails_WhenUserExists() throws Exception {
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
+        EmailManager emailManager = Mockito.mock(EmailManager.class);
+        EmailManagerReadOnly emailManagerReadOnly = Mockito.mock(EmailManagerReadOnly.class);
+        RecordNameManagerReadOnly recordNameManagerReadOnly = Mockito.mock(RecordNameManagerReadOnly.class);
+        TwoFactorAuthenticationManager twoFactorAuthenticationManager = Mockito.mock(TwoFactorAuthenticationManager.class);
+        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
+
+        AdminController adminController = new AdminController();
+        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
+        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
+        ReflectionTestUtils.setField(adminController, "emailManagerReadOnly", emailManagerReadOnly);
+        ReflectionTestUtils.setField(adminController, "recordNameManagerReadOnly", recordNameManagerReadOnly);
+        ReflectionTestUtils.setField(adminController, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+
+
+        String orcidId = "0000-0000-0000-0001";
+        String testEmail = "email@test.com";
+        String givenNames = "Given Names";
+        String familyName = "Family Name";
+        String primaryRecord = "0000-0000-0000-0002";
+
+        Email primaryEmail = new Email();
+        primaryEmail.setEmail(testEmail);
+
+        Name recordName = new Name();
+        recordName.setFamilyName(new FamilyName(familyName));
+        recordName.setGivenNames(new GivenNames(givenNames));
+
+        ProfileEntity profileEntity = new ProfileEntity(orcidId);
+        profileEntity.setPrimaryRecord(new ProfileEntity(primaryRecord));
+
+        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
+        Mockito.when(profileEntityManager.orcidExists(orcidId)).thenReturn(true);
+        Mockito.when(profileEntityManager.isProfileDeprecated(orcidId)).thenReturn(true);
+        Mockito.when(emailManager.findPrimaryEmail(orcidId)).thenReturn(primaryEmail);
+        Mockito.when(emailManagerReadOnly.getEmails(orcidId)).thenReturn(new Emails());
+        Mockito.when(recordNameManagerReadOnly.getRecordName(orcidId)).thenReturn(recordName);
+        Mockito.when(twoFactorAuthenticationManager.userUsing2FA(orcidId)).thenReturn(true);
+        Mockito.when(profileEntityManager.isReviewed(orcidId)).thenReturn(true);
+        Mockito.when(profileEntityCacheManager.retrieve(orcidId)).thenReturn(profileEntity);
+
+        String expectedOutput = String.format(
+                "%s (unclaimed)\t\t*%s \t\t%s %s \t\t2FAEnabled\t\treviewed\t\tprimaryEmail=%s\n",
+                orcidId, testEmail, givenNames, familyName, primaryRecord
+        );
+
+        String lookupResponse = adminController.lookupIdOrEmails(mockRequest, mockResponse, orcidId);
+
+        assertEquals(expectedOutput, lookupResponse);
+    }
+
 }

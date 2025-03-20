@@ -503,12 +503,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=true", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
     }
@@ -526,13 +523,10 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
-        
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/signin", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
     
@@ -550,12 +544,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=false", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
     
@@ -567,13 +558,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenThrow(new EncryptionOperationNotPossibleException());
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/signin?invalidVerifyUrl=true", mav.getViewName());
-        assertTrue(ra.getFlashAttributes().containsKey("invalidVerifyUrl"));
-        assertTrue((Boolean) ra.getFlashAttributes().get("invalidVerifyUrl"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
 }

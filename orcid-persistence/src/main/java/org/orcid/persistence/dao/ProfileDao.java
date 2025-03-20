@@ -168,4 +168,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean updateDeprecation(String deprecated, String primaryOrcid);
 
+    public boolean isReviewed(String orcid);
+
 }

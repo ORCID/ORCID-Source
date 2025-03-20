@@ -586,6 +586,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    public boolean isReviewed(String orcid) {
+        TypedQuery<Boolean> query = entityManager.createQuery("select reviewed from ProfileEntity where orcid = :orcid", Boolean.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
+
+    @Override
     @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");

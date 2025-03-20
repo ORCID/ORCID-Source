@@ -473,8 +473,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
-            RedirectAttributes redirectAttributes) throws Exception {
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         String primaryEmail = emailManager.findPrimaryEmail(getCurrentUserOrcid()).getEmail();
@@ -484,7 +483,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             logoutCurrentUser(request, response);
             result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
         } else {
-            redirectAttributes.addFlashAttribute("emailDoesntMatch", true);
             return new ModelAndView("redirect:"+ calculateRedirectUrl("/my-orcid"));
         }
 
@@ -608,13 +606,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson ( deletedEmail.getEmail() );            
+            deleteEmailJson ( deletedEmail.getEmail() );    
         }
         
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         List<ProfileEmailDomainEntity> updatedDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
-            profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet);
+            profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet, updatedSet);
             updatedDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
         org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet, updatedDomains);

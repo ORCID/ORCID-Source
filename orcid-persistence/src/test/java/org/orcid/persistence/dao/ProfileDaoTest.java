@@ -410,6 +410,15 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("2000-0000-0000-0002", primaryRecord.getId());
     }
 
+    @Test
+    public void testIsReviewed() {
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
+        assertTrue(profile.isReviewed());
+
+        profile = profileDao.find("4444-4444-4444-4443");
+        assertFalse(profile.getUsing2FA());
+    }
+
     private int updateProfileWithDateCreated(String orcid, Date dateCreated) {
         Query q = entityManager.createNativeQuery(
                 "UPDATE profile set date_created = :dateCreated where orcid = :orcid");
