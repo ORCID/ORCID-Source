@@ -81,6 +81,8 @@ public interface ProfileEntityManager extends ProfileEntityManagerReadOnly {
     
     List<Object[]> getSigninLock(String orcid);
 
+    boolean updateDeprecation(String deprecated, String primary);
+
     boolean isReviewed(String orcid);
 
 }

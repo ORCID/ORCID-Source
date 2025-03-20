@@ -1419,6 +1419,72 @@ public class AdminControllerTest extends BaseControllerTest {
     }
 
     @Test
+    public void updateDeprecation() throws Exception {
+        ProfileDeprecationRequest r = new ProfileDeprecationRequest();
+        ProfileDetails deprecatedRecord = new ProfileDetails();
+        deprecatedRecord.setOrcid("4444-4444-4444-444X");
+        r.setDeprecatedAccount(deprecatedRecord);
+        ProfileDetails primary = new ProfileDetails();
+        primary.setOrcid("4444-4444-4444-4443");
+        r.setPrimaryAccount(primary);
+
+
+        // Test update deprecation to account that is not deprecated
+        deprecatedRecord.setOrcid("0000-0000-0000-0001");
+        ProfileDeprecationRequest result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.update_deprecation.errors.not_deprecated", "0000-0000-0000-0001"), result.getErrors().get(0));
+
+        // Test deprecating account with himself
+        deprecatedRecord.setOrcid("4444-4444-4444-4440");
+        primary.setOrcid("4444-4444-4444-4440");
+        result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.update_deprecation.errors.deprecated_equals_primary"), result.getErrors().get(0));
+
+        // Test set deprecated account as a primary account
+        deprecatedRecord.setOrcid("0000-0000-0000-0004");
+        primary.setOrcid("4444-4444-4444-444X");
+        result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_deprecated", "4444-4444-4444-444X"), result.getErrors().get(0));
+
+        // Test deprecating an invalid orcid
+        deprecatedRecord.setOrcid("4444-4444-4444-444");
+        primary.setOrcid("4444-4444-4444-4443");
+        result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.invalid_orcid", "4444-4444-4444-444"), result.getErrors().get(0));
+
+        // Test use invalid orcid as primary
+        deprecatedRecord.setOrcid("4444-4444-4444-4440");
+        primary.setOrcid("4444-4444-4444-444");
+        result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.invalid_orcid", "4444-4444-4444-444"), result.getErrors().get(0));
+
+        // Deactivate primary record
+        adminController.deactivateOrcidRecords(mockRequest, mockResponse, "4444-4444-4444-4443");
+
+        // Test set deactive primary account
+        deprecatedRecord.setOrcid("0000-0000-0000-0004");
+        primary.setOrcid("4444-4444-4444-4443");
+        result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
+
+        // Deactivate primary record
+        adminController.deactivateOrcidRecords(mockRequest, mockResponse, "4444-4444-4444-4443");
+
+        // Test set deactive primary account with ORCID_URL
+        deprecatedRecord.setOrcid("https://orcid.org/0000-0000-0000-0004");
+        primary.setOrcid("4444-4444-4444-4443");
+        result = adminController.updateDeprecation(mockRequest, mockResponse, r);
+        assertEquals(1, result.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_is_deactivated", "4444-4444-4444-4443"), result.getErrors().get(0));
+    }
+    
+    @Test
     public void testLookupIdOrEmails_ShouldReturnFormattedUserDetails_WhenUserExists() throws Exception {
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);

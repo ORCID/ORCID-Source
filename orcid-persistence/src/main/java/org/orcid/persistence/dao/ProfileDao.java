@@ -166,6 +166,8 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo);
 
+    boolean updateDeprecation(String deprecated, String primaryOrcid);
+
     public boolean isReviewed(String orcid);
 
 }

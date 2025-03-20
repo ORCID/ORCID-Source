@@ -408,6 +408,15 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     }
 
     @Test
+    public void testUpdateDeprecation() throws Exception {
+        boolean result = profileEntityManager.updateDeprecation("0000-0000-0000-0004","4444-4444-4444-4441");
+        assertTrue(result);
+
+        ProfileEntity profile = profileEntityManager.findByOrcid("0000-0000-0000-0004");
+        assertEquals("4444-4444-4444-4441", profile.getPrimaryRecord().getId());
+    }
+
+    @Test
     public void testIsReviewed() throws Exception {
         profileEntityManager.reviewProfile("4444-4444-4444-4441");
         boolean result = profileEntityManager.isReviewed("4444-4444-4444-4441");

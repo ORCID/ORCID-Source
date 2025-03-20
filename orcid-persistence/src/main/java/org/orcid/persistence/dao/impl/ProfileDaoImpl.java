@@ -874,4 +874,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return results;
     }
 
+    @Override
+    @Transactional
+    public boolean updateDeprecation(String deprecated, String primaryOrcid) {
+        String queryString = "UPDATE profile SET last_modified = now(), primary_record = :primaryOrcid where orcid = :deprecated";
+        Query query = entityManager.createNativeQuery(queryString);
+        query.setParameter("deprecated", deprecated);
+        query.setParameter("primaryOrcid", primaryOrcid);
+        return query.executeUpdate() > 0;
+    }
+
 }
