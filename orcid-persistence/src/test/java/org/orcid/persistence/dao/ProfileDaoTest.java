@@ -391,6 +391,34 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(1, results.size());
     }
 
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testUpdateDeprecation() {
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442", ProfileEntity.ADMIN_DEPRECATION, "4444-4444-4444-4440");
+        assertTrue(result);
+
+        ProfileEntity profileToUpdateDeprecation = profileDao.find("4444-4444-4444-4441");
+        assertNotNull(profileToUpdateDeprecation.getPrimaryRecord());
+        result = profileDao.updateDeprecation("4444-4444-4444-4441", "2000-0000-0000-0002");
+        assertTrue(result);
+        profileToUpdateDeprecation = profileDao.find("4444-4444-4444-4441");
+        profileDao.refresh(profileToUpdateDeprecation);
+        assertNotNull(profileToUpdateDeprecation.getPrimaryRecord());
+        assertNotNull(profileToUpdateDeprecation.getDeprecatingAdmin());
+        ProfileEntity primaryRecord = profileToUpdateDeprecation.getPrimaryRecord();
+        assertEquals("2000-0000-0000-0002", primaryRecord.getId());
+    }
+
+    @Test
+    public void testIsReviewed() {
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
+        assertTrue(profile.isReviewed());
+
+        profile = profileDao.find("4444-4444-4444-4443");
+        assertFalse(profile.getUsing2FA());
+    }
+
     private int updateProfileWithDateCreated(String orcid, Date dateCreated) {
         Query q = entityManager.createNativeQuery(
                 "UPDATE profile set date_created = :dateCreated where orcid = :orcid");
