@@ -218,6 +218,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         givenPermissionToManager.remove(getCurrentUserOrcid(), manageDelegate.getDelegateToManage());
         return manageDelegate;
     }
+    
+    @RequestMapping(value = "/revokeOwnPermission.json", method = RequestMethod.POST)
+    public @ResponseBody ManageDelegate revokeOwnDelegate(@RequestBody ManageDelegate manageDelegate) {
+        givenPermissionToManager.remove(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
+        //add notifications, send email to giver account
+        return manageDelegate;
+    }
 
     @RequestMapping(value = "/socialAccounts.json", method = RequestMethod.GET)
     public @ResponseBody List<UserconnectionEntity> getSocialAccountsJson(HttpServletRequest request) {
