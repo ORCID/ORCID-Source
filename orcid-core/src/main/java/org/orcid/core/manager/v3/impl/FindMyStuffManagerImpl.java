@@ -150,7 +150,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
      * new one.
      * 
      * @param orcid
-     * @param f
+     * @param finder
      * @return
      */
     private NotificationFindMyStuff getOrCreateNotification(String orcid, Finder finder) {

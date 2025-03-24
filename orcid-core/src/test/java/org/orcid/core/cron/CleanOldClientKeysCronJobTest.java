@@ -69,7 +69,7 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         ClientDetailsEntity client = new ClientDetailsEntity(clientId, "clientName");
         ClientSecretEntity entity = new ClientSecretEntity();
         entity.setClientSecret("clientSecret");
-        entity.setClientDetailsEntity(client);
+        entity.setClientId(client.getClientId());
         secretList.add(entity);
 
         Mockito.when(mockClientSecretDao.getNonPrimaryKeys(100)).thenReturn(secretList);
@@ -99,10 +99,10 @@ public class CleanOldClientKeysCronJobTest extends DBUnitTest {
         ClientDetailsEntity clientTwo = new ClientDetailsEntity(clientIdTwo, "clientNameTwo");
         ClientSecretEntity entityOne = new ClientSecretEntity();
         entityOne.setClientSecret("clientSecret");
-        entityOne.setClientDetailsEntity(client);
+        entityOne.setClientId(client.getClientId());
         ClientSecretEntity entityTwo = new ClientSecretEntity();
         entityTwo.setClientSecret("clientSecretTwo");
-        entityTwo.setClientDetailsEntity(clientTwo);
+        entityTwo.setClientId(clientTwo.getClientId());
         secretList.add(entityOne);
         secretList.add(entityTwo);
 

@@ -3,13 +3,14 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.ehcache.UserManagedCache;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -17,8 +18,6 @@ import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.frontend.web.controllers.helper.UserSession;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -31,6 +30,7 @@ import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,9 +56,6 @@ public class NotificationController extends BaseController {
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Resource
-    private UserSession userSession;
-    
-    @Resource
     private PreferenceManager preferenceManager;
     
     @Resource
@@ -75,6 +72,13 @@ public class NotificationController extends BaseController {
         return new ModelAndView("notifications");
     }
 
+    UserManagedCache<String, Boolean> isObsoleteNotificationAlertsCheckDone =
+            UserManagedCacheBuilder.newUserManagedCacheBuilder(String.class, Boolean.class).build(true);
+
+    public void shutdown() {
+        isObsoleteNotificationAlertsCheckDone.close();
+    }
+
     @RequestMapping("/notifications.json")
     public @ResponseBody List<Notification> getNotificationsJson(@RequestParam(value = "firstResult", defaultValue = "0") int firstResult,
             @RequestParam(value = "maxResults", defaultValue = "10") int maxResults,
@@ -88,20 +92,10 @@ public class NotificationController extends BaseController {
         return notifications;
     }
 
-    @RequestMapping("/notification-alerts.json")
-    public @ResponseBody List<Notification> getNotificationAlertJson() {
-        String currentOrcid = getCurrentUserOrcid();
-        List<Notification> notifications = notificationManager.findNotificationAlertsByOrcid(currentOrcid);
-        notifications = archiveObsoleteNotifications(currentOrcid, notifications);
-        notifications = notifications.stream().filter(n -> !userSession.getSuppressedNotificationAlertIds().contains(n.getPutCode())).collect(Collectors.toList());
-        addSubjectToNotifications(notifications);
-        return notifications;
-    }
-
     private List<Notification> archiveObsoleteNotifications(String currentOrcid, List<Notification> notifications) {
-        if (!userSession.isObsoleteNotificationAlertsCheckDone()) {
+        if (!isObsoleteNotificationAlertsCheckDone.containsKey(currentOrcid)) {
             notifications = notificationManager.filterActionedNotificationAlerts(notifications, currentOrcid);
-            userSession.setObsoleteNotificationAlertsCheckDone(true);
+            isObsoleteNotificationAlertsCheckDone.putIfAbsent(currentOrcid, Boolean.TRUE);
         }
         return notifications;
     }
@@ -185,10 +179,10 @@ public class NotificationController extends BaseController {
         ActionableNotificationEntity notification = (ActionableNotificationEntity) notificationManager.findActionableNotificationEntity(id);
         String redirectUrl = notification.getAuthorizationUrl();
         String notificationOrcid = notification.getOrcid();
-        OrcidProfileUserDetails user = getCurrentUser();
+        UserDetails user = getCurrentUser();
         if (user != null) {
             // The user is logged in
-            if (!user.getOrcid().equals(notificationOrcid)) {
+            if (!user.getUsername().equals(notificationOrcid)) {
                 return new ModelAndView("wrong_user");
             }
         } else {
@@ -197,12 +191,6 @@ public class NotificationController extends BaseController {
         notificationManager.setActionedAndReadDate(notificationOrcid, id);
         return new ModelAndView("redirect:" + redirectUrl);
     }
-    
-    @RequestMapping(value = "{id}/suppressAlert.json")
-    public @ResponseBody void suppressAlert(HttpServletResponse response, @PathVariable("id") String id) {
-        userSession.getSuppressedNotificationAlertIds().add(Long.valueOf(id));
-        response.addHeader("X-Robots-Tag", "noindex");
-    }    
 
     @RequestMapping(value = "/frequencies/view", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getNotificationFrequencies() {

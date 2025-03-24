@@ -39,7 +39,6 @@ import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.frontend.web.forms.validate.OrcidUrlValidator;
@@ -79,6 +78,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -199,7 +199,7 @@ public class BaseController {
         this.domainsAllowingRobots = domainsAllowingRobots;
     }
 
-    protected OrcidProfileUserDetails getCurrentUser() {
+    protected UserDetails getCurrentUser() {
         return baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
     }
 
@@ -211,7 +211,7 @@ public class BaseController {
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
-        OrcidProfileUserDetails userDetails = getCurrentUser();
+        UserDetails userDetails = getCurrentUser();
         if (userDetails == null) {
             return true;
         }
@@ -320,7 +320,7 @@ public class BaseController {
     }
 
     boolean emailMatchesUser(String orcid, String email) {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
+        UserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
             return false;
         }
@@ -794,11 +794,11 @@ public class BaseController {
 
     @ModelAttribute("effectiveUserOrcid")
     public String getEffectiveUserOrcid() {
-        OrcidProfileUserDetails currentUser = getCurrentUser();
+        UserDetails currentUser = getCurrentUser();
         if (currentUser == null) {
             return null;
         }
-        return currentUser.getOrcid();
+        return currentUser.getUsername();
     }
     
     protected String getCurrentUserOrcid() {

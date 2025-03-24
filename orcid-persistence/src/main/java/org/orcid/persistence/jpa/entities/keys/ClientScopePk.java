@@ -1,5 +1,7 @@
 package org.orcid.persistence.jpa.entities.keys;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
@@ -11,23 +13,23 @@ public class ClientScopePk implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private String clientDetailsEntity;
+    private String clientId;
     private String scopeType;
 
     public ClientScopePk() {
     }
 
-    public ClientScopePk(String clientDetailsEntity, String scopeType) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public ClientScopePk(String clientDetailsId, String scopeType) {
+        this.clientId = clientDetailsId;
         this.scopeType = scopeType;
     }
 
-    public String getClientDetailsEntity() {
-        return clientDetailsEntity;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setClientDetailsEntity(String clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public void setClientId(String clientDetailsEntity) {
+        this.clientId = clientDetailsEntity;
     }
 
     public String getScopeType() {
@@ -47,7 +49,7 @@ public class ClientScopePk implements Serializable {
 
         ClientScopePk that = (ClientScopePk) o;
 
-        if (!clientDetailsEntity.equals(that.clientDetailsEntity))
+        if (!clientId.equals(that.clientId))
             return false;
         if (!scopeType.equals(that.scopeType))
             return false;
@@ -57,7 +59,7 @@ public class ClientScopePk implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = clientDetailsEntity.hashCode();
+        int result = clientId.hashCode();
         result = 31 * result + scopeType.hashCode();
         return result;
     }

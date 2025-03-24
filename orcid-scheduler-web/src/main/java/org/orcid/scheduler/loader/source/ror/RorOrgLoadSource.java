@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,6 +17,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
@@ -49,6 +52,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RorOrgLoadSource.class);
 
     private static final String WIKIPEDIA_URL = "wikipedia_url";
+            
 
     @Value("${org.orcid.core.orgs.ror.enabled:true}")
     private boolean enabled;
@@ -104,8 +108,10 @@ public class RorOrgLoadSource implements OrgLoadSource {
         try {
             fileRotator.removeFileIfExists(zipFilePath);
             fileRotator.removeFileIfExists(localDataPath);
-
-            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl + "&sort=mostrecent&size=1", userAgent, ZenodoRecords.class);
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.USER_AGENT, userAgent);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+            ZenodoRecords zenodoRecords = orgDataClient.get(rorZenodoRecordsUrl + "&sort=mostrecent&size=1", headers, ZenodoRecords.class);
             ZenodoRecordsHit zenodoHit = zenodoRecords.getHits().getHits().get(0);
 
             boolean success = false;
@@ -115,7 +121,10 @@ public class RorOrgLoadSource implements OrgLoadSource {
             // get the last element in the list that has the last version
             String zenodoUrl = zenodoHit.getFiles().get(zenodoHit.getFiles().size() > 0 ? zenodoHit.getFiles().size() - 1 : 0).getLinks().getSelf();
             LOGGER.info("Retrieving ROR data from: " + zenodoUrl);
-            success = orgDataClient.downloadFile(zenodoUrl, userAgent, zipFilePath);
+            headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.USER_AGENT, userAgent);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+            success = orgDataClient.downloadFile(zenodoUrl, zipFilePath, headers);
 
             try {
                 LOGGER.info("Unzipping  ROR ....");
@@ -206,17 +215,19 @@ public class RorOrgLoadSource implements OrgLoadSource {
                     if (locationsNode != null) {
                         for (JsonNode locationJson : locationsNode) {
                             JsonNode geoDetailsNode = locationJson.get("geonames_details").isNull() ? null : (JsonNode) locationJson.get("geonames_details");
-
                             if (geoDetailsNode != null) {
                                 String countryCode = geoDetailsNode.get("country_code").isNull() ? null : geoDetailsNode.get("country_code").asText();
                                 country = StringUtils.isBlank(countryCode) ? null : Iso3166Country.fromValue(countryCode);
                                 // for now storing just the first location
                                 city = geoDetailsNode.get("name").isNull() ? null : geoDetailsNode.get("name").asText();
+                                if(geoDetailsNode.get("country_subdivision_name") != null ) {
+                                    region = geoDetailsNode.get("country_subdivision_name").isNull() ? null : geoDetailsNode.get("country_subdivision_name").asText();
+                                }
                                 if (country != null) {
                                     break;
                                 }
-                                region = geoDetailsNode.get("country_subdivision_name").isNull() ? null : geoDetailsNode.get("country_subdivision_name").asText();
                             }
+                                
 
                         }
                         locationsJson = locationsNode.toString();
@@ -257,8 +268,10 @@ public class RorOrgLoadSource implements OrgLoadSource {
 
             String region, String url, String orgType, String locationsJson, String namesJson) {
         OrgDisambiguatedEntity existingBySourceId = orgDisambiguatedDao.findBySourceIdAndSourceType(sourceId, OrgDisambiguatedSourceType.ROR.name());
+        
         if (existingBySourceId != null) {
-            if (entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType) || indexAllEnabled) {
+            boolean entityChanged = entityChanged(existingBySourceId, name, country.value(), city, region, url, orgType, locationsJson, namesJson);
+            if (entityChanged || indexAllEnabled) {
                 existingBySourceId.setCity(city);
                 existingBySourceId.setCountry(country.name());
                 existingBySourceId.setName(name);
@@ -340,7 +353,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
      * 
      * @return true if the entity has changed.
      */
-    private boolean entityChanged(OrgDisambiguatedEntity entity, String name, String countryCode, String city, String region, String url, String orgType) {
+    private boolean entityChanged(OrgDisambiguatedEntity entity, String name, String countryCode, String city, String region, String url, String orgType, String locationsJson, String namesJson) {
         // Check name
         if (StringUtils.isNotBlank(name)) {
             if (!name.equalsIgnoreCase(entity.getName()))
@@ -350,7 +363,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
         // Check country
         if (StringUtils.isNotBlank(countryCode)) {
-            if (entity.getCountry() == null || !countryCode.equals(entity.getCountry())) {
+            if (entity.getCountry() == null || !StringUtils.equals(countryCode, entity.getCountry())) {
                 return true;
             }
         } else if (entity.getCountry() != null) {
@@ -358,7 +371,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
         // Check city
         if (StringUtils.isNotBlank(city)) {
-            if (entity.getCity() == null || !city.equals(entity.getCity())) {
+            if (entity.getCity() == null || !StringUtils.equals(city, entity.getCity())) {
                 return true;
             }
         } else if (StringUtils.isNotBlank(entity.getCity())) {
@@ -366,7 +379,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
         // Check region
         if (StringUtils.isNotBlank(region)) {
-            if (entity.getRegion() == null || !region.equals(entity.getRegion())) {
+            if (entity.getRegion() == null || !StringUtils.equals(region, entity.getRegion())) {
                 return true;
             }
         } else if (StringUtils.isNotBlank(entity.getRegion())) {
@@ -374,7 +387,7 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
         // Check url
         if (StringUtils.isNotBlank(url)) {
-            if (entity.getUrl() == null || !url.equals(entity.getUrl())) {
+            if (entity.getUrl() == null || !StringUtils.equals(url, entity.getUrl())) {
                 return true;
             }
         } else if (StringUtils.isNotBlank(entity.getUrl())) {
@@ -382,12 +395,31 @@ public class RorOrgLoadSource implements OrgLoadSource {
         }
         // Check org_type
         if (StringUtils.isNotBlank(orgType)) {
-            if (entity.getOrgType() == null || !orgType.equals(entity.getOrgType())) {
+            if (entity.getOrgType() == null || !StringUtils.equals(orgType, entity.getOrgType())) {
                 return true;
             }
         } else if (StringUtils.isNotBlank(entity.getOrgType())) {
             return true;
         }
+        
+        // Check names json
+        if (StringUtils.isNotBlank(namesJson)) {
+            if (entity.getNamesJson() == null || !StringUtils.equals(namesJson, entity.getNamesJson())) {
+                return true;
+            }
+        } else if (StringUtils.isNotBlank(entity.getNamesJson())) {
+            return true;
+        }
+        
+        //Check location Json
+        if (StringUtils.isNotBlank(locationsJson)) {
+            if (entity.getLocationsJson() == null || !StringUtils.equals(locationsJson, entity.getLocationsJson())) {
+                return true;
+            }
+        } else if (StringUtils.isNotBlank(entity.getLocationsJson())) {
+            return true;
+        }
+        
 
         return false;
     }

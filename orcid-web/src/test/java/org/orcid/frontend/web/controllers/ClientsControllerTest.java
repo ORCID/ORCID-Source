@@ -20,8 +20,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -33,13 +32,17 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+@ActiveProfiles("unitTests")
 public class ClientsControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml");
@@ -61,11 +64,10 @@ public class ClientsControllerTest extends BaseControllerTest {
 
     @Override
     protected Authentication getAuthentication() {
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails("5555-5555-5555-5558", "5555-5555-5555-5558@user.com",
-                "e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=");
+        UserDetails details = new User("5555-5555-5555-5558", "e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", List.of());
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", null,
-                Arrays.asList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("5555-5555-5555-5558", details.getPassword(),
+                Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_PREMIUM_INSTITUTION.name())));
         auth.setDetails(details);
         return auth;
     }
@@ -263,7 +265,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         Client client = new Client();
         client.setAllowAutoDeprecate(Checkbox.valueOf(true));
         client.setType(Text.valueOf(ClientType.CREATOR.name()));
-        client.setClientId(Text.valueOf("XXXXXX"));
         client.setDisplayName(Text.valueOf("My client name"));
         client.setMemberId(Text.valueOf("0000-0000-0000-0000"));
         client.setMemberName(Text.valueOf("My member name"));

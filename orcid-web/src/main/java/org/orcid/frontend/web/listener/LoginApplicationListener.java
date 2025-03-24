@@ -1,12 +1,12 @@
 package org.orcid.frontend.web.listener;
 
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 
 /**
@@ -29,12 +29,11 @@ public class LoginApplicationListener implements ApplicationListener<Application
             if (source instanceof UsernamePasswordAuthenticationToken) {
                 UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) source;
                 Object principal = token.getPrincipal();
-                if (principal instanceof OrcidProfileUserDetails) {
-                    OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-                    String orcid = userDetails.getOrcid();
-                    String email = userDetails.getPrimaryEmail();
+                if (principal instanceof UserDetails) {
+                    UserDetails userDetails = (UserDetails) principal;
+                    String orcid = userDetails.getUsername();
                     String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-                    LOGGER.info("User logged in with orcid={}, email={}, sessionid={}", new Object[] { orcid, email, sessionId });
+                    LOGGER.info("User logged in with orcid={}, sessionid={}", new Object[] { orcid, sessionId });
                 }
             }
         }
