@@ -1,5 +1,7 @@
 package org.orcid.persistence.jpa.entities.keys;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
@@ -11,23 +13,23 @@ public class ClientResourceIdPk implements Serializable {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private String clientDetailsEntity;
+    private String clientId;
     private String resourceId;
 
     public ClientResourceIdPk() {
     }
 
-    public ClientResourceIdPk(String clientDetailsEntity, String resourceId) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public ClientResourceIdPk(String clientId, String resourceId) {
+        this.clientId = clientId;
         this.resourceId = resourceId;
     }
 
-    public String getClientDetailsEntity() {
-        return clientDetailsEntity;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setClientDetailsEntity(String clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public String getResourceId() {
@@ -47,7 +49,7 @@ public class ClientResourceIdPk implements Serializable {
 
         ClientResourceIdPk that = (ClientResourceIdPk) o;
 
-        if (!clientDetailsEntity.equals(that.clientDetailsEntity))
+        if (!clientId.equals(that.clientId))
             return false;
         if (!resourceId.equals(that.resourceId))
             return false;
@@ -57,7 +59,7 @@ public class ClientResourceIdPk implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = clientDetailsEntity.hashCode();
+        int result = clientId.hashCode();
         result = 31 * result + resourceId.hashCode();
         return result;
     }

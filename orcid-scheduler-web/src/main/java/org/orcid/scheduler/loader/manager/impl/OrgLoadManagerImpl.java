@@ -38,6 +38,7 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
 
     @Override
     public void loadOrgs() {
+        LOGGER.info("About to start the orgs loader process");
         OrgLoadSource loader = getNextOrgLoader();
         if (loader != null) {
             loadOrg(loader);
@@ -46,6 +47,7 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
     
     @Override
     public void loadOrg(OrgLoadSource loader) {
+        LOGGER.info("About to start loading orgs from source {}", loader.getSourceName());
         if (loader != null) {
             OrgImportLogEntity importLog = getOrgImportLogEntity(loader);
             boolean success = loader.downloadOrgData();
@@ -55,8 +57,10 @@ public class OrgLoadManagerImpl implements OrgLoadManager {
             logImport(importLog, success);
 
             if (success) {
+                LOGGER.info("Orgs successfully imported from {}", loader.getSourceName());
                 slackManager.sendAlert(String.format("Orgs successfully imported from %s", loader.getSourceName()), slackChannel, slackUser);
             } else {
+                LOGGER.warn("Org import FAILURE from {}", loader.getSourceName());
                 slackManager.sendAlert(String.format("Org import FAILURE from %s", loader.getSourceName()), slackChannel, slackUser);
             }
         } else {

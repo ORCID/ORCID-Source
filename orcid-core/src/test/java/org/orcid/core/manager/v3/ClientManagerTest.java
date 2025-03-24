@@ -456,8 +456,7 @@ public class ClientManagerTest extends BaseTest {
             assertTrue(cs.isPrimary());
             assertFalse(PojoUtil.isEmpty(cs.getClientSecret()));
         }
-        
-        assertNotNull(entity.getCustomEmails());       
+
     }
     
     private Client getClient(String randomString, String memberId) {

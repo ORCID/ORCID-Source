@@ -1,6 +1,7 @@
 package org.orcid.core.utils;
 
 import java.io.UnsupportedEncodingException;
+
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.togglz.Features;
@@ -79,6 +81,13 @@ public class VerifyEmailUtils {
         XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
         String resetParams = MessageFormat.format("email={0}&issueDate={1}", new Object[] { userEmail, date.toXMLFormat() });
         return createEmailBaseUrl(resetParams, baseUri, "reset-password-email");
+    }
+    
+    public Pair<String, Date> createResetLinkForAdmin(String userEmail, String baseUri) {
+        Date issuedDate = new Date();
+        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(issuedDate);
+        String resetParams = MessageFormat.format("email={0}&issueDate={1}&h=24", new Object[] { userEmail, date.toXMLFormat() });
+        return new Pair<String, Date> (createEmailBaseUrl(resetParams, baseUri, "reset-password-email"), issuedDate);
     }
 
     public String createReactivationUrl(String userEmail, String baseUri) {

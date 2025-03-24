@@ -307,7 +307,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         Record record = recordManagerReadOnly.getRecord(orcid, filterVersionOfIdentifiers);
         orcidSecurityManager.checkAndFilter(orcid, record);
         if (record.getPerson() != null) {
-            emailDomainManager.processProfessionalEmailsForV3API(record.getPerson().getEmails());
             sourceUtils.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
@@ -886,8 +885,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
             orcidSecurityManager.checkAndFilter(orcid, emails.getEmails(), ScopePathType.ORCID_BIO_READ_LIMITED);
         }
 
-        emailDomainManager.processProfessionalEmailsForV3API(emails);
-
         ElementUtils.setPathToEmail(emails, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtils.setSourceName(emails);
@@ -1166,7 +1163,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, true);
         Person person = personDetailsManagerReadOnly.getPersonDetails(orcid, false);
         orcidSecurityManager.checkAndFilter(orcid, person);
-        emailDomainManager.processProfessionalEmailsForV3API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtils.setSourceName(person);

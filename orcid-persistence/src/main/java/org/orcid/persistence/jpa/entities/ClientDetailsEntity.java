@@ -56,7 +56,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String groupProfileId;
     private String authenticationProviderId;
 
-    private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
     private boolean persistentTokensEnabled = false;
     private String emailAccessReason;
@@ -130,7 +129,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientWebsite = clientWebsite;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientScopeEntity> getClientScopes() {
         return clientScopes;
     }
@@ -139,7 +138,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientScopes = clientScopes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientResourceIdEntity> getClientResourceIds() {
         return clientResourceIds;
     }
@@ -148,7 +147,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientResourceIds = clientResourceIds;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientAuthorisedGrantTypeEntity> getClientAuthorizedGrantTypes() {
         return clientAuthorizedGrantTypes;
     }
@@ -157,7 +156,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientAuthorizedGrantTypes = clientAuthorizedGrantTypes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris() {
         return clientRegisteredRedirectUris;
@@ -167,7 +166,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientRegisteredRedirectUris = clientRegisteredRedirectUris;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities() {
         return clientGrantedAuthorities;
     }
@@ -238,7 +237,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return getDecryptedClientSecret();
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public Set<ClientSecretEntity> getClientSecrets() {
         return clientSecrets;
@@ -248,15 +247,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientSecrets = clientSecrets;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
-    public Set<CustomEmailEntity> getCustomEmails() {
-        return customEmails;
-    }
-
-    public void setCustomEmails(Set<CustomEmailEntity> customEmails) {
-        this.customEmails = customEmails;
-    }
-    
     @Column(name = "persistent_tokens_enabled")
     public boolean isPersistentTokensEnabled() {
         return persistentTokensEnabled;
@@ -292,14 +282,14 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         if (clientSecrets == null) {
             clientSecrets = new TreeSet<>();
         }
-        clientSecrets.add(new ClientSecretEntity(clientSecret, this));
+        clientSecrets.add(new ClientSecretEntity(clientSecret, this.getClientId()));
     }
 
     public void setClientSecretForJpa(String clientSecret, boolean primary) {
         if (clientSecrets == null) {
             clientSecrets = new TreeSet<>();
         }
-        clientSecrets.add(new ClientSecretEntity(clientSecret, this, primary));
+        clientSecrets.add(new ClientSecretEntity(clientSecret, this.getClientId(), primary));
     }
 
     @Transient
@@ -500,7 +490,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         result = prime * result + ((clientSecrets == null) ? 0 : clientSecrets.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((clientWebsite == null) ? 0 : clientWebsite.hashCode());
-        result = prime * result + ((customEmails == null) ? 0 : customEmails.hashCode());
         result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
         result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
         result = prime * result + ((groupProfileId == null) ? 0 : groupProfileId.hashCode());
@@ -583,11 +572,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
             if (other.clientWebsite != null)
                 return false;
         } else if (!clientWebsite.equals(other.clientWebsite))
-            return false;
-        if (customEmails == null) {
-            if (other.customEmails != null)
-                return false;
-        } else if (!customEmails.equals(other.customEmails))
             return false;
         if (decryptedClientSecret == null) {
             if (other.decryptedClientSecret != null)

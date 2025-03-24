@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
@@ -53,5 +54,7 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
     List<BigInteger> getIdsForUserOBORecords(int max);
 
     List<BigInteger> getIdsOfAddressesReferencingClientProfiles(int max, List<String> ids);
+
+    boolean updateVisibility(String orcid, Visibility visibility);
     
 }

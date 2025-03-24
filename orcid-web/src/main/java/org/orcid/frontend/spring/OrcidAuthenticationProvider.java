@@ -2,18 +2,17 @@ package org.orcid.frontend.spring;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
@@ -29,6 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 
 public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -130,13 +130,13 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         }
 
         if (profile.getUsing2FA()) {
-            String recoveryCode = ((OrcidWebAuthenticationDetails) auth.getDetails()).getRecoveryCode();
+            String recoveryCode = ((MFAWebAuthenticationDetails) auth.getDetails()).getRecoveryCode();
             if (recoveryCode != null && !recoveryCode.isEmpty()) {
                 if (!backupCodeManager.verify(profile.getId(), recoveryCode)) {
                     throw new Bad2FARecoveryCodeException();
                 }
             } else {
-                String verificationCode = ((OrcidWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
+                String verificationCode = ((MFAWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
                 if (verificationCode == null || verificationCode.isEmpty()) {
                     throw new VerificationCodeFor2FARequiredException();
                 }
@@ -146,7 +146,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 }
             }
         }
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile.getId(), result.getCredentials(), result.getAuthorities());
+        User user = new User(profile.getId(), (String) auth.getCredentials(), result.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
         authentication.setDetails(orcidUserDetailsService.loadUserByProfile(profile));
         return authentication;
     }
