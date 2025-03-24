@@ -27,15 +27,7 @@ public class ErrorController extends BaseController {
 
     @RequestMapping(value = "/not-found")
     public ModelAndView error404Page(ModelAndView mav) {
-        String orcid = getCurrentUserOrcid();
-        if (orcid != null) {
-            return new ModelAndView("redirect:" + calculateRedirectUrl("/my-orcid"));
-        } else {
-            mav.setViewName("error-404");
-        }
-
-        mav.addObject("noIndex", true);
-        return mav;
+        return new ModelAndView("redirect:" + calculateRedirectUrl("/404"));
     }
 
     @RequestMapping(value = "/oauth/error/redirect-uri-mismatch")

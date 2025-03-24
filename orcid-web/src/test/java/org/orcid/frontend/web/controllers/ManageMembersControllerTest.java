@@ -33,8 +33,7 @@ import org.orcid.core.manager.v3.ClientDetailsManager;
 import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -51,7 +50,10 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -127,9 +129,9 @@ public class ManageMembersControllerTest extends DBUnitTest {
         
     protected Authentication getAuthentication() {    
         String orcid = "4444-4444-4444-4440";
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
-                "admin@user.com", null, Arrays.asList(OrcidWebRole.ROLE_ADMIN));
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, "password", Arrays.asList(OrcidWebRole.ROLE_ADMIN));
+        UserDetails details = new User(orcid,
+                "password", Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name())));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, "password", details.getAuthorities());
         auth.setDetails(details);
         return auth;
     }
@@ -306,7 +308,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
     public void editMemberWithInvalidEmailTest() throws Exception {
         //Create one member
         Member group = new Member();
-        String email = "group" + System.currentTimeMillis() + "@email.com";
+        String email = "group1" + System.currentTimeMillis() + "@email.com";
         group.setEmail(Text.valueOf(email));
         group.setGroupName(Text.valueOf("Group Name"));
         group.setType(Text.valueOf("premium-institution"));

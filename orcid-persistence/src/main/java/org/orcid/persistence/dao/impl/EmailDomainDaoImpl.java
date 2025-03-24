@@ -66,7 +66,7 @@ public class EmailDomainDaoImpl extends GenericDaoImpl<EmailDomainEntity, Long> 
     
     @Override
     public List<EmailDomainEntity>  findByEmailDomain(String emailDomain) {
-        TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where emailDomain = :emailDomain", EmailDomainEntity.class);
+        TypedQuery<EmailDomainEntity> query = entityManager.createQuery("from EmailDomainEntity where lower(trim(emailDomain)) = lower(trim(:emailDomain))", EmailDomainEntity.class);
         query.setParameter("emailDomain", emailDomain);
         try {
             return query.getResultList();

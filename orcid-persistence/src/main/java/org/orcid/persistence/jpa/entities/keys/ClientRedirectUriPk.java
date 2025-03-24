@@ -1,5 +1,8 @@
 package org.orcid.persistence.jpa.entities.keys;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import java.io.Serializable;
 
 /**
@@ -11,25 +14,25 @@ public class ClientRedirectUriPk implements Serializable {
      * 
      */
     private static final long serialVersionUID = -3948069038449324678L;
-    private String clientDetailsEntity;
+    private String clientId;
     private String redirectUri;
     private String redirectUriType;
 
     public ClientRedirectUriPk() {
     }
 
-    public ClientRedirectUriPk(String clientDetailsEntity, String redirectUri, String redirectUriType) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public ClientRedirectUriPk(String clientId, String redirectUri, String redirectUriType) {
+        this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.redirectUriType = redirectUriType;
     }
 
-    public String getClientDetailsEntity() {
-        return clientDetailsEntity;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setClientDetailsEntity(String clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public String getRedirectUri() {
@@ -57,7 +60,7 @@ public class ClientRedirectUriPk implements Serializable {
 
         ClientRedirectUriPk that = (ClientRedirectUriPk) o;
 
-        if (!clientDetailsEntity.equals(that.clientDetailsEntity))
+        if (!clientId.equals(that.clientId))
             return false;
         if (!redirectUri.equals(that.redirectUri))
             return false;
@@ -69,7 +72,7 @@ public class ClientRedirectUriPk implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = clientDetailsEntity.hashCode();
+        int result = clientId.hashCode();
         result = 31 * result + redirectUri.hashCode();
         result = 31 * result + redirectUriType.hashCode();
         return result;

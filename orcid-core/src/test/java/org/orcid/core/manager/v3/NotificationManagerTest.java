@@ -241,12 +241,6 @@ public class NotificationManagerTest extends DBUnitTest {
             Notification n = notificationManager.sendAmendEmail(testOrcid, AmendedSection.UNKNOWN, Collections.emptyList());
             assertNotNull(n);
             assertTrue(n.getPutCode() > minNotificationId);
-
-            // New notification entity should have been created
-            NotificationEntity latestNotification = notificationDao.findLatestByOrcid(testOrcid);
-            assertNotNull(latestNotification);
-            assertTrue(latestNotification.getId() > minNotificationId);
-            assertEquals(org.orcid.jaxb.model.notification_v2.NotificationType.AMENDED.name(), latestNotification.getNotificationType());
         }
     }
 

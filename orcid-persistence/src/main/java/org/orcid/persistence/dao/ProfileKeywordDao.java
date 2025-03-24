@@ -3,6 +3,7 @@ package org.orcid.persistence.dao;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
 public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long> {
@@ -67,4 +68,6 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
     List<BigInteger> getIdsForUserOBORecords(int max);
 
     List<BigInteger> getIdsOfKeywordsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
+
+    boolean updateVisibility(String orcid, Visibility visibility);
 }

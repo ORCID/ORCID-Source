@@ -25,22 +25,18 @@ import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
-import org.orcid.frontend.web.controllers.helper.OauthHelper;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -101,9 +97,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;
 
-    @Resource(name = "orcidSearchManagerV3")
-    private OrcidSearchManager orcidSearchManager;
-
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -119,20 +112,11 @@ public class RegistrationController extends BaseController {
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
 
-    @Resource(name = "affiliationsManagerReadOnlyV3")
-    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
-
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
-
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
-    @Resource
-    private OrcidUserDetailsService orcidUserDetailsService;
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
@@ -142,6 +126,9 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
 
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
@@ -173,7 +160,7 @@ public class RegistrationController extends BaseController {
 
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
 
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
         if (requestInfoForm != null) {
             if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
                 reg.getEmail().setValue(requestInfoForm.getUserEmail());
@@ -312,7 +299,7 @@ public class RegistrationController extends BaseController {
         String redirectUrl = calculateRedirectUrl(request, response, true);
         if (request.getQueryString() == null || request.getQueryString().isEmpty()) {
             redirectUrl = calculateRedirectUrl(request, response, true, true);
-        } 
+        }
         r.setUrl(redirectUrl);
         return r;
     }
@@ -492,11 +479,9 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/verify-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
-            RedirectAttributes redirectAttributes) throws UnsupportedEncodingException {
+    public ModelAndView verifyEmail(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws UnsupportedEncodingException {
         if (PojoUtil.isEmpty(encryptedEmail) || !Base64.isBase64(encryptedEmail)) {
             LOGGER.error("Error decypting verify email from the verify email link: {} ", encryptedEmail);
-            redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             return new ModelAndView("redirect:" + calculateRedirectUrl("/signin"));
         }
         String redirect = "redirect:" + calculateRedirectUrl("/signin");
@@ -514,18 +499,15 @@ public class RegistrationController extends BaseController {
                 boolean verified = emailManager.verifyEmail(orcid, decryptedEmail);
                 if (verified) {
                     profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
-                    redirectAttributes.addFlashAttribute("emailVerified", true);
                     sb.append("emailVerified=true");
 
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
-                            redirectAttributes.addFlashAttribute("primaryEmailUnverified", true);
                             sb.append("&");
                             sb.append("primaryEmailUnverified=true");
                         }
                     }
                 } else {
-                    redirectAttributes.addFlashAttribute("emailVerified", false);
                     sb.append("emailVerified=false");
                 }
 
@@ -537,17 +519,16 @@ public class RegistrationController extends BaseController {
             }
         } catch (EncryptionOperationNotPossibleException eonpe) {
             LOGGER.warn("Error decypting verify email from the verify email link");
-            redirectAttributes.addFlashAttribute("invalidVerifyUrl", true);
             sb.append("invalidVerifyUrl=true");
             redirect = "redirect:" + calculateRedirectUrl("/signin?" + sb.toString());
             SecurityContextHolder.clearContext();
-        }       
+        }
 
         return new ModelAndView(redirect);
-    }    
+    }
 
     private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
-            boolean usedCaptchaVerification, Locale locale, String ip) {
+                                                       boolean usedCaptchaVerification, Locale locale, String ip) {
         String unencryptedPassword = registration.getPassword().getValue();
         String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
         logUserIn(request, response, orcidId, unencryptedPassword);
@@ -562,11 +543,11 @@ public class RegistrationController extends BaseController {
             token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);
-            LOGGER.warn("User {0} should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
+            LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
         }
     }
 
@@ -588,7 +569,7 @@ public class RegistrationController extends BaseController {
     private void createAffiliation(Registration registration, String newUserOrcid) {
         registrationManager.createAffiliation(registration, newUserOrcid);
     }
-    
+
     private void processProfileHistoryEvents(Registration registration, String newUserOrcid) {
         // t&cs must be accepted but check just in case!
         if (registration.getTermsOfUse().getValue()) {
@@ -611,8 +592,8 @@ public class RegistrationController extends BaseController {
                         .toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMM").parseDefaulting(ChronoField.DAY_OF_MONTH, 1).toFormatter(),
                 new DateTimeFormatterBuilder().appendPattern("yyyyMMdd").parseStrict().toFormatter() };
-        String dateString = date.getYear();        
-        
+        String dateString = date.getYear();
+
         // If year is blank and month or day is not, then it is invalid
         if (StringUtils.isBlank(date.getYear())) {
             if (!StringUtils.isBlank(date.getMonth()) || !StringUtils.isBlank(date.getDay())) {
@@ -637,10 +618,10 @@ public class RegistrationController extends BaseController {
                 try {
                     LocalDate.parse(dateString, formatter);
                     return true;
-                } catch (DateTimeParseException e) {                    
+                } catch (DateTimeParseException e) {
                 }
             }
-        } 
+        }
         return false;
     }
 

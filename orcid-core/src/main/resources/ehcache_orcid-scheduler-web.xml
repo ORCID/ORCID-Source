@@ -124,7 +124,14 @@
     <ehcache:cache alias="emails" uses-template="bioTemplate" />
     
     <ehcache:cache alias="public-emails" uses-template="bioTemplate" />
-    
+
+    <ehcache:cache alias="primary-email-value" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:tti unit="minutes">10</ehcache:tti>
+        </ehcache:expiry>
+    </ehcache:cache>
+
     <ehcache:cache alias="count-tokens" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:resources>

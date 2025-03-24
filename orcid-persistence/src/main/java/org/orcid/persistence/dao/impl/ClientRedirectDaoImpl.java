@@ -22,7 +22,7 @@ public class ClientRedirectDaoImpl extends GenericDaoImpl<ClientRedirectUriEntit
 
     @Override
     public List<ClientRedirectUriEntity> findClientDetailsWithRedirectScope(String redirectUriType) {
-        Query query = entityManager.createQuery("from ClientRedirectUriEntity as crue inner join fetch crue.clientDetailsEntity where crue.predefinedClientScope is not null and crue.redirectUriType = :rut");
+        Query query = entityManager.createQuery("from ClientRedirectUriEntity as crue where crue.predefinedClientScope is not null and crue.redirectUriType = :rut");
         query.setParameter("rut", redirectUriType);
         return query.getResultList();
     }
