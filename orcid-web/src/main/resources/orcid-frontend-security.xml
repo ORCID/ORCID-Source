@@ -422,7 +422,7 @@
 			access="ROLE_USER" />
 			
 		<!-- Allow GET requests (no authentication needed) -->
-		<sec:intercept-url pattern="/.*" method="GET" access="permitAll" />
+		<sec:intercept-url pattern="/.*" method="GET" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<!-- Require ROLE_USER for all other methods -->
 		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
 		
