@@ -22,7 +22,11 @@ public class PeerReviewMinimizedSummary implements Serializable {
     private String sourceId;
     private String clientSourceId;
     private String assertionOriginSourceId;
-    
+
+    public PeerReviewMinimizedSummary() {
+
+    }
+
     public PeerReviewMinimizedSummary(String orcid, BigInteger groupId, String groupIdValue, BigInteger putCode, Visibility visibility, String name, int duplicated) {
         this.orcid = orcid;
         this.groupId = groupId;

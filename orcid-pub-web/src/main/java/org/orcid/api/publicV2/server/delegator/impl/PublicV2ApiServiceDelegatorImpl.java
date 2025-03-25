@@ -425,7 +425,6 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
         publicAPISecurityManagerV2.filter(emails);
-        emailDomainManager.processProfessionalEmailsForV2API(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(emails);
         sourceUtilsReadOnly.setSourceName(emails);
@@ -531,7 +530,6 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewPerson(String orcid) {
         Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
         publicAPISecurityManagerV2.filter(person);
-        emailDomainManager.processProfessionalEmailsForV2API(person.getEmails());
         ElementUtils.setPathToPerson(person, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(person);
         sourceUtilsReadOnly.setSourceName(person);
@@ -543,7 +541,6 @@ public class PublicV2ApiServiceDelegatorImpl
         Record record = recordManagerReadOnly.getPublicRecord(orcid);
         publicAPISecurityManagerV2.filter(record);
         if (record.getPerson() != null) {
-            emailDomainManager.processProfessionalEmailsForV2API(record.getPerson().getEmails());
             sourceUtilsReadOnly.setSourceName(record.getPerson());
         }
         if (record.getActivitiesSummary() != null) {
