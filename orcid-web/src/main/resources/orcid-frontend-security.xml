@@ -466,7 +466,11 @@
 		<sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
 			access="ROLE_USER" />
 					
-		<sec:intercept-url pattern="/.*" method="POST" access="ROLE_USER"/>  
+		<!-- Allow GET requests (no authentication needed) -->
+		<sec:intercept-url pattern="/**" method="GET" access="permitAll" />
+
+		<!-- Require ROLE_USER for all other methods -->
+		<sec:intercept-url pattern="/**" access="ROLE_USER" />
 		
 		<!-- <sec:form-login authentication-failure-url="/signin" login-page="/signin" 
 			login-processing-url="/signin/auth" -->
