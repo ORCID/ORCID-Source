@@ -419,9 +419,9 @@
 		<sec:intercept-url pattern="/2FA/authenticationCode.json(\?.*)?"
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
-			access="ROLE_USER" />
+			access="ROLE_USER" />		
+		<sec:intercept-url pattern="/.*" method="POST" access="ROLE_USER"/>  
 
-		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>
 
 		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 						login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
