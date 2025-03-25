@@ -1,3 +1,20 @@
+## v2.74.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.7...v2.74.0)
+
+- [#7149](https://github.com/ORCID/ORCID-Source/pull/7149): feat/ui-docker-container-builds
+
+### Fix
+
+- move haproxy stats ports back onto nonroot range internally
+- match proxying to new docker compose names
+- move to new haproxy stats port below 1024
+
+### Feature
+
+- unique log location for each tomcat
+- add haproxy router for database connections and use static ips and host file records to not require docker dns
+
 ## v2.73.7 - 2025-03-25
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.6...v2.73.7)
