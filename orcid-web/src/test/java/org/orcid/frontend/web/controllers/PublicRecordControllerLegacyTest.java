@@ -181,8 +181,8 @@ public class PublicRecordControllerLegacyTest extends DBUnitTest {
         assertEquals(1, record.getValidatedWorks());
         assertEquals(0, record.getSelfAssertedWorks());
 
-        assertEquals(0, record.getPeerReviewsTotal());
-        assertEquals(0, record.getPeerReviewPublicationGrants());
+        assertEquals(1, record.getPeerReviewsTotal());
+        assertEquals(1, record.getPeerReviewPublicationGrants());
 
         assertEquals(1, record.getValidatedFunds());
         assertEquals(0, record.getSelfAssertedFunds());

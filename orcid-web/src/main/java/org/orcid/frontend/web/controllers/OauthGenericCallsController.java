@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
@@ -42,6 +43,9 @@ public class OauthGenericCallsController extends OauthControllerBase {
     
     @Context
     private UriInfo uriInfo;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
     
     @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
     public ResponseEntity<?> obtainOauth2TokenPost(HttpServletRequest request) {
@@ -66,9 +70,8 @@ public class OauthGenericCallsController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
     public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {                    
         RequestInfoForm requestInfoForm = new RequestInfoForm();
-    
-        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
-            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        if(requestInfoFormLocalCache.containsKey(request.getSession().getId())) {
+            requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
         } 
         return requestInfoForm;
     }

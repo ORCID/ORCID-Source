@@ -16,10 +16,6 @@ public class EmailConstants {
      */
     public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
 
-    public static final String ORCID_EMAIL_VALIDATOR_CLIENT_NAME = "ORCID email validation";
-
-    public static final String ORCID_EMAIL_VALIDATOR_CLIENT_ID = "0000-0000-0000-0000";
-    
     public static final int MAX_EMAIL_COUNT = 30;
     
     public static final String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";

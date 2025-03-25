@@ -106,6 +106,10 @@ jobs:
             docker_name: orcid/registry/orcid-web-proxy
             file: orcid-web-proxy/Dockerfile
 
+          - artifact_name: orcid-haprouter
+            docker_name: orcid/registry/orcid-haprouter
+            file: orcid-haprouter/Dockerfile
+
     runs-on: ubuntu-latest
     steps:
       - name: git-checkout-ref-action

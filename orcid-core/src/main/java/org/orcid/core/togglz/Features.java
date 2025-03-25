@@ -62,7 +62,10 @@ public enum Features implements Feature {
     EMAIL_DOMAINS_UI,
     
     @Label("Enforce rate limiting for public API when disabled the rate monitoring is on. When disabled is the mode is monitoring only.")
-    ENABLE_PAPI_RATE_LIMITING;
+    ENABLE_PAPI_RATE_LIMITING,
+
+    @Label("Use the authorization server to sign in")
+    OAUTH_SIGNIN;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

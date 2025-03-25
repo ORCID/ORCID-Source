@@ -2,6 +2,7 @@ package org.orcid.frontend.web.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -30,6 +31,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
@@ -47,15 +49,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.google.common.collect.Lists;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-public class OauthRegistrationControllerTest extends DBUnitTest {
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
-    
-    @Resource
-    OauthRegistrationController oauthRegistrationController;
+public class OauthRegistrationControllerTest {
+    OauthRegistrationController oauthRegistrationController = new OauthRegistrationController();
     
     @Mock
     RegistrationController registrationController;
@@ -71,16 +66,9 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
     
     @Mock
     private HttpServletResponse servletResponse;
-    
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-    
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
+
+    @Mock
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
     
     @Before
     public void before() {
@@ -89,17 +77,19 @@ public class OauthRegistrationControllerTest extends DBUnitTest {
         oauthRegistrationController.setAuthorizationEndpoint(authorizationEndpoint);
         oauthRegistrationController.setAuthenticationManager(authenticationManager);
     }
-    
-    @SuppressWarnings("unchecked")
+
     @Test
     public void testStripHtmlFromNames() throws UnsupportedEncodingException {
+        RequestInfoForm rf = new RequestInfoForm();
         HttpSession session = mock(HttpSession.class);
-        RequestInfoForm rf = new RequestInfoForm();                
+        requestInfoFormLocalCache = mock(RequestInfoFormLocalCache.class);
+        when(requestInfoFormLocalCache.get(any())).thenReturn(rf);
+        oauthRegistrationController.setRequestInfoFormLocalCache(requestInfoFormLocalCache);
         RedirectView mv = new RedirectView();
         when(servletRequest.getSession()).thenReturn(session);
-        when(servletRequest.getSession().getAttribute("requestInfoForm")).thenReturn(rf);
-        when(authorizationEndpoint.approveOrDeny(Matchers.anyMap(), Matchers.anyMap(), Matchers.any(SessionStatus.class), Matchers.any(Principal.class))).thenReturn(mv);
-        when(authenticationManager.authenticate(Matchers.any(Authentication.class))).thenAnswer(new Answer<Authentication>(){
+        when(session.getId()).thenReturn("ID1");
+        when(authorizationEndpoint.approveOrDeny(Matchers.anyMap(), Matchers.anyMap(), any(SessionStatus.class), any(Principal.class))).thenReturn(mv);
+        when(authenticationManager.authenticate(any(Authentication.class))).thenAnswer(new Answer<Authentication>(){
             @Override
             public Authentication answer(InvocationOnMock invocation) throws Throwable {
                 OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);

@@ -79,11 +79,7 @@
     	<constructor-arg value="${org.orcid.recaptcha.verify_url}" />
     	<constructor-arg value="${org.orcid.recaptcha.secret}" />
     </bean>
-    
-    <bean id="userSession" class="org.orcid.frontend.web.controllers.helper.UserSession" scope="session">
-        <aop:scoped-proxy/>
-    </bean>
-    
+
     <bean id="worksPaginator" class="org.orcid.frontend.web.pagination.WorksPaginator" >
         <property name="worksCacheManager" ref="worksCacheManager" />
         <property name="worksExtendedCacheManager" ref="worksExtendedCacheManager" />

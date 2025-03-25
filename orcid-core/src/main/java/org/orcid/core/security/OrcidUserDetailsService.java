@@ -1,7 +1,7 @@
 package org.orcid.core.security;
 
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 public interface OrcidUserDetailsService extends UserDetailsService {
 
-    OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile);
+    UserDetails loadUserByProfile(ProfileEntity profile);
 
+    boolean isAdmin();
 }

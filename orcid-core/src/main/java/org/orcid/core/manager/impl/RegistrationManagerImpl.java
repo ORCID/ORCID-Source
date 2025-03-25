@@ -21,8 +21,7 @@ import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.togglz.Features;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.OrcidType;
@@ -258,7 +257,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         // Set authority
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setOrcid(orcid);
-        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        authority.setAuthority(OrcidRoles.ROLE_USER.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         newRecord.setAuthorities(authorities);

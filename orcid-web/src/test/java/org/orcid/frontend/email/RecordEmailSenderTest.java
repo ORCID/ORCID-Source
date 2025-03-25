@@ -42,6 +42,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.email.MailGunManager;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -49,6 +50,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+@ActiveProfiles("unitTests")
 public class RecordEmailSenderTest {
 
     @Mock
@@ -111,7 +113,6 @@ public class RecordEmailSenderTest {
         ReflectionTestUtils.setField(recordEmailSender, "recordNameManager", mockRecordNameManager);
         ReflectionTestUtils.setField(recordEmailSender, "profileEventDao", mockProfileEventDao);
         ReflectionTestUtils.setField(recordEmailSender, "mailgunManager", mockMailGunManager);
-        
     }
     
     @Test
