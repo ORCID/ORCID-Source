@@ -1,3 +1,9 @@
+## v2.73.7 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.6...v2.73.7)
+
+- [#7259](https://github.com/ORCID/ORCID-Source/pull/7259): 404-redirects
+
 ## v2.73.6 - 2025-03-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.5...v2.73.6)
