@@ -22,12 +22,14 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.pojo.OAuthSigninData;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
+@ActiveProfiles("unitTests")
 public class ShibbolethControllerTest {
 
     @Resource(name = "shibbolethController")

@@ -3,23 +3,16 @@ package org.orcid.core.togglz;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.orcid.core.common.manager.impl.EmailFrequencyManagerImpl;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.togglz.core.Feature;
 import org.togglz.core.manager.TogglzConfig;
 import org.togglz.core.repository.StateRepository;
 import org.togglz.core.repository.cache.CachingStateRepository;
 import org.togglz.core.repository.jdbc.JDBCStateRepository;
-import org.togglz.core.user.FeatureUser;
-import org.togglz.core.user.SimpleFeatureUser;
 import org.togglz.core.user.UserProvider;
 import org.togglz.spring.security.SpringSecurityUserProvider;
 
@@ -61,7 +54,7 @@ public class OrcidTogglzConfiguration implements TogglzConfig {
 
     @Override
     public UserProvider getUserProvider() {
-        return new SpringSecurityUserProvider(OrcidWebRole.ROLE_ADMIN.getAuthority());        
+        return new SpringSecurityUserProvider(OrcidRoles.ROLE_ADMIN.getAuthority());
     }
 
 }

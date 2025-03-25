@@ -5,11 +5,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.*;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import java.util.List;
 
 /**
  * @author rcpeters
@@ -49,9 +51,11 @@ public class BaseControllerUtilTest {
     public void getCurrentUserUsernamePasswordAuthenticationToken() {
         SecurityContext context = mock(SecurityContext.class);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = mock(UsernamePasswordAuthenticationToken.class);
-        OrcidProfileUserDetails orcidProfileUserDetails = mock(OrcidProfileUserDetails.class);
+        UserDetails userDetails = mock(UserDetails.class);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
+        when(usernamePasswordAuthenticationToken.getAuthorities()).thenReturn(List.of());
         assertNotNull(baseControllerUtil.getCurrentUser(context));
     }
     
@@ -59,9 +63,10 @@ public class BaseControllerUtilTest {
     public void getCurrentUserPreAuthenticatedAuthenticationToken() {
         SecurityContext context = mock(SecurityContext.class);
         PreAuthenticatedAuthenticationToken usernamePasswordAuthenticationToken = mock(PreAuthenticatedAuthenticationToken.class);
-        OrcidProfileUserDetails orcidProfileUserDetails = mock(OrcidProfileUserDetails.class);
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
-        when(usernamePasswordAuthenticationToken.getDetails()).thenReturn(orcidProfileUserDetails);
+        when(usernamePasswordAuthenticationToken.getName()).thenReturn("0000-0000-0000-0000");
+        when(usernamePasswordAuthenticationToken.getCredentials()).thenReturn("password");
+        when(usernamePasswordAuthenticationToken.getAuthorities()).thenReturn(List.of());
         assertNotNull(baseControllerUtil.getCurrentUser(context));
     }
 

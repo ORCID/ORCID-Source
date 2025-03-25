@@ -20,7 +20,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EventEntity;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.RequestInfoForm;
 
 /**
  *
@@ -45,40 +44,49 @@ public class EventManagerImpl implements EventManager {
 
         if (request != null) {
             Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-            RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute("requestInfoForm");
-            if (requestInfoForm != null) {
-                clientId = requestInfoForm.getClientId();
-                label = "OAuth " + requestInfoForm.getMemberName() + " " + requestInfoForm.getClientName();
-            } else if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
+            if (isOauth2ScreensRequest != null && isOauth2ScreensRequest) {
                 String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
                 clientId = getParameterValue(queryString, "client_id");
-                ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
-                String memberName = "";
-                String clientName = clientDetailsEntity.getClientName();
-
-                if (ClientType.PUBLIC_CLIENT.equals(clientDetailsEntity.getClientType())) {
-                    memberName = "PubApp";
-                } else if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId())) {
-                    Name name = recordNameManagerReadOnly.getRecordName(clientDetailsEntity.getGroupProfileId());
-                    if (name != null) {
-                        memberName = name.getCreditName() != null ? name.getCreditName().getContent() : "";
-                    }
-                }
-
-                if (StringUtils.isBlank(memberName)) {
-                    memberName = clientName;
-                }
-                label = "OAuth " + memberName + " " + clientName;
+                label = generateLabel(clientId);
             }
         }
 
         EventEntity eventEntity = new EventEntity();
-
         eventEntity.setEventType(eventType.getValue());
         eventEntity.setClientId(clientId);
         eventEntity.setLabel(label);
         eventEntity.setDateCreated(new Date());
         eventDao.createEvent(eventEntity);
+    }
+
+    @Override
+    public void createReauthorizeEvent(String clientId) {
+        EventEntity eventEntity = new EventEntity();
+        eventEntity.setEventType(EventType.REAUTHORIZE.getValue());
+        eventEntity.setClientId(clientId);
+        eventEntity.setLabel(generateLabel(clientId));
+        eventEntity.setDateCreated(new Date());
+        eventDao.createEvent(eventEntity);
+    }
+
+    private String generateLabel(String clientId) {
+        ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+        String memberName = "";
+        String clientName = clientDetailsEntity.getClientName();
+
+        if (ClientType.PUBLIC_CLIENT.equals(clientDetailsEntity.getClientType())) {
+            memberName = "PubApp";
+        } else if (!PojoUtil.isEmpty(clientDetailsEntity.getGroupProfileId())) {
+            Name name = recordNameManagerReadOnly.getRecordName(clientDetailsEntity.getGroupProfileId());
+            if (name != null) {
+                memberName = name.getCreditName() != null ? name.getCreditName().getContent() : "";
+            }
+        }
+
+        if (StringUtils.isBlank(memberName)) {
+            memberName = clientName;
+        }
+        return "OAuth " + memberName + " " + clientName;
     }
 
     private String getParameterValue(String queryString, String parameter)  {

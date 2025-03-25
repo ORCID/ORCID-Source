@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
@@ -23,6 +24,9 @@ import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.togglz.Features;
+import org.orcid.frontend.util.AuthorizationRequestLocalCache;
+import org.orcid.frontend.util.OriginalAuthorizationRequestLocalCache;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
@@ -30,6 +34,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.EventType;
+import org.orcid.persistence.jpa.entities.keys.ClientGrantedAuthorityPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.springframework.security.core.context.SecurityContext;
@@ -81,12 +86,23 @@ public class OauthController {
     @Resource
     private EventManager eventManager;
 
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
+
+    @Resource
+    private AuthorizationRequestLocalCache authorizationRequestLocalCache;
+
+    @Resource
+    private OriginalAuthorizationRequestLocalCache originalAuthorizationRequestLocalCache;
+
     @RequestMapping(value = { "/oauth/custom/init.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm loginGetHandler(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         // Populate the request info form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString(), model, requestParameters, sessionStatus, principal);                                
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);       
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(request, request.getQueryString(), model, requestParameters, sessionStatus, principal);
+
+        // Store the request info form in the cache
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
 
         boolean isResponseSet = false;
 
@@ -97,7 +113,7 @@ public class OauthController {
             if (responseParam != null && !responseParam.isEmpty() && !PojoUtil.isEmpty(responseParam.get(0))) {
                 isResponseSet = true;
                 if (Features.EVENTS.isActive()) {
-                    eventManager.createEvent(EventType.REAUTHORIZE, request);
+                    eventManager.createReauthorizeEvent(requestInfoForm.getClientId());
                 }
             }
         }
@@ -135,8 +151,9 @@ public class OauthController {
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.GET)
     public @ResponseBody RequestInfoForm requestInfoForm(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
-        RequestInfoForm requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
+        oauthHelper.setUserName(requestInfoForm);
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
         return setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
     }
 
@@ -144,29 +161,28 @@ public class OauthController {
     public @ResponseBody RequestInfoForm customRequestInfoForm(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
                                                          SessionStatus sessionStatus, Principal principal) throws UnsupportedEncodingException {
         RequestInfoForm requestInfoForm = new RequestInfoForm();
-
-        if(request.getSession() != null && request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM) != null) {
-            requestInfoForm = oauthHelper.setUserRequestInfoForm((RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM));
-                if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
-                    try {
-                        String url = URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
-                        if (url.startsWith("oauth=&")) {
-                            url = url.replaceFirst("oauth=&", "");
-                        }
-                        String[] pairs = url.split("&");
-                        for (int i = 0; i < pairs.length; i++) {
-                            String pair = pairs[i];
-                            String[] keyValue = pair.split("=");
-                            requestParameters.put(keyValue[0], keyValue[1]);
-                        }
-                        setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
-                    } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
-                        requestInfoForm.setError("oauth_error");
-                        requestInfoForm.setErrorDescription("Invalid request");
+        if(requestInfoFormLocalCache.containsKey(request.getSession().getId())) {
+            requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
+            oauthHelper.setUserName(requestInfoForm);
+            if (requestParameters.isEmpty() && request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING) != null) {
+                try {
+                    String url = URLDecoder.decode((String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING), "UTF-8").trim();
+                    if (url.startsWith("oauth=&")) {
+                        url = url.replaceFirst("oauth=&", "");
                     }
-                }                
+                    String[] pairs = url.split("&");
+                    for (int i = 0; i < pairs.length; i++) {
+                        String pair = pairs[i];
+                        String[] keyValue = pair.split("=");
+                        requestParameters.put(keyValue[0], keyValue[1]);
+                    }
+                    setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
+                } catch (NullPointerException | ArrayIndexOutOfBoundsException e) {
+                    requestInfoForm.setError("oauth_error");
+                    requestInfoForm.setErrorDescription("Invalid request");
+                }
+            }
         }
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
         return requestInfoForm;
     }
 
@@ -183,7 +199,6 @@ public class OauthController {
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;
         } catch (OauthInvalidRequestException e) {
-            requestInfoForm =  e.getRequestInfoForm();
             requestInfoForm.setError("oauth_error");
             requestInfoForm.setErrorDescription(e.getMessage());
             return requestInfoForm;
@@ -268,7 +283,7 @@ public class OauthController {
             String prompt = request.getParameter(OrcidOauth2Constants.PROMPT);
             String maxAge = request.getParameter(OrcidOauth2Constants.MAX_AGE);
             if (baseControllerUtil.getCurrentUser(sci) != null) {
-                String orcid = baseControllerUtil.getCurrentUser(sci).getOrcid();
+                String orcid = baseControllerUtil.getCurrentUser(sci).getUsername();
                 if (maxAge != null) {
                     //if maxAge+lastlogin > now, force login.  max_age is in seconds.
                     java.util.Date authTime = profileEntityManager.getLastLogin(orcid); //is also on the entity.
@@ -298,10 +313,10 @@ public class OauthController {
         }
 
         if (!forceConfirm && usePersistentTokens && baseControllerUtil.getCurrentUser(sci) != null) {
-            boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
+            boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), baseControllerUtil.getCurrentUser(sci).getUsername(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenLongLifeAlreadyExists) {                 
                 setAuthorizationRequest(request, model, requestParameters, sessionStatus, principal, requestInfoForm);
-                AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
+                AuthorizationRequest authorizationRequest = authorizationRequestLocalCache.get(request.getSession().getId());
                 if (authorizationRequest != null) {
                     Map<String, String> requestParams = new HashMap<String, String>();
                     copyRequestParameters(request, requestParams);
@@ -333,7 +348,7 @@ public class OauthController {
                     Map<String, Object> modelAuth = new HashMap<String, Object>();
                     modelAuth.put("authorizationRequest", authorizationRequest);
 
-                    Map<String, Object> originalRequest = (Map<String, Object>) request.getSession().getAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST);
+                    Map<String, Object> originalRequest = originalAuthorizationRequestLocalCache.get(request.getSession().getId());
                     if(originalRequest != null) {
                         modelAuth.put(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalRequest);
                     }
@@ -343,7 +358,7 @@ public class OauthController {
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, modelAuth, status, principal);
                     requestInfoForm.setRedirectUrl(view.getUrl());
                     // Oauth has been approved, hence, remove the oauth flag from the session
-                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, null);
+                    requestInfoFormLocalCache.remove(request.getSession().getId());
                     request.getSession().removeAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
                 }
             }
@@ -354,7 +369,9 @@ public class OauthController {
 
     private void populateSession(HttpServletRequest request, RequestInfoForm requestInfoForm) {
         String url = request.getQueryString();
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
+
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, url);
 
@@ -371,8 +388,8 @@ public class OauthController {
         
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
         ClientGrantedAuthorityEntity cgae = new ClientGrantedAuthorityEntity();
-        cgae.setClientDetailsEntity(clientDetails);
-        cgae.setAuthority(clientDetails.getClientGrantedAuthorities().isEmpty() ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
+        cgae.setClientId(clientDetails.getClientId());
+        cgae.setAuthority((clientDetails.getClientGrantedAuthorities().isEmpty()) ? "ROLE_CLIENT" : clientDetails.getClientGrantedAuthorities().get(0).getAuthority());
         authorizationRequestMap.put(OrcidOauth2Constants.AUTHORITIES, Set.of(cgae));        
         
         if(requestInfoForm.getStateParam() != null) {
@@ -396,13 +413,13 @@ public class OauthController {
         }
         
         Map<String, Object> originalAuthorizationRequest = Map.copyOf(authorizationRequestMap);
-        request.getSession().setAttribute(OrcidOauth2Constants.ORIGINAL_AUTHORIZATION_REQUEST, originalAuthorizationRequest);
+        originalAuthorizationRequestLocalCache.put(request.getSession().getId(), originalAuthorizationRequest);
     }
     
     private RequestInfoForm setAuthorizationRequest(HttpServletRequest request, Map<String, Object> model, @RequestParam Map<String, String> requestParameters,
             SessionStatus sessionStatus, Principal principal, RequestInfoForm requestInfoForm) {
         SecurityContext sci = getSecurityContext(request);
-        request.getSession().setAttribute("authorizationRequest", null);
+        authorizationRequestLocalCache.remove(request.getSession().getId());
         if (baseControllerUtil.getCurrentUser(sci) != null) {
             // Authorize the request
             try {
@@ -416,9 +433,12 @@ public class OauthController {
                         requestInfoForm.setErrorDescription(url.substring(url.indexOf("error_description=") + errorDescription.length()));
                     }   
                 }
-                
-                AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
-                request.getSession().setAttribute("authorizationRequest", authRequest);
+
+                // If there are not errors, store the authorizationRequest in the local cache
+                if(StringUtils.isEmpty(requestInfoForm.getError())) {
+                    AuthorizationRequest authRequest = (AuthorizationRequest) mav.getModel().get("authorizationRequest");
+                    authorizationRequestLocalCache.put(request.getSession().getId(), authRequest);
+                }
             } catch (RedirectMismatchException e ) {
                 requestInfoForm.setError("invalid_grant");
                 requestInfoForm.setErrorDescription("Redirect URI doesn't match your registered redirect URIs.");

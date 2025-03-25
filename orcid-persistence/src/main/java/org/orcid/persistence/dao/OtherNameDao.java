@@ -3,6 +3,7 @@ package org.orcid.persistence.dao;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
@@ -81,4 +82,6 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
     List<BigInteger> getIdsForUserOBORecords(int max);
 
     List<BigInteger> getIdsOfOtherNamesReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
+
+    boolean updateVisibility(String orcid, Visibility visibility);
 }

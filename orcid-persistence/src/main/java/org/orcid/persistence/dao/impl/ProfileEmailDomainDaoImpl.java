@@ -28,6 +28,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
         e.setEmailDomain(emailDomain);
         e.setOrcid(orcid);
         e.setVisibility(visibility);
+        e.setGeneratedByScript(false);
         entityManager.persist(e);
         return e;
     }
@@ -40,6 +41,17 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
 
         Query query = entityManager.createNativeQuery(deleteEmail);
         query.setParameter("emailDomain", emailDomain);
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void removeAllEmailDomains(String orcid) {
+        String deleteEmail = "delete from profile_email_domain where orcid = :orcid";
+
+        Query query = entityManager.createNativeQuery(deleteEmail);
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -85,5 +97,16 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
             throw e;
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid) {
+        Query query = entityManager.createNativeQuery("UPDATE profile_email_domain SET orcid=:primaryOrcid, last_modified = now() WHERE orcid = :deprecatedOrcid and email_domain = :emailDomain");
+        query.setParameter("primaryOrcid", primaryOrcid);
+        query.setParameter("emailDomain", emailDomain);
+        query.setParameter("deprecatedOrcid", deprecatedOrcid);
+        query.executeUpdate();
     }
 }

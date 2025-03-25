@@ -73,7 +73,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import static org.orcid.core.constants.EmailConstants.VERIFICATION_DATE_CUTOFF;
 
 public class SummaryManagerImpl implements SummaryManager {
     @Resource(name = "recordNameManagerReadOnlyV3")
@@ -284,7 +283,7 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (EmailDomain ed : recordSummary.getEmailDomains().getEmailDomains()) {
                     EmailDomainSummary eds = new EmailDomainSummary();
                     eds.setValue(ed.getValue());
-                    if (ed.getVerificationDate() != null && ed.getVerificationDate().after(VERIFICATION_DATE_CUTOFF)) {
+                    if (ed.getVerificationDate() != null && ed.getVerificationDate().getValue() != null) {
                         eds.setVerificationDate(ed.getVerificationDate().toString());
                     }
                     emailDomains.add(eds);
@@ -525,9 +524,13 @@ public class SummaryManagerImpl implements SummaryManager {
                 for (ProfileEmailDomainEntity ped : emailDomains) {
                     ed = new EmailDomain();
                     ed.setValue(ped.getEmailDomain());
-                    VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
-                    if (verificationDate.after(VERIFICATION_DATE_CUTOFF)) {
-                        ed.setVerificationDate(verificationDate);
+                    if (!ped.getGeneratedByScript()) {
+                        //TODO: There is a bug where the date_created is null for some records, so, we need to add this one meanwhile we fix this card https://trello.com/c/qh1uioKO/9557-qa-verified-date-not-displayed-for-new-email-domains
+                        //Remove this if statement once that card get to PROD
+                        if(ped.getDateCreated() != null) {
+                            VerificationDate verificationDate = new VerificationDate(DateUtils.convertToXMLGregorianCalendar(ped.getDateCreated()));
+                            ed.setVerificationDate(verificationDate);
+                        }
                     }
                     edList.add(ed);
                 }

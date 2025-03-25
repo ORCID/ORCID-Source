@@ -4,7 +4,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import org.orcid.core.common.manager.EmailDomainManager;
+import org.orcid.core.utils.SourceEntityUtils;
+import org.orcid.core.utils.emailDomain.EmailDomainValidator;
+import org.orcid.jaxb.model.common_v2.Source;
+import org.orcid.jaxb.model.record_v2.Email;
+import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
@@ -20,6 +26,9 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
     @Resource(name = "emailDomainDaoReadOnly")
     private EmailDomainDao emailDomainDaoReadOnly;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     private void validateEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
@@ -48,11 +57,24 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     }
 
     @Override
-    public EmailDomainEntity findByEmailDomain(String emailDomain) {
+    public List<EmailDomainEntity>  findByEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
         }
-        return emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
+
+        // Fetch entries for the current email domain
+        List<EmailDomainEntity> results = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
+
+        // If no results and domain contains a dot, strip the first subdomain and recurse
+        if (results.isEmpty() && emailDomain.contains(".")) {
+            String strippedDomain = emailDomain.substring(emailDomain.indexOf(".") + 1);
+            if(EmailDomainValidator.getInstance().isValidEmailDomain(strippedDomain)) {
+                return findByEmailDomain(strippedDomain); // Recursive call with stripped domain
+            }
+        }
+
+        // Return the results (either found or empty if no more subdomains)
+        return results;
     }
 
     @Override
@@ -65,12 +87,14 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
     @Override
     public STATUS createOrUpdateEmailDomain(String emailDomain, String rorId) {
-        EmailDomainEntity existingEntity = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
-        if(existingEntity != null) {
-            if(!rorId.equals(existingEntity.getRorId())) {
-                boolean updated = emailDomainDao.updateRorId(existingEntity.getId(), rorId);
-                if(updated)
-                    return STATUS.UPDATED;
+        List<EmailDomainEntity>  existingEntities = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
+        if(existingEntities != null && !existingEntities.isEmpty()) {
+            if(existingEntities.size() == 1) {
+                if(!rorId.equals(existingEntities.get(0).getRorId())) {
+                    boolean updated = emailDomainDao.updateRorId(existingEntities.get(0).getId(), rorId);
+                    if(updated)
+                        return STATUS.UPDATED;
+                }
             }
         } else {
             EmailDomainEntity newEntity = emailDomainDao.createEmailDomain(emailDomain, DomainCategory.PROFESSIONAL, rorId);
@@ -80,5 +104,4 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
         }
         return null;
     }
-
 }

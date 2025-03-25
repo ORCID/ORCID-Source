@@ -11,7 +11,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
-import org.orcid.frontend.spring.OrcidWebAuthenticationDetails;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -139,7 +139,7 @@ public class OauthControllerBase extends BaseController {
      ****************************/
     protected Authentication authenticateUser(HttpServletRequest request, String email, String password) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
-        token.setDetails(new OrcidWebAuthenticationDetails(request));
+        token.setDetails(new MFAWebAuthenticationDetails(request));
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;

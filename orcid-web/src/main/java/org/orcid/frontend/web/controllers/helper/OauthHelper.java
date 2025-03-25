@@ -14,7 +14,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.RegistrationController;
 import org.orcid.frontend.web.exception.OauthInvalidRequestException;
@@ -30,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +38,6 @@ public class OauthHelper {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthHelper.class);   
     public static final String PUBLIC_MEMBER_NAME = "PubApp";
-    public static final String REQUEST_INFO_FORM = "requestInfoForm";
     
     private final Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private final Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
@@ -116,7 +115,7 @@ public class OauthHelper {
                 infoForm.setClientEmailRequestReason(clientEmailRequestReason);
                 infoForm.setMemberName(memberName);
             } else {
-                throw new OauthInvalidRequestException("Please specify a client id", infoForm);
+                throw new OauthInvalidRequestException("Please specify a client id");
             }
 
             Matcher orcidMatcher = orcidPattern.matcher(requestUrl);
@@ -158,7 +157,7 @@ public class OauthHelper {
                 // Replace any number of spaces or a plus (+) sign with a single space
                 scopesString = scopesString.replaceAll("( |\\+)+", " ");
                 if(scopesString == null || scopesString.isBlank()) {
-                    throw new OauthInvalidRequestException("Please specify the desired scopes", infoForm);
+                    throw new OauthInvalidRequestException("Please specify the desired scopes");
                 }
                 for (ScopePathType theScope : ScopePathType.getScopesFromSpaceSeparatedString(scopesString)) {
                     ScopeInfoForm scopeInfoForm = new ScopeInfoForm();
@@ -173,7 +172,7 @@ public class OauthHelper {
                     infoForm.getScopes().add(scopeInfoForm);
                 }
             } else {
-                throw new OauthInvalidRequestException("Please specify the desired scopes", infoForm);
+                throw new OauthInvalidRequestException("Please specify the desired scopes");
             }
 
             Matcher redirectUriMatcher = redirectUriPattern.matcher(requestUrl);
@@ -181,10 +180,10 @@ public class OauthHelper {
                 try {
                     infoForm.setRedirectUrl(OrcidStringUtils.stripHtml(URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim()));
                 } catch (UnsupportedEncodingException e) {
-                    throw new OauthInvalidRequestException("Invalid redirect URL", infoForm);
+                    throw new OauthInvalidRequestException("Invalid redirect URL");
                 }
             } else {
-                throw new OauthInvalidRequestException("Please specify a redirect URL", infoForm);
+                throw new OauthInvalidRequestException("Please specify a redirect URL");
             }
 
             Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
@@ -201,10 +200,10 @@ public class OauthHelper {
                 try {
                     infoForm.setResponseType(OrcidStringUtils.stripHtml(URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim()));
                 } catch (UnsupportedEncodingException e) {
-                    throw new OauthInvalidRequestException("Invalid response type", infoForm);
+                    throw new OauthInvalidRequestException("Invalid response type");
                 }
             } else {
-                throw new OauthInvalidRequestException("Please specify a response type", infoForm);
+                throw new OauthInvalidRequestException("Please specify a response type");
             }
 
             Matcher givenNamesMatcher = RegistrationController.givenNamesPattern.matcher(requestUrl);
@@ -239,7 +238,7 @@ public class OauthHelper {
         return infoForm;
     }
 
-    public RequestInfoForm setUserRequestInfoForm(RequestInfoForm requestInfoForm) throws UnsupportedEncodingException {
+    public void setUserName(RequestInfoForm requestInfoForm) throws UnsupportedEncodingException {
         String loggedUserOrcid = getEffectiveUserOrcid();
         if (!PojoUtil.isEmpty(loggedUserOrcid)) {
             requestInfoForm.setUserOrcid(loggedUserOrcid);
@@ -248,15 +247,14 @@ public class OauthHelper {
                 requestInfoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());
             }
         }
-        return requestInfoForm;
     }
 
     private String getEffectiveUserOrcid() {
-        OrcidProfileUserDetails currentUser = baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
+        UserDetails currentUser = baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
         if (currentUser == null) {
             return null;
         }
-        return currentUser.getOrcid();
+        return currentUser.getUsername();
     }
     
     public String getMessage(String messageCode, Object... messageParams) {

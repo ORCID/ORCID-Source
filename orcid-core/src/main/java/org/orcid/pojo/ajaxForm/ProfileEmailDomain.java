@@ -15,12 +15,15 @@ public class ProfileEmailDomain {
 
     private Date lastModified;
 
+    private Boolean generatedByScript;
+
     public static ProfileEmailDomain valueOf(ProfileEmailDomainEntity ed) {
         ProfileEmailDomain emailDomain = new ProfileEmailDomain();
 
         if (ed != null) {
             emailDomain.setValue(ed.getEmailDomain());
             emailDomain.setVisibility(ed.getVisibility());
+            emailDomain.setGeneratedByScript(ed.getGeneratedByScript());
 
             if (ed.getDateCreated() != null) {
                 Date createdDate = new Date();
@@ -77,4 +80,8 @@ public class ProfileEmailDomain {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+
+    public Boolean getGeneratedByScript() { return generatedByScript; }
+
+    public void setGeneratedByScript(Boolean generatedByScript) { this.generatedByScript = generatedByScript; }
 }

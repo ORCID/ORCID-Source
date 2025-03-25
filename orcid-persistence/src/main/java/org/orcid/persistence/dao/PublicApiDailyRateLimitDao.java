@@ -11,5 +11,6 @@ public interface PublicApiDailyRateLimitDao extends GenericDao<PublicApiDailyRat
     int countClientRequestsWithLimitExceeded(LocalDate requestDate, int limit);
     int countAnonymousRequestsWithLimitExceeded(LocalDate requestDate, int limit);
     boolean updatePublicApiDailyRateLimit(PublicApiDailyRateLimitEntity papiRateLimitingEntity, boolean isClient);
+    int cleanup(int daysToKeep);
 
 }

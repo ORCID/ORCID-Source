@@ -16,10 +16,6 @@ public class EmailConstants {
      */
     public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
 
-    public static final String ORCID_EMAIL_VALIDATOR_CLIENT_NAME = "ORCID email validation";
-
-    public static final String ORCID_EMAIL_VALIDATOR_CLIENT_ID = "0000-0000-0000-0000";
-    
     public static final int MAX_EMAIL_COUNT = 30;
     
     public static final String LAST_RESORT_ORCID_USER_EMAIL_NAME = "ORCID Registry User";
@@ -27,8 +23,6 @@ public class EmailConstants {
     public static final String DO_NOT_REPLY_NOTIFY_ORCID_ORG = "ORCID - Do not reply <DoNotReply@notify.orcid.org>";
     
     public static final String DO_NOT_REPLY_VERIFY_ORCID_ORG = "ORCID - Do not reply <DoNotReply@verify.orcid.org>";
-
-    public static final VerificationDate VERIFICATION_DATE_CUTOFF;
 
     static {
         XMLGregorianCalendar gregorianCutoffDate = null;
@@ -46,6 +40,5 @@ public class EmailConstants {
             throw new RuntimeException("Error initializing XMLGregorianCalendar", e);
         }
 
-        VERIFICATION_DATE_CUTOFF = verificationDate;
     }
 }

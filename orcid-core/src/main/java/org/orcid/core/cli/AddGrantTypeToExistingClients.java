@@ -11,6 +11,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientAuthorisedGrantTypePk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -49,11 +50,6 @@ public class AddGrantTypeToExistingClients {
             addGrantTypeToExistingClients.validateParameters(parser);
             addGrantTypeToExistingClients.init();
             addGrantTypeToExistingClients.process();
-            System.out.println();
-            System.out.println();
-            System.out.println(addGrantTypeToExistingClients.getClientsUpdated() + " clients were updated");
-            System.out.println();
-            System.out.println();
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
@@ -110,14 +106,11 @@ public class AddGrantTypeToExistingClients {
             if (!alreadyHaveGrantType) {
                 ClientAuthorisedGrantTypeEntity newGrantType = new ClientAuthorisedGrantTypeEntity();
                 newGrantType.setGrantType(grantType);
-                newGrantType.setClientDetailsEntity(clientDetails);
+                newGrantType.setClientId(clientDetails.getClientId());
                 clientDetails.getClientAuthorizedGrantTypes().add(newGrantType);
                 
                 clientDetailsManager.merge(clientDetails);
                 clientsUpdated += 1;
-                System.out.println("Client " + clientDetails.getId() + " has been updated");                
-            } else {
-                System.out.println("Client " + clientDetails.getId() + " already have the " + grantType + " scope");
             }
         }                
     }        

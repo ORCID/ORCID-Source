@@ -90,10 +90,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 @Component
-public class PublicV3ApiServiceDelegatorImpl
-        implements PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> {
+public class PublicV3ApiServiceDelegatorImpl implements
+        PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> {
 
     // Activities managers
     @Resource(name = "workManagerReadOnlyV3")
@@ -167,7 +168,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Resource(name = "orcidSearchManagerV3")
     private OrcidSearchManager orcidSearchManager;
-    
+
     @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
@@ -182,10 +183,10 @@ public class PublicV3ApiServiceDelegatorImpl
 
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
-    
+
     @Resource
     private StatusManager statusManager;
-    
+
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
@@ -210,7 +211,7 @@ public class PublicV3ApiServiceDelegatorImpl
     public void setFilterVersionOfIdentifiers(Boolean filterVersionOfIdentifiers) {
         this.filterVersionOfIdentifiers = filterVersionOfIdentifiers;
     }
-    
+
     @Override
     public Response viewStatusSimple() {
         Map<String, Boolean> statusMap = statusManager.createStatusMapSimple();
@@ -251,7 +252,7 @@ public class PublicV3ApiServiceDelegatorImpl
         checkProfileStatus(orcid);
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(w);
-        contributorUtilsReadOnly.filterContributorPrivateData(w);        
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtilsReadOnly.setSourceName(w);
@@ -263,13 +264,13 @@ public class PublicV3ApiServiceDelegatorImpl
         checkProfileStatus(orcid);
         List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         // Should we filter the version-of identifiers before grouping?
-        if(filterVersionOfIdentifiers) {
-            for(WorkSummary w : works) {
-                if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+        if (filterVersionOfIdentifiers) {
+            for (WorkSummary w : works) {
+                if (w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
                     Iterator<ExternalID> it = w.getExternalIdentifiers().getExternalIdentifier().iterator();
-                    while(it.hasNext()) {
+                    while (it.hasNext()) {
                         ExternalID extId = it.next();
-                        if(Relationship.VERSION_OF.equals(extId.getRelationship())) {
+                        if (Relationship.VERSION_OF.equals(extId.getRelationship())) {
                             it.remove();
                         }
                     }
@@ -366,7 +367,7 @@ public class PublicV3ApiServiceDelegatorImpl
                 publicEducations.add(summary);
             }
         }
-        
+
         Educations groupedEducations = new Educations(affiliationsManagerReadOnly.groupAffiliations(publicEducations, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedEducations);
         ActivityUtils.setPathToAffiliations(groupedEducations, orcid);
@@ -398,7 +399,7 @@ public class PublicV3ApiServiceDelegatorImpl
     public Response viewEmployments(String orcid) {
         checkProfileStatus(orcid);
         List<EmploymentSummary> employments = affiliationsManagerReadOnly.getEmploymentSummaryList(orcid);
-        List<EmploymentSummary>  publicEmployments = new ArrayList<>();
+        List<EmploymentSummary> publicEmployments = new ArrayList<>();
         for (EmploymentSummary summary : employments) {
             if (Visibility.PUBLIC.equals(summary.getVisibility())) {
                 ActivityUtils.setPathToActivity(summary, orcid);
@@ -494,7 +495,6 @@ public class PublicV3ApiServiceDelegatorImpl
     public Response viewEmails(String orcid) {
         checkProfileStatus(orcid);
         Emails emails = emailManagerReadOnly.getPublicEmails(orcid);
-        processProfessionalEmails(emails);
         publicAPISecurityManagerV3.filter(emails);
         ElementUtils.setPathToEmail(emails, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(emails);
@@ -641,14 +641,14 @@ public class PublicV3ApiServiceDelegatorImpl
         Search search = orcidSearchManager.findOrcidIds(solrParams);
         return Response.ok(search).build();
     }
-    
+
     @Override
     public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
         validateSearchParams(solrParams);
         String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
         return Response.ok(search).build();
     }
-    
+
     @Override
     public Response expandedSearchByQuery(Map<String, List<String>> solrParams) {
         validateSearchParams(solrParams);
@@ -664,7 +664,7 @@ public class PublicV3ApiServiceDelegatorImpl
         }
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV3.filter(workBulk);
-        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
+        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
@@ -678,7 +678,7 @@ public class PublicV3ApiServiceDelegatorImpl
 
     private void validateStart(Map<String, List<String>> queryMap) {
         String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        if (clientId == null) { 
+        if (clientId == null) {
             // only validate start param where no client credentials
             List<String> startList = queryMap.get("start");
             if (startList != null && !startList.isEmpty()) {
@@ -713,19 +713,6 @@ public class PublicV3ApiServiceDelegatorImpl
         } else {
             // Set the default number of results
             queryMap.put("rows", Arrays.asList(String.valueOf(OrcidSearchManager.DEFAULT_SEARCH_ROWS)));
-        }
-    }
-
-    private void processProfessionalEmails(Emails emails) {
-        for (Email email : emails.getEmails()) {
-            if (email.isVerified()) {
-                String domain = email.getEmail().split("@")[1];
-                EmailDomainEntity domainInfo = emailDomainManager.findByEmailDomain(domain);
-                // Set appropriate source name and source id for professional emails
-                if (domainInfo != null && domainInfo.getCategory().equals(EmailDomainEntity.DomainCategory.PROFESSIONAL)) {
-                    email.setSource(sourceEntityUtils.convertEmailSourceToOrcidValidator(email.getSource()));
-                }
-            }
         }
     }
 
@@ -786,13 +773,13 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewInvitedPositions(String orcid) {
         List<InvitedPositionSummary> invitedPositions = affiliationsManagerReadOnly.getInvitedPositionSummaryList(orcid);
-        List<InvitedPositionSummary>  publicInvitedPositions = new ArrayList<>();
+        List<InvitedPositionSummary> publicInvitedPositions = new ArrayList<>();
         for (InvitedPositionSummary summary : invitedPositions) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                        sourceUtilsReadOnly.setSourceName(summary);
-                        publicInvitedPositions.add(summary);
-                }
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtilsReadOnly.setSourceName(summary);
+                publicInvitedPositions.add(summary);
+            }
         }
         ActivityUtils.cleanOrganizationEmptyFields(publicInvitedPositions);
         InvitedPositions groupedInvitedPositions = new InvitedPositions(affiliationsManagerReadOnly.groupAffiliations(publicInvitedPositions, true));
@@ -826,13 +813,13 @@ public class PublicV3ApiServiceDelegatorImpl
         List<MembershipSummary> memberships = affiliationsManagerReadOnly.getMembershipSummaryList(orcid);
         List<MembershipSummary> publicMemberships = new ArrayList<>();
         for (MembershipSummary summary : memberships) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                        sourceUtilsReadOnly.setSourceName(summary);
-                        publicMemberships.add(summary);
-                }
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtilsReadOnly.setSourceName(summary);
+                publicMemberships.add(summary);
+            }
         }
-        
+
         ActivityUtils.cleanOrganizationEmptyFields(publicMemberships);
         Memberships groupedMemberships = new Memberships(affiliationsManagerReadOnly.groupAffiliations(publicMemberships, true));
         Api3_0LastModifiedDatesHelper.calculateLastModified(groupedMemberships);
@@ -863,13 +850,13 @@ public class PublicV3ApiServiceDelegatorImpl
     @Override
     public Response viewQualifications(String orcid) {
         List<QualificationSummary> qualifications = affiliationsManagerReadOnly.getQualificationSummaryList(orcid);
-        List<QualificationSummary>  publicQualifications = new ArrayList<>();
+        List<QualificationSummary> publicQualifications = new ArrayList<>();
         for (QualificationSummary summary : qualifications) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                        sourceUtilsReadOnly.setSourceName(summary);
-                        publicQualifications.add(summary);
-                }
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtilsReadOnly.setSourceName(summary);
+                publicQualifications.add(summary);
+            }
         }
         ActivityUtils.cleanOrganizationEmptyFields(publicQualifications);
         Qualifications groupedQualifications = new Qualifications(affiliationsManagerReadOnly.groupAffiliations(publicQualifications, true));
@@ -903,11 +890,11 @@ public class PublicV3ApiServiceDelegatorImpl
         List<ServiceSummary> services = affiliationsManagerReadOnly.getServiceSummaryList(orcid);
         List<ServiceSummary> publicServices = new ArrayList<>();
         for (ServiceSummary summary : services) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        ActivityUtils.setPathToActivity(summary, orcid);
-                        sourceUtilsReadOnly.setSourceName(summary);
-                        publicServices.add(summary);
-                }
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtilsReadOnly.setSourceName(summary);
+                publicServices.add(summary);
+            }
         }
         ActivityUtils.cleanOrganizationEmptyFields(publicServices);
         Services groupedServices = new Services(affiliationsManagerReadOnly.groupAffiliations(publicServices, true));
@@ -925,9 +912,9 @@ public class PublicV3ApiServiceDelegatorImpl
         sourceUtilsReadOnly.setSourceName(s);
         return Response.ok(s).build();
     }
-    
+
     private void checkProfileStatus(String orcid) {
-        orcidSecurityManager.checkProfile(orcid);        
+        orcidSecurityManager.checkProfile(orcid);
     }
 
     @Override
@@ -944,9 +931,9 @@ public class PublicV3ApiServiceDelegatorImpl
         List<ResearchResourceSummary> researchResources = researchResourceManagerReadOnly.getResearchResourceSummaryList(orcid);
         List<ResearchResourceSummary> publicResearchResources = new ArrayList<>();
         for (ResearchResourceSummary summary : researchResources) {
-                if (Visibility.PUBLIC.equals(summary.getVisibility())) {
-                        publicResearchResources.add(summary);
-                }
+            if (Visibility.PUBLIC.equals(summary.getVisibility())) {
+                publicResearchResources.add(summary);
+            }
         }
         ResearchResources rr = researchResourceManagerReadOnly.groupResearchResources(publicResearchResources, true);
         Api3_0LastModifiedDatesHelper.calculateLastModified(rr);

@@ -23,7 +23,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -43,6 +43,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
@@ -134,7 +135,7 @@ public class MembersManagerImpl implements MembersManager {
                 // Set authority
                 OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
                 authority.setOrcid(orcid);
-                authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+                authority.setAuthority(OrcidRoles.ROLE_GROUP.getAuthority());
                 Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
                 authorities.add(authority);
                 newRecord.setAuthorities(authorities);
@@ -337,7 +338,7 @@ public class MembersManagerImpl implements MembersManager {
             // Insert the new scopes
             for (String newScope : newSetOfScopes) {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-                clientScopeEntity.setClientDetailsEntity(client);
+                clientScopeEntity.setClientId(client.getClientId());
                 clientScopeEntity.setScopeType(newScope);
                 clientScopeDao.persist(clientScopeEntity);
             }
