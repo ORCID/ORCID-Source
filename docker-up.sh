@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
+set -e
 
-docker compose --profile db up -d
+mkdir -p /opt/docker/logs/reg-ui
 
-sleep 20
+docker compose --profile db up -d --remove-orphans
 
-docker compose --profile dev up -d
+echo "sleeping 5s"
+sleep 5
+
+docker compose --profile dev up -d --remove-orphans

@@ -50,7 +50,7 @@ services:
       - orcid-haprouter/default.env
       - orcid-haprouter/deployment.env
     ports:
-      - 0.0.0.0:8888:1936 # stats
+      - 0.0.0.0:678:1936 # stats
       - 0.0.0.0:7983:7983 # solr read
       - 0.0.0.0:6983:6983 # solr write
       - 0.0.0.0:7432:7432 # postgres read
@@ -67,7 +67,7 @@ services:
       context: .
       dockerfile: orcid-lb/Dockerfile
     ports:
-      - 0.0.0.0:9999:1936 # stats
+      - 0.0.0.0:891:1936 # stats
       - 0.0.0.0:80:80
       - 0.0.0.0:443:443
     networks:
@@ -75,7 +75,7 @@ services:
     profiles:
       - dev
 
-  frontend:
+  ui_frontend:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
     build:
       context: .
@@ -88,7 +88,7 @@ services:
     networks:
       app:
 
-  web_proxy:
+  ui_proxy:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
     build:
       context: .
@@ -106,7 +106,7 @@ services:
       - dev
       - ui
 
-  web:
+  ui:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web:${TAG:-0.0.1}
     build:
       cache_from:
@@ -128,6 +128,8 @@ services:
       - 0.0.0.0:13100:8080
     networks:
       app:
+    volumes:
+      - /opt/docker/logs/reg-ui:/usr/local/tomcat/logs
     profiles:
       - dev
       - ui

@@ -182,3 +182,32 @@ org.orcid.core.utils.cache.redis.summary.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_R
 
 # Maintenance message
 org.orcid.frontend.web.maintenanceHeaderUrl={{ ORG_ORCID_FRONTEND_WEB_MAINTENANCE_HEADER_URL }}
+
+#Enable panoply deleted items tracking
+org.orcid.persistence.panoply.cleanup.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_CLEANUP_PROD_ONLY }}
+# Panoply redshift database
+org.orcid.core.utils.panoply.driver={{ ORG_ORCID_CORE_UTILS_PANOPLY_DRIVER }}
+org.orcid.core.utils.panoply.maxPoolSize={{ ORG_ORCID_CORE_UTILS_PANOPLY_MAX_POOL_SIZE }}
+org.orcid.core.utils.panoply.password={{ ORG_ORCID_CORE_UTILS_PANOPLY_PASSWORD }}
+org.orcid.core.utils.panoply.idleConnectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_IDLE_CONN_TIMEOUT }}
+org.orcid.core.utils.panoply.connectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_CONN_TIMEOUT }}
+#jdbc:redshift://<host>:<port>/<database>
+org.orcid.core.utils.panoply.jdbcUrl={{ ORG_ORCID_CORE_UTILS_PANOPLY_JDBC_URL }}
+org.orcid.core.utils.panoply.username={{ ORG_ORCID_CORE_UTILS_PANOPLY_USERNAME }}
+
+#Enable papi rate exceeded tracking in panoply
+org.orcid.persistence.panoply.papiExceededRate.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_PAPI_EXCEEDED_RATE_PROD_ONLY }}
+
+# Papi limits
+org.orcid.papi.rate.limit.anonymous.requests={{ ORG_ORCID_PAPI_LIMIT_ANONYMOUS_REQUESTS }}
+org.orcid.papi.rate.limit.known.requests={{ ORG_ORCID_PAPI_LIMIT_KNOWN_REQUESTS }}
+org.orcid.papi.rate.limit.enabled={{ ORG_ORCID_PAPI_LIMIT_ENABLED }}
+
+# CSRF Cookie settings
+org.orcid.core.csrf.domain={{ ORG_ORCID_CORE_CSRF_DOMAIN }}
+
+# Redis papi limits
+org.orcid.core.utils.cache.papi.redis.host={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_HOST }}
+org.orcid.core.utils.cache.papi.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_PORT }}
+org.orcid.core.utils.cache.papi.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_PASSWORD }}
+org.orcid.core.utils.cache.papi.redis.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_ENABLED }}
