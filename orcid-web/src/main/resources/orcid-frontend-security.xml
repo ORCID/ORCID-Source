@@ -426,10 +426,6 @@
 		<!-- Require ROLE_USER for all other methods -->
 		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
 		
-
-		<!-- Require ROLE_USER for all other methods -->
-		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
-		
 		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 						login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 						authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
