@@ -135,6 +135,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private SlackManager slackManager;
+    
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
 
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -222,7 +225,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/revokeOwnPermission.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeOwnDelegate(@RequestBody ManageDelegate manageDelegate) {
         givenPermissionToManager.remove(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
-        //add notifications, send email to giver account
+        notificationManager.sendRevokeNotificationToUserGrantingPermission(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
         return manageDelegate;
     }
 
