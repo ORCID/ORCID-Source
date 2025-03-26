@@ -1,3 +1,72 @@
+## v2.76.1 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.0...v2.76.1)
+
+- [#7261](https://github.com/ORCID/ORCID-Source/pull/7261): 404-redirects
+
+## v2.76.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.75.0...v2.76.0)
+
+## v2.75.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.74.0...v2.75.0)
+
+## v2.74.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.7...v2.74.0)
+
+- [#7149](https://github.com/ORCID/ORCID-Source/pull/7149): feat/ui-docker-container-builds
+
+### Fix
+
+- move haproxy stats ports back onto nonroot range internally
+- match proxying to new docker compose names
+- move to new haproxy stats port below 1024
+
+### Feature
+
+- unique log location for each tomcat
+- add haproxy router for database connections and use static ips and host file records to not require docker dns
+
+## v2.73.7 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.6...v2.73.7)
+
+- [#7259](https://github.com/ORCID/ORCID-Source/pull/7259): 404-redirects
+
+## v2.73.6 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.5...v2.73.6)
+
+### Fix
+
+- Add missing test case (#7255)
+
+## v2.73.5 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.4...v2.73.5)
+
+## v2.73.4 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.3...v2.73.4)
+
+### Feature
+
+- Add new endpoint `update deprecation` (#7243)
+
+## v2.73.3 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.2...v2.73.3)
+
+## v2.73.2 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.1...v2.73.2)
+
+## v2.73.1 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.0...v2.73.1)
+
 ## v2.73.0 - 2025-03-19
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.20...v2.73.0)

@@ -546,11 +546,13 @@
     
     <bean id="peerReviewManagerV3" class="org.orcid.core.manager.v3.impl.PeerReviewManagerImpl">
         <property name="peerReviewDao" ref="peerReviewDao" />
+        <property name="groupIdRecordDao" ref="groupIdRecordDaoReadOnly" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
     <bean id="peerReviewManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.PeerReviewManagerReadOnlyImpl">
         <property name="peerReviewDao" ref="peerReviewDaoReadOnly" />
+        <property name="groupIdRecordDao" ref="groupIdRecordDaoReadOnly" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     

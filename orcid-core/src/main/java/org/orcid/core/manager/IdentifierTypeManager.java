@@ -16,7 +16,7 @@ public interface IdentifierTypeManager {
 
 	Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName(Locale loc);
 	
-        List<IdentifierType> queryByPrefix(String query, Locale loc);
+	List<IdentifierType> queryByPrefix(String query, Locale loc);
 
-        List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc);
+	List<IdentifierType> fetchDefaultIdentifierTypes(Locale loc);
 }

@@ -124,6 +124,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private SlackManager slackManager;
+    
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
 
     @Resource(name = "profileInterstitialFlagManagerReadOnly")
     private ProfileInterstitialFlagManagerReadOnly profileInterstitialFlagManagerReadOnly;
@@ -211,6 +214,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         givenPermissionToManager.remove(getCurrentUserOrcid(), manageDelegate.getDelegateToManage());
+        return manageDelegate;
+    }
+    
+    @RequestMapping(value = "/revokeOwnPermission.json", method = RequestMethod.POST)
+    public @ResponseBody ManageDelegate revokeOwnDelegate(@RequestBody ManageDelegate manageDelegate) {
+        givenPermissionToManager.remove(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
+        notificationManager.sendRevokeNotificationToUserGrantingPermission(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
         return manageDelegate;
     }
 

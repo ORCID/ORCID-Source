@@ -418,11 +418,14 @@
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/2FA/authenticationCode.json(\?.*)?"
 			access="ROLE_USER" />
-		<sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
+    <sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
 			access="ROLE_USER" />
-
-		<sec:intercept-url pattern="/.*" access="ROLE_USER"/>
-
+			
+		<!-- Allow GET requests (no authentication needed) -->
+		<sec:intercept-url pattern="/.*" method="GET" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<!-- Require ROLE_USER for all other methods -->
+		<sec:intercept-url pattern="/.*" access="ROLE_USER" />
+		
 		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 						login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 						authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
