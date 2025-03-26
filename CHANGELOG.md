@@ -1,3 +1,294 @@
+## v2.76.1 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.0...v2.76.1)
+
+- [#7261](https://github.com/ORCID/ORCID-Source/pull/7261): 404-redirects
+
+## v2.76.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.75.0...v2.76.0)
+
+## v2.75.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.74.0...v2.75.0)
+
+## v2.74.0 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.7...v2.74.0)
+
+- [#7149](https://github.com/ORCID/ORCID-Source/pull/7149): feat/ui-docker-container-builds
+
+### Fix
+
+- move haproxy stats ports back onto nonroot range internally
+- match proxying to new docker compose names
+- move to new haproxy stats port below 1024
+
+### Feature
+
+- unique log location for each tomcat
+- add haproxy router for database connections and use static ips and host file records to not require docker dns
+
+## v2.73.7 - 2025-03-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.6...v2.73.7)
+
+- [#7259](https://github.com/ORCID/ORCID-Source/pull/7259): 404-redirects
+
+## v2.73.6 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.5...v2.73.6)
+
+### Fix
+
+- Add missing test case (#7255)
+
+## v2.73.5 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.4...v2.73.5)
+
+## v2.73.4 - 2025-03-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.3...v2.73.4)
+
+### Feature
+
+- Add new endpoint `update deprecation` (#7243)
+
+## v2.73.3 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.2...v2.73.3)
+
+## v2.73.2 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.1...v2.73.2)
+
+## v2.73.1 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.73.0...v2.73.1)
+
+## v2.73.0 - 2025-03-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.20...v2.73.0)
+
+## v2.72.20 - 2025-03-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.19...v2.72.20)
+
+## v2.72.19 - 2025-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.18...v2.72.19)
+
+## v2.72.18 - 2025-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.17...v2.72.18)
+
+## v2.72.17 - 2025-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.16...v2.72.17)
+
+## v2.72.16 - 2025-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.15...v2.72.16)
+
+## v2.72.15 - 2025-03-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.14...v2.72.15)
+
+## v2.72.14 - 2025-03-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.13...v2.72.14)
+
+## v2.72.13 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.12...v2.72.13)
+
+## v2.72.12 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.11...v2.72.12)
+
+## v2.72.11 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.10...v2.72.11)
+
+## v2.72.10 - 2025-03-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.9...v2.72.10)
+
+## v2.72.9 - 2025-03-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.8...v2.72.9)
+
+## v2.72.8 - 2025-03-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.7...v2.72.8)
+
+## v2.72.7 - 2025-03-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.6...v2.72.7)
+
+## v2.72.6 - 2025-03-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.5...v2.72.6)
+
+## v2.72.5 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.4...v2.72.5)
+
+## v2.72.4 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.3...v2.72.4)
+
+- [#7235](https://github.com/ORCID/ORCID-Source/pull/7235): Fix switch user role
+
+## v2.72.3 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.2...v2.72.3)
+
+- [#7234](https://github.com/ORCID/ORCID-Source/pull/7234): Do not save the session on email verification events
+
+## v2.72.2 - 2025-03-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.1...v2.72.2)
+
+## v2.72.1 - 2025-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.72.0...v2.72.1)
+
+## v2.72.0 - 2025-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.22...v2.72.0)
+
+## v2.71.23 - 2025-02-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.22...v2.71.23)
+
+## v2.71.22 - 2025-02-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.21...v2.71.22)
+
+## v2.71.21 - 2025-02-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.20...v2.71.21)
+
+## v2.71.20 - 2025-02-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.19...v2.71.20)
+
+## v2.71.19 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.18...v2.71.19)
+
+- [#7222](https://github.com/ORCID/ORCID-Source/pull/7222): Changed Accept type from wild card to octet stream, logging error
+
+## v2.71.18 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.17...v2.71.18)
+
+## v2.71.17 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.16...v2.71.17)
+
+## v2.71.16 - 2025-02-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.15...v2.71.16)
+
+## v2.71.15 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.14...v2.71.15)
+
+## v2.71.14 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.13...v2.71.14)
+
+## v2.71.13 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.12...v2.71.13)
+
+## v2.71.12 - 2025-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.11...v2.71.12)
+
+## v2.71.11 - 2025-02-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.10...v2.71.11)
+
+- [#7216](https://github.com/ORCID/ORCID-Source/pull/7216): pull tx
+
+## v2.71.10 - 2025-02-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.9...v2.71.10)
+
+- [#7215](https://github.com/ORCID/ORCID-Source/pull/7215): Lmendoza/9623 prod professional personal email detection is case sensitive
+
+## v2.71.9 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.8...v2.71.9)
+
+## v2.71.8 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.7...v2.71.8)
+
+## v2.71.7 - 2025-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.6...v2.71.7)
+
+## v2.71.6 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.5...v2.71.6)
+
+## v2.71.5 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.4...v2.71.5)
+
+## v2.71.4 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.3...v2.71.4)
+
+- [#7206](https://github.com/ORCID/ORCID-Source/pull/7206): Revert "Revert "Update the cached token info so it indicate if the token is an OBO one""
+
+## v2.71.3 - 2025-02-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.2...v2.71.3)
+
+- [#7205](https://github.com/ORCID/ORCID-Source/pull/7205): Revert "Update the cached token info so it indicate if the token is an OBO one"
+
+## v2.71.2 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.1...v2.71.2)
+
+## v2.71.1 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.71.0...v2.71.1)
+
+## v2.71.0 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.16...v2.71.0)
+
+## v2.70.16 - 2025-02-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.15...v2.70.16)
+
+## v2.70.15 - 2025-01-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.14...v2.70.15)
+
+## v2.70.14 - 2025-01-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.13...v2.70.14)
+
+## v2.70.13 - 2025-01-30
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.12...v2.70.13)
+
+## v2.70.12 - 2025-01-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.11...v2.70.12)
+
+## v2.70.11 - 2025-01-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.10...v2.70.11)
+
 ## v2.70.10 - 2025-01-27
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.70.9...v2.70.10)

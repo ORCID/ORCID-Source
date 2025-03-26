@@ -26,6 +26,10 @@ public class ProfileEmailDomainManagerReadOnlyImpl extends ManagerReadOnlyBaseIm
         return profileEmailDomainDaoReadOnly.findByOrcid(orcid);
     };
 
+    public ProfileEmailDomainEntity getEmailDomain(String orcid, String emailDomain) {
+        return profileEmailDomainDaoReadOnly.findByEmailDomain(orcid, emailDomain);
+    }
+
     public List<ProfileEmailDomainEntity> getPublicEmailDomains(String orcid) {
         return profileEmailDomainDaoReadOnly.findPublicEmailDomains(orcid);
     };

@@ -17,16 +17,15 @@
 package org.orcid.core.security;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.persistence.dao.EmailDao;
@@ -38,6 +37,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Propagation;
@@ -53,15 +58,17 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
 
     @Resource
     private EmailDao emailDao;
-    
-    @Resource(name = "emailManagerReadOnlyV3")
-    protected EmailManagerReadOnly emailManagerReadOnly;
-    
+
     @Resource
     private OrcidSecurityManager securityMgr;
 
+    @Resource (name = "emailManagerReadOnlyV3")
+    private EmailManagerReadOnly emailManagerReadOnly;
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
+
+    private final GrantedAuthority adminAuthority = new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name());
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidUserDetailsServiceImpl.class);
 
@@ -96,7 +103,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrcidProfileUserDetails loadUserByProfile(ProfileEntity profile) {
+    public UserDetails loadUserByProfile(ProfileEntity profile) {
         if (profile == null) {
             throw new UsernameNotFoundException("Bad username or password");
         } else if(OrcidType.CLIENT.name().equals(profile.getOrcidType())) {
@@ -106,42 +113,19 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         return createUserDetails(profile);
     }
 
-    private OrcidProfileUserDetails createUserDetails(ProfileEntity profile) {
-        String primaryEmail = retrievePrimaryEmail(profile);
-
-        OrcidProfileUserDetails userDetails = null;
-
-        if (profile.getOrcidType() != null) {
-            OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword(), buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
-        } else {
-            userDetails = new OrcidProfileUserDetails(profile.getId(), primaryEmail, profile.getEncryptedPassword());
+    private UserDetails createUserDetails(ProfileEntity profile) {
+        // Fix the case when the entity does not have a primary email address
+        setPrimaryEmailIfMissing(profile.getId());
+        OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
+        String id = profile.getId();
+        String encryptedPassword = profile.getEncryptedPassword();
+        if(OrcidType.GROUP.equals(orcidType)) {
+            LOGGER.warn("GROUP with id " + id + " is signin in");
+            // Members does not have password, so, we need to set one as placeholder
+            encryptedPassword = RandomStringUtils.randomAlphanumeric(5);
         }
-               
-        return userDetails;
-    }
 
-    private String retrievePrimaryEmail(ProfileEntity profile) {
-        String orcid = profile.getId();
-        try {
-            return emailDao.findPrimaryEmail(orcid).getEmail();
-        } catch (javax.persistence.NoResultException nre) {
-            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(profile.getId());
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            
-            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
-            LOGGER.error(message);
-                        
-            return alternativePrimaryEmail;
-        } catch (javax.persistence.NonUniqueResultException nure) {
-            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(profile.getId());
-            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
-            
-            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
-            LOGGER.error(message);
-            
-            return alternativePrimaryEmail;
-        }
+        return new User(id, encryptedPassword, buildAuthorities(orcidType, profile.getGroupType() != null ? MemberType.valueOf(profile.getGroupType()) : null));
     }
 
     private void checkStatuses(ProfileEntity profile) {
@@ -177,39 +161,76 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         return profile;
     }
 
-    private Collection<OrcidWebRole> buildAuthorities(OrcidType orcidType, MemberType groupType) {
-        Collection<OrcidWebRole> result = null;
+    private Collection<GrantedAuthority> buildAuthorities(OrcidType orcidType, MemberType groupType) {
+        Collection<GrantedAuthority> result = null;
         // If the orcid type is null, assume it is a normal user
         if (orcidType == null)
-            result = rolesAsList(OrcidWebRole.ROLE_USER);
+            result = rolesAsList(OrcidRoles.ROLE_USER);
         else if (orcidType == OrcidType.ADMIN)
-            result = rolesAsList(OrcidWebRole.ROLE_ADMIN, OrcidWebRole.ROLE_USER);
+            result = rolesAsList(OrcidRoles.ROLE_ADMIN, OrcidRoles.ROLE_USER);
         else if (orcidType.equals(OrcidType.GROUP)) {
             switch (groupType) {
             case BASIC:
-                result = rolesAsList(OrcidWebRole.ROLE_BASIC, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidRoles.ROLE_BASIC, OrcidRoles.ROLE_USER);
                 break;
             case PREMIUM:
-                result = rolesAsList(OrcidWebRole.ROLE_PREMIUM, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidRoles.ROLE_PREMIUM, OrcidRoles.ROLE_USER);
                 break;
             case BASIC_INSTITUTION:
-                result = rolesAsList(OrcidWebRole.ROLE_BASIC_INSTITUTION, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidRoles.ROLE_BASIC_INSTITUTION, OrcidRoles.ROLE_USER);
                 break;
             case PREMIUM_INSTITUTION:
-                result = rolesAsList(OrcidWebRole.ROLE_PREMIUM_INSTITUTION, OrcidWebRole.ROLE_USER);
+                result = rolesAsList(OrcidRoles.ROLE_PREMIUM_INSTITUTION, OrcidRoles.ROLE_USER);
                 break;
             }
         } else {
-            result = rolesAsList(OrcidWebRole.ROLE_USER);
+            result = rolesAsList(OrcidRoles.ROLE_USER);
         }
 
         return result;
     }
 
-    private List<OrcidWebRole> rolesAsList(OrcidWebRole... roles) {
-        // Make a mutable list
-        List<OrcidWebRole> list = new ArrayList<OrcidWebRole>(Arrays.asList(roles));
-        return list;
+    private List<GrantedAuthority> rolesAsList(OrcidRoles... roles) {
+        List<GrantedAuthority> result = new ArrayList<>();
+        for(OrcidRoles r : roles) {
+            result.add(new SimpleGrantedAuthority(r.name()));
+        }
+        return result;
+    }
 
+    @Override
+    public boolean isAdmin() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = null;
+        if (context != null && context.getAuthentication() != null) {
+            authentication = context.getAuthentication();
+        }
+
+        if (authentication != null) {
+            Object details = authentication.getDetails();
+            if (details instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) details;
+                return userDetails.getAuthorities().contains(adminAuthority);
+            }
+        }
+        return false;
+    }
+
+    private String setPrimaryEmailIfMissing(String orcid) {
+        try {
+            return emailDao.findPrimaryEmail(orcid).getEmail();
+        } catch (javax.persistence.NoResultException nre) {
+            String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
+            LOGGER.error(message);
+            return alternativePrimaryEmail;
+        } catch (javax.persistence.NonUniqueResultException nure) {
+            String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
+            emailDao.updatePrimary(orcid, alternativePrimaryEmail);
+            String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);
+            LOGGER.error(message);
+            return alternativePrimaryEmail;
+        }
     }
 }

@@ -29,10 +29,9 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.orgs.OrgDisambiguatedSourceType;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -47,6 +46,10 @@ import org.orcid.pojo.grouping.FundingGroup;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -89,9 +92,9 @@ public class FundingsControllerTest extends BaseControllerTest {
         String orcid = "4444-4444-4444-4443";
         ProfileEntity p = profileEntityManagerReadOnly.findByOrcid(orcid);
         Email e = emailManagerReadOnly.findPrimaryEmail(orcid);
-        List<OrcidWebRole> roles = Arrays.asList(OrcidWebRole.ROLE_USER);
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(orcid,
-                e.getEmail(), null, roles);
+        List<GrantedAuthority> roles = Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
+        UserDetails details = new User(orcid,
+                "password", roles);
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, p.getPassword(), roles);
         auth.setDetails(details);
         return auth;

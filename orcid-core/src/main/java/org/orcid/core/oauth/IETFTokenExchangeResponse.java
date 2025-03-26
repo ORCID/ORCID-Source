@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import com.nimbusds.jwt.SignedJWT;
 
 import static org.orcid.core.constants.OrcidOauth2Constants.TOKEN_DISABLED;
+import static org.orcid.core.constants.OrcidOauth2Constants.IS_OBO_TOKEN;
 
 public class IETFTokenExchangeResponse implements OAuth2AccessToken {
 
@@ -52,6 +53,10 @@ public class IETFTokenExchangeResponse implements OAuth2AccessToken {
         if(accessToken.getAdditionalInformation().containsKey(TOKEN_DISABLED)) {
             token.additionalInformation.put(TOKEN_DISABLED, "true");
         }
+        if(accessToken.getAdditionalInformation().containsKey(IS_OBO_TOKEN)) {
+            token.additionalInformation.put(IS_OBO_TOKEN, "true");
+        }
+
         return token;
     }
     

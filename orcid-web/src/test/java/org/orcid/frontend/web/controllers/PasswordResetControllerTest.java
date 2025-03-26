@@ -161,33 +161,26 @@ public class PasswordResetControllerTest extends DBUnitTest {
     @Test
     public void testPasswordResetLinkExpired() throws Exception {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
 
-        ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
+        ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString");
 
         assertEquals("redirect:https://testserver.orcid.org/reset-password?expired=true", modelAndView.getViewName());
-        verify(redirectAttributes, times(1)).addFlashAttribute("passwordResetLinkExpired", true);
-
     }
 
     @Test
     public void testPasswordResetLinkValidLinkDirectsToConsolidatedScreenDirectly() throws Exception {
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
-        ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString", redirectAttributes);
+        ModelAndView modelAndView = passwordResetController.resetPasswordEmail(servletRequest, "randomString");
 
         assertEquals("password_one_time_reset", modelAndView.getViewName());
-        verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
-
     }
 
     @Test
     public void testSubmitConsolidatedPasswordReset() throws Exception {
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
         BindingResult bindingResult = mock(BindingResult.class);
 
         OneTimeResetPasswordForm oneTimeResetPasswordForm = new OneTimeResetPasswordForm();
@@ -206,7 +199,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
         assertTrue(oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://testserver.orcid.org/my-orcid")
                 || oneTimeResetPasswordForm.getSuccessRedirectLocation().equals("https://localhost:8443/orcid-web/my-orcid"));
-        verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
 
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
 

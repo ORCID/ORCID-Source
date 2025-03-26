@@ -180,3 +180,9 @@ file_filter = orcid-core/src/main/resources/i18n/email_add_works_to_record_<lang
 source_file = orcid-core/src/main/resources/i18n/email_add_works_to_record_en.properties
 source_lang = en
 type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:papi_rate_limit_email]
+file_filter = orcid-core/src/main/resources/i18n/papi_rate_limit_email_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/papi_rate_limit_email_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES

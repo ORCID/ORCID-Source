@@ -109,6 +109,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.beans.factory.FactoryBean;
@@ -1040,10 +1041,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             b.getClientRegisteredRedirectUris().add(existingEntity);
                         } else {
                             ClientRedirectUriEntity newEntity = new ClientRedirectUriEntity();
-                            newEntity.setClientDetailsEntity(b);
-                            newEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
+                            newEntity.setClientId(b.getClientId());
                             newEntity.setRedirectUri(cru.getRedirectUri());
                             newEntity.setRedirectUriType(cru.getRedirectUriType());
+                            newEntity.setPredefinedClientScope(ScopePathType.getScopesAsSingleString(cru.getPredefinedClientScopes()));
                             newEntity.setUriActType(cru.getUriActType());
                             newEntity.setUriGeoArea(cru.getUriGeoArea());
                             b.getClientRegisteredRedirectUris().add(newEntity);

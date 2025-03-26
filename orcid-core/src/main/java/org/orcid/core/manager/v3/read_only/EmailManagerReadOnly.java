@@ -37,7 +37,9 @@ public interface EmailManagerReadOnly extends ManagerReadOnlyBase {
     
     EmailEntity find(String email);
     
-    Email findPrimaryEmail(String orcid);   
+    Email findPrimaryEmail(String orcid);
+
+    String findPrimaryEmailValueFromCache(String orcid);
     
     EmailFrequencyOptions getEmailFrequencyOptions();
 

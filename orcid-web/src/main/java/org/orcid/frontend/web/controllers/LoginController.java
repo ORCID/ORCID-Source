@@ -19,7 +19,6 @@ import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
@@ -27,6 +26,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -91,6 +92,9 @@ public class LoginController extends OauthControllerBase {
 
     @Resource
     private EventManager eventManager;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
     
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
     public @ResponseBody Names getAccountNames(@PathVariable String type) {
@@ -179,7 +183,7 @@ public class LoginController extends OauthControllerBase {
 
         // Check if user is already logged in, if so, redirect it to
         // oauth/authorize
-        OrcidProfileUserDetails userDetails = getCurrentUser();
+        UserDetails userDetails = getCurrentUser();
         if (!forceLogin && userDetails != null) {
             redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
             queryString = queryString.replace("oauth&", "");
@@ -251,7 +255,7 @@ public class LoginController extends OauthControllerBase {
             }
         }
 
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
