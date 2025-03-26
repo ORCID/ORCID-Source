@@ -51,5 +51,13 @@
 		</preConditions>
 		<sql>GRANT SELECT ON profile_interstitial_flag to orcidro;</sql>
 	</changeSet>
-	
+
+	<changeSet id="ADD-ORCID-INDEX-ON-PROFILE-INTERSTITIAL-FLAG" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="profile_interstitial_flag_orcid_index" tableName="profile_interstitial_flag" />
+			</not>
+		</preConditions>
+		<sql>create index profile_interstitial_flag_orcid_index on profile_interstitial_flag(orcid);</sql>
+	</changeSet>
 </databaseChangeLog>		
