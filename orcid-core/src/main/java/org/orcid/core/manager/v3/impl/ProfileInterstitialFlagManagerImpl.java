@@ -25,9 +25,6 @@ public class ProfileInterstitialFlagManagerImpl extends ProfileInterstitialFlagM
         if (interstitialName == null || interstitialName.isBlank()) {
             throw new IllegalArgumentException("Interstitial flag must not be empty");
         }
-        boolean hasInterstitialFlag = profileInterstitialFlagDaoReadOnly.hasInterstitialFlag(orcid, interstitialName);
-        if (!hasInterstitialFlag) {
-            return profileInterstitialFlagDao.addInterstitialFlag(orcid, interstitialName);
-        }
+        return profileInterstitialFlagDao.addInterstitialFlag(orcid, interstitialName);
     }
 }
