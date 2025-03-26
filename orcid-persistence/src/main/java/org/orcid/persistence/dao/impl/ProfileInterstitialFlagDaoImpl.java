@@ -16,7 +16,6 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
         
     @Override
     @Transactional
-    @UpdateProfileLastModifiedAndIndexingStatus
     public ProfileInterstitialFlagEntity addInterstitialFlag(String orcid, String interstitialName) {
         ProfileInterstitialFlagEntity e = new ProfileInterstitialFlagEntity();
         e.setInterstitialName(interstitialName);
