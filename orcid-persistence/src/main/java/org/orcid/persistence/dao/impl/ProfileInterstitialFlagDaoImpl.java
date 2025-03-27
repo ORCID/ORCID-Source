@@ -6,7 +6,9 @@ import org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.math.BigInteger;
+import java.util.List;
 
 public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInterstitialFlagEntity, Long> implements ProfileInterstitialFlagDao {
 
@@ -16,7 +18,6 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
         
     @Override
     @Transactional
-    @UpdateProfileLastModifiedAndIndexingStatus
     public ProfileInterstitialFlagEntity addInterstitialFlag(String orcid, String interstitialName) {
         ProfileInterstitialFlagEntity e = new ProfileInterstitialFlagEntity();
         e.setInterstitialName(interstitialName);
@@ -32,5 +33,13 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
         query.setParameter("interstitialName", interstitialName);
         long result = ((BigInteger)query.getSingleResult()).longValue();
         return result > 0;
+    }
+
+    @Override
+    public List<ProfileInterstitialFlagEntity> findByOrcid(String orcid) {
+        TypedQuery<ProfileInterstitialFlagEntity> query = entityManager.createQuery("from ProfileInterstitialFlagEntity where orcid = :orcid", ProfileInterstitialFlagEntity.class);
+        query.setParameter("orcid", orcid);
+        List<ProfileInterstitialFlagEntity> results = query.getResultList();
+        return results.isEmpty() ? null : results;
     }
 }

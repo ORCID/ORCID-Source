@@ -1068,4 +1068,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         String orcid = getCurrentUserOrcid();
         return profileInterstitialFlagManager.addInterstitialFlag(orcid, interstitialName);
     }
+
+    @RequestMapping(value = "/getInterstitialFlags")
+    public @ResponseBody List<String> getInterstitialFlags() {
+        String orcid = getCurrentUserOrcid();
+        return profileInterstitialFlagManager.findByOrcid(orcid);
+    }
 }
