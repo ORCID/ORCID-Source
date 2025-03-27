@@ -341,6 +341,49 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setBodyText(text);
         createNotification(userGrantingPermission, notification);
     }
+    
+    
+    @Override
+    public void sendRevokeNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission) {
+        ProfileEntity userGrantingProfileEntity = profileEntityCacheManager.retrieve(userGrantingPermission);
+        String emailName = recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission);
+
+        Locale userLocale = getUserLocaleFromProfileEntity(userGrantingProfileEntity);
+
+        String subject = messages.getMessage("email.subject.delegate.revoked", new String[] { emailName }, userLocale); 
+        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(userReceivingPermission);
+
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        String grantingOrcidEmail = primaryEmail.getEmail();
+        String assetsUrl = getAssetsUrl();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailName);
+        templateParams.put("orcidValue", userGrantingPermission);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("orcidValueForDelegate", userReceivingPermission);
+        templateParams.put("grantingOrcidValue", userGrantingPermission);
+        templateParams.put("grantingOrcidName", recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+        templateParams.put("subject", subject);
+        templateParams.put("assetsUrl", assetsUrl);
+
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String text = templateManager.processTemplate("delegate_revoke_notification.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("delegate_revoke_notification_html.ftl", templateParams);
+        
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+        notification.setSubject(subject);
+        notification.setBodyHtml(html);
+        notification.setBodyText(text);
+        createNotification(userGrantingPermission, notification);
+    }
+
 
     public String createEmailBaseUrl(String unencryptedParams, String baseUri, String path) {
         // Encrypt and encode params
