@@ -179,29 +179,31 @@ org.orcid.core.utils.cache.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_PORT }
 org.orcid.core.utils.cache.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_PASSWORD }}
 org.orcid.core.utils.cache.redis.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_ENABLED }}
 org.orcid.core.utils.cache.redis.summary.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_SUMMARY_ENABLED }}
+org.orcid.core.utils.cache.redis.summary.ttl={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_SUMMARY_TTL }}
 
 # Maintenance message
 org.orcid.frontend.web.maintenanceHeaderUrl={{ ORG_ORCID_FRONTEND_WEB_MAINTENANCE_HEADER_URL }}
 
+
 #Enable panoply deleted items tracking
-org.orcid.persistence.panoply.cleanup.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_CLEANUP_PROD_ONLY }}
-# Panoply redshift database
+org.orcid.persistence.panoply.cleanup.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_CLEANUP_PRODUCTION }}
+# Panoply redshift database 
 org.orcid.core.utils.panoply.driver={{ ORG_ORCID_CORE_UTILS_PANOPLY_DRIVER }}
 org.orcid.core.utils.panoply.maxPoolSize={{ ORG_ORCID_CORE_UTILS_PANOPLY_MAX_POOL_SIZE }}
 org.orcid.core.utils.panoply.password={{ ORG_ORCID_CORE_UTILS_PANOPLY_PASSWORD }}
-org.orcid.core.utils.panoply.idleConnectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_IDLE_CONN_TIMEOUT }}
-org.orcid.core.utils.panoply.connectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_CONN_TIMEOUT }}
+org.orcid.core.utils.panoply.idleConnectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_IDLE_CONNECTION_TIMEOUT }}
+org.orcid.core.utils.panoply.connectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_CONNECTION_TIMEOUT }}
 #jdbc:redshift://<host>:<port>/<database>
 org.orcid.core.utils.panoply.jdbcUrl={{ ORG_ORCID_CORE_UTILS_PANOPLY_JDBC_URL }}
 org.orcid.core.utils.panoply.username={{ ORG_ORCID_CORE_UTILS_PANOPLY_USERNAME }}
 
 #Enable papi rate exceeded tracking in panoply
-org.orcid.persistence.panoply.papiExceededRate.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_PAPI_EXCEEDED_RATE_PROD_ONLY }}
+org.orcid.persistence.panoply.papiExceededRate.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_PAPI_EXCEEDED_RATE_PRODUCTION }}
 
-# Papi limits
-org.orcid.papi.rate.limit.anonymous.requests={{ ORG_ORCID_PAPI_LIMIT_ANONYMOUS_REQUESTS }}
-org.orcid.papi.rate.limit.known.requests={{ ORG_ORCID_PAPI_LIMIT_KNOWN_REQUESTS }}
-org.orcid.papi.rate.limit.enabled={{ ORG_ORCID_PAPI_LIMIT_ENABLED }}
+# Papi limits 
+org.orcid.papi.rate.limit.anonymous.requests={{ ORG_ORCID_PAPI_RATE_LIMIT_ANONYMOUS_REQUESTS }}
+org.orcid.papi.rate.limit.known.requests={{ ORG_ORCID_PAPI_RATE_LIMIT_KNOWN_REQUESTS }}
+org.orcid.papi.rate.limit.enabled={{ ORG_ORCID_PAPI_RATE_LIMIT_ENABLED }}
 
 # CSRF Cookie settings
 org.orcid.core.csrf.domain={{ ORG_ORCID_CORE_CSRF_DOMAIN }}
@@ -211,3 +213,17 @@ org.orcid.core.utils.cache.papi.redis.host={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_RE
 org.orcid.core.utils.cache.papi.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_PORT }}
 org.orcid.core.utils.cache.papi.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_PASSWORD }}
 org.orcid.core.utils.cache.papi.redis.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_ENABLED }}
+
+# This is passed to the admin registry to tell it what the /registry/ domain name is for password resets
+org.orcid.admin.registry.url={{ ORG_ORCID_ADMIN_REGISTRY_URL }}
+
+# Redis to hold session data
+org.orcid.core.session.cookie.domain={{ ORG_ORCID_CORE_SESSION_COOKIE_DOMAIN }}
+org.orcid.core.utils.cache.session.redis.host={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_HOST }}
+org.orcid.core.utils.cache.session.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_PORT }}
+org.orcid.core.utils.cache.session.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_PASSWORD }}
+org.orcid.core.utils.cache.session.redis.pool.idle.max={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_IDLE_MAX }}
+org.orcid.core.utils.cache.session.redis.pool.max={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_MAX }}
+org.orcid.core.utils.cache.session.redis.pool.wait.millis={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_WAIT_MILLIS }}
+org.orcid.core.utils.cache.session.redis.connection_timeout_millis={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_CONNECTION_TIMEOUT_MILLIS }}
+org.orcid.core.utils.cache.session.redis.session.timeout={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_SESSION_TIMEOUT }}

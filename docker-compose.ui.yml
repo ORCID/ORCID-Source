@@ -1,0 +1,75 @@
+services:
+  haprouter:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-haprouter:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-haprouter/Dockerfile
+    restart: ${RESTART:-no}
+    env_file:
+      - orcid-haprouter/default.env
+      - orcid-haprouter/deployment.env
+    ports:
+      - 0.0.0.0:678:1936 # stats
+      - 0.0.0.0:7983:7983 # solr read
+      - 0.0.0.0:6983:6983 # solr write
+      - 0.0.0.0:7432:7432 # postgres read
+      - 0.0.0.0:6432:6432 # postgres write
+    networks:
+      app:
+
+  ui_frontend:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: 'FIXME: must build in the orcid-angular project first Dockerfile.build'
+    restart: ${RESTART:-no}
+    ports:
+      - 0.0.0.0:13106:80
+    networks:
+      app:
+
+  ui_proxy:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-web-proxy/Dockerfile
+    restart: ${RESTART:-no}
+    ports:
+      - 0.0.0.0:13107:80
+      - 0.0.0.0:13108:443
+    volumes:
+      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem:ro
+      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem:ro
+      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem:ro
+    networks:
+      app:
+
+  ui:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web:${TAG:-0.0.1}
+    build:
+      cache_from:
+        - orcid/registry-dependencies:${TAG:-0.0.1}
+      context: .
+      dockerfile: orcid-web/Dockerfile
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    restart: ${RESTART:-no}
+    env_file:
+      - default.env
+      - properties/default.orcid_core.env
+      - properties/default.misc.env
+      - properties/default.frontend.env
+      - properties/default.persistence.env
+      - orcid-web/default.env
+      - orcid-web/deployment.env
+      - ${DOCKER_DEV_ENV_FILE:-empty.env}
+    ports:
+      - 0.0.0.0:13100:8080
+    networks:
+      app:
+    volumes:
+      - /opt/docker/logs/reg-ui:/usr/local/tomcat/logs
+
+networks:
+  app:
+    driver: bridge
