@@ -504,12 +504,22 @@
     </bean>
 
 	<bean id="profileEmailDomainManager" class="org.orcid.core.manager.v3.impl.ProfileEmailDomainManagerImpl">
-		<property name="profileEmailDomainDao" ref="profileEmailDomainDaoReadOnly" />
+		<property name="profileEmailDomainDao" ref="profileEmailDomainDao" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 
 	<bean id="profileEmailDomainManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl">
 		<property name="profileEmailDomainDao" ref="profileEmailDomainDaoReadOnly" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+
+	<bean id="profileInterstitialFlagManager" class="org.orcid.core.manager.v3.impl.ProfileInterstitialFlagManagerImpl">
+		<property name="profileInterstitialFlagDao" ref="profileInterstitialFlagDao" />
+		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
+	</bean>
+
+	<bean id="profileInterstitialFlagManagerReadOnly" class="org.orcid.core.manager.v3.read_only.impl.ProfileInterstitialFlagManagerReadOnlyImpl">
+		<property name="profileInterstitialFlagDao" ref="profileInterstitialFlagDaoReadOnly" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspectReadOnly" />
 	</bean>
 
