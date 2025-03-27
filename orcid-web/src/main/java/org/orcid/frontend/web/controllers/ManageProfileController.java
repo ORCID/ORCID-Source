@@ -19,7 +19,6 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
-import org.orcid.core.adapter.impl.MapperFacadeFactory;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
@@ -28,11 +27,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.*;
-import org.orcid.core.manager.v3.read_only.ProfileEmailDomainManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
@@ -43,10 +38,7 @@ import org.orcid.jaxb.model.v3.release.record.Addresses;
 import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.UserconnectionEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.AddEmail;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ChangePassword;
@@ -58,8 +50,6 @@ import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.ajaxForm.*;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -70,7 +60,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author Declan Newman (declan) Date: 22/02/2012
@@ -138,6 +127,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
+
+    @Resource(name = "profileInterstitialFlagManagerReadOnly")
+    private ProfileInterstitialFlagManagerReadOnly profileInterstitialFlagManagerReadOnly;
+
+    @Resource(name = "profileInterstitialFlagManager")
+    private ProfileInterstitialFlagManager profileInterstitialFlagManager;
 
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -1060,5 +1055,17 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/emailFrequencyOptions.json", method = RequestMethod.GET)
     public @ResponseBody EmailFrequencyOptions getEmailFrequencyOptions() {
         return emailManagerReadOnly.getEmailFrequencyOptions();
+    }
+
+    @RequestMapping(value = "/hasInterstitialFlag/{interstitialName}")
+    public @ResponseBody Boolean hasInterstitialFlag(@PathVariable("interstitialName") String interstitialName) {
+        String orcid = getCurrentUserOrcid();
+        return profileInterstitialFlagManagerReadOnly.hasInterstitialFlag(orcid, interstitialName);
+    }
+
+    @RequestMapping(value = "/addInterstitialFlag", method = RequestMethod.POST)
+    public @ResponseBody ProfileInterstitialFlagEntity addInterstitialFlag(@RequestBody String interstitialName) {
+        String orcid = getCurrentUserOrcid();
+        return profileInterstitialFlagManager.addInterstitialFlag(orcid, interstitialName);
     }
 }
