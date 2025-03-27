@@ -254,7 +254,7 @@
 		<sec:form-login login-processing-url="/shibboleth/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 						login-page="${org.orcid.core.baseUri}/shibboleth/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerShibboleth"
 						authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerShibboleth"
-						username-parameter="username" password-parameter="password"
+						username-parameter="userId" password-parameter="password"
 						default-target-url="/shibboleth/signin" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
@@ -281,7 +281,7 @@
 		<sec:form-login login-processing-url="/social/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 						login-page="${org.orcid.core.baseUri}/social/access" authentication-success-handler-ref="ajaxAuthenticationSuccessHandlerSocial"
 						authentication-failure-handler-ref="ajaxAuthenticationFailureHandlerSocial"
-						username-parameter="username" password-parameter="password"
+						username-parameter="userId" password-parameter="password"
 						default-target-url="/social/access" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
@@ -429,7 +429,7 @@
 		<sec:form-login login-processing-url="/signin/auth.json" authentication-details-source-ref="authenticationDetailsSource"
 						login-page="${org.orcid.core.baseUri}/signin" authentication-success-handler-ref="ajaxAuthenticationSuccessHandler"
 						authentication-failure-handler-ref="ajaxAuthenticationFailureHandler"
-						username-parameter="username" password-parameter="password" />
+						username-parameter="userId" password-parameter="password" />
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 

@@ -11,6 +11,5 @@ import java.util.List;
  */
 public interface ProfileInterstitialFlagManagerReadOnly {
     boolean hasInterstitialFlag(String orcid, String interstitialName);
-
     List<String> findByOrcid(String orcid);
 }

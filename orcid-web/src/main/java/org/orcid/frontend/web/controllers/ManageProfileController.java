@@ -70,16 +70,16 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final String IS_SELF = "isSelf";
 
-    private static final String FOUND = "found";
+    private static final String FOUND = "found";   
 
-    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";
+    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";   
 
     @Resource
     private EncryptionManager encryptionManager;
 
     @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
-
+    
     @Resource
     private GivenPermissionToManager givenPermissionToManager;
 
@@ -88,7 +88,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource(name = "profileEmailDomainManager")
     private ProfileEmailDomainManager profileEmailDomainManager;
-
+    
     @Resource
     private UserConnectionManager userConnectionManager;
 
@@ -100,31 +100,31 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource(name = "biographyManagerV3")
     private BiographyManager biographyManager;
-
+    
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
-
+    
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
-
+    
     @Resource
     private PreferenceManager preferenceManager;
-
+    
     @Resource
     private OrcidIdentifierUtils orcidIdentifierUtils;
-
+    
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
 
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
-
+    
     @Resource
     private RecordEmailSender recordEmailSender;
-
+    
     @Resource
     private SlackManager slackManager;
-
+    
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
@@ -138,7 +138,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
     }
-
+    
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
 
@@ -147,28 +147,31 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
 
         EmailEntity emailEntity = emailManager.find(email);
-        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));
+        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
+
 
         if (emailEntity == null) {
             map.put(FOUND, Boolean.FALSE);
             return map;
         } else {
-            map.put(IS_ALREADY_ADDED,
-                    delegates.removeIf(e -> e.getReceiverOrcid().getPath().equals(emailEntity.getOrcid())));
-            map.put(FOUND, Boolean.TRUE);
+            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
+             e.getReceiverOrcid().getPath().equals(emailEntity.getOrcid())
+            ));
+            map.put(FOUND,  Boolean.TRUE);
             map.put(IS_SELF, emailEntity.getOrcid().equals(getCurrentUserOrcid()));
             return map;
         }
-    }
-
+    }    
+    
     @RequestMapping(value = "/search-for-delegate-by-orcid/{orcid}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByOrcid(@PathVariable String orcid) {
         Map<String, Boolean> map = new HashMap<>();
         String effectiveOrcid = getEffectiveUserOrcid();
         List<DelegateForm> delegates = new ArrayList<DelegateForm>();
 
-        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));
+        delegates = givenPermissionToManagerReadOnly.findByGiver(effectiveOrcid, getLastModified(effectiveOrcid));            
 
+        
         Boolean isValidForDelegate = profileEntityManagerReadOnly.isOrcidValidAsDelegate(orcid);
         if (isValidForDelegate == null || isValidForDelegate.booleanValue() == false) {
             map.put(FOUND, Boolean.FALSE);
@@ -176,17 +179,19 @@ public class ManageProfileController extends BaseWorkspaceController {
         } else {
             map.put(FOUND, Boolean.TRUE);
             map.put(IS_SELF, orcid.equals(getCurrentUserOrcid()));
-            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> e.getReceiverOrcid().getPath().equals(orcid)));
+            map.put(IS_ALREADY_ADDED, delegates.removeIf(e -> 
+            e.getReceiverOrcid().getPath().equals(orcid)
+           ));
             return map;
         }
-    }
+    } 
 
     @RequestMapping(value = "/delegates.json", method = RequestMethod.GET)
-    public @ResponseBody List<DelegateForm> getDelegates() {
+    public @ResponseBody List<DelegateForm>  getDelegates() {
         String currentOrcid = getCurrentUserOrcid();
         return givenPermissionToManagerReadOnly.findByGiver(currentOrcid, getLastModified(currentOrcid));
     }
-
+    
     @RequestMapping(value = "/addDelegate.json")
     public @ResponseBody ManageDelegate addDelegate(@RequestBody ManageDelegate addDelegate) {
         givenPermissionToManager.create(getCurrentUserOrcid(), addDelegate.getDelegateToManage());
@@ -205,18 +210,17 @@ public class ManageProfileController extends BaseWorkspaceController {
         addDelegate.setDelegateToManage(addDelegate.getDelegateToManage());
         return addDelegate(addDelegate);
     }
-
+    
     @RequestMapping(value = "/revokeDelegate.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeDelegate(@RequestBody ManageDelegate manageDelegate) {
         givenPermissionToManager.remove(getCurrentUserOrcid(), manageDelegate.getDelegateToManage());
         return manageDelegate;
     }
-
+    
     @RequestMapping(value = "/revokeOwnPermission.json", method = RequestMethod.POST)
     public @ResponseBody ManageDelegate revokeOwnDelegate(@RequestBody ManageDelegate manageDelegate) {
-        givenPermissionToManager.remove(manageDelegate.getDelegateToManage(), getCurrentUserOrcid());
-        notificationManager.sendRevokeNotificationToUserGrantingPermission(manageDelegate.getDelegateToManage(),
-                getCurrentUserOrcid());
+        givenPermissionToManager.remove(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
+        notificationManager.sendRevokeNotificationToUserGrantingPermission(manageDelegate.getDelegateToManage(),getCurrentUserOrcid());
         return manageDelegate;
     }
 
@@ -233,8 +237,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String password = manageSocialAccount.getPassword();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password)
-                        || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
+                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
             manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
             return manageSocialAccount;
         }
@@ -251,69 +254,64 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/preferences.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, Object> getDefaultPreference(HttpServletRequest request) {
         Map<String, Object> preferences = new HashMap<String, Object>();
-
+        
         ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         preferences.put("default_visibility", entity.getActivitiesVisibilityDefault());
         preferences.put("developer_tools_enabled", entity.getEnableDeveloperTools());
         return preferences;
     }
-
+    
     @RequestMapping(value = "/default_visibility.json", method = RequestMethod.POST)
-    public @ResponseBody String setDefaultVisibility(@RequestBody String defaultVisibility)
-            throws IllegalArgumentException {
+    public @ResponseBody String setDefaultVisibility(@RequestBody String defaultVisibility) throws IllegalArgumentException {
         try {
-            org.orcid.jaxb.model.common_v2.Visibility visibility = org.orcid.jaxb.model.common_v2.Visibility
-                    .fromValue(defaultVisibility);
-            if (org.orcid.jaxb.model.common_v2.Visibility.REGISTERED_ONLY.equals(visibility)
-                    || org.orcid.jaxb.model.common_v2.Visibility.SYSTEM.equals(visibility)) {
+            org.orcid.jaxb.model.common_v2.Visibility visibility = org.orcid.jaxb.model.common_v2.Visibility.fromValue(defaultVisibility); 
+            if(org.orcid.jaxb.model.common_v2.Visibility.REGISTERED_ONLY.equals(visibility) || org.orcid.jaxb.model.common_v2.Visibility.SYSTEM.equals(visibility)) {
                 throw new IllegalArgumentException();
             }
             preferenceManager.updateDefaultVisibility(getCurrentUserOrcid(), visibility);
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid visibility provided: " + defaultVisibility);
         }
-
+        
         return "{\"status\": \"" + defaultVisibility + "\"}";
     }
-
+    
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.GET)
     public @ResponseBody ChangePassword getChangedPasswordJson(HttpServletRequest request) {
-        return new ChangePassword();
+        return new ChangePassword();        
     }
 
     @RequestMapping(value = { "/change-password.json" }, method = RequestMethod.POST)
-    public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request,
-            @RequestBody ChangePassword cp) {
+    public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
         List<String> errors = new ArrayList<String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-
+        
         if (cp.getPassword() == null || !cp.getPassword().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
             errors.add(getMessage("Pattern.registrationForm.passwordRequirement"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
             errors.add(getMessage("FieldMatch.registrationForm"));
-        }
+        } 
 
         if (CommonPasswords.passwordIsCommon(cp.getPassword())) {
             errors.add(getMessage("password.too_common", cp.getPassword()));
         }
 
-        if (cp.getOldPassword() == null
-                || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
+        if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
         if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
-            final String newPassword = cp.getPassword();
-            emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
-                if (!email.getEmail().isEmpty() && newPassword.contains(email.getEmail())) {
-                    errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
-                }
-
-            });
+        	final String newPassword  = cp.getPassword();
+        	 emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
+	        	if (!email.getEmail().isEmpty()  && newPassword.contains(email.getEmail())) {
+	        		errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
+	        	}
+	        	
+	        });
         }
 
-        if (errors.size() == 0) {
+        if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
-            // reset the lock fields
+            //reset the lock fields
             profileEntityManager.resetSigninLock(getCurrentUserOrcid());
             profileEntityCacheManager.remove(getCurrentUserOrcid());
             cp = new ChangePassword();
@@ -338,12 +336,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         String currentUserOrcid = getCurrentUserOrcid();
         ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(currentUserOrcid);
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
-
+        
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
-
+        
         validateNonDeprecatingEntity(deprecateProfile, primaryEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -356,10 +354,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         Emails deprecatingEmails = emailManager.getEmails(deprecatingEntity.getId());
         Emails primaryEmails = emailManager.getEmails(primaryEntity.getId());
-
+                
         String primaryOrcid = primaryEntity.getId();
         String deprecatingOrcid = deprecatingEntity.getId();
-
+        
         String primaryAccountName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(primaryOrcid);
         String deprecatingAccountName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(deprecatingOrcid);
         deprecateProfile.setPrimaryAccountName(primaryAccountName);
@@ -387,10 +385,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
-
+        
         ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
-
+        
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -400,14 +398,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
-
+        
         validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
 
-        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(),
-                ProfileEntity.USER_DRIVEN_DEPRECATION, null);
+        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
@@ -415,19 +412,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private void validateNonDeprecatingEntity(DeprecateProfile deprecateProfile, ProfileEntity entity) {
-        if (entity.getDeprecatedDate() != null) {
-            deprecateProfile
-                    .setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deprecated", entity.getId())));
-        }
-
-        if (entity.getDeactivationDate() != null) {
-            deprecateProfile
-                    .setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deactivated", entity.getId())));
-        }
+       if (entity.getDeprecatedDate() != null) {
+           deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deprecated", entity.getId())));
+       }
+       
+       if (entity.getDeactivationDate() != null) {
+           deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.this_profile_deactivated", entity.getId())));
+       }
     }
 
-    private void validateDeprecatingEntity(ProfileEntity deprecatingEntity, ProfileEntity primaryEntity,
-            DeprecateProfile deprecateProfile) {
+    private void validateDeprecatingEntity(ProfileEntity deprecatingEntity, ProfileEntity primaryEntity, DeprecateProfile deprecateProfile) {
         if (deprecatingEntity == null) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.profile_does_not_exist")));
         } else if (primaryEntity.getId().equals(deprecatingEntity.getId())) {
@@ -437,8 +431,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private void validateFormData(DeprecateProfile deprecateProfile) {
         List<String> errors = new ArrayList<>();
-        if (deprecateProfile.getDeprecatingPassword() == null
-                || deprecateProfile.getDeprecatingPassword().trim().isEmpty()) {
+        if (deprecateProfile.getDeprecatingPassword() == null || deprecateProfile.getDeprecatingPassword().trim().isEmpty()) {
             errors.add(getMessage("deprecate_orcid.no_password_specified"));
         }
         if (deprecateProfile.getDeprecatingOrcidOrEmail() == null) {
@@ -448,15 +441,12 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private void validateDeprecateAccountRequest(DeprecateProfile deprecateProfile, ProfileEntity deprecatingEntity) {
-        if (!encryptionManager.hashMatches(deprecateProfile.getDeprecatingPassword(),
-                deprecatingEntity.getEncryptedPassword())) {
+        if (!encryptionManager.hashMatches(deprecateProfile.getDeprecatingPassword(), deprecatingEntity.getEncryptedPassword())) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("check_password_modal.incorrect_password")));
         } else if (deprecatingEntity.getDeprecatedDate() != null) {
-            deprecateProfile.setErrors(
-                    Arrays.asList(getMessage("deprecate_orcid.already_deprecated", deprecatingEntity.getId())));
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.already_deprecated", deprecatingEntity.getId())));
         } else if (deprecatingEntity.getDeactivationDate() != null) {
-            deprecateProfile.setErrors(
-                    Arrays.asList(getMessage("deprecate_orcid.already_deactivated", deprecatingEntity.getId())));
+            deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.already_deactivated", deprecatingEntity.getId())));
         }
     }
 
@@ -468,11 +458,9 @@ public class ManageProfileController extends BaseWorkspaceController {
                 return profileEntityManagerReadOnly.findByOrcid(emailEntity.getOrcid());
             }
         } else {
-            if (OrcidStringUtils.getOrcidNumber(orcidIdOrEmail) != null
-                    && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail))) {
+            if (OrcidStringUtils.getOrcidNumber(orcidIdOrEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail))) {
                 try {
-                    ProfileEntity profileEntity = profileEntityCacheManager
-                            .retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
+                    ProfileEntity profileEntity = profileEntityCacheManager.retrieve(OrcidStringUtils.getOrcidNumber(orcidIdOrEmail));
                     if (profileEntity != null) {
                         return profileEntity;
                     }
@@ -490,11 +478,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
+    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
-        String decryptedEmail = encryptionManager
-                .decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
+        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
         String primaryEmail = emailManager.findPrimaryEmail(getCurrentUserOrcid()).getEmail();
 
         if (decryptedEmail.equals(primaryEmail)) {
@@ -502,26 +488,26 @@ public class ManageProfileController extends BaseWorkspaceController {
             logoutCurrentUser(request, response);
             result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
         } else {
-            return new ModelAndView("redirect:" + calculateRedirectUrl("/my-orcid"));
+            return new ModelAndView("redirect:"+ calculateRedirectUrl("/my-orcid"));
         }
 
         return result;
     }
-
+    
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
-    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {
-        String currentUserOrcid = getCurrentUserOrcid();
-
-        String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
-        if (!currentUserOrcid.equals(emailOwner)) {
-            throw new IllegalArgumentException("Invalid email address provided");
+    public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {  
+    	String currentUserOrcid = getCurrentUserOrcid();
+    	
+    	String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
+        if(!currentUserOrcid.equals(emailOwner)) {
+                throw new IllegalArgumentException("Invalid email address provided");
         }
-
+    	
         boolean isPrimaryEmail = emailManagerReadOnly.isPrimaryEmail(currentUserOrcid, email);
         if (isPrimaryEmail) {
-            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);        
         }
-
+        
         recordEmailSender.sendVerificationEmail(currentUserOrcid, email, isPrimaryEmail);
         return new Errors();
     }
@@ -543,7 +529,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmails(HttpServletRequest request) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmails(HttpServletRequest request) {                                
         Emails v2Emails = emailManager.getEmails(getCurrentUserOrcid());
 
         List<ProfileEmailDomainEntity> emailDomains = null;
@@ -551,8 +537,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             emailDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
         org.orcid.pojo.ajaxForm.Emails emails = org.orcid.pojo.ajaxForm.Emails.valueOf(v2Emails, emailDomains);
-        // Old emails are missing the source name and id -- assign the user as the
-        // source
+        // Old emails are missing the source name and id -- assign the user as the source
         if (emails.getEmails() != null) {
             for (org.orcid.pojo.ajaxForm.Email email : emails.getEmails()) {
                 if (email.getSource() == null && email.getSourceName() == null) {
@@ -567,8 +552,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/emails.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails setEmails(HttpServletRequest request,
-            @RequestBody org.orcid.pojo.ajaxForm.Emails newEmailSet) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails setEmails(HttpServletRequest request,  @RequestBody org.orcid.pojo.ajaxForm.Emails newEmailSet) {
         Emails oldEmailSet = emailManager.getEmails(getCurrentUserOrcid());
         List<org.orcid.jaxb.model.v3.release.record.Email> deletedEmails = new ArrayList<org.orcid.jaxb.model.v3.release.record.Email>();
         List<Email> newEmails = new ArrayList<Email>();
@@ -577,16 +561,16 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
             boolean isNewEmail = true;
-            for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail : oldEmailSet.getEmails()) {
-                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())) {
+            for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail: oldEmailSet.getEmails()) {
+                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
                     isNewEmail = false;
                     // VISIBILITY UPDATE
-                    if (!newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())) {
+                    if (!newJsonEmail.getVisibility().value().equals(oldJsonEmail.getVisibility().value())){
                         updateEmailVisibility(newJsonEmail);
                     }
                     // Primary email UPDATE
-                    if (newJsonEmail.isPrimary() != null && newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
-                        org.orcid.pojo.ajaxForm.Email response = setPrimary(request, newJsonEmail);
+                    if (newJsonEmail.isPrimary() != null &&  newJsonEmail.isPrimary() && !oldJsonEmail.isPrimary()) {
+                        org.orcid.pojo.ajaxForm.Email response  = setPrimary(request, newJsonEmail);
                         errors.addAll(response.getErrors());
                     }
                 }
@@ -596,11 +580,11 @@ public class ManageProfileController extends BaseWorkspaceController {
                 newEmails.add(newJsonEmail);
             }
         }
-
+        
         for (org.orcid.jaxb.model.v3.release.record.Email oldJsonEmail : oldEmailSet.getEmails()) {
             boolean emailWasDeleted = true;
-            for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
-                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())) {
+            for (org.orcid.pojo.ajaxForm.Email  newJsonEmail:   newEmailSet.getEmails()) {
+                if (newJsonEmail.getValue().equals(oldJsonEmail.getEmail())){
                     emailWasDeleted = false;
                 }
             }
@@ -609,7 +593,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 deletedEmails.add(oldJsonEmail);
             }
         }
-
+                      
         for (Email newEmail : newEmails) {
             AddEmail newEmailCasted = new org.orcid.pojo.AddEmail();
             newEmailCasted.setCurrent(true);
@@ -617,40 +601,37 @@ public class ManageProfileController extends BaseWorkspaceController {
             newEmailCasted.setVisibility(newEmail.getVisibility());
             newEmailCasted.setPrimary(false);
             newEmailCasted.setVerified(false);
-            org.orcid.pojo.ajaxForm.Email response = addEmails(request, newEmailCasted);
+            org.orcid.pojo.ajaxForm.Email response  = addEmails ( request, newEmailCasted);
             errors.addAll(response.getErrors());
-            if (newEmail.isPrimary() != null && newEmail.isPrimary()) {
-                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse = setPrimary(request, newEmail);
+            if (newEmail.isPrimary() != null &&  newEmail.isPrimary()) {
+                org.orcid.pojo.ajaxForm.Email setAsPrimaryResponse  = setPrimary(request, newEmail);
                 errors.addAll(setAsPrimaryResponse.getErrors());
             }
-
+            
         }
-
+        
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
-            deleteEmailJson(deletedEmail.getEmail());
+            deleteEmailJson ( deletedEmail.getEmail() );    
         }
-
+        
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         List<ProfileEmailDomainEntity> updatedDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
             profileEmailDomainManager.updateEmailDomains(orcid, newEmailSet, updatedSet);
             updatedDomains = profileEmailDomainManagerReadOnly.getEmailDomains(getCurrentUserOrcid());
         }
-        org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet,
-                updatedDomains);
+        org.orcid.pojo.ajaxForm.Emails emailsResponse = org.orcid.pojo.ajaxForm.Emails.valueOf(updatedSet, updatedDomains);
         emailsResponse.setErrors(errors);
         return emailsResponse;
     }
 
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmails(HttpServletRequest request,
-            @RequestBody org.orcid.pojo.AddEmail email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email addEmails(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         // Check password
         if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (email.getPassword() == null
-                        || !encryptionManager.hashMatches(email.getPassword(), profile.getEncryptedPassword()))) {
+                && (email.getPassword() == null || !encryptionManager.hashMatches(email.getPassword(), profile.getEncryptedPassword()))) {
             errors.add(getMessage("check_password_modal.incorrect_password"));
         }
 
@@ -658,18 +639,17 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (PojoUtil.isEmpty(email.getValue())) {
             errors.add(getMessage("Email.personalInfoForm.email"));
         }
-
+        
         // if > 30
         Emails currentEmails = emailManager.getEmails(getCurrentUserOrcid());
-        if (currentEmails.getEmails().size() > (EmailConstants.MAX_EMAIL_COUNT - 1)) {
-            errors.add(getMessage("Email.personalInfoForm.youCannotAddMore1") + " " + EmailConstants.MAX_EMAIL_COUNT
-                    + " " + getMessage("Email.personalInfoForm.youCannotAddMore2"));
+        if(currentEmails.getEmails().size() > (EmailConstants.MAX_EMAIL_COUNT - 1 )) {
+            errors.add(getMessage("Email.personalInfoForm.youCannotAddMore1") + " " + EmailConstants.MAX_EMAIL_COUNT + " "  + getMessage("Email.personalInfoForm.youCannotAddMore2"));
         }
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // Clean the email address so it doesn't contains any horizontal white spaces
         email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
-
+        
         // make sure there are no dups
         validateEmailAddress(email.getValue(), false, false, request, mbr);
 
@@ -680,34 +660,32 @@ public class ManageProfileController extends BaseWorkspaceController {
                 errors.add(oe.getDefaultMessage());
             }
         }
-
+        
         if (errors.isEmpty()) {
             // clear errors
             email.setErrors(new ArrayList<String>());
-            String currentUserOrcid = getCurrentUserOrcid();
+            String currentUserOrcid = getCurrentUserOrcid();            
             Map<String, String> keys = emailManager.addEmail(currentUserOrcid, email.toV3Email());
-            if (!keys.isEmpty()) {
+            if(!keys.isEmpty()) {
                 request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
             }
-            recordEmailSender.sendVerificationEmail(currentUserOrcid,
-                    OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
+            recordEmailSender.sendVerificationEmail(currentUserOrcid, OrcidStringUtils.filterEmailAddress(email.getValue()), email.isPrimary());
         } else {
             email.setErrors(errors);
         }
         return email;
     }
-
+    
     @RequestMapping(value = "/validateEmail.json", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email validatEmail(HttpServletRequest request,
-            @RequestBody org.orcid.pojo.AddEmail email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email validatEmail(HttpServletRequest request, @RequestBody org.orcid.pojo.AddEmail email) {
         List<String> errors = new ArrayList<String>();
 
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
         // Clean the email address so it doesn't contains any horizontal white spaces
         email.setValue(OrcidStringUtils.filterEmailAddress(email.getValue()));
-
+        
         validateEmailAddress(email.getValue(), true, false, request, mbr);
-
+        
         for (ObjectError oe : mbr.getAllErrors()) {
             if (oe.getCode() != null) {
                 errors.add(getMessage(oe.getCode(), oe.getArguments()));
@@ -717,11 +695,13 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         if (!errors.isEmpty()) {
             email.setErrors(errors);
-
-        }
+                          
+        } 
         return email;
 
     }
+
+    
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
     public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {
@@ -749,43 +729,41 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (emailManager.isPrimaryEmail(currentUserOrcid, email)) {
             errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
             return errors;
-        }
-
+        } 
+        
         if (emailManager.isUsersOnlyEmail(currentUserOrcid, email)) {
             errors.getErrors().add(getMessage("manage.email.primaryEmailDeletion"));
             return errors;
-        }
-
+        } 
+        
         emailManager.removeEmail(currentUserOrcid, email);
         return errors;
     }
-
+    
     @RequestMapping(value = "/email/visibility", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email updateEmailVisibility(
-            @RequestBody org.orcid.pojo.ajaxForm.Email email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email updateEmailVisibility(@RequestBody org.orcid.pojo.ajaxForm.Email email) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
-        if (orcid.equals(owner)) {
-            if (email.getVisibility() != null) {
+        if(orcid.equals(owner)) {
+            if(email.getVisibility() != null) {
                 // Updates the visibility on the given email
                 emailManager.updateVisibility(orcid, email.getValue(), email.getVisibility());
-            }
+            }            
         }
         return email;
     }
-
+    
     @RequestMapping(value = "/email/setPrimary", method = RequestMethod.POST)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request,
-            @RequestBody org.orcid.pojo.ajaxForm.Email email) {
+    public @ResponseBody org.orcid.pojo.ajaxForm.Email setPrimary(HttpServletRequest request, @RequestBody org.orcid.pojo.ajaxForm.Email email) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(email.getValue());
-        if (orcid.equals(owner)) {
+        if(orcid.equals(owner)) {
             // Sets the given email as primary
             Map<String, String> keys = emailManager.setPrimary(orcid, email.getValue().trim(), request);
-            if (keys.containsKey("new")) {
+            if(keys.containsKey("new")) {
                 String newPrimary = keys.get("new");
                 String oldPrimary = keys.get("old");
-                if (keys.containsKey("sendVerification")) {
+                if(keys.containsKey("sendVerification")) {
                     recordEmailSender.sendVerificationEmail(orcid, newPrimary, true);
                     request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
                 }
@@ -793,28 +771,27 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return email;
     }
-
+    
     @RequestMapping(value = "/email/edit.json", method = RequestMethod.GET)
-    public @ResponseBody EditEmail getEmailEdit(HttpServletRequest request) {
+    public @ResponseBody EditEmail getEmailEdit(HttpServletRequest request) {                                
         return new EditEmail();
     }
-
+    
     @RequestMapping(value = "/email/edit", method = RequestMethod.POST)
     public @ResponseBody EditEmail editEmail(HttpServletRequest request, @RequestBody EditEmail editEmail) {
         String orcid = getCurrentUserOrcid();
         String owner = emailManager.findOrcidIdByEmail(editEmail.getOriginal());
 
         List<String> errors = new ArrayList<String>();
-        if (!orcid.equals(owner)) {
+        if(!orcid.equals(owner)) {            
             errors.add(getMessage("Email.personalInfoForm.email"));
         }
-
+        
         MapBindingResult mbr = new MapBindingResult(new HashMap<String, String>(), "Email");
-
-        // Clean the edited email address so it doesn't contains any horizontal white
-        // spaces
+        
+        //Clean the edited email address so it doesn't contains any horizontal white spaces
         editEmail.setEdited(OrcidStringUtils.filterEmailAddress(editEmail.getEdited()));
-
+                
         validateEmailAddress(editEmail.getEdited(), false, false, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
@@ -824,7 +801,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 errors.add(oe.getDefaultMessage());
             }
         }
-
+        
         if (errors.isEmpty()) {
             // clear errors
             editEmail.setErrors(new ArrayList<String>());
@@ -839,7 +816,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return editEmail;
     }
-
+    
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.GET)
     public @ResponseBody AddressesForm getProfileCountryJson(HttpServletRequest request) {
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid());
@@ -853,10 +830,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility
-                .valueOf(profile.getActivitiesVisibilityDefault());
+        org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         Visibility v = Visibility.valueOf(defaultVis);
-
+        
         // Set the default visibility
         if (profile.getActivitiesVisibilityDefault() != null) {
             form.setVisibility(v);
@@ -866,8 +842,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/countryForm.json", method = RequestMethod.POST)
-    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request,
-            @RequestBody AddressesForm addressesForm) {
+    public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) {
         addressesForm.setErrors(new ArrayList<String>());
         Map<String, String> countries = retrieveIsoCountries();
         if (addressesForm != null) {
@@ -878,10 +853,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                     } else {
                         form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
                     }
-
-                    // Validate visibility is not null
+                    
+                    //Validate visibility is not null
                     validateVisibility(form);
-
+                    
                     copyErrors(form, addressesForm);
                     copyErrors(form.getVisibility(), addressesForm);
                 }
@@ -907,7 +882,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         Name name = recordNameManager.getRecordName(currentOrcid);
         return NamesForm.valueOf(name);
     }
-
+    
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
     public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) {
         nf.setErrors(new ArrayList<String>());
@@ -925,9 +900,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             nf.getCreditName().setValue(OrcidStringUtils.stripHtml(nf.getCreditName().getValue()));
         }
 
-        // Validate visibility is not null
+        //Validate visibility is not null
         validateVisibility(nf);
-
+                
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
         if (nf.getFamilyName() == null)
@@ -962,11 +937,10 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody BiographyForm getBiographyForm() {
         Biography bio = biographyManager.getBiography(getCurrentUserOrcid());
         BiographyForm form = BiographyForm.valueOf(bio);
-        if (form.getVisibility() == null) {
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-            org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility
-                    .valueOf(profile.getActivitiesVisibilityDefault());
-            Visibility v = Visibility.valueOf(defaultVis);
+        if(form.getVisibility() == null) {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid()); 
+            org.orcid.jaxb.model.v3.release.common.Visibility defaultVis = org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(profile.getActivitiesVisibilityDefault());
+            Visibility v = Visibility.valueOf(defaultVis);          
             form.setVisibility(v);
         }
         return form;
@@ -977,9 +951,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         bf.setErrors(new ArrayList<String>());
         if (bf.getBiography() != null) {
             validateBiography(bf.getBiography());
-            // Validate visibility is not null
+            //Validate visibility is not null
             validateVisibility(bf);
-
+            
             copyErrors(bf.getBiography(), bf);
             copyErrors(bf.getVisibility(), bf);
             if (bf.getErrors().size() > 0)
@@ -990,20 +964,19 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if (bf.getVisibility() != null && bf.getVisibility().getVisibility() != null) {
-                org.orcid.jaxb.model.v3.release.common.Visibility v = org.orcid.jaxb.model.v3.release.common.Visibility
-                        .fromValue(bf.getVisibility().getVisibility().value());
+                org.orcid.jaxb.model.v3.release.common.Visibility v = org.orcid.jaxb.model.v3.release.common.Visibility.fromValue(bf.getVisibility().getVisibility().value());
                 bio.setVisibility(v);
             }
 
             String orcid = getCurrentUserOrcid();
 
-            if (StringUtils.isEmpty(bio.getContent())) {
+            if (StringUtils.isEmpty(bio.getContent())){
                 if (biographyManager.exists(orcid)) {
                     biographyManager.deleteBiography(orcid);
                 } else {
-                    // do nothing - don't add empty bios
-                }
-            } else {
+                    //do nothing - don't add empty bios
+                }                  
+            }else{
                 if (biographyManager.exists(orcid)) {
                     BiographyForm biographyForm = BiographyForm.valueOf(biographyManager.getBiography(orcid));
                     if (!biographyForm.compare(bf)) {
@@ -1011,7 +984,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     }
                 } else {
                     biographyManager.createBiography(orcid, bio);
-                }
+                }                
             }
 
         }
@@ -1025,15 +998,14 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView authorizeDelegatesRequest(@RequestParam("key") String key) {
         try {
             Map<String, String> params = decryptDelegationKey(key);
-            if (params.containsKey(AdminManager.MANAGED_USER_PARAM)
-                    && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
+            if (params.containsKey(AdminManager.MANAGED_USER_PARAM) && params.containsKey(AdminManager.TRUSTED_USER_PARAM)) {
                 String managedOrcid = params.get(AdminManager.MANAGED_USER_PARAM);
                 String trustedOrcid = params.get(AdminManager.TRUSTED_USER_PARAM);
                 // Check if managed user is the same as the logged user
                 if (managedOrcid.equals(getEffectiveUserOrcid())) {
                     // Check if the managed user email is verified, if not,
                     // verify it
-                    verifyPrimaryEmailIfNeeded(managedOrcid);
+                    verifyPrimaryEmailIfNeeded(managedOrcid);                    
                     givenPermissionToManager.create(getCurrentUserOrcid(), trustedOrcid);
                     return new ModelAndView("redirect:" + calculateRedirectUrl("/account?delegate=" + trustedOrcid));
                 } else {
@@ -1046,7 +1018,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             return new ModelAndView("redirect:" + calculateRedirectUrl("/account?invalidToken=true"));
         }
     }
-
+    
     @RequestMapping(value = { "/get-trusted-orgs.json" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
         return profileEntityManager.getApplications(getCurrentUserOrcid());
@@ -1057,8 +1029,7 @@ public class ManageProfileController extends BaseWorkspaceController {
      */
     @SuppressWarnings("unchecked")
     private Map<String, String> decryptDelegationKey(String encryptedKey) throws UnsupportedEncodingException {
-        String jsonString = encryptionManager
-                .decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));
+        String jsonString = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedKey), "UTF-8"));
         Map<String, String> params = (Map<String, String>) JsonUtils.readObjectFromJsonString(jsonString, Map.class);
         return params;
     }
@@ -1067,24 +1038,20 @@ public class ManageProfileController extends BaseWorkspaceController {
      * Verify a primary email if it is not verified yet.
      * 
      * @param orcid
-     *              The profile id to check
+     *            The profile id to check
      */
     private void verifyPrimaryEmailIfNeeded(String orcid) {
         if (!emailManager.isPrimaryEmailVerified(orcid)) {
             try {
                 emailManager.verifyPrimaryEmail(orcid);
-            } catch (javax.persistence.NoResultException nre) {
-                slackManager.sendSystemAlert(String.format(
-                        "User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one",
-                        orcid));
-            } catch (javax.persistence.NonUniqueResultException nure) {
-                slackManager.sendSystemAlert(String.format(
-                        "User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one",
-                        orcid));
-            }
+            } catch(javax.persistence.NoResultException nre) {
+                slackManager.sendSystemAlert(String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid));
+            } catch(javax.persistence.NonUniqueResultException nure) {
+                slackManager.sendSystemAlert(String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid));
+            } 
         }
     }
-
+    
     @RequestMapping(value = "/emailFrequencyOptions.json", method = RequestMethod.GET)
     public @ResponseBody EmailFrequencyOptions getEmailFrequencyOptions() {
         return emailManagerReadOnly.getEmailFrequencyOptions();
