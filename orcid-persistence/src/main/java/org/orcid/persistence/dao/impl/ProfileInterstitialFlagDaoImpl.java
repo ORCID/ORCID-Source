@@ -10,12 +10,13 @@ import javax.persistence.TypedQuery;
 import java.math.BigInteger;
 import java.util.List;
 
-public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInterstitialFlagEntity, Long> implements ProfileInterstitialFlagDao {
+public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInterstitialFlagEntity, Long>
+        implements ProfileInterstitialFlagDao {
 
     public ProfileInterstitialFlagDaoImpl() {
         super(ProfileInterstitialFlagEntity.class);
     }
-        
+
     @Override
     @Transactional
     public ProfileInterstitialFlagEntity addInterstitialFlag(String orcid, String interstitialName) {
@@ -28,16 +29,18 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
 
     @Override
     public boolean hasInterstitialFlag(String orcid, String interstitialName) {
-        Query query = entityManager.createNativeQuery("select count(*) from profile_interstitial_flag where orcid = :orcid and interstitial_name = :interstitialName");
+        Query query = entityManager.createNativeQuery(
+                "select count(*) from profile_interstitial_flag where orcid = :orcid and interstitial_name = :interstitialName");
         query.setParameter("orcid", orcid);
         query.setParameter("interstitialName", interstitialName);
-        long result = ((BigInteger)query.getSingleResult()).longValue();
+        long result = ((BigInteger) query.getSingleResult()).longValue();
         return result > 0;
     }
 
     @Override
     public List<ProfileInterstitialFlagEntity> findByOrcid(String orcid) {
-        TypedQuery<ProfileInterstitialFlagEntity> query = entityManager.createQuery("from ProfileInterstitialFlagEntity where orcid = :orcid", ProfileInterstitialFlagEntity.class);
+        TypedQuery<ProfileInterstitialFlagEntity> query = entityManager.createQuery(
+                "from ProfileInterstitialFlagEntity where orcid = :orcid", ProfileInterstitialFlagEntity.class);
         query.setParameter("orcid", orcid);
         List<ProfileInterstitialFlagEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
