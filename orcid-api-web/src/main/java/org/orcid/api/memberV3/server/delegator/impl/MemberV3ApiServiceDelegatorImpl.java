@@ -1202,6 +1202,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
         contributorUtils.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
+        ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
     }
