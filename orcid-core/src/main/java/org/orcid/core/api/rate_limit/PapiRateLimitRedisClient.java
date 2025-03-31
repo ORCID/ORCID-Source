@@ -91,11 +91,23 @@ public class PapiRateLimitRedisClient {
             if (pgRateLimitEntity != null) {
                 if (((pgRateLimitEntity.getRequestCount() > knownRequestLimit) && isClient)
                         || ((pgRateLimitEntity.getRequestCount() > anonymousRequestLimit) && !isClient)) {
+                    if(isClient) {
+                        LOG.warn("Existent PAPI limit entry: " + pgRateLimitEntity.getRequestCount() + " client ID: " + pgRateLimitEntity.getClientId() + " Request Date " +  pgRateLimitEntity.getRequestDate());
+                    }
+                    else {
+                        LOG.warn("Existent PAPI limit entry: " + pgRateLimitEntity.getRequestCount() + " IP Address: " + pgRateLimitEntity.getIpAddress() + " Request Date " +  pgRateLimitEntity.getRequestDate());   
+                    }
                     papiRateLimitingDao.updatePublicApiDailyRateLimit(pgRateLimitEntity, isClient);
                 }
             } else {
                 if (((redisRateLimitEntity.getRequestCount() > knownRequestLimit) && isClient)
                         || ((redisRateLimitEntity.getRequestCount() > anonymousRequestLimit) && !isClient)) {
+                    if(isClient) {
+                        LOG.warn("New PAPI limit entry: " + redisRateLimitEntity.getRequestCount() + " client ID: " + redisRateLimitEntity.getClientId() + " Request Date " +  redisRateLimitEntity.getRequestDate());
+                    }
+                    else {
+                        LOG.warn("New PAPI limit entry: " + redisRateLimitEntity.getRequestCount() + " IP Address: " + redisRateLimitEntity.getIpAddress() + " Request Date " +  redisRateLimitEntity.getRequestDate());   
+                    }
                     papiRateLimitingDao.persist(redisRateLimitEntity);
                 }
             }
@@ -114,7 +126,6 @@ public class PapiRateLimitRedisClient {
         rateLimitEntity.setRequestDate(LocalDate.parse(redisObj.getString(KEY_REQUEST_DATE)));
         rateLimitEntity.setDateCreated(new Date(redisObj.getInt(KEY_DATE_CREATED)));
         rateLimitEntity.setLastModified(new Date(redisObj.getInt(KEY_LAST_MODIFIED)));
-        papiRateLimitingDao.persist(rateLimitEntity);
         return rateLimitEntity;
     }
 
