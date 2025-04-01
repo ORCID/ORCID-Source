@@ -6,8 +6,6 @@
         <title>${subject}</title>
     </head>
     <body>
-    <#include "notification_header_html.ftl"/>
-            <p>
                 <b>${emailNameForDelegate}</b>
                 <@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/${orcidValueForDelegate}" target="_blank">
@@ -21,7 +19,6 @@
                 <@emailMacros.msg "notification.delegate.receipt.trustedIndividuals" />
             </a>
             </p>
-            <#include "notification_footer_html.ftl"/>
         </body>
  </html>
  </#escape>
