@@ -14,6 +14,7 @@
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.added_as_delegate.you_have.1" /><@emailMacros.space />${grantingOrcidName}<@emailMacros.space /><@emailMacros.msg "email.added_as_delegate.you_have.2" /><a href="${baseUri}/${grantingOrcidValue}?lang=${locale}" rel="noopener noreferrer" target="orcid.blank">${baseUri}/${grantingOrcidValue}</a><@emailMacros.msg "email.added_as_delegate.you_have.3" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.you_have.4" />
+		        <@emailMacros.space /><@emailMacros.space /><a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/trusted-parties" target="_blank"><@emailMacros.msg "email.added_as_delegate.you_have.5" /></a><@emailMacros.space /><@emailMacros.msg "email.added_as_delegate.you_have.6" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
                 <@emailMacros.msg "email.added_as_delegate.for_a_tutorial" />
