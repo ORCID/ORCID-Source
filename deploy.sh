@@ -92,6 +92,7 @@ for project in orcid-message-listener orcid-activemq orcid-api-web orcid-interna
 
   build_log_file=~/log/orcid-source-${project}-${tag_numeric}.log
 
+  echo "log_file: $build_log_file"
   mvn --batch-mode \
       --settings settings-custom-deploy.xml \
       --file "${project}/pom.xml" \

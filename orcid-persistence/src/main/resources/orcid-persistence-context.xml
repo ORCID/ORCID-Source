@@ -89,6 +89,12 @@
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
 
+    <bean id="profileInterstitialFlagDao" class="org.orcid.persistence.dao.impl.ProfileInterstitialFlagDaoImpl" />
+
+    <bean id="profileInterstitialFlagDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileInterstitialFlagDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+
     <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />
     
     <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">

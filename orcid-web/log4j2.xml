@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">/usr/local/tomcat/logs</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="FILE_APPENDER" fileName="${basePath}/orcid-web.log" filePattern="${basePath}/orcid-web-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="FILE_APPENDER_SHIBBOLETH" fileName="${basePath}/orcid-web-shib.log" filePattern="${basePath}/orcid-web-shib-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="%d %-5p [%t] %C{2} (%F:%L) - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+        </RollingFile>
+        <Console name="CONSOLE" target="SYSTEM_OUT">
+            <PatternLayout   pattern="WEB %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.springframework" level="warn" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="org.springframework.security" level="warn" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="org.hibernate" level="warn" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="warn" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="com.mchange.v2" level="warn" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="com.sun.jersey.spi.container.servlet.WebComponent.filterFormParameters" level="off" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="org.xml.sax.SAXParseException" level="error" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
+        <Logger name="org.orcid.frontend.web.controllers.ShibbolethController" level="info" additivity="true">
+            <appender-ref ref="FILE_APPENDER_SHIBBOLETH" />
+        </Logger>
+        <Logger name="org.orcid.utils.email.MailGunManager"  level="debug" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />		
+        </Logger>
+        <Root level="error" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Root>
+    </Loggers>
+</Configuration>
