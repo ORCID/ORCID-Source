@@ -10,3 +10,7 @@ ${emailNameForDelegate}<@emailMacros.space /><a style="text-decoration: underlin
 <@emailMacros.msg "notification.delegate.receipt.revokeAccessYourRecord" /><@emailMacros.space /><a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/trusted-parties" target="_blank">
                 <@emailMacros.msg "notification.delegate.receipt.trustedIndividuals" />
             </a>
+<@emailMacros.msg "notification.delegate.receipt.revokeConcerns" /><@emailMacros.space />
+            <@emailMacros.space /><a style="text-decoration: underline;color: #085c77;display: inline-block;" href="https://orcid.org/help/contact-us" target="_blank">
+                https://orcid.org/help/contact-us.
+            </a>
