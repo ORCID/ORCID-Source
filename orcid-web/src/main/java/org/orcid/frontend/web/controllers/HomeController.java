@@ -53,7 +53,7 @@ public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
     
-    private static final String JSESSIONID = "JSESSIONID";
+    private static final String SESSION_COOKIE_NAME = "SESSION";
 
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
@@ -139,30 +139,30 @@ public class HomeController extends BaseController {
         }
         
         if (logUserOut != null && logUserOut.booleanValue()) {
-            removeJSessionIdCookie(request, response);
+            removeSessionIdCookie(request, response);
             SecurityContextHolder.clearContext();
             if(request.getSession(false) != null) {
                 request.getSession().invalidate();
-            }   
-            
+            }
+
             logoutCurrentUser(request, response);
-            
+
             UserStatus us = new UserStatus();
             us.setLoggedIn(false);
             return us;
         } else {
             UserStatus us = new UserStatus();
-            us.setLoggedIn((orcid != null));            
+            us.setLoggedIn((orcid != null));
             return us;
-        }                                            
+        }
     }
-    
-    private void removeJSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
+
+    private void removeSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         // Delete cookie and token associated with that cookie
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (JSESSIONID.equals(cookie.getName())) {
+                if (SESSION_COOKIE_NAME.equals(cookie.getName())) {
                     cookie.setValue(StringUtils.EMPTY);
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
