@@ -41,6 +41,8 @@
                                     ${(subjectDelegate)}
                                 <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
                                     ${(subjectDelegate)}
+                                <#elseif subjectDelegate?ends_with("has revoked their Account Delegate access to your record")>
+                                    ${(subjectDelegate)}
                                 <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
                                     ${(subjectDelegate)}
                                 </#if>
@@ -134,6 +136,8 @@
                                         <@bodyHtmlDelegateRecipient?interpret />
                                     <#elseif subjectDelegate?ends_with("has been added as a Trusted Individual")>
                                         <@bodyHtmlDelegate?interpret />
+                                    <#elseif subjectDelegate?ends_with("has revoked their Account Delegate access to your record")>
+                                    	<@bodyHtmlDelegate?interpret />
                                     <#elseif subjectDelegate?starts_with("[ORCID] Trusting")>
                                         <@bodyHtmlAdminDelegate?interpret />
                                     <#else>

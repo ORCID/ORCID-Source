@@ -197,9 +197,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             if (notification instanceof NotificationAdministrative) {
                 NotificationAdministrative notificationAdministrative = (NotificationAdministrative) notification;
                 subjectDelegate = notificationAdministrative.getSubject();
-                if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record") || subjectDelegate.endsWith("has revoked their Account Delegate access to your record")) {
+                if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record")) {
                     bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
-                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual")) {
+                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual") || subjectDelegate.endsWith("has revoked their Account Delegate access to your record")) {
                     bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
                 } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
                     bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);

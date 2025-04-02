@@ -19,6 +19,13 @@
                 <@emailMacros.msg "notification.delegate.receipt.trustedIndividuals" />
             </a>
             </p>
+            <p>
+                <@emailMacros.msg "notification.delegate.receipt.revokeConcerns" /><@emailMacros.space />
+            <@emailMacros.space /><a style="text-decoration: underline;color: #085c77;display: inline-block;" href="https://orcid.org/help/contact-us" target="_blank">
+                https://orcid.org/help/contact-us.
+            </a>
+            </p>
+            
         </body>
  </html>
  </#escape>
