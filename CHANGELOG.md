@@ -1,3 +1,9 @@
+## v2.76.13 - 2025-04-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.12...v2.76.13)
+
+- [#7273](https://github.com/ORCID/ORCID-Source/pull/7273): Chage the account settings to trusted parties
+
 ## v2.76.12 - 2025-04-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.11...v2.76.12)
