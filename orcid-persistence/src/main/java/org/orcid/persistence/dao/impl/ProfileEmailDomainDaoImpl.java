@@ -5,6 +5,7 @@ import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
@@ -84,6 +85,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
+    @Cacheable(value = "email-domain", key = "#orcid.concat('-').concat(#emailDomain)")
     public ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain", ProfileEmailDomainEntity.class);
         query.setParameter("orcid", orcid);

@@ -259,6 +259,17 @@
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:heap unit="entries">2000</ehcache:heap>
     </ehcache:cache>
+
+    <ehcache:cache alias="email-domain" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:tti unit="minutes">120</ehcache:tti>
+        </ehcache:expiry>
+        <ehcache:resources>
+            <ehcache:heap unit="entries">100000</ehcache:heap>
+            <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache>
     
     <ehcache:cache-template name="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.SerializingCopier"/>
@@ -291,5 +302,7 @@
             <ehcache:disk unit="MB" persistent="false">64</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache-template>
+
+
 
 </ehcache:config>
