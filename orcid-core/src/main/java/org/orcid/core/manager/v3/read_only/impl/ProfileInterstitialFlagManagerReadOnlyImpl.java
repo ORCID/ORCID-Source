@@ -19,7 +19,7 @@ public class ProfileInterstitialFlagManagerReadOnlyImpl extends ManagerReadOnlyB
     @Resource(name="profileInterstitialFlagDaoReadOnly")
     protected ProfileInterstitialFlagDao profileInterstitialFlagDaoReadOnly;
 
-    public void setProfileInterstitialFlagDaoReadOnly(ProfileInterstitialFlagDao profileInterstitialFlagDaoReadOnly) {
+    public void setProfileInterstitialFlagDao(ProfileInterstitialFlagDao profileInterstitialFlagDaoReadOnly) {
         this.profileInterstitialFlagDaoReadOnly = profileInterstitialFlagDaoReadOnly;
     }
 
