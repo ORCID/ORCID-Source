@@ -1,3 +1,9 @@
+## v2.77.1 - 2025-04-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.0...v2.77.1)
+
+- [#7277](https://github.com/ORCID/ORCID-Source/pull/7277): 9694-capture-affiliations-during-sign-in
+
 ## v2.77.0 - 2025-04-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.14...v2.77.0)
