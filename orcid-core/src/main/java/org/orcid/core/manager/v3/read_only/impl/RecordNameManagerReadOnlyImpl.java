@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.v3.JpaJaxbNameAdapter;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
@@ -33,10 +34,12 @@ public class RecordNameManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imple
     
     @Override
     public Name getRecordName(String orcid) {
-        try {
-            return jpaJaxbNameAdapter.toName(recordNameDao.getRecordName(orcid, getLastModified(orcid)));             
-        } catch(Exception e) {
-            LOGGER.error("Exception getting record name", e);
+        if(StringUtils.isNotBlank(orcid)) {
+            try {
+                return jpaJaxbNameAdapter.toName(recordNameDao.getRecordName(orcid, getLastModified(orcid)));
+            } catch (Exception e) {
+                LOGGER.error("Exception getting record name", e);
+            }
         }
         return null;
     }

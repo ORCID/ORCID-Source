@@ -16,7 +16,7 @@ import java.util.List;
  * 
  */
 public class ProfileInterstitialFlagManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileInterstitialFlagManagerReadOnly {
-    @Resource
+    @Resource(name="profileInterstitialFlagDaoReadOnly")
     protected ProfileInterstitialFlagDao profileInterstitialFlagDaoReadOnly;
 
     public void setProfileInterstitialFlagDao(ProfileInterstitialFlagDao profileInterstitialFlagDaoReadOnly) {

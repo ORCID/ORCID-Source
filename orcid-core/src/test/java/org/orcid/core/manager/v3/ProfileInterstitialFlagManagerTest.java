@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.manager.v3.impl.ProfileInterstitialFlagManagerImpl;
+import org.orcid.core.manager.v3.read_only.ProfileInterstitialFlagManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.impl.ProfileInterstitialFlagManagerReadOnlyImpl;
 import org.orcid.persistence.dao.ProfileInterstitialFlagDao;
 import org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity;
 import org.orcid.test.TargetProxyHelper;
@@ -12,6 +14,7 @@ import org.orcid.test.TargetProxyHelper;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -19,7 +22,7 @@ public class ProfileInterstitialFlagManagerTest {
     @Mock
     private ProfileInterstitialFlagDao profileInterstitialFlagDao;
 
-    @Mock
+    @Mock(name="profileInterstitialFlagDaoReadOnly")
     private ProfileInterstitialFlagDao profileInterstitialFlagDaoReadOnly;
 
     ProfileInterstitialFlagManager pifm = new ProfileInterstitialFlagManagerImpl();
@@ -48,6 +51,10 @@ public class ProfileInterstitialFlagManagerTest {
 
         when(profileInterstitialFlagDaoReadOnly.findByOrcid(eq(ORCID))).thenReturn(List.of(pif1, pif2));
         when(profileInterstitialFlagDaoReadOnly.findByOrcid(eq(ORCID_TWO))).thenReturn(List.of(pif2));
+        when(profileInterstitialFlagDaoReadOnly.hasInterstitialFlag(eq(ORCID), eq(INTERSTITIAL_FLAG))).thenReturn(false);
+        when(profileInterstitialFlagDaoReadOnly.hasInterstitialFlag(eq(ORCID), eq(INTERSTITIAL_FLAG_TWO))).thenReturn(true);
+        when(profileInterstitialFlagDao.addInterstitialFlag(eq(ORCID), eq(INTERSTITIAL_FLAG))).thenReturn(pif1);
+
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -62,8 +69,17 @@ public class ProfileInterstitialFlagManagerTest {
 
     @Test
     public void addFlag_success() {
-        pifm.addInterstitialFlag(ORCID, INTERSTITIAL_FLAG);
+        ProfileInterstitialFlagEntity pif = pifm.addInterstitialFlag(ORCID, INTERSTITIAL_FLAG);
         verify(profileInterstitialFlagDao, times(1)).addInterstitialFlag(eq(ORCID), eq(INTERSTITIAL_FLAG));
+        assertEquals(pif.getOrcid(), ORCID);
+        assertEquals(pif.getInterstitialName(), INTERSTITIAL_FLAG);
+    }
+
+    @Test
+    public void addFlag_alreadyExists() {
+        ProfileInterstitialFlagEntity pif = pifm.addInterstitialFlag(ORCID, INTERSTITIAL_FLAG_TWO);
+        verify(profileInterstitialFlagDao, times(0)).addInterstitialFlag(eq(ORCID), eq(INTERSTITIAL_FLAG_TWO));
+        assertNull(pif);
     }
 
     @Test
