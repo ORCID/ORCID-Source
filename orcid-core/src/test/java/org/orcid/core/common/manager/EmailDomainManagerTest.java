@@ -26,6 +26,7 @@ import org.orcid.core.common.manager.impl.EmailDomainManagerImpl.STATUS;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
+import org.orcid.pojo.EmailDomain;
 import org.orcid.test.TargetProxyHelper;
 
 public class EmailDomainManagerTest {
@@ -112,7 +113,7 @@ public class EmailDomainManagerTest {
     
     @Test
     public void findByEmailDomainTest() {
-        List<EmailDomainEntity> ede = edm.findByEmailDomain("gmail.com");
+        List<EmailDomain> ede = edm.findByEmailDomain("gmail.com");
         assertNotNull(ede);
         if(ede !=null) {
         assertEquals("gmail.com", ede.get(0).getEmailDomain());

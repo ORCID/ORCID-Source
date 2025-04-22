@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.orcid.pojo.EmailDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -78,7 +79,7 @@ public class EmailDomainLoader {
             for (List<String> row : emailDomainData) {
                 String elementDomain = row.get(0);
                 String elementCategory = row.get(1);
-                List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(elementDomain);
+                List<EmailDomain> ede = emailDomainManager.findByEmailDomain(elementDomain);
                 EmailDomainEntity.DomainCategory category = EmailDomainEntity.DomainCategory.valueOf(elementCategory.toUpperCase());
                 if(ede == null) {
                     try {
