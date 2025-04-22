@@ -17,6 +17,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -36,6 +37,9 @@ public class EmailDomainManagerTest {
     @Mock
     private EmailDomainDao emailDomainDaoReadOnlyMock;
 
+    @Mock
+    private Cache<String, List<EmailDomain>> emailDomainCacheMock;
+
     EmailDomainManager edm = new EmailDomainManagerImpl();
 
     @Before
@@ -43,6 +47,8 @@ public class EmailDomainManagerTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(edm, "emailDomainDao", emailDomainDaoMock);
         TargetProxyHelper.injectIntoProxy(edm, "emailDomainDaoReadOnly", emailDomainDaoReadOnlyMock);
+        TargetProxyHelper.injectIntoProxy(edm, "emailDomainCache", emailDomainCacheMock);
+
         
         EmailDomainEntity e1 = new EmailDomainEntity("gmail.com", DomainCategory.PERSONAL);
         EmailDomainEntity e2 = new EmailDomainEntity("yahoo.com", DomainCategory.PERSONAL);
@@ -57,6 +63,8 @@ public class EmailDomainManagerTest {
 
         when(emailDomainDaoMock.createEmailDomain(eq("new.domain.com"), eq(DomainCategory.PROFESSIONAL), eq("https://ror.org/0"))).thenReturn(new EmailDomainEntity("new.domain.com", DomainCategory.PROFESSIONAL, "https://ror.org/0"));
         when(emailDomainDaoMock.updateRorId(1000L, "https://ror.org/0")).thenReturn(true);
+
+        when(emailDomainCacheMock.containsKey(anyString())).thenReturn(false);
     }
 
     @Test(expected = IllegalArgumentException.class)
