@@ -1,21 +1,20 @@
 package org.orcid.core.common.manager.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
+import org.ehcache.Cache;
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.emailDomain.EmailDomainValidator;
-import org.orcid.jaxb.model.common_v2.Source;
-import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.jaxb.model.record_v2.Emails;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
 
 import com.google.common.net.InternetDomainName;
+import org.orcid.pojo.EmailDomain;
 
 public class EmailDomainManagerImpl implements EmailDomainManager {
 
@@ -29,6 +28,9 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+
+    @Resource(name = "emailDomainCache")
+    private Cache<String, List<EmailDomain>> emailDomainCache;
 
     private void validateEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
@@ -56,24 +58,50 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
         return emailDomainDao.updateCategory(id, category);
     }
 
+    private List<EmailDomain> getEmailDomainCache(String emailDomain) {
+        if (emailDomainCache.containsKey(emailDomain)) {
+            return emailDomainCache.get(emailDomain);
+        }
+        return null;
+    }
+
     @Override
-    public List<EmailDomainEntity>  findByEmailDomain(String emailDomain) {
+    public List<EmailDomain>  findByEmailDomain(String emailDomain) {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
         }
 
+        List<EmailDomain> cachedEmailDomain = getEmailDomainCache(emailDomain);
+        if (cachedEmailDomain != null && !cachedEmailDomain.isEmpty()) {
+            return cachedEmailDomain;
+        }
+
+
         // Fetch entries for the current email domain
-        List<EmailDomainEntity> results = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
+        List<EmailDomainEntity> entities = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
 
         // If no results and domain contains a dot, strip the first subdomain and recurse
-        if (results.isEmpty() && emailDomain.contains(".")) {
+        if (entities.isEmpty() && emailDomain.contains(".")) {
             String strippedDomain = emailDomain.substring(emailDomain.indexOf(".") + 1);
             if(EmailDomainValidator.getInstance().isValidEmailDomain(strippedDomain)) {
                 return findByEmailDomain(strippedDomain); // Recursive call with stripped domain
             }
         }
 
-        // Return the results (either found or empty if no more subdomains)
+        List<EmailDomain> results = new ArrayList<>();
+
+        // convert to pojo to be more cache-friendly
+        for (EmailDomainEntity entity : entities) {
+            System.out.println(entity.getEmailDomain());
+            EmailDomain domain = new EmailDomain();
+            domain.setEmailDomain(entity.getEmailDomain());
+            domain.setCategory(entity.getCategory());
+            domain.setRorId(entity.getRorId());
+            results.add(domain);
+        }
+
+        emailDomainCache.put(emailDomain, results);
+        // Return the domains (either found or empty if no more subdomains)
         return results;
     }
 
