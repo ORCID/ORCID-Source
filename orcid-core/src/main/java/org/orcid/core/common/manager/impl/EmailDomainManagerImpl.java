@@ -92,7 +92,6 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
         // convert to pojo to be more cache-friendly
         for (EmailDomainEntity entity : entities) {
-            System.out.println(entity.getEmailDomain());
             EmailDomain domain = new EmailDomain();
             domain.setEmailDomain(entity.getEmailDomain());
             domain.setCategory(entity.getCategory());
