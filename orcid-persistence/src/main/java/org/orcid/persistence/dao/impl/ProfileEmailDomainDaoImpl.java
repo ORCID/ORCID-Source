@@ -85,7 +85,6 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     }
 
     @Override
-    @Cacheable(value = "email-domain", key = "#orcid.concat('-').concat(#emailDomain)")
     public ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain) {
         TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain", ProfileEmailDomainEntity.class);
         query.setParameter("orcid", orcid);
