@@ -5,6 +5,8 @@ import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
@@ -27,6 +29,12 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
 
     @Resource
     protected ProfileEmailDomainDao profileEmailDomainDao;
+
+    @Resource
+    protected EmailDomainDao emailDomainDao;
+
+    @Resource(name = "emailDaoReadOnly")
+    protected EmailDao emailDaoReadOnly;
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
