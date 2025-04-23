@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.common.manager.EmailDomainManager;
+import org.orcid.core.manager.v3.impl.ProfileEmailDomainManagerImpl;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.emailDomain.EmailDomainValidator;
 import org.orcid.persistence.dao.EmailDomainDao;
@@ -15,8 +16,11 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
 
 import com.google.common.net.InternetDomainName;
 import org.orcid.pojo.EmailDomain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailDomainManagerImpl implements EmailDomainManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEmailDomainManagerImpl.class);
 
     public enum STATUS {CREATED, UPDATED};
     
@@ -76,15 +80,21 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
             return cachedEmailDomain;
         }
 
+        List<EmailDomain> results = resolveEmailDomain(emailDomain);
+        emailDomainCache.put(emailDomain, results);
+        return results;
+    }
+
+    private List<EmailDomain> resolveEmailDomain(String emailDomain) {
+        LOGGER.debug("Resolving email domain {}", emailDomain);
         // Fetch entries for the current email domain
         List<EmailDomainEntity> entities = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
 
         // If no results and domain contains a dot, strip the first subdomain and recurse
         if (entities.isEmpty() && emailDomain.contains(".")) {
-            emailDomainCache.put(emailDomain, new ArrayList<>());
             String strippedDomain = emailDomain.substring(emailDomain.indexOf(".") + 1);
             if(EmailDomainValidator.getInstance().isValidEmailDomain(strippedDomain)) {
-                return findByEmailDomain(strippedDomain); // Recursive call with stripped domain
+                return resolveEmailDomain(strippedDomain); // Recursive call with stripped domain
             }
         }
 
@@ -99,7 +109,6 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
             results.add(domain);
         }
 
-        emailDomainCache.put(emailDomain, results);
         // Return the domains (either found or empty if no more subdomains)
         return results;
     }
