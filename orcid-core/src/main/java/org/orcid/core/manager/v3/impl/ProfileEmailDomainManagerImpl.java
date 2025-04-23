@@ -115,6 +115,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
                     // Verify the user doesn't have more emails with that domain
                     ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                     String domainVisibility = profile.getActivitiesVisibilityDefault();
+                    LOGGER.debug("Creating profile email domain " + domain + " for orcid " + orcid + " with visibility " + domainVisibility);
                     profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
                 }
             }
