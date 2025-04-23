@@ -72,16 +72,16 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
         }
 
         List<EmailDomain> cachedEmailDomain = getEmailDomainCache(emailDomain);
-        if (cachedEmailDomain != null && !cachedEmailDomain.isEmpty()) {
+        if (cachedEmailDomain != null) {
             return cachedEmailDomain;
         }
-
 
         // Fetch entries for the current email domain
         List<EmailDomainEntity> entities = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
 
         // If no results and domain contains a dot, strip the first subdomain and recurse
         if (entities.isEmpty() && emailDomain.contains(".")) {
+            emailDomainCache.put(emailDomain, new ArrayList<>());
             String strippedDomain = emailDomain.substring(emailDomain.indexOf(".") + 1);
             if(EmailDomainValidator.getInstance().isValidEmailDomain(strippedDomain)) {
                 return findByEmailDomain(strippedDomain); // Recursive call with stripped domain
