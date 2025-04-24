@@ -77,6 +77,7 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
         List<EmailDomain> cachedEmailDomain = getEmailDomainCache(emailDomain);
         if (cachedEmailDomain != null) {
+            LOGGER.debug("Retrieving cache for email domain {}", emailDomain);
             return cachedEmailDomain;
         }
 
