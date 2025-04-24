@@ -112,7 +112,6 @@
 
 	<!-- Public pages -->
 	<sec:http request-matcher="regex" pattern="/home(\?.*)?" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/lang\.json(.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/messages\.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/config\.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/identifiers/norm/(.*)?" security="none" create-session="stateless" />
@@ -299,6 +298,8 @@
 		<sec:intercept-url pattern="/"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/login(\?.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/lang.json(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
