@@ -32,6 +32,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.*;
 import org.orcid.persistence.jpa.entities.keys.*;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -91,8 +92,17 @@ public class ClientManagerImpl implements ClientManager {
     }
 
     private Client create(Client newClient, boolean publicClient) {
-        String memberId = sourceManager.retrieveActiveSourceId();
+        // If the member id comes in the newClient, use that one, if not, use the active source id
+        String memberId = PojoUtil.isEmpty(newClient.getGroupProfileId()) ? null : newClient.getGroupProfileId();
+        if(memberId == null) {
+            memberId = sourceManager.retrieveActiveSourceId();
+        }
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
+
+        if(memberEntity == null) {
+            LOGGER.error("Unable to find member with id {}", memberId);
+            throw new IllegalArgumentException("Unable to find member with id " + memberId);
+        }
 
         // Verify if the member type allow him to create another client
         if (publicClient) {
@@ -170,7 +180,7 @@ public class ClientManagerImpl implements ClientManager {
         try {
             clientDetailsDao.persist(newEntity);
         } catch (Exception e) {
-            LOGGER.error("Unable to client client with id {}", newEntity.getId(), e);
+            LOGGER.error("Unable to create client with id {}", newEntity.getId(), e);
             throw e;
         }
 

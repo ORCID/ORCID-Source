@@ -910,15 +910,13 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
         EmailManager emailManager = Mockito.mock(EmailManager.class);
-        NotificationManager notificationManager = Mockito.mock(NotificationManager.class);
-        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);        
+        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
 
         AdminController adminController = new AdminController();
         ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);                                                                    
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
         ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
-        ReflectionTestUtils.setField(adminController, "notificationManager", notificationManager);
         ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
 
         Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
@@ -1372,7 +1370,6 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
     @Test
     public void resetPasswordLink() throws Exception {
        VerifyEmailUtils verifyEmailUtils = Mockito.mock(VerifyEmailUtils.class);
-       EncryptionManager encryptionManager= Mockito.mock(EncryptionManager.class);  
        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
        AdminController adminController = new AdminController();
        EmailManager emailManager = Mockito.mock(EmailManager.class);    
@@ -1381,7 +1378,6 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
 
                
        ReflectionTestUtils.setField(adminController, "verifyEmailUtils", verifyEmailUtils);
-       ReflectionTestUtils.setField(adminController, "encryptionManager", encryptionManager);
        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
        ReflectionTestUtils.setField(adminController, "localeManager", localeManager);
        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
@@ -1410,7 +1406,6 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
        Mockito.when(emailManager.findOrcidIdByEmail(Mockito.anyString())).thenReturn("0000-0002-0551-5914"); 
        adminResetPasswordLink.setOrcidOrEmail("existent_email@test.com");
        XMLGregorianCalendar date = DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(new Date());
-       Mockito.when(encryptionManager.decryptForExternalUse(Mockito.anyString())).thenReturn("email=existent_email@test.com&issueDate="+ date.toXMLFormat()+ "&h=24"); 
        adminResetPasswordLink = adminController.resetPasswordLink(mockRequest, mockResponse, adminResetPasswordLink);
        assertNotNull(adminResetPasswordLink.getResetLink());
        assertEquals(24,adminResetPasswordLink.getDurationInHours());
