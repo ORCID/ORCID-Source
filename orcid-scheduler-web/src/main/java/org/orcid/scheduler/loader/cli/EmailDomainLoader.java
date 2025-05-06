@@ -10,8 +10,10 @@ import java.util.List;
 
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.orcid.pojo.EmailDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,7 +35,8 @@ public class EmailDomainLoader {
         this.filePath = filePath;
         init(filePath);        
     }
-    
+
+    @CacheEvict(value = { "email-domain" }, allEntries = true)
     public void execute() throws IOException {
         load(this.filePath);
         process();
@@ -76,7 +79,7 @@ public class EmailDomainLoader {
             for (List<String> row : emailDomainData) {
                 String elementDomain = row.get(0);
                 String elementCategory = row.get(1);
-                List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(elementDomain);
+                List<EmailDomain> ede = emailDomainManager.findByEmailDomain(elementDomain);
                 EmailDomainEntity.DomainCategory category = EmailDomainEntity.DomainCategory.valueOf(elementCategory.toUpperCase());
                 if(ede == null) {
                     try {
@@ -98,8 +101,7 @@ public class EmailDomainLoader {
             }
         }
         LOG.info("Process done, total: {}, new entities: {}, updated entities: {}", total, newEntities, updatedEntities);
-    }    
-    
+    }
     public static void main(String[] args) throws IOException {
         String filePath = args[0]; 
         EmailDomainLoader edl = new EmailDomainLoader(filePath);

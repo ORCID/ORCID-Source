@@ -19,6 +19,7 @@
             <@emailMacros.msg "notification.delegate.receipt.accountDelegateMeans" />
             <@emailMacros.space />${emailNameGrantingPermissionWithApostrophe}
             <@emailMacros.msg "notification.delegate.receipt.orcidRecord" />
+            <@emailMacros.space /><@emailMacros.msg "notification.delegate.receipt.revokeAnytime" /><@emailMacros.space /><a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/trusted-parties" target="_blank"><@emailMacros.msg "notification.delegate.receipt.trustedParties" /></a><@emailMacros.space /><@emailMacros.msg "notification.delegate.receipt.sectionOf" />
         </p>
         <p>
             <@emailMacros.msg "notification.delegate.receipt.tutorial" /><@emailMacros.space />

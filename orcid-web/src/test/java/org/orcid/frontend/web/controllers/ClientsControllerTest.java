@@ -266,7 +266,6 @@ public class ClientsControllerTest extends BaseControllerTest {
         client.setAllowAutoDeprecate(Checkbox.valueOf(true));
         client.setType(Text.valueOf(ClientType.CREATOR.name()));
         client.setDisplayName(Text.valueOf("My client name"));
-        client.setMemberId(Text.valueOf("0000-0000-0000-0000"));
         client.setMemberName(Text.valueOf("My member name"));
         client.setPersistentTokenEnabled(Checkbox.valueOf(true));
         List<RedirectUri> redirectUris = new ArrayList<RedirectUri>();

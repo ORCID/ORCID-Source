@@ -198,4 +198,14 @@
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.full_work_entity.maxMegaBytesOnDisk:128}" />
         <property name="copyValues" value="true" />
     </bean>
+
+    <bean id="emailDomainCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="email-domain" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.email_domain.timeToIdleSeconds:86400}" />
+        <property name="maxElementsInMemory" value="${org.orcid.core.cache.email_domain.maxElementsInMemory:100000}"/>
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.email_domain.maxMegaBytesInMemory:16}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.email_domain.maxMegaBytesOnDisk:128}" />
+        <property name="copyValues" value="false" />
+    </bean>
 </beans>

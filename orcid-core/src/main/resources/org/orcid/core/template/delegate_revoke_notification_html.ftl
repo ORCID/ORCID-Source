@@ -6,8 +6,6 @@
         <title>${subject}</title>
     </head>
     <body>
-    <#include "notification_header_html.ftl"/>
-            <p>
                 <b>${emailNameForDelegate}</b>
                 <@emailMacros.space />
             <a style="text-decoration: underline;color: #085c77;display: inline-block;" href="${baseUri}/${orcidValueForDelegate}" target="_blank">
@@ -21,7 +19,13 @@
                 <@emailMacros.msg "notification.delegate.receipt.trustedIndividuals" />
             </a>
             </p>
-            <#include "notification_footer_html.ftl"/>
+            <p>
+                <@emailMacros.msg "notification.delegate.receipt.revokeConcerns" /><@emailMacros.space />
+            <@emailMacros.space /><a style="text-decoration: underline;color: #085c77;display: inline-block;" href="https://orcid.org/help/contact-us" target="_blank">
+                https://orcid.org/help/contact-us.
+            </a>
+            </p>
+            
         </body>
  </html>
  </#escape>
