@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.solr.OrcidSolrOrgsClient;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.orcid.pojo.EmailDomain;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.stereotype.Controller;
@@ -40,7 +41,7 @@ public class EmailDomainController {
             return response;
         }
         domain = OrcidStringUtils.stripHtml(domain);
-        List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(domain);
+        List<EmailDomain> ede = emailDomainManager.findByEmailDomain(domain);
         String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
         if(ede == null) {
             ObjectNode response = mapper.createObjectNode();
@@ -52,7 +53,7 @@ public class EmailDomainController {
                 response.put("rorId", ede.get(0).getRorId());
                 response.put("category", ede.get(0).getCategory().name());
             } else {
-                for(EmailDomainEntity ed:ede) {
+                for(EmailDomain ed:ede) {
                     category = ed.getCategory().name();
                     if(StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
                         break;
@@ -75,7 +76,7 @@ public class EmailDomainController {
         }
         domain = OrcidStringUtils.stripHtml(domain);
         
-        List<EmailDomainEntity> ede = emailDomainManager.findByEmailDomain(domain);
+        List<EmailDomain> ede = emailDomainManager.findByEmailDomain(domain);
         //return the org if there was exactly one match
         if(ede != null && ede.size()== 1) {
             String rorId = ede.get(0).getRorId();

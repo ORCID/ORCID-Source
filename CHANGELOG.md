@@ -1,3 +1,17 @@
+## v2.78.1 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.0...v2.78.1)
+
+## v2.78.0 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.5...v2.78.0)
+
+## v2.77.5 - 2025-05-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.4...v2.77.5)
+
+- [#7285](https://github.com/ORCID/ORCID-Source/pull/7285): transifex pull
+
 ## v2.77.4 - 2025-04-24
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.3...v2.77.4)
