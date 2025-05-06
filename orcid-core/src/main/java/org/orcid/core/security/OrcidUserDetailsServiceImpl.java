@@ -119,8 +119,8 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
         String id = profile.getId();
         String encryptedPassword = profile.getEncryptedPassword();
-        if(OrcidType.GROUP.equals(orcidType)) {
-            LOGGER.warn("GROUP with id " + id + " is signin in");
+        if(OrcidType.GROUP.equals(orcidType) && PojoUtil.isEmpty(encryptedPassword)) {
+            LOGGER.warn("GROUP with id " + id + " and empty password is signin in, changing his password to a placeholder");
             // Members does not have password, so, we need to set one as placeholder
             encryptedPassword = RandomStringUtils.randomAlphanumeric(5);
         }

@@ -347,11 +347,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     public void sendRevokeNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission) {
         ProfileEntity userGrantingProfileEntity = profileEntityCacheManager.retrieve(userGrantingPermission);
         String emailName = recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission);
-
+        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(userReceivingPermission);
         Locale userLocale = getUserLocaleFromProfileEntity(userGrantingProfileEntity);
 
-        String subject = messages.getMessage("email.subject.delegate.revoked", new String[] { emailName }, userLocale); 
-        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(userReceivingPermission);
+        String subject = messages.getMessage("email.subject.delegate.revoked", new String[] { emailNameForDelegate }, userLocale); 
+        
 
         org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
         String grantingOrcidEmail = primaryEmail.getEmail();
