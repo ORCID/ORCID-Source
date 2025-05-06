@@ -5,18 +5,13 @@ import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEmailDomainManagerReadOnlyImpl;
-import org.orcid.core.utils.emailDomain.EmailDomainValidator;
-import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.EmailDomainDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
-import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.Email;
+import org.orcid.pojo.EmailDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +62,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
             }
 
             // REMOVE DOMAINS
-            Set<EmailDomainEntity> edSet = new HashSet<EmailDomainEntity>();
+            Set<EmailDomain> edSet = new HashSet<>();
             if (updatedEmailSet != null && updatedEmailSet.getEmails() != null) {
                 for (org.orcid.jaxb.model.v3.release.record.Email email : updatedEmailSet.getEmails()) {
                     if (email.isVerified() && StringUtils.isNotBlank(email.getEmail())) {
@@ -78,7 +73,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
 
             for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
                 boolean deleteEmail = true;
-                for (EmailDomainEntity emailDomain : edSet) {
+                for (EmailDomain emailDomain : edSet) {
                     if (StringUtils.equals(existingEmailDomain.getEmailDomain(), emailDomain.getEmailDomain())
                             && StringUtils.equals(emailDomain.getCategory().name(), EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
                         deleteEmail = false;
@@ -101,12 +96,12 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
         }
 
         String domain = email.split("@")[1];
-        List<EmailDomainEntity> domainsInfo = emailDomainManager.findByEmailDomain(domain);
+        List<EmailDomain> domainsInfo = emailDomainManager.findByEmailDomain(domain);
         String category = EmailDomainEntity.DomainCategory.UNDEFINED.name();
 
         // Check if email is professional
         if (domainsInfo != null) {
-            for (EmailDomainEntity domainInfo : domainsInfo) {
+            for (EmailDomain domainInfo : domainsInfo) {
                 category = domainInfo.getCategory().name();
                 if (StringUtils.equalsIgnoreCase(category, EmailDomainEntity.DomainCategory.PROFESSIONAL.name())) {
                     domain = domainInfo.getEmailDomain();
@@ -120,6 +115,7 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
                     // Verify the user doesn't have more emails with that domain
                     ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
                     String domainVisibility = profile.getActivitiesVisibilityDefault();
+                    LOGGER.debug("Creating profile email domain " + domain + " for orcid " + orcid + " with visibility " + domainVisibility);
                     profileEmailDomainDao.addEmailDomain(orcid, domain, domainVisibility);
                 }
             }
