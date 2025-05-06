@@ -82,16 +82,22 @@ public class ClientManagerImpl implements ClientManager {
     @Override
     @Transactional
     public Client create(Client newClient) throws IllegalArgumentException {
-        return create(newClient, false);
+        return create(newClient, false, false);
     }
 
     @Override
     @Transactional
     public Client createPublicClient(Client newClient) {
-        return create(newClient, true);
+        return create(newClient, true, false);
     }
 
-    private Client create(Client newClient, boolean publicClient) {
+    @Override
+    @Transactional
+    public Client createWithConfigValues(Client newClient) {
+        return create(newClient, false, true);
+    }
+
+    private Client create(Client newClient, boolean publicClient, boolean addConfigValues) {
         // If the member id comes in the newClient, use that one, if not, use the active source id
         String memberId = PojoUtil.isEmpty(newClient.getGroupProfileId()) ? null : newClient.getGroupProfileId();
         if(memberId == null) {
@@ -115,7 +121,6 @@ public class ClientManagerImpl implements ClientManager {
         }
 
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
-        Date now = new Date();
         newEntity.setId(appIdGenerationManager.createNewAppId());
         newEntity.setClientSecretForJpa(encryptionManager.encryptForInternalUse(UUID.randomUUID().toString()), true);
         newEntity.setGroupProfileId(memberId);
@@ -176,6 +181,11 @@ public class ClientManagerImpl implements ClientManager {
             clientScopeEntities.add(clientScopeEntity);
         }
         newEntity.setClientScopes(clientScopeEntities);
+
+        if (addConfigValues) {
+            newEntity.setUserOBOEnabled(newClient.isUserOBOEnabled());
+            refreshGrantTypesForObo(newEntity, newClient.isOboEnabled());
+        }
 
         try {
             clientDetailsDao.persist(newEntity);
@@ -247,7 +257,29 @@ public class ClientManagerImpl implements ClientManager {
             }
         });
     }
-    
+
+    @Override
+    @Transactional
+    public String resetAndGetClientSecret(String clientId) {
+        try {
+            String newSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
+            clientSecretDao.revokeAllKeys(clientId);
+            boolean created  = clientSecretDao.createClientSecret(clientId, newSecret);
+            if (created) {
+                clientDetailsDao.updateLastModified(clientId);
+                String sourceId = sourceManager.retrieveActiveSourceId();
+                profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceId);
+            } else {
+                LOGGER.warn("Client secret creation failed for client {}", clientId);
+            }
+
+            return encryptionManager.decryptForInternalUse(newSecret);
+        } catch (Exception e) {
+            LOGGER.error("Unable to reset client secret for client {}", clientId, e);
+            throw e;
+        }
+    }
+
     private void refreshGrantTypesForObo(ClientDetailsEntity clientDetails, boolean enableObo) {
         boolean oboAlreadyEnabled = false;
         Iterator<ClientAuthorisedGrantTypeEntity> grantTypes = clientDetails.getClientAuthorizedGrantTypes().iterator();

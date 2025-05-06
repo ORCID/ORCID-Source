@@ -387,6 +387,74 @@ public class ClientManagerTest extends BaseTest {
         assertEquals(secret3, client.getDecryptedSecret());
     }
 
+    @Test
+    @Transactional
+    public void saveClientWithConfigValuesTest() {
+        // Create a new client
+        String seed = RandomStringUtils.randomAlphanumeric(15);
+        Client client = getClient(seed, MEMBER_ID);
+
+        client.setAllowAutoDeprecate(false);
+        client.setUserOBOEnabled(true);
+        client.setOboEnabled(true);
+
+        Client newClient = clientManager.createWithConfigValues(client);
+        // Check config options where saved
+        assertTrue(newClient.getId().startsWith("APP-"));
+        assertEquals("authentication-provider-id " + seed, newClient.getAuthenticationProviderId());
+        assertFalse(newClient.isAllowAutoDeprecate());
+        assertTrue(newClient.isUserOBOEnabled());
+        assertTrue(newClient.isOboEnabled());
+
+        seed = RandomStringUtils.randomAlphanumeric(15);
+        client = getClient(seed, MEMBER_ID);
+
+        client.setAllowAutoDeprecate(true);
+        client.setUserOBOEnabled(true);
+        client.setOboEnabled(false);
+
+        newClient = clientManager.createWithConfigValues(client);
+        // Check config options where saved
+        assertTrue(newClient.getId().startsWith("APP-"));
+        assertEquals("authentication-provider-id " + seed, newClient.getAuthenticationProviderId());
+        assertTrue(newClient.isAllowAutoDeprecate());
+        assertTrue(newClient.isUserOBOEnabled());
+        assertFalse(newClient.isOboEnabled());
+    }
+
+    @Test
+    public void resetAndGetClientSecretTest() {
+        String clientId = "APP-5555555555555556";
+        // Get an existing client
+        Client client = clientManagerReadOnly.get(clientId);
+        assertNotNull(client);
+        assertNotNull(client.getDecryptedSecret());
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertTrue(client.getDecryptedSecret().length() > 1);
+        String secret1 = client.getDecryptedSecret();
+
+        // Reset it one time
+        String newSecret = clientManager.resetAndGetClientSecret(clientId);
+        assertFalse(PojoUtil.isEmpty(newSecret));
+        assertNotEquals(secret1, newSecret);
+        String secret2 = newSecret;
+
+        // Reset it the second time
+        newSecret = clientManager.resetAndGetClientSecret(clientId);
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertNotEquals(secret1, newSecret);
+        assertNotEquals(secret2, newSecret);
+        String secret3 = newSecret;
+
+        // Update the client and fetch secret again to confirm it didnt changed
+        client.setName("Updated name");
+        client = clientManager.edit(client, false);
+        assertEquals("Updated name", client.getName());
+        assertFalse(PojoUtil.isEmpty(client.getDecryptedSecret()));
+        assertTrue(client.getDecryptedSecret().length() > 1);
+        assertEquals(secret3, client.getDecryptedSecret());
+    }
+
     private void validateClientConfigSettings(ClientDetailsEntity entity, Date lastTimeEntityWasModified) {
         assertNotNull(entity.getAuthorizedGrantTypes());
         assertEquals(4, entity.getClientAuthorizedGrantTypes().size());
