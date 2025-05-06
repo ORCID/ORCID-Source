@@ -16,7 +16,7 @@ public class PeerReviewGroup {
         PeerReviewSummary peerReviewSummary = (PeerReviewSummary) summary;
         PeerReviewGroupKey prgk = new PeerReviewGroupKey();
         if(peerReviewSummary.getGroupId() != null) {
-            prgk.setGroupId(peerReviewSummary.getGroupId().toLowerCase());
+            prgk.setGroupId(peerReviewSummary.getGroupId());
         }
         groupKeys.add(prgk);
 

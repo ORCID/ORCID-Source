@@ -462,9 +462,9 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void nonGroupableIdsGenerateEmptyIdsListTest() {
-        PeerReviewSummary s1 = getPeerReviewSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
-        PeerReviewSummary s2 = getPeerReviewSummary("Element 2", "ext-id-2", Visibility.LIMITED);
-        PeerReviewSummary s3 = getPeerReviewSummary("Element 3", "ext-id-3", Visibility.PRIVATE);
+        PeerReviewSummary s1 = getPeerReviewSummary("element 1", "ext-id-1", Visibility.PUBLIC);
+        PeerReviewSummary s2 = getPeerReviewSummary("element 2", "ext-id-2", Visibility.LIMITED);
+        PeerReviewSummary s3 = getPeerReviewSummary("element 3", "ext-id-3", Visibility.PRIVATE);
         
         // Remove the grouping id from s1
         s1.setGroupId(null);
