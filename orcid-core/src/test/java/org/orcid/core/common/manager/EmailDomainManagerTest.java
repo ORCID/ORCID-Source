@@ -17,6 +17,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ehcache.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -26,6 +27,7 @@ import org.orcid.core.common.manager.impl.EmailDomainManagerImpl.STATUS;
 import org.orcid.persistence.dao.EmailDomainDao;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
+import org.orcid.pojo.EmailDomain;
 import org.orcid.test.TargetProxyHelper;
 
 public class EmailDomainManagerTest {
@@ -35,6 +37,9 @@ public class EmailDomainManagerTest {
     @Mock
     private EmailDomainDao emailDomainDaoReadOnlyMock;
 
+    @Mock
+    private Cache<String, List<EmailDomain>> emailDomainCacheMock;
+
     EmailDomainManager edm = new EmailDomainManagerImpl();
 
     @Before
@@ -42,6 +47,8 @@ public class EmailDomainManagerTest {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(edm, "emailDomainDao", emailDomainDaoMock);
         TargetProxyHelper.injectIntoProxy(edm, "emailDomainDaoReadOnly", emailDomainDaoReadOnlyMock);
+        TargetProxyHelper.injectIntoProxy(edm, "emailDomainCache", emailDomainCacheMock);
+
         
         EmailDomainEntity e1 = new EmailDomainEntity("gmail.com", DomainCategory.PERSONAL);
         EmailDomainEntity e2 = new EmailDomainEntity("yahoo.com", DomainCategory.PERSONAL);
@@ -56,6 +63,8 @@ public class EmailDomainManagerTest {
 
         when(emailDomainDaoMock.createEmailDomain(eq("new.domain.com"), eq(DomainCategory.PROFESSIONAL), eq("https://ror.org/0"))).thenReturn(new EmailDomainEntity("new.domain.com", DomainCategory.PROFESSIONAL, "https://ror.org/0"));
         when(emailDomainDaoMock.updateRorId(1000L, "https://ror.org/0")).thenReturn(true);
+
+        when(emailDomainCacheMock.containsKey(anyString())).thenReturn(false);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -112,7 +121,7 @@ public class EmailDomainManagerTest {
     
     @Test
     public void findByEmailDomainTest() {
-        List<EmailDomainEntity> ede = edm.findByEmailDomain("gmail.com");
+        List<EmailDomain> ede = edm.findByEmailDomain("gmail.com");
         assertNotNull(ede);
         if(ede !=null) {
         assertEquals("gmail.com", ede.get(0).getEmailDomain());
