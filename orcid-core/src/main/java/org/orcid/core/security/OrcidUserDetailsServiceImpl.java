@@ -202,6 +202,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     public boolean isAdmin() {
         LOGGER.trace("Checking if the user is an admin");
         SecurityContext context = SecurityContextHolder.getContext();
+        LOGGER.trace("Is security context null? " + (context == null));
         Authentication authentication = null;
         if (context != null && context.getAuthentication() != null) {
             authentication = context.getAuthentication();
