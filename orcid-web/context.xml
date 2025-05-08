@@ -1,0 +1,9 @@
+<Context>
+  <Valve className="org.apache.catalina.valves.RemoteIpValve" />
+  <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+         conditionUnless="skipAccessLog"
+         requestAttributesEnabled="true"
+         prefix="access_log" suffix=".txt"
+         pattern='%h %l %u %t "%r" %s %b "%{Referer}i" "%{User-Agent}i" %T "%{Content-Type}o" %{username}r %I %{Authorization}i %{Location}o %S %{clientId}r' />
+</Context>
+

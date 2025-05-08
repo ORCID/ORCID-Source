@@ -61,9 +61,9 @@ RUN mvn -T 1C --batch-mode --projects orcid-api-common clean install -DskipTests
 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 ##################################################################################
-COPY orcid-web/src orcid-web/src
+COPY orcid-pub-web/src orcid-pub-web/src
 RUN mvn -T 1C --batch-mode -DgenerateBackupPoms=false \
---projects orcid-web -am package -DskipTests \
+--projects orcid-pub-web -am package -DskipTests \
 -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 # For Java 11 and Tomcat 9
@@ -73,7 +73,7 @@ FROM tomcat:9.0.93-jdk11-temurin-jammy
 # FROM tomcat:9.0.91-jdk11-temurin-focal
 
 # copy jar file from build
-COPY --from=maven /build/*/target/*.war /usr/local/tomcat/webapps/orcid-web.war
+COPY --from=maven /build/*/target/*.war /usr/local/tomcat/webapps/orcid-pub-web.war
 
 RUN mkdir -p /usr/local/tomcat/newrelic
 COPY newrelic.yml /usr/local/tomcat/newrelic/newrelic.yml
@@ -92,11 +92,11 @@ ADD certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY entrypoint.sh .
 RUN chmod +x ./entrypoint.sh
 
-COPY orcid-web/*.j2 .
+COPY orcid-pub-web/*.j2 .
 
-COPY orcid-web/log4j2.xml .
+COPY orcid-pub-web/log4j2.xml .
 
-COPY orcid-web/context.xml /usr/local/tomcat/conf
+COPY orcid-pub-web/context.xml /usr/local/tomcat/conf
 
 ENTRYPOINT [ "./entrypoint.sh" ]
 
