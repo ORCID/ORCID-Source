@@ -206,30 +206,25 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         Authentication authentication = null;
         if (context != null && context.getAuthentication() != null) {
             authentication = context.getAuthentication();
-            LOGGER.trace("Is authentication null? " + (authentication == null));
-            LOGGER.trace("Is authenticated: " + authentication.isAuthenticated());
             LOGGER.trace("Authentication name " + authentication.getName());
-            LOGGER.trace("Principal: " + authentication.getPrincipal());
-            LOGGER.trace("Credentials " + authentication.getCredentials());
+
+            //TODO: Remove this code before going live
             LOGGER.trace("Authorities:");
             for(GrantedAuthority auth : authentication.getAuthorities()) {
-                LOGGER.trace("Authority: " + auth.getAuthority());
-                LOGGER.trace("Authority class: " + auth.getClass().getName());
+                LOGGER.trace("Authority: " + auth.getAuthority() + " of type: " + auth.getClass().getName());
+            }
+            ///////////////////////////////////////////
+
+            if(authentication.getAuthorities().contains(adminAuthority)) {
+                LOGGER.trace("Current user " + authentication.getName() + " is an admin");
+                return true;
+            } else {
+                LOGGER.trace("Current user " + authentication.getName() + " is not an admin");
             }
         } else {
-            LOGGER.trace("Authentication name is null");
+            LOGGER.trace("Authentication object is null");
         }
 
-        if (authentication != null) {
-            Object details = authentication.getDetails();
-            LOGGER.trace("Details type: " + details.getClass().getName());
-            if (details instanceof UserDetails) {
-                LOGGER.trace("User details is of the right type");
-                UserDetails userDetails = (UserDetails) details;
-                return userDetails.getAuthorities().contains(adminAuthority);
-            }
-            LOGGER.trace("User details is not and instanceof UserDeteails ... it is: " + details.getClass().getName());
-        }
         return false;
     }
 
