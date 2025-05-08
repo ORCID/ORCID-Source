@@ -16,6 +16,8 @@ public class PingFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
             LOG.warn("PING HIT");
+            request.setAttribute("skipAccessLog", true);
+            request.setAttribute("isMonitoring", true);
             response.setStatus(200);
             response.setContentType("application/json");
             response.getWriter().write("{\"tomcatUp\":true}");
