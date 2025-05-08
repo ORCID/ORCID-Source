@@ -200,18 +200,35 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
 
     @Override
     public boolean isAdmin() {
+        LOGGER.trace("Checking if the user is an admin");
         SecurityContext context = SecurityContextHolder.getContext();
+        LOGGER.trace("Is security context null? " + (context == null));
         Authentication authentication = null;
         if (context != null && context.getAuthentication() != null) {
             authentication = context.getAuthentication();
+            LOGGER.trace("Is authentication null? " + (authentication == null));
+            LOGGER.trace("Is authenticated: " + authentication.isAuthenticated());
+            LOGGER.trace("Authentication name " + authentication.getName());
+            LOGGER.trace("Principal: " + authentication.getPrincipal());
+            LOGGER.trace("Credentials " + authentication.getCredentials());
+            LOGGER.trace("Authorities:");
+            for(GrantedAuthority auth : authentication.getAuthorities()) {
+                LOGGER.trace("Authority: " + auth.getAuthority());
+                LOGGER.trace("Authority class: " + auth.getClass().getName());
+            }
+        } else {
+            LOGGER.trace("Authentication name is null");
         }
 
         if (authentication != null) {
             Object details = authentication.getDetails();
+            LOGGER.trace("Details type: " + details.getClass().getName());
             if (details instanceof UserDetails) {
+                LOGGER.trace("User details is of the right type");
                 UserDetails userDetails = (UserDetails) details;
                 return userDetails.getAuthorities().contains(adminAuthority);
             }
+            LOGGER.trace("User details is not and instanceof UserDeteails ... it is: " + details.getClass().getName());
         }
         return false;
     }
