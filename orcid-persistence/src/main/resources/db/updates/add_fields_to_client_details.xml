@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="ADD-NOTIFICATION-ENABLED" author="Camelia Dumitru">
+	<changeSet id="ADD-NOTIFICATION-ENABLED" author="Camelia Dumitru" dbms="postgresql">
     	<preConditions onFail="MARK_RAN">
     		<not>
     			<columnExists tableName="client_details" columnName="user_notification_enabled"/>
@@ -13,7 +13,7 @@
         </addColumn>		
     </changeSet>
     
-    <changeSet id="ADD-NOTIFICATION-DOMAINS" author="Camelia Dumitru">
+    <changeSet id="ADD-NOTIFICATION-DOMAINS" author="Camelia Dumitru" dbms="postgresql">
     	<preConditions onFail="MARK_RAN">
     		<not>
     			<columnExists tableName="client_details" columnName="notification_domains"/>
@@ -24,7 +24,7 @@
         </addColumn>	
     </changeSet>
     
-    <changeSet id="ADD-NOTIFICATION-WEBPAGE-URL" author="Camelia Dumitru">
+    <changeSet id="ADD-NOTIFICATION-WEBPAGE-URL" author="Camelia Dumitru" dbms="postgresql">
     	<preConditions onFail="MARK_RAN">
     		<not>
     			<columnExists tableName="client_details" columnName="notification_webpage_url"/>
