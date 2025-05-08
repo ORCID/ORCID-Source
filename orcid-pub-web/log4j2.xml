@@ -43,7 +43,7 @@
             <appender-ref ref="FILE_APPENDER" />
         </Logger>
 
-        <Root level="error" additivity="true">
+        <Root level="warn" additivity="true">
             <appender-ref ref="FILE_APPENDER" />
         </Root>
     </Loggers>
