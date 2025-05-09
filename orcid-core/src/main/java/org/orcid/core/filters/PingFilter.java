@@ -1,4 +1,4 @@
-package org.orcid.api.filters;
+package org.orcid.core.filters;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

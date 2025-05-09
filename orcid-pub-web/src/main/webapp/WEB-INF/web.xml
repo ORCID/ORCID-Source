@@ -40,7 +40,7 @@
 
     <filter>
         <filter-name>pingFilter</filter-name>
-        <filter-class>org.orcid.api.filters.PingFilter</filter-class>
+        <filter-class>org.orcid.core.filters.PingFilter</filter-class>
     </filter>
 
     <filter-mapping>
