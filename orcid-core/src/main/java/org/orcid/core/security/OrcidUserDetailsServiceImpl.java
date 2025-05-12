@@ -208,9 +208,11 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
             LOGGER.trace("Authentication name " + authentication.getName());
 
             //TODO: Remove this code before going live
-            LOGGER.trace("Authorities:");
-            for(GrantedAuthority auth : authentication.getAuthorities()) {
-                LOGGER.trace("Authority: " + auth.getAuthority() + " of type: " + auth.getClass().getName());
+            if(LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Authorities:");
+                for (GrantedAuthority auth : authentication.getAuthorities()) {
+                    LOGGER.trace("Authority: " + auth.getAuthority() + " of type: " + auth.getClass().getName());
+                }
             }
             ///////////////////////////////////////////
 
