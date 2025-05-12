@@ -206,19 +206,22 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         Authentication authentication = null;
         if (context != null && context.getAuthentication() != null) {
             authentication = context.getAuthentication();
-            LOGGER.trace("Authentication name " + authentication.getName());
-
             //TODO: Remove this code before going live
-            LOGGER.trace("Authorities:");
-            for(GrantedAuthority auth : authentication.getAuthorities()) {
-                LOGGER.trace("Authority: " + auth.getAuthority() + " of type: " + auth.getClass().getName());
+            if(LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Authentication name " + authentication.getName());
+                LOGGER.trace("Authorities:");
+                for (GrantedAuthority auth : authentication.getAuthorities()) {
+                    LOGGER.trace("Authority: " + auth.getAuthority() + " of type: " + auth.getClass().getName());
+                }
             }
             ///////////////////////////////////////////
 
             if(authentication.getAuthorities().contains(adminAuthority)) {
+                //TODO: Remove this code before going live
                 LOGGER.trace("Current user " + authentication.getName() + " is an admin");
                 return true;
             } else {
+                //TODO: Remove this code before going live
                 LOGGER.trace("Current user " + authentication.getName() + " is not an admin");
             }
         } else {
