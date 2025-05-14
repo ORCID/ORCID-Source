@@ -94,11 +94,12 @@ public class AuthenticationUtils {
                         LOGGER.trace("Authentication: {}", sourceAuthentication);
                         LOGGER.trace("Authentication type: {}", sourceAuthentication.getClass().getName());
                         LOGGER.trace("User Details type: {}", sourceAuthentication.getDetails().getClass());
+                        LOGGER.trace("Source authorities: {}", sourceAuthentication.getAuthorities());
 
-                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof UserDetails) {
-                            LOGGER.trace("Authorities: {}", ((UserDetails) sourceAuthentication.getDetails()).getAuthorities());
-                            LOGGER.trace("Admin authority: {}", adminAuthority);
-                            return ((UserDetails) sourceAuthentication.getDetails()).getAuthorities().contains(adminAuthority);
+                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken) {
+                            if(sourceAuthentication.getAuthorities() != null) {
+                                return sourceAuthentication.getAuthorities().contains(adminAuthority);
+                            }
                         }
                     }
                 }
