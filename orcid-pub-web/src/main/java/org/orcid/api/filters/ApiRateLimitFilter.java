@@ -164,7 +164,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     if (isAnonymous) {
                         if (!isWhiteListed(ipAddress)) {
                             LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                            this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                            this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse, httpServletRequest, filterChain);
                         }
 
                     } else {
@@ -172,18 +172,21 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                             // Get the locale for the clientID
                             LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
                             this.rateLimitClientRequest(clientId, today);
+
                         }
+                        filterChain.doFilter(httpServletRequest, httpServletResponse);
                     }
                 } catch (Exception ex) {
                     LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
                 }
             }
+        } else {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
-
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
-    private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException, JSONException {
+    private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest,
+            FilterChain filterChain) throws IOException, JSONException, ServletException {
         JSONObject dailyLimitsObj = papiRedisClient.getTodayDailyLimitsForClient(ipAddress);
         long limitValue = 0l;
         if (dailyLimitsObj != null) {
@@ -213,6 +216,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                 }
                 return;
             }
+        } else {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
 
@@ -235,7 +240,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         if (Features.ENABLE_PAPI_RATE_LIMITING.isActive() && (limitValue == knownRequestLimit)) {
             sendEmail(clientId, LocalDate.now());
         }
-
     }
 
     private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId, Locale locale) {
@@ -364,10 +368,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         IPAddress ip = ipStr.getAddress();
         IPAddress subnet = cidrStr.getAddress();
-        
+
         if (ip == null || subnet == null) {
             // Invalid IP or CIDR notation
-            LOG.info("IP or cidr null returning false"); 
+            LOG.info("IP or cidr null returning false");
             return false;
         }
         LOG.info("ip Address: " + ipAddress + " cidr: " + cidr + " is in ip range? " + subnet.contains(ip));
