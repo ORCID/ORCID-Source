@@ -140,6 +140,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
         LOG.warn("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
+        boolean filterChainRequired = true;
 
         if (enableRateLimiting && !isReferrerWhiteListed(httpServletRequest.getHeader(HttpHeaders.REFERER))) {
             String tokenValue = null;
@@ -164,7 +165,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     if (isAnonymous) {
                         if (!isWhiteListed(ipAddress)) {
                             LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                            this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse, httpServletRequest, filterChain);
+                            filterChainRequired = this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
                         }
 
                     } else {
@@ -172,21 +173,19 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                             // Get the locale for the clientID
                             LOG.info("ApiRateLimitFilter client request with clientId: " + clientId);
                             this.rateLimitClientRequest(clientId, today);
-
                         }
-                        filterChain.doFilter(httpServletRequest, httpServletResponse);
                     }
                 } catch (Exception ex) {
                     LOG.error("Papi Limiting Filter unexpected error, ignore and chain request.", ex);
                 }
             }
-        } else {
+        }
+        if (filterChainRequired) {
             filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
 
-    private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest,
-            FilterChain filterChain) throws IOException, JSONException, ServletException {
+    private boolean rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException, JSONException {
         JSONObject dailyLimitsObj = papiRedisClient.getTodayDailyLimitsForClient(ipAddress);
         long limitValue = 0l;
         if (dailyLimitsObj != null) {
@@ -214,11 +213,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     writer.write(TOO_MANY_REQUESTS_MSG);
                     writer.flush();
                 }
-                return;
+                return false;
             }
-        } else {
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
+        return true;
     }
 
     private void rateLimitClientRequest(String clientId, LocalDate today) throws JSONException {
@@ -240,6 +238,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
         if (Features.ENABLE_PAPI_RATE_LIMITING.isActive() && (limitValue == knownRequestLimit)) {
             sendEmail(clientId, LocalDate.now());
         }
+
     }
 
     private Map<String, Object> createTemplateParams(String clientId, String clientName, String emailName, String orcidId, Locale locale) {
