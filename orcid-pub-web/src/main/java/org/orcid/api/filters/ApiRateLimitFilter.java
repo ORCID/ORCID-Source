@@ -140,6 +140,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
             throws ServletException, IOException {
         LOG.warn("ApiRateLimitFilter starts, rate limit is : " + enableRateLimiting);
+        boolean filterChainRequired = true;
 
         if (enableRateLimiting && !isReferrerWhiteListed(httpServletRequest.getHeader(HttpHeaders.REFERER))) {
             String tokenValue = null;
@@ -164,7 +165,7 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     if (isAnonymous) {
                         if (!isWhiteListed(ipAddress)) {
                             LOG.info("ApiRateLimitFilter anonymous request for ip: " + ipAddress);
-                            this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
+                            filterChainRequired = this.rateLimitAnonymousRequest(ipAddress, today, httpServletResponse);
                         }
 
                     } else {
@@ -179,11 +180,12 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                 }
             }
         }
-
-        filterChain.doFilter(httpServletRequest, httpServletResponse);
+        if (filterChainRequired) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        }
     }
 
-    private void rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException, JSONException {
+    private boolean rateLimitAnonymousRequest(String ipAddress, LocalDate today, HttpServletResponse httpServletResponse) throws IOException, JSONException {
         JSONObject dailyLimitsObj = papiRedisClient.getTodayDailyLimitsForClient(ipAddress);
         long limitValue = 0l;
         if (dailyLimitsObj != null) {
@@ -211,9 +213,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                     writer.write(TOO_MANY_REQUESTS_MSG);
                     writer.flush();
                 }
-                return;
+                return false;
             }
         }
+        return true;
     }
 
     private void rateLimitClientRequest(String clientId, LocalDate today) throws JSONException {
@@ -364,10 +367,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
         IPAddress ip = ipStr.getAddress();
         IPAddress subnet = cidrStr.getAddress();
-        
+
         if (ip == null || subnet == null) {
             // Invalid IP or CIDR notation
-            LOG.info("IP or cidr null returning false"); 
+            LOG.info("IP or cidr null returning false");
             return false;
         }
         LOG.info("ip Address: " + ipAddress + " cidr: " + cidr + " is in ip range? " + subnet.contains(ip));
