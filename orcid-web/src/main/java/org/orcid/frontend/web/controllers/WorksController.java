@@ -366,10 +366,6 @@ public class WorksController extends BaseWorkspaceController {
                 workForm.getTranslatedTitle().setLanguageName(languageName);
             }
 
-            if (workForm.getContributorsGroupedByOrcid() != null) {
-                contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
-            }            
-
             return workForm;
         }
 
