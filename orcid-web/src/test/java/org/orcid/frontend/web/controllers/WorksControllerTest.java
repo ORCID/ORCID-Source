@@ -177,7 +177,7 @@ public class WorksControllerTest extends BaseControllerTest {
         // contributor is an ORCID user with private name
         contributor = work.getContributorsGroupedByOrcid().get(3);
         assertNull(contributor.getContributorEmail());
-        assertEquals("Name is private", contributor.getCreditName().getContent());
+        assertEquals("Not This Name", contributor.getCreditName().getContent());
     }
 
     @Test
@@ -201,7 +201,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
         contributor = work.getContributorsGroupedByOrcid().get(3);
         assertNull(contributor.getContributorEmail());
-        assertEquals("Name is private", contributor.getCreditName().getContent());
+        assertEquals("Not This Name", contributor.getCreditName().getContent());
     }
 
     @Test
