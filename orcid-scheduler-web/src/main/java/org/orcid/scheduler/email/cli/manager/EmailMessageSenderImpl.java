@@ -199,11 +199,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 subjectDelegate = notificationAdministrative.getSubject();
                 if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record")) {
                     bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
-                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual")) {
+                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual") || subjectDelegate.endsWith("has revoked their Account Delegate access to your record")) {
                     bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
                 } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
                     bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
-                }
+                } 
             }
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {

@@ -9,4 +9,6 @@ public interface ProfileInterstitialFlagDao extends GenericDao<ProfileInterstiti
     ProfileInterstitialFlagEntity addInterstitialFlag(String orcid, String interstitialName);
 
     boolean hasInterstitialFlag(String orcid, String interstitialName);
+
+    List<ProfileInterstitialFlagEntity> findByOrcid(String orcid);
 }

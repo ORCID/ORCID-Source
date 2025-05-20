@@ -10,4 +10,5 @@ import org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity;
  */
 public interface ProfileInterstitialFlagManager extends ProfileInterstitialFlagManagerReadOnly {
     ProfileInterstitialFlagEntity addInterstitialFlag(String orcid, String interstitialName);
+
 }

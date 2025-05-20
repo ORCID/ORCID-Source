@@ -7,6 +7,12 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("OAuth - affiliation interstitial")
+    OAUTH_AFFILIATION_INTERSTITIAL,
+
+    @Label("Login - affiliation interstitial")
+    LOGIN_AFFILIATION_INTERSTITIAL,
+
     @Label("Login - domains interstitial")
     LOGIN_DOMAINS_INTERSTITIAL,
 

@@ -25,6 +25,7 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity.DomainCategory;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.EmailDomain;
 import org.orcid.pojo.ajaxForm.ProfileEmailDomain;
 import org.orcid.test.TargetProxyHelper;
 
@@ -86,6 +87,14 @@ public class ProfileEmailDomainManagerTest {
         EmailDomainEntity e2 = new EmailDomainEntity();
         e2.setEmailDomain(EMAIL_DOMAIN_TWO);
         e2.setCategory(DomainCategory.PROFESSIONAL);
+
+        EmailDomain edPojo1 = new EmailDomain();
+        edPojo1.setEmailDomain(EMAIL_DOMAIN);
+        edPojo1.setCategory(DomainCategory.PROFESSIONAL);
+
+        EmailDomain edPojo2 = new EmailDomain();
+        edPojo2.setEmailDomain(EMAIL_DOMAIN_TWO);
+        edPojo2.setCategory(DomainCategory.PROFESSIONAL);
       
         
         when(profileEmailDomainDaoReadOnlyMock.findByEmailDomain(eq(ORCID), eq(EMAIL_DOMAIN))).thenReturn(ped1);
@@ -103,8 +112,8 @@ public class ProfileEmailDomainManagerTest {
 
         when(profileEmailDomainDaoMock.updateVisibility(eq(ORCID), eq(EMAIL_DOMAIN_TWO), eq(Visibility.LIMITED.value()))).thenReturn(true);
         
-        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(e1));
-        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN_TWO))).thenReturn(List.of(e2));
+        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(edPojo1));
+        when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN_TWO))).thenReturn(List.of(edPojo2));
 
         ProfileEntity profile = new ProfileEntity();
         profile.setActivitiesVisibilityDefault(Visibility.PUBLIC.value());
@@ -123,7 +132,7 @@ public class ProfileEmailDomainManagerTest {
 
     @Test
     public void processDomain_domainAlreadyAdded() {
-        EmailDomainEntity professionalEmailDomain = new EmailDomainEntity();
+        EmailDomain professionalEmailDomain = new EmailDomain();
         professionalEmailDomain.setCategory(DomainCategory.PROFESSIONAL);
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN);
         when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
@@ -142,7 +151,7 @@ public class ProfileEmailDomainManagerTest {
 
     @Test
     public void processDomain_doNotAddPersonalDomain() {
-        EmailDomainEntity professionalEmailDomain = new EmailDomainEntity();
+        EmailDomain professionalEmailDomain = new EmailDomain();
         professionalEmailDomain.setCategory(DomainCategory.PERSONAL);
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN);
         when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN))).thenReturn(List.of(professionalEmailDomain));
@@ -153,7 +162,7 @@ public class ProfileEmailDomainManagerTest {
 
     @Test
     public void processDomain_addDomain() {
-        EmailDomainEntity professionalEmailDomain = new EmailDomainEntity();
+        EmailDomain professionalEmailDomain = new EmailDomain();
         professionalEmailDomain.setCategory(DomainCategory.PROFESSIONAL);
         professionalEmailDomain.setEmailDomain(EMAIL_DOMAIN_THREE);
         when(emailDomainManagerMock.findByEmailDomain(eq(EMAIL_DOMAIN_THREE))).thenReturn(List.of(professionalEmailDomain));

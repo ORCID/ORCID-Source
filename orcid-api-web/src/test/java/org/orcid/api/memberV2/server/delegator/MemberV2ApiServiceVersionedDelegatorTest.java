@@ -1558,8 +1558,11 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertTrue(workBulk.getBulk().get(1) instanceof Work);
         assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work but matching source
         assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // private work not matching source
+        assertEquals("/0000-0000-0000-0003/work/11", ((Work) workBulk.getBulk().get(0)).getPath());
+        assertEquals("/0000-0000-0000-0003/work/12", ((Work) workBulk.getBulk().get(1)).getPath());
+        assertEquals("/0000-0000-0000-0003/work/13", ((Work) workBulk.getBulk().get(2)).getPath());
     }
-    
+
     @Test
     public void testViewBulkWorksWithBadPutCode() {
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0003", ScopePathType.READ_LIMITED);

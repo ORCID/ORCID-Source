@@ -1,8 +1,6 @@
 package org.orcid.pojo.summary;
 
-import org.orcid.jaxb.model.v3.release.common.VerificationDate;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
-import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 

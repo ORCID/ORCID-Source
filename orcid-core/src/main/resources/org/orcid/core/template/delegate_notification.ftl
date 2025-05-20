@@ -7,5 +7,5 @@ ${emailNameForDelegate}<@emailMacros.space /><@emailMacros.msg "notification.del
 
 <@emailMacros.msg "notification.delegate.added" /><@emailMacros.space />${emailNameForDelegate}<@emailMacros.space /><@emailMacros.msg "notification.delegate.asTrustedIndividual" />
 
-<@emailMacros.msg "notification.delegate.accessYourRecord" /><@emailMacros.space /><@emailMacros.msg "notification.delegate.settings" />
+<@emailMacros.msg "notification.delegate.accessYourRecord" /><@emailMacros.space /><@emailMacros.msg "notification.delegate.receipt.trustedParties" /> (${baseUri}/trusted-parties).
 <#include "notification_footer.ftl"/>

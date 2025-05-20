@@ -1,3 +1,133 @@
+## v2.79.2 - 2025-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.1...v2.79.2)
+
+## v2.79.1 - 2025-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.0...v2.79.1)
+
+## v2.79.0 - 2025-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.12...v2.79.0)
+
+## v2.78.12 - 2025-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.11...v2.78.12)
+
+- [#7294](https://github.com/ORCID/ORCID-Source/pull/7294): tx pull
+
+## v2.78.11 - 2025-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.10...v2.78.11)
+
+## v2.78.10 - 2025-05-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.9...v2.78.10)
+
+## v2.78.9 - 2025-05-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.8...v2.78.9)
+
+## v2.78.8 - 2025-05-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.7...v2.78.8)
+
+## v2.78.7 - 2025-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.6...v2.78.7)
+
+## v2.78.6 - 2025-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.5...v2.78.6)
+
+## v2.78.5 - 2025-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.4...v2.78.5)
+
+## v2.78.4 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.3...v2.78.4)
+
+## v2.78.3 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.2...v2.78.3)
+
+## v2.78.2 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.1...v2.78.2)
+
+## v2.78.1 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.0...v2.78.1)
+
+## v2.78.0 - 2025-05-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.5...v2.78.0)
+
+## v2.77.5 - 2025-05-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.4...v2.77.5)
+
+- [#7285](https://github.com/ORCID/ORCID-Source/pull/7285): transifex pull
+
+## v2.77.4 - 2025-04-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.3...v2.77.4)
+
+## v2.77.3 - 2025-04-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.2...v2.77.3)
+
+## v2.77.2 - 2025-04-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.1...v2.77.2)
+
+## v2.77.1 - 2025-04-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.77.0...v2.77.1)
+
+- [#7277](https://github.com/ORCID/ORCID-Source/pull/7277): 9694-capture-affiliations-during-sign-in
+
+## v2.77.0 - 2025-04-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.14...v2.77.0)
+
+- [#7276](https://github.com/ORCID/ORCID-Source/pull/7276): check for exicting interstitial flag before creating a new one
+
+## v2.76.14 - 2025-04-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.13...v2.76.14)
+
+## v2.76.13 - 2025-04-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.12...v2.76.13)
+
+- [#7273](https://github.com/ORCID/ORCID-Source/pull/7273): Chage the account settings to trusted parties
+
+## v2.76.12 - 2025-04-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.11...v2.76.12)
+
+## v2.76.11 - 2025-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.10...v2.76.11)
+
+## v2.76.10 - 2025-04-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.9...v2.76.10)
+
+## v2.76.9 - 2025-03-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.8...v2.76.9)
+
+## v2.76.8 - 2025-03-31
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.7...v2.76.8)
+
+## v2.76.7 - 2025-03-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.6...v2.76.7)
+
 ## v2.76.6 - 2025-03-27
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.76.5...v2.76.6)

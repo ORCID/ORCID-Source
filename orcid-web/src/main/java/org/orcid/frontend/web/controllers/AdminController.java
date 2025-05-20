@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -24,10 +26,7 @@ import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.core.manager.v3.ClientDetailsManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.SpamManager;
+import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.core.utils.VerifyEmailUtils;
@@ -40,6 +39,7 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
@@ -49,7 +49,9 @@ import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +77,6 @@ public class AdminController extends BaseController {
     @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
 
-    @Resource(name = "notificationManagerV3")
-    NotificationManager notificationManager;
-
     @Resource
     private AdminManager adminManager;
 
@@ -93,9 +92,6 @@ public class AdminController extends BaseController {
     @Resource
     private VerifyEmailUtils verifyEmailUtils;
 
-    @Resource
-    private EncryptionManager encryptionManager;
-
     @Resource(name = "spamManager")
     SpamManager spamManager;
 
@@ -107,6 +103,12 @@ public class AdminController extends BaseController {
 
     @Value("${org.orcid.admin.registry.url:https://orcid.org}")
     private String registryUrl;
+
+    @Resource(name = "clientManagerV3")
+    private ClientManager clientManager;
+
+    @Resource(name = "profileDaoReadOnly")
+    private ProfileDao profileDaoReadOnly;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
@@ -1257,5 +1259,48 @@ public class AdminController extends BaseController {
             data.setError(e.getMessage());
             return data;
         }
+    }
+
+    @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public @ResponseBody Client createClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody Client client) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        if(client == null) {
+            client = new Client();
+            client.getErrors().add("Client object cannot be null");
+        } else if(client.getMemberId() == null || PojoUtil.isEmpty(client.getMemberId())) {
+            client.getErrors().add("Member ID is requiered");
+        } else if (profileDaoReadOnly.getGroupType(client.getMemberId().getValue()) == null) {
+            client.getErrors().add("Member with ID " + client.getMemberId().getValue() + " does not exists");
+        } else if(client.getDisplayName() == null || PojoUtil.isEmpty(client.getDisplayName())) {
+            client.getErrors().add("Display name is requiered");
+        } else if(client.getShortDescription() == null || PojoUtil.isEmpty(client.getShortDescription())) {
+            client.getErrors().add("Description is requiered");
+        } else if(client.getWebsite() == null || PojoUtil.isEmpty(client.getWebsite())) {
+            client.getErrors().add("Website is requiered");
+        } else if(client.getRedirectUris() == null || client.getRedirectUris().isEmpty()) {
+            client.getErrors().add("Redirect URIs are requiered");
+        } else {
+            // Validate the redirect uris are valid
+            for(RedirectUri r : client.getRedirectUris()) {
+                if(r.getType() == null || PojoUtil.isEmpty(r.getType())) {
+                    client.getErrors().add("Redirect uri type missing on redirect uri " + r.getValue().getValue());
+                }
+            }
+            if(client.getErrors().isEmpty()) {
+                org.orcid.jaxb.model.v3.release.client.Client newClient = client.toModelObject();
+                try {
+                    newClient = clientManager.create(newClient);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage());
+                    String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
+                    client.setErrors(new ArrayList<String>());
+                    client.getErrors().add(errorDesciption);
+                    return client;
+                }
+                client = Client.fromModelObject(newClient);
+            }
+        }
+        return client;
     }
 }

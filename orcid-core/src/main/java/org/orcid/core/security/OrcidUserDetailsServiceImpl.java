@@ -119,8 +119,8 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
         OrcidType orcidType = OrcidType.valueOf(profile.getOrcidType());
         String id = profile.getId();
         String encryptedPassword = profile.getEncryptedPassword();
-        if(OrcidType.GROUP.equals(orcidType)) {
-            LOGGER.warn("GROUP with id " + id + " is signin in");
+        if(OrcidType.GROUP.equals(orcidType) && PojoUtil.isEmpty(encryptedPassword)) {
+            LOGGER.warn("GROUP with id " + id + " and empty password is signin in, changing his password to a placeholder");
             // Members does not have password, so, we need to set one as placeholder
             encryptedPassword = RandomStringUtils.randomAlphanumeric(5);
         }
@@ -200,19 +200,34 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
 
     @Override
     public boolean isAdmin() {
+        LOGGER.trace("Checking if the user is an admin");
         SecurityContext context = SecurityContextHolder.getContext();
+        LOGGER.trace("Is security context null? " + (context == null));
         Authentication authentication = null;
         if (context != null && context.getAuthentication() != null) {
             authentication = context.getAuthentication();
+            //TODO: Remove this code before going live
+            if(LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Authentication name " + authentication.getName());
+                LOGGER.trace("Authorities:");
+                for (GrantedAuthority auth : authentication.getAuthorities()) {
+                    LOGGER.trace("Authority: " + auth.getAuthority() + " of type: " + auth.getClass().getName());
+                }
+            }
+            ///////////////////////////////////////////
+
+            if(authentication.getAuthorities().contains(adminAuthority)) {
+                //TODO: Remove this code before going live
+                LOGGER.trace("Current user " + authentication.getName() + " is an admin");
+                return true;
+            } else {
+                //TODO: Remove this code before going live
+                LOGGER.trace("Current user " + authentication.getName() + " is not an admin");
+            }
+        } else {
+            LOGGER.trace("Authentication object is null");
         }
 
-        if (authentication != null) {
-            Object details = authentication.getDetails();
-            if (details instanceof UserDetails) {
-                UserDetails userDetails = (UserDetails) details;
-                return userDetails.getAuthorities().contains(adminAuthority);
-            }
-        }
         return false;
     }
 
