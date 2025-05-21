@@ -410,6 +410,8 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/get-my-data"
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/account/.*"
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/userInfo.json(\?.*)?"
