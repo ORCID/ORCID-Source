@@ -440,7 +440,9 @@
 			access="ROLE_USER" />
         <sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
 			access="ROLE_USER" />
-        <sec:intercept-url pattern="/my-orcid(\?.*)?"
+		<sec:intercept-url pattern="/my-orcid(\?.*)?"
+			access="ROLE_USER" />
+		<sec:intercept-url pattern="/my-orcid/.*?"
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
