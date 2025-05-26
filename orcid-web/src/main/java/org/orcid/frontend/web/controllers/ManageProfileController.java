@@ -481,14 +481,18 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
         ModelAndView result = null;
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        String primaryEmail = emailManager.findPrimaryEmail(getCurrentUserOrcid()).getEmail();
+        String currentUserOrcid = getCurrentUserOrcid();
 
-        if (decryptedEmail.equals(primaryEmail)) {
-            profileEntityManager.deactivateRecord(getCurrentUserOrcid());
-            logoutCurrentUser(request, response);
-            result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
-        } else {
-            return new ModelAndView("redirect:"+ calculateRedirectUrl("/my-orcid"));
+        if(!PojoUtil.isEmpty(currentUserOrcid)) {
+            org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid);
+
+            if (primaryEmail != null && decryptedEmail.equals(primaryEmail.getEmail())) {
+                profileEntityManager.deactivateRecord(currentUserOrcid);
+                logoutCurrentUser(request, response);
+                result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
+            } else {
+                return new ModelAndView("redirect:" + calculateRedirectUrl("/my-orcid"));
+            }
         }
 
         return result;
