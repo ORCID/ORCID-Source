@@ -127,8 +127,6 @@ jobs:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
       ref: ${{ inputs.ref }}
-      seed_maven_cache: false
-      install_maven_dependencies: false
 
 ##############################################################################
 
