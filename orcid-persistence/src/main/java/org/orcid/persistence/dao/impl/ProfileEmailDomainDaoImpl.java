@@ -20,7 +20,7 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     public ProfileEmailDomainDaoImpl() {
         super(ProfileEmailDomainEntity.class);
     }
-        
+
     @Override
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
@@ -61,7 +61,8 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibility(String orcid, String emailDomain, String visibility) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_email_domain SET visibility=:visibility, last_modified = now() WHERE orcid = :orcid and email_domain = :emailDomain");
+        Query query = entityManager
+                .createNativeQuery("UPDATE profile_email_domain SET visibility=:visibility, last_modified = now() WHERE orcid = :orcid and email_domain = :emailDomain");
         query.setParameter("orcid", orcid);
         query.setParameter("emailDomain", emailDomain);
         query.setParameter("visibility", visibility);
@@ -78,7 +79,8 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
 
     @Override
     public List<ProfileEmailDomainEntity> findPublicEmailDomains(String orcid) {
-        TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and visibility = 'PUBLIC'", ProfileEmailDomainEntity.class);
+        TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and visibility = 'PUBLIC'",
+                ProfileEmailDomainEntity.class);
         query.setParameter("orcid", orcid);
         List<ProfileEmailDomainEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
@@ -86,14 +88,15 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
 
     @Override
     public ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain) {
-        TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain", ProfileEmailDomainEntity.class);
+        TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where orcid = :orcid and emailDomain = :emailDomain",
+                ProfileEmailDomainEntity.class);
         query.setParameter("orcid", orcid);
         query.setParameter("emailDomain", emailDomain);
         try {
             return query.getSingleResult();
-        } catch(NoResultException nre) {
+        } catch (NoResultException nre) {
             // Ignore this exception
-        } catch(Exception e) {
+        } catch (Exception e) {
             // Propagate any other exception
             throw e;
         }
@@ -104,10 +107,27 @@ public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomain
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_email_domain SET orcid=:primaryOrcid, last_modified = now() WHERE orcid = :deprecatedOrcid and email_domain = :emailDomain");
+        Query query = entityManager.createNativeQuery(
+                "UPDATE profile_email_domain SET orcid=:primaryOrcid, last_modified = now() WHERE orcid = :deprecatedOrcid and email_domain = :emailDomain");
         query.setParameter("primaryOrcid", primaryOrcid);
         query.setParameter("emailDomain", emailDomain);
         query.setParameter("deprecatedOrcid", deprecatedOrcid);
         query.executeUpdate();
+    }
+
+    @Override
+    public List<ProfileEmailDomainEntity> findByEmailDomain(String emailDomain) {
+        TypedQuery<ProfileEmailDomainEntity> query = entityManager.createQuery("from ProfileEmailDomainEntity where emailDomain = :emailDomain",
+                ProfileEmailDomainEntity.class);
+        query.setParameter("emailDomain", emailDomain);
+        try {
+            return query.getResultList();
+        } catch (NoResultException nre) {
+            // Ignore this exception
+        } catch (Exception e) {
+            // Propagate any other exception
+            throw e;
+        }
+        return null;
     }
 }

@@ -380,6 +380,18 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.setMaxResults(max);
         return query.getResultList();
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<NotificationEntity> findNotificationsByOrcidAndClientAndFamilyNoClientToken(String orcid, String clientId, String notificationFamily){
+        Query query = entityManager.createNativeQuery("SELECT * FROM notification WHERE source_id = :clientId AND orcid = :orcid "
+                + "AND notification_family = :notificationFamily AND NOT EXISTS (SELECT 1  FROM oauth_token_detail WHERE "
+                + "oauth_token_detail.user_orcid = notification.orcid AND oauth_token_detail.client_details_id = notification.source_id)");
+        query.setParameter("clientId", clientId);
+        query.setParameter("orcid", orcid);
+        query.setParameter("notificationFamily", notificationFamily);
+        return query.getResultList();
+    }
 
     @Override
     @Transactional
