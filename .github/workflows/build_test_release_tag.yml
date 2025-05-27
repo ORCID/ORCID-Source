@@ -118,7 +118,6 @@ jobs:
     needs:
       - lint
       - test_mvn
-      - install_maven_dependencies
     permissions:
       checks: write
       contents: read
