@@ -60,8 +60,7 @@ public class ClientsController extends BaseWorkspaceController {
 
     @RequestMapping
     public ModelAndView manageClients() {
-        ModelAndView mav = new ModelAndView("member_developer_tools");
-        return mav;
+        return new ModelAndView("member_developer_tools");
     }
 
     @RequestMapping(value = "/client.json", method = RequestMethod.GET)

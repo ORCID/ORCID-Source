@@ -2,6 +2,8 @@ package org.orcid.core.common.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.security.OrcidRoles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,8 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserGran
 import java.util.Collection;
 
 public class AuthenticationUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationUtils.class);
 
     public static final GrantedAuthority adminAuthority = new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name());
 
@@ -85,8 +89,17 @@ public class AuthenticationUtils {
                     if (authority instanceof SwitchUserGrantedAuthority) {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
-                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken && sourceAuthentication.getDetails() instanceof UserDetails) {
-                            return ((UserDetails) sourceAuthentication.getDetails()).getAuthorities().contains(adminAuthority);
+
+                        LOGGER.trace("isDelegatedByAnAdmin");
+                        LOGGER.trace("Authentication: {}", sourceAuthentication);
+                        LOGGER.trace("Authentication type: {}", sourceAuthentication.getClass().getName());
+                        LOGGER.trace("User Details type: {}", sourceAuthentication.getDetails().getClass());
+                        LOGGER.trace("Source authorities: {}", sourceAuthentication.getAuthorities());
+
+                        if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken) {
+                            if(sourceAuthentication.getAuthorities() != null) {
+                                return sourceAuthentication.getAuthorities().contains(adminAuthority);
+                            }
                         }
                     }
                 }

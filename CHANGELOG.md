@@ -1,3 +1,61 @@
+## v2.79.6 - 2025-05-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.5...v2.79.6)
+
+## v2.79.5 - 2025-05-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.4...v2.79.5)
+
+## v2.79.4 - 2025-05-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.3...v2.79.4)
+
+## v2.79.3 - 2025-05-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.2...v2.79.3)
+
+## v2.79.2 - 2025-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.1...v2.79.2)
+
+## v2.79.1 - 2025-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.0...v2.79.1)
+
+## v2.79.0 - 2025-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.12...v2.79.0)
+
+## v2.78.12 - 2025-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.11...v2.78.12)
+
+- [#7294](https://github.com/ORCID/ORCID-Source/pull/7294): tx pull
+
+## v2.78.11 - 2025-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.10...v2.78.11)
+
+## v2.78.10 - 2025-05-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.9...v2.78.10)
+
+## v2.78.9 - 2025-05-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.8...v2.78.9)
+
+## v2.78.8 - 2025-05-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.7...v2.78.8)
+
+## v2.78.7 - 2025-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.6...v2.78.7)
+
+## v2.78.6 - 2025-05-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.5...v2.78.6)
+
 ## v2.78.5 - 2025-05-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.78.4...v2.78.5)
