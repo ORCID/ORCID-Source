@@ -60,5 +60,9 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     boolean convertPublicClientToMember(String clientId, String groupId, String name);
     
     boolean updateClientGrantedAuthority(String clientId, String grantedAuthority);
+    
+    boolean updateNotificationInfo(String clientId, boolean notificationEnabled, String notificationWebUrl, String notificationDomains);
+    
+    List<ClientDetailsEntity> findMVPEnabled();
 
 }

@@ -1,0 +1,48 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-NOTIFICATION-ENABLED" author="Camelia Dumitru">
+    	<preConditions onFail="MARK_RAN">
+    		<not>
+    			<columnExists tableName="client_details" columnName="user_notification_enabled"/>
+    		</not>                       
+        </preConditions>
+        <addColumn tableName="client_details">
+        	<column name="user_notification_enabled" type="boolean" defaultValueBoolean="false" />
+        </addColumn>		
+    </changeSet>
+    
+    <changeSet id="ADD-NOTIFICATION-DOMAINS-POSTGRES" author="Camelia Dumitru" dbms="postgresql">
+    	<preConditions onFail="MARK_RAN">
+    		<not>
+    			<columnExists tableName="client_details" columnName="notification_domains"/>
+    		</not>                       
+        </preConditions>	
+        <addColumn tableName="client_details">
+        	<column name="notification_domains" type="json" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="ADD-NOTIFICATION-DOMAINS-HSQL" author="Camelia Dumitru" dbms="hsqldb">
+	     <preConditions onFail="MARK_RAN">
+	      <not>
+             <columnExists tableName="client_details" columnName="notification_domains"/>
+	      </not>
+	     </preConditions>
+	     <addColumn tableName="client_details">
+             <column name="notification_domains" type="clob" />
+	     </addColumn>
+ 	</changeSet>
+    
+    <changeSet id="ADD-NOTIFICATION-WEBPAGE-URL" author="Camelia Dumitru">
+    	<preConditions onFail="MARK_RAN">
+    		<not>
+    			<columnExists tableName="client_details" columnName="notification_webpage_url"/>
+    		</not>                       
+        </preConditions>
+        <addColumn tableName="client_details">
+        	<column name="notification_webpage_url" type="text" />
+        </addColumn>		
+    </changeSet>        
+</databaseChangeLog>	

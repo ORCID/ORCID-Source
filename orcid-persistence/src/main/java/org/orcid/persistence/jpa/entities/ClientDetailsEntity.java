@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name = "client_details")
 public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     // Default is 20 years!
@@ -61,10 +61,13 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String emailAccessReason;
     private boolean allowAutoDeprecate = false;
     private boolean userOBOEnabled = false;
-    
+    private boolean userNotificationEnabled = false;
+    private String notificationWebpageUrl;
+    private String notificationDomains;
+
     private Date deactivatedDate;
     private String deactivatedBy;
-    
+
     public ClientDetailsEntity() {
     }
 
@@ -73,11 +76,11 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     }
 
     public ClientDetailsEntity(String clientId, String clientName) {
-    	this.clientId = clientId;
-    	this.clientName = clientName;
-	}
+        this.clientId = clientId;
+        this.clientName = clientName;
+    }
 
-	/**
+    /**
      * This should be implemented by all entity classes to return the id of the
      * entity represented by the &lt;T&gt; generic argument
      * 
@@ -173,7 +176,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     public void setClientGrantedAuthorities(List<ClientGrantedAuthorityEntity> clientGrantedAuthorities) {
         this.clientGrantedAuthorities = clientGrantedAuthorities;
-    }    
+    }
 
     @Column(name = "group_orcid")
     @JoinColumn(name = "group_orcid")
@@ -255,7 +258,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setPersistentTokensEnabled(boolean persistentTokensEnabled) {
         this.persistentTokensEnabled = persistentTokensEnabled;
     }
-    
+
     /**
      * Reason, if any, client wants to access users' private email addresses.
      * 
@@ -413,7 +416,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     @Override
     @Transient
-    public boolean isAutoApprove(String scope) {        
+    public boolean isAutoApprove(String scope) {
         return false;
     }
 
@@ -434,7 +437,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
     }
-    
+
     @Column(name = "user_obo_enabled")
     public boolean isUserOBOEnabled() {
         return userOBOEnabled;
@@ -443,7 +446,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setUserOBOEnabled(boolean userOBOEnabled) {
         this.userOBOEnabled = userOBOEnabled;
     }
-    
+
     @Column(name = "deactivated_date")
     public Date getDeactivatedDate() {
         return deactivatedDate;
@@ -590,8 +593,35 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
             return false;
         if (persistentTokensEnabled != other.persistentTokensEnabled)
             return false;
-        if (userOBOEnabled != other.userOBOEnabled) 
+        if (userOBOEnabled != other.userOBOEnabled)
             return false;
         return true;
-    }                  
+    }
+
+    @Column(name = "user_notification_enabled")
+    public boolean isUserNotificationEnabled() {
+        return userNotificationEnabled;
+    }
+
+    public void setUserNotificationEnabled(boolean userNotificationEnabled) {
+        this.userNotificationEnabled = userNotificationEnabled;
+    }
+
+    @Column(name = "notification_webpage_url")
+    public String getNotificationWebpageUrl() {
+        return notificationWebpageUrl;
+    }
+
+    public void setNotificationWebpageUrl(String notificationWebpageUrl) {
+        this.notificationWebpageUrl = notificationWebpageUrl;
+    }
+
+    @Column(name = "notification_domains")
+    public String getNotificationDomains() {
+        return notificationDomains;
+    }
+
+    public void setNotificationDomains(String notificationDomains) {
+        this.notificationDomains = notificationDomains;
+    }
 }

@@ -20,4 +20,6 @@ public interface ProfileEmailDomainDao extends GenericDao<ProfileEmailDomainEnti
     ProfileEmailDomainEntity findByEmailDomain(String orcid, String emailDomain);
 
     void moveEmailDomainToAnotherAccount(String emailDomain, String deprecatedOrcid, String primaryOrcid);
+    
+    List<ProfileEmailDomainEntity> findByEmailDomain(String emailDomain);
 }
