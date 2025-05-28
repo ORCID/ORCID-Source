@@ -75,6 +75,34 @@ services:
     profiles:
       - dev
 
+  papi:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-pub-web:${TAG:-0.0.1}
+    build:
+      cache_from:
+        - orcid/registry-dependencies:${TAG:-0.0.1}
+      context: .
+      dockerfile: orcid-pub-web/Dockerfile
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    env_file:
+      - default.env
+      - properties/default.orcid_core.env
+      - properties/default.misc.env
+      - properties/default.frontend.env
+      - properties/default.persistence.env
+      - orcid-pub-web/default.env
+      - orcid-pub-web/deployment.env
+      - ${DOCKER_DEV_ENV_FILE:-empty.env}
+    ports:
+      - 0.0.0.0:13102:8080
+    networks:
+      app:
+    volumes:
+      - /opt/docker/logs/reg-papi:/usr/local/tomcat/logs
+    profiles:
+      - dev
+      - papi
+
   papi_proxy:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-pub-web-proxy:${TAG:-0.0.1}
     build:
