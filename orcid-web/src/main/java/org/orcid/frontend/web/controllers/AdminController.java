@@ -1298,12 +1298,7 @@ public class AdminController extends BaseController {
                 }
             }
 
-            if (!errors.isEmpty()) {
-                client.setErrors(errors);
-                return client;
-            }
-
-            if (client.getErrors().isEmpty()) {
+            if (errors.isEmpty()) {
                 org.orcid.jaxb.model.v3.release.client.Client newClient = client.toModelObject();
                 try {
                     newClient = clientManager.createWithConfigValues(newClient);
@@ -1317,6 +1312,13 @@ public class AdminController extends BaseController {
                 client = Client.fromModelObject(newClient);
             }
         }
+
+        if (!errors.isEmpty()) {
+            client.setErrors(errors);
+            return client;
+        }
+
+
         return client;
     }
 
