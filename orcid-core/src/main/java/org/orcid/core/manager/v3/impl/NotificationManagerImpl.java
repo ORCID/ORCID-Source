@@ -820,12 +820,10 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         addMessageParams(templateParams, userLocale);
 
-        String text = null;
-        String html = null;
-
-        text = templateManager.processTemplate("orcid_integration_notification.ftl", templateParams);
-        html = templateManager.processTemplate("orcid_integration_notification_html.ftl", templateParams);
-
+        String text = templateManager.processTemplate("orcid_integration_notification.ftl", templateParams);
+        //Keep it for now, it might be needed in the future
+        //String html = templateManager.processTemplate("orcid_integration_notification_html.ftl", templateParams);
+        
         NotificationPermission notification = new NotificationPermission();
 
         Item item = new Item();
