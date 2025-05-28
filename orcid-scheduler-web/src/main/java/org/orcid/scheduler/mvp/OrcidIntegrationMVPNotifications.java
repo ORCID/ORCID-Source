@@ -36,13 +36,13 @@ public class OrcidIntegrationMVPNotifications {
     public void createOrcidIntegrationNotifications() {
         // Get clients eligible for mvp
         long startTime = System.currentTimeMillis();
-        LOG.info("Start time: {}", new java.util.Date(startTime));
+        LOG.info("Start process.");
         List<ClientDetailsEntity> clientsWithMVP = clientDetailsDaoReadOnly.findMVPEnabled();
         if (clientsWithMVP != null && !clientsWithMVP.isEmpty()) {
             for (ClientDetailsEntity clientDetails : clientsWithMVP) {
                 if (StringUtils.isNotBlank(clientDetails.getNotificationWebpageUrl()) && StringUtils.isNotBlank(clientDetails.getNotificationDomains())) {
                     long startTimeClient = System.currentTimeMillis();
-                    LOG.info("Start mvp notifications for client with the id {} and start time {} ", clientDetails.getClientId(), startTimeClient);
+                    LOG.info("Start process client {}.", clientDetails.getClientId());
                     try {
                         JSONArray jsonDomainArr = new JSONArray(clientDetails.getNotificationDomains());
                         Set<ProfileEmailDomainEntity> profileDomainSet = new HashSet<ProfileEmailDomainEntity>();
@@ -59,8 +59,7 @@ public class OrcidIntegrationMVPNotifications {
                                         pe.getOrcid(), clientDetails.getClientId(), ORCID_INTEGRATION_NOTIFICATION_FAMILY);
                                 if (orcidIntegrationNotifications == null || orcidIntegrationNotifications.isEmpty()) {
                                     notificationManager.sendOrcidIntegrationNotificationToUser(pe.getOrcid(), clientDetails);
-                                    LOG.warn("MVP Orcid Integration Notification for client with the id: " + clientDetails.getClientId() + " and orcid: " + pe.getOrcid()
-                                            + " was created successfully.");
+                                    LOG.warn("Create notification for client {} and orcid {} " ,clientDetails.getClientId(), pe.getOrcid());
                                 }
                             }
                         }
@@ -69,8 +68,8 @@ public class OrcidIntegrationMVPNotifications {
                     }
                     long endTimeClient = System.currentTimeMillis();
                     long durationMillisClient = endTimeClient - startTimeClient;
-                    LOG.info("End the mvp notifications for client with the id {} and start time {} ", clientDetails.getClientId(), endTimeClient);
-                    LOG.info("MVP Orcid Integration Notification for client {} - total duration {} .", durationToString(durationMillisClient) );
+                    LOG.info("End process for client {}.", clientDetails.getClientId());
+                    LOG.info("Duration process client {}.", durationToString(durationMillisClient) );
 
                 } else {
                     LOG.warn("Check the mvp notifications fields for client with the id: " + clientDetails.getClientId()
@@ -79,11 +78,11 @@ public class OrcidIntegrationMVPNotifications {
             }
         }
         long endTime = System.currentTimeMillis();
-        LOG.info("End time: {}", new java.util.Date(endTime));
+        LOG.info("End process.");
 
         long durationMillis = endTime - startTime;
 
-        LOG.info("MVP Orcid Integration Notification - total duration {}.", durationToString(durationMillis) );
+        LOG.info("Total duration process {}.", durationToString(durationMillis) );
     }
     
     private String durationToString(long durationMillis) {
