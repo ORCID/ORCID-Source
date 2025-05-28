@@ -8,17 +8,21 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.v3.ClientManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -38,6 +42,9 @@ public class AdminControllerTest {
 
     @Mock
     private ClientManager clientManagerMock;
+
+    @Mock
+    private ClientManagerReadOnly clientManagerReadOnlyMock;
 
     @Mock
     private OrcidSecurityManager orcidSecurityManagerMock;
@@ -72,7 +79,7 @@ public class AdminControllerTest {
         c.setMemberId(null);
         c = adminController.createClient(requestMock, responseMock, c);
         assertEquals(c.getErrors().size(), 1);
-        assertEquals("Member ID is requiered", c.getErrors().get(0));
+        assertEquals("Member ID is required", c.getErrors().get(0));
     }
 
     @Test
@@ -90,7 +97,7 @@ public class AdminControllerTest {
         c.setDisplayName(null);
         c = adminController.createClient(requestMock, responseMock, c);
         assertEquals(c.getErrors().size(), 1);
-        assertEquals("Display name is requiered", c.getErrors().get(0));
+        assertEquals("Display name is required", c.getErrors().get(0));
     }
 
     @Test
@@ -99,7 +106,7 @@ public class AdminControllerTest {
         c.setShortDescription(null);
         c = adminController.createClient(requestMock, responseMock, c);
         assertEquals(c.getErrors().size(), 1);
-        assertEquals("Description is requiered", c.getErrors().get(0));
+        assertEquals("Description is required", c.getErrors().get(0));
     }
 
     @Test
@@ -108,7 +115,7 @@ public class AdminControllerTest {
         c.setWebsite(null);
         c = adminController.createClient(requestMock, responseMock, c);
         assertEquals(c.getErrors().size(), 1);
-        assertEquals("Website is requiered", c.getErrors().get(0));
+        assertEquals("Website is required", c.getErrors().get(0));
     }
 
     @Test
@@ -117,7 +124,7 @@ public class AdminControllerTest {
         c.getRedirectUris().remove(0);
         c = adminController.createClient(requestMock, responseMock, c);
         assertEquals(c.getErrors().size(), 1);
-        assertEquals("Redirect URIs are requiered", c.getErrors().get(0));
+        assertEquals("Redirect URIs are required", c.getErrors().get(0));
     }
 
     @Test
@@ -131,7 +138,7 @@ public class AdminControllerTest {
 
     @Test
     public void createClientTest() throws IllegalAccessException {
-        when(clientManagerMock.create(any())).thenAnswer(
+        when(clientManagerMock.createWithConfigValues(any())).thenAnswer(
                 (Answer<org.orcid.jaxb.model.v3.release.client.Client>) invocation -> {
                     org.orcid.jaxb.model.v3.release.client.Client c = invocation.getArgument(0, org.orcid.jaxb.model.v3.release.client.Client.class);
                     // Mock the client secret to prevent a NPE
@@ -148,7 +155,23 @@ public class AdminControllerTest {
         assertTrue(c.getErrors().isEmpty());
         assertFalse(PojoUtil.isEmpty(newClient.getClientId()));
         org.orcid.jaxb.model.v3.release.client.Client modelObject = newClient.toModelObject();
-        verify(clientManagerMock, times(1)).create(any(org.orcid.jaxb.model.v3.release.client.Client.class));
+        verify(clientManagerMock, times(1)).createWithConfigValues(any(org.orcid.jaxb.model.v3.release.client.Client.class));
+    }
+
+    @Test
+    public void resetClientSecretTest() throws IllegalAccessException {
+        String newClientSecret = "dummy-secret";
+        Client c = getClient();
+        // Mock the client id to prevent a NPE
+        c.setClientId(Text.valueOf("APP-0"));
+        when(clientManagerReadOnlyMock.get(any())).thenReturn(c.toModelObject());
+        when(clientManagerMock.resetAndGetClientSecret(any())).thenReturn(newClientSecret);
+
+        ResponseEntity<Map<String, String>> responseEntity = adminController.resetClientSecret(requestMock, responseMock, c);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(c.getClientId().getValue(), responseEntity.getBody().get("clientId"));
+        assertEquals(newClientSecret, responseEntity.getBody().get("newSecret"));
+        verify(clientManagerMock, times(1)).resetAndGetClientSecret(anyString());
     }
 
     private Client getClient() {

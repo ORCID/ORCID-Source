@@ -27,8 +27,8 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.*;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
@@ -56,12 +56,15 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -106,6 +109,9 @@ public class AdminController extends BaseController {
 
     @Resource(name = "clientManagerV3")
     private ClientManager clientManager;
+
+    @Resource(name = "clientManagerReadOnlyV3")
+    private ClientManagerReadOnly clientManagerReadOnly;
 
     @Resource(name = "profileDaoReadOnly")
     private ProfileDao profileDaoReadOnly;
@@ -686,7 +692,7 @@ public class AdminController extends BaseController {
 
     /**
      * Reset password validate
-     * 
+     *
      * @throws IllegalAccessException
      * @throws UnsupportedEncodingException
      */
@@ -1262,45 +1268,92 @@ public class AdminController extends BaseController {
     }
 
     @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public @ResponseBody Client createClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody Client client) throws IllegalAccessException {
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @ResponseBody
+    public Client createClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody Client client) throws IllegalAccessException {
         isAdmin(serverRequest, response);
-        if(client == null) {
+
+        List<String> errors = new ArrayList<>();
+
+        if (client == null) {
             client = new Client();
-            client.getErrors().add("Client object cannot be null");
-        } else if(client.getMemberId() == null || PojoUtil.isEmpty(client.getMemberId())) {
-            client.getErrors().add("Member ID is requiered");
+            errors.add("Client object cannot be null");
+        } else if (client.getMemberId() == null || PojoUtil.isEmpty(client.getMemberId())) {
+            errors.add("Member ID is required");
         } else if (profileDaoReadOnly.getGroupType(client.getMemberId().getValue()) == null) {
-            client.getErrors().add("Member with ID " + client.getMemberId().getValue() + " does not exists");
-        } else if(client.getDisplayName() == null || PojoUtil.isEmpty(client.getDisplayName())) {
-            client.getErrors().add("Display name is requiered");
-        } else if(client.getShortDescription() == null || PojoUtil.isEmpty(client.getShortDescription())) {
-            client.getErrors().add("Description is requiered");
-        } else if(client.getWebsite() == null || PojoUtil.isEmpty(client.getWebsite())) {
-            client.getErrors().add("Website is requiered");
-        } else if(client.getRedirectUris() == null || client.getRedirectUris().isEmpty()) {
-            client.getErrors().add("Redirect URIs are requiered");
+            errors.add("Member with ID " + client.getMemberId().getValue() + " does not exists");
+        } else if (client.getDisplayName() == null || PojoUtil.isEmpty(client.getDisplayName())) {
+            errors.add("Display name is required");
+        } else if (client.getShortDescription() == null || PojoUtil.isEmpty(client.getShortDescription())) {
+            errors.add("Description is required");
+        } else if (client.getWebsite() == null || PojoUtil.isEmpty(client.getWebsite())) {
+            errors.add("Website is required");
+        } else if (client.getRedirectUris() == null || client.getRedirectUris().isEmpty()) {
+            errors.add("Redirect URIs are required");
         } else {
             // Validate the redirect uris are valid
-            for(RedirectUri r : client.getRedirectUris()) {
-                if(r.getType() == null || PojoUtil.isEmpty(r.getType())) {
-                    client.getErrors().add("Redirect uri type missing on redirect uri " + r.getValue().getValue());
+            for (RedirectUri r : client.getRedirectUris()) {
+                if (r.getType() == null || PojoUtil.isEmpty(r.getType())) {
+                    errors.add("Redirect uri type missing on redirect uri " + r.getValue().getValue());
                 }
             }
-            if(client.getErrors().isEmpty()) {
+
+            if (errors.isEmpty()) {
                 org.orcid.jaxb.model.v3.release.client.Client newClient = client.toModelObject();
                 try {
-                    newClient = clientManager.create(newClient);
+                    newClient = clientManager.createWithConfigValues(newClient);
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
-                    String errorDesciption = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
+                    String errorDescription = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
                     client.setErrors(new ArrayList<String>());
-                    client.getErrors().add(errorDesciption);
+                    client.getErrors().add(errorDescription);
                     return client;
                 }
                 client = Client.fromModelObject(newClient);
             }
         }
+
+        if (!errors.isEmpty()) {
+            client.setErrors(errors);
+            return client;
+        }
+
+
         return client;
+    }
+
+
+    @PostMapping(value = "/reset-client-secret.json", produces = MediaType.APPLICATION_JSON)
+    public ResponseEntity<Map<String, String>> resetClientSecret(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody Client client) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+
+        if (client == null || PojoUtil.isEmpty(client.getClientId())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "Client ID is required"));
+        }
+
+        String clientId = client.getClientId().getValue();
+
+        org.orcid.jaxb.model.v3.release.client.Client existingClient = clientManagerReadOnly.get(clientId);
+        if (existingClient == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Client “" + clientId + "” not found"));
+        }
+
+        try {
+            String newSecret = clientManager.resetAndGetClientSecret(clientId);
+            return ResponseEntity
+                    .ok(Map.of(
+                            "clientId", clientId,
+                            "newSecret", newSecret
+                    ));
+        } catch (Exception e) {
+            LOGGER.error("Error resetting secret for client {}", clientId, e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to reset client secret"));
+        }
     }
 }
