@@ -75,6 +75,24 @@ services:
     profiles:
       - dev
 
+  papi_proxy:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-pub-web-proxy:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-pub-web-proxy/Dockerfile
+    ports:
+      - 0.0.0.0:13109:80
+      - 0.0.0.0:13110:443
+    volumes:
+      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem:ro
+      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem:ro
+      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem:ro
+    networks:
+      app:
+    profiles:
+      - dev
+      - papi
+
   ui_frontend:
     image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
     build:
