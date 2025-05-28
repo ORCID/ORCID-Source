@@ -112,6 +112,22 @@ jobs:
       seed_maven_cache: false
       install_maven_dependencies: false
 
+  bld_docker:
+    uses: ./.github/workflows/bld_docker.yml
+    secrets: inherit # pass all secrets for uploading assets
+    needs:
+      - lint
+      - test_mvn
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+
 ##############################################################################
 
   rel_tag:

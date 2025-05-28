@@ -137,7 +137,6 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[x](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX](\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/userInfo.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?" security="none" create-session="stateless" />
@@ -411,8 +410,28 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/get-my-data"
 			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/account/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/qr-code.png"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/find-my-stuff/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/fundings/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/delegators/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/inbox/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/notifications/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/peer-reviews/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/research-resources/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/works/.*"
+			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/affiliations/.*"
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/userInfo.json(\?.*)?"
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/person.json(\?.*)?"
@@ -421,8 +440,12 @@
 			access="ROLE_USER" />
         <sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
 			access="ROLE_USER" />
-        <sec:intercept-url pattern="/my-orcid(\?.*)?" access="ROLE_USER" />
-			
+		<sec:intercept-url pattern="/my-orcid(\?.*)?"
+			access="ROLE_USER" />
+		<sec:intercept-url pattern="/my-orcid/.*?"
+			access="ROLE_USER" />
+		<sec:intercept-url pattern="/verify-email/[a-zA-Z0-9_-]+(\?lang=[a-zA-Z]*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<!-- Allow GET requests (no authentication needed) -->
 		<sec:intercept-url pattern="/.*" method="GET" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<!-- Require ROLE_USER for all other methods -->
