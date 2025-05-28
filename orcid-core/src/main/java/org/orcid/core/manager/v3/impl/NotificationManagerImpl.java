@@ -807,7 +807,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         }
     }
 
-    public void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails) {
+    public void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
 
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
@@ -836,7 +836,9 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         Items items = new Items(itemsList);
         notification.setItems(items);
         notification.setSubject(subject);
-        notification.setNotificationIntro(html);
+        notification.setNotificationIntro(text);
+        notification.setNotificationSubject(subject);
+        notification.setAuthorizationUrl(new AuthorizationUrl(buildAuthorizationUrlForInstitutionalSignIn(clientDetails)));
         Source source = new Source();
         source.setSourceClientId(new SourceClientId(clientDetails.getClientId()));
         source.setSourceName(new SourceName(clientDetails.getClientName()));
