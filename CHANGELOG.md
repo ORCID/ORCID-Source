@@ -1,3 +1,18 @@
+## v2.80.0 - 2025-05-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.6...v2.80.0)
+
+- [#7262](https://github.com/ORCID/ORCID-Source/pull/7262): feat/ui-docker-container-builds Fixed linting errors that angel found, pr not relating to anything outside docker as container builds can fail and build will still complete.
+
+### Fix
+
+- try a separate docker compose file rather than profiles
+- cleaning up old property names and adding new redis props to docker config template
+
+### Feature
+
+- run docker builds with every registry maven build
+
 ## v2.79.6 - 2025-05-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.79.5...v2.79.6)
