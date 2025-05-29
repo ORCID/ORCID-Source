@@ -368,10 +368,6 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/spam/report-spam.json"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/notifications/frequencies/[^\/\?#:]*/email-frequencies\\.json(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/.*"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/reactivation/.*?"
