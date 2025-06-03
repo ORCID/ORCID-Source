@@ -46,7 +46,7 @@ public class OrcidIntegrationMVPNotifications {
             for (ClientDetailsEntity clientDetails : clientsWithMVP) {
                 if (StringUtils.isNotBlank(clientDetails.getNotificationWebpageUrl()) && StringUtils.isNotBlank(clientDetails.getNotificationDomains())) {
                     long startTimeClient = System.currentTimeMillis();
-                    LOG.info("Start process client {}. Notification send for the seconf time {} ago", clientDetails.getClientId(), daysAgo);
+                    LOG.info("Start process client {}. Notification send for the second time if no notifications sent since {} ago", clientDetails.getClientId(), daysAgo);
                     try {
                         JSONArray jsonDomainArr = new JSONArray(clientDetails.getNotificationDomains());
                         Set<ProfileEmailDomainEntity> profileDomainSet = new HashSet<ProfileEmailDomainEntity>();
