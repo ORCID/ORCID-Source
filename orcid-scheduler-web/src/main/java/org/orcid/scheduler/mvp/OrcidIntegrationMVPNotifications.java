@@ -7,7 +7,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.LocalDateTime;
 import org.json.JSONArray;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -18,6 +17,7 @@ import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidIntegrationMVPNotifications {
 
@@ -33,6 +33,9 @@ public class OrcidIntegrationMVPNotifications {
     private NotificationManager notificationManager;
 
     public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
+    
+    @Value("${org.orcid.notifications.mvp.daysAgo:10}")
+    private Long daysAgo;
 
     public void createOrcidIntegrationNotifications() {
         // Get clients eligible for mvp
@@ -43,7 +46,7 @@ public class OrcidIntegrationMVPNotifications {
             for (ClientDetailsEntity clientDetails : clientsWithMVP) {
                 if (StringUtils.isNotBlank(clientDetails.getNotificationWebpageUrl()) && StringUtils.isNotBlank(clientDetails.getNotificationDomains())) {
                     long startTimeClient = System.currentTimeMillis();
-                    LOG.info("Start process client {}.", clientDetails.getClientId());
+                    LOG.info("Start process client {}. Notification send for the seconf time {} ago", clientDetails.getClientId(), daysAgo);
                     try {
                         JSONArray jsonDomainArr = new JSONArray(clientDetails.getNotificationDomains());
                         Set<ProfileEmailDomainEntity> profileDomainSet = new HashSet<ProfileEmailDomainEntity>();
@@ -60,8 +63,8 @@ public class OrcidIntegrationMVPNotifications {
                                         pe.getOrcid(), clientDetails.getClientId(), ORCID_INTEGRATION_NOTIFICATION_FAMILY);
                                 boolean shouldSendNotification = orcidIntegrationNotifications == null || orcidIntegrationNotifications.isEmpty()
                                         || orcidIntegrationNotifications.stream().anyMatch(notification -> {
-                                            java.util.Date tenDaysAgo = new java.util.Date(System.currentTimeMillis() - 10L * 24 * 60 * 60 * 1000);
-                                            return notification.getDateCreated() != null && notification.getDateCreated().before(tenDaysAgo);
+                                            java.util.Date daysAgoDate = new java.util.Date(System.currentTimeMillis() - daysAgo * 24 * 60 * 60 * 1000);
+                                            return notification.getDateCreated() != null && notification.getDateCreated().before(daysAgoDate);
                                         });
 
                                 if (shouldSendNotification) {
