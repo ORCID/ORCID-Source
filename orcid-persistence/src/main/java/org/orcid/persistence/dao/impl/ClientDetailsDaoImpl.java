@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
@@ -284,8 +285,9 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @SuppressWarnings("unchecked")
     public List<ClientDetailsEntity> findMVPEnabled() {
-        Query query = entityManager.createQuery("from ClientDetailsEntity where userNotificationEnabled = :userNotificationEnabled");
+        Query query = entityManager.createQuery("from ClientDetailsEntity where userNotificationEnabled = :userNotificationEnabled and client_type = :premiumUpdater" );
         query.setParameter("userNotificationEnabled", true);
+        query.setParameter("premiumUpdater", ClientType.PREMIUM_UPDATER.name());
         return query.getResultList();
     }
 
