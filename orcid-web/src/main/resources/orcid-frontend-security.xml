@@ -105,6 +105,7 @@
 	<sec:http pattern="/.well-known/**" security="none" />
 	<sec:http pattern="/robots.txt" security="none" create-session="stateless" />
 	<sec:http pattern="/tomcatUp.json" security="none" create-session="stateless" />
+	<sec:http pattern="/ping" security="none" create-session="stateless" />
 	<sec:http pattern="/webStatus.json" security="none" create-session="stateless" />
 	<sec:http pattern="/error" security="none" />
 	<sec:http pattern="/favicon.ico" security="none" create-session="stateless" />
