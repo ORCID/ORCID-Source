@@ -17,6 +17,7 @@ import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public class OrcidIntegrationMVPNotifications {
 
@@ -32,6 +33,9 @@ public class OrcidIntegrationMVPNotifications {
     private NotificationManager notificationManager;
 
     public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
+    
+    @Value("${org.orcid.notifications.mvp.daysAgo:10}")
+    private Long daysAgo;
 
     public void createOrcidIntegrationNotifications() {
         // Get clients eligible for mvp
@@ -42,7 +46,7 @@ public class OrcidIntegrationMVPNotifications {
             for (ClientDetailsEntity clientDetails : clientsWithMVP) {
                 if (StringUtils.isNotBlank(clientDetails.getNotificationWebpageUrl()) && StringUtils.isNotBlank(clientDetails.getNotificationDomains())) {
                     long startTimeClient = System.currentTimeMillis();
-                    LOG.info("Start process client {}.", clientDetails.getClientId());
+                    LOG.info("Start process client {}. Notification send for the second time if no notifications sent since {} ago", clientDetails.getClientId(), daysAgo);
                     try {
                         JSONArray jsonDomainArr = new JSONArray(clientDetails.getNotificationDomains());
                         Set<ProfileEmailDomainEntity> profileDomainSet = new HashSet<ProfileEmailDomainEntity>();
@@ -57,9 +61,17 @@ public class OrcidIntegrationMVPNotifications {
                             for (ProfileEmailDomainEntity pe : profileDomainSet) {
                                 List<NotificationEntity> orcidIntegrationNotifications = notificationManager.findByOrcidAndClientAndNotificationFamilyNoClientToken(
                                         pe.getOrcid(), clientDetails.getClientId(), ORCID_INTEGRATION_NOTIFICATION_FAMILY);
-                                if (orcidIntegrationNotifications == null || orcidIntegrationNotifications.isEmpty()) {
+                                boolean shouldSendNotification = orcidIntegrationNotifications == null || orcidIntegrationNotifications.isEmpty()
+                                        || orcidIntegrationNotifications.stream().anyMatch(notification -> {
+                                            java.util.Date daysAgoDate = new java.util.Date(System.currentTimeMillis() - daysAgo * 24 * 60 * 60 * 1000);
+                                            return notification.getDateCreated() != null && notification.getDateCreated().before(daysAgoDate);
+                                        });
+
+                                if (shouldSendNotification) {
                                     notificationManager.sendOrcidIntegrationNotificationToUser(pe.getOrcid(), clientDetails);
-                                    LOG.warn("Create notification for client {} and orcid {} " ,clientDetails.getClientId(), pe.getOrcid());
+                                    LOG.warn("Create notification for client {} and orcid {}", clientDetails.getClientId(), pe.getOrcid());
+                                } else {
+                                    LOG.info("Notification already sent for client {} and orcid {}", clientDetails.getClientId(), pe.getOrcid());
                                 }
                             }
                         }
@@ -69,7 +81,7 @@ public class OrcidIntegrationMVPNotifications {
                     long endTimeClient = System.currentTimeMillis();
                     long durationMillisClient = endTimeClient - startTimeClient;
                     LOG.info("End process for client {}.", clientDetails.getClientId());
-                    LOG.info("Duration process client {}.", durationToString(durationMillisClient) );
+                    LOG.info("Duration process client {}.", durationToString(durationMillisClient));
 
                 } else {
                     LOG.warn("Check the mvp notifications fields for client with the id: " + clientDetails.getClientId()
@@ -82,9 +94,9 @@ public class OrcidIntegrationMVPNotifications {
 
         long durationMillis = endTime - startTime;
 
-        LOG.info("Total duration process {}.", durationToString(durationMillis) );
+        LOG.info("Total duration process {}.", durationToString(durationMillis));
     }
-    
+
     private String durationToString(long durationMillis) {
         long hours = durationMillis / (1000 * 60 * 60);
         long minutes = (durationMillis / (1000 * 60)) % 60;

@@ -467,16 +467,55 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return createNotification(orcid, notification);
     }
 
-    private Notification createPermissionNotificationWithFamily(String orcid, NotificationPermission notification, String notificationFamily) {
+    private Notification createPermissionNotificationWithFamily(String orcid, NotificationPermission notification, String notificationFamily,
+            ClientDetailsEntity clientDetails) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
         }
 
-        return createNotification(orcid, notification, notificationFamily);
+        return createNotification(orcid, notification, notificationFamily, clientDetails);
     }
 
-    private Notification createNotification(String orcid, Notification notification, String notificationFamily) {
+    private Notification createNotification(String orcid, Notification notification, String notificationFamily, ClientDetailsEntity clientDetails) {
+        if (notification.getPutCode() != null) {
+            throw new IllegalArgumentException("Put code must be null when creating a new notification");
+        }
+        NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
+        notificationEntity.setOrcid(orcid);
+        SourceEntity sourceEntity = null;
+
+        if (clientDetails != null) {
+            sourceEntity = new SourceEntity();
+            sourceEntity.setSourceClient(clientDetails);
+        } else {
+            sourceEntity = sourceManager.retrieveActiveSourceEntity();
+        }
+
+        if (sourceEntity != null) {
+            // Set source id
+            if (sourceEntity.getSourceProfile() != null) {
+                notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+            }
+
+            if (sourceEntity.getSourceClient() != null) {
+                notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            }
+        } else {
+            // If we can't find source id, set the user as the source
+
+            notificationEntity.setSourceId(orcid);
+        }
+
+        if (StringUtils.isNotBlank(notificationFamily)) {
+            notificationEntity.setNotificationFamily(notificationFamily);
+        }
+
+        notificationDao.persist(notificationEntity);
+        return notificationAdapter.toNotification(notificationEntity);
+    }
+
+    private Notification createNotification(String orcid, Notification notification) {
         if (notification.getPutCode() != null) {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
         }
@@ -496,19 +535,12 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             }
         } else {
             // If we can't find source id, set the user as the source
-            notificationEntity.setSourceId(orcid);
-        }
 
-        if (StringUtils.isNotBlank(notificationFamily)) {
-            notificationEntity.setNotificationFamily(notificationFamily);
+            notificationEntity.setSourceId(orcid);
         }
 
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
-    }
-
-    private Notification createNotification(String orcid, Notification notification) {
-        return createNotification(orcid, notification, null);
     }
 
     @Override
@@ -821,9 +853,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         addMessageParams(templateParams, userLocale);
 
         String text = templateManager.processTemplate("orcid_integration_notification.ftl", templateParams);
-        //Keep it for now, it might be needed in the future
-        //String html = templateManager.processTemplate("orcid_integration_notification_html.ftl", templateParams);
-        
+        // Keep it for now, it might be needed in the future
+        // String html =
+        // templateManager.processTemplate("orcid_integration_notification_html.ftl",
+        // templateParams);
+
         NotificationPermission notification = new NotificationPermission();
 
         Item item = new Item();
@@ -841,7 +875,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         source.setSourceClientId(new SourceClientId(clientDetails.getClientId()));
         source.setSourceName(new SourceName(clientDetails.getClientName()));
         notification.setSource(source);
-        createPermissionNotificationWithFamily(orcid, notification, ORCID_INTEGRATION_NOTIFICATION_FAMILY);
+        createPermissionNotificationWithFamily(orcid, notification, ORCID_INTEGRATION_NOTIFICATION_FAMILY, clientDetails);
     }
 
     public List<NotificationEntity> findByOrcidAndClientAndNotificationFamilyNoClientToken(String orcid, String clientId, String notificationFamily) {
