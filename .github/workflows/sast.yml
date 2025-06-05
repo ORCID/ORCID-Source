@@ -1,0 +1,54 @@
+name: SAST
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '45 6 * * *'
+jobs:
+  buildmavenDepTree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Generate dependency tree
+        run: |
+          find . -name "pom.xml" -execdir mvn -q dependency:tree -DoutputFile=maven_dep_tree.txt -Dmaven.test.skip=true \;
+      - name: Create zip with all dependency trees
+        run: find . -type f -name 'maven_dep_tree.txt' -exec zip -r deptree.zip {} +
+      - name: Upload zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: deptree
+          path: deptree.zip
+  sast:
+    needs: buildmavenDepTree
+    name: sast
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+    container:
+      image: semgrep/semgrep
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Download Maven Dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: deptree
+      - name: Extract zip and run Semgrep
+        run: |
+          unzip -o deptree.zip
+          semgrep ci > /dev/null 2>&1 || exit $?
