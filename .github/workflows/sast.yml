@@ -20,26 +20,9 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Set temporary version for Maven
-        run: |
-          mvn -q versions:set -DnewVersion=0.0.0-ci -DgenerateBackupPoms=false -Dmaven.test.skip=true || echo "No version bump needed"
-
       - name: Generate dependency tree
         run: |
-          find . -name "pom.xml" | while read pom; do
-            dir=$(dirname "$pom")
-            echo "Processing $dir"
-            (
-              cd "$dir" || exit 1
-              echo "Running in $(pwd)"
-              if ! timeout 300s mvn -q dependency:tree -DoutputFile=maven_dep_tree.txt -Dmaven.test.skip=true 2> error.log; then
-                echo "Failed in $dir"
-                echo "-------- ERROR LOG START ($dir) --------"
-                cat error.log
-                echo "-------- ERROR LOG END ($dir) --------"
-              fi
-            )
-          done
+          find . -name "pom.xml" -execdir mvn -q dependency:tree -DoutputFile=maven_dep_tree.txt -Dmaven.test.skip=true \;
       - name: Create zip with all dependency trees
         run: find . -type f -name 'maven_dep_tree.txt' -exec zip -r deptree.zip {} +
       - name: Upload zip
