@@ -106,7 +106,7 @@
   <parent>
   	<groupId>org.orcid</groupId>
   	<artifactId>orcid-parent</artifactId>
-        <version>${project.version}</version>
+	<version>release-2.0.0</version>
   	<relativePath>../pom.xml</relativePath>
   </parent>
   
