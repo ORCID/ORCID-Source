@@ -22,7 +22,7 @@
                     <#if notificationType == 'PERMISSION' || notificationType == 'INSTITUTIONAL_CONNECTION'>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;letter-spacing: 0.5px;">
-                            <span style="background-color:#ff9c00;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
+                            <span style="background-color:#ff9c00;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;"></span>
                             <p style="color: #ff9c00;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.permissions" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
@@ -59,7 +59,55 @@
                     </#if>
                     <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
                         <#if notificationType == 'PERMISSION'>
-                            <#if notification.notificationIntro??><p>${notification.notificationIntro}</p></#if>
+                            <#if notification.notificationIntro??>
+                            <#if notification.notificationIntro?contains("::")>
+                            <#assign splitValues = notification.notificationIntro?split("::") />
+    						<#assign memberName = splitValues[0] />
+    						<#assign memberWebUrl = splitValues[1] />
+    						<p><b>${notification.notificationSubject}</b></p>
+                            <p><@emailMacros.msg "notification.mvp.youCanBenefit" /></p>
+                            <p><@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space /><b>${memberName}</b>.<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />
+							</p> 
+							<p>
+							               <a href="${memberWebUrl}"
+                               rel="noopener noreferrer"
+                               target="_blank"
+                            >
+                                <button type="button"
+                                        style="width: 200px;
+                                        background-color: #2e7f9f;
+                                        color: white;
+                                        position: relative;
+                                        display: inline-block;
+                                        padding: .8em;
+                                        border: 1px solid transparent;
+                                        border-radius: 3px;
+                                        outline: none;
+                                        font-family: inherit;
+                                        font-size: 13px;
+                                        font-weight: normal;
+                                        line-height: 1.15384615;
+                                        text-align: center;
+                                        text-decoration: none;
+                                        cursor: pointer;
+                                        user-select: none;
+                                        border: transparent;">
+                                    <span style="text-transform: uppercase;">
+                                        <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space />${memberName}
+                                    </span>
+                                </button>
+                            </a>
+                            <p/>
+                            <br>
+                            <p style="word-break: break-word">
+                                <@emailMacros.msg "notification.digest.cantClick" />
+                                <a href="${memberWebUrl}"
+                                   target="orcid.blank"
+                                   style="text-decoration: underline;color: #085c77;display: inline-block;"
+                                >${memberWebUrl}</a>
+                            </p>
+							<#else>
+							<p>${notification.notificationIntro}</p>
                             <p><#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if></p>
                             <#assign itemsByType=notification.items.itemsByType>
                             <#list itemsByType?keys?sort as itemType>
@@ -112,6 +160,8 @@
                                    style="text-decoration: underline;color: #085c77;display: inline-block;"
                                 >${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action</a>
                             </p>
+                            </#if>
+                            </#if>
                         <#elseif notificationType == 'AMENDED' && !verboseNotifications>
                             <p>
                                 <@emailMacros.msg "notification.digest.showing" />
