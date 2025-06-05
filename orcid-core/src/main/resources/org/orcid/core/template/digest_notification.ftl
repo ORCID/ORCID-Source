@@ -31,7 +31,8 @@ ${'\n'}${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.
                             <@emailMacros.msg "notification.mvp.youCanBenefit" />
                             <@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space />${memberName}.<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />
 					        <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space />${memberName}: <@emailMacros.space /> ${memberWebUrl}
-					<#else>		
+					<#else>	
+					<#if notification.notificationIntro??>${notification.notificationIntro}</#if>
                     ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if>
                     <#assign itemsByType=notification.items.itemsByType>
                     <#list itemsByType?keys?sort as itemType>
@@ -39,7 +40,7 @@ ${'\n'}${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.
                         <#list itemsByType[itemType] as item>
                             ${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
                         </#list>
-                        
+
                         <@emailMacros.msg "email.digest.plaintext.addnow" /><@emailMacros.space />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
                         <@emailMacros.msg "email.digest.plaintext.moreinfo" /><@emailMacros.space />${baseUri}/inbox#${notification.putCode}
                     </#list>

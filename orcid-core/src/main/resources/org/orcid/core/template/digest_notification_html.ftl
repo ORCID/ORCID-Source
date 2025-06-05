@@ -22,7 +22,7 @@
                     <#if notificationType == 'PERMISSION' || notificationType == 'INSTITUTIONAL_CONNECTION'>
                         <hr style="color: #ff9c00;background-color: #ff9c00;border-style: solid;border-width: 2px;"/>
                         <div style="font-weight: bold;display: flex;align-items: center;text-align: start;letter-spacing: 0.5px;">
-                            <span style="background-color:#ff9c00;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;"></span>
+                            <span style="background-color:#ff9c00;height: 8px;width: 8px;border-radius: 50%;display: inline-block;margin-right: 8px;margin-top: 10px;"></span>
                             <p style="color: #ff9c00;margin: 6px 0;font-size: 12px;font-weight: bold;"><@emailMacros.msg "notification.digest.permissions" /></p>
                         </div>
                         <p style="margin: 15px 0;font-weight: bold;">
@@ -59,8 +59,7 @@
                     </#if>
                     <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
                         <#if notificationType == 'PERMISSION'>
-                            <#if notification.notificationIntro??>
-                            <#if notification.notificationIntro?contains("::")>
+                            <#if notification.notificationIntro?? && notification.notificationIntro?contains("::")>
                             <#assign splitValues = notification.notificationIntro?split("::") />
     						<#assign memberName = splitValues[0] />
     						<#assign memberWebUrl = splitValues[1] />
@@ -107,7 +106,7 @@
                                 >${memberWebUrl}</a>
                             </p>
 							<#else>
-							<p>${notification.notificationIntro}</p>
+                            <#if notification.notificationIntro??><p>${notification.notificationIntro}</p></#if>
                             <p><#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if></p>
                             <#assign itemsByType=notification.items.itemsByType>
                             <#list itemsByType?keys?sort as itemType>
@@ -160,8 +159,7 @@
                                    style="text-decoration: underline;color: #085c77;display: inline-block;"
                                 >${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action</a>
                             </p>
-                            </#if>
-                            </#if>
+                         	</#if>
                         <#elseif notificationType == 'AMENDED' && !verboseNotifications>
                             <p>
                                 <@emailMacros.msg "notification.digest.showing" />
