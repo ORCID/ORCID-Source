@@ -16,5 +16,13 @@
     <import resource="classpath*:orcid-scheduler-context.xml"/>
     
     <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
-		
+
+    <bean id="jedisPoolBuilder" class="org.orcid.scheduler.cleanup.JedisPoolBuilder">
+        <constructor-arg index="0" value="localhost"/>
+        <constructor-arg index="1" value="6379" />
+        <constructor-arg index="2" value="password" />
+        <constructor-arg index="3" value="1000" />
+        <constructor-arg index="4" value="1" />
+    </bean>
+
 </beans>
