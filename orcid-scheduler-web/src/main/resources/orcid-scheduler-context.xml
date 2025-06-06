@@ -51,7 +51,7 @@
         <task:scheduled ref="redisExpiredMainIndexCleanup" method="execute" cron="${org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup.cron:0 35 22 * * SAT} />
     </task:scheduled-tasks>
 
-	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:30}"/>
+	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:60}"/>
 
     <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
 
