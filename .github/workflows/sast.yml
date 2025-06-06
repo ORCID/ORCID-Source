@@ -33,7 +33,7 @@ jobs:
   sast:
     needs: buildmavenDepTree
     name: sast
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-8-cores
     permissions:
       contents: read
     env:
@@ -49,6 +49,7 @@ jobs:
         with:
           name: deptree
       - name: Extract zip and run Semgrep
+        timeout-minutes: 60
         run: |
           unzip -o deptree.zip
           semgrep ci > /dev/null 2>&1 || exit $?
