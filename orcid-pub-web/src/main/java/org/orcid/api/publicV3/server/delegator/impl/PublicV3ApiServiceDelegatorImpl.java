@@ -252,6 +252,7 @@ public class PublicV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid);
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV3.checkIsPublic(w);
+        contributorUtilsReadOnly.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtilsReadOnly.setSourceName(w);
@@ -663,6 +664,7 @@ public class PublicV3ApiServiceDelegatorImpl implements
         }
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV3.filter(workBulk);
+        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
