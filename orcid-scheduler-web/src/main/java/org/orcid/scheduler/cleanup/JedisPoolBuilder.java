@@ -1,9 +1,11 @@
 package org.orcid.scheduler.cleanup;
 
+import org.springframework.context.annotation.Profile;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+@Profile("!unitTests")
 public class JedisPoolBuilder {
     private String host;
     private int port;
