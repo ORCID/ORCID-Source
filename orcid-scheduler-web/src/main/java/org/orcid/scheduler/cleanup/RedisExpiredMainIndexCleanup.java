@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -64,7 +63,10 @@ public class RedisExpiredMainIndexCleanup {
         String orcid = mainIndexEntry.substring(mainIndexEntry.lastIndexOf(":") + 1);
         LOGGER.info("Checking main index for " + orcid + " Elements: " + sessionIds.size());
         if(sessionIds == null || sessionIds.isEmpty()) {
+            LOGGER.info("Removing main index" + mainIndexEntry);
             removeMainIndex(mainIndexEntry, j);
+            j.close();
+            return;
         } else {
             LOGGER.trace("Iterating over main index entries in " + orcid);
             for (String sessionId : sessionIds) {
@@ -75,9 +77,9 @@ public class RedisExpiredMainIndexCleanup {
             LOGGER.trace("DONE Iterating over main index entries in " + orcid);
         }
         // Check again the main index, if it is emtpy, remove it
-        LOGGER.info("Checking main index again for " + mainIndexEntry);
         Set<String> sessionIdsAgain = j.smembers(mainIndexEntry);
         if (sessionIdsAgain == null || sessionIdsAgain.size() == 0) {
+            LOGGER.info("Removing main index" + mainIndexEntry);
             removeMainIndex(mainIndexEntry, j);
         }
 
