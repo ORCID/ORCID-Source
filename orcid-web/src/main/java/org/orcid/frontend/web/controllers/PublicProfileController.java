@@ -528,6 +528,10 @@ public class PublicProfileController extends BaseWorkspaceController {
                 work.getTranslatedTitle().setLanguageName(languageName);
             }
 
+            if (work.getContributorsGroupedByOrcid() != null) {
+                contributorUtils.filterContributorsGroupedByOrcidPrivateData(work.getContributorsGroupedByOrcid(), maxContributorsForUI);
+            }            
+
             return new ResponseEntity<>(work, HttpStatus.OK);
         }
         
