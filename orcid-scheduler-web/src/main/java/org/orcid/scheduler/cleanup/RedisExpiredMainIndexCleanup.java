@@ -63,7 +63,6 @@ public class RedisExpiredMainIndexCleanup {
         String orcid = mainIndexEntry.substring(mainIndexEntry.lastIndexOf(":") + 1);
         LOGGER.info("Checking main index for " + orcid + " Elements: " + sessionIds.size());
         if(sessionIds == null || sessionIds.isEmpty()) {
-            LOGGER.info("Removing main index" + mainIndexEntry);
             removeMainIndex(mainIndexEntry, j);
             j.close();
             return;
@@ -79,7 +78,6 @@ public class RedisExpiredMainIndexCleanup {
         // Check again the main index, if it is emtpy, remove it
         Set<String> sessionIdsAgain = j.smembers(mainIndexEntry);
         if (sessionIdsAgain == null || sessionIdsAgain.size() == 0) {
-            LOGGER.info("Removing main index" + mainIndexEntry);
             removeMainIndex(mainIndexEntry, j);
         }
 
