@@ -1,3 +1,33 @@
+## v2.91.0 - 2025-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.90.0...v2.91.0)
+
+## v2.90.0 - 2025-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.89.0...v2.90.0)
+
+## v2.89.0 - 2025-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.88.0...v2.89.0)
+
+## v2.88.0 - 2025-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.87.0...v2.88.0)
+
+## v2.87.0 - 2025-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.86.0...v2.87.0)
+
+## v2.86.0 - 2025-06-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.85.0...v2.86.0)
+
+## v2.85.0 - 2025-06-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.84.0...v2.85.0)
+
+- [#7310](https://github.com/ORCID/ORCID-Source/pull/7310): add sast ci
+
 ## v2.84.0 - 2025-06-05
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.83.0...v2.84.0)
