@@ -157,6 +157,20 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         }
         return true;
     }
+    
+    @Override
+    public boolean hasTokenForClient(String userName, String clientId) {
+        Query query = entityManager
+                .createNativeQuery("select true from oauth2_token_detail where user_orcid=:userName and client_details_id=:clientId limit 1");
+        query.setParameter("userName", userName);
+        query.setParameter("clientId", clientId);
+        try {
+            query.getSingleResult();
+        } catch (NoResultException e) {
+            return false;
+        }
+        return true;
+    }
 
 
     /** Disable all tokens with this code/clientID pair.  Should never be more than one.

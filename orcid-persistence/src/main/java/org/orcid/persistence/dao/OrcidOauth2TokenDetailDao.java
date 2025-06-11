@@ -36,6 +36,8 @@ public interface OrcidOauth2TokenDetailDao extends GenericDao<OrcidOauth2TokenDe
     List<String> findAvailableScopesByUserAndClientId(String clientId, String userName);
 
     boolean hasToken(String userName);
+    
+    boolean hasTokenForClient(String userName, String clientId);
 
     int disableAccessTokenByCodeAndClient(String authorizationCode, String clientId, String reason);
     
