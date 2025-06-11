@@ -1,3 +1,7 @@
+## v2.89.0 - 2025-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.88.0...v2.89.0)
+
 ## v2.88.0 - 2025-06-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.87.0...v2.88.0)
