@@ -33,7 +33,7 @@ public class StatusController {
     @Resource
     private StatusManager statusManager;
     
-    @RequestMapping(value = "/tomcatUp.json")
+    @RequestMapping(value = {"/tomcatUp.json", "/ping"})
     @Produces(value = { MediaType.APPLICATION_JSON })
     public @ResponseBody
     String tomcatUp(HttpServletRequest request) {
