@@ -15,7 +15,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.util.ClientUtils;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +55,7 @@ public class OrcidSolrOrgsClient {
     }
 
    public List<OrgDisambiguatedSolrDocument> getOrgs(String searchTerm, int firstResult, int maxResult, boolean fundersOnly, boolean withNamesHighlight) {
-        String escapedSearchTerm = ClientUtils.escapeQueryChars(searchTerm);
-        StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", escapedSearchTerm));
+        StringBuilder queryString = new StringBuilder(SOLR_ORGS_QUERY.replace("%s", searchTerm));
         if (fundersOnly) {
             queryString.append(" AND is-funding-org:true");
         } 

@@ -16,10 +16,8 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.util.ClientUtils;
+
 import org.apache.solr.common.SolrDocument;
-import org.orcid.core.solr.OrcidSolrResult;
-import org.orcid.core.solr.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +30,7 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
     public OrcidSolrResult findByOrcid(String orcid) {
         OrcidSolrResult orcidSolrResult = null;
         SolrQuery query = new SolrQuery();
-        query.setQuery(ORCID + ":\"" + ClientUtils.escapeQueryChars(orcid) + "\"").setFields(SCORE, ORCID, PUBLIC_PROFILE);
+        query.setQuery(ORCID + ":\"" + orcid + "\"").setFields(SCORE, ORCID, PUBLIC_PROFILE);
         try {
             QueryResponse queryResponse = solrReadOnlyProfileClient.query(query);
             if (!queryResponse.getResults().isEmpty()) {
@@ -52,7 +50,7 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
 
     public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();
-        query.setQuery(ORCID + ":\"" + ClientUtils.escapeQueryChars(orcid) + "\"");
+        query.setQuery(ORCID + ":\"" + orcid + "\"");
         query.setFields(PROFILE_LAST_MODIFIED_DATE);
         try {
             QueryResponse response = solrReadOnlyProfileClient.query(query);
@@ -104,11 +102,8 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
         SolrQuery solrQuery = new SolrQuery();
         for (Map.Entry<String, List<String>> entry : queryMap.entrySet()) {
             String queryKey = entry.getKey();
-            List<String> escapedQueryVals = new ArrayList<>();
-            for (String value : entry.getValue()) {
-                escapedQueryVals.add(ClientUtils.escapeQueryChars(value));
-            }
-            solrQuery.add(queryKey, escapedQueryVals.get(0));
+            List<String> queryVals = entry.getValue();
+            solrQuery.add(queryKey, queryVals.get(0));    
         }
         solrQuery.setFields(fieldList);
         return querySolr(solrQuery);
