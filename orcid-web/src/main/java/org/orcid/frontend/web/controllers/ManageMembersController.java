@@ -17,6 +17,7 @@ import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ClientActivationRequest;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
@@ -173,6 +174,9 @@ public class ManageMembersController extends BaseController {
         } else {
             org.orcid.jaxb.model.v3.release.client.Client modelClient = clientManagerReadOnly.get(clientId);
             result = Client.fromModelObject(modelClient);
+            ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(clientId);
+            boolean isDeactivated = clientDetails.getDeactivatedDate() != null;
+            result.setDeactivated(isDeactivated);
         }
                 
         return result;
