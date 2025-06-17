@@ -1,3 +1,11 @@
+## v2.95.0 - 2025-06-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.94.0...v2.95.0)
+
+### Feature
+
+- Add deactivated status in findClient API response (#7318)
+
 ## v2.94.0 - 2025-06-17
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.93.0...v2.94.0)
