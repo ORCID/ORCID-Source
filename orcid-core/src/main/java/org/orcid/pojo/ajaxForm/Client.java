@@ -28,7 +28,8 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
     private Set<String> scopes;
     private Checkbox allowAutoDeprecate;  
     private Checkbox userOBOEnabled;  
-    private Checkbox oboEnabled; 
+    private Checkbox oboEnabled;
+    private Boolean deactivated;
         
     public static Client fromModelObject(org.orcid.jaxb.model.v3.release.client.Client modelObject) {
         Client client = new Client();
@@ -287,6 +288,14 @@ public class Client implements ErrorsInterface, Serializable, Comparable<Client>
 
     public void setOboEnabled(Checkbox oboEnabled) {
         this.oboEnabled = oboEnabled;
+    }
+
+    public Boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(Boolean deactivated) {
+        this.deactivated = deactivated;
     }
 
     @Override
