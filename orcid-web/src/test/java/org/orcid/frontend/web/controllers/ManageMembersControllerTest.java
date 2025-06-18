@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -279,6 +280,21 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals("Group Name", newGroup2.getGroupName().getValue());
         assertEquals("1234567890abcde", newGroup2.getSalesforceId().getValue());
         assertEquals(orcid, newGroup2.getGroupOrcid().getValue());
+
+        // Test: Find member by ORCID with clients and check deactivated status
+        Member newGroup3 = manageMembers.findMember("5555-5555-5555-0000");
+
+        List<Client> clients = newGroup3.getClients();
+        Client activeClient1 = clients.get(0);
+        Client activeClient2 = clients.get(1);
+        Client deactivatedClient = clients.get(2);
+
+        assertNotNull(newGroup3);
+
+        assertEquals(3, clients.size());
+        assertEquals(false, activeClient1.isDeactivated());
+        assertEquals(false, activeClient2.isDeactivated());
+        assertEquals(true, deactivatedClient.isDeactivated());
     }
     
     
