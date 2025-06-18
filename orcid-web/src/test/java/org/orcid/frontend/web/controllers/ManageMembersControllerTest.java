@@ -285,9 +285,10 @@ public class ManageMembersControllerTest extends DBUnitTest {
         Member newGroup3 = manageMembers.findMember("5555-5555-5555-0000");
 
         List<Client> clients = newGroup3.getClients();
-        Client activeClient1 = clients.get(0);
-        Client activeClient2 = clients.get(1);
-        Client deactivatedClient = clients.get(2);
+
+        Client activeClient1 = findClientById(clients, "APP-0000000000000001");
+        Client activeClient2 = findClientById(clients, "APP-0000000000000002");
+        Client deactivatedClient = findClientById(clients, "APP-0000000000000003");
 
         assertNotNull(newGroup3);
 
@@ -532,5 +533,12 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(clientActivation.getError());
         assertEquals("already-active", clientActivation.getError());
         ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", clientDetailsManager);
+    }
+
+    private Client findClientById(List<Client> clients, String id) {
+        return clients.stream()
+                .filter(c -> id.equals(c.getClientId().getValue()))
+                .findFirst()
+                .orElse(null);
     }
 }
