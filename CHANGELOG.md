@@ -1,3 +1,11 @@
+## v2.96.0 - 2025-06-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.95.0...v2.96.0)
+
+### Fix
+
+- include client deactivated status in findMember result (#7321)
+
 ## v2.95.0 - 2025-06-17
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.94.0...v2.95.0)
