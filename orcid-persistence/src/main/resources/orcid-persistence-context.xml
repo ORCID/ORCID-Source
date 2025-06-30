@@ -350,6 +350,7 @@
     </bean>
 
 	<bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.data.source.name:orcid}" />
         <property name="driverClass" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
         <property name="user" value="\${org.orcid.persistence.db.username}" />
@@ -366,6 +367,7 @@
     </bean>
     
     <bean id="pooledDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.db.readonly.data.source.name:orcidreadonly}" />
         <property name="driverClass" value="\${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.readonly.url}" />
         <property name="user" value="\${org.orcid.persistence.db.readonly.username}" />
@@ -397,6 +399,7 @@
     
     <!-- Features -->
     <bean id="featuresDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.togglz.db.data.source.name:features}" />
         <property name="driverClass" value="\${org.orcid.persistence.togglz.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.togglz.db.url}" />
         <property name="user" value="\${org.orcid.persistence.togglz.db.username}" />
