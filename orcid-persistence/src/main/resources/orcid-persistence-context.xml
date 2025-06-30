@@ -362,6 +362,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.db.numHelperThreads:10}"/>
     </bean>
@@ -379,6 +380,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.db.readonly.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.db.readonly.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.db.readonly.numHelperThreads:10}"/>
     </bean>
@@ -410,6 +412,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.togglz.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.togglz.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.togglz.db.numHelperThreads:10}"/>
     </bean>        
