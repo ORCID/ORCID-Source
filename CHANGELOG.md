@@ -1,3 +1,17 @@
+## v2.98.0 - 2025-07-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.97.1...v2.98.0)
+
+## v2.97.1 - 2025-07-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.97.0...v2.97.1)
+
+- [#7324](https://github.com/ORCID/ORCID-Source/pull/7324): Togglz to enable oauth authorization
+
+## v2.97.0 - 2025-06-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.96.0...v2.97.0)
+
 ## v2.96.0 - 2025-06-18
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.95.0...v2.96.0)
