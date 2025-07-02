@@ -350,6 +350,7 @@
     </bean>
 
 	<bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.dataSourceName:orcid}" />
         <property name="driverClass" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
         <property name="user" value="\${org.orcid.persistence.db.username}" />
@@ -361,11 +362,13 @@
         <property name="maxStatements" value="\${org.orcid.persistence.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.db.numHelperThreads:10}"/>
     </bean>
     
     <bean id="pooledDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.db.readonly.dataSourceName:orcidreadonly}" />
         <property name="driverClass" value="\${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.readonly.url}" />
         <property name="user" value="\${org.orcid.persistence.db.readonly.username}" />
@@ -377,6 +380,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.db.readonly.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.db.readonly.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.db.readonly.numHelperThreads:10}"/>
     </bean>
@@ -397,6 +401,7 @@
     
     <!-- Features -->
     <bean id="featuresDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.togglz.db.dataSourceName:features}" />
         <property name="driverClass" value="\${org.orcid.persistence.togglz.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.togglz.db.url}" />
         <property name="user" value="\${org.orcid.persistence.togglz.db.username}" />
@@ -407,6 +412,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.togglz.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.togglz.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.togglz.db.numHelperThreads:10}"/>
     </bean>        
