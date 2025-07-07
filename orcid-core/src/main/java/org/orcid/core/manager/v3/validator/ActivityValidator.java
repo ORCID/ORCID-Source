@@ -21,6 +21,7 @@ import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidAmountException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
+import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MissingStartDateException;
@@ -55,6 +56,7 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.ExternalIdentifiersAwareActivity;
@@ -374,6 +376,19 @@ public class ActivityValidator {
             throw new InvalidDisambiguatedOrgException();
         }
     }
+    
+    
+    private void validateOrgAddress(OrganizationHolder organizationHolder) {
+        if (organizationHolder.getOrganization() == null) {
+            throw new InvalidOrgException();
+        }
+
+        Organization org = organizationHolder.getOrganization();
+        if (org.getAddress() == null || PojoUtil.isEmpty(org.getAddress().getCity()) || org.getAddress().getCountry() == null
+                || PojoUtil.isEmpty(org.getAddress().getCountry().name())) {
+            throw new InvalidOrgAddressException();
+        }
+    }
 
     private void validateDisambiguatedOrg(MultipleOrganizationHolder organizationHolder) {
         if (organizationHolder.getOrganization() == null) {
@@ -392,7 +407,7 @@ public class ActivityValidator {
         }
     }
 
-    public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility, AffiliationType type) {
         if (affiliation.getPutCode() != null && createFlag) {
             throw InvalidPutCodeException.forSource(activeSource);
         }
@@ -402,9 +417,15 @@ public class ActivityValidator {
             Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
+        
 
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
+            //validate city/country requirement for education and employment 
+            if (type == AffiliationType.EDUCATION || type == AffiliationType.EMPLOYMENT) {
+                validateOrgAddress(affiliation);
+            }
+
             if (affiliation.getEndDate() != null) {
                 validateFuzzyDate(affiliation.getEndDate());
             }
