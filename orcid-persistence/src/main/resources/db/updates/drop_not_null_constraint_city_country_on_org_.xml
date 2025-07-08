@@ -1,0 +1,28 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="DROP-NOT-NULL-CONSTRAINT-CITY-ON-ORG" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="NO">select is_nullable from information_schema.columns where table_name = 'org' and column_name = 'city';</sqlCheck>
+        </preConditions>
+         <sql>ALTER TABLE org ALTER COLUMN city DROP not null;</sql>         
+     </changeSet>
+     
+     <changeSet id="DROP-NOT-NULL-CONSTRAINT-CITY-ON-ORG_HSQL" author="Camelia Dumitru" dbms="hsqldb">
+		<dropNotNullConstraint tableName="org" columnName="city" />
+	</changeSet>
+
+	<changeSet id="DROP-NOT-NULL-CONSTRAINT-COUNTRY-ON-ORG"
+		author="Camelia Dumitru" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck expectedResult="NO">select is_nullable from information_schema.columns where table_name = 'org' and column_name = 'country';</sqlCheck>
+		</preConditions>
+		<sql>ALTER TABLE org ALTER COLUMN country DROP not null;</sql>
+	</changeSet>
+
+	<changeSet id="DROP-NOT-NULL-CONSTRAINT-COUNTRY-ON-ORG_HSQL"
+		author="Camelia Dumitru" dbms="hsqldb">
+		<dropNotNullConstraint tableName="org" columnName="country" />
+	</changeSet>
+	
+</databaseChangeLog>
