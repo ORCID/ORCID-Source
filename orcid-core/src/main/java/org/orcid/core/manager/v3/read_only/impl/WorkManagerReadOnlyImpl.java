@@ -231,6 +231,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Timestamp createdDate = (Timestamp) q1[14];
             Timestamp lastModifiedDate = (Timestamp) q1[15];
             String contributors = isEmpty(q1[16]);
+            BigInteger featuredDisplayIndex = (BigInteger) q1[17];
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
                 externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
@@ -271,6 +272,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     .sourceName(sourceName)
                     .assertionOriginName(assertionOriginName)
                     .displayIndex(displayIndex)
+                    .featuredDisplayIndex(featuredDisplayIndex)
                     .assertionOriginSourceId(assertionOriginSourceId)
                     .assertionOriginClientSourceId(assertionOriginClientSourceId)
                     .contributors(contributorList)

@@ -58,6 +58,7 @@ public class WorkSummaryExtended extends WorkSummary {
             super.setPublicationDate(pd);
             super.setVisibility(Visibility.valueOf(builder.visibility));
             super.setDisplayIndex(builder.displayIndex.toString());
+            super.setFeaturedDisplayIndex(builder.featuredDisplayIndex.toString());
             Source s;
             if (builder.clientSourceId != null) {
                 s = new Source(builder.clientSourceId);
@@ -123,6 +124,7 @@ public class WorkSummaryExtended extends WorkSummary {
         private BigInteger displayIndex;
         private WorkContributors contributors;
         private List<ContributorsRolesAndSequences> topContributors;
+        private BigInteger featuredDisplayIndex;
 
         public WorkSummaryExtendedBuilder(
                 BigInteger putCode, String workType, String title, String sourceId, String clientSourceId,
@@ -220,6 +222,10 @@ public class WorkSummaryExtended extends WorkSummary {
 
         public WorkSummaryExtendedBuilder topContributors(List<ContributorsRolesAndSequences> topContributors) {
             this.topContributors = topContributors;
+            return this;
+        }
+
+        public WorkSummaryExtendedBuilder featuredDisplayIndex(BigInteger featuredDisplayIndex) {
             return this;
         }
 

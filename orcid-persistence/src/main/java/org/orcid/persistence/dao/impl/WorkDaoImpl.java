@@ -388,6 +388,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("publication_day", IntegerType.INSTANCE)
                 .addScalar("visibility", StringType.INSTANCE)
                 .addScalar("display_index", BigIntegerType.INSTANCE)
+                .addScalar("featured_display_index", BigIntegerType.INSTANCE)
                 .addScalar("source_id", StringType.INSTANCE)
                 .addScalar("client_source_id", StringType.INSTANCE)
                 .addScalar("assertion_origin_source_id", StringType.INSTANCE)
