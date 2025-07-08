@@ -25,14 +25,14 @@ public class OrgConverter extends BidirectionalConverter<Organization, OrgEntity
     @Override
     public Organization convertFrom(OrgEntity source, Type<Organization> destinationType) {
         if (source != null) {
-            Organization org  = new Organization();
+            Organization org = new Organization();
             OrganizationAddress address = new OrganizationAddress();
             org.setAddress(address);
-            address.setCity(source.getCity());
+            address.setCity(source.getCity() != null && !source.getCity().isEmpty() ? source.getCity() : null);
             address.setRegion(source.getRegion() != null && !source.getRegion().isEmpty() ? source.getRegion() : null);
-            address.setCountry(Iso3166Country.fromValue(source.getCountry()));
+            address.setCountry(source.getCountry() != null && !source.getCountry().isEmpty() ? Iso3166Country.fromValue(source.getCountry()) : null);
             org.setName(source.getName());
-            
+
             if (source.getOrgDisambiguated() != null) {
                 DisambiguatedOrganization disambiguated = new DisambiguatedOrganization();
                 disambiguated.setDisambiguatedOrganizationIdentifier(source.getOrgDisambiguated().getSourceId());

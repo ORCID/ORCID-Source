@@ -265,7 +265,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getFundings() != null && summaries.getFundings().getFundingGroup() != null) {
                 for (FundingGroup group : summaries.getFundings().getFundingGroup()) {
                     if (group.getFundingSummary() != null) {
@@ -275,7 +275,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getPeerReviews() != null && summaries.getPeerReviews().getPeerReviewGroup() != null) {
                 for (PeerReviewGroup group : summaries.getPeerReviews().getPeerReviewGroup()) {
                     if (group.getPeerReviewGroup() != null) {
@@ -289,7 +289,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getServices() != null && summaries.getServices().getServiceGroups() != null) {
                 for (AffiliationGroup<ServiceSummary> group : summaries.getServices().getServiceGroups()) {
                     if (group.getActivities() != null) {
@@ -299,7 +299,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getQualifications() != null && summaries.getQualifications().getQualificationGroups() != null) {
                 for (AffiliationGroup<QualificationSummary> group : summaries.getQualifications().getQualificationGroups()) {
                     if (group.getActivities() != null) {
@@ -309,7 +309,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getMemberships() != null && summaries.getMemberships().getMembershipGroups() != null) {
                 for (AffiliationGroup<MembershipSummary> group : summaries.getMemberships().getMembershipGroups()) {
                     if (group.getActivities() != null) {
@@ -319,7 +319,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getInvitedPositions() != null && summaries.getInvitedPositions().getInvitedPositionGroups() != null) {
                 for (AffiliationGroup<InvitedPositionSummary> group : summaries.getInvitedPositions().getInvitedPositionGroups()) {
                     if (group.getActivities() != null) {
@@ -329,7 +329,7 @@ public class ActivityUtils {
                     }
                 }
             }
-            
+
             if (summaries.getDistinctions() != null && summaries.getDistinctions().getDistinctionGroups() != null) {
                 for (AffiliationGroup<DistinctionSummary> group : summaries.getDistinctions().getDistinctionGroups()) {
                     if (group.getActivities() != null) {
@@ -434,6 +434,10 @@ public class ActivityUtils {
 
                 if (organization.getAddress().getRegion() != null && organization.getAddress().getRegion().isEmpty()) {
                     organization.getAddress().setRegion(null);
+                }
+
+                if (organization.getAddress().getCountry() != null) {
+                    organization.getAddress().setCountry(null);
                 }
             }
 
