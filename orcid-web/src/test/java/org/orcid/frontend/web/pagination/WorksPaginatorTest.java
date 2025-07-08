@@ -162,7 +162,24 @@ public class WorksPaginatorTest {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
         }
-    }    
+    }
+
+    @Test
+    public void testGetPublicFeaturedWorks() {
+        int pageSize = 100;
+
+        Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroupsExtended());
+        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true, true);
+        assertFalse(pageSize == page.getGroups().size());
+        assertTrue((pageSize / 2) == page.getGroups().size());
+        assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
+
+        for (org.orcid.pojo.grouping.WorkGroup workGroup : page.getGroups()) {
+            for (WorkForm workForm : workGroup.getWorks()) {
+                assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
+            }
+        }
+    }
 
     @Test
     public void testReverseSecondaryTitleSortForNullDates() {
@@ -350,6 +367,25 @@ public class WorksPaginatorTest {
             workSummary.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(x), new Day(x))));
             workSummary.setTitle(getTitle(i));
             workSummary.setVisibility(Visibility.PUBLIC);
+            workSummary.setDisplayIndex(Integer.toString(x));
+            workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
+            workSummary.setSource(getSource());
+            workSummary.setType(WorkType.EDITED_BOOK);
+            workSummary.setContributors(getWorkContributors());
+            workSummary.setContributorsGroupedByOrcid(getContributorsGroupedByOrcid());
+            workGroup.getWorkSummary().add(workSummary);
+        }
+        return workGroup;
+    }
+
+    private WorkGroupExtended getMixedFeaturedWorkGroupExtended(int i) {
+        WorkGroupExtended workGroup = new WorkGroupExtended();
+        workGroup.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        for (int x = 0; x < 10; x++) {
+            WorkSummaryExtended workSummary = new WorkSummaryExtended();
+            workSummary.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+            workSummary.setTitle(getTitle(i));
+            workSummary.setVisibility(i % 2 == 0 ? Visibility.PUBLIC : Visibility.PRIVATE);
             workSummary.setDisplayIndex(Integer.toString(x));
             workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
             workSummary.setSource(getSource());

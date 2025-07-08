@@ -30,8 +30,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
             + " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, "
             + " w.publication_year, w.publication_month, w.publication_day, w.date_created, "
             + " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," + " w.assertion_origin_source_id, w.assertion_origin_client_source_id, "
-            + " w.top_contributors_json as contributors " + " FROM work w" + " WHERE orcid=:orcid";
-    
+            + " w.top_contributors_json as contributors, w.featured_display_index" + " FROM work w" + " WHERE orcid=:orcid";
+
+
     public WorkDaoImpl() {
         super(WorkEntity.class);
     }
@@ -373,7 +374,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public List<Object[]> getWorksByOrcid(String orcid, boolean featuredOnly) {
         String queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS;
         if (featuredOnly) {
-            queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS + " AND featured_display_index IS NOT NULL";
+            queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS + " AND featured_display_index <> 0";
         }
         Query query = entityManager.createNativeQuery(queryText);
         query.setParameter("orcid", orcid)
@@ -388,14 +389,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("publication_day", IntegerType.INSTANCE)
                 .addScalar("visibility", StringType.INSTANCE)
                 .addScalar("display_index", BigIntegerType.INSTANCE)
-                .addScalar("featured_display_index", BigIntegerType.INSTANCE)
                 .addScalar("source_id", StringType.INSTANCE)
                 .addScalar("client_source_id", StringType.INSTANCE)
                 .addScalar("assertion_origin_source_id", StringType.INSTANCE)
                 .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
                 .addScalar("date_created", TimestampType.INSTANCE)
                 .addScalar("last_modified", TimestampType.INSTANCE)
-                .addScalar("contributors", StringType.INSTANCE);
+                .addScalar("contributors", StringType.INSTANCE)
+                .addScalar("featured_display_index", IntegerType.INSTANCE);
         return query.getResultList();
     }
 

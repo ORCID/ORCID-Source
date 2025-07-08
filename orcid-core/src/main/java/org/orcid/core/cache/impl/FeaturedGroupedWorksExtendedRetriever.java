@@ -14,7 +14,6 @@ public class FeaturedGroupedWorksExtendedRetriever implements Retriever<OrcidStr
     private WorkManagerReadOnly workManagerReadOnly;
 
     @Override
-    @Transactional
     public WorksExtended retrieve(OrcidString key) {
         return workManagerReadOnly.getFeaturedWorksExtendedAsGroups(key.getOrcid());
     }

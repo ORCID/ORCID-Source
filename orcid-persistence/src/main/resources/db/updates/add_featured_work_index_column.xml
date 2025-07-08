@@ -1,6 +1,6 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
 	<changeSet id="ADD-FEATURED-WORK-INDEX-COLUMN" author="Andrej Romanov">
 		<preConditions onFail="MARK_RAN">
@@ -9,8 +9,15 @@
 			</not>
 		</preConditions>
 		<addColumn tableName="work">
-			<column name="featured_display_index" type="BIGINT" />
+			<column name="featured_display_index" type="INTEGER" defaultValue="0" />
 		</addColumn>
+	</changeSet>
+
+	<changeSet id="SET-NOT-NULL-FEATURED-WORK-INDEX-COLUMN" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<sqlCheck  expectedResult="YES">select is_nullable from information_schema.columns where table_name = 'work' and column_name = 'featured_display_index';</sqlCheck>
+		</preConditions>
+		<addNotNullConstraint tableName="work" columnName="featured_display_index" columnDataType="INTEGER"/>
 	</changeSet>
 
 	<changeSet id="CREATE-FEATURED-WORK-DISPLAY-INDEX-IDX" author="Andrej Romanov">
@@ -19,7 +26,7 @@
 				<indexExists indexName="featured_display_index_idx" tableName="work" />
 			</not>
 		</preConditions>
-		<sql>create index featured_display_index_idx on work(display_index);</sql>
+		<sql>create index featured_display_index_idx on work(featured_display_index);</sql>
 	</changeSet>
 
 </databaseChangeLog>
