@@ -6,4 +6,5 @@ public interface WorksExtendedCacheManager {
 
     WorksExtended getGroupedWorksExtended(String orcid);
 
+    WorksExtended getFeaturedGroupedWorksExtended(String orcid);
 }

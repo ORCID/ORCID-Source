@@ -153,6 +153,14 @@
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.grouped_works.maxMegaBytesInMemory:16}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.grouped_works.maxMegaBytesOnDisk:128}" />
 	</bean>
+
+    <bean id="featuredGroupedWorksExtendedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="featured-grouped-works-extended" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="timeToIdleSeconds" value="${org.orcid.core.cache.grouped_works.timeToIdleSeconds:1}" />
+        <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.grouped_works.maxMegaBytesInMemory:16}" />
+        <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.grouped_works.maxMegaBytesOnDisk:128}" />
+    </bean>
     
     <bean id="workLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="work-last-modified" />

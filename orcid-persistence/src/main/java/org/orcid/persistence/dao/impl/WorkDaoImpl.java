@@ -370,8 +370,12 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    public List<Object[]> getWorksByOrcid(String orcid) {
-        Query query = entityManager.createNativeQuery(WORKS_BY_ORCID_WITH_CONTRIBUTORS);
+    public List<Object[]> getWorksByOrcid(String orcid, boolean featuredOnly) {
+        String queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS;
+        if (featuredOnly) {
+            queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS + " AND featured_display_index IS NOT NULL";
+        }
+        Query query = entityManager.createNativeQuery(queryText);
         query.setParameter("orcid", orcid)
                 .unwrap(org.hibernate.query.NativeQuery.class)
                 .addScalar("work_id", BigIntegerType.INSTANCE)

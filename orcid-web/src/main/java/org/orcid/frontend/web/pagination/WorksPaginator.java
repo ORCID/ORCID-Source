@@ -67,8 +67,14 @@ public class WorksPaginator {
         return worksPage;
     }
 
-    public Page<WorkGroup> getWorksExtendedPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
-        WorksExtended works = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
+    public Page<WorkGroup> getWorksExtendedPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc, boolean featuredOnly) {
+        WorksExtended works = new WorksExtended();
+        if (featuredOnly) {
+            works = worksExtendedCacheManager.getFeaturedGroupedWorksExtended(orcid);
+        } else {
+            works = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
+
+        }
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
             List<WorkGroupExtended> filteredGroups = filterWorksExtended(works, justPublic);

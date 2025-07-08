@@ -1,0 +1,25 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+
+	<changeSet id="ADD-FEATURED-WORK-INDEX-COLUMN" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="work" columnName="featured_display_index"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="work">
+			<column name="featured_display_index" type="BIGINT" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="CREATE-FEATURED-WORK-DISPLAY-INDEX-IDX" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="featured_display_index_idx" tableName="work" />
+			</not>
+		</preConditions>
+		<sql>create index featured_display_index_idx on work(display_index);</sql>
+	</changeSet>
+
+</databaseChangeLog>
