@@ -2,7 +2,9 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -316,5 +318,23 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("Profile is claimed");
         }
         emailDao.removeEmail(orcid, emailAddress);
-    }      
+    }
+
+    @Override
+    @Transactional
+    public List<String> removeEmails(String orcid, List<String> emailsToRemove) {
+        List<EmailEntity> currentEmailsList = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+        if (emailsToRemove.size() == currentEmailsList.size()) {
+            throw new IllegalArgumentException("Can't mark all user's as deleted");
+        }
+
+        for (String email : emailsToRemove) {
+            emailDao.removeEmail(orcid, email);
+        }
+
+        return emailDao.findByOrcid(orcid, System.currentTimeMillis())
+                .stream()
+                .map(EmailEntity::getEmail)
+                .collect(Collectors.toList());
+    }
 }
