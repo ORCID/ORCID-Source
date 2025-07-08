@@ -483,42 +483,42 @@ public class ActivityValidatorTest {
     @Test
     public void validateEmployment_validEmploymentTest() {
         Employment employment = getEmployment();
-        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidPutCodeException.class)
     public void validateEmployment_invalidPutCodeTest() {
         Employment employment = getEmployment();
         employment.setPutCode(1L);
-        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC);
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void validateEmployment_dontChangeVisibilityTest() {
         Employment employment = getEmployment();
         employment.setVisibility(Visibility.LIMITED);
-        activityValidator.validateAffiliation(employment, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(employment, null, false, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidOrgException.class)
     public void validateEmploymentWithoutOrg() {
         Employment e = getEmployment();
         e.setOrganization(null);
-        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEmploymentWithoutDisambiguatedOrg() {
         Employment e = getEmployment();
         e.getOrganization().setDisambiguatedOrganization(null);
-        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEmploymentWithoutDisambiguatedOrgId() {
         Employment e = getEmployment();
         e.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
-        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
     }
 
     @Test
@@ -527,7 +527,7 @@ public class ActivityValidatorTest {
         try {
             e.setStartDate(new FuzzyDate(new Year(2010), new Month(1), new Day(1)));
             e.setEndDate(new FuzzyDate(new Year(2009), new Month(1), new Day(1)));
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
             fail();
         } catch (StartDateAfterEndDateException s) {
 
@@ -542,7 +542,7 @@ public class ActivityValidatorTest {
             end.setYear(new Year(2009));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
             fail();
         } catch (StartDateAfterEndDateException s) {
 
@@ -559,7 +559,7 @@ public class ActivityValidatorTest {
             end.setMonth(new Month(1));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
             fail();
         } catch (StartDateAfterEndDateException s) {
 
@@ -578,7 +578,7 @@ public class ActivityValidatorTest {
             end.setDay(new Day(1));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
             fail();
         } catch (StartDateAfterEndDateException s) {
 
@@ -598,7 +598,7 @@ public class ActivityValidatorTest {
             end.setDay(new Day(1));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
         } catch (Exception x) {
             fail();
         }
@@ -615,7 +615,7 @@ public class ActivityValidatorTest {
             end.setDay(new Day(1));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
         } catch (Exception x) {
             fail();
         }
@@ -631,7 +631,7 @@ public class ActivityValidatorTest {
             end.setDay(new Day(1));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
         } catch (Exception x) {
             fail();
         }
@@ -647,7 +647,7 @@ public class ActivityValidatorTest {
             end.setDay(new Day(2));
             e.setStartDate(start);
             e.setEndDate(end);
-            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+            activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
         } catch (Exception x) {
             fail();
         }
@@ -656,42 +656,42 @@ public class ActivityValidatorTest {
     @Test
     public void validateEducation_validEducationTest() {
         Education education = getEducation();
-        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidPutCodeException.class)
     public void validateEducation_invalidPutCodeTest() {
         Education education = getEducation();
         education.setPutCode(1L);
-        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC);
     }
 
     @Test(expected = VisibilityMismatchException.class)
     public void validateEducation_dontChangeVisibilityTest() {
         Education education = getEducation();
         education.setVisibility(Visibility.LIMITED);
-        activityValidator.validateAffiliation(education, null, false, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(education, null, false, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidOrgException.class)
     public void validateEducationWithoutOrg() {
         Education e = getEducation();
         e.setOrganization(null);
-        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEducationWithoutDisambiguatedOrg() {
         Education e = getEducation();
         e.getOrganization().setDisambiguatedOrganization(null);
-        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
     }
 
     @Test(expected = InvalidDisambiguatedOrgException.class)
     public void validateEducationWithoutDisambiguatedOrgId() {
         Education e = getEducation();
         e.getOrganization().getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(null);
-        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(e, null, false, true, Visibility.PUBLIC);
     }
 
     public Employment getEmployment() {
@@ -1017,7 +1017,7 @@ public class ActivityValidatorTest {
     public void validateEducationNoCountryNorCity() {
         Education education = new Education();
         education.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC, AffiliationType.EDUCATION);
+        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC);
     }
     
     
@@ -1025,41 +1025,41 @@ public class ActivityValidatorTest {
     public void validateEmploymentNoCountryNorCity() {
         Employment employment = new Employment();
         employment.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC, AffiliationType.EMPLOYMENT);
+        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC);
     }
     
     @Test
     public void validateQualificationWithoutAddress() {
         Qualification qualification = new Qualification();
         qualification.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(qualification, null, true, true, Visibility.PUBLIC, AffiliationType.QUALIFICATION);
+        activityValidator.validateAffiliation(qualification, null, true, true, Visibility.PUBLIC);
     }
     
     @Test
     public void validateDistinctionWithoutAddress() {
         Distinction distinction = new Distinction();
         distinction.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(distinction, null, true, true, Visibility.PUBLIC, AffiliationType.DISTINCTION);
+        activityValidator.validateAffiliation(distinction, null, true, true, Visibility.PUBLIC);
     }
 
     @Test
     public void validateMembershipWithoutAddress() {
         Membership membership = new Membership();
         membership.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(membership, null, true, true, Visibility.PUBLIC, AffiliationType.MEMBERSHIP);
+        activityValidator.validateAffiliation(membership, null, true, true, Visibility.PUBLIC);
     }
     
     @Test
     public void validateInvitatedPositionWithoutAddress() {
         InvitedPosition invitedPosition = new InvitedPosition();
         invitedPosition.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(invitedPosition, null, true, true, Visibility.PUBLIC, AffiliationType.INVITED_POSITION);
+        activityValidator.validateAffiliation(invitedPosition, null, true, true, Visibility.PUBLIC);
     }
     
     @Test
     public void validateServiceWithoutAddress() {
         Service service = new Service();
         service.setOrganization(getOrganizationWithoutCityOrCountry());
-        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC, AffiliationType.SERVICE);
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
     }
 }

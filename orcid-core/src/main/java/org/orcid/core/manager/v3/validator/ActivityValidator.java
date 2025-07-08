@@ -57,6 +57,8 @@ import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.ExternalIdentifiersAwareActivity;
@@ -407,7 +409,7 @@ public class ActivityValidator {
         }
     }
 
-    public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility, AffiliationType type) {
+    public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (affiliation.getPutCode() != null && createFlag) {
             throw InvalidPutCodeException.forSource(activeSource);
         }
@@ -422,7 +424,7 @@ public class ActivityValidator {
         if (isApiRequest) {
             validateDisambiguatedOrg(affiliation);
             //validate city/country requirement for education and employment 
-            if (type == AffiliationType.EDUCATION || type == AffiliationType.EMPLOYMENT) {
+            if (affiliation instanceof Education || affiliation instanceof Employment) {
                 validateOrgAddress(affiliation);
             }
 

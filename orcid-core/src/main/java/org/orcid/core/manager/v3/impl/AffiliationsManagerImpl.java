@@ -254,7 +254,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
 
     private Affiliation createAffiliation(String orcid, Affiliation affiliation, boolean isApiRequest, AffiliationType type) {
         Source activeSource = sourceManager.retrieveActiveSource();
-        activityValidator.validateAffiliation(affiliation, activeSource, true, isApiRequest, null, type);
+        activityValidator.validateAffiliation(affiliation, activeSource, true, isApiRequest, null);
 
         if (isApiRequest) {
             checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
@@ -349,7 +349,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orcidSecurityManager.checkSourceAndThrow(entity);
 
         activityValidator.validateAffiliation(affiliation, activeSource, false, isApiRequest,
-                org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(originalVisibility), type);
+                org.orcid.jaxb.model.v3.release.common.Visibility.valueOf(originalVisibility));
 
         if (isApiRequest) {
             checkAffiliationExternalIDsForDuplicates(orcid, affiliation, activeSource);
