@@ -28,6 +28,10 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
     // Request attributes
     private String authoriziationCode;
     private Set<String> scopes;
+    ////////
+    // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+    ////////
+    private String newScopes;
     private Set<String> resourceIds;
     private Boolean approved;
     private Set<String> authorities;
@@ -184,5 +188,17 @@ public class OrcidOauth2AuthoriziationCodeDetail extends BaseEntity<String> impl
 
     public void setNonce(String nonce) {
         this.nonce = nonce;
+    }
+
+    ////////
+    // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+    ////////
+    @Column(name = "scopes")
+    public String getNewScopes() {
+        return newScopes;
+    }
+
+    public void setNewScopes(String newScopes) {
+        this.newScopes = newScopes;
     }
 }
