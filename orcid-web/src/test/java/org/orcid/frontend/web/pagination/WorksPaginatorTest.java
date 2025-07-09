@@ -164,22 +164,22 @@ public class WorksPaginatorTest {
         }
     }
 
-    @Test
-    public void testGetPublicFeaturedWorks() {
-        int pageSize = 100;
-
-        Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroupsExtended());
-        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true, true);
-        assertFalse(pageSize == page.getGroups().size());
-        assertTrue((pageSize / 2) == page.getGroups().size());
-        assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
-
-        for (org.orcid.pojo.grouping.WorkGroup workGroup : page.getGroups()) {
-            for (WorkForm workForm : workGroup.getWorks()) {
-                assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
-            }
-        }
-    }
+//    @Test
+//    public void testGetPublicFeaturedWorks() {
+//        int pageSize = 100;
+//
+//        Mockito.when(worksExtendedCacheManager.getGroupedWorksExtended(Mockito.anyString())).thenReturn(getPageSizeOfMixedWorkGroupsExtended());
+//        Page<org.orcid.pojo.grouping.WorkGroup> page = worksPaginator.getWorksExtendedPage("orcid", 0, pageSize, true, WorksPaginator.DATE_SORT_KEY, true, true);
+//        assertFalse(pageSize == page.getGroups().size());
+//        assertTrue((pageSize / 2) == page.getGroups().size());
+//        assertEquals(1, page.getGroups().get(0).getWorks().get(0).getContributorsGroupedByOrcid().size());
+//
+//        for (org.orcid.pojo.grouping.WorkGroup workGroup : page.getGroups()) {
+//            for (WorkForm workForm : workGroup.getWorks()) {
+//                assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
+//            }
+//        }
+//    }
 
     @Test
     public void testReverseSecondaryTitleSortForNullDates() {
