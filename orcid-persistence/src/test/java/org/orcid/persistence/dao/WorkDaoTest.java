@@ -111,4 +111,28 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(e.getDateCreated(), e2.getDateCreated());
         assertEquals(e2.getDateCreated(), e2.getLastModified());
     }
+
+    @Test
+    public void testGetWorksByOrcid() {
+        List<Object[]> works = dao.getWorksByOrcid(USER_ORCID, false);
+        assertEquals(3, works.size());
+        List<Integer> featuredWorks = new ArrayList<Integer>();
+        for (Object[] result : works) {
+            int featuredDisplayIndex = (int) result[17];
+            if (featuredDisplayIndex > 0) {
+                featuredWorks.add(featuredDisplayIndex);
+            };
+        }
+        assertEquals(featuredWorks.size(), 2);
+    }
+
+    @Test
+    public void testGetFeaturedWorksByOrcid() {
+        List<Object[]> works = dao.getWorksByOrcid(USER_ORCID, true);
+        assertEquals(2, works.size());
+        for (Object[] result : works) {
+            int featuredDisplayIndex = (int) result[17];
+            assertTrue(featuredDisplayIndex > 0);
+        }
+    }
 }
