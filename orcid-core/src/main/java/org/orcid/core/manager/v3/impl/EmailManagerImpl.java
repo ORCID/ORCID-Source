@@ -10,8 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
@@ -27,6 +27,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -50,9 +51,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Resource
     private ProfileDao profileDao;
-    
-    @Resource(name = "encryptionManager")
-    private EncryptionManager encryptionManager;
+
+    @Resource(name = "orcidSecurityManagerV3")
+    protected OrcidSecurityManager orcidSecurityManager;
     
     @Override
     @Transactional
@@ -323,6 +324,10 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Override
     @Transactional
     public List<String> removeEmails(String orcid, List<String> emailsToRemove) {
+        if (!orcidSecurityManager.isAdmin()) {
+            throw new AccessDeniedException("Admin privileges required to remove emails");
+        }
+
         List<EmailEntity> currentEmailsList = emailDao.findByOrcid(orcid, System.currentTimeMillis());
         if (emailsToRemove.size() == currentEmailsList.size()) {
             throw new IllegalArgumentException("Can't mark all user's as deleted");

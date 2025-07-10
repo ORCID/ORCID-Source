@@ -553,10 +553,10 @@ public class EmailManagerTest extends BaseTest {
     }
 
     @Test
-    public void testRemoveEmails_successful() {
-        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
-        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+    public void testRemoveEmails_successful() throws IllegalAccessException {
+        OrcidSecurityManager mockOrcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        ReflectionTestUtils.setField(emailManager, "orcidSecurityManager", mockOrcidSecurityManager);
 
         EmailEntity email1 = getEmailEntity("remove1@example.com");
         EmailEntity email2 = getEmailEntity("remove2@example.com");
@@ -567,6 +567,7 @@ public class EmailManagerTest extends BaseTest {
         List<EmailEntity> currentEmailsList = Arrays.asList(email1, email2, email3, email4);
         List<EmailEntity> remainingEmailsList = Arrays.asList(email3, email4);
 
+        Mockito.when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
         Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong()))
                 .thenReturn(currentEmailsList)
                 .thenReturn(remainingEmailsList);
@@ -586,9 +587,9 @@ public class EmailManagerTest extends BaseTest {
 
     @Test
     public void testRemoveEmails_throwIfAllEmailsRemoved() {
-        EmailDao mockEmailDao = Mockito.mock(EmailDao.class);
-        EmailDao emailDao = (EmailDao) ReflectionTestUtils.getField(emailManager, "emailDao");
+        OrcidSecurityManager mockOrcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
         ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        ReflectionTestUtils.setField(emailManager, "orcidSecurityManager", mockOrcidSecurityManager);
 
         List<EmailEntity> currentEmails = Arrays.asList(
                 getEmailEntity("test1@example.com"),
@@ -597,6 +598,7 @@ public class EmailManagerTest extends BaseTest {
 
         List<String> toRemove = Arrays.asList("test1@example.com", "test2@example.com");
 
+        Mockito.when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
         Mockito.when(mockEmailDao.findByOrcid(Mockito.anyString(), Mockito.anyLong())).thenReturn(currentEmails);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
