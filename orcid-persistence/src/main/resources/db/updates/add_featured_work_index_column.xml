@@ -13,13 +13,6 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="SET-NOT-NULL-FEATURED-WORK-INDEX-COLUMN" author="Andrej Romanov" dbms="postgresql">
-		<preConditions onFail="MARK_RAN">
-			<sqlCheck  expectedResult="YES">select is_nullable from information_schema.columns where table_name = 'work' and column_name = 'featured_display_index';</sqlCheck>
-		</preConditions>
-		<addNotNullConstraint tableName="work" columnName="featured_display_index" columnDataType="INTEGER"/>
-	</changeSet>
-
 	<changeSet id="CREATE-FEATURED-WORK-DISPLAY-INDEX-IDX" author="Andrej Romanov">
 		<preConditions onFail="MARK_RAN">
 			<not>
