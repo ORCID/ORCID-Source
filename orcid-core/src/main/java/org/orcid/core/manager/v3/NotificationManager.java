@@ -84,7 +84,7 @@ public interface NotificationManager {
 
     NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);  
     
-    void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
+    void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails, String memberName) throws UnsupportedEncodingException;
     
     List<NotificationEntity> findByOrcidAndClientAndNotificationFamilyNoClientToken(String orcid, String clientId,  String notificationFamily);
 
