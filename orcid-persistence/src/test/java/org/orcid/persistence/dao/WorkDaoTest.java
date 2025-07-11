@@ -14,8 +14,10 @@ import javax.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -23,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WorkDaoTest extends DBUnitTest {
 
     private static String USER_ORCID = "4444-4444-4444-4443";
@@ -43,6 +46,30 @@ public class WorkDaoTest extends DBUnitTest {
     }
 
     @Test
+    public void getWorksByOrcid() {
+        List<Object[]> works = dao.getWorksByOrcid(USER_ORCID, false);
+        assertEquals(3, works.size());
+        List<Integer> featuredWorks = new ArrayList<Integer>();
+        for (Object[] result : works) {
+            int featuredDisplayIndex = (int) result[17];
+            if (featuredDisplayIndex > 0) {
+                featuredWorks.add(featuredDisplayIndex);
+            };
+        }
+        assertEquals(featuredWorks.size(), 2);
+    }
+
+    @Test
+    public void getFeaturedWorksByOrcid() {
+        List<Object[]> works = dao.getWorksByOrcid(USER_ORCID, true);
+        assertEquals(2, works.size());
+        for (Object[] result : works) {
+            int featuredDisplayIndex = (int) result[17];
+            assertTrue(featuredDisplayIndex > 0);
+        }
+    }
+
+    @Test
     public void removeAllWorksTest() {
         long initialNumber = dao.countAll();
         long elementThatBelogsToUser = dao.getWorkLastModifiedList(USER_ORCID).size();
@@ -59,18 +86,6 @@ public class WorkDaoTest extends DBUnitTest {
         assertEquals(0, finalNumberOfElementsThatBelogsToUser);
         assertEquals(otherUserElements, finalNumberOfOtherUserElements);
         assertEquals((initialNumber - elementThatBelogsToUser), finalNumberOfElements);
-    }
-
-    @Test
-    public void getWorksByOrcidIdTest() {
-        List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");
-        List<Long> existingIds = new ArrayList<Long>(Arrays.asList(11L, 12L, 13L, 14L, 15L, 16L));
-        assertEquals(6, works.size());
-        for(WorkEntity w : works) {
-            assertTrue(existingIds.contains(w.getId()));
-            existingIds.remove(w.getId());
-        }
-        assertTrue("Elements not found: " + existingIds, existingIds.isEmpty());
     }
 
     @Test
@@ -113,26 +128,14 @@ public class WorkDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void testGetWorksByOrcid() {
-        List<Object[]> works = dao.getWorksByOrcid(USER_ORCID, false);
-        assertEquals(3, works.size());
-        List<Integer> featuredWorks = new ArrayList<Integer>();
-        for (Object[] result : works) {
-            int featuredDisplayIndex = (int) result[17];
-            if (featuredDisplayIndex > 0) {
-                featuredWorks.add(featuredDisplayIndex);
-            };
+    public void getWorksByOrcidId_Deprecated() {
+        List<WorkEntity> works = dao.getWorksByOrcidId("0000-0000-0000-0003");
+        List<Long> existingIds = new ArrayList<Long>(Arrays.asList(11L, 12L, 13L, 14L, 15L, 16L));
+        assertEquals(6, works.size());
+        for(WorkEntity w : works) {
+            assertTrue(existingIds.contains(w.getId()));
+            existingIds.remove(w.getId());
         }
-        assertEquals(featuredWorks.size(), 2);
-    }
-
-    @Test
-    public void testGetFeaturedWorksByOrcid() {
-        List<Object[]> works = dao.getWorksByOrcid(USER_ORCID, true);
-        assertEquals(2, works.size());
-        for (Object[] result : works) {
-            int featuredDisplayIndex = (int) result[17];
-            assertTrue(featuredDisplayIndex > 0);
-        }
+        assertTrue("Elements not found: " + existingIds, existingIds.isEmpty());
     }
 }
