@@ -1,5 +1,6 @@
 package org.orcid.core.manager.v3;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,4 +87,6 @@ public interface EmailManager extends EmailManagerReadOnly {
     Map<String, String> getEmailKeys(String email);
 
     void removeUnclaimedEmail(String orcid, String emailAddress);
+
+    List<String> removeEmails(String orcid, List<String> emailsToRemove);
 }
