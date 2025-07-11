@@ -1,3 +1,18 @@
+## v2.99.0 - 2025-07-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.98.3...v2.99.0)
+
+- [#7328](https://github.com/ORCID/ORCID-Source/pull/7328): 
+- [#7329](https://github.com/ORCID/ORCID-Source/pull/7329): 
+
+### Fix
+
+- Check if user is admin on removeEmails method
+
+### Feature
+
+- Add remove emails endpoint in AdminController
+
 ## v2.98.3 - 2025-07-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.98.2...v2.98.3)
