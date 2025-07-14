@@ -23,7 +23,7 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
     protected String contributorsJson;
     protected String topContributorsJson;
     protected Date addedToProfileDate;
-    protected BigInteger featuredDisplayIndex;
+    protected Integer featuredDisplayIndex;
 
     @Column(name = "orcid", updatable = false, insertable = true)
     public String getOrcid() {
@@ -89,11 +89,11 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
     }
 
     @Column(name = "featured_display_index")
-    public BigInteger getFeaturedDisplayIndex() {
+    public Integer getFeaturedDisplayIndex() {
         return featuredDisplayIndex;
     }
 
-    public void setFeaturedDisplayIndex(BigInteger featuredDisplayIndex) {
+    public void setFeaturedDisplayIndex(Integer featuredDisplayIndex) {
         this.featuredDisplayIndex = featuredDisplayIndex;
     }
     

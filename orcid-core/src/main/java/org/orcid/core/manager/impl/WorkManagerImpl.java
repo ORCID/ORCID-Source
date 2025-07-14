@@ -180,6 +180,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
+        workEntity.setFeaturedDisplayIndex(0);
 
         // Set source id
         if (sourceEntity.getSourceProfile() != null) {
