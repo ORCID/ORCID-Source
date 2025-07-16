@@ -1,3 +1,9 @@
+## v2.102.0 - 2025-07-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.101.0...v2.102.0)
+
+- [#7335](https://github.com/ORCID/ORCID-Source/pull/7335): assign featured display indices when creating works
+
 ## v2.101.0 - 2025-07-14
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.100.0...v2.101.0)
