@@ -261,6 +261,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
+                        workEntity.setFeaturedDisplayIndex(0);
 
                         // Set source id
                         if (sourceEntity.getSourceProfile() != null) {
