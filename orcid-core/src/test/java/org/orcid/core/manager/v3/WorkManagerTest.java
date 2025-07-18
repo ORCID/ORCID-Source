@@ -94,6 +94,8 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
+import org.orcid.pojo.WorkGroupExtended;
+import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.beans.factory.annotation.Value;
@@ -1971,6 +1973,20 @@ public class WorkManagerTest extends BaseTest {
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void a_testGetWorksExtendedAsGroups() {
+        WorksExtended works = workManager.getWorksExtendedAsGroups(claimedOrcid);
+        List<WorkGroupExtended> workGroup = works.getWorkGroup();
+        assertEquals(3, workGroup.size());
+    }
+
+    @Test
+    public void a_testGetFeaturedWorksExtendedAsGroups() {
+        WorksExtended works = workManager.getFeaturedWorksExtendedAsGroups(claimedOrcid);
+        List<WorkGroupExtended> workGroup = works.getWorkGroup();
+        assertEquals(2, workGroup.size());
     }
 
     private WorkEntity getUserPreferredWork() {

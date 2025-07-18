@@ -333,7 +333,6 @@
           source_id="0000-0000-0000-0002"
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="PRIVATE"
-          external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;relationship&quot;:&quot;self&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;3&quot;}}],&quot;scope&quot;:null}"
           display_index="0"
           featured_display_index="2"
     />
