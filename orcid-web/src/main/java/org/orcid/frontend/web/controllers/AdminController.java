@@ -49,6 +49,8 @@ import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.RemoveEmailsResponse;
+import org.orcid.pojo.RemoveEmailsRequest;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -1354,6 +1356,39 @@ public class AdminController extends BaseController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to reset client secret"));
+        }
+    }
+
+    @PostMapping("/remove-emails.json")
+    @ResponseBody
+    public ResponseEntity<RemoveEmailsResponse> removeEmails(
+            HttpServletRequest serverRequest,
+            HttpServletResponse serverResponse,
+            @RequestBody RemoveEmailsRequest removeEmails
+    ) throws IllegalAccessException {
+        isAdmin(serverRequest, serverResponse);
+
+        if (removeEmails == null || removeEmails.getEmailsToRemove() == null || removeEmails.getEmailsToRemove().isEmpty()) {
+            return ResponseEntity.badRequest().body(new RemoveEmailsResponse("emailsToRemove cannot be empty", null));
+        }
+
+        try {
+            List<String> remainingEmails = emailManager.removeEmails(
+                    removeEmails.getOrcid(),
+                    removeEmails.getEmailsToRemove()
+            );
+
+            return ResponseEntity.ok(new RemoveEmailsResponse(
+                    "Emails removed successfully.",
+                    remainingEmails
+            ));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new RemoveEmailsResponse(e.getMessage(), null));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RemoveEmailsResponse("Unexpected error: " + e.getMessage(), null));
         }
     }
 }

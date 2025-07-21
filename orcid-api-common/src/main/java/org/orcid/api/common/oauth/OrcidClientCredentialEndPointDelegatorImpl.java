@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -257,7 +259,16 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }
                 
                 if(!authorizationParameters.containsKey(OAuth2Utils.SCOPE) || PojoUtil.isEmpty(authorizationParameters.get(OAuth2Utils.SCOPE))) {
-                    String scopesString = StringUtils.join(authorizationCodeEntity.getScopes(), ' ');
+                    ////////
+                    // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+                    ////////
+                    Set<String> newScopes = StringUtils.isNotBlank(authorizationCodeEntity.getNewScopes()) ? Stream.of(authorizationCodeEntity.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
+
+                    Set<String> allScopes = new HashSet<String>();
+                    allScopes.addAll(newScopes);
+                    allScopes.addAll(authorizationCodeEntity.getScopes());
+
+                    String scopesString = StringUtils.join(allScopes, ' ');
                     authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
                 }
                 

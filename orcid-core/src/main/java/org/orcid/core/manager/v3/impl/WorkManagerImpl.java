@@ -201,6 +201,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
+        workEntity.setFeaturedDisplayIndex(0);
         
         //Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
@@ -275,6 +276,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
+                        workEntity.setFeaturedDisplayIndex(0);
 
                         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
                         
@@ -508,6 +510,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         } else {
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
+            allPreferredMetadata.setFeaturedDisplayIndex(0);
             workDao.persist(allPreferredMetadata);
         }
     }
@@ -526,6 +529,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
+        workEntity.setFeaturedDisplayIndex(0);
 
         //Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);

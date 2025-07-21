@@ -1,5 +1,6 @@
 package org.orcid.persistence.jpa.entities;
 
+import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -22,7 +23,8 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
     protected String contributorsJson;
     protected String topContributorsJson;
     protected Date addedToProfileDate;
-    
+    protected Integer featuredDisplayIndex;
+
     @Column(name = "orcid", updatable = false, insertable = true)
     public String getOrcid() {
         return orcid;
@@ -84,6 +86,15 @@ public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>
 
     public void setAddedToProfileDate(Date addedToProfileDate) {
         this.addedToProfileDate = addedToProfileDate;
+    }
+
+    @Column(name = "featured_display_index")
+    public Integer getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
+    }
+
+    public void setFeaturedDisplayIndex(Integer featuredDisplayIndex) {
+        this.featuredDisplayIndex = featuredDisplayIndex;
     }
     
     @Override

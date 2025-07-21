@@ -840,22 +840,26 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         }
     }
 
-    public void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
+    public void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails, String memberName) throws UnsupportedEncodingException {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
 
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
-        String subject = messages.getMessage("notification.mvp.connectWithOrcidIntegration", new String[] { clientDetails.getClientName() }, userLocale);
+        if (memberName == null || memberName.isEmpty()) {
+            memberName = clientDetails.getClientName();
+        }
+        
+        String subject = messages.getMessage("notification.mvp.connectWithOrcidIntegration", new String[] { memberName }, userLocale);
 
         NotificationPermission notification = new NotificationPermission();
         Items items = new Items();
         notification.setItems(items);
         notification.setSubject(subject);
-        notification.setNotificationIntro(clientDetails.getClientName() + "::" +clientDetails.getNotificationWebpageUrl());
+        notification.setNotificationIntro(memberName + "::" +clientDetails.getNotificationWebpageUrl());
         notification.setNotificationSubject(subject);
         notification.setAuthorizationUrl(new AuthorizationUrl(buildAuthorizationUrlForInstitutionalSignIn(clientDetails)));
         Source source = new Source();
         source.setSourceClientId(new SourceClientId(clientDetails.getClientId()));
-        source.setSourceName(new SourceName(clientDetails.getClientName()));
+        source.setSourceName(new SourceName(memberName));
         notification.setSource(source);
         createPermissionNotificationWithFamily(orcid, notification, ORCID_INTEGRATION_NOTIFICATION_FAMILY, clientDetails);
     }

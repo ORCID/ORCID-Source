@@ -335,7 +335,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, true);
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtils.setSourceName(w);
@@ -1200,7 +1199,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);

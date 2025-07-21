@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
@@ -15,6 +16,7 @@ import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class OrcidIntegrationMVPNotifications {
 
     @Resource(name = "orcidOauth2TokenDetailDaoReadOnly")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     public void createOrcidIntegrationNotifications() {
         // Get clients eligible for mvp
@@ -50,6 +55,12 @@ public class OrcidIntegrationMVPNotifications {
             for (ClientDetailsEntity clientDetails : clientsWithMVP) {
                 if (StringUtils.isNotBlank(clientDetails.getNotificationWebpageUrl()) && StringUtils.isNotBlank(clientDetails.getNotificationDomains())) {
                     long startTimeClient = System.currentTimeMillis();
+                    ProfileEntity profileEntity = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
+                    String memberName = profileEntity != null ? profileEntity.getUsername() : null;
+                    if (memberName == null || memberName.isEmpty()) {
+                        memberName = clientDetails.getClientName();
+                    }
+                    
                     LOG.info("Start process client {}. Notification send for the second time if no notifications sent since {} ago", clientDetails.getClientId(),
                             daysAgo);
                     try {
@@ -71,7 +82,7 @@ public class OrcidIntegrationMVPNotifications {
                                     boolean shouldSendNotification = orcidIntegrationNotifications == null || orcidIntegrationNotifications.isEmpty()
                                             || shouldSendNotification(orcidIntegrationNotifications);
                                     if (shouldSendNotification) {
-                                        notificationManager.sendOrcidIntegrationNotificationToUser(pe.getOrcid(), clientDetails);
+                                        notificationManager.sendOrcidIntegrationNotificationToUser(pe.getOrcid(), clientDetails, memberName);
                                         LOG.warn("Create notification for client {} and orcid {}", clientDetails.getClientId(), pe.getOrcid());
                                     } else {
                                         LOG.info("Notification already sent for client {} and orcid {}", clientDetails.getClientId(), pe.getOrcid());

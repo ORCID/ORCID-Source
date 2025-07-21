@@ -191,18 +191,17 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      * Get the list of works that belongs to a user
      *
      * @param orcid
+     * @param featuredOnly
      * @return the list of works that belongs to this user
      */
     @Override
-    public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid) {
-        List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid);
+    public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid, boolean featuredOnly) {
+        List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid, featuredOnly);
         // Filter the contributors list
         for (WorkSummaryExtended wse : wseList) {
             if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
-                contributorUtils.filterContributorsGroupedByOrcidPrivateData(wse.getContributorsGroupedByOrcid(), maxContributorsForUI);
                 wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
             } else {
-                contributorUtils.filterContributorPrivateData(wse.getContributors().getContributor(), maxContributorsForUI);
                 List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
                 wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
                 wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
@@ -211,9 +210,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         return wseList;
     }
 
-    private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid) {
+    private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
-        List<Object[]> list = workDao.getWorksByOrcid(orcid);
+        List<Object[]> list = workDao.getWorksByOrcid(orcid, featuredOnly);
         for(Object[] q1 : list){
             BigInteger putCode = (BigInteger) q1[0];
             String workType = isEmpty(q1[1]);
@@ -232,6 +231,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Timestamp createdDate = (Timestamp) q1[14];
             Timestamp lastModifiedDate = (Timestamp) q1[15];
             String contributors = isEmpty(q1[16]);
+            int featuredDisplayIndex = (int) q1[17];
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
                 externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
@@ -272,6 +272,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     .sourceName(sourceName)
                     .assertionOriginName(assertionOriginName)
                     .displayIndex(displayIndex)
+                    .featuredDisplayIndex(featuredDisplayIndex)
                     .assertionOriginSourceId(assertionOriginSourceId)
                     .assertionOriginClientSourceId(assertionOriginClientSourceId)
                     .contributors(contributorList)
@@ -385,7 +386,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorksExtended getWorksExtendedAsGroups(String orcid) {
-        return groupWorksExtendedAndGenerateGroupingSuggestions(getWorksSummaryExtendedList(orcid), orcid);
+        return groupWorksExtendedAndGenerateGroupingSuggestions(getWorksSummaryExtendedList(orcid, false), orcid);
+    }
+
+    @Override
+    public WorksExtended getFeaturedWorksExtendedAsGroups(String orcid) {
+        return groupWorksExtendedAndGenerateGroupingSuggestions(getWorksSummaryExtendedList(orcid, true), orcid);
     }
 
     private String[] getPutCodeArray(String putCodesAsString) {
