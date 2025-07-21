@@ -63,9 +63,10 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * Get the list of works that belongs to a user
      *
      * @param orcid
+     * @param featuredOnly
      * @return the list of works that belongs to this user
      * */
-    List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid);
+    List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid, boolean featuredOnly);
 
     /**
      * Generate a grouped list of works with the given list of works
@@ -100,6 +101,13 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * @return WorksExtended object
      */
     WorksExtended getWorksExtendedAsGroups(String orcid);
+
+    /**
+     * Returns a org.orcid.jaxb.model.v3.release.record.summary.Works object containing grouped WorkSummary objects of featured works for the given user.
+     * @param orcid
+     * @return WorksExtended object
+     */
+    WorksExtended getFeaturedWorksExtendedAsGroups(String orcid);
 
     /**
      * Returns a list of works that matches the given list of WorkLastModifiedEntity entities
