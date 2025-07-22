@@ -1123,7 +1123,15 @@
 	    <property name="retriever" ref="groupedWorksExtendedRetriever" />
 	</bean>
 
+	<bean id="featuredGroupedWorksExtendedGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+		<property name="cache" ref="featuredGroupedWorksExtendedCache" />
+		<property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+		<property name="retriever" ref="featuredGroupedWorksExtendedRetriever" />
+	</bean>
+
 	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
+
+	<bean id="featuredGroupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.FeaturedGroupedWorksExtendedRetriever" />
 
 	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	

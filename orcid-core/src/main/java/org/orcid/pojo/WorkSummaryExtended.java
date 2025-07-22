@@ -35,6 +35,7 @@ public class WorkSummaryExtended extends WorkSummary {
 
     protected int numberOfContributors;
     protected List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
+    protected int featuredDisplayIndex;
 
     private WorkSummaryExtended(WorkSummaryExtendedBuilder builder) {
         super.setPutCode(builder.putCode.longValue());
@@ -74,6 +75,7 @@ public class WorkSummaryExtended extends WorkSummary {
         }
         this.contributors = builder.contributors;
         this.contributorsGroupedByOrcid = builder.topContributors;
+        this.featuredDisplayIndex = builder.featuredDisplayIndex;
     }
 
     public WorkSummaryExtended() { }
@@ -92,6 +94,14 @@ public class WorkSummaryExtended extends WorkSummary {
 
     public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
+    }
+
+    public int getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
+    }
+
+    public void setFeaturedDisplayIndex(int featuredDisplayIndex) {
+        this.featuredDisplayIndex = featuredDisplayIndex;
     }
 
     public int getNumberOfContributors() {
@@ -123,6 +133,7 @@ public class WorkSummaryExtended extends WorkSummary {
         private BigInteger displayIndex;
         private WorkContributors contributors;
         private List<ContributorsRolesAndSequences> topContributors;
+        private int featuredDisplayIndex;
 
         public WorkSummaryExtendedBuilder(
                 BigInteger putCode, String workType, String title, String sourceId, String clientSourceId,
@@ -220,6 +231,11 @@ public class WorkSummaryExtended extends WorkSummary {
 
         public WorkSummaryExtendedBuilder topContributors(List<ContributorsRolesAndSequences> topContributors) {
             this.topContributors = topContributors;
+            return this;
+        }
+
+        public WorkSummaryExtendedBuilder featuredDisplayIndex(int featuredDisplayIndex) {
+            this.featuredDisplayIndex = featuredDisplayIndex;
             return this;
         }
 

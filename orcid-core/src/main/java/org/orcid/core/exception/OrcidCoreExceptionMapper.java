@@ -77,6 +77,7 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidAmountException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9054));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(StartDateAfterEndDateException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9055));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidContributorRoleException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9058));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidOrgAddressException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9060));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));

@@ -456,13 +456,13 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksExtendedPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
-                                                           @RequestParam("sortAsc") boolean sortAsc) {
+                                                           @RequestParam("sortAsc") boolean sortAsc, @RequestParam("featuredOnly") boolean featuredOnly) {
         try {
             orcidSecurityManager.checkProfile(orcid);
         } catch (Exception e) {
             return new Page<WorkGroup>();
         }
-        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc, featuredOnly);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
