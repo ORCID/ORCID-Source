@@ -2,14 +2,16 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
@@ -25,6 +27,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -48,9 +51,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Resource
     private ProfileDao profileDao;
-    
-    @Resource(name = "encryptionManager")
-    private EncryptionManager encryptionManager;
+
+    @Resource(name = "orcidSecurityManagerV3")
+    protected OrcidSecurityManager orcidSecurityManager;
     
     @Override
     @Transactional
@@ -316,5 +319,27 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("Profile is claimed");
         }
         emailDao.removeEmail(orcid, emailAddress);
-    }      
+    }
+
+    @Override
+    @Transactional
+    public List<String> removeEmails(String orcid, List<String> emailsToRemove) {
+        if (!orcidSecurityManager.isAdmin()) {
+            throw new AccessDeniedException("Admin privileges required to remove emails");
+        }
+
+        List<EmailEntity> currentEmailsList = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+        if (emailsToRemove.size() == currentEmailsList.size()) {
+            throw new IllegalArgumentException("Can't mark all user's as deleted");
+        }
+
+        for (String email : emailsToRemove) {
+            emailDao.removeEmail(orcid, email);
+        }
+
+        return emailDao.findByOrcid(orcid, System.currentTimeMillis())
+                .stream()
+                .map(EmailEntity::getEmail)
+                .collect(Collectors.toList());
+    }
 }

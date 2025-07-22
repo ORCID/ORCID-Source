@@ -1,3 +1,50 @@
+## v2.105.0 - 2025-07-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.104.0...v2.105.0)
+
+## v2.104.0 - 2025-07-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.103.0...v2.104.0)
+
+## v2.103.0 - 2025-07-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.102.0...v2.103.0)
+
+## v2.102.0 - 2025-07-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.101.0...v2.102.0)
+
+- [#7335](https://github.com/ORCID/ORCID-Source/pull/7335): assign featured display indices when creating works
+
+## v2.101.0 - 2025-07-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.100.0...v2.101.0)
+
+- [#7334](https://github.com/ORCID/ORCID-Source/pull/7334): assign featured display index when creating works
+
+## v2.100.0 - 2025-07-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.99.0...v2.100.0)
+
+## v2.99.0 - 2025-07-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.98.3...v2.99.0)
+
+- [#7328](https://github.com/ORCID/ORCID-Source/pull/7328): 
+- [#7329](https://github.com/ORCID/ORCID-Source/pull/7329): 
+
+### Fix
+
+- Check if user is admin on removeEmails method
+
+### Feature
+
+- Add remove emails endpoint in AdminController
+
+## v2.98.3 - 2025-07-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.98.2...v2.98.3)
+
 ## v2.98.2 - 2025-07-08
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.98.1...v2.98.2)

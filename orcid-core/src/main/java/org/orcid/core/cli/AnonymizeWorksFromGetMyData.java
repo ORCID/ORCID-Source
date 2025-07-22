@@ -298,6 +298,7 @@ public class AnonymizeWorksFromGetMyData {
                 workEntity.setTopContributorsJson("[]");
             }
             workEntity.setVisibility(orig.getVisibility().value());
+            workEntity.setFeaturedDisplayIndex(0);
             DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, false);
             workDao.persist(workEntity);
             workDao.flush();

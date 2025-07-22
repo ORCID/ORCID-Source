@@ -118,6 +118,7 @@ public class LoadWorksToDB {
                 Work work = getWorkFromSummary(summary);
                 WorkEntity workEntity = workAdapter.toWorkEntity(work);
                 workEntity.setOrcid(orcid);
+                workEntity.setFeaturedDisplayIndex(0);
                 worksList.add(workEntity);
             }
         }

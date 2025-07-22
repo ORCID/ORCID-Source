@@ -74,7 +74,10 @@ public enum Features implements Feature {
     OAUTH_SIGNIN,
 
     @Label("Use the authorization server to authorize OAUTH requests")
-    OAUTH_AUTHORIZATION;
+    OAUTH_AUTHORIZATION,
+
+    @Label("Enable featured works logic in the UI")
+    FEATURED_WORKS_UI;
     
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
