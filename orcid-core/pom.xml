@@ -236,16 +236,6 @@
             <version>0.6</version>
         </dependency>
         <dependency>
-            <groupId>org.citationstyles</groupId>
-            <artifactId>styles</artifactId>
-            <version>25.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.citationstyles</groupId>
-            <artifactId>locales</artifactId>
-            <version>25.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.mozilla</groupId>
             <artifactId>rhino</artifactId>
             <version>1.7.7.1</version>
