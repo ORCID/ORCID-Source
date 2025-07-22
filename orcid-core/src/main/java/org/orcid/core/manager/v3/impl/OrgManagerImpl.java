@@ -156,9 +156,9 @@ public class OrgManagerImpl implements OrgManager {
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setName(organization.getName().trim());
         org.orcid.jaxb.model.v3.release.common.OrganizationAddress address = organization.getAddress();
-        orgEntity.setCity(address.getCity().trim());
+        orgEntity.setCity(address.getCity() !=null? address.getCity().trim():"");
         orgEntity.setRegion(address.getRegion() != null ? address.getRegion().trim() : "");
-        orgEntity.setCountry(address.getCountry().name());
+        orgEntity.setCountry(address.getCountry() !=null? address.getCountry().name(): "");
 
         if (organization.getDisambiguatedOrganization() != null && organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
             // if disambiguated org is present (must be for v3 API, but not UI)
