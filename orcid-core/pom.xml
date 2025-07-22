@@ -252,12 +252,12 @@
         <dependency>
             <groupId>org.citationstyles</groupId>
             <artifactId>styles</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>25.4</version>
         </dependency>
         <dependency>
             <groupId>org.citationstyles</groupId>
             <artifactId>locales</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>25.4</version>
         </dependency>
         <dependency>
             <groupId>org.mozilla</groupId>
