@@ -199,7 +199,7 @@ public class WorkGroup extends ActivityGroup {
         workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
         WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
         workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
-        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));      
+        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
         return workForm;
     }
 
@@ -243,7 +243,8 @@ public class WorkGroup extends ActivityGroup {
         workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
         workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
         workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
-        workForm.setNumberOfContributors(workSummary.getNumberOfContributors());        
+        workForm.setNumberOfContributors(workSummary.getNumberOfContributors());
+        workForm.setFeaturedDisplayIndex(workSummary.getFeaturedDisplayIndex());
         return workForm;
     }
 

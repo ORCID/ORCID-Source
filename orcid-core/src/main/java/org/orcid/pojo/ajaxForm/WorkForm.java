@@ -77,6 +77,14 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private Date createdDate;
 
     private Date lastModified;        
+    
+    private Integer featuredDisplayIndex;
+
+    public static WorkForm getExtendedWorkForm(WorkExtended work, int maxContributorsForUI) {
+        WorkForm workForm = valueOf(work, maxContributorsForUI);
+        workForm.setFeaturedDisplayIndex(work.getFeaturedDisplayIndex());
+        return workForm;
+    }
 
     public static WorkForm valueOf(Work work, int maxContributorsForUI) {
         if (work == null)
@@ -1002,8 +1010,16 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
-    }    
-    
+    }
+
+    public Integer getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
+    }
+
+    public void setFeaturedDisplayIndex(Integer featuredDisplayIndex) {
+        this.featuredDisplayIndex = featuredDisplayIndex;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

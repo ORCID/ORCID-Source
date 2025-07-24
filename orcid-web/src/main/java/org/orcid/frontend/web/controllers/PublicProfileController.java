@@ -507,7 +507,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
          
         WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
-        WorkForm work = WorkForm.valueOf(workExtended, maxContributorsForUI);
+        WorkForm work = WorkForm.getExtendedWorkForm(workExtended, maxContributorsForUI);
         Work workObj = workExtended;        
 
         if (work != null && validateVisibility(workObj.getVisibility())) {
