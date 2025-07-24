@@ -849,6 +849,12 @@ public class WorksController extends BaseWorkspaceController {
         return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, false, sort, sortAsc, featuredOnly);
     }
 
+    @RequestMapping(value = "/featuredWorks.json", method = RequestMethod.GET)
+    public @ResponseBody ArrayList<WorkForm> getFeaturedWorksJson() {
+        String orcid = getEffectiveUserOrcid();
+        return workManagerReadOnly.getFeaturedWorks(orcid);
+    }
+
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();

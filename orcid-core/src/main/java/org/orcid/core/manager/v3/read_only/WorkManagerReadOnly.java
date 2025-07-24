@@ -107,7 +107,7 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * @param orcid
      * @return WorksExtended object
      */
-    WorksExtended getFeaturedWorksExtendedAsGroups(String orcid);
+    List<WorkSummaryExtended> getFeaturedWorksExtendedAsGroups(String orcid);
 
     /**
      * Returns a list of works that matches the given list of WorkLastModifiedEntity entities
