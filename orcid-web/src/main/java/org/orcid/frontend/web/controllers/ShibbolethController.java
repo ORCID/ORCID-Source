@@ -187,10 +187,13 @@ public class ShibbolethController extends BaseController {
         if (mav.getViewName().equals("social_link_signin")) {
             String insitutionalLinking = "/institutional-linking";
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+
             if (queryString != null) {
                 insitutionalLinking = insitutionalLinking + "?" + queryString;
             }
             return new ModelAndView("redirect:"+ calculateRedirectUrl(insitutionalLinking));
+        } else {
+            LOGGER.warn("View name is not what we were expecting: " + mav.getView());
         }
         
         return mav;
