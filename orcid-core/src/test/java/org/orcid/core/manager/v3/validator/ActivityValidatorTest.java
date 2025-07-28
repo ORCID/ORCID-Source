@@ -16,6 +16,7 @@ import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
+import org.orcid.core.exception.InvalidOrgAddressCityNoCountryException;
 import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
@@ -970,6 +971,16 @@ public class ActivityValidatorTest {
         org.setDisambiguatedOrganization(getDisambiguatedOrganization());
         return org;
     }
+    
+    public Organization getOrganizationWithCityNoCountry() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        org.setAddress(address);
+        org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
+        return org;
+    }
 
     private DisambiguatedOrganization getDisambiguatedOrganization() {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
@@ -1060,6 +1071,14 @@ public class ActivityValidatorTest {
     public void validateServiceWithoutAddress() {
         Service service = new Service();
         service.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidOrgAddressCityNoCountryException.class)
+    public void validateServiceWithCityNoCountry() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithCityNoCountry());
         activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
     }
 }
