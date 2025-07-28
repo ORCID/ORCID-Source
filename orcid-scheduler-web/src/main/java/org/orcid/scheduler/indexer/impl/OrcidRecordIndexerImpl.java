@@ -2,7 +2,9 @@ package org.orcid.scheduler.indexer.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -117,7 +119,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         String solrQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSolrQueueName : updateSolrQueueName);
         String v2Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV2RecordQueueName : updateV2RecordQueueName);
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
-        List<String> orcidsForIndexing = new ArrayList<>();
+        Map<String, Date> orcidsForIndexing = new LinkedHashMap<String, Date>();
         try {
             if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_UPDATE.equals(status)) {
                 orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
@@ -142,11 +144,8 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
             return false;
         }
 
-        for (String orcid : orcidsForIndexing) {
-            // TODO: Why do we need this? We should be able to fetch orcid +
-            // last_modified in the previous query
-            Date last = profileLastModifiedDaoReadOnly.retrieveLastModifiedDate(orcid);
-            LastModifiedMessage mess = new LastModifiedMessage(orcid, last);
+        for (String orcid : orcidsForIndexing.keySet()) {
+            LastModifiedMessage mess = new LastModifiedMessage(orcid, orcidsForIndexing.get(orcid));
 
             if (IndexingStatus.SOLR_UPDATE.equals(status)) {
                 connectionIssue = index(mess, solrQueue);

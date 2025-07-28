@@ -3,6 +3,7 @@ package org.orcid.persistence.dao;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -33,7 +34,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
+    Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -51,7 +52,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
+    Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 

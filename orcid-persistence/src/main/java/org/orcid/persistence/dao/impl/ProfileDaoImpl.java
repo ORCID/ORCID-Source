@@ -1,10 +1,15 @@
 package org.orcid.persistence.dao.impl;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -31,18 +36,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
 
-    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_primary "
-            + "FROM email e, profile p "
-            + "WHERE e.is_verified = false "
-            + "        AND p.orcid = e.orcid "
-            + "        AND p.deprecated_date is null "
-            + "        AND p.profile_deactivation_date is null "
-            + "        AND p.account_expiry is null "
+    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_primary " + "FROM email e, profile p "
+            + "WHERE e.is_verified = false " + "        AND p.orcid = e.orcid " + "        AND p.deprecated_date is null "
+            + "        AND p.profile_deactivation_date is null " + "        AND p.account_expiry is null "
             + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY)) "
-            + "        AND NOT EXISTS "
-            + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}')) "
+            + "        AND NOT EXISTS " + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}')) "
             + "order by e.last_modified";
-    
+
     @Value("${org.orcid.postgres.query.timeout:30000}")
     private Integer queryTimeout;
 
@@ -71,7 +71,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
+    public Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST, delay);
     }
 
@@ -93,25 +93,45 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
+    public Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
+        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.last_modified FROM profile p WHERE p.indexing_status = :indexingStatus");
+
         if (delay != null && delay > 0) {
-            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+            // By calculating the date in Java, we create a portable and secure
+            // query
+            builder.append(" AND (p.last_indexed_date IS NULL OR p.last_indexed_date < :thresholdDate)");
         }
-        if (!orcidsToExclude.isEmpty()) {
-            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
+
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
+            builder.append(" AND p.orcid NOT IN (:orcidsToExclude)");
         }
-        // Ordering by last modified so we get the oldest modified first
-        builder.append(" ORDER BY p.last_modified");
+
+        // Ordering by last_modified to process the oldest records first
+        builder.append(" ORDER BY p.last_modified ASC");
+
         Query query = entityManager.createNativeQuery(builder.toString());
+
+        // Set parameters
         query.setParameter("indexingStatus", indexingStatus.name());
-        if (!orcidsToExclude.isEmpty()) {
+
+        if (delay != null && delay > 0) {
+            // Calculate the threshold date here and pass it as a parameter
+            Instant threshold = Instant.now().minus(delay, ChronoUnit.MINUTES);
+            query.setParameter("thresholdDate", Date.from(threshold));
+        }
+
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
+
         query.setMaxResults(maxResults);
-        // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        return query.getResultList();
+
+        List<Object[]> results = query.getResultList();
+
+        return results.stream().collect(Collectors.toMap(row -> (String) row[0], row -> (Date) row[1], (existing, replacement) -> {
+            throw new IllegalStateException("Duplicate ORCID found: " + existing);
+        }, LinkedHashMap::new));
     }
 
     @SuppressWarnings("unchecked")
