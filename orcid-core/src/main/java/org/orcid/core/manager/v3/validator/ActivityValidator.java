@@ -21,6 +21,7 @@ import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidAmountException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
+import org.orcid.core.exception.InvalidOrgAddressCityNoCountryException;
 import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
@@ -391,6 +392,18 @@ public class ActivityValidator {
             throw new InvalidOrgAddressException();
         }
     }
+    
+    private void validateOrgAddressForProfessionalActivities(OrganizationHolder organizationHolder) {
+        if (organizationHolder.getOrganization() == null) {
+            throw new InvalidOrgException();
+        }
+
+        Organization org = organizationHolder.getOrganization();
+        if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity()) && ( org.getAddress().getCountry() == null
+                || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
+            throw new InvalidOrgAddressCityNoCountryException();
+        }
+    }
 
     private void validateDisambiguatedOrg(MultipleOrganizationHolder organizationHolder) {
         if (organizationHolder.getOrganization() == null) {
@@ -426,6 +439,9 @@ public class ActivityValidator {
             //validate city/country requirement for education and employment 
             if (affiliation instanceof Education || affiliation instanceof Employment) {
                 validateOrgAddress(affiliation);
+            }
+            else {
+                validateOrgAddressForProfessionalActivities(affiliation);
             }
 
             if (affiliation.getEndDate() != null) {
