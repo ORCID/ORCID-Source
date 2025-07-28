@@ -21,8 +21,11 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(OrcidRecordIndexerImpl.class);
 
-    @Value("${org.orcid.persistence.messaging.indexing.batch.size:100}")
+    @Value("${org.orcid.persistence.messaging.indexing.batch.size:100000}")
     private int INDEXING_BATCH_SIZE;
+    
+    @Value("${org.orcid.persistence.messaging.indexing.batch.max.count:3}")
+    private int INDEXING_BATCH_MAX_COUNT;
 
     @Value("${org.orcid.persistence.indexing.delay:5}")
     private Integer indexingDelay;
@@ -89,13 +92,33 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
     }    
     
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status) {
-        LOG.info("processing profiles with " + status.name() + " flag.");
-        List<String> orcidsForIndexing = new ArrayList<>();
+        LOG.info("Processing profiles with " + status.name() + " flag. Batch size: " + INDEXING_BATCH_SIZE + ",Batch Max count: " + INDEXING_BATCH_MAX_COUNT);
+        for (int i = 0; i < INDEXING_BATCH_MAX_COUNT; i++) {
+            boolean batchProcessed = processProfilesForIndexing(status);
+            if (batchProcessed) {               
+                LOG.info("Processed batch " + i + " with " + status.name() + "h flag.");
+            } else {
+                LOG.info("No more records found with " + status.name() + " flag or connection issues, stopping processing.");
+                break;
+            }
+        }
+    }
+    
+    private boolean index(LastModifiedMessage mess, String queue) {
+        if (!messaging.send(mess, queue)) {
+            LOG.warn("ABORTED - couldnt send messages to queue ' " + queue + "'");                    
+            return true;
+        }
+        return false;
+    }  
+    
+    
+    private boolean processProfilesForIndexing(IndexingStatus status) {
         boolean connectionIssue = false;
         String solrQueue = (IndexingStatus.REINDEX.equals(status) ? reindexSolrQueueName : updateSolrQueueName);
         String v2Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV2RecordQueueName : updateV2RecordQueueName);
         String v3Queue = (IndexingStatus.REINDEX.equals(status) ? reindexV3RecordQueueName : updateV3RecordQueueName);
-        do {            
+        List<String> orcidsForIndexing = new ArrayList<>();            
             try {
                 if (IndexingStatus.REINDEX.equals(status) || IndexingStatus.S3_UPDATE.equals(status)) {
                     orcidsForIndexing = profileDaoReadOnly.findOrcidsByIndexingStatus(status, INDEXING_BATCH_SIZE, 0);
@@ -113,6 +136,10 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                 }                
             }
             LOG.info(status.name() + " - processing batch of " + orcidsForIndexing.size());
+            if (orcidsForIndexing.isEmpty()) {
+                LOG.info("No records found with indexing status " + status.name());
+                return false;
+            }
 
             for (String orcid : orcidsForIndexing) {
                 // TODO: Why do we need this? We should be able to fetch orcid + last_modified in the previous query
@@ -147,14 +174,8 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
                     }
                 }
             }
-        } while (!connectionIssue && !orcidsForIndexing.isEmpty());
+        
+        // returns true if there wasn't a connection issue and the indexing batch size was reached meaning a new batch should be processed if batch count was not reached
+        return !connectionIssue && orcidsForIndexing.size() == INDEXING_BATCH_SIZE ;
     }
-    
-    private boolean index(LastModifiedMessage mess, String queue) {
-        if (!messaging.send(mess, queue)) {
-            LOG.warn("ABORTED - couldnt send messages to queue ' " + queue + "'");                    
-            return true;
-        }
-        return false;
-    }        
 }
