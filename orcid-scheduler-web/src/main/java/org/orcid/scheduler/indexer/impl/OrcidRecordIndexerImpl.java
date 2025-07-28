@@ -21,7 +21,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
 
     protected static final Logger LOG = LoggerFactory.getLogger(OrcidRecordIndexerImpl.class);
 
-    @Value("${org.orcid.persistence.messaging.indexing.batch.size:100000}")
+    @Value("${org.orcid.persistence.messaging.indexing.batch.size:10000}")
     private int INDEXING_BATCH_SIZE;
 
     @Value("${org.orcid.persistence.messaging.indexing.batch.max.count:3}")
@@ -96,7 +96,7 @@ public class OrcidRecordIndexerImpl implements OrcidRecordIndexer {
         for (int i = 0; i < INDEXING_BATCH_MAX_COUNT; i++) {
             boolean batchProcessed = processProfilesForIndexing(status);
             if (batchProcessed) {
-                LOG.info("Processed batch " + i + " with " + status.name() + "h flag.");
+                LOG.info("Processed batch " + i + " with " + status.name() + " flag.");
             } else {
                 LOG.info("No more records found with " + status.name() + " flag or connection issues, stopping processing.");
                 break;
