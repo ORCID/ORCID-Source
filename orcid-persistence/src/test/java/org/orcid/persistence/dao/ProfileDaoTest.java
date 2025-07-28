@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -204,13 +205,13 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o2, d2, IndexingStatus.PENDING);
         profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o3, d3, IndexingStatus.PENDING);
         
-        List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        Map<String,Date> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
         
         assertEquals(3, results.size());
-        assertTrue(results.contains(o1));
-        assertTrue(results.contains(o2));
-        assertTrue(results.contains(o3));       
+        assertTrue(results.containsKey(o1));
+        assertTrue(results.containsKey(o2));
+        assertTrue(results.containsKey(o3));       
     }
 
     @Test
