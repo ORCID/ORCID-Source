@@ -28,6 +28,8 @@ import org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -49,6 +51,8 @@ import com.nimbusds.jwt.SignedJWT;
  *
  */
 public class IETFExchangeTokenGranter implements TokenGranter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IETFExchangeTokenGranter.class);
 
     private AuthorizationServerTokenServices tokenServices;
 
@@ -258,12 +262,14 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                         }
                         // Keep only the /activities/update scope if the token was not revoked by a client or staff member
                         if (revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
+                            // We keen this scope even on user deactivated tokens so the member can still delete their own data from records
+                            LOGGER.info("Storing /activites/update scope from deactivated token, this will allow members to delete even if the permission was revoked");
                             inactiveScopesOBO.add(ScopePathType.ACTIVITIES_UPDATE);
                         } else {
                             isRevoked = true;
                         }
                     } else {
-                        throw new OrcidInvalidScopeException("The id_token is disabled and does not contain any valid scope");
+                        LOGGER.info("Ignoring disabled token because it is disabled and doesn't have the /activities/update scope");
                     }
                 }                
             }
