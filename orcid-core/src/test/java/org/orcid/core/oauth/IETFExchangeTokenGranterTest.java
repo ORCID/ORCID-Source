@@ -289,7 +289,7 @@ public class IETFExchangeTokenGranterTest {
             tokenGranter.grant(GRANT_TYPE, getTokenRequest(ACTIVE_CLIENT_ID, List.of("/read-limited")));
             fail();
         } catch (OrcidInvalidScopeException oise) {
-            assertEquals("The id_token is disabled and does not contain any valid scope", oise.getMessage());
+            assertEquals("The id_token is not associated with a valid scope", oise.getMessage());
         } catch (Exception e) {
             fail();
         }
