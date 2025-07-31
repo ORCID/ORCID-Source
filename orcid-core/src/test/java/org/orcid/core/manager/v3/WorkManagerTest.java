@@ -92,10 +92,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.ContributorsRolesAndSequences;
-import org.orcid.pojo.WorkExtended;
-import org.orcid.pojo.WorkGroupExtended;
-import org.orcid.pojo.WorksExtended;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.beans.factory.annotation.Value;
@@ -1984,9 +1981,8 @@ public class WorkManagerTest extends BaseTest {
 
     @Test
     public void a_testGetFeaturedWorksExtendedAsGroups() {
-        WorksExtended works = workManager.getFeaturedWorksExtendedAsGroups(claimedOrcid);
-        List<WorkGroupExtended> workGroup = works.getWorkGroup();
-        assertEquals(2, workGroup.size());
+        List<WorkSummaryExtended> works = workManager.getFeaturedWorksSummaryExtended(claimedOrcid);
+        assertEquals(2, works.size());
     }
 
     private WorkEntity getUserPreferredWork() {

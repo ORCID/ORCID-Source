@@ -3,6 +3,7 @@ package org.orcid.pojo.grouping;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
@@ -15,6 +16,10 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
+
+import javax.annotation.Resource;
+
+import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
 public class WorkGroup extends ActivityGroup {
 
@@ -163,93 +168,7 @@ public class WorkGroup extends ActivityGroup {
         return group;
     }
 
-    private static WorkForm getWorkForm(WorkSummary workSummary) {
-        WorkForm workForm = new WorkForm();
-        workForm.setPutCode(Text.valueOf(workSummary.getPutCode()));
 
-        String title = workSummary.getTitle() != null && workSummary.getTitle().getTitle() != null ? workSummary.getTitle().getTitle().getContent() : "";
-        workForm.setTitle(Text.valueOf(title));
 
-        if (workSummary.getJournalTitle() != null) {
-            workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
-        }
-
-        if (workSummary.getPublicationDate() != null) {
-            workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
-        }
-
-        workForm.setSource(workSummary.getSource().retrieveSourcePath());
-        if (workSummary.getSource().getSourceName() != null) {
-            workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginClientId() != null) {
-            workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginOrcid() != null) {
-            workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginName() != null) {
-            workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
-        }
-
-        workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
-        workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
-        WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
-        workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
-        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
-        return workForm;
-    }
-
-    private static WorkForm getWorkForm(WorkSummaryExtended workSummary) {
-        WorkForm workForm = new WorkForm();
-        workForm.setPutCode(Text.valueOf(workSummary.getPutCode()));
-
-        String title = workSummary.getTitle() != null && workSummary.getTitle().getTitle() != null ? workSummary.getTitle().getTitle().getContent() : "";
-        workForm.setTitle(Text.valueOf(title));
-
-        if (workSummary.getJournalTitle() != null) {
-            workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
-        }
-
-        if (workSummary.getPublicationDate() != null) {
-            workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
-        }
-
-        if (workSummary.getSource() != null) {
-            workForm.setSource(workSummary.getSource().retrieveSourcePath());
-            if (workSummary.getSource().getSourceName() != null) {
-                workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
-            }
-
-            if (workSummary.getSource().getAssertionOriginClientId() != null) {
-                workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
-            }
-
-            if (workSummary.getSource().getAssertionOriginOrcid() != null) {
-                workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
-            }
-
-            if (workSummary.getSource().getAssertionOriginName() != null) {
-                workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
-            }
-        }
-
-        workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
-        workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
-        WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
-        workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
-        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
-        workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
-        workForm.setNumberOfContributors(workSummary.getNumberOfContributors());
-        workForm.setFeaturedDisplayIndex(workSummary.getFeaturedDisplayIndex());
-        return workForm;
-    }
-
-    private static Date getPublicationDate(PublicationDate publicationDate) {
-        return PojoUtil.convertDate(publicationDate);
-    }
 
 }

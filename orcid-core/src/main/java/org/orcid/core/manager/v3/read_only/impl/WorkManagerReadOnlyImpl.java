@@ -32,6 +32,7 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
@@ -51,10 +52,14 @@ import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
+
+import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -395,13 +400,20 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    public List<WorkSummaryExtended> getFeaturedWorksExtendedAsGroups(String orcid) {
+    public List<WorkSummaryExtended> getFeaturedWorksSummaryExtended(String orcid) {
         return getWorksSummaryExtendedList(orcid, true);
     }
 
     @Override
-    public ArrayList<WorkForm> getFeaturedWorks(String orcid) {
-        ArrayList<WorkForm> works = worksExtendedCacheManager.getFeaturedGroupedWorksExtended(orcid);
+    public List<WorkForm> getFeaturedWorks(String orcid) {
+        List<WorkSummaryExtended> works = worksExtendedCacheManager.getFeaturedGroupedWorksExtended(orcid);
+        List<WorkForm> workForms = new ArrayList<>();
+        if (!works.isEmpty()) {
+            for (WorkSummaryExtended workSummary : works) {
+                workForms.add(getWorkForm(workSummary));
+            }
+        }
+        return workForms;
     }
 
     private String[] getPutCodeArray(String putCodesAsString) {

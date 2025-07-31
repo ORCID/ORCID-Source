@@ -456,13 +456,23 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksExtendedPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
-                                                           @RequestParam("sortAsc") boolean sortAsc, @RequestParam("featuredOnly") boolean featuredOnly) {
+                                                           @RequestParam("sortAsc") boolean sortAsc) {
         try {
             orcidSecurityManager.checkProfile(orcid);
         } catch (Exception e) {
             return new Page<WorkGroup>();
         }
-        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc, featuredOnly);
+        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/featuredWorks.json", method = RequestMethod.GET)
+    public @ResponseBody List<WorkForm> getFeaturedWorksJson(@PathVariable("orcid") String orcid) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+        return workManagerReadOnly.getFeaturedWorks(orcid);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
