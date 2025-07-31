@@ -426,7 +426,7 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = { "/reactivationConfirm.json", "/shibboleth/reactivationConfirm.json" }, method = RequestMethod.POST)
-    public @ResponseBody Object setReactivationConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Reactivation reg)
+    public @ResponseBody Redirect setReactivationConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Reactivation reg)
             throws UnsupportedEncodingException {
         Redirect r = new Redirect();
 
@@ -442,7 +442,9 @@ public class PasswordResetController extends BaseController {
         // make sure validation still passes
         validateReactivationFields(request, reg);
         if (reg.getErrors() != null && reg.getErrors().size() > 0) {
-            return reg;
+            LOGGER.error("Multiple errors while reactivating an account: " + reg.getErrors().get(0));
+            r.getErrors().add(reg.getErrors().get(0));
+            return r;
         }
 
         if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {

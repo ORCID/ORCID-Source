@@ -283,7 +283,7 @@ public class WorksController extends BaseWorkspaceController {
             return null;
 
         WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
-        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        WorkForm workForm = WorkForm.getExtendedWorkForm(work, maxContributorsForUI);
         
         if (workForm != null) {
             if (workForm.getPublicationDate() == null) {
