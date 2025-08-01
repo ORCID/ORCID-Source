@@ -1980,7 +1980,7 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void a_testGetFeaturedWorksExtendedAsGroups() {
+    public void a_testGetFeaturedWorksSummaryExtended() {
         List<WorkSummaryExtended> works = workManager.getFeaturedWorksSummaryExtended(claimedOrcid);
         assertEquals(2, works.size());
     }
