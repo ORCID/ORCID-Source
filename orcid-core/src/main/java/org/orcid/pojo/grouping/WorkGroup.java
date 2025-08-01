@@ -161,8 +161,4 @@ public class WorkGroup extends ActivityGroup {
 
         return group;
     }
-
-
-
-
 }
