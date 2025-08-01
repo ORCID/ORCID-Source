@@ -115,7 +115,6 @@ public class WorkGroup extends ActivityGroup {
         WorkType workType = null;
 
         Long maxDisplayIndex = null;
-        int maxFeaturedDisplayIndex = 0;
         for (WorkSummaryExtended workSummary : workGroup.getWorkSummary()) {
             WorkForm workForm = getWorkForm(workSummary);
             group.getWorks().add(workForm);
@@ -128,17 +127,12 @@ public class WorkGroup extends ActivityGroup {
                 group.setActiveVisibility(workSummary.getVisibility().name());
             }
 
-            int featuredDisplayIndex = workSummary.getFeaturedDisplayIndex();
-            maxFeaturedDisplayIndex = Math.max(featuredDisplayIndex, maxFeaturedDisplayIndex);
-
             if (orcid.equals(workSummary.getSource().retrieveSourcePath())) {
                 group.setUserVersionPresent(true);
             }
 
             workType = workSummary.getType();
         }
-
-        group.setFeaturedDisplayIndex(maxFeaturedDisplayIndex);
 
         if (workGroup.getIdentifiers() != null) {
             List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();
