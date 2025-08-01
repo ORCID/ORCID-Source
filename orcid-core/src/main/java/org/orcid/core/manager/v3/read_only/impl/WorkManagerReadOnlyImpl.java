@@ -22,6 +22,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
+import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
@@ -31,6 +32,7 @@ import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
 import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
+import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
@@ -50,9 +52,14 @@ import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.springframework.beans.factory.annotation.Value;
+
+import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
     
@@ -69,6 +76,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     protected WorkEntityCacheManager workEntityCacheManager;
 
     private final Integer maxWorksToRead;
+
+    @Resource
+    private WorksExtendedCacheManager worksExtendedCacheManager;
     
     @Resource
     private GroupingSuggestionManager groupingSuggestionsManager;
@@ -390,8 +400,20 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    public WorksExtended getFeaturedWorksExtendedAsGroups(String orcid) {
-        return groupWorksExtendedAndGenerateGroupingSuggestions(getWorksSummaryExtendedList(orcid, true), orcid);
+    public List<WorkSummaryExtended> getFeaturedWorksSummaryExtended(String orcid) {
+        return getWorksSummaryExtendedList(orcid, true);
+    }
+
+    @Override
+    public List<WorkForm> getFeaturedWorks(String orcid) {
+        List<WorkSummaryExtended> works = worksExtendedCacheManager.getFeaturedGroupedWorksExtended(orcid);
+        List<WorkForm> workForms = new ArrayList<>();
+        if (!works.isEmpty()) {
+            for (WorkSummaryExtended workSummary : works) {
+                workForms.add(getWorkForm(workSummary));
+            }
+        }
+        return workForms;
     }
 
     private String[] getPutCodeArray(String putCodesAsString) {

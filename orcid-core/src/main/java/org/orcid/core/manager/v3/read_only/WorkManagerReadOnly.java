@@ -11,6 +11,7 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase {           
     /**
@@ -107,7 +108,9 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * @param orcid
      * @return WorksExtended object
      */
-    WorksExtended getFeaturedWorksExtendedAsGroups(String orcid);
+    List<WorkSummaryExtended> getFeaturedWorksSummaryExtended(String orcid);
+
+    List<WorkForm> getFeaturedWorks(String orcid);
 
     /**
      * Returns a list of works that matches the given list of WorkLastModifiedEntity entities
