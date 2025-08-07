@@ -20,6 +20,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
 
 @Component
 public class VerifyEmailUtils {
@@ -34,9 +35,10 @@ public class VerifyEmailUtils {
     private EncryptionManager encryptionManager;
 
     public Map<String, Object> createParamsForVerificationEmail(String emailFriendlyName, String orcid, String email, boolean isPrimary, Locale locale) {
+        //Check emailFriendly name for domain
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("isPrimary", isPrimary);
-        templateParams.put("userName", emailFriendlyName);
+        templateParams.put("userName", OrcidStringUtils.containsDomain(emailFriendlyName)?orcid:emailFriendlyName);
         templateParams.put("verificationUrl", createVerificationUrl(email, orcidUrlManager.getBaseUrl()));
         templateParams.put("orcidId", orcid);
         templateParams.put("subject", getSubject((isPrimary ? "email.subject.verify_reminder_primary_address" : "email.subject.verify_reminder"), locale));
