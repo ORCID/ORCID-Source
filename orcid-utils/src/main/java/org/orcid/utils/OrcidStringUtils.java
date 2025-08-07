@@ -20,6 +20,7 @@ public class OrcidStringUtils {
     public static String ORCID_URI_2_1_STRING = "https://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String EMAIL_REGEXP = "^([^@\\s]|(\".+\"))+@([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]+\\.)+([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]{2,})+$";
     public static String URL_REGEXP = "^((https?):\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#%\\[\\]@!\\$&'\\(\\)\\*\\+\\\\,;=.><\\ ]+$";
+    public static String CONTAINS_DOMAIN_REGEX= "\\b([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,}\\b";
 
     private static String LT = "&lt;";
     private static String GT = "&gt;";
@@ -168,5 +169,17 @@ public class OrcidStringUtils {
         }
 
         return emailPattern.matcher(email).matches();
+    }
+    
+    
+    public static boolean containsDomain(String string) {
+        if (string == null || string.trim().isEmpty()) {
+            return false;
+        }
+
+        Pattern pattern = Pattern.compile(CONTAINS_DOMAIN_REGEX);
+        Matcher matcher = pattern.matcher(string);
+
+        return matcher.find();
     }
 }
