@@ -20,6 +20,15 @@ public class OrcidStringUtils {
     public static String ORCID_URI_2_1_STRING = "https://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
     public static String EMAIL_REGEXP = "^([^@\\s]|(\".+\"))+@([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]+\\.)+([^@\\s\\.\"'\\(\\)\\[\\]\\{\\}\\\\/,:;]{2,})+$";
     public static String URL_REGEXP = "^((https?):\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#%\\[\\]@!\\$&'\\(\\)\\*\\+\\\\,;=.><\\ ]+$";
+    public static String CONTAINS_DOMAIN_REGEX= "\\b([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,}\\b";
+    /**
+     * Regex to find an IPv4 address. It checks for four blocks of numbers from 0-255, separated by dots.
+     */
+    public static String IPV4_ADDRESS_REGEX = "\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+    // A comprehensive regex for validating a string that is a complete IPv6 address.
+    private static String IPV6_VALIDATION_STRING = "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|:([0-9a-fA-F]{1,4}:){1,7}|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:(:(:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))";
+    // A simpler pattern to find potential IPv6 candidates in a larger string.
+    private static String IPV6_CANDIDATE_REGEX = "[0-9a-fA-F:%\\.]+";
 
     private static String LT = "&lt;";
     private static String GT = "&gt;";
@@ -39,6 +48,10 @@ public class OrcidStringUtils {
     private static final Pattern clientIdPattern = Pattern.compile("APP-[\\dA-Z]{16}");
     private static final Pattern emailPattern = Pattern.compile(EMAIL_REGEXP);
     private static final Pattern urlPattern = Pattern.compile(URL_REGEXP, Pattern.CASE_INSENSITIVE);
+    private static final Pattern containsDomainPattern = Pattern.compile(CONTAINS_DOMAIN_REGEX, Pattern.CASE_INSENSITIVE);
+    private static final Pattern ipv4AddressPattern = Pattern.compile(IPV4_ADDRESS_REGEX);
+    private static final Pattern ipv6ValidationPattern = Pattern.compile(IPV6_VALIDATION_STRING, Pattern.CASE_INSENSITIVE);
+    private static final Pattern ipv6CandidatePattern = Pattern.compile(IPV6_CANDIDATE_REGEX, Pattern.CASE_INSENSITIVE);
 
     private static final Pattern invalidXMLCharactersPattern = Pattern.compile("(\u0000|\uFFFE|\uFFFF)");
 
@@ -169,4 +182,63 @@ public class OrcidStringUtils {
 
         return emailPattern.matcher(email).matches();
     }
+    
+    
+    public static boolean containsDomain(String string) {
+        if (string == null || string.trim().isEmpty()) {
+            return false;
+        }
+
+        return containsDomainPattern.matcher(string).find();
+    }
+    
+    public static boolean containsIPv4Address(String string) {
+        if (string == null || string.trim().isEmpty()) {
+            return false;
+        }
+
+        return ipv4AddressPattern.matcher(string).find();
+    }
+    
+    /**
+     * Checks if the given string contains a valid IPv6 address.
+     * This method first finds potential candidates and then uses a strict
+     * regex to validate them completely. This avoids false positives from
+     * partial matches on invalid addresses.
+     *
+     * @param string The string to check.
+     * @return true if the string contains a valid IPv6 address, false otherwise.
+     */
+    public static boolean containsIPv6Address(String string) {
+        if (StringUtils.isBlank(string)) {
+            return false;
+        }
+        // Use the simpler regex to find potential matches (candidates).
+        Matcher candidateMatcher = ipv6CandidatePattern.matcher(string);
+        while (candidateMatcher.find()) {
+            String candidate = candidateMatcher.group();
+            // Use the comprehensive regex with .matches() to validate the ENTIRE candidate.
+            if (ipv6ValidationPattern.matcher(candidate).matches()) {
+                // We found a valid IPv6 address within the string.
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Checks if a string is a valid "friendly name" for an email, meaning it does
+     * not contain any domains or IP addresses, which could be used for phishing.
+     *
+     * @param name The name to validate.
+     * @return true only if the name does not contain a domain, IPv4, or IPv6 address.
+     */
+    public static boolean isValidEmailFriendlyName(String name) {
+        if (StringUtils.isBlank(name)) {
+            return true;
+        }
+        // The name is valid if it does NOT contain a domain AND does NOT contain an IPv4 AND does NOT contain an IPv6.
+        return !containsDomain(name) && !containsIPv4Address(name) && !containsIPv6Address(name);
+    }
+    
 }
