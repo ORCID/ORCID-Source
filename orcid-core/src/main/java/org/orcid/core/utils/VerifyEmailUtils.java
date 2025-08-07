@@ -38,7 +38,7 @@ public class VerifyEmailUtils {
         //Check emailFriendly name for domain
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("isPrimary", isPrimary);
-        templateParams.put("userName", OrcidStringUtils.containsDomain(emailFriendlyName)?orcid:emailFriendlyName);
+        templateParams.put("userName", OrcidStringUtils.isValidEmailFriendlyName(emailFriendlyName)?emailFriendlyName:orcid);
         templateParams.put("verificationUrl", createVerificationUrl(email, orcidUrlManager.getBaseUrl()));
         templateParams.put("orcidId", orcid);
         templateParams.put("subject", getSubject((isPrimary ? "email.subject.verify_reminder_primary_address" : "email.subject.verify_reminder"), locale));
