@@ -86,11 +86,6 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         //Validate scopes
         OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);
 
-        ////////
-        // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
-        ////////
-        Set<String> newScopes = StringUtils.isNotBlank(codeDetails.getNewScopes()) ? Stream.of(codeDetails.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
-
         if(codeDetails == null) {
             int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId(), RevokeReason.AUTH_CODE_REUSED);
             if (numDisabled > 0) {
@@ -98,6 +93,11 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             }                
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
         } else {
+            ////////
+            // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+            ////////
+            Set<String> newScopes = StringUtils.isNotBlank(codeDetails.getNewScopes()) ? Stream.of(codeDetails.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
+
             // Check auth code expiration
             Date tokenCreationDate = codeDetails.getDateCreated();
             Calendar calendar = Calendar.getInstance();
@@ -111,7 +111,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             
             // Check granted scopes
             ////////
-            // TODO: these granted scopes should be the newScopes set once the authoirzation server generate all authorization codes
+            // TODO: these granted scopes should be the newScopes set once the authorization server generate all authorization codes
             ////////
             Set<String> grantedScopes = codeDetails.getScopes();
             // Add the new scopes to the list of scopes
