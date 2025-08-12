@@ -186,3 +186,9 @@ file_filter = orcid-core/src/main/resources/i18n/papi_rate_limit_email_<lang>.pr
 source_file = orcid-core/src/main/resources/i18n/papi_rate_limit_email_en.properties
 source_lang = en
 type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification_mvp]
+file_filter = orcid-core/src/main/resources/i18n/notification_mvp_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_mvp_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
