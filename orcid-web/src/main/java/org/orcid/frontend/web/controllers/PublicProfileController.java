@@ -465,6 +465,16 @@ public class PublicProfileController extends BaseWorkspaceController {
         return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/featuredWorks.json", method = RequestMethod.GET)
+    public @ResponseBody List<WorkForm> getFeaturedWorksJson(@PathVariable("orcid") String orcid) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+        return workManagerReadOnly.getFeaturedWorks(orcid);
+    }
+
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
     public @ResponseBody Page<ResearchResourceGroupPojo> getResearchResourceGroupsJson(@PathVariable("orcid") String orcid, @RequestParam("offset") int offset,
             @RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc, @RequestParam("pageSize") int pageSize) {
@@ -507,7 +517,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return null;
          
         WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
-        WorkForm work = WorkForm.valueOf(workExtended, maxContributorsForUI);
+        WorkForm work = WorkForm.getExtendedWorkForm(workExtended, maxContributorsForUI);
         Work workObj = workExtended;        
 
         if (work != null && validateVisibility(workObj.getVisibility())) {
@@ -527,10 +537,6 @@ public class PublicProfileController extends BaseWorkspaceController {
                 String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
                 work.getTranslatedTitle().setLanguageName(languageName);
             }
-
-            if (work.getContributorsGroupedByOrcid() != null) {
-                contributorUtils.filterContributorsGroupedByOrcidPrivateData(work.getContributorsGroupedByOrcid(), maxContributorsForUI);
-            }            
 
             return new ResponseEntity<>(work, HttpStatus.OK);
         }

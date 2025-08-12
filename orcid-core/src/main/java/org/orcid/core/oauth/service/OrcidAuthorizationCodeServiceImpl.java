@@ -7,10 +7,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -88,16 +91,23 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             LOGGER.info("No such authorization code to remove: code={}",
                     new Object[] { code });
             return null;
-        } 
-        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(detail.getClientDetailsEntity().getId(), detail.getScopes(), detail.getOrcid());         
-        LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
-                    authInfo.getUserOrcid() });
+        }
+
+        ////////
+        // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+        ////////
+        Set<String> newScopes = StringUtils.isNotBlank(detail.getNewScopes()) ? Stream.of(detail.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
+        Set<String> scopes = detail.getScopes();
+        scopes.addAll(newScopes);
+        String clientId = detail.getClientDetailsEntity().getId();
+
+        LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, clientId, scopes,
+                    detail.getOrcid() });
         
         
-        OAuth2Request oAuth2Request = new OAuth2Request(Collections.<String, String> emptyMap(), authInfo.getClientId(), Collections.<GrantedAuthority> emptyList(), true, authInfo.getScopes(), detail.getResourceIds(), detail.getRedirectUri(), new HashSet<String>(Arrays.asList(detail.getResponseType())), Collections.<String, Serializable> emptyMap());
+        OAuth2Request oAuth2Request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, scopes, detail.getResourceIds(), detail.getRedirectUri(), new HashSet<String>(Arrays.asList(detail.getResponseType())), Collections.<String, Serializable> emptyMap());
         Authentication userAuth = getUserAuthentication(detail);
-        OAuth2Authentication result = new OAuth2Authentication(oAuth2Request, userAuth);
-        return result;        
+        return new OAuth2Authentication(oAuth2Request, userAuth);
     }        
 
     private OrcidOauth2UserAuthentication getUserAuthentication(OrcidOauth2AuthoriziationCodeDetail detail) {

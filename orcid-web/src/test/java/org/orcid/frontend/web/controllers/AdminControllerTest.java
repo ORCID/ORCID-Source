@@ -7,10 +7,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.pojo.RemoveEmailsRequest;
+import org.orcid.pojo.RemoveEmailsResponse;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
@@ -21,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +52,9 @@ public class AdminControllerTest {
 
     @Mock
     private OrcidSecurityManager orcidSecurityManagerMock;
+
+    @Mock
+    private EmailManager emailManagerMock;
 
     @InjectMocks
     private AdminController adminController;
@@ -172,6 +179,24 @@ public class AdminControllerTest {
         assertEquals(c.getClientId().getValue(), responseEntity.getBody().get("clientId"));
         assertEquals(newClientSecret, responseEntity.getBody().get("newSecret"));
         verify(clientManagerMock, times(1)).resetAndGetClientSecret(anyString());
+    }
+
+    @Test
+    public void testRemoveEmails() throws Exception {
+        String orcid = "0000-0001-2345-6789";
+        List<String> emailsToRemove = Arrays.asList("old1@example.com", "old2@example.com");
+        List<String> remainingEmails = Arrays.asList("primary@example.com", "new@example.com");
+        RemoveEmailsRequest removeEmailsRequest = new RemoveEmailsRequest(orcid, emailsToRemove);
+
+        when(emailManagerMock.removeEmails(any(), any()))
+                .thenReturn(remainingEmails);
+
+        ResponseEntity<RemoveEmailsResponse> responseEntity = adminController.removeEmails(requestMock, responseMock, removeEmailsRequest);
+        assertNotNull(responseEntity.getBody());
+        List<String> responseEmailsList = responseEntity.getBody().getRemainingEmails();
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(remainingEmails.size(), responseEmailsList.size());
+        verify(emailManagerMock, times(1)).removeEmails(anyString(), any());
     }
 
     private Client getClient() {

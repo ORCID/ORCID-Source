@@ -283,7 +283,7 @@ public class WorksController extends BaseWorkspaceController {
             return null;
 
         WorkExtended work = workManager.getWorkExtended(this.getEffectiveUserOrcid(), workId);
-        WorkForm workForm = WorkForm.valueOf(work, maxContributorsForUI);
+        WorkForm workForm = WorkForm.getExtendedWorkForm(work, maxContributorsForUI);
         
         if (workForm != null) {
             if (workForm.getPublicationDate() == null) {
@@ -365,10 +365,6 @@ public class WorksController extends BaseWorkspaceController {
                 String languageName = languages.get(workForm.getTranslatedTitle().getLanguageCode());
                 workForm.getTranslatedTitle().setLanguageName(languageName);
             }
-
-            if (workForm.getContributorsGroupedByOrcid() != null) {
-                contributorUtils.filterContributorsGroupedByOrcidPrivateData(workForm.getContributorsGroupedByOrcid(), maxContributorsForUI);
-            }            
 
             return workForm;
         }
@@ -851,6 +847,12 @@ public class WorksController extends BaseWorkspaceController {
                                                                            @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();
         return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, false, sort, sortAsc);
+    }
+
+    @RequestMapping(value = "/featuredWorks.json", method = RequestMethod.GET)
+    public @ResponseBody List<WorkForm> getFeaturedWorksJson() {
+        String orcid = getEffectiveUserOrcid();
+        return workManagerReadOnly.getFeaturedWorks(orcid);
     }
 
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)

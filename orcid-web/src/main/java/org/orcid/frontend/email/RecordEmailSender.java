@@ -28,6 +28,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +97,7 @@ public class RecordEmailSender {
         String baseUri = orcidUrlManager.getBaseUrl();
         
         templateParams.put("subject", subject);
-        templateParams.put("userName", userName);
+        templateParams.put("userName", OrcidStringUtils.isValidEmailFriendlyName(userName)?userName:orcidId);
         templateParams.put("verificationUrl", verificationUrl);
         templateParams.put("orcidId", orcidId);
         templateParams.put("baseUri", baseUri);                

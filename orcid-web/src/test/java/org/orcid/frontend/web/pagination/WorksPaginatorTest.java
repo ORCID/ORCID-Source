@@ -162,7 +162,7 @@ public class WorksPaginatorTest {
                 assertEquals(workForm.getVisibility().getVisibility(), Visibility.PUBLIC);
             }
         }
-    }    
+    }
 
     @Test
     public void testReverseSecondaryTitleSortForNullDates() {
@@ -350,6 +350,25 @@ public class WorksPaginatorTest {
             workSummary.setPublicationDate(new PublicationDate(new FuzzyDate(new Year(2017), new Month(x), new Day(x))));
             workSummary.setTitle(getTitle(i));
             workSummary.setVisibility(Visibility.PUBLIC);
+            workSummary.setDisplayIndex(Integer.toString(x));
+            workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
+            workSummary.setSource(getSource());
+            workSummary.setType(WorkType.EDITED_BOOK);
+            workSummary.setContributors(getWorkContributors());
+            workSummary.setContributorsGroupedByOrcid(getContributorsGroupedByOrcid());
+            workGroup.getWorkSummary().add(workSummary);
+        }
+        return workGroup;
+    }
+
+    private WorkGroupExtended getMixedFeaturedWorkGroupExtended(int i) {
+        WorkGroupExtended workGroup = new WorkGroupExtended();
+        workGroup.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        for (int x = 0; x < 10; x++) {
+            WorkSummaryExtended workSummary = new WorkSummaryExtended();
+            workSummary.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+            workSummary.setTitle(getTitle(i));
+            workSummary.setVisibility(i % 2 == 0 ? Visibility.PUBLIC : Visibility.PRIVATE);
             workSummary.setDisplayIndex(Integer.toString(x));
             workSummary.setPutCode(Long.valueOf(new StringBuilder(i).append(x).toString()));
             workSummary.setSource(getSource());

@@ -19,6 +19,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.InvalidOrgAddressException;
+import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -347,6 +349,28 @@ public class MemberV3ApiServiceDelegator_EducationsTest extends DBUnitTest {
         
         //Delete the just created element
         serviceDelegator.deleteAffiliation(ORCID, putCode);
+    }
+    
+    
+    @Test(expected = InvalidOrgAddressException.class)
+    public void testAddEducationNoCityNoCountry() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewActivities(ORCID);
+        assertNotNull(response);
+        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summary);
+        Utils.verifyLastModified(summary.getLastModifiedDate());
+        assertNotNull(summary.getEducations());
+        Utils.verifyLastModified(summary.getEducations().getLastModifiedDate());
+        assertNotNull(summary.getEducations().retrieveGroups());
+        assertEquals(3, summary.getEducations().retrieveGroups().size());
+        
+        EducationSummary educationSummary = summary.getEducations().retrieveGroups().iterator().next().getActivities().get(0);
+        assertNotNull(educationSummary);
+        Utils.verifyLastModified(educationSummary.getLastModifiedDate());
+
+        response = serviceDelegator.createEducation(ORCID, (Education) Utils.getAffiliationNoCityNoCountry(AffiliationType.EDUCATION));
+
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)

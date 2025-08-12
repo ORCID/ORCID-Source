@@ -4,9 +4,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
@@ -81,7 +84,8 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         
         //Validate scopes
-        OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);        
+        OrcidOauth2AuthoriziationCodeDetail codeDetails = orcidOauth2AuthoriziationCodeDetailDao.find(authorizationCode);
+
         if(codeDetails == null) {
             int numDisabled = orcidOauthTokenDetailService.disableAccessTokenByCodeAndClient(authorizationCode, tokenRequest.getClientId(), RevokeReason.AUTH_CODE_REUSED);
             if (numDisabled > 0) {
@@ -89,6 +93,11 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             }                
             throw new InvalidGrantException("Invalid authorization code: " + authorizationCode);                
         } else {
+            ////////
+            // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+            ////////
+            Set<String> newScopes = StringUtils.isNotBlank(codeDetails.getNewScopes()) ? Stream.of(codeDetails.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
+
             // Check auth code expiration
             Date tokenCreationDate = codeDetails.getDateCreated();
             Calendar calendar = Calendar.getInstance();
@@ -101,7 +110,13 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
             }
             
             // Check granted scopes
+            ////////
+            // TODO: these granted scopes should be the newScopes set once the authorization server generate all authorization codes
+            ////////
             Set<String> grantedScopes = codeDetails.getScopes();
+            // Add the new scopes to the list of scopes
+            grantedScopes.addAll(newScopes);
+
             Set<String> requestScopes = tokenRequest.getScope();
             
             for(String requestScope : requestScopes) {

@@ -385,16 +385,12 @@
 	<bean id="contributorUtils" class="org.orcid.core.utils.ContributorUtils">
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
-		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
-		<property name="contributorsNameCache" ref="contributorsNameCache" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
 	<bean id="contributorUtilsReadOnly" class="org.orcid.core.utils.ContributorUtils">
 		<property name="cacheManager" ref="activityManager" />
 		<property name="profileEntityManager" ref="profileEntityManager" />
-		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
-		<property name="contributorsNameCache" ref="contributorsNameCache" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
 	</bean>
 	
@@ -409,16 +405,12 @@
 	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils">
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
-    	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
-    	<property name="contributorsNameCache" ref="contributorsNameCache" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     
     <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
         <property name="cacheManager" ref="activityManagerV3" />
         <property name="profileEntityManager" ref="profileEntityManagerV3" />
-        <property name="recordNameDao" ref="recordNameDaoReadOnly" />
-		<property name="contributorsNameCache" ref="contributorsNameCache" />
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
 	
@@ -1131,7 +1123,15 @@
 	    <property name="retriever" ref="groupedWorksExtendedRetriever" />
 	</bean>
 
+	<bean id="featuredGroupedWorksExtendedGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+		<property name="cache" ref="featuredGroupedWorksExtendedCache" />
+		<property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+		<property name="retriever" ref="featuredGroupedWorksExtendedRetriever" />
+	</bean>
+
 	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
+
+	<bean id="featuredGroupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.FeaturedGroupedWorksExtendedRetriever" />
 
 	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	
