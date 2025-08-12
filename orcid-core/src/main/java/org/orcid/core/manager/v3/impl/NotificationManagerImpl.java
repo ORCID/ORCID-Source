@@ -52,6 +52,7 @@ import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
@@ -845,30 +846,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
         String subject = messages.getMessage("notification.mvp.connectWithOrcidIntegration", new String[] { clientDetails.getClientName() }, userLocale);
 
-        Map<String, Object> templateParams = new HashMap<String, Object>();
-        templateParams.put("memberWebpageUrl", clientDetails.getNotificationWebpageUrl());
-        templateParams.put("subject", subject);
-        templateParams.put("memberName", clientDetails.getClientName());
-
-        addMessageParams(templateParams, userLocale);
-
-        String text = templateManager.processTemplate("orcid_integration_notification.ftl", templateParams);
-        // Keep it for now, it might be needed in the future
-        // String html =
-        // templateManager.processTemplate("orcid_integration_notification_html.ftl",
-        // templateParams);
-
         NotificationPermission notification = new NotificationPermission();
-
-        Item item = new Item();
-        item.setItemName("ORCID Integration");
-        item.setActionType(ActionType.UNKNOWN);
-        List<Item> itemsList = new ArrayList<Item>();
-        itemsList.add(item);
-        Items items = new Items(itemsList);
+        Items items = new Items();
         notification.setItems(items);
         notification.setSubject(subject);
-        notification.setNotificationIntro(text);
+        notification.setNotificationIntro(clientDetails.getClientName() + "::" +clientDetails.getNotificationWebpageUrl());
         notification.setNotificationSubject(subject);
         notification.setAuthorizationUrl(new AuthorizationUrl(buildAuthorizationUrlForInstitutionalSignIn(clientDetails)));
         Source source = new Source();

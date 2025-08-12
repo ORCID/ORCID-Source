@@ -1,11 +1,6 @@
 package org.orcid.core.manager.impl;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -35,7 +30,9 @@ public class UserConnectionManagerImpl implements UserConnectionManager {
 
     @Override
     public List<UserconnectionEntity> findByOrcid(String orcid) {
-        return userConnectionDao.findByOrcid(orcid);
+        List<UserconnectionEntity> userConnections = userConnectionDao.findByOrcid(orcid);
+        userConnections.removeIf(userConnection -> userConnection.getId().getProviderid().equals("google") || userConnection.getId().getProviderid().equals("facebook"));
+        return userConnections;
     }
 
     @Override

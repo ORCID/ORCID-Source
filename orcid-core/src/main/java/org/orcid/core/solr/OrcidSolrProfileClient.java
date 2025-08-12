@@ -16,9 +16,8 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+
 import org.apache.solr.common.SolrDocument;
-import org.orcid.core.solr.OrcidSolrResult;
-import org.orcid.core.solr.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
@@ -104,7 +103,7 @@ public class OrcidSolrProfileClient extends OrcidSolrClient {
         for (Map.Entry<String, List<String>> entry : queryMap.entrySet()) {
             String queryKey = entry.getKey();
             List<String> queryVals = entry.getValue();
-            solrQuery.add(queryKey, queryVals.get(0));
+            solrQuery.add(queryKey, queryVals.get(0));    
         }
         solrQuery.setFields(fieldList);
         return querySolr(solrQuery);

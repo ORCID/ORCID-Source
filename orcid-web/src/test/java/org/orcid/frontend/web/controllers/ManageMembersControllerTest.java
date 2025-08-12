@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
@@ -279,6 +280,22 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals("Group Name", newGroup2.getGroupName().getValue());
         assertEquals("1234567890abcde", newGroup2.getSalesforceId().getValue());
         assertEquals(orcid, newGroup2.getGroupOrcid().getValue());
+
+        // Test: Find member by ORCID with clients and check deactivated status
+        Member newGroup3 = manageMembers.findMember("5555-5555-5555-0000");
+
+        List<Client> clients = newGroup3.getClients();
+
+        Client activeClient1 = findClientById(clients, "APP-0000000000000001");
+        Client activeClient2 = findClientById(clients, "APP-0000000000000002");
+        Client deactivatedClient = findClientById(clients, "APP-0000000000000003");
+
+        assertNotNull(newGroup3);
+
+        assertEquals(3, clients.size());
+        assertEquals(false, activeClient1.isDeactivated());
+        assertEquals(false, activeClient2.isDeactivated());
+        assertEquals(true, deactivatedClient.isDeactivated());
     }
     
     
@@ -362,7 +379,8 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(client_0002.getRedirectUris());
         assertEquals(1, client_0002.getRedirectUris().size());
         assertEquals("http://www.google.com/APP-0000000000000002/redirect/oauth", client_0002.getRedirectUris().get(0).getValue().getValue());
-        
+        assertEquals(false, client_0002.isDeactivated());
+
         //Client with redirect uri not default
         Client client_0003 = manageMembers.findClient("APP-0000000000000003");
         assertNotNull(client_0003);
@@ -370,6 +388,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertEquals("Client # 3", client_0003.getDisplayName().getValue());
         assertNotNull(client_0003.getRedirectUris());
         assertEquals(2, client_0003.getRedirectUris().size());
+        assertEquals(true, client_0003.isDeactivated());
         
         RedirectUri rUri1 = client_0003.getRedirectUris().get(0);
         if("http://www.google.com/APP-0000000000000003/redirect/oauth".equals(rUri1.getValue().getValue())) {
@@ -386,7 +405,7 @@ public class ManageMembersControllerTest extends DBUnitTest {
         } else {
             fail("Invalid redirect uri: " + rUri1.getValue().getValue());
         }
-        
+
         RedirectUri rUri2 = client_0003.getRedirectUris().get(1);
         if("http://www.google.com/APP-0000000000000003/redirect/oauth".equals(rUri2.getValue().getValue())) {
             assertNotNull(rUri2.getType());
@@ -514,5 +533,12 @@ public class ManageMembersControllerTest extends DBUnitTest {
         assertNotNull(clientActivation.getError());
         assertEquals("already-active", clientActivation.getError());
         ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", clientDetailsManager);
+    }
+
+    private Client findClientById(List<Client> clients, String id) {
+        return clients.stream()
+                .filter(c -> id.equals(c.getClientId().getValue()))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -16,7 +16,7 @@
 		base-package="org.orcid.scheduler.loader" />
 
     <task:scheduled-tasks scheduler="scheduler">
-      	<task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
+        <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
         <task:scheduled ref="statisticsManager" method="generateStatistics" cron="${org.orcid.scheduler.web.generateStats:0 0 0 * * FRI}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
@@ -48,9 +48,10 @@
         <task:scheduled ref="papiLimitReport" method="papiDailyLimitReport" cron="${org.orcid.scheduler.papiLimitReport.process:0 0 1 * * *}"/>
         <task:scheduled ref="papiLimitCleanup" method="removeOldEvents" cron="${org.orcid.scheduler.papiLimitReport.cleanup:0 30 22 * * MON}"/>
         <task:scheduled ref="orcidIntegrationMvp" method="createOrcidIntegrationNotifications" cron="${org.orcid.scheduler.mvp.orcidIntegration:0 0 23 * * WED}"/>
+        <task:scheduled ref="redisExpiredMainIndexCleanup" method="execute" cron="${org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup.cron:0 35 18 * * SAT}" />
     </task:scheduled-tasks>
 
-	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:30}"/>
+	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:60}"/>
 
     <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
 
@@ -147,5 +148,15 @@
     <bean id="papiLimitCleanup" class="org.orcid.scheduler.cleanup.PapiDailyLimitCleanup" />
     
     <bean id="orcidIntegrationMvp" class="org.orcid.scheduler.mvp.OrcidIntegrationMVPNotifications" />
+
+	<bean id="jedisPoolBuilder" class="org.orcid.scheduler.cleanup.JedisPoolBuilder">
+        <constructor-arg index="0" value="${org.orcid.core.utils.cache.session.redis.host}"/>
+        <constructor-arg index="1" value="${org.orcid.core.utils.cache.session.redis.port}" />
+        <constructor-arg index="2" value="${org.orcid.core.utils.cache.session.redis.password}" />
+        <constructor-arg index="3" value="${org.orcid.core.utils.cache.session.redis.pool.wait.millis:180000}" />
+        <constructor-arg index="4" value="${org.orcid.core.utils.cache.session.redis.pool.max:100}" />
+	</bean>
+
+    <bean id="redisExpiredMainIndexCleanup" class="org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup" />
 
 </beans>
