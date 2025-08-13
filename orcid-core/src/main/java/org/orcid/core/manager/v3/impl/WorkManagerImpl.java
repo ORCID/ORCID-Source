@@ -594,6 +594,25 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
+    @Override
+    @Transactional
+    public boolean updateFeaturedWorks(String orcid, Map<Long, Integer> featuredDisplayIndexMap) {
+        boolean isPublic = workDao.isPublic(orcid, new ArrayList<>(featuredDisplayIndexMap.keySet()));
+        boolean result = true;
+        if (!isPublic) {
+            throw new IllegalStateException(String.format("Error when processing works %s for user %s",featuredDisplayIndexMap.keySet(), orcid));
+        }
+        if (featuredDisplayIndexMap.size() > 10) {
+            LOGGER.warn("Featured works limit exceeded - " + featuredDisplayIndexMap.keySet());
+        }
+        for (Map.Entry<Long, Integer> workIndexPair : featuredDisplayIndexMap.entrySet()) {
+            Long workId = workIndexPair.getKey();
+            Integer featuredDisplayIndex = workIndexPair.getValue();
+            result = workDao.updateFeaturedDisplayIndex(workId, featuredDisplayIndex);
+        };
+        return result;
+    }
+
     private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {
         WorkEntity preferredFullData = workDao.find(preferred.getId());
 

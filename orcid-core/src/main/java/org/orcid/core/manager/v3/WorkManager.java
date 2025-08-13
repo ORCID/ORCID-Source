@@ -1,6 +1,7 @@
 package org.orcid.core.manager.v3;
 
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
@@ -101,4 +102,5 @@ public interface WorkManager extends WorkManagerReadOnly {
 
     Work updateWork(String orcid, WorkForm work);
 
+    boolean updateFeaturedWorks(String orcid, Map<Long, Integer> featuredDisplayIndexMap);
 }
