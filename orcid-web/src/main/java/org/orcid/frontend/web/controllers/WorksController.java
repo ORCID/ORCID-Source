@@ -855,6 +855,12 @@ public class WorksController extends BaseWorkspaceController {
         return workManagerReadOnly.getFeaturedWorks(orcid);
     }
 
+    @RequestMapping(value = "/featuredWorks.json", method = RequestMethod.PUT)
+    public @ResponseBody boolean getFeaturedWorksJson(HttpServletRequest request, @RequestBody Map<Long, Integer> featuredWorks) throws Exception {
+        String orcid = getEffectiveUserOrcid();
+        return workManager.updateFeaturedWorks(orcid, featuredWorks);
+    }
+
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getAllWorkGroupsJson(@RequestParam("sort") String sort, @RequestParam("sortAsc") boolean sortAsc) {
         String orcid = getEffectiveUserOrcid();

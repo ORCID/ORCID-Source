@@ -51,7 +51,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     boolean removeWork(String orcid, Long workId);
     
     /**
-     * Removes all works for an record. Careful!
+     * Removes all works for a record. Careful!
      * 
      * @param orcid
      *            The ORCID iD of the record from which all works will be
@@ -116,6 +116,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     
     boolean hasPublicWorks(String orcid);
 
+    boolean isPublic(String orcid, List<Long> workIds);
+
     List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds);
 
     void correctClientSource(List<BigInteger> ids);
@@ -147,4 +149,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<Object[]> getWorksStartingFromWorkId(Long WorkId, int numberOfWorks);
 
+    boolean updateFeaturedDisplayIndex(Long id, Integer featuredDisplayIndex);
 }
