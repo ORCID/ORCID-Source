@@ -1,3 +1,11 @@
+## v2.119.0 - 2025-08-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.118.0...v2.119.0)
+
+### Refactor
+
+- Remove old admin tool actions apart from switch user (#7352)
+
 ## v2.118.0 - 2025-08-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.117.0...v2.118.0)
