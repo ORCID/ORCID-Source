@@ -1,238 +1,299 @@
 # Development Environment Setup
 
-## Prerequisites 
+## Table of Contents
 
-* Install [Java OpenJDK 8](https://openjdk.java.net/install/) by preference or the [Oracle version](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* Add JAVA_HOME environment variable:
-  * Windows - control panel -> system -> advanced system settings -> environment variables
-  * Mac - create or edit .bash_profile file in home directory, add EXPORT JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_111.jdk/Contents/Home
+* [1) Prerequisites](#1-prerequisites)
 
-* Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
-  --> replace local_policy.jar and US_export_policy.jar in <JAVA_HOME>/jre/lib/security/policy with those from JCE download
+  * [Install Java OpenJDK 11](#install-java-openjdk-11)
+  * [Install PostgreSQL 13](#install-postgresql-13)
+  * [Install Tomcat 9.0.x](#install-tomcat-90x)
+* [2) Clone & Build](#2-clone--build)
+* [3) Databases](#3-databases)
+* [4) Redis](#4-redis)
+* [5) JWKs (OpenID Connect)](#5-jwks-for-openid-connect)
+* [6) IntelliJ IDEA Setup (step-by-step)](#6-intellij-idea-setup)
+* [7) Test your setup](#7-test-your-setup)
+* [8) Configure Message Listener - optional](#8-configure-message-listener)
+* [9) Configure SOLR - optional](#9-configure-solr)
+* [10) Orcid Angular](#10-orcid-angular)
 
-* Install [Maven](http://maven.apache.org/index.html) - ensure you add maven/bin directory to PATH environment variable. Verify installation with mvn -version
+  * [Legacy: Configure frontend (Optional to run the old UI)](#legacy-configure-frontend-optional-to-run-the-old-ui)
+* [11) Proxy for local registry](#11-proxy-for-local-registry)
 
-* Install Postgres version 10.9:
-  * [Windows](http://www.postgresql.org/download/) - verify with psql -U postgres in postgres installation's bin directory in command prompt
-  * [Mac](http://postgresapp.com/) - add postgres bin directory to .bash_profile directory
-  ```
-  export PATH=/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH
-  ```
 
-* Install [Tomcat 8.5.5](http://tomcat.apache.org/) and ensure it starts
+---
 
-* Ensure a git client is installed
+## 1) Prerequisites
 
-## Setup Postgres DB
+### Install java openjdk 11
 
-* Run the following commands from the command line (or use pgAdmin to run the SQL queries) to create the databases and roles.
+**Windows (PowerShell)**
 
+```powershell
+# Download and install from https://openjdk.java.net/install/
+java -version
+echo %JAVA_HOME%
+# set JAVA_HOME via Control Panel → System → Advanced → Environment Variables
+# and add %JAVA_HOME%\bin to Path
 ```
-psql -U postgres -c "CREATE DATABASE orcid;"
-psql -U postgres -c "CREATE USER orcid WITH PASSWORD 'orcid';" 
-psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE orcid to orcid;"
 
-psql -U postgres -c "CREATE DATABASE statistics;" 
-psql -U postgres -c "CREATE USER statistics WITH PASSWORD 'statistics';" 
-psql -U postgres -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE statistics to statistics;"
+**macOS (zsh)**
 
+```zsh
+brew install openjdk@11
+echo 'export JAVA_HOME=$(/usr/libexec/java_home -v 11)' >> ~/.zshrc
+echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+java -version && echo $JAVA_HOME
+```
+
+### Install PostgreSQL 13
+
+**Windows (PowerShell)**
+
+```powershell
+# Download PG13: https://www.postgresql.org/download/windows/
+psql -U postgres
+```
+
+**macOS (zsh)**
+
+```zsh
+brew install postgresql@13
+echo 'export PATH="/opt/homebrew/opt/postgresql@13/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+psql --version
+```
+
+### Install Tomcat 9.0.x
+
+**Windows (PowerShell)**
+
+```powershell
+# Download: https://tomcat.apache.org/download-90.cgi
+# Unzip to C:\Tomcat9 and add C:\Tomcat9\bin to Path
+catalina version
+```
+
+**macOS (zsh)**
+
+```zsh
+brew install tomcat@9
+catalina version
+```
+
+---
+
+## 2) Clone & Build
+
+```bash
+git clone https://github.com/ORCID/ORCID-Source.git
+cd ORCID-Source
+mvn clean install -DskipTests
+```
+
+---
+
+## 3) Databases
+
+> **ORCID employees:** **`[Private Guide Placeholder Link]`**.
+
+Create users, DBs, and minimal features for local development.
+
+```bash
+# As a superuser (e.g., postgres):
+psql -U postgres -c "CREATE USER orcid WITH PASSWORD 'orcid';"
+psql -U postgres -c "CREATE USER statistics WITH PASSWORD 'statistics';"
 psql -U postgres -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
-psql -U postgres -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
-psql -U postgres -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
+psql -U postgres -c "CREATE USER dw_user WITH PASSWORD 'dw_user';"
+
+psql -U postgres -c "CREATE DATABASE orcid;"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE orcid TO orcid;"
+
+psql -U postgres -c "CREATE DATABASE statistics;"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE statistics TO statistics;"
 
 psql -U postgres -c "CREATE DATABASE features;"
-psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE features to orcid;"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE features TO orcid;"
 
 psql -U postgres -c "CREATE DATABASE message_listener;"
-psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener to orcid;"
-
-psql -U postgres -c "CREATE USER dw_user WITH PASSWORD 'dw_user';"
+psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE message_listener TO orcid;"
 ```
 
-Verify user login and database exist
+Initialize schema & seed JSON:
 
-    psql -U orcid -d orcid -c "\list" -h localhost
-    psql -U statistics -d statistics -c "\list" -h localhost
+```bash
+cd ORCID-Source/orcid-core
+mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
 
-## Clone the git repositories
-
-Clone the repository
-
-    git clone https://github.com/ORCID/ORCID-Source.git
-
-## Run Maven build
-
-Skip test the first time you run this
-
-    cd ORCID-Source
-    mvn clean install 
-
->If you experience the below error you can find the solution [here](http://stackoverflow.com/questions/25911623/problems-using-maven-and-ssl-behind-proxy)
-
-    Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-
-## Verify you have the DigiCertGlobalRootG2.crt
-
-This is an annoying issue where Java's cacerts file lags behind listing common Certificate Authorities. Mailgun uses DigiCertGlobalRootG2 and you'll need verify the cert is installed.
-
-Run the following with administrator privileges(windows users will have have to use an admin account and remove sudo command) while in the project root.
-
-1. Make sure everything is compiled
-
-        mvn compile;
-
-2. Run command as adminstrator  
-
-Linux:
-
-    sudo mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit" 
-
-Windows:
-
-    mvn exec:java -pl orcid-utils -Dexec.mainClass="org.orcid.utils.AddCacertsUtil" -Dexec.args="--keystore_password changeit"
-
->Note: the java keystore password is usefully 'changeit' this can be different if you've changed it.
-
-## Create the Database Schema
-
-    cd ORCID-Source/orcid-core
-    mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
-
-    cd ..
-    psql -U postgres -d orcid -f orcid-persistence/src/main/resources/db/updates/json-setup.sql
-
-
-## Eclipse Setup (Spring Tool Suite Eclipse)
-
-These instructions are for Spring Tool Suite for Eclipse. 
-
-* Download and install Spring Tool Suite for [Eclipse](http://www.springsource.org/downloads/sts-ggts)
-
-* Select File-> Import -> Git -> Project from Git, Click Next.
-
-* Select "Existing local repository", Click Next
-
-* Select Add, once ORCID-Source has been added, select it and click Next
-
-* Select "Import as general project", click Next.
-
-* Click Finish
-
-* In package Explorer, right click ORCID-Source.
-
-* Select Configure (at the bottom) -> Select "Convert to Maven Project"
-
-* In package Explorer Right click on ORCID-Source 
-
-* Select Import -> "Existing Maven Projects"
-
-* Unselect the first pom.xml (orcid-parent)
-
-* Select all pom.xml(s) after.
-
-* Click Finish
-
-* Wait for build to finish then right-click orcid-api-common project and select Build Path->Configure Build path. Click the 'add folder' button and add "orcid-api-common/target/generated-sources/jena".
-
-* For Windows 10 users, if all your projects shows an error "Missing artifact jdk.tools:jdk.tools:jar:1.6", it means your STS Maven plugin is looking for a Java 1.6 tools.jar library, please modify the STS.ini fileto indicate the java executable you want to use to run STS, which should be the JDK one: 
-
-        -vm
-        C:/Program Files/Java/jdk1.8.0_65/bin/javaw.exe
-Do this before the '-vmargs' param
-
-### Tomcat Setup
-
-* Select Window -> Preferences -> Servers(Expand) -> Runtime Environments
-
-* Click on Add.
-
-* Expand the folder Apache, select Apache Tomcat and click Next.
-
-* Browse to the directory of apache tomcat in the file system and click Finish.
-
-* Click OK.
-
-* Go to File -> New -> Other.
-
-* Filter for 'Server', select and click Next.
-
-* Expand the folder Apache, select Apache Tomcat.
-
-* Field 'Server Runtime Environment' should point to the newly added server runtime for tomcat.
-
-* Click Next and Finish.
-
-* Select Window -> Show View -> Servers
-
-* Double Click "Apache Tomcat Server"
-
-* Select Open launch configuration
-
-* Select Arguments 
-
-* In VM Arguments add the following
-
-         -Dorg.orcid.config.file=[PATH_TO_PROJECT]/properties/development.properties -Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true -Dorg.orcid.message-listener.properties=classpath:message-listener.properties -Dorg.orcid.message-listener.development_mode=true -Dorg.orcid.activemq.config.file=classpath:orcid-activemq.properties
-
-* Click Ok
-
-* Under **Server Locations** select **User custom location** set and **Server Path** to `/tmp-tomcat-orcid-web`.
-      * You also need to make a directory under `/tmp-tomcat-orcid-web`. In a linux shell:
-  `sudo mkdir /tmp-tomcat-orcid-web; sudo chown -R $(whoami) /tmp-tomcat-orcid-web;`
-
-* Under `Server Options` make sure everything is unchecked.
-
-* In Timeouts, increase the time limit of Start to 600 seconds and Stop to 100.
-
-* If you are using Tomcat 9 you have to configure the 'Tomcat admin port' 
-
-* Save and close the server configuration view.
-
-* Right click on "Apache Tomcat Server".
-
-* Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web and orcid-web
-
-### Setting up Eclipse to use ORCID formatting rules
-
-* Select Eclipse (or Spring Tool Suit) -> Preferences -> Java -> Code style -> Formatter -> Import
-
-  * Navigate to ORCID-Source and select eclipse_formatter.xml
-
-  * Click "Apply"
-
-* Select Eclipse (or Spring Tool Suit) -> Preferences -> JavaScript -> Code style -> Formatter -> Import
-
-  * Navigate to ORCID-Source and select eclipse_javascript_formatter.xml
-
-  * Click "Apply"
-
-### Add Typescript support
-
-* Follow instructions at [https://github.com/palantir/eclipse-typescript](https://github.com/palantir/eclipse-typescript)
-
-### Disabling JPA facet for orcid-persistence
-
-* Select Eclipse (or Spring Tool Suit) -> Preferences -> Validation 
-
-  * Uncheck the JPA validatior checkboxes
-
-  * Click "Ok"
-
-### Enabling https
-
-We should enable our server to run over SSL/https using the ORCID configuration, so, in the **server.xml** add the following configuration.
-
-Find the **service** element/tag and the following connector:
-
-```
-<Connector SSLEnabled="true" clientAuth="want" keystoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-keystore.jks" keystorePass="changeit" maxThreads="150" port="8443" protocol="HTTP/1.1" scheme="https" secure="true" sslProtocol="TLS" truststoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-truststore.jks" truststorePass="changeit"/> 
+cd ..
+psql -U postgres -d orcid -f orcid-persistence/src/main/resources/db/updates/json-setup.sql
 ```
 
-Please notice that you should update the path on "*keystoreFile*" and "*truststoreFile*"; that path should point to the root path where you have the ORCID code. 
+Seed **features** flags (minimum for local dev):
 
-When this it is done, restart the server.
+```bash
+psql -U postgres -d features -c "
+INSERT INTO togglz (feature_name, feature_enabled) VALUES
+  ('PROFESSIONAL_ACTIVITIES', 1),
+  ('REGISTRATION_2_0',        1),
+  ('REGISTRATION_2_1',        1),
+  ('SIGN_IN_UPDATES_V1',      1)
+ON CONFLICT (feature_name) DO UPDATE SET feature_enabled = EXCLUDED.feature_enabled;
+"
+```
 
-### Configure Message Listener
+## 4) Redis
+
+> **ORCID employees:** **`[Private Guide Placeholder Link]`**.
+
+Install and run Redis locally
+
+**Windows (PowerShell)**
+
+```powershell
+docker run -d --name redis-local -p 6379:6379 redis:7-alpine
+docker exec -it redis-local redis-cli ping  # PONG
+```
+
+**macOS (zsh)**
+
+```zsh
+brew install redis
+brew services start redis
+redis-cli ping  # PONG
+```
+
+Set these in `properties/development.properties` and **restart Tomcat**:
+
+TBD: More details on how to run reddis trhough a secure port need to be added
+
+
+```properties
+org.orcid.core.utils.cache.redis.enabled=true
+org.orcid.core.utils.cache.redis.host=localhost
+org.orcid.core.utils.cache.redis.port=6379
+org.orcid.core.utils.cache.redis.password=
+
+org.orcid.core.utils.cache.papi.redis.enabled=true
+org.orcid.core.utils.cache.papi.redis.host=localhost
+org.orcid.core.utils.cache.papi.redis.port=6379
+org.orcid.core.utils.cache.papi.redis.password=
+
+org.orcid.core.utils.cache.session.redis.host=localhost
+org.orcid.core.utils.cache.session.redis.port=6379
+org.orcid.core.utils.cache.session.redis.password=
+```
+
+---
+
+## 5) JWKs for OpenID Connect
+> **ORCID employees:** **`[Private Guide Placeholder Link]`**.
+
+
+* Generate RS256 at [https://mkjwk.org](https://mkjwk.org) and set in the properties file:
+
+```
+org.orcid.openid.jwksKeyName=
+org.orcid.openid.jwksLocation=
+org.orcid.openid.jwksTestKey= xxxxxx
+```
+
+
+## 6) IntelliJ IDEA Setup
+
+**Prereqs**
+
+* Install IntelliJ (**Ultimate** recommended; **Community** works with **Smart Tomcat**).
+* Ensure **Project SDK = Java 11**:
+
+  * `File → Project Structure → Project → Project SDK = 11`
+* Ensure Maven importer JDK = **11**:
+
+  * `Settings → Build, Execution, Deployment → Build Tools → Maven → Importing → JDK for importer = 11`
+* Import the project as a **Maven** project and enable auto-import.
+
+**Add Tomcat to IntelliJ**
+
+1. **Ultimate**:
+
+   * `Settings → Plugins` → ensure **Tomcat and TomEE** is enabled.
+   * `Settings → Build, Execution, Deployment → Application Servers` → **+ Tomcat**.
+2. **Community**:
+
+   * `Settings → Plugins → Marketplace` → install **Smart Tomcat**.
+   * Smart Tomcat typically requires both **HTTP (8080)** and **HTTPS (8443)** unless you change plugin settings.
+
+**Tell IntelliJ where Tomcat lives**
+
+* **Windows:** `C:\Tomcat9`
+* **macOS (Homebrew):** `/opt/homebrew/Cellar/tomcat@9/<version>/libexec`
+
+**Create a Run/Debug configuration**
+
+1. `Run → Edit Configurations → +`
+
+   * Ultimate: **Tomcat Server (Local)**
+   * Community: **Smart Tomcat**
+2. **Name** your config (e.g., `orcid-local-https`).
+3. **Ports**
+
+   * HTTPS: `8443`
+   * HTTP: `8080` (Smart Tomcat default; keep or disable in plugin settings)
+4. **VM options (required)**
+
+   ```bash
+   -Dorg.orcid.config.file="file:/ABS/PATH/ORCID-Source/properties/development.properties"
+   -Dlog4j.configurationFile="file:/ABS/PATH/ORCID-Source/orcid-web/log4j2.xml"
+   ```
+
+   * Use **absolute paths** and keep the surrounding quotes.
+5. **Deployment tab → Add Artifact(s)**
+
+   * Choose **WAR exploded** for faster redeploy:
+
+     * `orcid-web`
+     * `orcid-api-web`
+     * `orcid-pub-web`
+     * `orcid-scheduler-web`
+   * ⚠️ Set Application contexts cleanly, e.g. change `/orcid_web_war` → `/orcid-web` (and similarly for the others).
+6. **Enable HTTPS in Tomcat** (server.xml)
+
+   ```xml
+   <Connector SSLEnabled="true" clientAuth="want" keystoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-keystore.jks" keystorePass="changeit" maxThreads="150" port="8443" protocol="HTTP/1.1" scheme="https" secure="true" sslProtocol="TLS" truststoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-truststore.jks" truststorePass="changeit"/>
+   ```
+
+   * Replace `[ROOT_PATH]` with your absolute `ORCID-Source` path.
+   * Typical `server.xml`:
+
+     * Windows: `C:\Tomcat9\conf\server.xml`
+     * macOS (Homebrew): `<tomcat-home>/conf/server.xml` (e.g., `/opt/homebrew/Cellar/tomcat@9/9.0.108/libexec/conf/server.xml`)
+
+**Gotchas (read me!)**
+
+* **Artifact not listed** in Deploy tab → run:
+
+  ```bash
+  mvn -q -T 1C -DskipTests package
+  ```
+
+  or build from the Maven tool window, then reopen Deployment.
+* **404 or wrong URL** → your browser path must match the **Application context** (e.g. `/orcid-web`).
+* **SSL errors** → verify keystore/truststore paths in `server.xml` and that files exist.
+
+---
+
+## 7) Test your setup
+
+* In IntelliJ, select your Tomcat config → **Debug**
+* Browse to `http://localhost:8080/orcid-web/ping`
+* You should see a blank page with the text `{tomcatUp:true}`
+---
+
+## 8) Configure Message Listener
+> This step is optiona, and not require to run the orcid-web or api. 
+> Please note this section has not been updated in a few years, and some of this content might be outdated.
+
 
 * Create a directory to be used as the message store directory for the ActiveMQ broker (changing the [PATH]/git/ path to a path on your machine)
 
@@ -274,7 +335,12 @@ When this it is done, restart the server.
 
 * In the Servers tab, right click on "Message Listener" and click Start.
 
-## Configure SOLR
+---
+
+## 9) Configure SOLR
+> This step is optiona, and not require to run the orcid-web or api. 
+> Please note this section has not been updated in a few years, and some of this content might be outdated.
+
 A local SOLR server is needed in order to test search functionality locally. SOLR includes its own development environment, which runs separately from the Tomact servers you created in Eclipse. 
 
 To install and configure SOLR locally, follow the steps in solr-config/README.md (https://github.com/ORCID/ORCID-Source/tree/master/solr-config)
@@ -294,7 +360,14 @@ Optionally, you can connect your local environment to the QA SOLR instance by ad
 * Click Ok
          
 
-## Configure frontend (Angular)
+---
+
+## 10) Orcid Angular
+
+Follow the instructions on the public repo [https://github.com/ORCID/orcid-angular](https://github.com/ORCID/orcid-angular)
+
+### Legacy: Configure frontend (Optional to run the old ui)
+> Please note this section has not been updated in a few years, and some of this content might be outdated.
 
 Follow next instructions in order to generate the core javascript file.
 
@@ -302,44 +375,12 @@ See [How to produce angular_orcid_generated.js](https://github.com/ORCID/ORCID-S
 For background about webpack see [Webpack setup](https://github.com/ORCID/ORCID-Source/tree/master/orcid-web/src/main/webapp/static/javascript)
 .
 
-## Test your setup
+---
 
-* Right click on "Apache Tomcat Server"
+## 11) Proxy for local registry
 
-* Select Debug
+> **ORCID employees:** **`[Private Guide Placeholder Link]`**.
 
-* Point your browser to https://localhost:8443/orcid-web/signin
+As of now there is not a public version of this proxy.
 
-* You should see a login page.
-
-
-## Updating
-
-* Get latest version
-
-```
-cd ORCID-Source
-git checkout master
-git pull
-```
-
-* In Spring Tool Suite go to Package Explorer
-
-* Select all items
-
-* Right click, and select refresh
-
-# Testing
-
-## Automated Testing
-
-See [TESTAUTO.md](TESTAUTO.md)
-
-## Manual Testing
-
-See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/development/manual-test)
-
-* Finally help out by improving these instructions!    
-
-# Eclipse tips
-[ECLIPSE_TIPS.md](ECLIPSE_TIPS.md)
+---
