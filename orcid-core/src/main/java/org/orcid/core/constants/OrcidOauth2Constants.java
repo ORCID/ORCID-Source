@@ -17,6 +17,7 @@ public class OrcidOauth2Constants {
     public static final String ORCID = "orcid";
     public static final String NAME = "name";
     public static final String CLIENT_ID_PARAM = "client_id";
+    public static final String CLIENT_SECRET_PARAM = "client_secret";
     public static final String SCOPE_PARAM = "scope";
     public static final String STATE_PARAM = "state";
     public static final String RESPONSE_TYPE_PARAM = "response_type";
