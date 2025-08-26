@@ -31,6 +31,8 @@ import org.orcid.pojo.grouping.WorkGroupingSuggestionsCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -856,9 +858,18 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/featuredWorks.json", method = RequestMethod.PUT)
-    public @ResponseBody boolean getFeaturedWorksJson(HttpServletRequest request, @RequestBody Map<Long, Integer> featuredWorks) throws Exception {
+    public @ResponseBody ResponseEntity<Map<String, Object>> getFeaturedWorksJson(HttpServletRequest request, @RequestBody Map<Long, Integer> featuredWorks) {
         String orcid = getEffectiveUserOrcid();
-        return workManager.updateFeaturedWorks(orcid, featuredWorks);
+        Map<String, Object> body = new HashMap<String, Object>();
+        try {
+            boolean updated = workManager.updateFeaturedWorks(orcid, featuredWorks);
+            body.put("ok", Boolean.valueOf(updated));
+            return new ResponseEntity<Map<String, Object>>(body, HttpStatus.OK);
+        } catch (IllegalStateException ex) {
+            body.put("error", "non_public_works_selected");
+            body.put("message", ex.getMessage());
+            return new ResponseEntity<Map<String, Object>>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 
     @RequestMapping(value = "/allWorks.json", method = RequestMethod.GET)
