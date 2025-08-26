@@ -1,3 +1,11 @@
+## v2.121.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.120.0...v2.121.0)
+
+### Refactor
+
+- Remove `Manage members` and `Member developer tools` from old user menu options (#7354)
+
 ## v2.120.0 - 2025-08-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.119.0...v2.120.0)
