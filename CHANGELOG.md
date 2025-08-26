@@ -1,3 +1,9 @@
+## v2.122.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.121.0...v2.122.0)
+
+- [#7350](https://github.com/ORCID/ORCID-Source/pull/7350): ${PD-1993} add update featured works logic
+
 ## v2.121.0 - 2025-08-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.120.0...v2.121.0)
