@@ -401,7 +401,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public List<WorkSummaryExtended> getFeaturedWorksSummaryExtended(String orcid) {
-        return getWorksSummaryExtendedList(orcid, true);
+        List<WorkSummaryExtended> featured = getWorksSummaryExtendedList(orcid, true);
+        if (featured != null && !featured.isEmpty()) {
+            featured.sort((a, b) -> Integer.compare(a.getFeaturedDisplayIndex(), b.getFeaturedDisplayIndex()));
+        }
+        return featured;
     }
 
     @Override
