@@ -428,10 +428,11 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Override
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
-    public boolean updateFeaturedDisplayIndex(Long id, Integer featuredDisplayIndex) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET featured_display_index = :featuredDisplayIndex where work_id = :id");
+    public boolean updateFeaturedDisplayIndex(String orcid, Long id, Integer featuredDisplayIndex) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET featured_display_index = :featuredDisplayIndex, last_modified=now() where work_id = :id and orcid = :orcid");
         query.setParameter("featuredDisplayIndex", featuredDisplayIndex);
         query.setParameter("id", id);
+        query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }
 }

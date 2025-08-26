@@ -608,7 +608,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         for (Map.Entry<Long, Integer> workIndexPair : featuredDisplayIndexMap.entrySet()) {
             Long workId = workIndexPair.getKey();
             Integer featuredDisplayIndex = workIndexPair.getValue();
-            result = workDao.updateFeaturedDisplayIndex(workId, featuredDisplayIndex);
+            // If null provided, clear the featured index by setting it to 0
+            int normalizedIndex = (featuredDisplayIndex == null) ? 0 : featuredDisplayIndex.intValue();
+            result = workDao.updateFeaturedDisplayIndex(orcid, workId, normalizedIndex);
         };
         return result;
     }

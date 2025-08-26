@@ -149,5 +149,5 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<Object[]> getWorksStartingFromWorkId(Long WorkId, int numberOfWorks);
 
-    boolean updateFeaturedDisplayIndex(Long id, Integer featuredDisplayIndex);
+    boolean updateFeaturedDisplayIndex(String orcid, Long id, Integer featuredDisplayIndex);
 }
