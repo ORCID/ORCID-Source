@@ -21,6 +21,7 @@ import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidAmountException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
+import org.orcid.core.exception.InvalidNoOrgOrExternalIdException;
 import org.orcid.core.exception.InvalidOrgAddressCityNoCountryException;
 import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
@@ -393,15 +394,21 @@ public class ActivityValidator {
         }
     }
     
-    private void validateOrgAddressForProfessionalActivities(OrganizationHolder organizationHolder) {
-        if (organizationHolder.getOrganization() == null) {
-            throw new InvalidOrgException();
+    
+    /*
+     * Validates that either organization info is provided or external id present
+     */
+    private void validateDisambiguatedOrgAndExternalIdentifiersForProfessionalActivities(Affiliation affiliation) {
+        if (affiliation.getOrganization() == null && (affiliation.getExternalIdentifiers() == null || affiliation.getExternalIdentifiers().getExternalIdentifier().isEmpty())) {
+            throw new InvalidNoOrgOrExternalIdException();
         }
 
-        Organization org = organizationHolder.getOrganization();
-        if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity()) && ( org.getAddress().getCountry() == null
-                || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
-            throw new InvalidOrgAddressCityNoCountryException();
+        if (affiliation.getOrganization() != null) {
+            Organization org = affiliation.getOrganization();
+            if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity()) && ( org.getAddress().getCountry() == null
+                    || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
+                throw new InvalidOrgAddressCityNoCountryException();
+            }
         }
     }
 
@@ -435,13 +442,14 @@ public class ActivityValidator {
         
 
         if (isApiRequest) {
-            validateDisambiguatedOrg(affiliation);
+            
             //validate city/country requirement for education and employment 
             if (affiliation instanceof Education || affiliation instanceof Employment) {
+                validateDisambiguatedOrg(affiliation);
                 validateOrgAddress(affiliation);
             }
             else {
-                validateOrgAddressForProfessionalActivities(affiliation);
+                validateDisambiguatedOrgAndExternalIdentifiersForProfessionalActivities(affiliation);
             }
 
             if (affiliation.getEndDate() != null) {

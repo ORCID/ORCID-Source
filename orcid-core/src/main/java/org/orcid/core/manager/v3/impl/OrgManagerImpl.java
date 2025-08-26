@@ -153,6 +153,8 @@ public class OrgManagerImpl implements OrgManager {
     }
 
     private OrgEntity getOrgEntity(org.orcid.jaxb.model.v3.release.common.Organization organization) {
+        if (organization == null)
+            return null;
         OrgEntity orgEntity = new OrgEntity();
         orgEntity.setName(organization.getName().trim());
         org.orcid.jaxb.model.v3.release.common.OrganizationAddress address = organization.getAddress();
