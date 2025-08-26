@@ -509,7 +509,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         Map<String, Object> additionalInfo = new HashMap<String, Object>();
         additionalInfo.put("department", orgAffiliationEntity.getDepartment());
-        additionalInfo.put("org_name", orgAffiliationEntity.getOrg().getName());
+        if(orgAffiliationEntity.getOrg() != null) {
+            additionalInfo.put("org_name", orgAffiliationEntity.getOrg().getName());
+        }
 
         if(extIds != null && extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
             additionalInfo.put("external_identifiers", extIds);
