@@ -76,6 +76,9 @@ public enum Features implements Feature {
     @Label("Use the authorization server to authorize OAUTH requests")
     OAUTH_AUTHORIZATION,
 
+    @Label("Use the authorization server to exchange authorization codes for authentication tokens")
+    OAUTH_AUTHORIZATION_CODE_EXCHANGE,
+
     @Label("Enable featured works logic in the UI")
     FEATURED_WORKS_UI;
     
