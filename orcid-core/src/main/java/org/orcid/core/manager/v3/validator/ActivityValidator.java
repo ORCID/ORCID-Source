@@ -244,10 +244,10 @@ public class ActivityValidator {
                         LOGGER.warn("Invalid DOI provided: " + extId.getValue());
                     }
                 }
-                
+
                 if (extId.getRelationship() != null && Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
-                    if(!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(extId.getType())) {
-                        throw new OrcidValidationException("External ID " + extId.getType() + " not supported for relationship funded_by"); 
+                    if (!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(extId.getType())) {
+                        throw new OrcidValidationException("External ID " + extId.getType() + " not supported for relationship funded_by");
                     }
                 }
             }
@@ -380,8 +380,7 @@ public class ActivityValidator {
             throw new InvalidDisambiguatedOrgException();
         }
     }
-    
-    
+
     private void validateOrgAddress(OrganizationHolder organizationHolder) {
         if (organizationHolder.getOrganization() == null) {
             throw new InvalidOrgException();
@@ -393,20 +392,32 @@ public class ActivityValidator {
             throw new InvalidOrgAddressException();
         }
     }
-    
-    
+
     /*
-     * Validates that either organization info is provided or external id present
+     * Validates that either organization info is provided or external id
+     * present
      */
     private void validateDisambiguatedOrgAndExternalIdentifiersForProfessionalActivities(Affiliation affiliation) {
-        if (affiliation.getOrganization() == null && (affiliation.getExternalIdentifiers() == null || affiliation.getExternalIdentifiers().getExternalIdentifier().isEmpty())) {
+        if (affiliation.getOrganization() == null) {
+            throw new InvalidOrgException();
+        }
+
+        Organization org = affiliation.getOrganization();
+        
+        if (org.getDisambiguatedOrganization() == null && StringUtils.isEmpty(org.getName())) {
+            throw new InvalidOrgException();
+        }
+
+        if ((org.getDisambiguatedOrganization() == null || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() == null
+                || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier().isEmpty())
+                && (affiliation.getExternalIdentifiers() == null || affiliation.getExternalIdentifiers().getExternalIdentifier().isEmpty())) {
             throw new InvalidNoOrgOrExternalIdException();
         }
 
         if (affiliation.getOrganization() != null) {
-            Organization org = affiliation.getOrganization();
-            if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity()) && ( org.getAddress().getCountry() == null
-                    || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
+
+            if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity())
+                    && (org.getAddress().getCountry() == null || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
                 throw new InvalidOrgAddressCityNoCountryException();
             }
         }
@@ -439,16 +450,14 @@ public class ActivityValidator {
             Visibility updatedVisibility = affiliation.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
-        
 
         if (isApiRequest) {
-            
-            //validate city/country requirement for education and employment 
+
+            // validate city/country requirement for education and employment
             if (affiliation instanceof Education || affiliation instanceof Employment) {
                 validateDisambiguatedOrg(affiliation);
                 validateOrgAddress(affiliation);
-            }
-            else {
+            } else {
                 validateDisambiguatedOrgAndExternalIdentifiersForProfessionalActivities(affiliation);
             }
 
