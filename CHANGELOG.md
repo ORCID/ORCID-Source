@@ -1,3 +1,45 @@
+## v2.126.0 - 2025-09-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.125.0...v2.126.0)
+
+## v2.125.0 - 2025-09-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.124.0...v2.125.0)
+
+## v2.124.0 - 2025-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.123.0...v2.124.0)
+
+## v2.123.0 - 2025-08-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.122.0...v2.123.0)
+
+## v2.122.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.121.0...v2.122.0)
+
+- [#7350](https://github.com/ORCID/ORCID-Source/pull/7350): ${PD-1993} add update featured works logic
+
+## v2.121.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.120.0...v2.121.0)
+
+### Refactor
+
+- Remove `Manage members` and `Member developer tools` from old user menu options (#7354)
+
+## v2.120.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.119.0...v2.120.0)
+
+## v2.119.0 - 2025-08-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.118.0...v2.119.0)
+
+### Refactor
+
+- Remove old admin tool actions apart from switch user (#7352)
+
 ## v2.118.0 - 2025-08-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.117.0...v2.118.0)

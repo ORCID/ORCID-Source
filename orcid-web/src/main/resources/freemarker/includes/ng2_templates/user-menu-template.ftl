@@ -45,11 +45,6 @@
                                     <img src="{{assetsPath + '/img/svg/vpn_key_FILL1_wght400_GRAD0_opsz20.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.trusted_individuals")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
-                                <#--  (GROUP) DEVELOPER TOOLS  -->
-                                <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']=='true'" href="{{getBaseUri()}}/group/developer-tools">
-                                    <img src="{{assetsPath + '/img/svg/baseline-code-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("workspace.developer_tools")}' }}
-                                </a>
                                  <#--  DEVELOPER TOOLS  -->
                                 <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']!='true'" href="{{getBaseUri()}}/developer-tools">
                                     <img src="{{assetsPath + '/img/svg/baseline-code-24px.svg'}}"> 
@@ -59,11 +54,6 @@
                                 <a  class="top-menu-item"   *ngIf="userInfo['SELF_SERVICE_MENU']"  href="{{getBaseUri()}}/self-service">
                                     <img src="{{assetsPath + '/img/svg/baseline-build-24px.svg'}}"> 
                                     {{'${springMacroRequestContext.getMessage("workspace.self_service")?replace("<br />", " ")?replace("'", "\\'")}'  }}
-                                </a>
-                                <#--  MANAGE MEMBERS  -->
-                                <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/manage-members" >
-                                    <img src="{{assetsPath + '/img/svg/baseline-group-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("admin.members.workspace_link")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
                                 <#--  ADMIN ACTIONS  -->
                                 <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/admin-actions">

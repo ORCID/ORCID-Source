@@ -128,30 +128,41 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         initDateFields(form, summary.getStartDate(), summary.getEndDate());
         
         Organization organization = summary.getOrganization();
-
         form.setDateSortString(PojoUtil.createDateSortString(summary));
-        form.setAffiliationName(Text.valueOf(organization.getName()));
-        OrganizationAddress address = organization.getAddress();
-        form.setCity(Text.valueOf(address.getCity()));
-        if (organization.getDisambiguatedOrganization() != null) {
-            if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-                form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
-                form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
-                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));  
+        if(organization != null) {
+      
+            if(organization.getName() != null) {
+                form.setAffiliationName(Text.valueOf(organization.getName()));
+            } 
+            OrganizationAddress address = organization.getAddress();
+            if(address != null) {
+                form.setCity(Text.valueOf(address.getCity()));
             }
-        }
-        if (address.getRegion() != null) {
-            form.setRegion(Text.valueOf(address.getRegion()));
-        } else {
-            form.setRegion(new Text());
-        }
+            if (organization.getDisambiguatedOrganization() != null) {
+                if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
+                    form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
+                    form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
+                    form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));  
+                }
+            }
+            if (address.getRegion() != null) {
+                form.setRegion(Text.valueOf(address.getRegion()));
+            } else {
+                form.setRegion(new Text());
+            }
+    
+            if (address.getCountry() != null) {
+                form.setCountry(Text.valueOf(address.getCountry().name()));
+            } else {
+                form.setCountry(new Text());
+            }
 
-        if (address.getCountry() != null) {
-            form.setCountry(Text.valueOf(address.getCountry().name()));
-        } else {
-            form.setCountry(new Text());
         }
-
+        // DO we need to set the affiliation text to something generic here?
+        if (form.getAffiliationName() == null) {
+            form.setAffiliationName(new Text());
+        }
+        
         if (summary.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(summary.getDepartmentName()));
         } else {

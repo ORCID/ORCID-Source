@@ -271,6 +271,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return (result != null && result > 0);
     }
 
+    @Override
+    public boolean isPublic(String orcid, List<Long> ids) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC' AND work_id IN :ids");
+        query.setParameter("orcid", orcid);
+        query.setParameter("ids", ids);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return result.equals((long) ids.size());
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds) {
@@ -414,6 +423,17 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("work_id", BigIntegerType.INSTANCE)
                 .addScalar("contributors_json", StringType.INSTANCE);
         return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public boolean updateFeaturedDisplayIndex(String orcid, Long id, Integer featuredDisplayIndex) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET featured_display_index = :featuredDisplayIndex, last_modified=now() where work_id = :id and orcid = :orcid");
+        query.setParameter("featuredDisplayIndex", featuredDisplayIndex);
+        query.setParameter("id", id);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
     }
 }
 
