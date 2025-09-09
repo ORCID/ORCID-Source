@@ -17,7 +17,7 @@ import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidNoOrgOrExternalIdException;
-import org.orcid.core.exception.InvalidOrgAddressCityNoCountryException;
+import org.orcid.core.exception.InvalidOrgAddressNoCountryButCityRegionException;
 import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
@@ -982,6 +982,17 @@ public class ActivityValidatorTest {
         org.setDisambiguatedOrganization(getDisambiguatedOrganization());
         return org;
     }
+    
+    
+    public Organization getOrganizationWithRegionNoCountry() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        address.setRegion("region");
+        org.setAddress(address);
+        org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
+        return org;
+    }
 
     private DisambiguatedOrganization getDisambiguatedOrganization() {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
@@ -1091,10 +1102,17 @@ public class ActivityValidatorTest {
     }
     
     
-    @Test(expected = InvalidOrgAddressCityNoCountryException.class)
+    @Test(expected = InvalidOrgAddressNoCountryButCityRegionException.class)
     public void validateServiceWithCityNoCountry() {
         Service service = new Service();
         service.setOrganization(getOrganizationWithCityNoCountry());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = InvalidOrgAddressNoCountryButCityRegionException.class)
+    public void validateServiceWithRegionNoCountry() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithRegionNoCountry());
         activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
     }
     
