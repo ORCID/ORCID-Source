@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import javax.ws.rs.core.Response;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,8 +18,10 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.oauth.OAuthError;
+import org.orcid.core.togglz.Features;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.togglz.junit.TogglzRule;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,6 +33,9 @@ public class OauthGenericCallsControllerTest {
 
     @InjectMocks
     private OauthGenericCallsController controller;
+
+    @Rule
+    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @Before
     public void setUp() {
