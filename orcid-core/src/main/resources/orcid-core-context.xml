@@ -1128,10 +1128,18 @@
 		<property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
 		<property name="retriever" ref="featuredGroupedWorksExtendedRetriever" />
 	</bean>
+	
+	<bean id="worksTitleGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+		<property name="cache" ref="worksTitleCache" />
+		<property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+		<property name="retriever" ref="worksTitleRetriever" />
+	</bean>
 
 	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
 
 	<bean id="featuredGroupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.FeaturedGroupedWorksExtendedRetriever" />
+	
+	<bean id="worksTitleRetriever" class="org.orcid.core.cache.impl.WorksTitleRetriever" />
 
 	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	
