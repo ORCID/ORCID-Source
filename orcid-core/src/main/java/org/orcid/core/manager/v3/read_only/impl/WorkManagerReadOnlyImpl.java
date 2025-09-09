@@ -492,7 +492,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             return new ArrayList<>();
         }
 
-        List<ActivityTitle> allTitles = getWorksTitle(orcid); // worksExtendedCacheManager.getWorksTitle(orcid);
+        List<ActivityTitle> allTitles = getWorksTitle(orcid); 
         String lowerCaseSearchTerm = searchTerm.toLowerCase();
         List<ActivityTitle> filteredTitles = allTitles.stream().filter(t -> t.getTitle() != null && t.getTitle().toLowerCase().contains(lowerCaseSearchTerm))
                 .collect(Collectors.toList());
