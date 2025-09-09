@@ -1,6 +1,7 @@
 package org.orcid.api.common;
 
 import static org.orcid.core.api.OrcidApiConstants.OAUTH_TOKEN;
+import static org.orcid.core.constants.OrcidOauth2Constants.*;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -18,6 +19,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.orcid.api.common.oauth.AuthCodeExchangeForwardUtil;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.locale.LocaleManager;
@@ -38,9 +41,6 @@ import java.util.Set;
 @Component
 @Path(OAUTH_TOKEN)
 public class OrcidApiCommonEndpoints {
-
-    private final String authorizationServerTokenExchangeEndpoint;
-
     @Context
     private UriInfo uriInfo;
 
@@ -48,13 +48,7 @@ public class OrcidApiCommonEndpoints {
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
 
     @Resource
-    private HttpRequestUtils httpRequestUtils;
-
-    private final Set<String> authServerGrantTypes = Set.of("authorization_code", "client_credentials");
-
-    public OrcidApiCommonEndpoints(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl) {
-        this.authorizationServerTokenExchangeEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth/token" : authorizationServerUrl + "/oauth/token";
-    }
+    private AuthCodeExchangeForwardUtil authCodeExchangeForwardUtil;
 
     @POST
     @Produces(value = { MediaType.APPLICATION_JSON })
@@ -68,8 +62,9 @@ public class OrcidApiCommonEndpoints {
         String subjectTokenType, @FormParam(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE) String requestedTokenType)
         throws IOException, URISyntaxException, InterruptedException {
 
-        if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive()) {
-            return useAuthorizationServer(clientId, clientSecret, redirectUri, grantType, code, scopeList);
+        // Token delegation is not implemented in the authorization server
+        if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthCodeExchangeForwardUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
+            return authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, grantType, code, scopeList);
         } else {
             MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
             if (clientId != null) {
@@ -120,52 +115,4 @@ public class OrcidApiCommonEndpoints {
         }
     }
 
-    private Response useAuthorizationServer(String clientId, String clientSecret, String redirectUri, String grantType, String code, String scope) throws IOException, URISyntaxException, InterruptedException {
-        if(StringUtils.isBlank(clientId)) {
-            throw new IllegalArgumentException(OrcidOauth2Constants.CLIENT_ID_PARAM + " is required");
-        }
-        if(StringUtils.isBlank(clientSecret)) {
-            throw new IllegalArgumentException("client_secret is required");
-        }
-
-        if(StringUtils.isBlank(redirectUri)) {
-            throw new IllegalArgumentException("redirect_uri is required");
-        }
-
-        if(StringUtils.isBlank(grantType)) {
-            throw new IllegalArgumentException("grant_type is required");
-        } else if(!authServerGrantTypes.contains(grantType)) {
-            throw new IllegalArgumentException("Unsupported grant_type " + grantType);
-        }
-
-        Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("client_id", clientId);
-        parameters.put("client_secret", clientSecret);
-        parameters.put("redirect_uri", redirectUri);
-        parameters.put("grant_type", grantType);
-        switch(grantType) {
-            case "authorization_code":
-                if(StringUtils.isBlank(code)) {
-                    throw new IllegalArgumentException("code is required");
-                }
-                parameters.put("code", code);
-                break;
-            case "client_credentials":
-                if(StringUtils.isBlank(scope)) {
-                    throw new IllegalArgumentException("scope is required");
-                }
-                parameters.put("scope", scope);
-                break;
-        }
-
-        HttpResponse<String> tokenResponse = httpRequestUtils.doPost(authorizationServerTokenExchangeEndpoint, parameters);
-        int statusCode = tokenResponse.statusCode();
-        String tokenResult = tokenResponse.body();
-
-        Response.ResponseBuilder responseBuilder = Response.status(statusCode);
-        responseBuilder.entity(tokenResult);
-        tokenResponse.headers().firstValue("Content-Type")
-                .ifPresent(contentType -> responseBuilder.type(MediaType.valueOf(contentType)));
-        return responseBuilder.build();
-    }
 }
