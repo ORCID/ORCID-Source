@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -561,7 +562,7 @@ public class WorkManagerTest extends BaseTest {
         // no work where user is source
         List<MinimizedWorkEntity> works = new ArrayList<>();
         works.add(work);
-        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
 
         WorkBulk bulk = new WorkBulk();
@@ -1983,6 +1984,46 @@ public class WorkManagerTest extends BaseTest {
     public void a_testGetFeaturedWorksSummaryExtended() {
         List<WorkSummaryExtended> works = workManager.getFeaturedWorksSummaryExtended(claimedOrcid);
         assertEquals(2, works.size());
+    }
+
+
+    @Test
+    public void updateFeaturedWorks_shouldUpdateIndexes() {
+        String orcid = "0000-0000-0000-0003";
+
+        Map<Long, Integer> map = new java.util.HashMap<>();
+        // Work 11 belongs to 0000-0000-0000-0003 and is PUBLIC in fixtures
+        map.put(11L, 1);
+        boolean ok = workManager.updateFeaturedWorks(orcid, map);
+        assertTrue(ok);
+
+        WorkEntity w11 = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(1), w11.getFeaturedDisplayIndex());
+
+    }
+
+    @Test
+    public void updateFeaturedWorks_nullIndexClearsFeatured() {
+        // Use a profile that has a PUBLIC work so it passes the isPublic check
+        String orcid = "0000-0000-0000-0003";
+        // set to non-zero first
+        assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 5));
+        Map<Long, Integer> map = new java.util.HashMap<>();
+        map.put(11L, null);
+
+        assertTrue(workManager.updateFeaturedWorks(orcid, map));
+
+        WorkEntity w11 = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(0), w11.getFeaturedDisplayIndex());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void updateFeaturedWorks_nonPublicThrows() {
+        String orcid = claimedOrcid;
+        // pick a non-public work id from fixtures, e.g., 2L if LIMITED in data set
+        Map<Long, Integer> map = new java.util.HashMap<>();
+        map.put(2L, 1);
+        workManager.updateFeaturedWorks(orcid, map);
     }
 
     private WorkEntity getUserPreferredWork() {

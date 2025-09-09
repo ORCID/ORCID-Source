@@ -132,8 +132,8 @@ jobs:
 
   rel_tag:
     uses: ./.github/workflows/rel_tag.yml
-    needs: bld_mvn
     if: ${{ inputs.rel_tag }}
+    needs: bld_mvn    
     with:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
