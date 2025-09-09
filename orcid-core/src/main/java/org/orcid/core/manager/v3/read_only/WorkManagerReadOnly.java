@@ -8,6 +8,7 @@ import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ActivityTitle;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
@@ -133,4 +134,8 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
     WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid);
 
     WorkExtended getWorkExtended(String orcid, Long workId);
+
+    List<ActivityTitle> getWorksTitle(String orcid);
+    
+    List<ActivityTitle> searchWorksTitle(String orcid, String searchTerm, int maxResults, boolean publicOnly, boolean defaultOnly);
 }

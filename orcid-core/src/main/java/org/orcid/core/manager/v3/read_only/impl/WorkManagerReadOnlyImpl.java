@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +47,7 @@ import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ActivityTitle;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.WorkExtended;
@@ -62,7 +64,7 @@ import org.springframework.beans.factory.annotation.Value;
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
-    
+
     public static final String BULK_PUT_CODES_DELIMITER = ",";
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
@@ -79,7 +81,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private WorksExtendedCacheManager worksExtendedCacheManager;
-    
+
     @Resource
     private GroupingSuggestionManager groupingSuggestionsManager;
 
@@ -91,13 +93,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "workContributorsConverter")
     private WorkContributorsConverter workContributorsConverter;
-        
+
     @Resource
     private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
 
     @Resource(name = "clientDetailsManagerReadOnlyV3")
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-    
+
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -109,11 +111,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
-    
+
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
     }
-    
+
     public void setWorkDao(WorkDao workDao) {
         this.workDao = workDao;
     }
@@ -138,19 +140,17 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      * Checks if there is any public work for a specific user
      * 
      * @param orcid
-     *          the Id of the user
+     *            the Id of the user
      * @return true if there is at least one public work for a specific user
-     * */
+     */
     @Override
     public Boolean hasPublicWorks(String orcid) {
-        if(PojoUtil.isEmpty(orcid)) {
+        if (PojoUtil.isEmpty(orcid)) {
             return false;
         }
         return workDao.hasPublicWorks(orcid);
     }
-    
-    
-    
+
     /**
      * Find the public works for a specific user
      * 
@@ -212,18 +212,19 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
                 wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
             } else {
-                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(), maxContributorsForUI);
+                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(),
+                        maxContributorsForUI);
                 wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
                 wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
             }
-        }        
+        }
         return wseList;
     }
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
         List<Object[]> list = workDao.getWorksByOrcid(orcid, featuredOnly);
-        for(Object[] q1 : list){
+        for (Object[] q1 : list) {
             BigInteger putCode = (BigInteger) q1[0];
             String workType = isEmpty(q1[1]);
             String title = isEmpty(q1[2]);
@@ -244,7 +245,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             int featuredDisplayIndex = (int) q1[17];
             ExternalIDs externalIDs = null;
             if (externalIdsJson != null) {
-                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson,null);
+                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson, null);
             }
             String sourceName = null;
             String assertionOriginName = null;
@@ -257,7 +258,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
                 assertionOriginName = contributorUtils.getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
             }
-            if (!PojoUtil.isEmpty(sourceId)){
+            if (!PojoUtil.isEmpty(sourceId)) {
                 sourceName = contributorUtils.getSourceName(sourceId, sourceNameCacheManager);
             }
             if (!PojoUtil.isEmpty(clientSourceId)) {
@@ -272,22 +273,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 contributorList = workContributorsConverter.getContributorsList(contributors);
             }
 
-            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate, lastModifiedDate)
-                    .journalTitle(journalTitle)
-                    .externalIdsJson(externalIDs)
-                    .publicationYear(publicationYear)
-                    .publicationMonth(publicationMonth)
-                    .publicationDay(publicationDay)
-                    .visibility(visibility)
-                    .sourceName(sourceName)
-                    .assertionOriginName(assertionOriginName)
-                    .displayIndex(displayIndex)
-                    .featuredDisplayIndex(featuredDisplayIndex)
-                    .assertionOriginSourceId(assertionOriginSourceId)
-                    .assertionOriginClientSourceId(assertionOriginClientSourceId)
-                    .contributors(contributorList)
-                    .topContributors(contributorsRolesAndSequencesList)
-                    .build();
+            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate,
+                    lastModifiedDate).journalTitle(journalTitle).externalIdsJson(externalIDs).publicationYear(publicationYear).publicationMonth(publicationMonth)
+                            .publicationDay(publicationDay).visibility(visibility).sourceName(sourceName).assertionOriginName(assertionOriginName)
+                            .displayIndex(displayIndex).featuredDisplayIndex(featuredDisplayIndex).assertionOriginSourceId(assertionOriginSourceId)
+                            .assertionOriginClientSourceId(assertionOriginClientSourceId).contributors(contributorList).topContributors(contributorsRolesAndSequencesList)
+                            .build();
             workSummaryExtendedList.add(wse);
         }
         return workSummaryExtendedList;
@@ -306,9 +297,10 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, putCodes, getLastModified(orcid));
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
-    
+
     /**
-     * Generate a grouped list of works with the given list of works and generates grouping suggestions
+     * Generate a grouped list of works with the given list of works and
+     * generates grouping suggestions
      * 
      * @param works
      *            The list of works to group
@@ -364,31 +356,31 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorkBulk findWorkBulk(String orcid, String putCodesAsString) {
-        List<BulkElement> works = new ArrayList<>();        
-        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());                        
+        List<BulkElement> works = new ArrayList<>();
+        List<Long> putCodes = Arrays.stream(getPutCodeArray(putCodesAsString)).map(s -> Long.parseLong(s)).collect(Collectors.toList());
         List<WorkEntity> entities = new ArrayList<>();
-        
+
         if (Features.READ_BULK_WORKS_DIRECTLY_FROM_DB.isActive()) {
-            entities = workDao.getWorkEntities(orcid, putCodes);            
+            entities = workDao.getWorkEntities(orcid, putCodes);
         } else {
             entities = workEntityCacheManager.retrieveFullWorks(orcid, putCodes);
         }
-        
-        for(WorkEntity entity : entities) {
+
+        for (WorkEntity entity : entities) {
             works.add(jpaJaxbWorkAdapter.toWork(entity));
             putCodes.remove(entity.getId());
         }
-        
+
         // Put codes still in this list doesn't exists on the database
-        for(Long invalidPutCode : putCodes) {
+        for (Long invalidPutCode : putCodes) {
             works.add(orcidCoreExceptionMapper.getV3OrcidError(new PutCodeFormatException("'" + invalidPutCode + "' is not a valid put code")));
         }
-        
+
         WorkBulk bulk = new WorkBulk();
         bulk.setBulk(works);
         return bulk;
     }
-    
+
     @Override
     public Works getWorksAsGroups(String orcid) {
         return groupWorksAndGenerateGroupingSuggestions(getWorksSummaryList(orcid), orcid);
@@ -431,7 +423,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<Work> findWorks(String orcid, List<WorkLastModifiedEntity> elements) {
         List<Work> result = new ArrayList<Work>();
-        for(WorkLastModifiedEntity w : elements) {
+        for (WorkLastModifiedEntity w : elements) {
             WorkEntity entity = workEntityCacheManager.retrieveFullWork(orcid, w.getId(), w.getLastModified().getTime());
             result.add(jpaJaxbWorkAdapter.toWork(entity));
         }
@@ -448,16 +440,71 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public ExternalIDs getAllExternalIDs(String orcid) {
         List<WorkSummary> summaries = getWorksSummaryList(orcid);
         ExternalIDs ids = new ExternalIDs();
-        for (WorkSummary s:summaries){
-            for (ExternalID id: s.getExternalIdentifiers().getExternalIdentifier()){
-                if (!ids.getExternalIdentifier().contains(id)){
+        for (WorkSummary s : summaries) {
+            for (ExternalID id : s.getExternalIdentifiers().getExternalIdentifier()) {
+                if (!ids.getExternalIdentifier().contains(id)) {
                     ids.getExternalIdentifier().add(id);
                 }
             }
         }
         return ids;
     }
-    
+
+    public List<ActivityTitle> getWorksTitle(String orcid) {
+        WorksExtended worksExtended = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
+        List<ActivityTitle> titles = new ArrayList<>();
+        if (worksExtended != null && worksExtended.getWorkGroup() != null && !worksExtended.getWorkGroup().isEmpty()) {
+            for (WorkGroupExtended wg : worksExtended.getWorkGroup()) {
+                List<WorkSummaryExtended> orderedList = new ArrayList<>(wg.getWorkSummary());
+                orderedList.sort((a, b) -> Long.compare(Long.valueOf(b.getDisplayIndex()), Long.valueOf(a.getDisplayIndex())));
+                for (int i = 0; i < orderedList.size(); i++) {
+                    WorkSummaryExtended w = orderedList.get(i);
+                    ActivityTitle title = new ActivityTitle();
+                    title.setPutCode(w.getPutCode());
+                    // If this is the first element, it is the one with the
+                    // highest display index
+                    title.setDefault(i == 0);
+                    if (w.getTitle() != null && w.getTitle().getTitle() != null && !PojoUtil.isEmpty(w.getTitle().getTitle().getContent())) {
+                        title.setTitle(w.getTitle().getTitle().getContent());
+                    } else {
+                        throw new IllegalStateException("Work with put code " + w.getPutCode() + " doesn't have a title!");
+                    }
+
+                    title.setPublic(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(w.getVisibility()));
+                    if (w.getTitle() != null && w.getTitle().getTranslatedTitle() != null && !PojoUtil.isEmpty(w.getTitle().getTranslatedTitle().getContent())) {
+                        title.setTranslatedTitle(w.getTitle().getTranslatedTitle().getContent());
+                    }
+
+                    title.setFeatured(w.getFeaturedDisplayIndex() > 0);
+                    titles.add(title);
+                }
+            }
+        }
+
+        return titles;
+
+    }
+
+    @Override
+    public List<ActivityTitle> searchWorksTitle(String orcid, String searchTerm, int maxResults, boolean publicOnly, boolean defaultOnly) {
+
+        if (PojoUtil.isEmpty(searchTerm)) {
+            return new ArrayList<>();
+        }
+
+        List<ActivityTitle> allTitles = getWorksTitle(orcid); // worksExtendedCacheManager.getWorksTitle(orcid);
+        String lowerCaseSearchTerm = searchTerm.toLowerCase();
+        List<ActivityTitle> filteredTitles = allTitles.stream().filter(t -> t.getTitle() != null && t.getTitle().toLowerCase().contains(lowerCaseSearchTerm))
+                .collect(Collectors.toList());
+        if (publicOnly) {
+            filteredTitles = filteredTitles.stream().filter(t -> t.isPublic()).collect(Collectors.toList());
+        }
+        if (filteredTitles.size() > maxResults) {
+            filteredTitles = filteredTitles.subList(0, maxResults);
+        }
+        return filteredTitles;
+    }
+
     private Works processGroupedWorks(List<ActivitiesGroup> groups) {
         Works result = new Works();
         for (ActivitiesGroup group : groups) {
@@ -465,7 +512,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Set<GroupableActivity> activities = group.getActivities();
             WorkGroup workGroup = new WorkGroup();
             // Fill the work groups with the external identifiers
-            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+            if (externalIdentifiers == null || externalIdentifiers.isEmpty()) {
                 // Initialize the ids as an empty list
                 workGroup.getIdentifiers().getExternalIdentifier();
             } else {
@@ -474,7 +521,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
                 }
             }
-            
+
             // Fill the work group with the list of activities
             for (GroupableActivity activity : activities) {
                 WorkSummary workSummary = (WorkSummary) activity;
@@ -497,7 +544,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             Set<GroupableActivity> activities = group.getActivities();
             WorkGroupExtended workGroup = new WorkGroupExtended();
             // Fill the work groups with the external identifiers
-            if(externalIdentifiers == null || externalIdentifiers.isEmpty()) {
+            if (externalIdentifiers == null || externalIdentifiers.isEmpty()) {
                 // Initialize the ids as an empty list
                 workGroup.getIdentifiers().getExternalIdentifier();
             } else {
@@ -527,6 +574,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             return o.toString();
         }
         return null;
-    }    
-    
+    }
+
 }
