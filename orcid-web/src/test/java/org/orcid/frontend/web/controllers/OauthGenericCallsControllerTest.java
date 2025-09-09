@@ -20,6 +20,9 @@ import org.orcid.core.oauth.OAuthError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class OauthGenericCallsControllerTest {
 
     @Mock
@@ -34,7 +37,7 @@ public class OauthGenericCallsControllerTest {
     }
 
     @Test
-    public void testObtainOauth2TokenPost() {
+    public void testObtainOauth2TokenPost() throws IOException, URISyntaxException, InterruptedException {
         when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(isNull(), any())).thenReturn(
                 Response.ok("some-success-entity").build());
         ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(new MockHttpServletRequest());
@@ -44,7 +47,7 @@ public class OauthGenericCallsControllerTest {
     }
 
     @Test
-    public void testObtainOauth2TokenPostLockedClient() {
+    public void testObtainOauth2TokenPostLockedClient() throws IOException, URISyntaxException, InterruptedException {
         when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(isNull(), any())).thenThrow(
                 new LockedException("Client is locked"));
         ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(new MockHttpServletRequest());
