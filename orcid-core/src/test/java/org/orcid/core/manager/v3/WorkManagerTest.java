@@ -2319,10 +2319,10 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(titles);
         assertEquals(4, titles.size());
         assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, true, true).size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, true, true).size()));
+        assertEquals(2, (workManager.searchWorksTitle(orcid, "Journal", 10, true, true).size()));
+        assertEquals(2, (workManager.searchWorksTitle(orcid, "journal Article", 10, true, true).size()));
         assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, true, true).size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, true, true).size()));    
+        assertEquals(2, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, true, true).size()));    
     }
     
     @Test
@@ -2345,9 +2345,9 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(titles);
         assertEquals(4, titles.size());
         assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, true, true).size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, true, true).size()));
-        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, true, true).size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, true, true).size()));    
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, false, true).size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, false, true).size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, false, true).size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, false, true).size()));    
     }
 }

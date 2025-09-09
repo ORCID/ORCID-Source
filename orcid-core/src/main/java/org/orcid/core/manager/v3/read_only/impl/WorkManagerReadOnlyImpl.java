@@ -499,6 +499,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         if (publicOnly) {
             filteredTitles = filteredTitles.stream().filter(t -> t.isPublic()).collect(Collectors.toList());
         }
+        
+        if (defaultOnly) {
+            filteredTitles = filteredTitles.stream().filter(t -> t.isDefault()).collect(Collectors.toList());
+        }
+        
         if (filteredTitles.size() > maxResults) {
             filteredTitles = filteredTitles.subList(0, maxResults);
         }
