@@ -1,3 +1,10 @@
+## v2.128.1 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.0...v2.128.1)
+
+- [#7364](https://github.com/ORCID/ORCID-Source/pull/7364): PD-2042 Empty PR 
+- [#7363](https://github.com/ORCID/ORCID-Source/pull/7363): Lmendoza/pd 2042
+
 ## v2.128.0 - 2025-09-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.127.1...v2.128.0)
