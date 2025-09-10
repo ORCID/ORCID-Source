@@ -2068,6 +2068,9 @@ public class WorkManagerTest extends BaseTest {
         WorkEntity workAfter = workDao.getWork(orcid, 11L);
         assertEquals(Integer.valueOf(3), workAfter.getFeaturedDisplayIndex());
         assertEquals("PUBLIC", workAfter.getVisibility());
+
+        // Cleanup: restore original featured display index
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
     }
 
     @Test
