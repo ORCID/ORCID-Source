@@ -476,6 +476,24 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     }
 
                     title.setFeatured(w.getFeaturedDisplayIndex() > 0);
+                    if (w.getPublicationDate() != null) {
+                        PublicationDate pd = w.getPublicationDate();
+                        if (pd.getYear() != null && !PojoUtil.isEmpty(pd.getYear().getValue())) {
+                            title.setPublicationYear(pd.getYear().getValue());
+                        }
+                        if (pd.getMonth() != null && !PojoUtil.isEmpty(pd.getMonth().getValue())) {
+                            title.setPublicationMonth(pd.getMonth().getValue());
+                        }
+                        if (pd.getDay() != null && !PojoUtil.isEmpty(pd.getDay().getValue())) {
+                            title.setPublicationDay(pd.getDay().getValue());
+                        }
+                    }
+                    if (w.getType()!= null && !PojoUtil.isEmpty(w.getType().value())) {
+                        title.setWorkType(w.getType().value()); 
+                    }
+                    if (w.getJournalTitle() != null && !PojoUtil.isEmpty(w.getJournalTitle().getContent())) {
+                        title.setJournalTitle(w.getJournalTitle().getContent());
+                    }
                     titles.add(title);
                 }
             }
