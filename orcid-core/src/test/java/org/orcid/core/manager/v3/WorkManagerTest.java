@@ -2044,6 +2044,10 @@ public class WorkManagerTest extends BaseTest {
         WorkEntity workAfter = workDao.getWork(orcid, 11L);
         assertEquals(Integer.valueOf(0), workAfter.getFeaturedDisplayIndex());
         assertEquals("PRIVATE", workAfter.getVisibility());
+        
+        // Cleanup: restore original visibility and featured display index
+        workManager.updateVisibilities(orcid, workIds, Visibility.PUBLIC);
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
     }
 
     @Test
@@ -2070,6 +2074,9 @@ public class WorkManagerTest extends BaseTest {
     public void updateWork_workForm_nonPublicResetsFeaturedDisplayIndex() {
         String orcid = "0000-0000-0000-0003";
         
+        // Set up mock source manager to return the correct client ID for work 11
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
+        
         // First set a featured display index to non-zero
         assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 4));
         WorkEntity workBefore = workDao.getWork(orcid, 11L);
@@ -2089,11 +2096,19 @@ public class WorkManagerTest extends BaseTest {
         WorkEntity workAfter = workDao.getWork(orcid, 11L);
         assertEquals(Integer.valueOf(0), workAfter.getFeaturedDisplayIndex());
         assertEquals("PRIVATE", workAfter.getVisibility());
+        
+        // Cleanup: restore original visibility and featured display index
+        workForm.getVisibility().setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+        workManager.updateWork(orcid, workForm);
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
     }
 
     @Test
     public void updateWork_workForm_publicPreservesFeaturedDisplayIndex() {
         String orcid = "0000-0000-0000-0003";
+        
+        // Set up mock source manager to return the correct client ID for work 11
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
         
         // First set a featured display index to non-zero
         assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 2));
@@ -2114,6 +2129,9 @@ public class WorkManagerTest extends BaseTest {
         WorkEntity workAfter = workDao.getWork(orcid, 11L);
         assertEquals(Integer.valueOf(2), workAfter.getFeaturedDisplayIndex());
         assertEquals("PUBLIC", workAfter.getVisibility());
+        
+        // Cleanup: restore original featured display index
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
     }
 
     private WorkEntity getUserPreferredWork() {
