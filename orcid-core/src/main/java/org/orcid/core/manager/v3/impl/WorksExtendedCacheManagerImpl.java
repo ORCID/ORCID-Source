@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3.impl;
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
-import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.pojo.ActivityTitle;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 
@@ -17,6 +17,9 @@ public class WorksExtendedCacheManagerImpl implements WorksExtendedCacheManager 
 
     @Resource(name = "featuredGroupedWorksExtendedGenericCacheManager")
     private GenericCacheManager<OrcidString, List<WorkSummaryExtended>> featuredGroupedWorksExtendedGenericCacheManager;
+    
+    @Resource(name = "worksTitleGenericCacheManager")
+    private GenericCacheManager<OrcidString, List<ActivityTitle>> worksTitleGenericCacheManager;
 
     @Override
     public WorksExtended getGroupedWorksExtended(String orcid) {
@@ -27,4 +30,11 @@ public class WorksExtendedCacheManagerImpl implements WorksExtendedCacheManager 
     public List<WorkSummaryExtended> getFeaturedGroupedWorksExtended(String orcid) {
         return featuredGroupedWorksExtendedGenericCacheManager.retrieve(new OrcidString(orcid));
     }
+    
+    @Override
+    public List<ActivityTitle> getWorksTitle(String orcid) {
+        return worksTitleGenericCacheManager.retrieve(new OrcidString(orcid));
+    }
+    
+    
 }

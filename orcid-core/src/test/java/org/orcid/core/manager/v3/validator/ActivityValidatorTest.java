@@ -16,7 +16,8 @@ import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
-import org.orcid.core.exception.InvalidOrgAddressCityNoCountryException;
+import org.orcid.core.exception.InvalidNoOrgOrExternalIdException;
+import org.orcid.core.exception.InvalidOrgAddressNoCountryButCityRegionException;
 import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
@@ -981,12 +982,38 @@ public class ActivityValidatorTest {
         org.setDisambiguatedOrganization(getDisambiguatedOrganization());
         return org;
     }
+    
+    
+    public Organization getOrganizationWithRegionNoCountry() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        address.setRegion("region");
+        org.setAddress(address);
+        org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
+        return org;
+    }
 
     private DisambiguatedOrganization getDisambiguatedOrganization() {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
         disambiguatedOrganization.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         return disambiguatedOrganization;
+    }
+    
+    public Organization getOrganizationWithoutExternalIdentifiersOrDisambiguatedOrg() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        org.setAddress(address);
+        org.setName("name");
+        return org;
+    }
+ 
+    public Organization getEmptyOrg() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        org.setAddress(address);
+        return org;
     }
 
     // validate normalization is being used
@@ -1075,10 +1102,49 @@ public class ActivityValidatorTest {
     }
     
     
-    @Test(expected = InvalidOrgAddressCityNoCountryException.class)
+    @Test(expected = InvalidOrgAddressNoCountryButCityRegionException.class)
     public void validateServiceWithCityNoCountry() {
         Service service = new Service();
         service.setOrganization(getOrganizationWithCityNoCountry());
         activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
     }
+    
+    @Test(expected = InvalidOrgAddressNoCountryButCityRegionException.class)
+    public void validateServiceWithRegionNoCountry() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithRegionNoCountry());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidNoOrgOrExternalIdException.class)
+    public void validateServiceWithNoOrgNoExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithoutExternalIdentifiersOrDisambiguatedOrg());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateServiceWithNoOrgDisambiguatedButWithExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithoutExternalIdentifiersOrDisambiguatedOrg());
+        service.setExternalIdentifiers(getExternalIDs());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateServiceWithOrgDisambiguatedButNoExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getOrganization());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidOrgException.class)
+    public void validateServiceWithNoOrgNameWithExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getEmptyOrg());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
 }

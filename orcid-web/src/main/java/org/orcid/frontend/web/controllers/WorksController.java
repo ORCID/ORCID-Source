@@ -18,6 +18,7 @@ import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ActivityTitle;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
@@ -94,6 +95,9 @@ public class WorksController extends BaseWorkspaceController {
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
+    
+    @Value("${org.orcid.core.work.search.title.toFeature.size:10}")
+    private int resultsSizeForSearchWorksToFeature;
 
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
@@ -856,6 +860,13 @@ public class WorksController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
         return workManagerReadOnly.getFeaturedWorks(orcid);
     }
+    
+    @RequestMapping(value = "/searchWorksTitleToFeature.json", method = RequestMethod.GET)
+    public @ResponseBody List<ActivityTitle> searchWorkTitlesToFeatureJson(@RequestParam(value="term") String term) {
+        String orcid = getEffectiveUserOrcid();
+        return workManagerReadOnly.searchWorksTitle(orcid, term, resultsSizeForSearchWorksToFeature, true, true);
+    }
+
 
     @RequestMapping(value = "/featuredWorks.json", method = RequestMethod.PUT)
     public @ResponseBody ResponseEntity<Map<String, Object>> getFeaturedWorksJson(HttpServletRequest request, @RequestBody Map<Long, Integer> featuredWorks) {
