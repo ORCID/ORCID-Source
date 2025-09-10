@@ -399,6 +399,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     		workEntity.setVisibility(originalVisibility.name());  
     	}
         
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
+        }
+        
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
@@ -576,6 +582,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
         if (workEntity.getVisibility() == null) {
             workEntity.setVisibility(originalVisibility.name());
+        }
+
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
         }
 
         //Be sure it doesn't overwrite the source

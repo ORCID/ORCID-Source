@@ -100,7 +100,12 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, List<Long> workIds, String visibility) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)");
+        // If visibility is not PUBLIC, also reset featured_display_index to 0
+        String sql = "PUBLIC".equals(visibility) 
+            ? "UPDATE work SET visibility=:visibility, last_modified=now() WHERE work_id in (:workIds)"
+            : "UPDATE work SET visibility=:visibility, featured_display_index=0, last_modified=now() WHERE work_id in (:workIds)";
+        
+        Query query = entityManager.createNativeQuery(sql);
         query.setParameter("visibility", visibility);
         query.setParameter("workIds", workIds);
         return query.executeUpdate() > 0;
