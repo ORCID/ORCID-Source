@@ -10,6 +10,11 @@ public class ActivityTitle {
     private boolean isDefault;
     private boolean isFeatured;
     private boolean isPublic;
+    private String publicationYear;
+    private String publicationMonth;
+    private String publicationDay;
+    private String workType;
+    private String journalTitle;
 
     public long getPutCode() {
         return putCode;
@@ -60,4 +65,43 @@ public class ActivityTitle {
         this.isPublic = isPublic;
     }
 
+    public String getJournalTitle() {
+        return journalTitle;
+    }
+
+    public void setJournalTitle(String journalTitle) {
+        this.journalTitle = journalTitle;
+    }
+
+    public String getWorkType() {
+        return workType;
+    }
+
+    public void setWorkType(String workType) {
+        this.workType = workType;
+    }
+
+    public String getPublicationDay() {
+        return publicationDay;
+    }
+
+    public void setPublicationDay(String publicationDay) {
+        this.publicationDay = publicationDay;
+    }
+
+    public String getPublicationMonth() {
+        return publicationMonth;
+    }
+
+    public void setPublicationMonth(String publicationMonth) {
+        this.publicationMonth = publicationMonth;
+    }
+
+    public String getPublicationYear() {
+        return publicationYear;
+    }
+
+    public void setPublicationYear(String publicationYear) {
+        this.publicationYear = publicationYear;
+    }
 }
