@@ -135,7 +135,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
-        return workDao.updateVisibilities(orcid, workIds, visibility.name());
+        boolean result = workDao.updateVisibilities(orcid, workIds, visibility.name());
+        
+        // If visibility is not PUBLIC (EVERYONE), set featured display index to 0
+        if (result && !Visibility.PUBLIC.equals(visibility)) {
+            for (Long workId : workIds) {
+                workDao.updateFeaturedDisplayIndex(orcid, workId, 0);
+            }
+        }
+        
+        return result;
     }
 
     /**
@@ -399,6 +408,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     		workEntity.setVisibility(originalVisibility.name());  
     	}
         
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
+        }
+        
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
@@ -576,6 +591,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
         if (workEntity.getVisibility() == null) {
             workEntity.setVisibility(originalVisibility.name());
+        }
+
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
         }
 
         //Be sure it doesn't overwrite the source
