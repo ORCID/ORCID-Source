@@ -135,7 +135,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
-        return workDao.updateVisibilities(orcid, workIds, visibility.name());
+        boolean result = workDao.updateVisibilities(orcid, workIds, visibility.name());
+        
+        // If visibility is not PUBLIC (EVERYONE), set featured display index to 0
+        if (result && !Visibility.PUBLIC.equals(visibility)) {
+            for (Long workId : workIds) {
+                workDao.updateFeaturedDisplayIndex(orcid, workId, 0);
+            }
+        }
+        
+        return result;
     }
 
     /**
