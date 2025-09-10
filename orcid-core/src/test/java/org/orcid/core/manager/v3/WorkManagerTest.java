@@ -2071,7 +2071,7 @@ public class WorkManagerTest extends BaseTest {
 
         // Cleanup: restore original featured display index
         workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
-    }
+    } 
 
     @Test
     public void updateWork_workForm_nonPublicResetsFeaturedDisplayIndex() {
