@@ -140,7 +140,6 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/print" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/worksPage.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/worksExtendedPage.json(\?.*)?" security="none" create-session="stateless" />
-	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/searchWorksTitleToFeature.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/allWorks.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/person.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/public-record.json(\?.*)?" security="none" create-session="stateless" />
