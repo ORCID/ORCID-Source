@@ -48,6 +48,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.pojo.ActivityTitle;
+import org.orcid.pojo.ActivityTitleSearchResult;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkContributorsList;
 import org.orcid.pojo.WorkExtended;
@@ -471,11 +472,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     }
 
                     title.setPublic(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(w.getVisibility()));
-                    if (w.getTitle() != null && w.getTitle().getTranslatedTitle() != null && !PojoUtil.isEmpty(w.getTitle().getTranslatedTitle().getContent())) {
-                        title.setTranslatedTitle(w.getTitle().getTranslatedTitle().getContent());
-                    }
 
-                    title.setFeatured(w.getFeaturedDisplayIndex() > 0);
+                    title.setFeaturedDisplayIndex(w.getFeaturedDisplayIndex());
                     if (w.getPublicationDate() != null) {
                         PublicationDate pd = w.getPublicationDate();
                         if (pd.getYear() != null && !PojoUtil.isEmpty(pd.getYear().getValue())) {
@@ -504,10 +502,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    public List<ActivityTitle> searchWorksTitle(String orcid, String searchTerm, int maxResults, boolean publicOnly, boolean defaultOnly) {
+    public ActivityTitleSearchResult searchWorksTitle(String orcid, String searchTerm, int size, int offset, boolean publicOnly, boolean defaultOnly) {
 
+        ActivityTitleSearchResult result = new ActivityTitleSearchResult(new ArrayList<>(), 0, 0);
         if (PojoUtil.isEmpty(searchTerm)) {
-            return new ArrayList<>();
+            return new ActivityTitleSearchResult (new ArrayList<>(), 0,0);
         }
 
         List<ActivityTitle> allTitles = getWorksTitle(orcid); 
@@ -522,10 +521,19 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             filteredTitles = filteredTitles.stream().filter(t -> t.isDefault()).collect(Collectors.toList());
         }
         
-        if (filteredTitles.size() > maxResults) {
-            filteredTitles = filteredTitles.subList(0, maxResults);
+        int totalCount = filteredTitles.size();
+        
+        if (filteredTitles.size() > size) {
+            int fromIndex = Math.min(offset, filteredTitles.size());
+            int toIndex = Math.min(fromIndex + size, filteredTitles.size());
+            filteredTitles.subList(fromIndex, toIndex);
         }
-        return filteredTitles;
+        result.setResults(filteredTitles);
+        result.setTotalCount(totalCount);
+        result.setOffset(offset);
+        result.setPageSize(size);
+        
+        return result;
     }
 
     private Works processGroupedWorks(List<ActivitiesGroup> groups) {
