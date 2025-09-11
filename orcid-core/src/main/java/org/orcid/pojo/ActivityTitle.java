@@ -6,9 +6,8 @@ public class ActivityTitle {
 
     private long putCode;
     private String title;
-    private String translatedTitle;
     private boolean isDefault;
-    private boolean isFeatured;
+    private int featuredDisplayIndex;
     private boolean isPublic;
     private String publicationYear;
     private String publicationMonth;
@@ -32,29 +31,12 @@ public class ActivityTitle {
         this.title = title;
     }
 
-    public String getTranslatedTitle() {
-        return translatedTitle;
-    }
-
-    public void setTranslatedTitle(String translatedTitle) {
-        this.translatedTitle = translatedTitle;
-    }
-
-
     public boolean isDefault() {
         return isDefault;
     }
 
     public void setDefault(boolean isDefault) {
         this.isDefault = isDefault;
-    }
-
-    public boolean isFeatured() {
-        return isFeatured;
-    }
-
-    public void setFeatured(boolean isFeatured) {
-        this.isFeatured = isFeatured;
     }
 
     public boolean isPublic() {
@@ -103,5 +85,13 @@ public class ActivityTitle {
 
     public void setPublicationYear(String publicationYear) {
         this.publicationYear = publicationYear;
+    }
+    
+    public int getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
+    }
+
+    public void setFeaturedDisplayIndex(int featuredDisplayIndex) {
+        this.featuredDisplayIndex= featuredDisplayIndex;
     }
 }
