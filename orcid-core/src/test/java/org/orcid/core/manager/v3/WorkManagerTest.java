@@ -2443,10 +2443,10 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(titles);
         assertEquals(4, titles.size());
         assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, true, true).getResults().size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, true, true).getResults().size()));
-        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0, true, true).getResults().size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, true, true).getResults().size()));    
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, true, false).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, true, false).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0, true, false).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, true, false).getResults().size()));    
     }
     
     @Test
@@ -2456,9 +2456,9 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(titles);
         assertEquals(4, titles.size());
         assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, true, true).getResults().size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, true, true).getResults().size()));
-        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0, true, true).getResults().size()));
-        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, true, true).getResults().size()));   
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, false, true).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, false, true).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0,false , true).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, false, true).getResults().size()));   
     }
 }
