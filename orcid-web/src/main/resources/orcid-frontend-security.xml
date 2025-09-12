@@ -10,7 +10,7 @@
 
 	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
 
-	<context:component-scan base-package="org.orcid"/>
+	<context:component-scan base-package="org.orcid, org.orcid.api.common"/>
 	<context:annotation-config />
 
 	<sec:global-method-security pre-post-annotations="enabled" />
