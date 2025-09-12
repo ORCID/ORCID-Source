@@ -2422,7 +2422,6 @@ public class WorkManagerTest extends BaseTest {
         return workForm;
     }
     
-    
     @Test
     public void testSearchWorkTitle_onlyPublicWorksWithPreferred() {
         String orcid = "0000-0000-0000-0008";
@@ -2460,5 +2459,18 @@ public class WorkManagerTest extends BaseTest {
         assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, false, true).getResults().size()));
         assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0,false , true).getResults().size()));
         assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, false, true).getResults().size()));   
+    }
+    
+    @Test
+    public void testSearchWorkTitle_onlyPublicWorksWithPreferredSizeOne() {
+        String orcid = "0000-0000-0000-0008";
+        List<ActivityTitle> titles = workManager.getWorksTitle(orcid);
+        assertNotNull(titles);
+        assertEquals(4, titles.size());
+        assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
+        assertEquals(1, (workManager.searchWorksTitle(orcid, "Journal", 1, 0, true, true).getResults().size()));
+        assertEquals(1, (workManager.searchWorksTitle(orcid, "journal Article", 1, 0, true, true).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 1, 0, true, true).getResults().size()));
+        assertEquals(1, (workManager.searchWorksTitle(orcid, "JOURNAL", 1, 0, true, true).getResults().size())); 
     }
 }

@@ -526,7 +526,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         if (filteredTitles.size() > size) {
             int fromIndex = Math.min(offset, filteredTitles.size());
             int toIndex = Math.min(fromIndex + size, filteredTitles.size());
-            filteredTitles.subList(fromIndex, toIndex);
+            filteredTitles = filteredTitles.subList(fromIndex, toIndex);
         }
         result.setResults(filteredTitles);
         result.setTotalCount(totalCount);
