@@ -1,0 +1,22 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+   <!-- dw_work -->
+    <changeSet id="ALTER_DW_WORK_ADD_FEATURED_DISPLAY_INDEX" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_work" replaceIfExists="true">
+            select work_id, orcid, publication_day, publication_month, publication_year, title, subtitle, description,
+            work_url, citation, citation_type, work_type, journal_title, language_code, translated_title,
+            translated_title_language_code, iso2_country, visibility, case when orcid = source_id then true else false end as self_asserted , client_source_id,
+            date_created::timestamp, last_modified::timestamp, featured_display_index
+            from work where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-WORK-FEAT_DISPLAY" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_work to dw_user;</sql>
+    </changeSet>  
+    
+</databaseChangeLog>
