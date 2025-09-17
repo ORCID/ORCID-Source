@@ -389,12 +389,26 @@ public class BaseController {
         }
     }
 
+    /**
+     * Deprecated: Use setErrorCode instead. The frontend is responsible for
+     * translating error codes into user-facing strings.
+     */
+    @Deprecated
     protected void setError(ErrorsInterface ei, String msg) {
         ei.getErrors().add(getMessage(msg));
     }
 
+    /**
+     * Deprecated: Use setErrorCode instead. The frontend is responsible for
+     * translating error codes into user-facing strings.
+     */
+    @Deprecated
     protected void setError(ErrorsInterface ei, String msg, Object... messageParams) {
         ei.getErrors().add(getMessage(msg, messageParams));
+    }
+
+    protected void setErrorCode(ErrorsInterface ei, String code) {
+        ei.getErrors().add(code);
     }
 
     protected void validateBiography(Text text) {
