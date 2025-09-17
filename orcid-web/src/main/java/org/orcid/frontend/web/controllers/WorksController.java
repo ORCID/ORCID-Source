@@ -869,9 +869,8 @@ public class WorksController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
         if (term == null || term.isBlank()|| term.trim().length() >= ACTIVITY_TITLE_SEARCH_MAX_LENGHT) {
             ActivityTitleSearchResult emptyResult = new ActivityTitleSearchResult (new ArrayList<>(), offset,0);
-            setError(emptyResult, "Length.activityTitle.search");
+            setErrorCode(emptyResult, "error.activity_title_search.term_length_invalid");
             return emptyResult;
-            
         }
         return workManagerReadOnly.searchWorksTitle(orcid, term,resultsSizeForSearchWorksToFeature,offset, true, true);
     }
