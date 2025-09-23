@@ -28,6 +28,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.http.HttpRequestUtils;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -64,7 +65,24 @@ public class OrcidApiCommonEndpoints {
 
         // Token delegation is not implemented in the authorization server
         if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthCodeExchangeForwardUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
-            return authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, grantType, code, scopeList);
+            Response response = null;
+            switch (grantType) {
+                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                    response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                break;
+                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, redirectUri, refreshToken);
+                break;
+                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                    response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, redirectUri, scopeList);
+                break;
+                case IETF_EXCHANGE_GRANT_TYPE:
+                    response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                break;
+            }
+            Object entity = response.getEntity();
+            int statusCode = response.getStatus();
+            return Response.status(statusCode).entity(entity).header(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),"ON").build();
         } else {
             MultivaluedMap<String, String> formParams = new MultivaluedHashMap<String, String>();
             if (clientId != null) {

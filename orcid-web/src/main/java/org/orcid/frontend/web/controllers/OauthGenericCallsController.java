@@ -18,6 +18,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.oauth.AuthCodeExchangeForwardUtil;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.togglz.Features;
@@ -36,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import static org.orcid.core.constants.OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE;
 
 
 @Controller("oauthGenericCallsController")
@@ -64,7 +67,28 @@ public class OauthGenericCallsController extends OauthControllerBase {
             String redirectUri = request.getParameter("redirect_uri");
             String code = request.getParameter("code");
             String scopeList = request.getParameter("scope");
-            Response response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, grantType, code, scopeList);
+            String refreshToken = request.getParameter("refresh_token");
+            String subjectToken = request.getParameter("subject_token");
+            String subjectTokenType = request.getParameter("subject_token_type");
+            String requestedTokenType = request.getParameter("requested_token_type");
+
+            Response response = null;
+
+            switch (grantType) {
+                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                    response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                    break;
+                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, redirectUri, refreshToken);
+                    break;
+                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                    response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, redirectUri, scopeList);
+                    break;
+                case IETF_EXCHANGE_GRANT_TYPE:
+                    response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                    break;
+            }
+
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
                     "ON");
