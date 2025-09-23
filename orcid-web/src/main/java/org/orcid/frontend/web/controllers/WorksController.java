@@ -18,6 +18,8 @@ import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ActivityTitle;
+import org.orcid.pojo.ActivityTitleSearchResult;
 import org.orcid.pojo.GroupedWorks;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
@@ -94,7 +96,12 @@ public class WorksController extends BaseWorkspaceController {
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
+    
+    @Value("${org.orcid.core.work.search.title.toFeature.size:10}")
+    private int resultsSizeForSearchWorksToFeature;
 
+    private static final int ACTIVITY_TITLE_SEARCH_MAX_LENGHT = 100;
+    
     @RequestMapping(value = "/{workIdsStr}", method = RequestMethod.DELETE)
     public @ResponseBody ArrayList<Long> removeWork(@PathVariable("workIdsStr") String workIdsStr) {
         List<String> workIds = Arrays.asList(workIdsStr.split(","));
@@ -856,6 +863,18 @@ public class WorksController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
         return workManagerReadOnly.getFeaturedWorks(orcid);
     }
+    
+    @RequestMapping(value = "/searchWorksTitleToFeature.json", method = RequestMethod.GET)
+    public @ResponseBody ActivityTitleSearchResult searchWorkTitlesToFeatureJson(@RequestParam(value="term") String term, @RequestParam(value="offset", defaultValue = "0") int offset) {
+        String orcid = getEffectiveUserOrcid();
+        if (term == null || term.isBlank()|| term.trim().length() >= ACTIVITY_TITLE_SEARCH_MAX_LENGHT) {
+            ActivityTitleSearchResult emptyResult = new ActivityTitleSearchResult (new ArrayList<>(), offset,0);
+            setErrorCode(emptyResult, "error.activity_title_search.term_length_invalid");
+            return emptyResult;
+        }
+        return workManagerReadOnly.searchWorksTitle(orcid, term,resultsSizeForSearchWorksToFeature,offset, true, true);
+    }
+
 
     @RequestMapping(value = "/featuredWorks.json", method = RequestMethod.PUT)
     public @ResponseBody ResponseEntity<Map<String, Object>> getFeaturedWorksJson(HttpServletRequest request, @RequestBody Map<Long, Integer> featuredWorks) {

@@ -22,7 +22,7 @@ import org.orcid.core.exception.InvalidAmountException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
 import org.orcid.core.exception.InvalidNoOrgOrExternalIdException;
-import org.orcid.core.exception.InvalidOrgAddressCityNoCountryException;
+import org.orcid.core.exception.InvalidOrgAddressNoCountryButCityRegionException;
 import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
@@ -418,7 +418,12 @@ public class ActivityValidator {
 
             if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity())
                     && (org.getAddress().getCountry() == null || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
-                throw new InvalidOrgAddressCityNoCountryException();
+                throw new InvalidOrgAddressNoCountryButCityRegionException();
+            }
+            
+            if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getRegion())
+                    && (org.getAddress().getCountry() == null || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
+                throw new InvalidOrgAddressNoCountryButCityRegionException();
             }
         }
     }

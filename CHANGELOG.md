@@ -1,3 +1,38 @@
+## v2.128.5 - 2025-09-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.4...v2.128.5)
+
+## v2.128.4 - 2025-09-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.3...v2.128.4)
+
+## v2.128.3 - 2025-09-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.2...v2.128.3)
+
+## v2.128.2 - 2025-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.1...v2.128.2)
+
+## v2.128.1 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.0...v2.128.1)
+
+- [#7364](https://github.com/ORCID/ORCID-Source/pull/7364): PD-2042 Empty PR 
+- [#7363](https://github.com/ORCID/ORCID-Source/pull/7363): Lmendoza/pd 2042
+
+## v2.128.0 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.127.1...v2.128.0)
+
+## v2.127.1 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.127.0...v2.127.1)
+
+## v2.127.0 - 2025-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.126.0...v2.127.0)
+
 ## v2.126.0 - 2025-09-01
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.125.0...v2.126.0)
