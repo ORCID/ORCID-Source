@@ -60,7 +60,10 @@ public class AuthCodeExchangeForwardUtil {
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
         addToMapOrThrow(OrcidOauth2Constants.REFRESH_TOKEN, refreshToken, parameters);
-        addToMapOrThrow(OrcidOauth2Constants.SCOPE_PARAM, scope, parameters);
+        // Scope is not required
+        if(!StringUtils.isBlank(scope)) {
+            parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope);
+        }
 
         // Set the grant type
         parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN);
@@ -95,10 +98,13 @@ public class AuthCodeExchangeForwardUtil {
         Map<String, String> parameters = new HashMap<String, String>();
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
-        addToMapOrThrow(OrcidOauth2Constants.SCOPE_PARAM, scope, parameters);
         addToMapOrThrow(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN, subjectToken, parameters);
         addToMapOrThrow(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE, subjectTokenType, parameters);
         addToMapOrThrow(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, requestedTokenType, parameters);
+        // Scope is not required
+        if(!StringUtils.isBlank(scope)) {
+            parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope);
+        }
 
         // Set the grant type
         parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);

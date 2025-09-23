@@ -79,7 +79,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
                     response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
                     break;
                 case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, redirectUri, refreshToken);
+                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
                     break;
                 case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
                     response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, redirectUri, scopeList);
