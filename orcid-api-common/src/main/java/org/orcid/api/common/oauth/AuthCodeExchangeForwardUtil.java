@@ -41,11 +41,14 @@ public class AuthCodeExchangeForwardUtil {
         Map<String, String> parameters = new HashMap<String, String>();
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
-        addToMapOrThrow(OrcidOauth2Constants.REDIRECT_URI_PARAM, redirectUri, parameters);
         addToMapOrThrow(OrcidOauth2Constants.CODE_PARAM, code, parameters);
 
         // Set the grant type
         parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE);
+        // Set the redirect uri if it is not blank
+        if(!StringUtils.isBlank(redirectUri)) {
+            parameters.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, redirectUri);
+        }
 
         // Post and respond
         return this.doPost(parameters);
