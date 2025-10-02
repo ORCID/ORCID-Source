@@ -2,7 +2,7 @@
 <p>
 <pre style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
 <@emailMacros.msg "email.common.warm_regards" />
-<a href="https://support.orcid.org/hc/en-us" target="_blank" style="color: #2E7F9F;">https://support.orcid.org</a>
+<a href="https://support.orcid.org" target="_blank" style="color: #2E7F9F;">https://support.orcid.org</a>
 </pre>
 </p>
 <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
