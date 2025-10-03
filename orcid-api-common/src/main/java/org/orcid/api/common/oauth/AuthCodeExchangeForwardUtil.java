@@ -75,7 +75,7 @@ public class AuthCodeExchangeForwardUtil {
         return this.doPost(parameters);
     }
 
-    public Response forwardClientCredentialsRequest(String clientId, String clientSecret, String redirectUri, String scope) throws IOException, URISyntaxException, InterruptedException {
+    public Response forwardClientCredentialsRequest(String clientId, String clientSecret, String scope) throws IOException, URISyntaxException, InterruptedException {
         if(logger.isTraceEnabled()) {
             logger.trace("Using authorization server to refresh a token");
         }
@@ -83,7 +83,6 @@ public class AuthCodeExchangeForwardUtil {
         Map<String, String> parameters = new HashMap<String, String>();
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
-        addToMapOrThrow(OrcidOauth2Constants.REDIRECT_URI_PARAM, redirectUri, parameters);
         addToMapOrThrow(OrcidOauth2Constants.SCOPE_PARAM, scope, parameters);
 
         // Set the grant type
