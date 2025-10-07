@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Header Compact")
+    HEADER_COMPACT,
+
     @Label("OAuth - affiliation interstitial")
     OAUTH_AFFILIATION_INTERSTITIAL,
 
