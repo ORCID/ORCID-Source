@@ -74,25 +74,31 @@ public class OauthGenericCallsController extends OauthControllerBase {
 
             Response response = null;
 
-            switch (grantType) {
-                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                    response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                    response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
-                    break;
-                case IETF_EXCHANGE_GRANT_TYPE:
-                    response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
-                    break;
-            }
+            try {
+                switch (grantType) {
+                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                        response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                        response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                        response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
+                        break;
+                    case IETF_EXCHANGE_GRANT_TYPE:
+                        response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                        break;
+                }
 
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
-                    "ON");
-            return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
+                        "ON");
+                return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
+            } catch(Exception e) {
+                OAuthError error = OAuthErrorUtils.getOAuthError(e);
+                HttpStatus status = HttpStatus.valueOf(error.getResponseStatus().getStatusCode());
+                return ResponseEntity.status(status).body(error);
+            }
         } else {
             String authorization = request.getHeader("Authorization");
             Enumeration<String> paramNames = request.getParameterNames();
