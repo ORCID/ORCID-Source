@@ -73,7 +73,6 @@ public class OauthGenericCallsController extends OauthControllerBase {
             String requestedTokenType = request.getParameter("requested_token_type");
 
             Response response = null;
-
             try {
                 switch (grantType) {
                     case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
@@ -89,7 +88,6 @@ public class OauthGenericCallsController extends OauthControllerBase {
                         response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
                         break;
                 }
-
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
                         "ON");
