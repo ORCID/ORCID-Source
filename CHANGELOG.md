@@ -1,3 +1,9 @@
+## v2.129.5 - 2025-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.4...v2.129.5)
+
+- [#7376](https://github.com/ORCID/ORCID-Source/pull/7376): PD-2418
+
 ## v2.129.4 - 2025-10-06
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.3...v2.129.4)
