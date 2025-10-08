@@ -32,6 +32,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,6 +62,13 @@ public class OauthGenericCallsController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
     public ResponseEntity<?> obtainOauth2TokenPost(HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
         String grantType = request.getParameter("grant_type");
+        if(grantType == null) {
+            OAuthError error = new OAuthError();
+            error.setErrorDescription("grant_type is missing");
+            error.setError(OAuthError.UNSUPPORTED_GRANT_TYPE);
+            error.setResponseStatus(Response.Status.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
         if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthCodeExchangeForwardUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
             String clientId = request.getParameter("client_id");
             String clientSecret = request.getParameter("client_secret");
@@ -73,26 +81,30 @@ public class OauthGenericCallsController extends OauthControllerBase {
             String requestedTokenType = request.getParameter("requested_token_type");
 
             Response response = null;
-
-            switch (grantType) {
-                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                    response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                    response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
-                    break;
-                case IETF_EXCHANGE_GRANT_TYPE:
-                    response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
-                    break;
+            try {
+                switch (grantType) {
+                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                        response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                        response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                        response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
+                        break;
+                    case IETF_EXCHANGE_GRANT_TYPE:
+                        response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                        break;
+                }
+                HttpHeaders responseHeaders = new HttpHeaders();
+                responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
+                        "ON");
+                return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
+            } catch(Exception e) {
+                OAuthError error = OAuthErrorUtils.getOAuthError(e);
+                HttpStatus status = HttpStatus.valueOf(error.getResponseStatus().getStatusCode());
+                return ResponseEntity.status(status).body(error);
             }
-
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
-                    "ON");
-            return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
         } else {
             String authorization = request.getHeader("Authorization");
             Enumeration<String> paramNames = request.getParameterNames();

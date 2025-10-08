@@ -29,6 +29,7 @@ import org.orcid.core.utils.http.HttpRequestUtils;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -64,6 +65,10 @@ public class OrcidApiCommonEndpoints {
         throws IOException, URISyntaxException, InterruptedException {
 
         // Token delegation is not implemented in the authorization server
+        if(grantType == null) {
+            throw new UnsupportedGrantTypeException("grant_type is missing");
+        }
+
         if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthCodeExchangeForwardUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
             Response response = null;
             switch (grantType) {
