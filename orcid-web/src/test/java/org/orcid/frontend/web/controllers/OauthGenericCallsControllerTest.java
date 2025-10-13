@@ -46,7 +46,9 @@ public class OauthGenericCallsControllerTest {
     public void testObtainOauth2TokenPost() throws IOException, URISyntaxException, InterruptedException {
         when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(isNull(), any())).thenReturn(
                 Response.ok("some-success-entity").build());
-        ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(new MockHttpServletRequest());
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.addParameter("grant_type", "client_credentials");
+        ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(mockHttpServletRequest);
         assertNotNull(responseEntity);
         assertNotNull(responseEntity.getBody());
         assertEquals("some-success-entity", responseEntity.getBody());
@@ -56,7 +58,9 @@ public class OauthGenericCallsControllerTest {
     public void testObtainOauth2TokenPostLockedClient() throws IOException, URISyntaxException, InterruptedException {
         when(orcidClientCredentialEndPointDelegator.obtainOauth2Token(isNull(), any())).thenThrow(
                 new LockedException("Client is locked"));
-        ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(new MockHttpServletRequest());
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.addParameter("grant_type", "client_credentials");
+        ResponseEntity<?> responseEntity = controller.obtainOauth2TokenPost(mockHttpServletRequest);
         assertNotNull(responseEntity);
         assertNotNull(responseEntity.getBody());
         assertTrue(responseEntity.getBody() instanceof OAuthError);
