@@ -1,5 +1,6 @@
 package org.orcid.api.common.oauth;
 
+import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -119,6 +120,7 @@ public class AuthCodeExchangeForwardUtil {
         if(StringUtils.isBlank(value)) {
             throw new IllegalArgumentException(name + " is required");
         }
+
         parameters.put(name, value);
     }
 

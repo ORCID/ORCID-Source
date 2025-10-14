@@ -102,8 +102,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
                 return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
             } catch(Exception e) {
                 OAuthError error = OAuthErrorUtils.getOAuthError(e);
-                HttpStatus status = HttpStatus.valueOf(error.getResponseStatus().getStatusCode());
-                return ResponseEntity.status(status).body(error);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
             }
         } else {
             String authorization = request.getHeader("Authorization");
