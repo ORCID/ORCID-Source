@@ -45,12 +45,14 @@ public class ISBNOCLCResolver implements LinkResolver {
         // this assumes we're using worldcat - 303 on success, 200 on fail
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            // If it is a valid format, but the resolver is disabled,
+            // If it is a valid format
         	if(StringUtils.equals("isbn", apiTypeName) && ISBNValidator.getInstance().isValid(normalizationService.normalise("isbn", value))) {
 				return new PIDResolutionResult(false, false, true, normUrl);
 			}
         	
             if (disableIsbnResolution) {
+            	// If it is a valid format, but the resolver is disabled,
+                // return just the valid format
                 return new PIDResolutionResult(false, false, true, null);
             } else if (cache.isHttp303(normUrl)) {
                 return new PIDResolutionResult(true, true, true, normUrl);
