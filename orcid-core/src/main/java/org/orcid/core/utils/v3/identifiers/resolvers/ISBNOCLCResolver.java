@@ -2,6 +2,8 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import java.util.List;
 
+import org.apache.commons.validator.routines.ISBNValidator;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -43,8 +45,13 @@ public class ISBNOCLCResolver implements LinkResolver {
         // this assumes we're using worldcat - 303 on success, 200 on fail
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
+            // If it is a valid format
+        	if(StringUtils.equals("isbn", apiTypeName) && ISBNValidator.getInstance().isValid(normalizationService.normalise("isbn", value))) {
+				return new PIDResolutionResult(false, false, true, normUrl);
+			}
+        	
             if (disableIsbnResolution) {
-                // If it is a valid format, but the resolver is disabled,
+            	// If it is a valid format, but the resolver is disabled,
                 // return just the valid format
                 return new PIDResolutionResult(false, false, true, null);
             } else if (cache.isHttp303(normUrl)) {
@@ -55,4 +62,6 @@ public class ISBNOCLCResolver implements LinkResolver {
         }
         return new PIDResolutionResult(false,false,true,null);//unreachable?
     }
+    
+    
 }
