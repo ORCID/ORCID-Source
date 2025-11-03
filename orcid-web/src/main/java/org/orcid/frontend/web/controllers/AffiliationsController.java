@@ -201,14 +201,15 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody AffiliationForm postAffiliation(HttpServletRequest request, @RequestBody AffiliationForm affiliationForm) throws Exception {
         // Validate
         affiliationNameValidate(affiliationForm);
-        cityValidate(affiliationForm);
-        regionValidate(affiliationForm);
-        countryValidate(affiliationForm);
+        if(!AffiliationForm.isEditorialService(affiliationForm)) {
+	        cityValidate(affiliationForm);
+	        regionValidate(affiliationForm);
+	        countryValidate(affiliationForm);
+        }
         departmentValidate(affiliationForm);
         roleTitleValidate(affiliationForm);
         datesValidate(affiliationForm);
         urlValidate(affiliationForm);
-
         copyErrors(affiliationForm.getAffiliationName(), affiliationForm);
         copyErrors(affiliationForm.getCity(), affiliationForm);
         copyErrors(affiliationForm.getRegion(), affiliationForm);
@@ -220,6 +221,7 @@ public class AffiliationsController extends BaseWorkspaceController {
 
         if (!PojoUtil.isEmpty(affiliationForm.getEndDate()))
             copyErrors(affiliationForm.getEndDate(), affiliationForm);
+        
         if (affiliationForm.getErrors().isEmpty()) {
             if (PojoUtil.isEmpty(affiliationForm.getPutCode()))
                 addAffiliation(affiliationForm);
