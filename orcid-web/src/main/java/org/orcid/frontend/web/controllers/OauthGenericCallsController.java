@@ -16,14 +16,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.api.common.oauth.AuthCodeExchangeForwardUtil;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.util.RequestInfoFormLocalCache;
-import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -32,7 +31,6 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +55,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
     private RequestInfoFormLocalCache requestInfoFormLocalCache;
 
     @Resource
-    private AuthCodeExchangeForwardUtil authCodeExchangeForwardUtil;
+    private AuthorizationServerUtil authCodeExchangeForwardUtil;
     
     @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
     public ResponseEntity<?> obtainOauth2TokenPost(HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
@@ -69,7 +67,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
             error.setResponseStatus(Response.Status.BAD_REQUEST);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
-        if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthCodeExchangeForwardUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
+        if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthorizationServerUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
             String clientId = request.getParameter("client_id");
             String clientSecret = request.getParameter("client_secret");
             String redirectUri = request.getParameter("redirect_uri");

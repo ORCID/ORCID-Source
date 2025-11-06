@@ -19,26 +19,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.orcid.api.common.oauth.AuthCodeExchangeForwardUtil;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.http.HttpRequestUtils;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 @Component
 @Path(OAUTH_TOKEN)
@@ -50,7 +39,7 @@ public class OrcidApiCommonEndpoints {
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
 
     @Resource
-    private AuthCodeExchangeForwardUtil authCodeExchangeForwardUtil;
+    private AuthorizationServerUtil authorizationServerUtil;
 
     @POST
     @Produces(value = { MediaType.APPLICATION_JSON })
@@ -69,20 +58,20 @@ public class OrcidApiCommonEndpoints {
             throw new UnsupportedGrantTypeException("grant_type is missing");
         }
 
-        if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthCodeExchangeForwardUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
+        if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive() && AuthorizationServerUtil.AUTH_SERVER_ALLOWED_GRANT_TYPES.contains(grantType)) {
             Response response = null;
             switch (grantType) {
                 case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                    response = authCodeExchangeForwardUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                    response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
                 break;
                 case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authCodeExchangeForwardUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
+                    response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
                 break;
                 case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                    response = authCodeExchangeForwardUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
+                    response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
                 break;
                 case IETF_EXCHANGE_GRANT_TYPE:
-                    response = authCodeExchangeForwardUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                    response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
                 break;
             }
             Object entity = response.getEntity();
