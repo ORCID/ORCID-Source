@@ -53,7 +53,8 @@ public class OAuthErrorUtils {
             error.setError(OAuthError.UNAUTHORIZED_CLIENT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if(MissingArgumentException.class.isAssignableFrom(t.getClass())) {
-
+            error.setError(OAuthError.UNAUTHORIZED_CLIENT);
+            error.setResponseStatus(Status.BAD_REQUEST);
         } else {
             error.setError(OAuthError.SERVER_ERROR);
             error.setResponseStatus(Status.INTERNAL_SERVER_ERROR);
