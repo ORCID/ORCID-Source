@@ -495,43 +495,44 @@ public class ManageProfileController extends BaseWorkspaceController {
     public DeactivateOrcid confirmDeactivateOrcid(HttpServletRequest request, HttpServletResponse response, @PathVariable("token") String token, @RequestBody DeactivateOrcid deactivateForm) {
         ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
         deactivateForm.setTokenVerification(verificationResult);
+        DeactivateOrcid deactivateResponse = new DeactivateOrcid();
         List<String> errors = new ArrayList<String>();
         if (verificationResult.getStatus() != ExpiringLinkService.VerificationStatus.VALID) {
-            deactivateForm.setTokenVerification(verificationResult);
-            return deactivateForm;
+            deactivateResponse.setTokenVerification(verificationResult);
+            return deactivateResponse;
         }
 
         String orcid = verificationResult.getClaims().getSubject();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (deactivateForm.getPassword() == null || !encryptionManager.hashMatches(deactivateForm.getPassword(), profile.getEncryptedPassword())) {
-            deactivateForm.setInvalidPassword(true);
-            return deactivateForm;
+            deactivateResponse.setInvalidPassword(true);
+            return deactivateResponse;
         }
         if (twoFactorAuthenticationManager.userUsing2FA(orcid)) {
             if (deactivateForm.getTwoFactorCode() == null && deactivateForm.getTwoFactorRecoveryCode() == null) {
-                deactivateForm.setTwoFactorEnabled(true);
-                return deactivateForm;
+                deactivateResponse.setTwoFactorEnabled(true);
+                return deactivateResponse;
             } else {
                 if (deactivateForm.getTwoFactorRecoveryCode() != null && !deactivateForm.getTwoFactorRecoveryCode().isEmpty()) {
                     if (!backupCodeManager.verify(orcid, deactivateForm.getTwoFactorRecoveryCode())) {
-                        deactivateForm.setInvalidTwoFactorRecoveryCode(true);
-                        return deactivateForm;
+                        deactivateResponse.setInvalidTwoFactorRecoveryCode(true);
+                        return deactivateResponse;
                     }
                 } else if (deactivateForm.getTwoFactorCode() != null && !deactivateForm.getTwoFactorCode().isEmpty()) {
                     if (!twoFactorAuthenticationManager.verificationCodeIsValid(deactivateForm.getTwoFactorCode(), orcid)) {
-                        deactivateForm.setInvalidTwoFactorCode(true);
-                        return deactivateForm;
+                        deactivateResponse.setInvalidTwoFactorCode(true);
+                        return deactivateResponse;
                     }
                 } else {
-                    deactivateForm.setInvalidTwoFactorCode(true);
-                    return deactivateForm;
+                    deactivateResponse.setInvalidTwoFactorCode(true);
+                    return deactivateResponse;
                 }
 
             }
         }
         //deactivate orcid
-        deactivateForm.setDeactivationSuccessful(true);
-        return deactivateForm;
+        deactivateResponse.setDeactivationSuccessful(true);
+        return deactivateResponse;
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
