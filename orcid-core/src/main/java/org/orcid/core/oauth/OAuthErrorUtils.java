@@ -2,6 +2,7 @@ package org.orcid.core.oauth;
 
 import javax.ws.rs.core.Response.Status;
 
+import de.undercouch.citeproc.helper.tool.MissingArgumentException;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
@@ -49,6 +50,9 @@ public class OAuthErrorUtils {
             error.setError(OAuthError.UNAUTHORIZED_CLIENT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else if (InvalidTokenException.class.isAssignableFrom(t.getClass())) {
+            error.setError(OAuthError.UNAUTHORIZED_CLIENT);
+            error.setResponseStatus(Status.BAD_REQUEST);
+        } else if(MissingArgumentException.class.isAssignableFrom(t.getClass())) {
             error.setError(OAuthError.UNAUTHORIZED_CLIENT);
             error.setResponseStatus(Status.BAD_REQUEST);
         } else {

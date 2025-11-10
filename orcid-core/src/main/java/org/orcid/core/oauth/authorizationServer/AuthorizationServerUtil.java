@@ -1,11 +1,14 @@
-package org.orcid.api.common.oauth;
+package org.orcid.core.oauth.authorizationServer;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.http.HttpRequestUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -19,18 +22,26 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-public class AuthCodeExchangeForwardUtil {
-    private static final Logger logger = Logger.getLogger(AuthCodeExchangeForwardUtil.class);
+public class AuthorizationServerUtil {
+    private static final Logger logger = Logger.getLogger(AuthorizationServerUtil.class);
 
     public static final Set<String> AUTH_SERVER_ALLOWED_GRANT_TYPES = Set.of("authorization_code", "refresh_token", "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange");
 
     private final String authorizationServerTokenExchangeEndpoint;
 
+    private final String authorizationServerIntrospectionEndpoint;
+
     @Resource
     private HttpRequestUtils httpRequestUtils;
 
-    public AuthCodeExchangeForwardUtil(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl) {
+    @Value("${org.orcid.authorization.server.tokenIntrospection.clientId}")
+    private String tokenIntrospectionClientId;
+    @Value("${org.orcid.authorization.server.tokenIntrospection.clientSecret}")
+    private String tokenIntrospectionClientSecret;
+
+    public AuthorizationServerUtil(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl) {
         this.authorizationServerTokenExchangeEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth/token" : authorizationServerUrl + "/oauth/token";
+        this.authorizationServerIntrospectionEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/introspect" : authorizationServerUrl + "/oauth2/introspect";
     }
 
     public Response forwardAuthorizationCodeExchangeRequest(String clientId, String clientSecret, String redirectUri, String code) throws IOException, URISyntaxException, InterruptedException {
@@ -115,15 +126,39 @@ public class AuthCodeExchangeForwardUtil {
         return this.doPost(parameters);
     }
 
+    public JSONObject tokenIntrospection(String tokenValue) throws IOException, URISyntaxException, InterruptedException, JSONException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server for token introspection");
+        }
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, tokenIntrospectionClientId, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, tokenIntrospectionClientSecret, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.TOKEN, tokenValue, parameters);
+
+        Response response = this.doPost(this.authorizationServerIntrospectionEndpoint, parameters);
+
+        if (response != null && (response.getStatus() == 200)) {
+            String responseString = (String) response.getEntity();
+            return new JSONObject(responseString);
+        }
+
+        return null;
+    }
+
     private void addToMapOrThrow(String name, String value, Map<String, String> parameters) {
         if(StringUtils.isBlank(value)) {
             throw new IllegalArgumentException(name + " is required");
         }
+
         parameters.put(name, value);
     }
 
-    private Response doPost( Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
-        HttpResponse<String> tokenResponse = httpRequestUtils.doPost(authorizationServerTokenExchangeEndpoint, parameters);
+    private Response doPost(Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
+        return doPost(authorizationServerTokenExchangeEndpoint, parameters);
+    }
+
+    private Response doPost(String uri, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
+        HttpResponse<String> tokenResponse = httpRequestUtils.doPost(uri, parameters);
         int statusCode = tokenResponse.statusCode();
         String tokenResult = tokenResponse.body();
 
