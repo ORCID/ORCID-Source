@@ -30,6 +30,7 @@ public class OrcidOauth2Constants {
     public static final String REVOKE_OLD = "revoke_old";
     public static final String EXPIRES_IN = "expires_in";
     public static final String TOKEN_ID = "tokenId";
+    public static final String TOKEN = "token";
     public static final String ORIGINAL_AUTHORIZATION_REQUEST = "org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint.ORIGINAL_AUTHORIZATION_REQUEST";
     public static final String TOKEN_EXPIRATION_TIME = "token_expiration_time";
     

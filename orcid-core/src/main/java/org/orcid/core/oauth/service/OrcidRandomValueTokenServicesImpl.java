@@ -5,7 +5,10 @@ import java.util.*;
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
 
+import javassist.compiler.SyntaxError;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.constants.RevokeReason;
@@ -17,6 +20,7 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
@@ -32,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -96,10 +102,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
     private boolean isTokenCacheEnabled;
-    
-    public boolean isCustomSupportRefreshToken() {
-        return customSupportRefreshToken;
-    }
+
+    @Resource
+    private AuthorizationServerUtil authorizationServerUtil;
 
     public void setCustomSupportRefreshToken(boolean customSupportRefreshToken) {
         this.customSupportRefreshToken = customSupportRefreshToken;
@@ -269,36 +274,94 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         return false;
     }
 
+    private OAuth2Authentication loadAuthenticationFromAuthorizationServer(String accessTokenValue) {
+        try {
+            JSONObject tokenInfo = authorizationServerUtil.tokenIntrospection(accessTokenValue);
+            if(tokenInfo == null) {
+                throw new InvalidTokenException("Invalid access token: Unable to obtain information from the authorization server");
+            }
+
+            boolean isTokenActive = tokenInfo.getBoolean("active");
+            if(isTokenActive) {
+                // If the token is user revoked it might be used for DELETE requests
+                return buildAuthentication(accessTokenValue, tokenInfo);
+            } else {
+                ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                if(RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
+                    if(tokenInfo.has("USER_REVOKED") && tokenInfo.getBoolean("USER_REVOKED") == true) {
+                        return buildAuthentication(accessTokenValue, tokenInfo);
+                    } else {
+                        throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+                    }
+                } else {
+                    throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+                }
+            }
+        } catch(Exception e) {
+            LOGGER.error("Exception validating token from authorization server", e);
+            throw new RuntimeException("Exception validating token from authorization server", e);
+        }
+    }
+
+    private OrcidOAuth2Authentication buildAuthentication(String accessTokenValue, JSONObject tokenInfo) throws JSONException {
+        // What will we get when the token does not exists?
+        String clientId = tokenInfo.getString("client_id");
+        Authentication authentication = null;
+        Set<String> scopes = OAuth2Utils.parseParameterList(tokenInfo.getString("scope"));
+        AuthorizationRequest request = new AuthorizationRequest(clientId, scopes);
+        request.setApproved(true);
+        if(tokenInfo.has("username")) {
+            String orcid = tokenInfo.getString("username");
+            ProfileEntity profile = new ProfileEntity(orcid);
+            authentication = new OrcidOauth2UserAuthentication(profile, true);
+        }
+        // `orcid` is the only resource id and it is applied to all clients
+        request.setResourceIds(Set.of("orcid"));
+
+        // Set granted authorities
+        if(tokenInfo.has("clientGrantedAuthority")) {
+            GrantedAuthority ga = new SimpleGrantedAuthority(tokenInfo.getString("clientGrantedAuthority"));
+            request.setAuthorities(List.of(ga));
+        }
+        return new OrcidOAuth2Authentication(request, authentication, accessTokenValue);
+    }
+
     @Override
     public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        LOGGER.debug("Loading authentication from token");
-        // Feature flag: If the request is to delete an element, allow
-        if (RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
-            OrcidOauth2TokenDetail orcidAccessToken = orcidTokenStore.readOrcidOauth2TokenDetail(accessTokenValue);
-            if (orcidAccessToken == null) {
-                // Access token not found
-                throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+        if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
+            if(LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Using the auth server to validate token");
             }
-            String revokeReason = orcidAccessToken.getRevokeReason();
-            if (PojoUtil.isEmpty(revokeReason) || RevokeReason.USER_REVOKED.equals(RevokeReason.valueOf(revokeReason))) {
-                OAuth2AccessToken accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
-                validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
-                return orcidTokenStore.readAuthenticationEvenOnDisabledTokens(accessTokenValue);
-            } else {
-                throw new InvalidTokenException("Invalid access token: " + accessTokenValue + ", revoke reason: " + revokeReason);
-            }
+            return loadAuthenticationFromAuthorizationServer(accessTokenValue);
         } else {
-            // Get the token from the cache
-            Map<String, String> cachedAccessToken = getTokenFromCache(accessTokenValue);
-            if(cachedAccessToken != null) {
-                 return orcidTokenStore.readAuthenticationFromCachedToken(cachedAccessToken);                 
-            }  else {
-                // Fallback to database if it is not in the cache
-                OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
-                validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
-                return orcidTokenStore.readAuthentication(accessTokenValue);
-            }            
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            // Feature flag: If the request is to delete an element, allow
+            if (RequestMethod.DELETE.name().equals(attr.getRequest().getMethod())) {
+                OrcidOauth2TokenDetail orcidAccessToken = orcidTokenStore.readOrcidOauth2TokenDetail(accessTokenValue);
+                if (orcidAccessToken == null) {
+                    // Access token not found
+                    throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
+                }
+                String revokeReason = orcidAccessToken.getRevokeReason();
+                if (PojoUtil.isEmpty(revokeReason) || RevokeReason.USER_REVOKED.equals(RevokeReason.valueOf(revokeReason))) {
+                    OAuth2AccessToken accessToken = orcidTokenStore.readEvenDisabledAccessToken(accessTokenValue);
+                    validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+                    return orcidTokenStore.readAuthenticationEvenOnDisabledTokens(accessTokenValue);
+                } else {
+                    throw new InvalidTokenException("Invalid access token: " + accessTokenValue + ", revoke reason: " + revokeReason);
+                }
+            } else {
+                // Get the token from the cache
+                Map<String, String> cachedAccessToken = getTokenFromCache(accessTokenValue);
+                if (cachedAccessToken != null) {
+                    return orcidTokenStore.readAuthenticationFromCachedToken(cachedAccessToken);
+                } else {
+                    // Fallback to database if it is not in the cache
+                    OAuth2AccessToken accessToken = orcidTokenStore.readAccessToken(accessTokenValue);
+                    validateTokenExpirationAndClientStatus(accessToken, accessTokenValue);
+                    return orcidTokenStore.readAuthentication(accessTokenValue);
+                }
+            }
         }
     }
         
