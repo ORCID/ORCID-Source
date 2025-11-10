@@ -66,7 +66,16 @@
 		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
 		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
 	</bean>
-	
+
+	<bean id="expiringLinkServiceConfig" class="org.orcid.utils.ExpiringLinkService.ExpiringLinkServiceConfig">
+		<property name="key" value="${org.orcid.utils.jwtKey}"/>
+		<property name="testKey" value="${org.orcid.utils.jwtTestKey}"/>
+	</bean>
+
+	<bean id="expiringLinkService" class="org.orcid.utils.ExpiringLinkService">
+		<constructor-arg ref="expiringLinkServiceConfig" />
+	</bean>
+
 	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService.OpenIDConnectDiscoveryServiceConfig"/>
 	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService"/>
 	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
