@@ -267,6 +267,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
         String bodyText = templateManager.processTemplate("digest_notification.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_notification_html.ftl", params, locale);
+        
+        System.out.println("Digest email for " + orcid + ":\n" + bodyText);
+        System.out.println("Digest email for html" + orcid + ":\n" + bodyHtml);
 
         EmailMessage emailMessage = new EmailMessage();
 
