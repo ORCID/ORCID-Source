@@ -496,9 +496,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
         deactivateForm.setTokenVerification(verificationResult);
         DeactivateOrcid deactivateResponse = new DeactivateOrcid();
+        deactivateResponse.setTokenVerification(verificationResult);
         List<String> errors = new ArrayList<String>();
         if (verificationResult.getStatus() != ExpiringLinkService.VerificationStatus.VALID) {
-            deactivateResponse.setTokenVerification(verificationResult);
             return deactivateResponse;
         }
 
