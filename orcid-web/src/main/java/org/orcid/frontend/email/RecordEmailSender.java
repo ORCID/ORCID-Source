@@ -45,6 +45,9 @@ public class RecordEmailSender {
 
     @Value("${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}")
     private boolean apiRecordCreationEmailEnabled;
+
+    @Value("${org.orcid.utils.jwtExpirationInMinutes:240}")
+    private long jwtExpirationInMinutes;
     
     @Resource
     private ProfileEventDao profileEventDao;
@@ -131,7 +134,7 @@ public class RecordEmailSender {
         try {
             token = expiringLinkService.generateExpiringToken(
                     userOrcid,
-                    500,
+                    jwtExpirationInMinutes,
                     ExpiringLinkService.ExpiringLinkType.ACCOUNT_DEACTIVATION
             );
         } catch (com.nimbusds.jose.JOSEException e) {
