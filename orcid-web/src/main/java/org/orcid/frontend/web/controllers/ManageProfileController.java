@@ -530,7 +530,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
             }
         }
-        //deactivate orcid
+        profileEntityManager.deactivateRecord(orcid);
         deactivateResponse.setDeactivationSuccessful(true);
         return deactivateResponse;
     }
