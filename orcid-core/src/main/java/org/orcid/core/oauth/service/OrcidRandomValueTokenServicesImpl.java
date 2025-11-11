@@ -297,6 +297,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
                     throw new InvalidTokenException("Invalid access token: " + accessTokenValue);
                 }
             }
+        } catch(InvalidTokenException i) {
+            throw i;
         } catch(Exception e) {
             LOGGER.error("Exception validating token from authorization server", e);
             throw new RuntimeException("Exception validating token from authorization server", e);
