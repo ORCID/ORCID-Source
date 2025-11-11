@@ -82,13 +82,14 @@ public class ExpiringLinkService {
     }
 
     public ExpiringLinkService(ExpiringLinkServiceConfig config) throws KeyLengthException, JOSEException {
-        String secretString = config.getTestKey();
+        String secretString = config.getKey();
+
         if (StringUtils.isEmpty(secretString)) {
-            secretString = config.getKey();
+            secretString = config.getTestKey();
         }
 
         if (StringUtils.isEmpty(secretString)) {
-            throw new IllegalArgumentException("No secret key provided in ExpiringLinkServiceConfig.");
+            throw new IllegalArgumentException("No 'org.orcid.utils.jwtKey' or 'org.orcid.utils.jwtTestKey' provided. Application cannot start.");
         }
 
         byte[] secretKey = secretString.getBytes(StandardCharsets.UTF_8);
