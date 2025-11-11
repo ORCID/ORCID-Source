@@ -470,12 +470,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return null;
     }
-
-    @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
-    public ModelAndView viewDeactivateOrcidAccount() {
-        return new ModelAndView("deactivate_orcid");
-    }
-
+    
     @RequestMapping(value = "/deactivate/{token}", method = RequestMethod.GET)
     @ResponseBody
     public ExpiringLinkService.VerificationResult verifyDeactivationToken(HttpServletRequest request, HttpServletResponse response, @PathVariable("token") String token) {
