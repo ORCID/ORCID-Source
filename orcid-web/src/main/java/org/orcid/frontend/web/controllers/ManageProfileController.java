@@ -509,8 +509,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             return deactivateResponse;
         }
         if (twoFactorAuthenticationManager.userUsing2FA(orcid)) {
+            deactivateResponse.setTwoFactorEnabled(true);
             if (deactivateForm.getTwoFactorCode() == null && deactivateForm.getTwoFactorRecoveryCode() == null) {
-                deactivateResponse.setTwoFactorEnabled(true);
                 return deactivateResponse;
             } else {
                 if (deactivateForm.getTwoFactorRecoveryCode() != null && !deactivateForm.getTwoFactorRecoveryCode().isEmpty()) {

@@ -22,11 +22,11 @@ public class DeactivateOrcid implements ErrorsInterface {
 
     private boolean deactivationSuccessful;
 
-    private boolean invalidPassword = false;
+    private boolean invalidPassword;
 
-    private boolean invalidTwoFactorCode = false;
+    private boolean invalidTwoFactorCode;
 
-    private boolean invalidTwoFactorRecoveryCode = false;
+    private boolean invalidTwoFactorRecoveryCode;
     
     public List<String> getErrors() {
         return errors;
