@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Optional;
 
 
 public class ExpiringLinkService {
@@ -52,10 +51,6 @@ public class ExpiringLinkService {
 
         public static VerificationResult invalid() {
             return new VerificationResult(VerificationStatus.INVALID, null);
-        }
-
-        public String getOrcid() {
-            return claims.getSubject();
         }
 
         public VerificationStatus getStatus() {
