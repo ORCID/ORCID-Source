@@ -71,7 +71,7 @@
 	</bean>
 
 	<bean id="expiringLinkServiceConfig" class="org.orcid.utils.ExpiringLinkService.ExpiringLinkServiceConfig">
-		<property name="key" value="${org.orcid.utils.jwtKey:ByxIzvso5sK8kZcV9sEIrk52jpJQsVTZ_kZcV9sEIrk5cV9sVTZ}"/>
+		<property name="key" value="${org.orcid.utils.jwtKey}"/>
 	</bean>
 
 	<bean id="expiringLinkService" class="org.orcid.utils.ExpiringLinkService">
