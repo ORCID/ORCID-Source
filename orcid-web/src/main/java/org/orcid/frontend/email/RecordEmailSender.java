@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.nimbusds.jose.JOSEException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.constants.EmailConstants;
@@ -21,13 +22,13 @@ import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
@@ -44,6 +45,9 @@ public class RecordEmailSender {
 
     @Value("${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}")
     private boolean apiRecordCreationEmailEnabled;
+
+    @Value("${org.orcid.utils.jwtExpirationInMinutes:240}")
+    private long jwtExpirationInMinutes;
     
     @Resource
     private ProfileEventDao profileEventDao;
@@ -84,6 +88,9 @@ public class RecordEmailSender {
     @Resource
     private VerifyEmailUtils verifyEmailUtils;
 
+    @Resource
+    private ExpiringLinkService expiringLinkService;
+
     public void sendWelcomeEmail(String userOrcid, String email) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
@@ -121,15 +128,26 @@ public class RecordEmailSender {
         String subject = verifyEmailUtils.getSubject("email.subject.deactivate", userLocale);
         String email = primaryEmail.getEmail();
         String encryptedEmail = encryptionManager.encryptForExternalUse(email);
-        String base64EncodedEmail = Base64.encodeBase64URLSafeString(encryptedEmail.getBytes());
-        String deactivateUrlEndpointPath = "/account/confirm-deactivate-orcid";
+        String deactivateUrlEndpointPath = "/account/deactivate";
+
+        String token;
+        try {
+            token = expiringLinkService.generateExpiringToken(
+                    userOrcid,
+                    jwtExpirationInMinutes,
+                    ExpiringLinkService.ExpiringLinkType.ACCOUNT_DEACTIVATION
+            );
+        } catch (com.nimbusds.jose.JOSEException e) {
+            LOGGER.error("Failed to generate account deactivation token", e);
+            throw new RuntimeException("Token generation failed", e);
+        }
 
         String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
         templateParams.put("emailName", emailFriendlyName);
         templateParams.put("orcid", userOrcid);
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
-        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "/" + base64EncodedEmail);
+        templateParams.put("deactivateUrlEndpoint", deactivateUrlEndpointPath + "?token=" + token);
         templateParams.put("deactivateUrlEndpointUrl", deactivateUrlEndpointPath);
         templateParams.put("subject", subject);
 
@@ -366,7 +384,7 @@ public class RecordEmailSender {
         
         String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
         Map<String, Object> templateParams = verifyEmailUtils.createParamsForVerificationEmail(emailFriendlyName, userOrcid, email, isPrimaryEmail, locale);
-        String subject = (String) templateParams.get("subject");        
+        String subject = (String) templateParams.get("subject");
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);

@@ -383,6 +383,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/countryNamesToCountryCodes.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/account/deactivate/.*"
+		   	access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 		<sec:intercept-url pattern="/developer-tools"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*"

@@ -220,7 +220,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 LOGGER.info("About to deactivate record {}", orcid);                
                 clearRecord(orcid, true);
                 emailManager.hideAllEmails(orcid);
-                notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
                 profileDao.deactivate(orcid);
                 LOGGER.info("Record {} successfully deactivated", orcid);
                 return true;                
