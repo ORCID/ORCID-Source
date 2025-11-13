@@ -20,13 +20,12 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.EmailConstants;
-import org.orcid.core.manager.AdminManager;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.PreferenceManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.core.manager.UserConnectionManager;
+import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.*;
+import org.orcid.core.manager.v3.AddressManager;
+import org.orcid.core.manager.v3.BiographyManager;
+import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
@@ -39,15 +38,9 @@ import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.jpa.entities.*;
-import org.orcid.pojo.AddEmail;
-import org.orcid.pojo.ApplicationSummary;
-import org.orcid.pojo.ChangePassword;
-import org.orcid.pojo.DelegateForm;
-import org.orcid.pojo.DeprecateProfile;
-import org.orcid.pojo.EmailFrequencyOptions;
-import org.orcid.pojo.ManageDelegate;
-import org.orcid.pojo.ManageSocialAccount;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.*;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.springframework.stereotype.Controller;
@@ -118,7 +111,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
-    
+
+    @Resource
+    private BackupCodeManager backupCodeManager;
+
     @Resource
     private RecordEmailSender recordEmailSender;
     
@@ -133,6 +129,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource(name = "profileInterstitialFlagManager")
     private ProfileInterstitialFlagManager profileInterstitialFlagManager;
+
+    @Resource
+    private ExpiringLinkService expiringLinkService;
 
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -285,7 +284,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody ChangePassword changedPasswordJson(HttpServletRequest request, @RequestBody ChangePassword cp) {
         List<String> errors = new ArrayList<String>();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
+
         if (cp.getPassword() == null || !cp.getPassword().matches(PasswordConstants.ORCID_PASSWORD_REGEX)) {
             errors.add(getMessage("Pattern.registrationForm.passwordRequirement"));
         } else if (!cp.getPassword().equals(cp.getRetypedPassword())) {
@@ -471,31 +470,64 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
         return null;
     }
-
-    @RequestMapping(value = { "deactivate-orcid", "/view-deactivate-orcid-account" }, method = RequestMethod.GET)
-    public ModelAndView viewDeactivateOrcidAccount() {
-        return new ModelAndView("deactivate_orcid");
-    }
-
-    @RequestMapping(value = "/confirm-deactivate-orcid/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView confirmDeactivateOrcidAccount(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail) throws Exception {
-        ModelAndView result = null;
-        String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8"));
-        String currentUserOrcid = getCurrentUserOrcid();
-
-        if(!PojoUtil.isEmpty(currentUserOrcid)) {
-            org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(currentUserOrcid);
-
-            if (primaryEmail != null && decryptedEmail.equals(primaryEmail.getEmail())) {
-                profileEntityManager.deactivateRecord(currentUserOrcid);
-                logoutCurrentUser(request, response);
-                result = new ModelAndView("redirect:" + calculateRedirectUrl("/signin#deactivated"));
-            } else {
-                return new ModelAndView("redirect:" + calculateRedirectUrl("/my-orcid"));
+    
+    @RequestMapping(value = "/deactivate/{token}", method = RequestMethod.GET)
+    @ResponseBody
+    public ExpiringLinkService.VerificationResult verifyDeactivationToken(HttpServletRequest request, HttpServletResponse response, @PathVariable("token") String token) {
+        logoutCurrentUser(request, response);
+        ExpiringLinkService.VerificationResult tokenVerification = expiringLinkService.verifyToken(token);
+        if (tokenVerification.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
+            String orcid = tokenVerification.getClaims().getSubject();
+            if (profileEntityManager.isDeactivated(orcid)) {
+                return ExpiringLinkService.VerificationResult.invalid();
             }
         }
+        return tokenVerification;
+    }
 
-        return result;
+    @RequestMapping(value = "/deactivate/{token}", method = RequestMethod.POST)
+    @ResponseBody
+    public DeactivateOrcid confirmDeactivateOrcid(HttpServletRequest request, HttpServletResponse response, @PathVariable("token") String token, @RequestBody DeactivateOrcid deactivateForm) {
+        ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
+        deactivateForm.setTokenVerification(verificationResult);
+        DeactivateOrcid deactivateResponse = new DeactivateOrcid();
+        deactivateResponse.setTokenVerification(verificationResult);
+        List<String> errors = new ArrayList<String>();
+        if (verificationResult.getStatus() != ExpiringLinkService.VerificationStatus.VALID) {
+            return deactivateResponse;
+        }
+
+        String orcid = verificationResult.getClaims().getSubject();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        if (deactivateForm.getPassword() == null || !encryptionManager.hashMatches(deactivateForm.getPassword(), profile.getEncryptedPassword())) {
+            deactivateResponse.setInvalidPassword(true);
+            return deactivateResponse;
+        }
+        if (twoFactorAuthenticationManager.userUsing2FA(orcid)) {
+            deactivateResponse.setTwoFactorEnabled(true);
+            if (deactivateForm.getTwoFactorCode() == null && deactivateForm.getTwoFactorRecoveryCode() == null) {
+                return deactivateResponse;
+            } else {
+                if (deactivateForm.getTwoFactorRecoveryCode() != null && !deactivateForm.getTwoFactorRecoveryCode().isEmpty()) {
+                    if (!backupCodeManager.verify(orcid, deactivateForm.getTwoFactorRecoveryCode())) {
+                        deactivateResponse.setInvalidTwoFactorRecoveryCode(true);
+                        return deactivateResponse;
+                    }
+                } else if (deactivateForm.getTwoFactorCode() != null && !deactivateForm.getTwoFactorCode().isEmpty()) {
+                    if (!twoFactorAuthenticationManager.verificationCodeIsValid(deactivateForm.getTwoFactorCode(), orcid)) {
+                        deactivateResponse.setInvalidTwoFactorCode(true);
+                        return deactivateResponse;
+                    }
+                } else {
+                    deactivateResponse.setInvalidTwoFactorCode(true);
+                    return deactivateResponse;
+                }
+
+            }
+        }
+        profileEntityManager.deactivateRecord(orcid);
+        deactivateResponse.setDeactivationSuccessful(true);
+        return deactivateResponse;
     }
     
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
