@@ -158,4 +158,4 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 Example response
 ```HTTP/1.1 204 No Content```
 
-[^1]: ***organization** and **address** fields on distinctions, intived-positions, memberships, services and qualifications are not requiered as long as an external-id is provided
+[^1]: ***organization** and **address** fields on distinctions, intived-positions, memberships, services and qualifications are not required as long as an external-id is provided
