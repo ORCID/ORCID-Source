@@ -69,6 +69,7 @@ public class PopulateTestWorksForClientAndUser {
         WorkEntity entity = new WorkEntity();
         entity.setTitle("test " + i);
         entity.setOrcid(orcidId);
+        entity.setFeaturedDisplayIndex(0);
         if (clientDetailsId != null) {
             entity.setClientSourceId(clientDetailsId);
         }

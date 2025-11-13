@@ -18,8 +18,8 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
-import org.orcid.core.utils.DateUtils;
-import org.orcid.core.utils.NullUtils;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.NullUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.TransactionStatus;
@@ -146,7 +146,7 @@ public class CreateNewClientSecrets {
 
     private void createNewClientSecret(ClientDetailsEntity clientDetails) {
         String clientSecret = UUID.randomUUID().toString();
-        clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails));
+        clientDetails.getClientSecrets().add(new ClientSecretEntity(encryptionManager.encryptForInternalUse(clientSecret), clientDetails.getClientId()));
         clientDetailsManager.merge(clientDetails);
         String output = String.format("%s\t%s\t%s\n", clientDetails.getId(), clientDetails.getClientName(), clientSecret);
         output(output);

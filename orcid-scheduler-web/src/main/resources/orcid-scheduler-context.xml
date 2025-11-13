@@ -15,29 +15,43 @@
     <context:component-scan
 		base-package="org.orcid.scheduler.loader" />
 
-    <task:scheduled-tasks scheduler="scheduler"> 
-      	<task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
+    <task:scheduled-tasks scheduler="scheduler">
+        <task:scheduled ref="webhookManager" method="processWebhooks" cron="${org.orcid.scheduler.web.processWebhooks:25 25 0-2 * * *}"/>
         <task:scheduled ref="statisticsManager" method="generateStatistics" cron="${org.orcid.scheduler.web.generateStats:0 0 0 * * FRI}"/>
         <task:scheduled ref="orgDisambiguatedManager" method="processOrgsWithIncorrectPopularity" cron="${org.orcid.scheduler.web.processOrgsWithIncorrectPopularity:45 45 0-2 * * *}"/>
-        <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>     
-        <task:scheduled ref="cleanOldClientKeysCronJob" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />            
+        <task:scheduled ref="orgDisambiguatedManager" method="processOrgsForIndexing" cron="${org.orcid.scheduler.web.processOrgsForIndexing:55 55 0-2 * * *}"/>
+        <task:scheduled ref="cleanOldClientKeysCronJob" method="cleanOldClientKeys" cron="${org.orcid.scheduler.web.cleanOldClientKeys:0 0 0/1 * * ?}" />
         <task:scheduled ref="emailMessageSender" method="sendEmailMessages" cron="${org.orcid.scheduler.web.sendEmailMessages:35 */5 * * * *}" />
-        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/> 
-        <task:scheduled ref="identityProviderLoader" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>        
+        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails2Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails2Days:0 10 * * * *}"/>
+        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 20 * * * *}"/>
+        <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails28Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails28Days:0 30 * * * *}"/>
+        <task:scheduled ref="identityProviderLoader" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
         <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
-        <task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/> 
-        <task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>          
+        <task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/>
+        <task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesReindexIndexingDelaySeconds:90}000"/>
-        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:900}000"/> 
-        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:900}000"/> 
+        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:900}000"/>
+        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:900}000"/>
         <task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
         <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
         <task:scheduled ref="issnLoadManager" method="loadIssn" cron="${org.orcid.scheduler.web.loadIssnCronConfig:0 0 0 * * FRI}"/>
+        <task:scheduled ref="autoLockSpamRecords" method="scheduledProcess" cron="${org.orcid.scheduler.autospam.process:0 0 0 * * TUE}"/>
+        <task:scheduled ref="emailMessageSender" method="addWorksToRecordFirstReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.firstReminder:0 10 * * * *}"/>
+        <task:scheduled ref="emailMessageSender" method="addWorksToRecordSecondReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.secondReminder:0 20 * * * *}"/>
+        <task:scheduled ref="emailMessageSender" method="addWorksToRecordThirdReminder" cron="${org.orcid.scheduler.web.addWorksToRecord.thirdReminder:0 30 * * * *}"/>
+        <task:scheduled ref="eventStats" method="deleteEvents" cron="${org.orcid.scheduler.web.deleteEventsOlderDays:0 10 0 * * *}"/>
+        <task:scheduled ref="eventStats" method="saveEventStats" cron="${org.orcid.scheduler.web.saveEventStats:0 20 0 * * *}"/>
+        <task:scheduled ref="eventStats" method="savePapiEventStats" cron="${org.orcid.scheduler.web.savePapiEventStats:0 55 0 * * *}"/>
+        <task:scheduled ref="eventStats" method="deletePapiEvents" cron="${org.orcid.scheduler.web.deletePapiEvents:0 40 0 * * *}"/>
+        <task:scheduled ref="papiLimitReport" method="papiDailyLimitReport" cron="${org.orcid.scheduler.papiLimitReport.process:0 0 1 * * *}"/>
+        <task:scheduled ref="papiLimitCleanup" method="removeOldEvents" cron="${org.orcid.scheduler.papiLimitReport.cleanup:0 30 22 * * MON}"/>
+        <task:scheduled ref="orcidIntegrationMvp" method="createOrcidIntegrationNotifications" cron="${org.orcid.scheduler.mvp.orcidIntegration:0 0 23 * * WED}"/>
+        <task:scheduled ref="redisExpiredMainIndexCleanup" method="execute" cron="${org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup.cron:0 35 18 * * SAT}" />
     </task:scheduled-tasks>
 
-	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:20}"/>
+	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:60}"/>
 
     <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
 
@@ -77,6 +91,8 @@
 	
 	<bean id="emailMessageSender" class="org.orcid.scheduler.email.cli.manager.EmailMessageSenderImpl" />
 	
+	<bean id="autospamEmailSender" class="org.orcid.scheduler.autospam.AutospamEmailSender" />
+	
 	<bean id="ringgoldFtpsFileDownloader" class="org.orcid.scheduler.loader.io.FtpsFileDownloader" />
 
 	<bean id="fundrefOrgDataClient" class="org.orcid.scheduler.loader.io.OrgDataClient" />
@@ -87,12 +103,7 @@
 	
     <bean id="rorOrgDataSource" class="org.orcid.scheduler.loader.source.ror.RorOrgLoadSource" />
     <bean id="fundrefOrgDataSource" class="org.orcid.scheduler.loader.source.fundref.FundrefOrgLoadSource" />
-    <bean id="ringgoldOrgDataSource" class="org.orcid.scheduler.loader.source.ringgold.RinggoldOrgLoadSource" />
-    <bean id="issnDataSource" class="org.orcid.scheduler.loader.source.issn.IssnLoadSource" />
-
-    <bean id="jerseyClientHelper" class="org.orcid.utils.jersey.JerseyClientHelper">
-        <constructor-arg value="${org.orcid.utils.jersey.development_mode:false}"/>
-    </bean>
+    <bean id="issnDataSource" class="org.orcid.scheduler.loader.source.issn.IssnLoadSource" />    
 	
     <bean id="jerseyClientHelperDevelopmentMode" class="org.orcid.utils.jersey.JerseyClientHelper">
         <constructor-arg value="true"/>
@@ -108,8 +119,6 @@
     
 
     <bean id="identityProviderLoader" class="org.orcid.scheduler.tasks.impl.IdentityProviderLoaderImpl" />
-
-    <bean id="slackManager" class="org.orcid.utils.alerting.impl.SlackManagerImpl" />
 
 	<bean id="statisticsManager" class="org.orcid.core.stats.impl.StatisticsManagerImpl"/>
 	
@@ -130,5 +139,24 @@
 	</bean>
 	
 	<bean id="issnLoadManager"  class="org.orcid.scheduler.loader.manager.impl.IssnLoadManagerImpl"/>
+    <bean id="autoLockSpamRecords" class="org.orcid.scheduler.autospam.cli.AutoLockSpamRecords" />
+
+    <bean id="eventStats" class="org.orcid.scheduler.web.event.impl.EventStatsImpl" />
+    
+    <bean id="papiLimitReport" class="org.orcid.scheduler.report.PapiDailyLimitReport" />
+
+    <bean id="papiLimitCleanup" class="org.orcid.scheduler.cleanup.PapiDailyLimitCleanup" />
+    
+    <bean id="orcidIntegrationMvp" class="org.orcid.scheduler.mvp.OrcidIntegrationMVPNotifications" />
+
+	<bean id="jedisPoolBuilder" class="org.orcid.scheduler.cleanup.JedisPoolBuilder">
+        <constructor-arg index="0" value="${org.orcid.core.utils.cache.session.redis.host}"/>
+        <constructor-arg index="1" value="${org.orcid.core.utils.cache.session.redis.port}" />
+        <constructor-arg index="2" value="${org.orcid.core.utils.cache.session.redis.password}" />
+        <constructor-arg index="3" value="${org.orcid.core.utils.cache.session.redis.pool.wait.millis:180000}" />
+        <constructor-arg index="4" value="${org.orcid.core.utils.cache.session.redis.pool.max:100}" />
+	</bean>
+
+    <bean id="redisExpiredMainIndexCleanup" class="org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup" />
 
 </beans>

@@ -2,8 +2,9 @@ package org.orcid.core.web.filters;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
 
@@ -25,7 +26,7 @@ public class CrossDomainWebMangerTest {
     CrossDomainWebManger crossDomainWebManger;
     
     String [] allowedDomains = {"http://localhost", "https://localhost"};
-    String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.ihateorcid.org", "http://qa.ihateorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.ihateorcid.org", "https://qa.ihateorcid.org"};
+    String [] forbiddenDomains = {"http://.orcid.org", "http://www.otherorcid.org", "http://www.myorcid.org", "http://www.testorcid.org", "http://qa.testorcid.org", "https://.orcid.org", "https://www.otherorcid.org", "https://www.myorcid.org", "https://www.testorcid.org", "https://qa.testorcid.org"};
     
     String [] allowedPaths = {"/lang.json","/userStatus.json","/oauth/userinfo","/oauth/jwks","/.well-known/openid-configuration"};
     String [] forbiddenPaths = {"/oauth","/whatever/oauth","/whatever/oauth/","/whatever/oauth/other",
@@ -33,7 +34,7 @@ public class CrossDomainWebMangerTest {
             "/userStatus.jsonwhatever/test","/userStatus.json/whatever","/userStatus.jsonwhatever","/userStatus.jsonwhatever/test"};
     
     @Test
-    public void testDomains() throws MalformedURLException {
+    public void testDomains() throws URISyntaxException {
         for(String allowed : allowedDomains) {            
             assertTrue("testing: " +  allowed, crossDomainWebManger.validateDomain(allowed));
         }  
@@ -44,7 +45,7 @@ public class CrossDomainWebMangerTest {
     }
     
     @Test
-    public void testPaths() throws MalformedURLException {
+    public void testPaths() throws URISyntaxException {
         for(String allowed : allowedPaths) {            
             assertTrue("testing: " +  allowed, crossDomainWebManger.validatePath(allowed));
         }  

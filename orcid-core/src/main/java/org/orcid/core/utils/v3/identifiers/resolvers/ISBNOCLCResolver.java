@@ -2,6 +2,8 @@ package org.orcid.core.utils.v3.identifiers.resolvers;
 
 import java.util.List;
 
+import org.apache.commons.validator.routines.ISBNValidator;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +11,7 @@ import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.pojo.PIDResolutionResult;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
@@ -21,6 +24,9 @@ public class ISBNOCLCResolver implements LinkResolver {
 
     @Resource
     PIDResolverCache cache;
+    
+    @Value("${org.orcid.core.utils.v3.identifiers.resolvers.ISBNOCLCResolver.disabled:true}")
+    private boolean disableIsbnResolution;
 
     public List<String> canHandle() {
         return Lists.newArrayList("oclc","isbn");
@@ -39,12 +45,23 @@ public class ISBNOCLCResolver implements LinkResolver {
         // this assumes we're using worldcat - 303 on success, 200 on fail
         String normUrl = normalizationService.generateNormalisedURL(apiTypeName, value);
         if (!StringUtils.isEmpty(normUrl)) {
-            if (cache.isHttp303(normUrl)){
-                return new PIDResolutionResult(true,true,true,normUrl);                
-            }else{
-                return new PIDResolutionResult(false,true,true,null);
+            // If it is a valid format
+        	if(StringUtils.equals("isbn", apiTypeName) && ISBNValidator.getInstance().isValid(normalizationService.normalise("isbn", value))) {
+				return new PIDResolutionResult(false, false, true, normUrl);
+			}
+        	
+            if (disableIsbnResolution) {
+            	// If it is a valid format, but the resolver is disabled,
+                // return just the valid format
+                return new PIDResolutionResult(false, false, true, null);
+            } else if (cache.isHttp303(normUrl)) {
+                return new PIDResolutionResult(true, true, true, normUrl);
+            } else {
+                return new PIDResolutionResult(false, true, true, null);
             }
         }
         return new PIDResolutionResult(false,false,true,null);//unreachable?
     }
+    
+    
 }

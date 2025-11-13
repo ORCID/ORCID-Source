@@ -1,0 +1,11 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="Angel Montenegro" id="ADD_RAID_IDENTIFIER_TYPE">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from identifier_type where id_name='RAiD';</sqlCheck>
+        </preConditions>
+        <sql>INSERT INTO identifier_type (id, id_name, id_resolution_prefix, id_deprecated, date_created, last_modified, primary_use) VALUES (52, 'RAiD', 'https://raid.org/', false, now(), now(), 'work');</sql>
+        <sql>UPDATE identifier_type SET "case_sensitive" = false WHERE id_name = 'RAiD';</sql>
+    </changeSet>
+</databaseChangeLog>

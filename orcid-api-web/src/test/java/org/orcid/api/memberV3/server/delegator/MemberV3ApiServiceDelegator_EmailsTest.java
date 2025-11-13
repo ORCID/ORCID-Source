@@ -2,12 +2,9 @@ package org.orcid.api.memberV3.server.delegator;
 
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +83,41 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         Emails element = (Emails) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/email", element.getPath());
-        Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
+        assertEquals(4, element.getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
+        emails.add("private_0000-0000-0000-0003@test.orcid.org");
+
+        for(Email e : element.getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+        assertTrue(emails.isEmpty());
+    }
+
+    @Test
+    public void testViewEmailsReadPublic_ClientNotSourceOfAnyEmail() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555556", ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEmails(ORCID);
+        Emails element = (Emails) r.getEntity();
+        assertNotNull(element);
+        assertEquals("/0000-0000-0000-0003/email", element.getPath());
+        assertEquals(2, element.getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+
+        for(Email e : element.getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+        assertTrue(emails.isEmpty());
     }
 
     @Test
@@ -99,10 +130,11 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertNotNull(email);
         assertEquals("/0000-0000-0000-0003/email", email.getPath());
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(3, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
         boolean found1 = false;
         boolean found2 = false;
         boolean found3 = false;
+        boolean found4 = false;
         for (Email element : email.getEmails()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -111,6 +143,8 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found4 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -119,6 +153,7 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
     }
 
     @Test
@@ -150,49 +185,39 @@ public class MemberV3ApiServiceDelegator_EmailsTest extends DBUnitTest {
         assertEquals("/4444-4444-4444-4443/email", emails.getPath());
         Utils.verifyLastModified(emails.getLastModifiedDate());
         assertNotNull(emails.getEmails());
-        
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            assertEquals(1, emails.getEmails().size());
-            Email email = emails.getEmails().get(0);
-            assertEquals("teddybass3private@semantico.com", email.getEmail());
-            assertEquals(Visibility.PRIVATE, email.getVisibility());
-            assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-            assertEquals(true, email.isVerified());
-            assertEquals(false, email.isPrimary());
-        } else {
-            assertEquals(3, emails.getEmails().size());
-            for (Email email : emails.getEmails()) {
-                Utils.verifyLastModified(email.getLastModifiedDate());
-                assertThat(email.getEmail(), anyOf(is("teddybass2@semantico.com"), is("teddybass3public@semantico.com"), is("teddybass3private@semantico.com")));
-                switch (email.getEmail()) {
-                case "teddybass2@semantico.com":
-                    assertEquals(Visibility.LIMITED, email.getVisibility());
-                    assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
-                    assertEquals(false, email.isVerified());
-                    assertEquals(false, email.isPrimary());
-                    break;
-                case "teddybass3public@semantico.com":
-                    assertEquals(Visibility.PUBLIC, email.getVisibility());
-                    assertEquals("4444-4444-4444-4443", email.retrieveSourcePath());
-                    assertEquals(false, email.isVerified());
-                    assertEquals(false, email.isPrimary());
-                    break;
-                case "teddybass3private@semantico.com":
-                    assertEquals(Visibility.PRIVATE, email.getVisibility());
-                    assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-                    assertEquals(true, email.isVerified());
-                    assertEquals(false, email.isPrimary());
-                    break;
-                case "peter@sellers.com":
-                    assertEquals(Visibility.PRIVATE, email.getVisibility());
-                    assertEquals("APP-5555555555555555", email.retrieveSourcePath());
-                    assertEquals(false, email.isVerified());
-                    assertEquals(true, email.isPrimary());
-                    break;
-                default: 
-                    fail("Invalid email: " + email.getEmail());
-                        break;
-                }
+        assertEquals(1, emails.getEmails().size());
+        Email email = emails.getEmails().get(0);
+        assertEquals("teddybass3private@semantico.com", email.getEmail());
+        assertEquals(Visibility.PRIVATE, email.getVisibility());
+        assertEquals("APP-5555555555555555", email.retrieveSourcePath());
+        assertEquals(true, email.isVerified());
+        assertEquals(false, email.isPrimary());       
+    }
+
+    @Test
+    public void checkSourceOnEmail_EmailEndpointTest() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.EMAIL_READ_PRIVATE);
+        Response r = serviceDelegator.viewEmails(orcid);
+        Emails emails = (Emails) r.getEntity();
+        checkEmails(emails);
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non verified professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
             }
         }
     }

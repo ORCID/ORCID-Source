@@ -22,7 +22,7 @@ See these and other updates by clicking on the link above, or reading our blog
 
 Regards,
 The ORCID Team
-https://support.orcid.org/hc/en-us/requests/new
+https://support.orcid.org/
 
 You have received this email as a service announcement related to your ORCID Account.
 <#include "email_footer.ftl"/>

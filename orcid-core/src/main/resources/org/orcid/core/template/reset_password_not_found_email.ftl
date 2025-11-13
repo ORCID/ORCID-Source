@@ -1,30 +1,9 @@
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.hello" /><@emailMacros.msg "email.common.dear.comma" />
+
+<@emailMacros.msg "email.reset_password_not_found.we_could_not_find" /><@emailMacros.space />${submittedEmail}
+<@emailMacros.msg "email.reset_password_not_found.registered_using_another_email" /><@emailMacros.space /><a href="https://orcid.org/reset-password"><@emailMacros.msg "email.reset_password_not_found.try_another_email" /></a><@emailMacros.space /><@emailMacros.msg "email.reset_password_not_found.many_users_have" />
+<@emailMacros.msg "email.reset_password_not_found.id_associated_with_email_no_longer_access" /><@emailMacros.space /><a href="https://support.orcid.org/?ticket_form_id=360003481994"><@emailMacros.msg "email.reset_password_not_found.contact_us" /></a>
+<@emailMacros.msg "email.reset_password_not_found.not_registered_using_other_email" /><@emailMacros.space /><a href="https://orcid.org/register"><@emailMacros.msg "email.reset_password_not_found.register_for_an_orcid" /></a>
 
 
-<@emailMacros.msg "email.reset_password_not_found.thank_you" />
-
-
-<@emailMacros.msg "email.reset_password_not_found.email_provided" /><@emailMacros.msg "email.common.dear.comma" /> ${submittedEmail}<@emailMacros.msg "email.common.dear.comma" /> 
-<@emailMacros.msg "email.reset_password_not_found.not_registered" />
-
-
-<@emailMacros.msg "email.reset_password_not_found.another_email_reset" /> <@emailMacros.msg "email.common.reset_password.href" />
-
-<@emailMacros.msg "email.reset_password_not_found.unable_to_reset" />
-
-
-<@emailMacros.msg "email.reset_password_not_found.unsure_whether" /> <@emailMacros.msg "email.common.register.href" />
-
-<@emailMacros.msg "email.reset_password_not_found.we_recommend" />
-
-
-<@emailMacros.msg "email.common.warm_regards" />
-<@emailMacros.msg "email.common.need_help.description.2.href" />
-
-
-${baseUri}/home?lang=${locale}
-
-
-<@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>

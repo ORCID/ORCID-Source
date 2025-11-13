@@ -19,30 +19,13 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.v3.AddressManager;
-import org.orcid.core.manager.v3.AffiliationsManager;
-import org.orcid.core.manager.v3.BiographyManager;
-import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
-import org.orcid.core.manager.v3.GivenPermissionToManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.OtherNameManager;
-import org.orcid.core.manager.v3.PeerReviewManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.manager.v3.ResearchResourceManager;
-import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.v3.WorkManager;
+import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
-import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -63,13 +46,8 @@ import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.persistence.dao.BackupCodeDao;
-import org.orcid.persistence.dao.ProfileLastModifiedDao;
-import org.orcid.persistence.dao.UserConnectionDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.dao.*;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -111,20 +89,20 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Resource
     private EncryptionManager encryptionManager;
 
-    @Resource(name = "addressManagerV3")
-    private AddressManager addressManager;
+    @Resource(name = "addressDao")
+    protected AddressDao addressDao;
 
-    @Resource(name = "externalIdentifierManagerV3")
-    private ExternalIdentifierManager externalIdentifierManager;
+    @Resource(name = "externalIdentifierDao")
+    private ExternalIdentifierDao externalIdentifierDao;
 
-    @Resource(name = "profileKeywordManagerV3")
-    private ProfileKeywordManager profileKeywordManager;
+    @Resource(name = "profileKeywordDao")
+    private ProfileKeywordDao profileKeywordDao;
 
-    @Resource(name = "otherNameManagerV3")
-    private OtherNameManager otherNameManager;
+    @Resource(name = "otherNameDao")
+    private OtherNameDao otherNameDao;
 
-    @Resource(name = "researcherUrlManagerV3")
-    private ResearcherUrlManager researcherUrlManager;
+    @Resource(name = "researcherUrlDao")
+    private ResearcherUrlDao researcherUrlDao;
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
@@ -177,6 +155,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Resource
     private ProfileLastModifiedDao profileLastModifiedDao;
 
+    @Resource
+    private ProfileEmailDomainManager profileEmailDomainManager;
+
     @Override
     public boolean orcidExists(String orcid) {
         return profileDao.orcidExists(orcid);
@@ -204,7 +185,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // If it was successfully deprecated
                 if (wasDeprecated) {
                     LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedOrcid, primaryOrcid);
-                    clearRecord(deprecatedOrcid, false);
                     // Move all email's to the primary record
                     Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
                     if (deprecatedAccountEmails != null) {
@@ -216,6 +196,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                             emailManager.moveEmailToOtherAccount(email.getEmail(), deprecatedOrcid, primaryOrcid);
                         }
                     }
+                    List<ProfileEmailDomainEntity> deprecatedEmailDomains = profileEmailDomainManager.getEmailDomains(deprecatedOrcid);
+                    if (deprecatedEmailDomains != null && !deprecatedEmailDomains.isEmpty()) {
+                        for (ProfileEmailDomainEntity emailDomain : deprecatedEmailDomains) {
+                            profileEmailDomainManager.moveEmailDomainToAnotherAccount(emailDomain.getEmailDomain(), deprecatedOrcid, primaryOrcid);
+                        }
+                    }
+                    // important to run this after moving domains, as this function will delete the domains from the database
+                    clearRecord(deprecatedOrcid, false);
 
                     profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(deprecatedOrcid, IndexingStatus.REINDEX);
                     return true;
@@ -232,7 +220,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 LOGGER.info("About to deactivate record {}", orcid);                
                 clearRecord(orcid, true);
                 emailManager.hideAllEmails(orcid);
-                notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
                 profileDao.deactivate(orcid);
                 LOGGER.info("Record {} successfully deactivated", orcid);
                 return true;                
@@ -300,6 +287,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    public boolean isReviewed(String orcid) {
+        return profileDao.isReviewed(orcid);
+    }
+
+    @Override
     public boolean reviewProfile(String orcid) {
         return profileDao.reviewProfile(orcid);
     }
@@ -344,19 +336,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 applicationSummary = new ApplicationSummary();
                 distinctApplications.put(client.getId(), applicationSummary);
                 applicationSummary.setScopePaths(new HashMap<String, String>());
-                applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());
-                applicationSummary.setOrcidUri(orcidUrlManager.getBaseUrl() + "/" + client.getId());
-                applicationSummary.setOrcidPath(client.getId());
                 applicationSummary.setName(client.getClientName());
+                applicationSummary.setClientId(client.getId());
                 applicationSummary.setWebsiteValue(client.getClientWebsite());
                 applicationSummary.setApprovalDate(token.getDateCreated());
-                applicationSummary.setTokenId(String.valueOf(token.getId()));
-
-                if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
-                    ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
-                    applicationSummary.setGroupOrcidPath(member.getId());
-                    applicationSummary.setGroupName(getMemberDisplayName(member));
-                }
             }
 
             Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
@@ -364,30 +347,13 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
             for (ScopePathType tempScope : scopesGrantedToClient) {
                 try {
                     String label = localeManager.resolveMessage(scopeFullPath + tempScope.toString());
-                    applicationSummary.getScopePaths().put(label, label);
+                    applicationSummary.getScopePaths().put(tempScope.toString(), label);
                 } catch (NoSuchMessageException e) {
                     LOGGER.warn("No message to display for scope " + tempScope.toString());
                 }
             }
         }
-    }
-
-    private String getMemberDisplayName(ProfileEntity member) {
-        Name recordName = recordNameManagerReadOnlyV3.getRecordName(member.getId());
-        
-        if (recordName == null) {
-            return StringUtils.EMPTY;
-        }
-
-        // If it is a member, return the credit name
-        if (OrcidType.GROUP.name().equals(member.getOrcidType())) {
-            return recordName.getCreditName().getContent();
-        }
-
-        String memberDisplayName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(member.getId());
-        
-        return PojoUtil.isEmpty(memberDisplayName) ? StringUtils.EMPTY : memberDisplayName;
-    }
+    }    
 
     @Override
     public String getOrcidHash(String string) {
@@ -438,39 +404,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         Visibility defaultVisibility = claim.getActivitiesVisibilityDefault().getVisibility();
         
         // Update address
-        Addresses addresses = addressManager.getAddresses(orcid);
-        for(Address address : addresses.getAddress()) {
-            address.setVisibility(defaultVisibility);
-            addressManager.updateAddress(orcid, address.getPutCode(), address, false);
-        }        
+        addressDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the keywords
-        Keywords keywords = profileKeywordManager.getKeywords(orcid); 
-        for(Keyword keyword : keywords.getKeywords()) {
-            keyword.setVisibility(defaultVisibility);
-            profileKeywordManager.updateKeyword(orcid, keyword.getPutCode(), keyword, false);
-        }
+        profileKeywordDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the other names
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
-        for(OtherName otherName : otherNames.getOtherNames()) {
-            otherName.setVisibility(defaultVisibility);
-            otherNameManager.updateOtherName(orcid, otherName.getPutCode(), otherName, false);
-        }
+        otherNameDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the researcher urls
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid);
-        for(ResearcherUrl researcherUrl : researcherUrls.getResearcherUrls()) {
-            researcherUrl.setVisibility(defaultVisibility);
-            researcherUrlManager.updateResearcherUrl(orcid, researcherUrl, false);
-        }
+        researcherUrlDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the external identifiers
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid);
-        for(PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
-            extId.setVisibility(defaultVisibility);
-            externalIdentifierManager.updateExternalIdentifier(orcid, extId, false);
-        }        
+        externalIdentifierDao.updateVisibility(orcid, defaultVisibility);
 
         // Update the biography
         if (biographyManager.exists(orcid)) {
@@ -519,6 +465,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
                 // Populate primary email
                 String primaryEmailTrim = primaryEmail.trim();
                 emailManager.reactivatePrimaryEmail(orcid, primaryEmailTrim);
+                profileEmailDomainManager.processDomain(orcid, primaryEmailTrim);
                 if (reactivation == null) {
                     // Delete any non primary email
                     emailManager.clearEmailsAfterReactivation(orcid);
@@ -635,6 +582,11 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getSigninLock(orcid);
     }
 
+    @Override
+    public boolean updateDeprecation(String deprecated, String primary) {
+        return profileDao.updateDeprecation(deprecated, primary);
+    }
+
     /**
      * Clears all record info but the email addresses, that stay unmodified
      */
@@ -655,19 +607,19 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         researchResourceManager.removeAllResearchResources(orcid);
 
         // Remove addresses
-        addressManager.removeAllAddress(orcid);
+        addressDao.removeAllAddress(orcid);
 
         // Remove external identifiers
-        externalIdentifierManager.removeAllExternalIdentifiers(orcid);
+        externalIdentifierDao.removeAllExternalIdentifiers(orcid);
 
         // Remove researcher urls
-        researcherUrlManager.removeAllResearcherUrls(orcid);
+        researcherUrlDao.removeAllResearcherUrls(orcid);
 
         // Remove other names
-        otherNameManager.removeAllOtherNames(orcid);
+        otherNameDao.removeAllOtherNames(orcid);
 
         // Remove keywords
-        profileKeywordManager.removeAllKeywords(orcid);
+        profileKeywordDao.removeAllKeywords(orcid);
 
         // Admin disabling 2FA, so, we should not notify the user
         profileDao.disable2FA(orcid);
@@ -678,6 +630,10 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         // remove trusted individuals
         givenPermissionToManager.removeAllForProfile(orcid);
+
+        // remove email domains
+        // NOTE: when deprecating, the domains get moved to the other record before this code is executed
+        profileEmailDomainManager.removeAllEmailDomains(orcid);
 
         // Remove biography
         if (biographyManager.exists(orcid)) {

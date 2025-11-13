@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 
 public abstract class AffiliationFormTestBase {
     XMLGregorianCalendar created;
@@ -160,7 +160,7 @@ public abstract class AffiliationFormTestBase {
         aff.setLastModifiedDate(new LastModifiedDate(lastModified));
         aff.setPutCode(1L);
         aff.setPath("/distinction/1");
-        
+        aff.setUrl(new Url("https://test.orcid.org"));
         aff.setDepartmentName("department-name");
         aff.setDisplayIndex("0");
         aff.setEndDate(new FuzzyDate(new Year(2018), new Month(1), new Day(1)));

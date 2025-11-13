@@ -1,7 +1,5 @@
 package org.orcid.api.memberV3.server.delegator.impl;
 
-import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +16,8 @@ import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
+import org.orcid.core.common.manager.EmailDomainManager;
+import org.orcid.core.common.manager.SummaryManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
 import org.orcid.core.exception.MismatchedPutCodeException;
@@ -64,7 +64,7 @@ import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.togglz.Features;
+import org.orcid.core.model.RecordSummary;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -129,6 +129,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
@@ -270,6 +271,15 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Resource
     private OrcidUrlManager orcidUrlManager;
     
+    @Resource
+    private SummaryManager summaryManager;
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     public Boolean getFilterVersionOfIdentifiers() {
         return filterVersionOfIdentifiers;
     }
@@ -279,8 +289,9 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response viewStatusText() {
-        return Response.ok(STATUS_OK_MESSAGE).build();
+    public Response viewStatusSimple() {
+        Map<String, Boolean> statusMap = statusManager.createStatusMapSimple();
+        return Response.ok(statusMap).build();
     }
     
     @Override
@@ -324,7 +335,6 @@ public class MemberV3ApiServiceDelegatorImpl implements
         checkProfileStatus(orcid, true);
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         orcidSecurityManager.checkAndFilter(orcid, w, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(w);
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
         sourceUtils.setSourceName(w);
@@ -855,24 +865,14 @@ public class MemberV3ApiServiceDelegatorImpl implements
         try {
             // return all emails if client has /email/read-private scope
             orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.EMAIL_READ_PRIVATE);
-            
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
-            } else {
-                emails = emailManagerReadOnly.getEmails(orcid);
-            }
+            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
             emails = new Emails();
             emails.setEmails(filteredList);
         } catch (OrcidAccessControlException e) {
-            
-            if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-                emails = emailManagerReadOnly.getVerifiedEmails(orcid);
-            } else {
-                emails = emailManagerReadOnly.getEmails(orcid);
-            }
+            emails = emailManagerReadOnly.getVerifiedEmails(orcid);
             
             // Lets copy the list so we don't modify the cached collection
             List<Email> filteredList = new ArrayList<Email>(emails.getEmails());
@@ -1160,7 +1160,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response viewPerson(String orcid) {
         checkProfileStatus(orcid, true);
-        Person person = personDetailsManagerReadOnly.getPersonDetails(orcid, !Features.HIDE_UNVERIFIED_EMAILS.isActive());
+        Person person = personDetailsManagerReadOnly.getPersonDetails(orcid, false);
         orcidSecurityManager.checkAndFilter(orcid, person);
         ElementUtils.setPathToPerson(person, orcid);
         Api3_0LastModifiedDatesHelper.calculateLastModified(person);
@@ -1199,8 +1199,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         orcidSecurityManager.checkAndFilter(orcid, workBulk, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        contributorUtils.filterContributorPrivateData(workBulk);
         ActivityUtils.cleanEmptyFields(workBulk);
+        ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
         return Response.ok(workBulk).build();
     }
@@ -1652,16 +1652,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         return Response.noContent().build();
     }
 
-    private void checkProfileStatus(String orcid, boolean readOperation) {
-        try {
-            orcidSecurityManager.checkProfile(orcid);
-        } catch (DeactivatedException e) {
-            // If it is a read operation, ignore the deactivated status since we
-            // are going to return the empty element with the deactivation date
-            if (!readOperation) {
-                throw e;
-            }
-        }
+    private void checkProfileStatus(String orcid, boolean readOperation) throws DeactivatedException {
+        orcidSecurityManager.checkProfile(orcid);        
     } 
     
     private Map<String, String> addParmsMismatchedPutCode(Long urlPutCode, Long bodyPutCode) {
@@ -1670,6 +1662,14 @@ public class MemberV3ApiServiceDelegatorImpl implements
         params.put("bodyPutCode", String.valueOf(bodyPutCode));
         params.put("clientName", SourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
         return params;
+    }
+
+    @Override
+    public Response getRecordSummary(String orcid) {
+        orcidSecurityManager.checkClientAccessAndScopes(orcid, ScopePathType.READ_PUBLIC);
+        checkProfileStatus(orcid, false);
+        RecordSummary summary = summaryManager.getRecordSummary(orcid);
+        return Response.ok(summary).build();
     }
 
 }

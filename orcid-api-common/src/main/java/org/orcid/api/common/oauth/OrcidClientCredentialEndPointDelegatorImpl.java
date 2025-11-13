@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
@@ -18,14 +20,18 @@ import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
+import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,6 +62,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     
     @Resource(name="profileLastModifiedDao")
     private ProfileLastModifiedDao profileLastModifiedDao;
+    
+    @Resource
+    private RedisClient redisClient;    
+    
+    @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
+    private boolean isTokenCacheEnabled;
     
     @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
@@ -121,7 +133,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     if(scopeType.isInternalScope()) {
                         // You should not allow any internal scope here! go away!
                         String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
-                        throw new OrcidInvalidScopeException(message);
+                        throw new OrcidInvalidScopeException(message, clientId, scope);
                     } else if(OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
                         if(!scopeType.isClientCreditalScope())
                             toRemove.add(scope);
@@ -137,7 +149,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             }                        
         } catch (IllegalArgumentException iae) {
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
-            throw new OrcidInvalidScopeException(message);
+            if(scopes != null) {
+                message += " Provided scopes: " + String.join(",", scopes);
+            }
+            throw new OrcidInvalidScopeException(message, clientId, iae.getMessage());
         }
                 
         try{
@@ -152,10 +167,43 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     }                    
                 }                
             }
+            
+            // Do not put the token in the cache if the token is disabled
+            if(token.getAdditionalInformation() != null && !token.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_DISABLED)) {
+                setToCache(client.getName(), token);
+            }
+            removeMetadataFromToken(token);
             return getResponse(token);
         } catch (InvalidGrantException e){ //this needs to be caught here so the transaction doesn't roll back
             OAuthError error = OAuthErrorUtils.getOAuthError(e);
             return Response.status(error.getResponseStatus().getStatusCode()).entity(error).build();
+        }
+    }
+    
+    /**
+     * Set the access token in the cache
+     * */
+    protected void setToCache(String clientId, OAuth2AccessToken accessToken) {
+        if(isTokenCacheEnabled) {
+            try {
+                String tokenValue = accessToken.getValue();
+                Map<String, String> tokenData = new HashMap<String, String>();
+                tokenData.put(OrcidOauth2Constants.ACCESS_TOKEN, tokenValue);
+                tokenData.put(OrcidOauth2Constants.TOKEN_EXPIRATION_TIME, String.valueOf(accessToken.getExpiration().getTime()));
+                StringBuilder sb = new StringBuilder();
+                accessToken.getScope().forEach(x -> {sb.append(x); sb.append(' ');});
+                tokenData.put(OrcidOauth2Constants.SCOPE_PARAM, sb.toString());
+                tokenData.put(OrcidOauth2Constants.ORCID, (String) accessToken.getAdditionalInformation().get(OrcidOauth2Constants.ORCID));
+                tokenData.put(OrcidOauth2Constants.CLIENT_ID, clientId);
+                tokenData.put(OrcidOauth2Constants.RESOURCE_IDS, OrcidOauth2Constants.ORCID);
+                tokenData.put(OrcidOauth2Constants.APPROVED, Boolean.TRUE.toString());
+                if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.IS_OBO_TOKEN)) {
+                    tokenData.put(OrcidOauth2Constants.IS_OBO_TOKEN, Boolean.TRUE.toString());
+                }
+                redisClient.set(tokenValue, JsonUtils.convertToJsonString(tokenData));
+            } catch(Exception e) {
+                LOGGER.info("Unable to set token in Redis cache", e);
+            }
         }
     }
 
@@ -211,7 +259,16 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 }
                 
                 if(!authorizationParameters.containsKey(OAuth2Utils.SCOPE) || PojoUtil.isEmpty(authorizationParameters.get(OAuth2Utils.SCOPE))) {
-                    String scopesString = StringUtils.join(authorizationCodeEntity.getScopes(), ' ');
+                    ////////
+                    // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+                    ////////
+                    Set<String> newScopes = StringUtils.isNotBlank(authorizationCodeEntity.getNewScopes()) ? Stream.of(authorizationCodeEntity.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
+
+                    Set<String> allScopes = new HashSet<String>();
+                    allScopes.addAll(newScopes);
+                    allScopes.addAll(authorizationCodeEntity.getScopes());
+
+                    String scopesString = StringUtils.join(allScopes, ' ');
                     authorizationParameters.put(OAuth2Utils.SCOPE, scopesString);
                 }
                 
@@ -261,7 +318,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         return token;
     }
     
-    protected Response getResponse(OAuth2AccessToken accessToken) {
+    protected void removeMetadataFromToken(OAuth2AccessToken accessToken) {
         if(accessToken != null && accessToken.getAdditionalInformation() != null) {
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_VERSION))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_VERSION);
@@ -271,8 +328,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.DATE_CREATED);
             if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_ID))
                 accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_ID);
-        }        
-        
+            if(accessToken.getAdditionalInformation().containsKey(OrcidOauth2Constants.TOKEN_DISABLED))
+                accessToken.getAdditionalInformation().remove(OrcidOauth2Constants.TOKEN_DISABLED);
+        }
+    }
+    
+    protected Response getResponse(OAuth2AccessToken accessToken) {                        
         return Response.ok((DefaultOAuth2AccessToken)accessToken).header("Cache-Control", "no-store").header("Pragma", "no-cache").build();
     }
 
@@ -284,6 +345,14 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_authentication_notfound.exception"));
         }
 
+    }
+
+    public boolean isTokenCacheEnabled() {
+        return isTokenCacheEnabled;
+    }
+
+    public void setTokenCacheEnabled(boolean isTokenCacheEnabled) {
+        this.isTokenCacheEnabled = isTokenCacheEnabled;
     }
 
 }

@@ -33,6 +33,8 @@ import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_v2.Item;
 import org.orcid.jaxb.model.notification.permission_v2.ItemType;
+import org.orcid.jaxb.model.record_v2.ExternalID;
+import org.orcid.jaxb.model.record_v2.ExternalIDs;
 import org.orcid.jaxb.model.record_v2.PeerReview;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -127,7 +129,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
@@ -173,7 +175,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         existingEntity = peerReviewDao.merge(existingEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(existingEntity);
     }
 
@@ -193,7 +195,8 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSource(pr);
         boolean result = deletePeerReview(pr, orcid);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr, ActionType.DELETE));
+        PeerReview model = jpaJaxbPeerReviewAdapter.toPeerReview(pr);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr, ActionType.DELETE, model.getExternalIdentifiers(), model.getSubjectExternalIdentifier()));
         return result;
     }
 
@@ -235,7 +238,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
     }
 
-    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type) {
+    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type, ExternalIDs extIds, ExternalID subjectExtId) {
         Item item = new Item();
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
@@ -252,6 +255,14 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 additionalInfo.put("group_name", optional.get().getName());
                 itemName = optional.get().getName();
             }
+        }
+
+        if(extIds != null) {
+            additionalInfo.put("external_identifiers", extIds);
+        }
+
+        if(subjectExtId != null) {
+            additionalInfo.put("subject_external_identifiers", subjectExtId);
         }
 
         item.setItemName(itemName);

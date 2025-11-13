@@ -6,17 +6,18 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.jena.sparql.function.library.e;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
@@ -24,9 +25,11 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -61,11 +64,11 @@ public class ClaimController extends BaseController {
     @Resource 
     private RecordEmailSender recordEmailSender;
     
-    @Resource
-    private AuthenticationManager authenticationManager;
-
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private RegistrationController registrationController;
 
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
@@ -169,12 +172,18 @@ public class ClaimController extends BaseController {
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, decryptedEmail, userLocale, claim);
         if (!claimed) {
             throw new IllegalStateException("Unable to claim record " + orcid);
-        }                    
-                
+        }
+
+        // Clear the profile entity cache so the new password is loaded
+        LOGGER.info("Clearing profile cache for orcid id: " + orcid);
+        profileEntityCacheManager.remove(orcid);
+
+        // Log user in
+        registrationController.logUserIn(request, response, orcid, claim.getPassword().getValue());
+
         // Notify
         notificationManager.sendAmendEmail(orcid, AmendedSection.UNKNOWN, null);
-        // Log user in 
-        automaticallyLogin(request, claim.getPassword().getValue(), orcid);
+
         // detech this situation
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         if (targetUrl == null)
@@ -201,23 +210,35 @@ public class ClaimController extends BaseController {
         String email = resendClaimRequest.getEmail();
         List<String> errors = new ArrayList<>();
         resendClaimRequest.setErrors(errors);
-        
-        if (!OrcidStringUtils.isEmailValid(email)) {
-            errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
-            return resendClaimRequest;
-        }
 
-        if (!emailManager.emailExists(email)) {
-            String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
-            message += "<a href=\"https://support.orcid.org/hc/en-us/requests/new\">";
-            message += getMessage("orcid.frontend.reset.password.email_not_found_3");
-            message += "</a>";
-            message += getMessage("orcid.frontend.reset.password.email_not_found_4");
-            errors.add(message);
-            return resendClaimRequest;
+        String orcid = null;
+        if (OrcidStringUtils.isValidOrcid(email)) {
+            try{
+                orcid = email;
+                email = emailManager.findPrimaryEmail(orcid).getEmail();
+            } catch(NoResultException nre) {
+                errors.add(getMessage("Email.resetPasswordForm.error"));
+                return resendClaimRequest;            
+            }
+        } else {
+            if (!OrcidStringUtils.isEmailValid(email)) {
+                errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
+                return resendClaimRequest;
+            }
+    
+            if (!emailManager.emailExists(email)) {
+                String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + email + " " + getMessage("orcid.frontend.reset.password.email_not_found_2");
+                message += "<a href=\"https://support.orcid.org/\">";
+                message += getMessage("orcid.frontend.reset.password.email_not_found_3");
+                message += "</a>";
+                message += getMessage("orcid.frontend.reset.password.email_not_found_4");
+                errors.add(message);
+                return resendClaimRequest;
+            }
+    
+            orcid = emailManager.findOrcidIdByEmail(email);
         }
-
-        String orcid = emailManager.findOrcidIdByEmail(email);
+  
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
 
         if (profile != null && profile.getClaimed()) {
@@ -233,19 +254,5 @@ public class ClaimController extends BaseController {
         recordEmailSender.sendClaimReminderEmail(orcid, (claimWaitPeriodDays - claimReminderAfterDays), email);
         resendClaimRequest.setSuccessMessage(getMessage("resend_claim.successful_resend"));
         return resendClaimRequest;
-    }
-
-    private void automaticallyLogin(HttpServletRequest request, String password, String orcid) {
-        UsernamePasswordAuthenticationToken token = null;
-        try {
-            token = new UsernamePasswordAuthenticationToken(orcid, password);
-            token.setDetails(new WebAuthenticationDetails(request));
-            Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (AuthenticationException e) {
-            // this should never happen
-            SecurityContextHolder.getContext().setAuthentication(null);
-            LOGGER.warn("User " + orcid + " should have been logged-in, but we unable to due to a problem", e, (token != null ? token.getPrincipal() : "empty principle"));
-        }
     }
 }

@@ -123,7 +123,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     private ArgumentCaptor<Map<String, List<String>>> searchParamsCaptor;
     
     @Before
-    public void before() {
+    public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
         Map<String, String> map = new HashMap<String, String>();
         map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));

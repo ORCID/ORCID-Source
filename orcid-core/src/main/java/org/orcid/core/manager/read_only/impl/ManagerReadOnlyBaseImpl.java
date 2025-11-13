@@ -2,8 +2,8 @@ package org.orcid.core.manager.read_only.impl;
 
 import java.util.Date;
 
+import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.read_only.ManagerReadOnlyBase;
-import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 
 public class ManagerReadOnlyBaseImpl implements ManagerReadOnlyBase {
     protected ProfileLastModifiedAspect profileLastModifiedAspect;

@@ -91,27 +91,25 @@
                                                 </a>
                                             </li>
                                             <!--  ADD WORKS WITH EXTERNAL ID CONTAINER-->
-                                            <ng-container *ngIf="TOGGLZ_ADD_WORKS_WITH_EXTERNAL_ID">
-                                                <li>
-                                                    <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
-                                                        <span class="ai ai-arxiv"></span>
-                                                        <@orcid.msg 'groups.common.add_arxiv'/>
-                                                    </a>
-                                                </li>
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('arXiv')">
+                                                    <span class="ai ai-arxiv"></span>
+                                                    <@orcid.msg 'groups.common.add_arxiv'/>
+                                                </a>
+                                            </li>
 
-                                                <li>
-                                                    <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
-                                                        <span class="ai ai-doi"></span>
-                                                        <@orcid.msg 'groups.common.add_doi'/>
-                                                    </a>
-                                                </li>
-                                                <li >
-                                                    <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
-                                                        <span class="ai ai-pubmed"></span>
-                                                        <@orcid.msg 'groups.common.add_pubmed'/>    
-                                                    </a>
-                                                </li>
-                                            </ng-container>
+                                            <li>
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('DOI')">
+                                                    <span class="ai ai-doi"></span>
+                                                    <@orcid.msg 'groups.common.add_doi'/>
+                                                </a>
+                                            </li>
+                                            <li >
+                                                <a class="action-option manage-button" (click)="addWorkExternalIdModal('pubMed')">
+                                                    <span class="ai ai-pubmed"></span>
+                                                    <@orcid.msg 'groups.common.add_pubmed'/>    
+                                                </a>
+                                            </li>
                                             <!--Add from Bibtex-->
                                             <li>
                                                 <a class="action-option manage-button" (click)="openBibTextWizard()">
@@ -399,19 +397,16 @@
         </div>
         <!--End bibtex import wizard-->
         <!--Works list-->
-        <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">
-            <@orcid.checkFeatureStatus featureName='MANUAL_WORK_GROUPING'>
+        <div *ngIf="workspaceSrvc.displayWorks" class="workspace-accordion-content">            
                 <div *ngIf="!isPublicPage" class="col-md-12 col-sm-12 col-xs-12">
                     <div class="work-bulk-actions row" *ngIf="worksService?.groups?.length">
-                        <@orcid.checkFeatureStatus featureName='GROUPING_SUGGESTIONS'>
-                            <div class="pull-right" *ngIf="groupingSuggestionPresent">
-                                
-                                    <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
-                                        <@orcid.msg 'groups.combine.suggestion.manage_similar'/>
-                                    </button>
-                        
-                            </div>
-                        </@orcid.checkFeatureStatus>
+                        <div class="pull-right" *ngIf="groupingSuggestionPresent">
+                            
+                                <button class="btn btn-primary leftBuffer" (click)="mergeSuggestionConfirm()">
+                                    <@orcid.msg 'groups.combine.suggestion.manage_similar'/>
+                                </button>
+                    
+                        </div>                        
                         <ul class="sources-actions">
                             <li>
                                 <div class="left">
@@ -470,9 +465,8 @@
                             </button>
                         </div>
                     </div>
-                </div>             
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION'>
+                </div>            
+            
                 <#--  INITIAL LOADER  -->
                 <div *ngIf="worksService.loading && !worksService.showPagination" class="text-center" id="workSpinner">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
@@ -489,13 +483,13 @@
                     </mat-paginator>
                     <i class="glyphicon glyphicon-refresh spin x2 green" id="spinner" *ngIf="worksService?.loading"></i>
                 </div>
-            </@orcid.checkFeatureStatus>
+            
                 <ul *ngIf="worksService?.groups?.length" class="workspace-publications bottom-margin-medium" id="body-work-list" role="presentation">
                     <li class="bottom-margin-small workspace-border-box card" *ngFor="let group of worksService.groups">
                         <#include "work-details-ng2.ftl"/>  
                     </li>
                 </ul>
-            <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION'>
+            
                 <#--  BOTTOM PAGINATION CONTOL  -->
                 <div class="paginatorContainer col-md-12 col-sm-12 col-xs-12" *ngIf="worksService.showPagination && !this.printView">
                     <mat-paginator 
@@ -508,13 +502,7 @@
                     </mat-paginator>
                     <i class="glyphicon glyphicon-refresh spin x2 green" id="spinner" *ngIf="worksService?.loading"></i>
                 </div>
-            </@orcid.checkFeatureStatus>
-            <@orcid.checkFeatureStatus featureName='WORKS_PAGINATION' enabled=false>
-            <button *ngIf="worksService.showLoadMore" (click)="loadMore()" class="btn btn-primary">${springMacroRequestContext.getMessage("workspace.works.load_more")}</button>
-            <div *ngIf="worksService?.loading" class="text-center" id="workSpinner">
-                <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-            </div>
-            </@orcid.checkFeatureStatus>
+            
             <div *ngIf="worksService?.loading == false && worksService?.groups?.length == 0">
                 <strong>
                     ${springMacroRequestContext.getMessage("workspace_works_body_list.havenotaddedanyworks")} 

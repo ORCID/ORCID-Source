@@ -1,0 +1,526 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <!-- dw_adress -->
+    <changeSet id="CREATE-DW-ADDRESS-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_address" replaceIfExists="true">
+            select id as db_id, orcid, iso2_country, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created, last_modified
+            from address where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ADDRESS-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_address to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_biography -->
+    <changeSet id="CREATE-DW-BIOGRAPHY-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_biography" replaceIfExists="true">
+            select id as db_id, orcid, biography, visibility,
+            date_created::timestamp, last_modified::timestamp
+            from biography where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-BIOGRAPHY-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_biography to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_client_details -->
+    <changeSet id="ALTER-DW-CLIENT-DETAILS-VIEW-USER-OBO-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_client_details" replaceIfExists="true">
+            select client_details_id, client_name, client_description, client_website, group_orcid,
+            client_type, user_obo_enabled, date_created, last_modified
+            from client_details where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-CLIENT_DETAILS_OBO-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_client_details to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_client_redirect_uri -->
+    <changeSet id="CREATE-DW-CLIENT-REDIRECT-URI-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_client_redirect_uri" replaceIfExists="true">
+            select client_details_id, redirect_uri, date_created, last_modified
+            from client_redirect_uri where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-CLIENT-REDIRECT-URI-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_client_redirect_uri to dw_user;</sql>
+    </changeSet>
+        
+    <!-- dw_email -->
+    <changeSet id="CREATE-DW-EMAIL-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_email" replaceIfExists="true">
+            select substring(email from '@(.*)$') as email, orcid, is_primary, is_verified, visibility,
+            date_created::timestamp, last_modified::timestamp
+            from email where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-EMAIL-VIEW_INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_email to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_event_stats -->
+    <changeSet id="CREATE-DW-EVENT-STATS-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_event_stats" replaceIfExists="true">
+            SELECT event_type, client_id, count, DATE_TRUNC('day', date), DATE_TRUNC('day', date) as last_modified
+            FROM event_stats where last_modified > date_trunc('day',(now() - interval '4 months')) 
+            ORDER BY DATE_TRUNC('day', date_created) DESC;
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW_USER-TO-DW_EVENT-STATS-VIEW-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_event_stats to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_external_identifier -->
+    <changeSet id="CREATE-DW-EXTERNAL-IDENTIFIER-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_external_identifier" replaceIfExists="true">
+            select id as db_id, orcid, external_id_reference, external_id_type, external_id_url, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created, last_modified
+            from external_identifier where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-EXT-ID-VIEW-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_external_identifier to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_given_permission_to -->
+    <changeSet id="ALTER-DW-GIVEN-PERMISSONS-TO-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_given_permission_to" replaceIfExists="true">
+            select given_permission_to_id, receiver_orcid, giver_orcid, approval_date::timestamp, date_created::timestamp, last_modified::timestamp 
+            from given_permission_to where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-GIVEN-PERMISSONS-TO-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_given_permission_to to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_group_id_record -->
+    <changeSet id="CREATE-DW-GROUP-ID-RECORD-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_group_id_record" replaceIfExists="true">
+            select id as db_id, group_id, group_name, group_type, client_source_id, date_created::timestamp, last_modified::timestamp
+            from group_id_record where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-GROUP-ID-RECORD-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_group_id_record to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_identifier_type-->
+    <changeSet id="CREATE-DW-IDENTIFIER-TYPE-VIEW-FOUR-MONTHS" author="Camelia Dumitru"  dbms="postgresql">
+        <createView viewName="dw_identifier_type" replaceIfExists="true">
+            select id as db_id, id_name, id_validation_regex, id_resolution_prefix, id_deprecated, primary_use,
+            case_sensitive, date_created::timestamp, last_modified::timestamp
+            from identifier_type where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-IDENTIFIER-TYPE-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_identifier_type to dw_user;</sql>
+    </changeSet> 
+    
+    <!-- dw_identity_provider -->
+    <changeSet id="CREATE-DW-IDENTITY-PROVIDER-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_identity_provider" replaceIfExists="true">
+            select id as db_id, providerid, display_name, last_failed::timestamp, failed_count, date_created::timestamp, last_modified::timestamp
+            from identity_provider where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-IDENTITY-PROVIDER-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_identity_provider to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_oauth2_token_detail -->
+    <changeSet id="CREATE-DW-OAUTH2-TOKEN-DETAIL-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_oauth2_token_detail" replaceIfExists="true">
+            select id as db_id, token_type, user_orcid, client_details_id, substring(redirect_uri from  '.*://([^/]*)') as redirect_uri, scope_type, obo_client_details_id,
+            token_expiration, revocation_date, date_created, last_modified
+            from oauth2_token_detail where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-OAUTH2-TOKEN-DETAIL-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_oauth2_token_detail to dw_user;</sql>
+    </changeSet> 
+    
+    <!-- dw_org -->
+    <changeSet id="CREATE-DW-ORG-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_org" replaceIfExists="true">
+            select id as db_id, name, city, region, country, url, org_disambiguated_id,
+            date_created::timestamp, last_modified::timestamp
+            from org where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ORG_INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_org_affiliation_relation -->
+    <changeSet id="CREATE-DW-ORG-AFFILIATION-RELATION-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_org_affiliation_relation" replaceIfExists="true">
+            select id as db_id, org_id, orcid, assertion_origin_client_source_id, org_affiliation_relation_role, org_affiliation_relation_title,
+            department, start_day, start_month, start_year, end_day, end_month, end_year, visibility,
+            case when orcid = source_id then true else false end as self_asserted, client_source_id, url, external_ids_json,
+            date_created::timestamp, last_modified::timestamp
+            from org_affiliation_relation where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ORG-AFF-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_affiliation_relation to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_org_disambiguated -->
+    <changeSet id="CREATE-DW-ORG-DISAMBIGUATED-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_org_disambiguated" replaceIfExists="true">
+            select id as db_id, source_id, source_url, source_type, org_type, name,
+            city, region, country, url, status, date_created::timestamp, last_modified::timestamp, popularity
+            from org_disambiguated where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-ORG-DISAMB-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_disambiguated to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_org_disambiguated_external_identifier-->
+    <changeSet id="CREATE-DW-ORG-DISAM-EXTERNAL-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_org_disambiguated_external_identifier" replaceIfExists="true">
+            select id as db_id, org_disambiguated_id, identifier, identifier_type, preferred,
+            date_created::timestamp, last_modified::timestamp
+            from org_disambiguated_external_identifier where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-EXTDISAM-ID-VIEW_INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_disambiguated_external_identifier to dw_user;</sql>
+    </changeSet>
+    
+ 	<!-- dw_other_name-->
+ 	<changeSet id="CREATE-DW-OTHER-NAME-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_other_name" replaceIfExists="true">
+            select other_name_id , orcid, display_name, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created, last_modified
+            from other_name where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+ 	
+ 	<changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-OTHER-NAME-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_other_name to dw_user;</sql>
+    </changeSet>
+ 	
+ 	<!-- dw_peer_review-->
+    <changeSet id="CREATE-DW-PEER-REVIEW-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_peer_review" replaceIfExists="true">
+            select id as db_id, orcid, peer_review_subject_id, external_identifiers_json, org_id,
+            peer_review_role, peer_review_type, completion_day, completion_month, completion_year,
+            url, visibility, subject_external_identifiers_json, subject_type, subject_container_name,
+            subject_name, subject_url, group_id, client_source_id,
+            date_created::timestamp, last_modified::timestamp
+            from peer_review where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PEER-REVIEW_INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_peer_review to dw_user;</sql>
+    </changeSet>
+
+	<!-- dw_profile -->
+    <changeSet id="ALTER-DW-PROFILE-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile" replaceIfExists="true">
+            select orcid, orcid_type, record_locked, group_type, salesforce_id, date_created, last_modified, profile_deactivation_date,
+            enable_developer_tools, last_login, using_2fa, reason_locked, auto_lock_date, locale, reviewed, creation_method
+            from profile where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PROFILE" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_profile_funding -->
+    <changeSet id="CREATE-DW-PROFILE-FUNDING-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile_funding" replaceIfExists="true">
+            select id as db_id, orcid, org_id, title, type, currency_code, numeric_amount, description, start_day, start_month,
+            start_year, end_day, end_month, end_year, url, contributors_json, organization_defined_type,
+            external_identifiers_json, visibility, case when orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created::timestamp, last_modified::timestamp
+            from profile_funding where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-PROFILE-FUNDING" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_funding to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_profile_history_event -->
+    <changeSet id="CREATE-DW-PROFILE_HISTORY-EVENT-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile_history_event" replaceIfExists="true">
+            select id as db_id, orcid, event_type, date_created::timestamp, last_modified::timestamp
+            from profile_history_event where last_modified > date_trunc('day',(now() - interval '4 months'))  
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-PROFILE_HISTORY-EVENT-VIEW-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_history_event to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_profile_keyword -->
+    <changeSet id="ALTER-DW-PROFILE_KEYWORD-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile_keyword" replaceIfExists="true">
+            select id as db_id, profile_orcid, trim(kwc) as keyword, visibility, case when profile_orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created, last_modified
+            from profile_keyword, regexp_split_to_table(keywords_name, '[,;\.]') kwc  where last_modified > date_trunc('day',(now() - interval '4 months'))  
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-PROFILE_KEYWORD-VIEW_INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_keyword to dw_user;</sql>
+     </changeSet>
+
+    <!-- dw_record_name -->
+    <changeSet id="CREATE-DW-RECORD-NAME-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_record_name" replaceIfExists="true">
+            select id as db_id, orcid, credit_name, family_name, given_names, visibility,
+            date_created::timestamp, last_modified::timestamp
+            from record_name where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RECORD-NAME-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_record_name to dw_user;</sql>
+    </changeSet>
+
+	<!-- dw_research_resource -->
+    <changeSet id="CREATE-DW-RESEARCH-RESOURCE-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource" replaceIfExists="true">
+            select id as db_id, orcid, proposal_type, external_identifiers_json, title, url, start_day,
+            start_month, start_year, end_day, end_month, end_year, visibility, client_source_id,
+            date_created, last_modified
+            from research_resource where last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RES_INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource to dw_user;</sql>
+    </changeSet>
+
+	<!-- dw_research_resource_item -->
+    <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ITEM-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_item" replaceIfExists="true">
+            select a.id as db_id, a.research_resource_id, a.resource_name, a.resource_type, a.external_identifiers_json, 
+            a.url, b.date_created::timestamp, b.last_modified::timestamp
+            from research_resource_item a 
+            inner join research_resource b on a.research_resource_id =b.id where b.last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCH-RES-ITEM_INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_item to dw_user;</sql>
+    </changeSet>
+
+   <!-- dw_research_resource_item_org -->
+   <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ITEM-ORG-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_item_org" replaceIfExists="true">
+            select a.research_resource_item_id, a.org_id, c.date_created, c.last_modified
+            from research_resource_item_org a
+            inner join research_resource_item b on a.research_resource_item_id =b.id
+            inner join research_resource c on b.research_resource_id =c.id where c.last_modified > date_trunc('day',(now() - interval '4 months')) 
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-RESEARCH-RESOURCE-ITEM-ORG-VIEW-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_item_org to dw_user;</sql>
+    </changeSet>
+   
+   <!-- dw_research_resource_org -->
+   <changeSet id="ALTER-DW-RESEARCH-RESOURCE-ORG-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_research_resource_org" replaceIfExists="true">
+            select a.research_resource_id, a.org_id, b.date_created::timestamp, b.last_modified::timestamp
+            from research_resource_org a  
+            inner join research_resource b on a.research_resource_id =b.id where b.last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-RESEARCH-RESOURCE-ORG-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_research_resource_org to dw_user;</sql>
+    </changeSet>
+   
+   <!-- dw_researcher_url -->
+    <changeSet id="POSTGRES-CREATE-DW-RESEARCHER-URL-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_researcher_url" replaceIfExists="true">
+            select id as db_id, orcid, substring(url from '[http[s]*://]?([^/]+)') as domain, url_name, visibility,case when orcid = source_id then true else false end as self_asserted, client_source_id,
+            date_created, last_modified
+            from researcher_url where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-RESEARCHER-URL-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_researcher_url to dw_user;</sql>
+    </changeSet>
+      
+    <!-- dw_userconnection -->
+    <changeSet id="CREATE-DW-USERCONNECTION-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_userconnection" replaceIfExists="true">
+            select orcid, providerid, is_linked,last_login, id_type, date_created::timestamp, last_modified::timestamp
+            from userconnection where last_modified > date_trunc('day',(now() - interval '4 months')) and TRIM(BOTH FROM orcid) &lt;&gt;''
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USERCONNECTION-VIEW-INTERVAL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_userconnection to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_validated_public_profile -->
+    <changeSet id="CREATE-VALIDATED-PUBLIC-PROFILE-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_validated_public_profile" replaceIfExists="true">
+            SELECT 
+            MIN(date_created) as date_from, 
+            MAX(date_created) as date_to, 
+            CAST ((SELECT COUNT(*) FROM validated_public_profile WHERE valid IS TRUE) AS FLOAT) / CAST ((SELECT COUNT(*) FROM validated_public_profile) AS FLOAT) * 100 AS percent_valid,
+            (SELECT error FROM (SELECT error, COUNT(*) AS errorCount FROM validated_public_profile WHERE valid IS FALSE GROUP BY error ORDER BY errorCount DESC LIMIT 1) AS dr) AS most_common_error,
+            CAST ((SELECT COUNT(*) FROM validated_public_profile WHERE valid IS FALSE AND error = (SELECT error FROM (SELECT error, COUNT(*) AS errorCount FROM validated_public_profile WHERE valid IS FALSE GROUP BY error ORDER BY errorCount DESC LIMIT 1) AS dr)) AS FLOAT) / CAST ((SELECT COUNT(*) FROM validated_public_profile) AS FLOAT) * 100 AS percent_affected_by_most_common_error,
+            MAX(last_modified) AS last_modified 
+            FROM validated_public_profile  where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW-USER-ON-DW-VALIDATED-PUBLIC-PROFILE_INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_validated_public_profile to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_work -->
+    <changeSet id="REMOVE_CONTRIBUTORSJSON_FROM-DW-WORK-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_work" replaceIfExists="true">
+            select work_id, orcid, publication_day, publication_month, publication_year, title, subtitle, description,
+            work_url, citation, citation_type, work_type, journal_title, language_code, translated_title,
+            translated_title_language_code, iso2_country, visibility, case when orcid = source_id then true else false end as self_asserted , client_source_id,
+            date_created::timestamp, last_modified::timestamp
+            from work where last_modified > date_trunc('day',(now() - interval '4 months'))
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ON-DW-WORK-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_work to dw_user;</sql>
+    </changeSet>
+    
+    <!-- dw_work_external_id -->
+        <changeSet id="CREATE-DW-WORK-EXTERNAL-ID-VIEW-FOUR-MONTHS" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_work_external_id" replaceIfExists="true">
+             with t as (select work_id,orcid, date_created, last_modified, json_array_elements(external_ids_json->'workExternalIdentifier') as external_json from work)  select work_id, orcid,  date_created, last_modified, external_json->'workExternalIdentifierId'->>'content' as workExternalIdentifierId, external_json->>'relationship'as relationship,  external_json->'url'->>'value'as url, external_json->>'workExternalIdentifierType' as workExternalIdentifierType  from t where last_modified > date_trunc('day',(now() - interval '4 months')) order by last_modified
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-WORK-EXTERNAL-ID-INT" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_work_external_id to dw_user;</sql>
+    </changeSet>
+    
+</databaseChangeLog>

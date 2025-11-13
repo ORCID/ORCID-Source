@@ -35,6 +35,8 @@ import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
 import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
@@ -123,7 +125,8 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
 
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE));
+
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(entity, ActionType.CREATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(entity);
     }
 
@@ -171,7 +174,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         
         existingEntity = peerReviewDao.merge(existingEntity);
         peerReviewDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE));
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(existingEntity, ActionType.UPDATE, peerReview.getExternalIdentifiers(), peerReview.getSubjectExternalIdentifier()));
         return jpaJaxbPeerReviewAdapter.toPeerReview(existingEntity);
     }
 
@@ -180,7 +183,8 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
         orcidSecurityManager.checkSourceAndThrow(pr);
         boolean result = deletePeerReview(pr, orcid);
-        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr, ActionType.DELETE));
+        PeerReview model = jpaJaxbPeerReviewAdapter.toPeerReview(pr);
+        notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItemList(pr, ActionType.DELETE, model.getExternalIdentifiers(), model.getSubjectExternalIdentifier()));
         return result;
     }
 
@@ -214,6 +218,11 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         return peerReviewDao.updateVisibilities(orcid, peerReviewIds, visibility.name());
     }
 
+    @Override
+    public boolean updateVisibilitiesByGroupId(String orcid, String groupId, Visibility visibility) {
+        return peerReviewDao.updateVisibilityByGroupId(orcid, groupId, visibility.name());
+    }
+
     private void validateGroupId(PeerReview peerReview) {
         if (!PojoUtil.isEmpty(peerReview.getGroupId())) {
             if (!groupIdRecordManager.exists(peerReview.getGroupId())) {
@@ -222,7 +231,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         }
     }
 
-    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type) {
+    private List<Item> createItemList(PeerReviewEntity peerReviewEntity, ActionType type, ExternalIDs extIds, ExternalID subjectExtId) {
         Item item = new Item();
         item.setItemType(ItemType.PEER_REVIEW);
         item.setPutCode(String.valueOf(peerReviewEntity.getId()));
@@ -231,7 +240,6 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         additionalInfo.put("subject_container_name", peerReviewEntity.getSubjectContainerName());
 
         String itemName = null;
-
         Optional<GroupIdRecord> optional = groupIdRecordManager.findByGroupId(peerReviewEntity.getGroupId());
         if (optional.isPresent()) {
             GroupIdRecord groupId = optional.get();
@@ -239,6 +247,13 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
                 additionalInfo.put("group_name", optional.get().getName());
                 itemName = optional.get().getName();
             }
+        }
+        if(extIds != null) {
+            additionalInfo.put("external_identifiers", extIds);
+        }
+
+        if(subjectExtId != null) {
+            additionalInfo.put("subject_external_identifiers", subjectExtId);
         }
 
         item.setItemName(itemName);

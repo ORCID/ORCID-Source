@@ -81,7 +81,7 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.test.helper.v3.Utils;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
@@ -734,6 +734,9 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertTrue(workBulk.getBulk().get(1) instanceof Work);
         assertTrue(workBulk.getBulk().get(2) instanceof Work); // private work but matching source
         assertTrue(workBulk.getBulk().get(3) instanceof OrcidError); // private work not matching source
+        assertEquals("/0000-0000-0000-0003/work/11", ((Work) workBulk.getBulk().get(0)).getPath());
+        assertEquals("/0000-0000-0000-0003/work/12", ((Work) workBulk.getBulk().get(1)).getPath());
+        assertEquals("/0000-0000-0000-0003/work/13", ((Work) workBulk.getBulk().get(2)).getPath());
     }
     
     @Test

@@ -13,18 +13,22 @@ import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidGenerationManager;
+import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common_v2.OrcidType;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.FamilyName;
 import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
@@ -34,7 +38,9 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.ProfileDeprecationRequest;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
@@ -90,6 +96,12 @@ public class RegistrationManagerImpl implements RegistrationManager {
     
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManager;
+
+    @Resource(name = "affiliationsManagerV3")
+    private AffiliationsManager affiliationsManager;
+
+    @Resource
+    private OrgDisambiguatedManager orgDisambiguatedManager;
     
     @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
@@ -99,6 +111,18 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Override
     public Long getCount() {
         return profileDao.getConfirmedProfileCount();
+    }
+
+    @Override
+    public void createAffiliation(Registration registration, String orcid) {
+        AffiliationForm affiliationForm = registration.getAffiliationForm();
+        OrgDisambiguated orgDisambiguated = orgDisambiguatedManager.findInDB(Long.valueOf(affiliationForm.getOrgDisambiguatedId().getValue()));
+        affiliationForm.setDisambiguatedAffiliationSourceId(Text.valueOf(orgDisambiguated.getSourceId()));
+        affiliationForm.setDisambiguationSource(Text.valueOf(orgDisambiguated.getSourceType()));
+        affiliationForm.setCity(Text.valueOf(orgDisambiguated.getCity()));
+        affiliationForm.setCountry(Text.valueOf(orgDisambiguated.getCountry()));
+        Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
+        affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
     }
 
     @Override
@@ -233,7 +257,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         // Set authority
         OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
         authority.setOrcid(orcid);
-        authority.setAuthority(OrcidWebRole.ROLE_USER.getAuthority());
+        authority.setAuthority(OrcidRoles.ROLE_USER.getAuthority());
         Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
         authorities.add(authority);
         newRecord.setAuthorities(authorities);
@@ -290,7 +314,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
             name.setGivenNames(new GivenNames(registration.getGivenNames().getValue()));
         }
         recordNameManager.createRecordName(orcid, name);
-                
+
         // Create email frequency entity
         boolean sendQuarterlyTips = (registration.getSendOrcidNews() == null) ? false : registration.getSendOrcidNews().getValue();
         emailFrequencyManager.createOnRegister(orcid, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, SendEmailFrequency.WEEKLY, sendQuarterlyTips);

@@ -18,32 +18,16 @@
 -->
 <#import "email_macros.ftl" as emailMacros />
 
-<@emailMacros.msg "email.welcome.thank_you.1" />
+<@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<br/>
+<@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
 
-${verificationUrl}?lang=${locale}
+<@emailMacros.msg "email.welcome" /><@emailMacros.space />${userName}
+<@emailMacros.msg "email.welcome.congrats" />
 
-<@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space />${baseUri}/${orcidId}
+<@emailMacros.msg "email.welcome.verify.1" />
 
-<@emailMacros.msg "email.welcome.next_steps" />
+<#include "how_do_i_verify_my_email_address.ftl"/>
 
-<@emailMacros.msg "email.welcome.next_steps.1" />
-		
-<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /><@emailMacros.space />${baseUri}/my-orcid<@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.1.2" /><@emailMacros.space />
+<@emailMacros.msg "email.welcome.please_visit_our" /><@emailMacros.space /><@emailMacros.msg "email.welcome.researcher_homepage" /><@emailMacros.space /><@emailMacros.msg "email.welcome.for_more_information" />
 
-<@emailMacros.msg "email.welcome.next_steps.1.description.2" />
-
-<@emailMacros.msg "email.welcome.next_steps.1.description.tips.1" /><@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.tips.1.link.text" /><@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.tips.1.link.href" /><@emailMacros.msg "email.welcome.next_steps.1.description.tips.2" /><@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.link.text" /><@emailMacros.msg "email.welcome.next_steps.1.description.link.href" />
-
-<@emailMacros.msg "email.welcome.next_steps.2" />
-		
-<@emailMacros.msg "email.welcome.next_steps.2.description" />
-
-<@emailMacros.msg "email.welcome.need_help" />
-
-<@emailMacros.msg "email.common.need_help.description.1" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.1.text" /><@emailMacros.space /><@emailMacros.msg "email.common.need_help.description.2" /><@emailMacros.msg "email.common.need_help.description.2.text" />
-
-<@emailMacros.msg "email.common.warm_regards.simple" />
-${baseUri}/home?lang=${locale}
-
-<@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>

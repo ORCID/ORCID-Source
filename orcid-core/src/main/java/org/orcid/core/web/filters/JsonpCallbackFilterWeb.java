@@ -2,6 +2,7 @@ package org.orcid.core.web.filters;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -40,7 +41,19 @@ public class JsonpCallbackFilterWeb extends OncePerRequestFilter {
         Map<String, String[]> parms = httpRequest.getParameterMap();
 
         if (parms.containsKey("callback")) {
-            if(crossDomainWebManger.allowed(request)) {
+
+            boolean allowCrossDomain = false;
+
+            try {
+                allowCrossDomain = crossDomainWebManger.allowed(request);
+            } catch (URISyntaxException e) {
+                String origin  = request.getHeader("origin");
+                String referer = request.getHeader("referer");
+                log.error("Unable to process your request due an invalid URI exception, please check your origin and request headers: origin = '" + origin + "' referer = '" + referer + "'" , e);
+                // Lets log the exception and assume this was rejected so it is not considered a JSONP call
+            }
+
+            if(allowCrossDomain) {
                 if (log.isDebugEnabled())
                     log.debug("Wrapping response with JSONP callback '" + parms.get("callback")[0] + "'");
 

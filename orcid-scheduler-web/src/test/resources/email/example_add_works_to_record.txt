@@ -1,0 +1,29 @@
+Your ORCID iD: 0000-0000-0000-0000
+Your ORCID record is https://testserver.orcid.org/0000-0000-0000-0000
+
+Dear John Watson
+
+We have noticed that you have not yet added any research outputs to your ORCID record. Adding these will help reduce your administrative burden when read and imported into other systems, ensure you are recognized for your research contributions, and disambiguate you from other researchers with the same name!
+
+Get started with these popular ORCID integrations:
+
+Below are links to 4 popular ORCID integrations that allow you to sign in to your ORCID record, grant permission to the service to add your selected research outputs to your ORCID record.
+
+For adding journal articles: Crossref Metadata Search allows you to search and add works by title or DOI.
+
+For adding life sciences literature: Europe PubMed Central allows you to import works from the Europe PubMed database, which includes all articles indexed by PubMed Central.
+
+For adding multiple published articles: Scopus allows you to add your Scopus Author ID to your record as well as importing works associated with your Scopus Author ID.
+
+BASE (Bielefeld Academic Search Engine) allows you to claim and import works from the Bielefeld Academic Search Engine. To use, you must first create a BASE user account. Recommended for authors of open access publications.
+
+We have more 'search and link' wizards available within your ORCID record.
+
+If you are having trouble adding your research outputs or you would like to know more about how to add data to your ORCID record, please visit our ORCID Help Center.
+
+Warm Regards,
+ORCID Support Team
+https://support.orcid.org
+
+You have received this email because you opted in to tips and features emails from ORCID. You can opt out of these at account settings.
+email preferences | privacy policy | ORCID, Inc. | 10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA | ORCID.org

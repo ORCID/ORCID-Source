@@ -60,6 +60,11 @@
         <class>org.orcid.persistence.jpa.entities.ResearchResourceItemEntity</class>
         <class>org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity</class>
         <class>org.orcid.persistence.jpa.entities.SpamEntity</class>
+        <class>org.orcid.persistence.jpa.entities.EventEntity</class>
+        <class>org.orcid.persistence.jpa.entities.EventStatsEntity</class>
+        <class>org.orcid.persistence.jpa.entities.EmailDomainEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity</class>
+        <class>org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity</class>
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>
@@ -86,13 +91,14 @@
 		<class>org.orcid.persistence.jpa.entities.RejectedGroupingSuggestionEntity</class>
 		<class>org.orcid.persistence.jpa.entities.ValidatedPublicProfileEntity</class>
 		<class>org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity</class>
-		<class>org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity</class>
-		<class>org.orcid.persistence.jpa.entities.OrgImportLogEntity</class>		
+		<class>org.orcid.persistence.jpa.entities.OrgImportLogEntity</class>
 				
 		<!-- Statistics -->
 		<class>org.orcid.statistics.jpa.entities.StatisticValuesEntity</class>
 		<class>org.orcid.statistics.jpa.entities.StatisticKeyEntity</class>
 		
+		<!-- PAPI Rate Limitig -->
+		<class>org.orcid.persistence.jpa.entities.PublicApiDailyRateLimitEntity</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 
 <!--         <properties> -->

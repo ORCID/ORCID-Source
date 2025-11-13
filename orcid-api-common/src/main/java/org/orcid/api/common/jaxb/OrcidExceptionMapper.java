@@ -5,10 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -16,35 +13,21 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException;
 import org.jbibtex.TokenMgrError;
+import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.core.exception.ClientDeactivatedException;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.DuplicatedGroupIdRecordException;
-import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
-import org.orcid.core.exception.LockedException;
-import org.orcid.core.exception.OrcidApiException;
-import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.exception.OrcidCoreExceptionMapper;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.exception.OrcidDuplicatedElementException;
-import org.orcid.core.exception.OrcidInvalidScopeException;
-import org.orcid.core.exception.OrcidNoBioException;
-import org.orcid.core.exception.OrcidNonPublicElementException;
-import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.exception.OrcidNotificationException;
-import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.exception.*;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OAuthError;
 import org.orcid.core.oauth.OAuthErrorUtils;
-import org.orcid.core.utils.DateUtils;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.orcid.core.version.ApiSection;
 import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
@@ -56,7 +39,9 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.stereotype.Component;
@@ -103,17 +88,27 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     public Response toResponse(Throwable t) {
         // Whatever exception has been caught, make sure we log it.
         String clientId = securityManager.getClientIdFromAPIRequest();
-        if (t instanceof NotFoundException) {
+        if(t instanceof OrcidInvalidScopeException) {
+            // This exception happens on client_credentials grant, so, the security manager doesn't have the client id info
+            OrcidInvalidScopeException ex = (OrcidInvalidScopeException) t;
+            if(clientId == null) {
+                clientId = ex.getClientId();
+            }
             logShortError(t, clientId);
-        } else if (t instanceof NoResultException) {
-            logShortError(t, clientId); 
-        } else if (t instanceof OrcidDeprecatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof LockedException) {
-            logShortError(t, clientId);
+        } else if(t instanceof OrcidDeprecatedException
+                || t instanceof LockedException
+                || t instanceof DeactivatedException
+                || t instanceof OrcidNoBioException
+                || t instanceof OrcidNonPublicElementException
+                || t instanceof OrcidNoResultException
+                || t instanceof NoResultException
+                || t instanceof NotFoundException
+                || t instanceof OrcidUnauthorizedException
+                || t instanceof DisabledException
+                || t instanceof OrcidDuplicatedActivityException
+                || t instanceof OrcidDuplicatedElementException) {
+            // Do not log any of these exceptions
         } else if (t instanceof ClientDeactivatedException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidNonPublicElementException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidBadRequestException) {
             logShortError(t, clientId);
@@ -121,13 +116,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof DuplicatedGroupIdRecordException) {
             logShortError(t, clientId);
-        } else if (t instanceof OrcidDuplicatedActivityException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidDuplicatedElementException) {
-            logShortError(t, clientId);
         } else if (t instanceof OrcidNotificationException) {
-            logShortError(t, clientId);
-        } else if (t instanceof OrcidNoBioException) {
             logShortError(t, clientId);
         } else if (t instanceof RemoteSolrException) {
             logShortError(t, clientId);
@@ -135,8 +124,31 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof TokenMgrError) {
             logShortError(t, clientId);
+        } else if (t instanceof InvalidPutCodeException) {
+            logShortError(t, clientId);
+        } else if (t instanceof MismatchedPutCodeException) {
+            logShortError(t, clientId);
+        } else if (t instanceof WrongSourceException) {
+            logShortError(t, clientId);
+        } else if (t instanceof OrcidWebhookNotFoundException) {
+            logShortError(t, clientId);
+        } else if(t instanceof OrcidAccessControlException) {
+            logShortError(t, clientId);
+        } else if (t instanceof InvalidJSONException) {
+            logShortError(t, clientId);
+        } else if(t instanceof StartDateAfterEndDateException) {
+            logShortError(t, clientId);
+        } else if(t instanceof InvalidClientException) {
+            logShortError(t, clientId);
+        } else if (t instanceof InvalidDisambiguatedOrgException) {
+            LOGGER.error("Error for client ID: " + clientId + "InvalidDisambiguatedOrgException: Disambiguated org is empty or null");
         } else {
-            LOGGER.error("An exception has occured processing request from client " + clientId, t);
+            Throwable rootCause = ExceptionUtils.getRootCause(t);
+            if(rootCause != null) {
+                LOGGER.error("An exception has occurred processing request from client " + clientId, rootCause);
+            } else {
+                LOGGER.error("An exception has occurred processing request from client " + clientId, t);
+            }
         }
 
         if (isOAuthTokenRequest()) {
@@ -169,8 +181,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private void logShortError(Throwable t, String clientId) {
-        StringBuffer temp = new StringBuffer(t.getClass().getSimpleName() + " exception from client: ").append(clientId).append(". ").append(t.getMessage());
-        LOGGER.error(temp.toString());
+        LOGGER.error(t.getClass().getSimpleName() + " exception from client: " + clientId + ((t.getMessage() == null) ? "." : "." + t.getMessage()));
     }
 
     private Response oAuthErrorResponse(Throwable t) {
@@ -178,6 +189,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return Response.status(error.getResponseStatus()).entity(error).build();
     }
 
+    @Deprecated
     private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return Response.status(((OrcidApiException) t).getHttpStatus()).build();            
@@ -239,7 +251,11 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (LockedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Account locked : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
-        } else if (ClientDeactivatedException.class.isAssignableFrom(t.getClass())) {
+        }else if (DisabledException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Account not active: ", t);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
+        } 
+        else if (ClientDeactivatedException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Client deactivated : ", t);
             return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else if (NoResultException.class.isAssignableFrom(t.getClass())) {
@@ -280,9 +296,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     }
 
     private Response newStyleErrorResponse(Throwable t, String version) {
-        if(NotFoundException.class.isAssignableFrom(t.getClass())) {
-            return getOrcidErrorResponse(t, version);
-        } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
+        if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             return getOrcidErrorResponse((WebApplicationException) t, version);
         } else {
             return getOrcidErrorResponse(t, version);
@@ -308,7 +322,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         int statusCode = 0;
 
         if (org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
-        	statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
+            statusCode = ((org.orcid.jaxb.model.error_v2.OrcidError) orcidError).getResponseCode();
         } else if (org.orcid.jaxb.model.v3.release.error.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
             statusCode = ((org.orcid.jaxb.model.v3.release.error.OrcidError) orcidError).getResponseCode();
         }
@@ -322,7 +336,25 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                     location = getPrimaryRecordLocation(params);
                 }
             }
-
+            
+            RequestAttributes reqAttr = RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes servlReqAttr = (ServletRequestAttributes)reqAttr;
+            HttpServletRequest req = servlReqAttr.getRequest();
+            String requestMethod = (req == null) ? null : req.getMethod();
+            
+            statusCode = Response.Status.MOVED_PERMANENTLY.getStatusCode();
+            if(requestMethod != null && !requestMethod.equals("GET")) {
+                statusCode = Response.Status.CONFLICT.getStatusCode();
+                // Create a new error object
+                if(org.orcid.jaxb.model.error_v2.OrcidError.class.isAssignableFrom(orcidError.getClass())) {
+                    org.orcid.jaxb.model.error_v2.OrcidError v2Error = (org.orcid.jaxb.model.error_v2.OrcidError) orcidError;
+                    orcidError = orcidCoreExceptionMapper.getDeprecatedOrcidErrorV2(v2Error.getErrorCode(), statusCode, params);
+                } else {
+                    org.orcid.jaxb.model.v3.release.error.OrcidError v3Error = (org.orcid.jaxb.model.v3.release.error.OrcidError) orcidError;
+                    orcidError = orcidCoreExceptionMapper.getDeprecatedOrcidErrorV3(v3Error.getErrorCode(), statusCode, params);
+                }
+            }
+            
             Response response = null;
             if (location != null) {
                 response = Response.status(statusCode).header(LOCATION_HEADER, location).entity(orcidError).build();

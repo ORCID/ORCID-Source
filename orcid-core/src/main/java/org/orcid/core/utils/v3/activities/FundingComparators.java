@@ -2,19 +2,30 @@ package org.orcid.core.utils.v3.activities;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.grouping.FundingGroup;
+import org.orcid.pojo.grouping.PeerReviewGroup;
 
 public class FundingComparators {
 
-    private static final String TITLE_SORT_KEY = "title";
+    private final String TITLE_SORT_KEY = "title";
 
-    private static final String DATE_SORT_KEY = "date";
+    private final String DATE_SORT_KEY = "date";
 
-    private static final String TYPE_SORT_KEY = "type";
+    private final String TYPE_SORT_KEY = "type";
     
-    public static Comparator<FundingGroup> getInstance(String key, boolean sortAsc) {
+    private final String START_DATE_KEY = "start";
+    
+    private final String END_DATE_KEY = "end";
+
+    public FundingComparators() {}
+
+    public Comparator<FundingGroup> getInstance(String key, boolean sortAsc, String orcid) {
         Comparator<FundingGroup> comparator = null;
         if (DATE_SORT_KEY.equals(key)) {
             comparator = FundingComparators.DATE_COMPARATOR;
@@ -22,8 +33,12 @@ public class FundingComparators {
             comparator = FundingComparators.TITLE_COMPARATOR;
         } else if (TYPE_SORT_KEY.equals(key)) {
             comparator = FundingComparators.TYPE_COMPARATOR;
+        } else if (START_DATE_KEY.equals(key)) {
+            comparator = FundingComparators.START_DATE_COMPARATOR;
+        } else if (END_DATE_KEY.equals(key)) {
+            comparator = FundingComparators.END_DATE_COMPARATOR;
         }
-        
+
         if (sortAsc) {
             return comparator;
         } else {
@@ -63,6 +78,20 @@ public class FundingComparators {
         return f1.getFundingType().getValue().compareTo(f2.getFundingType().getValue());
     };
     
+    public static Comparator<FundingGroup> START_DATE_COMPARATOR = (g1, g2) -> {
+        if (g1.getStartDate() == null && g2.getStartDate() == null)
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
+        //Null = to present and should sort first
+        if (g1.getStartDate() == null)
+            return 1;
+        if (g2.getStartDate() == null)
+            return -1;
+        if (g1.getStartDate().compareTo(g2.getStartDate()) == 0){
+            return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
+        }
+        return g1.getStartDate().compareTo(g2.getStartDate());
+    };
+    
     public static Comparator<FundingGroup> END_DATE_COMPARATOR = (g1, g2) -> {
         if (g1.getEndDate() == null && g2.getEndDate() == null)
             return TITLE_COMPARATOR.compare(g1, g2) * -1; // reverse secondary order;;
@@ -94,4 +123,19 @@ public class FundingComparators {
         return g1.getStartDate().compareTo(g2.getStartDate());
     };
 
+    public List<FundingGroup> sortBySource(List<FundingGroup> fundingGroups, boolean sortAsc, String orcid) {
+        List<FundingGroup> selfAsserted = fundingGroups.stream()
+                .filter(fundingGroup -> SourceUtils.isSelfAsserted(fundingGroup.getDefaultFunding(), orcid))
+                .collect(Collectors.toList());
+
+        List<FundingGroup> validated = fundingGroups.stream()
+                .filter(fundingGroup -> !SourceUtils.isSelfAsserted(fundingGroup.getDefaultFunding(), orcid))
+                .collect(Collectors.toList());
+
+        selfAsserted.sort(new FundingComparators().TITLE_COMPARATOR);
+        validated.sort(new FundingComparators().TITLE_COMPARATOR);
+
+        return (sortAsc ? Stream.concat(validated.stream(), selfAsserted.stream()) : Stream.concat(selfAsserted.stream(), validated.stream()))
+                .collect(Collectors.toList());
+    }
 }

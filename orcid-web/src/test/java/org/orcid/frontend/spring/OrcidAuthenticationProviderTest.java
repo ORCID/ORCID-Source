@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Before;
 import org.mockito.Mock;
@@ -13,13 +14,14 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
@@ -61,7 +63,7 @@ public class OrcidAuthenticationProviderTest {
 
             @Override
             public UserDetails answer(InvocationOnMock invocation) throws Throwable {                
-                return new OrcidProfileUserDetails((String) invocation.getArgument(0), "user@email.com", "password");                
+                return new User((String) invocation.getArgument(0), "password", List.of());
             }
             
         });
@@ -71,18 +73,18 @@ public class OrcidAuthenticationProviderTest {
             @Override
             public HashSet<GrantedAuthority> answer(InvocationOnMock invocation) throws Throwable {
                 HashSet<GrantedAuthority> mapped = new HashSet<GrantedAuthority>();
-                mapped.add(OrcidWebRole.ROLE_USER);
+                mapped.add(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name()));
                 return mapped;
             }
             
         });
         
-        when(orcidUserDetailsServiceMock.loadUserByProfile(any())).thenAnswer(new Answer<OrcidProfileUserDetails>() {
+        when(orcidUserDetailsServiceMock.loadUserByProfile(any())).thenAnswer(new Answer<UserDetails>() {
 
             @Override
-            public OrcidProfileUserDetails answer(InvocationOnMock invocation) throws Throwable {
+            public UserDetails answer(InvocationOnMock invocation) throws Throwable {
                 ProfileEntity p = (ProfileEntity) invocation.getArgument(0);
-                return new OrcidProfileUserDetails(p.getId(), "email", p.getEncryptedPassword());                
+                return new User(p.getId(), p.getEncryptedPassword(), List.of());
             }
             
         });

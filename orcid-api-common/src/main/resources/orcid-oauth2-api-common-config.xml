@@ -123,5 +123,14 @@
 				<ref bean="orcidImplicitTokenGranter" />
 			</list>
 		</constructor-arg>
-	</bean>		
+	</bean>
+	
+	<!-- Redis cache -->
+	<bean id="redisClient" class="org.orcid.core.utils.cache.redis.RedisClient">
+		<constructor-arg index="0" value="${org.orcid.core.utils.cache.redis.host}"/>
+		<constructor-arg index="1" value="${org.orcid.core.utils.cache.redis.port}" />
+		<constructor-arg index="2" value="${org.orcid.core.utils.cache.redis.password}" />
+		<constructor-arg index="3" value="${org.orcid.core.utils.cache.redis.expiration_in_secs:600}" />
+		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
+	</bean>
 </beans>

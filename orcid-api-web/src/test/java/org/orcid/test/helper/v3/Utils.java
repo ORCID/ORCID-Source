@@ -162,12 +162,12 @@ public class Utils {
         }
         assertIsPublicOrSource(p.getAddresses(), sourceId);
         assertIsPublicOrSource(p.getBiography(), sourceId);
-        assertIsPublicOrSource(p.getEmails(), sourceId);
         assertIsPublicOrSource(p.getExternalIdentifiers(), sourceId);
         assertIsPublicOrSource(p.getKeywords(), sourceId);
         assertIsPublicOrSource(p.getName(), sourceId);
         assertIsPublicOrSource(p.getOtherNames(), sourceId);
         assertIsPublicOrSource(p.getResearcherUrls(), sourceId);
+        // EMAILS ARE NOT TESTED! Source on professional emails is overwritten, so, you must verify the email on each test!
     }
 
     public static void verifyLastModified(LastModifiedDate l) {
@@ -210,6 +210,39 @@ public class Utils {
         a.setDepartmentName("My department name");
         a.setRoleTitle("My Role");
         a.setOrganization(getOrganization());
+        a.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
+        return a;
+    }
+    
+    
+    public static Affiliation getAffiliationNoCityNoCountry(AffiliationType type) {
+        Affiliation a = null;
+        switch(type) {
+        case DISTINCTION:
+            a = new Distinction();
+            break;
+        case EDUCATION:
+            a = new Education();
+            break;
+        case EMPLOYMENT:
+            a = new Employment();
+            break;
+        case INVITED_POSITION:
+            a = new InvitedPosition();
+            break;
+        case MEMBERSHIP:
+            a = new Membership();
+            break;
+        case QUALIFICATION:
+            a = new Qualification();
+            break;
+        case SERVICE:
+            a = new Service();
+            break;
+        }
+        a.setDepartmentName("My department name");
+        a.setRoleTitle("My Role");
+        a.setOrganization(getOrganizationNoCityNoCountry());
         a.setStartDate(FuzzyDate.valueOf(2017, 1, 1));
         return a;
     }
@@ -279,6 +312,18 @@ public class Utils {
         OrganizationAddress add = new OrganizationAddress();
         add.setCity("city");
         add.setCountry(Iso3166Country.TT);
+        org.setAddress(add);
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        org.setDisambiguatedOrganization(disambiguatedOrg);
+        return org;
+    }
+    
+    public static Organization getOrganizationNoCityNoCountry() {
+        Organization org = new Organization();
+        org.setName("Org Name");
+        OrganizationAddress add = new OrganizationAddress();
         org.setAddress(add);
         DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
         disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");

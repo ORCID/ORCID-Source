@@ -3,8 +3,11 @@ package org.orcid.persistence.dao;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -31,7 +34,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
+    Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -49,7 +52,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      * @return a list of object arrays where the object[0] contains the orcid id
      *         and object[1] contains the indexing status
      */
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
+    Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
@@ -75,7 +78,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
 
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults);
+    public List<Triple<String, String, Boolean>> findEmailsUnverfiedDays(int daysUnverified, EmailEventType eventSent);
 
     String retrieveOrcidType(String orcid);
 
@@ -155,8 +158,17 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public List<Object[]> getSigninLock(String orcid);
 
     public void startSigninLock(String orcid);
-    
+
     public void resetSigninLock(String orcid);
 
     public void updateSigninLock(String orcid, Integer count);
+
+    boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId);
+
+    public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo);
+
+    boolean updateDeprecation(String deprecated, String primaryOrcid);
+
+    public boolean isReviewed(String orcid);
+
 }

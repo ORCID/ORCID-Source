@@ -108,13 +108,8 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
     
     @Override
     public Emails getPublicEmails(String orcid) {
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            List<EmailEntity> entities = emailDao.findPublicEmails(orcid, getLastModified(orcid));
-            return toEmails(entities);
-        } else {
-            List<EmailEntity> entities = emailDao.findPublicEmailsIncludeUnverified(orcid);
-            return toEmails(entities);
-        }
+        List<EmailEntity> entities = emailDao.findPublicEmails(orcid, getLastModified(orcid));
+        return toEmails(entities);
     }
     
     private Emails toEmails(List<EmailEntity> entities) {

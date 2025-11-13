@@ -3,7 +3,6 @@ package org.orcid.frontend.web.controllers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.Iterator;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -13,24 +12,27 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.spring.web.social.config.SocialType;
 import org.orcid.frontend.spring.web.social.config.UserCookieGenerator;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -86,6 +89,12 @@ public class LoginController extends OauthControllerBase {
     
     @Resource
     private OauthHelper oauthHelper;
+
+    @Resource
+    private EventManager eventManager;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
     
     @RequestMapping(value = "/account/names/{type}", method = RequestMethod.GET)
     public @ResponseBody Names getAccountNames(@PathVariable String type) {
@@ -174,7 +183,7 @@ public class LoginController extends OauthControllerBase {
 
         // Check if user is already logged in, if so, redirect it to
         // oauth/authorize
-        OrcidProfileUserDetails userDetails = getCurrentUser();
+        UserDetails userDetails = getCurrentUser();
         if (!forceLogin && userDetails != null) {
             redirectUri = orcidUrlManager.getBaseUrl() + "/oauth/authorize?";
             queryString = queryString.replace("oauth&", "");
@@ -246,7 +255,7 @@ public class LoginController extends OauthControllerBase {
             }
         }
 
-        request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, requestInfoForm);
+        requestInfoFormLocalCache.put(request.getSession().getId(), requestInfoForm);
         // Save also the original query string
         request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
         // Save a flag to indicate this is a request from the new
@@ -329,7 +338,7 @@ public class LoginController extends OauthControllerBase {
             } else {
                 // Forward to account link page
                 view = socialLinking(request);
-            }   
+            }            
         } else {
             // Store relevant data in the session
             socialSignInUtils.setSignedInData(request, userData);
@@ -337,13 +346,17 @@ public class LoginController extends OauthControllerBase {
             userConnectionId = createUserConnection(socialType, providerUserId, userData.getString(OrcidOauth2Constants.EMAIL),
                     userData.getString(OrcidOauth2Constants.DISPLAY_NAME), accessToken, expiresIn);
             // Forward to account link page
-            view = socialLinking(request);
+            view = socialLinking(request);            
         }
         if (userConnectionId == null) {
             throw new IllegalArgumentException("Unable to find userConnectionId for providerUserId = " + providerUserId);
         }
-        userCookieGenerator.addCookie(userConnectionId, response);
-
+        
+        if (Features.EVENTS.isActive()) {
+            eventManager.createEvent(EventType.SIGN_IN, request);
+        }
+        userCookieGenerator.addCookie(userConnectionId, response);        
+        
         if ("social_2FA".equals(view.getViewName())) {
             return new ModelAndView("redirect:" + calculateRedirectUrl("/2fa-signin?social=true"));
         }

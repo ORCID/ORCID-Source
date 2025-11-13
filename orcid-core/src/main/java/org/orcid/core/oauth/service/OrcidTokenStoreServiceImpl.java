@@ -15,6 +15,8 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.constants.RevokeReason;
+import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
@@ -70,6 +72,16 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         return orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(token);
     }
     
+    @Override
+    public String readClientId(String token) {
+        String clientId = null;
+        OrcidOauth2TokenDetail orcidTokenDetail = orcidOauthTokenDetailService.findIgnoringDisabledByTokenValue(token);
+        if(orcidTokenDetail != null) {
+            clientId = orcidTokenDetail.getClientDetailsId();
+        }
+        return clientId;
+    }
+    
     /**
      * Read the authentication stored under the specified token value.
      * 
@@ -97,6 +109,28 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         return readAuthentication(token.getValue());
     }
 
+    @Override
+    public OAuth2Authentication readAuthenticationFromCachedToken(Map<String, String> cachedTokenData) {
+        String accessTokenValue = (String) cachedTokenData.get(OrcidOauth2Constants.ACCESS_TOKEN);
+        long tokenExpirationTime = Long.valueOf((String) cachedTokenData.get(OrcidOauth2Constants.TOKEN_EXPIRATION_TIME));
+        isTokenExpired(tokenExpirationTime, accessTokenValue);
+        
+        String clientId = (String) cachedTokenData.get(OrcidOauth2Constants.CLIENT_ID);
+        String scopeString = (String) cachedTokenData.get(OrcidOauth2Constants.SCOPE_PARAM);
+        String resourceId = (String) cachedTokenData.get(OrcidOauth2Constants.RESOURCE_IDS);
+        String orcid = (String) cachedTokenData.get(OrcidOauth2Constants.ORCID);
+        boolean approved = Boolean.valueOf((String) cachedTokenData.get(OrcidOauth2Constants.APPROVED));
+        
+        OrcidOauth2TokenDetail tokenDetails = new OrcidOauth2TokenDetail();
+        tokenDetails.setClientDetailsId(clientId);
+        tokenDetails.setScope(scopeString);
+        tokenDetails.setResourceId(resourceId);
+        tokenDetails.setTokenValue(accessTokenValue);        
+        tokenDetails.setOrcid(orcid);
+        tokenDetails.setApproved(approved);
+        return getOAuth2AuthenticationFromDetails(tokenDetails);                               
+    }
+    
     /**
      * Store an access token.
      * 
@@ -111,6 +145,9 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         orcidOauthTokenDetailService.createNew(detail);
         // Set the token id in the additional details
         token.getAdditionalInformation().put(OrcidOauth2Constants.TOKEN_ID, detail.getId());
+        if(detail.getOboClientDetailsId() != null) {
+            token.getAdditionalInformation().put(OrcidOauth2Constants.IS_OBO_TOKEN, "true");
+        }
     }
 
     /**
@@ -177,7 +214,7 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
     }
 
     /**
-     * Remove an access token from the database.
+     * Disable an access token from the database.
      * 
      * @param tokenValue
      *            The token to remove from the database.
@@ -186,6 +223,18 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void removeAccessToken(OAuth2AccessToken accessToken) {
         orcidOauthTokenDetailService.disableAccessToken(accessToken.getValue());
+    }
+    
+    /**
+     * Disable an access token from the database.
+     * 
+     * @param tokenValue
+     *            The token to remove from the database.
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void removeAccessToken(String accessTokenValue) {
+        orcidOauthTokenDetailService.disableAccessToken(accessTokenValue);
     }
 
     /**
@@ -364,12 +413,12 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
 
     private OAuth2Authentication getOAuth2AuthenticationFromDetails(OrcidOauth2TokenDetail details) {
         if (details != null) {
+            // Check member is not locked
+            isClientEnabled(details.getClientDetailsId());
             ClientDetailsEntity clientDetailsEntity = clientDetailsEntityCacheManager.retrieve(details.getClientDetailsId());
             Authentication authentication = null;
             AuthorizationRequest request = null;
-            if (clientDetailsEntity != null) {
-                //Check member is not locked                
-                orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetailsEntity);
+            if (clientDetailsEntity != null) {                
                 Set<String> scopes = OAuth2Utils.parseParameterList(details.getScope());
                 request = new AuthorizationRequest(clientDetailsEntity.getClientId(), scopes);
                 request.setAuthorities(clientDetailsEntity.getAuthorities());
@@ -489,4 +538,22 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
         return accessTokens;
     }
 
+    private void isTokenExpired(long expirationTime, String tokenValue) {
+        Date expirationDate = new Date(expirationTime);
+        if(expirationDate.before(new Date())) {
+            removeAccessToken(tokenValue);
+            throw new InvalidTokenException("Access token expired: " + tokenValue);
+        }
+    }
+    
+    public void isClientEnabled(String clientId) throws InvalidTokenException {
+        ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientId);
+        try {
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientEntity);
+        } catch (LockedException le) {
+            throw new InvalidTokenException(le.getMessage());
+        } catch (ClientDeactivatedException e) {
+            throw new InvalidTokenException(e.getMessage());
+        }
+    }
 }

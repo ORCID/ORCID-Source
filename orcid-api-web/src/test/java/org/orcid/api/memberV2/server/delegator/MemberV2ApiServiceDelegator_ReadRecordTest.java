@@ -1,11 +1,6 @@
 package org.orcid.api.memberV2.server.delegator;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +13,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_v2.Iso3166Country;
 import org.orcid.jaxb.model.common_v2.Locale;
@@ -66,6 +60,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.Assert.*;
+
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
 public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
@@ -74,7 +70,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
-    // Now on, for any new test, PLAESE USER THIS ORCID ID
+    // Now on, for any new test, PLEASE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
 
     @Resource(name = "memberV2ApiServiceDelegator")
@@ -116,6 +112,51 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555555");
         assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
         Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555555");
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        assertEquals(4, record.getPerson().getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+        emails.add("limited_0000-0000-0000-0003@test.orcid.org");
+        emails.add("private_0000-0000-0000-0003@test.orcid.org");
+
+        for(Email e : record.getPerson().getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+
+        assertTrue(emails.isEmpty());
+    }
+
+    @Test
+    public void testViewRecordReadPublic_clientThatIsNotTheSourceOfEmails() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555556", ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewRecord(ORCID);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record);
+        assertEquals("/0000-0000-0000-0003", record.getPath());
+        assertEquals("/0000-0000-0000-0003/activities", record.getActivitiesSummary().getPath());
+        Utils.assertIsPublicOrSource(record.getActivitiesSummary(), "APP-5555555555555556");
+        assertEquals("/0000-0000-0000-0003/person", record.getPerson().getPath());
+        Utils.assertIsPublicOrSource(record.getPerson(), "APP-5555555555555556");
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        assertEquals(2, record.getPerson().getEmails().getEmails().size());
+        List<String> emails = new ArrayList<>();
+        emails.add("public_0000-0000-0000-0003@test.orcid.org");
+        emails.add("public_0000-0000-0000-0003@orcid.org");
+
+        for(Email e : record.getPerson().getEmails().getEmails()) {
+            if(!emails.contains(e.getEmail())) {
+                fail(e.getEmail() + " is not in the email list");
+            }
+            emails.remove(e.getEmail());
+        }
+
+        assertTrue(emails.isEmpty());
     }
 
     @Test(expected = OrcidUnauthorizedException.class)
@@ -224,21 +265,29 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(person.getEmails());
         Utils.verifyLastModified(person.getEmails().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/email", person.getEmails().getPath());
-        assertEquals(4, person.getEmails().getEmails().size());
+        assertEquals(5, person.getEmails().getEmails().size());
         for (Email email : person.getEmails().getEmails()) {
             Utils.verifyLastModified(email.getLastModifiedDate());
             if (email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PRIVATE.value(), email.getVisibility().value());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PRIVATE.value(), email.getVisibility().value());
+                assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
             } else if (email.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
                 assertEquals("0000-0000-0000-0003", email.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.LIMITED.value(), email.getVisibility().value());
+                assertEquals("Credit Name", email.getSource().getSourceName().getContent());
+            } else if (email.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                assertEquals("0000-0000-0000-0003", email.getSource().retrieveSourcePath());
+                assertEquals(org.orcid.jaxb.model.common_v2.Visibility.PUBLIC.value(), email.getVisibility().value());
+                assertEquals("Credit Name", email.getSource().getSourceName().getContent());
             } else {
                 fail("Invalid email found: " + email.getEmail());
             }
@@ -247,7 +296,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(person.getExternalIdentifiers());
         Utils.verifyLastModified(person.getExternalIdentifiers().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals(6, person.getExternalIdentifiers().getExternalIdentifiers().size());
         for (PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifiers()) {
             Utils.verifyLastModified(extId.getLastModifiedDate());
             if (extId.getPutCode().equals(Long.valueOf(13))) {
@@ -282,6 +331,22 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 assertEquals("http://ext-id/self/limited", extId.getUrl().getValue());
                 assertEquals("self_limited_ref", extId.getValue());
                 assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+            } else if (extId.getPutCode().equals(Long.valueOf(18))) {
+                assertEquals(Long.valueOf(5), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/18", extId.getPath());
+                assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+                assertEquals("self_public_type", extId.getType());
+                assertEquals("http://ext-id/self/public", extId.getUrl().getValue());
+                assertEquals("self_public_ref", extId.getValue());
+                assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+            } else if (extId.getPutCode().equals(Long.valueOf(19))) {
+                assertEquals(Long.valueOf(6), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
+                assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
+                assertEquals("self_public_user_obo_type", extId.getType());
+                assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
+                assertEquals("self_public_user_obo_ref", extId.getValue());
+                assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
             } else {
                 fail("Invalid external identifier found: " + extId.getPutCode());
             }
@@ -796,7 +861,7 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Utils.verifyLastModified(a.getLastModifiedDate());
         assertEquals(3, a.getAddress().size());
 
-        boolean found1 = false, found2 = false, found3 = false;
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
         for (Address element : a.getAddress()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 9) {
@@ -827,12 +892,13 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         Emails email = p.getEmails();
         assertNotNull(email);
         Utils.verifyLastModified(email.getLastModifiedDate());
-        assertEquals(3, email.getEmails().size());
+        assertEquals(4, email.getEmails().size());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
 
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
 
         for (Email element : email.getEmails()) {
             if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
@@ -841,6 +907,8 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
                 found3 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found4 = true;
             } else {
                 fail("Invalid email " + element.getEmail());
             }
@@ -849,16 +917,19 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
 
         // External identifiers
         assertNotNull(p.getExternalIdentifiers());
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(3, extIds.getExternalIdentifiers().size());
+        assertEquals(5, extIds.getExternalIdentifiers().size());
         found1 = false;
         found2 = false;
         found3 = false;
+        found4 = false;
+        found5 = false;
         for (PersonExternalIdentifier element : extIds.getExternalIdentifiers()) {
             Utils.verifyLastModified(element.getLastModifiedDate());
             if (element.getPutCode() == 13) {
@@ -867,6 +938,10 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
                 found2 = true;
             } else if (element.getPutCode() == 15) {
                 found3 = true;
+            } else if (element.getPutCode() == 18) {
+                found4 = true;
+            } else if (element.getPutCode() == 19) {
+                found5 = true;
             } else {
                 fail("Invalid put code " + element.getPutCode());
             }
@@ -875,6 +950,8 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertTrue(found1);
         assertTrue(found2);
         assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
 
         // Keywords
         assertNotNull(p.getKeywords());
@@ -980,58 +1057,33 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertNotNull(p.getEmails());
         Emails email = p.getEmails();
         assertNotNull(email);
-        Utils.verifyLastModified(email.getLastModifiedDate());
-        
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            assertEquals(4, email.getEmails().size());
-    
-            boolean found1 = false, found2 = false, found3 = false, found4 = false;
-    
-            for (Email element : email.getEmails()) {
-                if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                    found1 = true;
-                } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found2 = true;
-                } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                    found3 = true;
-                } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found4 = true;
-                } else {
-                    fail("Invalid email " + element.getEmail());
-                }
+        Utils.verifyLastModified(email.getLastModifiedDate());                
+        assertEquals(5, email.getEmails().size());
+
+        boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
+
+        for (Email element : email.getEmails()) {
+            if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
+                found1 = true;
+            } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
+                found2 = true;
+            } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
+                found3 = true;
+            } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
+                found4 = true;
+            } else if (element.getEmail().equals("public_0000-0000-0000-0003@orcid.org")) {
+                found5 = true;
+            } else {
+                fail("Invalid email " + element.getEmail());
             }
-            
-            assertTrue(found1);
-            assertTrue(found2);
-            assertTrue(found3);
-            assertTrue(found4);
-        } else {
-            assertEquals(5, email.getEmails().size());
-            
-            boolean found1 = false, found2 = false, found3 = false, found4 = false, found5 = false;
-    
-            for (Email element : email.getEmails()) {
-                if (element.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {
-                    found1 = true;
-                } else if (element.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found2 = true;
-                } else if (element.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
-                    found3 = true;
-                } else if (element.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
-                    found4 = true;
-                } else if (element.getEmail().equals("self_private_0000-0000-0000-0003@test.orcid.org")) {
-                    found5 = true;
-                } else {
-                    fail("Invalid email " + element.getEmail());
-                }
-            }
-    
-            assertTrue(found1);
-            assertTrue(found2);
-            assertTrue(found3);
-            assertTrue(found4);
-            assertTrue(found5);
         }
+
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+
 
         this.assertAllPublicButEmails(p);
     }
@@ -1062,9 +1114,13 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         Utils.verifyLastModified(extIds.getLastModifiedDate());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
+        assertEquals(3, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(19), extIds.getExternalIdentifiers().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
+        assertEquals(Long.valueOf(18), extIds.getExternalIdentifiers().get(1).getPutCode());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(1).getVisibility());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(2).getPutCode());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(2).getVisibility());
 
         // Keywords
         assertNotNull(p.getKeywords());
@@ -1098,5 +1154,35 @@ public class MemberV2ApiServiceDelegator_ReadRecordTest extends DBUnitTest {
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC, ru.getResearcherUrls().get(0).getVisibility());
+    }
+
+    @Test
+    public void checkSourceOnEmail_RecordEndpointTest() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewRecord(orcid);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        checkEmails(record.getPerson().getEmails());
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("limited_verified_0000-0000-0000-0001@test.orcid.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on verified professional email addresses should change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
+            }
+        }
     }
 }

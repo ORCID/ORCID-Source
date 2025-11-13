@@ -1,11 +1,25 @@
 package org.orcid.core.manager.v3.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
@@ -17,7 +31,6 @@ import org.orcid.core.manager.v3.read_only.GroupingSuggestionManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.validator.ActivityValidator;
 import org.orcid.core.manager.v3.validator.ExternalIDValidator;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -39,6 +52,7 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
@@ -48,17 +62,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
@@ -132,7 +135,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
-        return workDao.updateVisibilities(orcid, workIds, visibility.name());
+        boolean result = workDao.updateVisibilities(orcid, workIds, visibility.name());
+        
+        // If visibility is not PUBLIC (EVERYONE), set featured display index to 0
+        if (result && !Visibility.PUBLIC.equals(visibility)) {
+            for (Long workId : workIds) {
+                workDao.updateFeaturedDisplayIndex(orcid, workId, 0);
+            }
+        }
+        
+        return result;
     }
 
     /**
@@ -198,15 +210,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
+        workEntity.setFeaturedDisplayIndex(0);
         
         //Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
         
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            filterContributors(work, workEntity);
-        }
+        filterContributors(work, workEntity);
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.CREATE));
@@ -270,20 +281,17 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 }
                             }
                         }
-
-
                         //Save the work
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
+                        workEntity.setFeaturedDisplayIndex(0);
 
                         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
                         
                         setIncomingWorkPrivacy(workEntity, profile);        
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
-                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                            filterContributors(work, workEntity);
-                        }
+                        filterContributors(work, workEntity);
                         workDao.persist(workEntity);                    
                         
                         //Update the element in the bulk
@@ -359,23 +367,25 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
-
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
-
-        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
-            if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
-                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
-                return workSaved;
-            }
-        }
-
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
         Source activeSource = sourceManager.retrieveActiveSource();
-        
+
         //Save the original source
         String existingSourceId = workEntity.getSourceId();
         String existingClientSourceId = workEntity.getClientSourceId();
+        
+        if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+            if (activeSource != null) {
+                if(!activeSource.equals(workSaved.getSource())) {
+                	throw new OrcidForbiddenException(localeManager.resolveMessage("apiError.9010.developerMessage").replace("${activity}", "work"));
+                }
+            }
+            
+            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+            return workSaved;
+        }
         
         if (isApiRequest) {
             activityValidator.validateWork(work, activeSource, false, isApiRequest, originalVisibility);                        
@@ -387,7 +397,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                     activityValidator.checkExternalIdentifiersForDuplicates(work, existing, existing.getSource(), activeSource);
                 }
             }
-        }else{
+        } else {
             //validate external ID vocab
             externalIDValidator.validateWork(work.getExternalIdentifiers(), isApiRequest);            
         }
@@ -398,12 +408,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     		workEntity.setVisibility(originalVisibility.name());  
     	}
         
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
+        }
+        
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            filterContributors(work, workEntity);
-        }
+        filterContributors(work, workEntity);        
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
@@ -472,9 +486,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         MinimizedWorkEntity userPreferred = null;
         
         boolean groupableExternalIdFound = false;
-        for (MinimizedWorkEntity work : works) {
+        for (MinimizedWorkEntity work : works) {     	
             if (orcid.equals(work.getSourceId())) {
                 userVersions.add(work);
+                work.setDisplayIndex(0L);
+            } else {
+                work.setDisplayIndex(1L);
             }
             if (userPreferred == null || userPreferred.getDisplayIndex() < work.getDisplayIndex()) {
                 userPreferred = work;
@@ -508,6 +525,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         } else {
             WorkEntity allPreferredMetadata = createCopyOfUserPreferredWork(userPreferred);
             allPreferredMetadata.setExternalIdentifiersJson(externalIDsJson);
+            allPreferredMetadata.setFeaturedDisplayIndex(0);
             workDao.persist(allPreferredMetadata);
         }
     }
@@ -526,6 +544,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
+        workEntity.setFeaturedDisplayIndex(0);
 
         //Set the source
         SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
@@ -554,14 +573,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         WorkExtended workSaved = jpaJaxbWorkAdapter.toWorkExtended(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
-
-        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
-            if (workFormSaved.compare(workForm)) {
-                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
-                return workSaved;
-            }
+        
+        if (workFormSaved.compare(workForm)) {
+            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + getSourceName(sourceManager.retrieveActiveSource()));
+            return workSaved;
         }
-
+        
         Visibility originalVisibility = Visibility.valueOf(workEntity.getVisibility());
 
         //Save the original source
@@ -574,6 +591,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
         if (workEntity.getVisibility() == null) {
             workEntity.setVisibility(originalVisibility.name());
+        }
+
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
         }
 
         //Be sure it doesn't overwrite the source
@@ -590,6 +613,27 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
+    }
+
+    @Override
+    @Transactional
+    public boolean updateFeaturedWorks(String orcid, Map<Long, Integer> featuredDisplayIndexMap) {
+        boolean isPublic = workDao.isPublic(orcid, new ArrayList<>(featuredDisplayIndexMap.keySet()));
+        boolean result = true;
+        if (!isPublic) {
+            throw new IllegalStateException(String.format("Error when processing works %s for user %s",featuredDisplayIndexMap.keySet(), orcid));
+        }
+        if (featuredDisplayIndexMap.size() > 10) {
+            LOGGER.warn("Featured works limit exceeded - " + featuredDisplayIndexMap.keySet());
+        }
+        for (Map.Entry<Long, Integer> workIndexPair : featuredDisplayIndexMap.entrySet()) {
+            Long workId = workIndexPair.getKey();
+            Integer featuredDisplayIndex = workIndexPair.getValue();
+            // If null provided, clear the featured index by setting it to 0
+            int normalizedIndex = (featuredDisplayIndex == null) ? 0 : featuredDisplayIndex.intValue();
+            result = workDao.updateFeaturedDisplayIndex(orcid, workId, normalizedIndex);
+        };
+        return result;
     }
 
     private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {

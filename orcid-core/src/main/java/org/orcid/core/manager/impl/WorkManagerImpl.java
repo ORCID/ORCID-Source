@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidForbiddenException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -52,6 +53,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerImpl.class);
@@ -85,7 +88,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
-
 
     @Resource(name = "contributorUtils")
     private ContributorUtils contributorUtils;
@@ -178,6 +180,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setOrcid(orcid);
         workEntity.setAddedToProfileDate(new Date());
+        workEntity.setFeaturedDisplayIndex(0);
 
         // Set source id
         if (sourceEntity.getSourceProfile() != null) {
@@ -190,7 +193,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         setIncomingWorkPrivacy(workEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
-        if (isApiRequest && Features.STORE_TOP_CONTRIBUTORS.isActive()) {
+        if (isApiRequest) {
             filterContributors(work, workEntity);
         }
         workDao.persist(workEntity);
@@ -258,6 +261,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
                         workEntity.setOrcid(orcid);
                         workEntity.setAddedToProfileDate(new Date());
+                        workEntity.setFeaturedDisplayIndex(0);
 
                         // Set source id
                         if (sourceEntity.getSourceProfile() != null) {
@@ -270,9 +274,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
                         setIncomingWorkPrivacy(workEntity, profile);
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
-                        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                            filterContributors(work, workEntity);
-                        }
+                        filterContributors(work, workEntity);                        
                         workDao.persist(workEntity);
 
                         // Update the element in the bulk
@@ -354,20 +356,25 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
         Work workSaved = jpaJaxbWorkAdapter.toWork(workEntity);
         WorkForm workFormSaved = WorkForm.valueOf(workSaved, maxContributorsForUI);
+        String devMessage = localeManager.resolveMessage("apiError.9010.developerMessage").replace("${activity}", "work");
 
-        if (Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED.isActive()) {
-            if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
-                SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-                String client = null;
-                if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
-                    client = sourceEntity.getSourceProfile().getId();
+        if (workFormSaved.compare(WorkForm.valueOf(work, maxContributorsForUI))) {
+            SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+            String client = null;
+            if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
+                client = sourceEntity.getSourceProfile().getId();
+                if(!StringUtils.equals(client, orcid) ) {
+                	throw new OrcidForbiddenException(devMessage );
                 }
-                if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
-                    client = sourceEntity.getSourceClient().getClientName();
-                }
-                LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
-                return workSaved;
             }
+            if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
+                client = sourceEntity.getSourceClient().getClientName();
+                if(!StringUtils.equals(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId()) ) {
+                	throw new OrcidForbiddenException(devMessage );
+                }
+            }
+            LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
+            return workSaved;
         }
 
         String originalVisibility = workEntity.getVisibility();
@@ -388,9 +395,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
 
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                filterContributors(work, workEntity);
-            }
+            filterContributors(work, workEntity);            
         } else {
             // validate external ID vocab
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
@@ -415,10 +420,11 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
         orcidSecurityManager.checkSource(workEntity);
+        Work work = jpaJaxbWorkAdapter.toWork(workEntity);
         try {
             workDao.removeWork(orcid, workId);
             workDao.flush();
-            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, null, ActionType.DELETE));
+            notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.DELETE));
         } catch (Exception e) {
             LOGGER.error("Unable to delete work with ID: " + workId);
             result = false;

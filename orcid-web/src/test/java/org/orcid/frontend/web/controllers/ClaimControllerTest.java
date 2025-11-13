@@ -29,6 +29,7 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -37,6 +38,7 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +48,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml"})
+@ActiveProfiles("unitTests")
 public class ClaimControllerTest {
 
     @Resource
@@ -94,6 +97,21 @@ public class ClaimControllerTest {
         assertNull(emailRequest.getSuccessMessage());
         assertNotNull(emailRequest.getErrors());
         assertFalse(emailRequest.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testResendClaimEmailByOrcid() {
+    	BindingResult bindingResult = mock(BindingResult.class);
+        when(bindingResult.hasErrors()).thenReturn(false);
+        Email email = new Email();
+        email.setEmail("billie@holiday.com");
+        when(emailManager.findPrimaryEmail("0000-0000-0000-0000")).thenReturn(email);
+        when(profileEntityCacheManager.retrieve(Mockito.anyString())).thenReturn(getProfileEntityToTestClaimResend(false));
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setEmail("0000-0000-0000-0000");
+        emailRequest = claimController.resendClaimEmail(emailRequest);
+        assertNotNull(emailRequest);
+        assertNotNull(emailRequest.getSuccessMessage());
     }
 
     @Test

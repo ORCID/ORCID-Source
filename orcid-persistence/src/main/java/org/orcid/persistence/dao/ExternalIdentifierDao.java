@@ -2,6 +2,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
+import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEntity, Long> {
@@ -68,4 +69,6 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
     void removeAllExternalIdentifiers(String orcid);
 
     List<ExternalIdentifierEntity> getPublicExternalIdentifiers(String orcid, long lastModified);
+
+    boolean updateVisibility(String orcid, Visibility visibility);
 }

@@ -73,7 +73,6 @@
                                                     ${springMacroRequestContext.getMessage("manage.email.verified")}
                                                 </span>
                                             </td>   
-                                            <@orcid.checkFeatureStatus 'EMAIL_STATUS_DROPDOWN_OPTION'>   
                                             <td>            
                                                 <select 
                                                     [(ngModel)]="email.current" 
@@ -87,7 +86,6 @@
                                                     </option>        
                                                 </select>
                                             </td>
-                                            </@orcid.checkFeatureStatus>
                                             <td width="26" class="tooltip-container">                                      
                                                 <a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
                                                     *ngIf="email.primary == false"

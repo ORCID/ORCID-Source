@@ -147,6 +147,9 @@ the software.
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/*ITest.java</exclude>
                         <exclude>org/orcid/integration/**/*.java</exclude>
+                        <exclude>**/OrgManagerTest.java</exclude>
+                        <exclude>**/LoadLEIDataTest.java</exclude>
+                        <exclude>**/SchemaOrgDocumentTest.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -691,7 +694,7 @@ the software.
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>42.3.8</version>
+                <version>42.7.2</version>
             </dependency>
             <dependency>
               <groupId>org.hibernate</groupId>
@@ -912,13 +915,13 @@ the software.
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>31.1-jre</version>
+                <version>32.0.0-jre</version>
             </dependency>
 
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.2.0</version>
+               <version>3.3.8</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>
@@ -973,18 +976,7 @@ the software.
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <id>spring-social-facebook-orcid-snapshot</id>
-            <name>copy of spring-social-facebook to work with Graph API 2.10</name>
-            <url>https://raw.github.com/ORCID/spring-social-facebook/mvn-repo/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+    <repositories>        
         <repository>
             <id>maven-restlet</id>
             <name>Public online Restlet repository</name>

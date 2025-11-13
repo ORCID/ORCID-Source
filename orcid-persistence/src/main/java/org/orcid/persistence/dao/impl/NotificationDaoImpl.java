@@ -64,7 +64,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<NotificationEntity> findNotificationAlertsByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery(
-                "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.orcid = :orcid and n.clientSourceId = r.clientDetailsEntity.id and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
+                "select n from NotificationEntity n, ClientRedirectUriEntity r where n.notificationType = 'INSTITUTIONAL_CONNECTION' and n.readDate is null and n.archivedDate is null and n.orcid = :orcid and n.clientSourceId = r.clientId and r.redirectUriType = 'institutional-sign-in' order by n.dateCreated desc",
                 NotificationEntity.class);
         query.setParameter("orcid", orcid);
         query.setMaxResults(3);
@@ -378,6 +378,18 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         Query query = entityManager.createNativeQuery("SELECT id FROM notification WHERE source_id IN :ids");
         query.setParameter("ids", clientProfileOrcidIds);
         query.setMaxResults(max);
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<NotificationEntity> findNotificationsByOrcidAndClientAndFamilyNoClientToken(String orcid, String clientId, String notificationFamily){
+        Query query = entityManager.createNativeQuery("SELECT * FROM notification WHERE client_source_id = :clientId AND orcid = :orcid "
+                + "AND notification_family = :notificationFamily AND NOT EXISTS (SELECT 1  FROM oauth2_token_detail WHERE "
+                + "oauth2_token_detail.user_orcid = notification.orcid AND oauth2_token_detail.client_details_id = notification.client_source_id)", NotificationEntity.class);
+        query.setParameter("clientId", clientId);
+        query.setParameter("orcid", orcid);
+        query.setParameter("notificationFamily", notificationFamily);
         return query.getResultList();
     }
 

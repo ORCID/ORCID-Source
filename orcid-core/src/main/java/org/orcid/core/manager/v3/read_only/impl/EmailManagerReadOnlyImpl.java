@@ -24,9 +24,10 @@ import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.EmailFrequencyOptions;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
@@ -185,7 +186,17 @@ public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements
         }
         return jpaJaxbEmailAdapter.toEmail(emailDao.findPrimaryEmail(orcid));
     }
-    
+
+    @Override
+    @Cacheable("primary-email-value")
+    public String findPrimaryEmailValueFromCache(String orcid) {
+        if(PojoUtil.isEmpty(orcid)) {
+            return null;
+        }
+        EmailEntity entity = emailDao.findPrimaryEmail(orcid);
+        return entity.getEmail();
+    }
+
     @Override
     public boolean isUsersOnlyEmail(String orcid, String email) {
         List<EmailEntity> emails = emailDao.findByOrcid(orcid, getLastModified(orcid));

@@ -26,14 +26,12 @@ import javax.xml.datatype.DatatypeFactory;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.DateFieldsOnBaseEntityUtils;
 import org.orcid.jaxb.model.common_v2.Country;
 import org.orcid.jaxb.model.common_v2.CreatedDate;
@@ -53,6 +51,7 @@ import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.summary_v2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
+import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.jaxb.model.record_v2.CitationType;
 import org.orcid.jaxb.model.record_v2.ExternalID;
 import org.orcid.jaxb.model.record_v2.ExternalIDs;
@@ -61,7 +60,6 @@ import org.orcid.jaxb.model.record_v2.Work;
 import org.orcid.jaxb.model.record_v2.WorkBulk;
 import org.orcid.jaxb.model.record_v2.WorkTitle;
 import org.orcid.jaxb.model.record_v2.WorkType;
-import org.orcid.jaxb.model.record_v2.Citation;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -74,7 +72,6 @@ import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.togglz.junit.TogglzRule;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
@@ -104,9 +101,6 @@ public class WorkManagerTest extends BaseTest {
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
-
-    @Rule
-    public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -218,7 +212,7 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(entity1.getDisplayIndex());
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
-        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
+        assertEquals(Long.valueOf(1), entity3.getDisplayIndex());
 
         // Rollback all changes
         workDao.remove(entity1.getId());
@@ -227,23 +221,23 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(0), w.getDisplayIndex());
+        assertEquals(Long.valueOf(1), w.getDisplayIndex());
     }
 
     @Test
@@ -1133,8 +1127,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1161,9 +1153,7 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksSameContent() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
+        
         Work work = new Work();
         fillWork(work);
         Work workSaved = workManager.createWork(claimedOrcid, work, true);

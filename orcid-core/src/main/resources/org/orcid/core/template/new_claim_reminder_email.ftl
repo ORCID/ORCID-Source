@@ -23,4 +23,8 @@ ${verificationUrl}?lang=${locale}
 ${baseUri}/home?lang=${locale}
 
 <@emailMacros.msg "email.api_record_creation.you_have_received.1" />${baseUri}/home?lang=${locale}S<@emailMacros.msg "email.api_record_creation.you_have_received.2" />
-<#include "email_footer.ftl"/>
+<@emailMacros.msg "email.common.email.preferences" /> (${baseUri}/account)
+<@emailMacros.msg "email.common.privacy_policy" /> (${baseUri}/privacy-policy)
+<@emailMacros.msg "email.common.address1" />
+
+<@emailMacros.msg "email.common.address2" />

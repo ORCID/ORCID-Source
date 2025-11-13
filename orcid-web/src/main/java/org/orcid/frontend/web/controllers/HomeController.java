@@ -19,22 +19,24 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.utils.UTF8Control;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecordPersonDetails;
 import org.orcid.pojo.UserStatus;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,7 +53,7 @@ public class HomeController extends BaseController {
     
     private static final Locale DEFAULT_LOCALE = Locale.US;
     
-    private static final String JSESSIONID = "JSESSIONID";
+    private static final String SESSION_COOKIE_NAME = "SESSION";
 
     @Value("${org.orcid.core.aboutUri:http://about.orcid.org}")
     private String aboutUri;
@@ -79,7 +81,10 @@ public class HomeController extends BaseController {
     
     @Resource
     private StatisticsManager statisticsManager;
-    
+
+    @Resource(name = "emailManagerReadOnlyV3")
+    protected EmailManagerReadOnly emailManagerReadOnly;
+
     @RequestMapping(value = "/")
     public ModelAndView homeHandler(HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("home");
@@ -134,30 +139,30 @@ public class HomeController extends BaseController {
         }
         
         if (logUserOut != null && logUserOut.booleanValue()) {
-            removeJSessionIdCookie(request, response);
+            removeSessionIdCookie(request, response);
             SecurityContextHolder.clearContext();
             if(request.getSession(false) != null) {
                 request.getSession().invalidate();
-            }   
-            
+            }
+
             logoutCurrentUser(request, response);
-            
+
             UserStatus us = new UserStatus();
             us.setLoggedIn(false);
             return us;
         } else {
             UserStatus us = new UserStatus();
-            us.setLoggedIn((orcid != null));            
+            us.setLoggedIn((orcid != null));
             return us;
-        }                                            
+        }
     }
-    
-    private void removeJSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
+
+    private void removeSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
         // Delete cookie and token associated with that cookie
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (JSESSIONID.equals(cookie.getName())) {
+                if (SESSION_COOKIE_NAME.equals(cookie.getName())) {
                     cookie.setValue(StringUtils.EMPTY);
                     cookie.setMaxAge(0);
                     response.addCookie(cookie);
@@ -169,7 +174,7 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/userInfo.json", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> getUserInfo(HttpServletRequest request) {
         Map<String, String> info = new HashMap<String, String>();        
-        OrcidProfileUserDetails userDetails = getCurrentUser();
+        UserDetails userDetails = getCurrentUser();
         if(userDetails != null) {
             String effectiveOrcid = getEffectiveUserOrcid();
             String realUserOrcid = getRealUserOrcid();
@@ -177,12 +182,14 @@ public class HomeController extends BaseController {
             // REAL_USER_ORCID = EFFECTIVE_USER_ORCID unless it is in delegation mode
             info.put("EFFECTIVE_USER_ORCID", effectiveOrcid);
             info.put("IN_DELEGATION_MODE", String.valueOf(!effectiveOrcid.equals(realUserOrcid)));
-            info.put("PRIMARY_EMAIL", userDetails.getPrimaryEmail());
+            //TODO: Do we need the primary email in the user info?
+            info.put("PRIMARY_EMAIL", emailManagerReadOnly.findPrimaryEmailValueFromCache(effectiveOrcid));
             info.put("HAS_VERIFIED_EMAIL", String.valueOf(emailManagerReadOnly.haveAnyEmailVerified(effectiveOrcid)));
             info.put("IS_PRIMARY_EMAIL_VERIFIED", String.valueOf(emailManagerReadOnly.isPrimaryEmailVerified(effectiveOrcid)));
-            for(OrcidWebRole role : userDetails.getAuthorities()) {
-                switch (role) {
-                case ROLE_USER: 
+            for(GrantedAuthority role : userDetails.getAuthorities()) {
+                OrcidRoles orcidRole = OrcidRoles.valueOf(role.getAuthority());
+                switch (orcidRole) {
+                case ROLE_USER:
                     break;
                 case ROLE_ADMIN:
                     info.put("ADMIN_MENU", String.valueOf(true));
@@ -287,12 +294,7 @@ public class HomeController extends BaseController {
     }
     
     protected String getSearchBaseUrl() {
-        String pubBaseUri = orcidUrlManager.getPubBaseUrl();
-        if(Features.HTTPS_IDS.isActive()) {
-            return pubBaseUri + "/v3.0/search/";
-        } else {
-            return pubBaseUri + "/v1.2/search/orcid-bio/";
-        }          
+        return orcidUrlManager.getPubBaseUrl() + "/v3.0/search/";                 
     }
     
     class ConfigDetails {

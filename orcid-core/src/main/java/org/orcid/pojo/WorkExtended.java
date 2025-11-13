@@ -6,6 +6,7 @@ import java.util.List;
 
 public class WorkExtended extends Work {
     List<ContributorsRolesAndSequences> contributorsGroupedByOrcid;
+    Integer featuredDisplayIndex;
 
     public List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid() {
         return contributorsGroupedByOrcid;
@@ -13,5 +14,13 @@ public class WorkExtended extends Work {
 
     public void setContributorsGroupedByOrcid(List<ContributorsRolesAndSequences> contributorsGroupedByOrcid) {
         this.contributorsGroupedByOrcid = contributorsGroupedByOrcid;
+    }
+
+    public Integer getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
+    }
+
+    public void setFeaturedDisplayIndex(Integer featuredDisplayIndex) {
+        this.featuredDisplayIndex = featuredDisplayIndex;
     }
 }

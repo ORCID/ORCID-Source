@@ -16,6 +16,9 @@ import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
+import org.orcid.core.exception.InvalidNoOrgOrExternalIdException;
+import org.orcid.core.exception.InvalidOrgAddressNoCountryButCityRegionException;
+import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
@@ -61,7 +64,9 @@ import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Citation;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
 import org.orcid.jaxb.model.v3.release.record.Education;
 import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
@@ -71,8 +76,12 @@ import org.orcid.jaxb.model.v3.release.record.FundingContributor;
 import org.orcid.jaxb.model.v3.release.record.FundingContributorAttributes;
 import org.orcid.jaxb.model.v3.release.record.FundingContributors;
 import org.orcid.jaxb.model.v3.release.record.FundingTitle;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Membership;
 import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
 import org.orcid.jaxb.model.v3.release.record.SubjectName;
+import org.orcid.jaxb.model.v3.release.record.Service;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
@@ -768,7 +777,7 @@ public class ActivityValidatorTest {
         pr.setVisibility(Visibility.LIMITED);
         activityValidator.validatePeerReview(pr, null, false, true, Visibility.PUBLIC);
     }
-    
+
     @Test
     public void validatePeerReviewWithoutOrg() {
         PeerReview pr = getPeerReviewWithWorkTypeAsSubjectType();
@@ -954,12 +963,57 @@ public class ActivityValidatorTest {
         org.setDisambiguatedOrganization(getDisambiguatedOrganization());
         return org;
     }
+    
+    public Organization getOrganizationWithoutCityOrCountry() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        org.setAddress(address);
+        org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
+        return org;
+    }
+    
+    public Organization getOrganizationWithCityNoCountry() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("city");
+        org.setAddress(address);
+        org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
+        return org;
+    }
+    
+    
+    public Organization getOrganizationWithRegionNoCountry() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        address.setRegion("region");
+        org.setAddress(address);
+        org.setName("name");
+        org.setDisambiguatedOrganization(getDisambiguatedOrganization());
+        return org;
+    }
 
     private DisambiguatedOrganization getDisambiguatedOrganization() {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
         disambiguatedOrganization.setDisambiguatedOrganizationIdentifier("some-identifier");
         disambiguatedOrganization.setDisambiguationSource(OrgDisambiguatedSourceType.FUNDREF.name());
         return disambiguatedOrganization;
+    }
+    
+    public Organization getOrganizationWithoutExternalIdentifiersOrDisambiguatedOrg() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        org.setAddress(address);
+        org.setName("name");
+        return org;
+    }
+ 
+    public Organization getEmptyOrg() {
+        Organization org = new Organization();
+        OrganizationAddress address = new OrganizationAddress();
+        org.setAddress(address);
+        return org;
     }
 
     // validate normalization is being used
@@ -995,4 +1049,102 @@ public class ActivityValidatorTest {
         source2.setSourceClientId(sourceClientId);
         activityValidator.checkExternalIdentifiersForDuplicates(w1, w2, source2, source1);
     }
+    
+    
+    @Test(expected = InvalidOrgAddressException.class)
+    public void validateEducationNoCountryNorCity() {
+        Education education = new Education();
+        education.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(education, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidOrgAddressException.class)
+    public void validateEmploymentNoCountryNorCity() {
+        Employment employment = new Employment();
+        employment.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(employment, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateQualificationWithoutAddress() {
+        Qualification qualification = new Qualification();
+        qualification.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(qualification, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateDistinctionWithoutAddress() {
+        Distinction distinction = new Distinction();
+        distinction.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(distinction, null, true, true, Visibility.PUBLIC);
+    }
+
+    @Test
+    public void validateMembershipWithoutAddress() {
+        Membership membership = new Membership();
+        membership.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(membership, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateInvitatedPositionWithoutAddress() {
+        InvitedPosition invitedPosition = new InvitedPosition();
+        invitedPosition.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(invitedPosition, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateServiceWithoutAddress() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithoutCityOrCountry());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidOrgAddressNoCountryButCityRegionException.class)
+    public void validateServiceWithCityNoCountry() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithCityNoCountry());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test(expected = InvalidOrgAddressNoCountryButCityRegionException.class)
+    public void validateServiceWithRegionNoCountry() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithRegionNoCountry());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidNoOrgOrExternalIdException.class)
+    public void validateServiceWithNoOrgNoExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithoutExternalIdentifiersOrDisambiguatedOrg());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateServiceWithNoOrgDisambiguatedButWithExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getOrganizationWithoutExternalIdentifiersOrDisambiguatedOrg());
+        service.setExternalIdentifiers(getExternalIDs());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    @Test
+    public void validateServiceWithOrgDisambiguatedButNoExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getOrganization());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
+    
+    @Test(expected = InvalidOrgException.class)
+    public void validateServiceWithNoOrgNameWithExternalIdentifiers() {
+        Service service = new Service();
+        service.setOrganization(getEmptyOrg());
+        activityValidator.validateAffiliation(service, null, true, true, Visibility.PUBLIC);
+    }
+    
 }

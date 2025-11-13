@@ -1,97 +1,61 @@
 package org.orcid.frontend.web.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.orcid.core.common.manager.EventManager;
+import org.orcid.core.common.manager.SummaryManager;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNoResultException;
 import org.orcid.core.exception.OrcidNotClaimedException;
-import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
-import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.v3.ActivityManager;
-import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.read_only.*;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.v3.SourceUtils;
-import org.orcid.frontend.web.pagination.ResearchResourcePaginator;
-import org.orcid.frontend.web.pagination.WorksPaginator;
-import org.orcid.frontend.web.util.LanguagesMap;
+import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.v3.release.record.Addresses;
+import org.orcid.jaxb.model.v3.release.record.Biography;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
-import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.v3.release.record.*;
+import org.orcid.jaxb.model.v3.release.record.Keywords;
+import org.orcid.jaxb.model.v3.release.record.Name;
+import org.orcid.jaxb.model.v3.release.record.OtherNames;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.persistence.jpa.entities.EventType;
+import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.PublicRecord;
-import org.orcid.pojo.ajaxForm.*;
+import org.orcid.pojo.ajaxForm.AddressForm;
+import org.orcid.pojo.ajaxForm.AddressesForm;
+import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
+import org.orcid.pojo.ajaxForm.KeywordsForm;
+import org.orcid.pojo.ajaxForm.NamesForm;
+import org.orcid.pojo.ajaxForm.OtherNamesForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.WebsitesForm;
+import org.orcid.pojo.summary.RecordSummaryPojo;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @Controller
 public class PublicRecordController extends BaseWorkspaceController {
-
-    @Resource(name = "membersManagerV3")
-    MembersManager membersManager;
-
-    @Resource(name = "workManagerReadOnlyV3")
-    private WorkManagerReadOnly workManagerReadOnly;
-
-    @Resource(name = "peerReviewManagerReadOnlyV3")
-    private PeerReviewManagerReadOnly peerReviewManagerReadOnly;
-
-    @Resource(name = "profileFundingManagerReadOnlyV3")
-    private ProfileFundingManagerReadOnly profileFundingManagerReadOnly;
-
-    @Resource
-    private WorksPaginator worksPaginator;
-
-    @Resource(name = "activityManagerV3")
-    private ActivityManager activityManager;
-
-    @Resource(name = "languagesMap")
-    private LanguagesMap lm;
-
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource(name = "groupIdRecordManagerReadOnlyV3")
-    private GroupIdRecordManagerReadOnly groupIdRecordManagerReadOnly;
-
     @Resource(name = "personalDetailsManagerReadOnlyV3")
     private PersonalDetailsManagerReadOnly personalDetailsManagerReadOnly;
-
-    @Resource
-    private OrgDisambiguatedManager orgDisambiguatedManager;
-
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
-    @Resource(name = "sourceUtilsV3")
-    private SourceUtils sourceUtils;
-
-    @Resource(name = "affiliationsManagerReadOnlyV3")
-    private AffiliationsManagerReadOnly affiliationsManagerReadOnly;
-
-    @Resource
-    private ResearchResourcePaginator researchResourcePaginator;
-
-    @Resource(name = "researchResourceManagerReadOnlyV3")
-    private ResearchResourceManagerReadOnly researchResourceManagerReadOnly;
-
-    @Resource
-    private IssnPortalUrlBuilder issnPortalUrlBuilder;
-
-    @Resource(name = "emailManagerReadOnlyV3")
-    protected EmailManagerReadOnly emailManagerReadOnly;
 
     @Resource(name = "addressManagerReadOnlyV3")
     private AddressManagerReadOnly addressManagerReadOnly;
@@ -105,16 +69,25 @@ public class PublicRecordController extends BaseWorkspaceController {
     @Resource(name = "externalIdentifierManagerReadOnlyV3")
     private ExternalIdentifierManagerReadOnly externalIdentifierManagerReadOnly;
 
-    public static int ORCID_HASH_LENGTH = 8;
-    private static final String PAGE_SIZE_DEFAULT = "50";
+    @Resource(name = "profileEmailDomainManagerReadOnly")
+    private ProfileEmailDomainManagerReadOnly profileEmailDomainManagerReadOnly;
 
+    @Resource
+    private EventManager eventManager;
+    
+    @Resource
+    private SummaryManager summaryManager;
+    
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/public-record.json", method = RequestMethod.GET)
     public @ResponseBody
     PublicRecord getPublicRecord(@PathVariable("orcid") String orcid) {
         PublicRecord publicRecord = new PublicRecord();
-        Boolean isDeprecated = false;
+        boolean isDeprecated = false;
 
         try {
+            if (Features.EVENTS.isActive()) {
+                eventManager.createEvent(EventType.PUBLIC_PAGE, null);
+            }
             // Check if the profile is deprecated or locked
             orcidSecurityManager.checkProfile(orcid);
         } catch (LockedException | DeactivatedException e) {
@@ -127,7 +100,7 @@ public class PublicRecordController extends BaseWorkspaceController {
         } catch (OrcidDeprecatedException e) {
             isDeprecated = true;
         } catch (OrcidNoResultException e) {
-            return publicRecord; 
+            return publicRecord;
         }
 
         publicRecord = getRecord(orcid);
@@ -163,16 +136,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             if (publicPersonalDetails.getName() != null) {
                 Name name = publicPersonalDetails.getName();
                 if (name.getVisibility().equals(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC)) {
-                    if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
-                        displayName = name.getCreditName().getContent();
-                    } else {
-                        if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
-                            displayName = name.getGivenNames().getContent() + " ";
-                        }
-                        if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
-                            displayName += name.getFamilyName().getContent();
-                        }
-                    }
+                    displayName = getDisplayName(name);
                     publicRecord.setNames(NamesForm.valueOf(name));
                 }
             }
@@ -195,13 +159,7 @@ public class PublicRecordController extends BaseWorkspaceController {
             // Fill other names
             OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
             if (publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
-                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
-                while (it.hasNext()) {
-                    OtherName otherName = it.next();
-                    if (!org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(otherName.getVisibility())) {
-                        it.remove();
-                    }
-                }
+                publicOtherNames.getOtherNames().removeIf(otherName -> !org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(otherName.getVisibility()));
             }
             publicRecord.setOtherNames(OtherNamesForm.valueOf(publicOtherNames));
         }
@@ -237,13 +195,26 @@ public class PublicRecordController extends BaseWorkspaceController {
         publicEmails = emailManagerReadOnly.getPublicEmails(orcid);
 
         Emails filteredEmails = new Emails();
-        if (Features.HIDE_UNVERIFIED_EMAILS.isActive()) {
-            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails().stream().filter(e -> e.isVerified()).collect(Collectors.toList())));
-        } else {
-            filteredEmails.setEmails(new ArrayList<Email>(publicEmails.getEmails()));
+        filteredEmails.setEmails(new ArrayList<>(publicEmails.getEmails().stream().filter(Email::isVerified).collect(Collectors.toList())));
+
+        // Fill email domains
+        List<ProfileEmailDomainEntity> emailDomains = null;
+        if (Features.EMAIL_DOMAINS.isActive()) {
+            emailDomains = profileEmailDomainManagerReadOnly.getPublicEmailDomains(orcid);
         }
 
-        publicRecord.setEmails(org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails));
+        org.orcid.pojo.ajaxForm.Emails emails = org.orcid.pojo.ajaxForm.Emails.valueOf(filteredEmails, emailDomains);
+        // Old emails are missing the source name and id -- assign the user as the source
+        if (emails.getEmails() != null) {
+            for (org.orcid.pojo.ajaxForm.Email email: emails.getEmails()) {
+                if (email.getSource() == null && email.getSourceName() == null) {
+                    email.setSource(orcid);
+                    email.setSourceName(publicRecord.getDisplayName());
+                }
+            }
+        }
+
+        publicRecord.setEmails(emails);
 
         // Fill external identifiers
         PersonExternalIdentifiers publicPersonExternalIdentifiers;
@@ -258,7 +229,54 @@ public class PublicRecordController extends BaseWorkspaceController {
         return publicRecord;
     }
 
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/summary.json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody RecordSummaryPojo getSummaryRecord(@PathVariable("orcid") String orcid) {
+        RecordSummaryPojo recordSummary = new RecordSummaryPojo();
+        try {
+            // Check if the profile is deprecated or locked
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (LockedException | DeactivatedException e) {
+            if (e instanceof LockedException) {
+                recordSummary.setStatus("locked");
+            } else {
+                recordSummary.setStatus("deactivated");
+            }
+            recordSummary.setName(localeManager.resolveMessage("public_profile.deactivated.given_names") + " "
+                    + localeManager.resolveMessage("public_profile.deactivated.family_name"));
+            return recordSummary;
+        } catch (OrcidNotClaimedException e) {
+            recordSummary.setName(localeManager.resolveMessage("orcid.reserved_for_claim"));
+            return recordSummary;
+        } catch (OrcidDeprecatedException e) {
+            recordSummary.setStatus("deprecated");
+            recordSummary.setEmploymentAffiliations(null);
+            recordSummary.setProfessionalActivities(null);
+            recordSummary.setExternalIdentifiers(null);
+            return recordSummary;
+        } catch (OrcidNoResultException e) {
+            return recordSummary;
+        }
+
+        // If not exceptions found, set the record as active and generate the summary        
+        return summaryManager.getRecordSummaryPojo(orcid);
+    }
+    
+    private String getDisplayName(Name name) {
+        String displayName = null;
+        if (name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+            displayName = name.getCreditName().getContent();
+        } else {
+            if (name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                displayName = name.getGivenNames().getContent() + " ";
+            }
+            if (name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                displayName += name.getFamilyName().getContent();
+            }
+        }
+        return displayName;
+    }
+
     private Long getLastModifiedTime(String orcid) {
         return profileEntityManager.getLastModified(orcid);
-    }
+    }    
 }

@@ -5,19 +5,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.dbunit.dataset.DataSetException;
 import org.joda.time.LocalDateTime;
 import org.junit.AfterClass;
@@ -44,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan)
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-profile-last-modified-aspect-disabled-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
 public class ProfileDaoTest extends DBUnitTest {
 
     @Resource
@@ -60,7 +62,7 @@ public class ProfileDaoTest extends DBUnitTest {
     private ClientDetailsDao clientDetailsDao;
 
     @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
     
     @Resource(name="entityManager")
     protected EntityManager entityManager;
@@ -71,12 +73,12 @@ public class ProfileDaoTest extends DBUnitTest {
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/WorksEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/WorksEntityData.xml", "/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml"));
     }
 
     @Before
@@ -104,9 +106,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(22, all.size());
+        assertEquals(23, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(22), count);
+        assertEquals(Long.valueOf(23), count);
     }
 
     @Test
@@ -127,7 +129,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(profile.getDateCreated(), profile.getLastModified());
         
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(23), count);
+        assertEquals(Long.valueOf(24), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -151,7 +153,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(profile.getLastModified());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(23), count);
+        assertEquals(Long.valueOf(24), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -177,7 +179,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(retrievedProfile.getLastModified());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(23), count);
+        assertEquals(Long.valueOf(24), count);
     }
 
     @Test
@@ -203,13 +205,13 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o2, d2, IndexingStatus.PENDING);
         profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(o3, d3, IndexingStatus.PENDING);
         
-        List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
+        Map<String,Date> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10, 0);
         assertNotNull(results);
         
         assertEquals(3, results.size());
-        assertTrue(results.contains(o1));
-        assertTrue(results.contains(o2));
-        assertTrue(results.contains(o3));       
+        assertTrue(results.containsKey(o1));
+        assertTrue(results.containsKey(o2));
+        assertTrue(results.containsKey(o3));       
     }
 
     @Test
@@ -278,12 +280,12 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(22), confirmedProfileCount);
+        assertEquals(Long.valueOf(23), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(21), confirmedProfileCount);
+        assertEquals(Long.valueOf(22), confirmedProfileCount);
     }
 
     @Test
@@ -377,83 +379,52 @@ public class ProfileDaoTest extends DBUnitTest {
         profile = profileDao.find("2000-0000-0000-0002");
         assertFalse(profile.getUsing2FA());
     }
-    
+
     @Test
     @Transactional
-    @Rollback(true)
-    public void findEmailsUnverfiedDaysTest() throws IllegalAccessException {
-        String orcid = "9999-9999-9999-999X";
-        ProfileEntity profile = new ProfileEntity();
-        profile.setId(orcid);
-        profile.setClaimed(true);
-        profileDao.persist(profile);
-        profileDao.flush();
-        emailDao.removeAll();
-        
-        // Created today
-        assertEquals(1, insertEmailWithDateCreated("unverified_1@test.orcid.org", "bd22086b65b6259fe79f7844a6b6a369441733b9ef04eff762f3d640957b78f5", orcid, false, new Date()));
-        
-        // Created a week ago
-        assertEquals(1, insertEmailWithDateCreated("unverified_2@test.orcid.org", "95770578974f683fb05c179a84f57c3fc7d4b260f8079fbc590080e51873bb67", orcid, false, LocalDateTime.now().minusDays(7).toDate()));
-           
-        // Created 15 days ago
-        assertEquals(1, insertEmailWithDateCreated("unverified_3@test.orcid.org", "3cbebfc1de2500494fc95553c956e757cb1998149d366afb71888cdeb1550719", orcid, false, LocalDateTime.now().minusDays(15).toDate()));
-        
-        // Created 7 days ago and verified
-        assertEquals(1, insertEmailWithDateCreated("verified_1@test.orcid.org", "2f4812b9c675e9803a4bb616dd1bc241c8c9302ba5690a1ea9d48049a32e7c5f", orcid, true, LocalDateTime.now().minusDays(7).toDate()));
-        
-        // Created 15 days ago and verified
-        assertEquals(1, insertEmailWithDateCreated("verified_2@test.orcid.org", "896dea808bbf69bde1b177f27800e84d17763860bffde1dfd8ef200e79ff9971", orcid, true, LocalDateTime.now().minusDays(15).toDate()));
-        
-        List<Pair<String, Date>> results = profileDao.findEmailsUnverfiedDays(7, 100);
-        assertNotNull(results);
-        assertEquals(2, results.size());
-        
-        boolean found1 = false, found2 = false;
-        
-        for(Pair<String, Date> element : results) {
-            assertNotNull(element.getRight());
-            if(element.getLeft().equals("unverified_2@test.orcid.org")) {
-                found1 = true;
-            } else if(element.getLeft().equals("unverified_3@test.orcid.org")) {
-                found2 = true;
-            } else {
-                fail("Unexpected email id: " + element.getRight());
-            }
-        }
-        
-        assertTrue(found1);
-        assertTrue(found2);
-        
-        // Put an email event on 'unverified_2@test.orcid.org' and verify there is only one result
-        emailEventDao.persist(new EmailEventEntity("unverified_2@test.orcid.org", EmailEventType.VERIFY_EMAIL_7_DAYS_SENT));
-        
-        results = profileDao.findEmailsUnverfiedDays(7, 100);
+    public void findEmailsToSendAddWorksFirstAttemptEmail() {
+        String orcid = "4444-4444-4444-4441";
+
+        updateProfileWithDateCreated(orcid, LocalDateTime.now().minusDays(7).toDate());
+
+        List<Pair<String, String>> results = profileDao.findEmailsToSendAddWorksEmail(7);
         assertNotNull(results);
         assertEquals(1, results.size());
-        assertEquals("unverified_3@test.orcid.org", results.get(0).getLeft());
-        
-        // Put an email event on 'unverified_3@test.orcid.org' and verify there is no result anymore
-        emailEventDao.persist(new EmailEventEntity("unverified_3@test.orcid.org", EmailEventType.VERIFY_EMAIL_TOO_OLD));
-        results = profileDao.findEmailsUnverfiedDays(7, 100);
-        assertNotNull(results);
-        assertTrue(results.isEmpty());        
     }
-    
-    private int insertEmailWithDateCreated(String email, String emailHash, String orcid, boolean isVerified, Date dateCreated) {
+
+    @Test
+    @Rollback(true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void testUpdateDeprecation() {
+        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442", ProfileEntity.ADMIN_DEPRECATION, "4444-4444-4444-4440");
+        assertTrue(result);
+
+        ProfileEntity profileToUpdateDeprecation = profileDao.find("4444-4444-4444-4441");
+        assertNotNull(profileToUpdateDeprecation.getPrimaryRecord());
+        result = profileDao.updateDeprecation("4444-4444-4444-4441", "2000-0000-0000-0002");
+        assertTrue(result);
+        profileToUpdateDeprecation = profileDao.find("4444-4444-4444-4441");
+        profileDao.refresh(profileToUpdateDeprecation);
+        assertNotNull(profileToUpdateDeprecation.getPrimaryRecord());
+        assertNotNull(profileToUpdateDeprecation.getDeprecatingAdmin());
+        ProfileEntity primaryRecord = profileToUpdateDeprecation.getPrimaryRecord();
+        assertEquals("2000-0000-0000-0002", primaryRecord.getId());
+    }
+
+    @Test
+    public void testIsReviewed() {
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
+        assertTrue(profile.isReviewed());
+
+        profile = profileDao.find("4444-4444-4444-4443");
+        assertFalse(profile.getUsing2FA());
+    }
+
+    private int updateProfileWithDateCreated(String orcid, Date dateCreated) {
         Query q = entityManager.createNativeQuery(
-        "INSERT INTO email(email,email_hash,orcid,source_id,visibility,is_primary,is_current,is_verified,date_created,last_modified) "
-        + "values(:email, :emailHash, :orcid, :sourceId, :visibility, :isPrimary, :isCurrent, :isVerified, :dateCreated, :lastModified)");
-        q.setParameter("email", email);
-        q.setParameter("emailHash", emailHash);
+                "UPDATE profile set date_created = :dateCreated where orcid = :orcid");
         q.setParameter("orcid", orcid);
-        q.setParameter("sourceId", orcid);
-        q.setParameter("visibility", "PUBLIC");
-        q.setParameter("isPrimary", false);
-        q.setParameter("isCurrent", false);
-        q.setParameter("isVerified", isVerified);
         q.setParameter("dateCreated", dateCreated);
-        q.setParameter("lastModified", dateCreated);
         return q.executeUpdate();
     }
 }

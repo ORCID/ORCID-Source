@@ -12,16 +12,21 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.NullUtils;
+
 public class PasswordResetToken {
 
     //  public static final String RESET_TOKEN_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
     private static final String EMAIL_PARAM_KEY = "email";
     private static final String ISSUE_DATE_PARAM_KEY = "issueDate";
+    private static final String HOURS_PARAM_KEY = "h";
     private static final String EQUALS = "=";
     private static final String SEPARATOR = "&";
 
     private String email;
     private XMLGregorianCalendar issueDate;
+    private int durationInHours = 4;
 
     public PasswordResetToken() {
 
@@ -35,19 +40,28 @@ public class PasswordResetToken {
             if (keyValue.length == 2) {
                 params.put(keyValue[0], keyValue[1]);
             }
+            
         }
         email = params.get(EMAIL_PARAM_KEY);
         issueDate = DateUtils.convertToXMLGregorianCalendar(params.get(ISSUE_DATE_PARAM_KEY));
+        if(StringUtils.isNotBlank(params.get(HOURS_PARAM_KEY))) {
+            durationInHours = Integer.valueOf(params.get(HOURS_PARAM_KEY));
+        }
 
     }
 
     public String getEmail() {
         return email;
     }
+    
+    public int getDurationInHours() {
+        return durationInHours;
+    }
 
     public Date getIssueDate() {
         return issueDate.toGregorianCalendar().getTime();
     }
+    
 
     /**
      * 
@@ -58,6 +72,7 @@ public class PasswordResetToken {
         List<Pair<String, String>> pairs = new ArrayList<Pair<String, String>>();
         pairs.add(new ImmutablePair<String, String>(EMAIL_PARAM_KEY, email));
         pairs.add(new ImmutablePair<String, String>(ISSUE_DATE_PARAM_KEY, String.valueOf(issueDate)));
+        pairs.add(new ImmutablePair<String, String>(HOURS_PARAM_KEY, String.valueOf(durationInHours)));
 
         List<String> items = new ArrayList<String>(pairs.size());
         for (Pair<String, String> pair : pairs) {

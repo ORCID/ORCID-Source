@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <event id="1"
+           event_type="Sign-In"
+           label="Website"
+           date_created="2023-01-01 15:31:00.00"           
+    />
+
+    <event id="2"
+           event_type="Sign-In"
+           label="Website"
+           date_created="2023-01-01 15:31:00.00"           
+    />
+
+    <event id="3"
+           event_type="Public-Page"
+           label="Website"
+           date_created="2023-01-01 15:31:00.00"           
+    />
+
+     <event id="4"
+           event_type="Public-API"
+           client_id="APP-0000000000000001"
+           date_created="2023-01-01 15:31:00.00"           
+    />
+
+     <event id="5"
+           event_type="Public-API"
+           client_id="APP-0000000000000002"
+           date_created="2023-01-01 15:31:00.00"           
+    />
+
+     <event id="6"
+           event_type="Public-API"
+           client_id="105.21.229.71"
+           label="anonymous"
+           date_created="2023-01-01 15:31:00.00"           
+    />
+
+</dataset>

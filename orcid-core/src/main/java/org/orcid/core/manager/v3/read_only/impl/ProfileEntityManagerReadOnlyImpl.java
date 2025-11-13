@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly { 
 
@@ -58,5 +59,13 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
     @Override
     public Boolean isOrcidValidAsDelegate(String orcid) {
         return profileDao.isOrcidValidAsDelegate(orcid);
-    }   
+    }
+    
+    @Override
+    public Boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId) {
+        if(PojoUtil.isEmpty(orcid) || PojoUtil.isEmpty(clientId)) {
+            return false;
+        }
+        return profileDao.haveMemberPushedWorksOrAffiliationsToRecord(orcid, clientId);
+    }
 }

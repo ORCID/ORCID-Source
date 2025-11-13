@@ -14,10 +14,6 @@ public interface SourceManager {
     
     SourceEntity retrieveSourceEntity();
 
-    boolean isInDelegationMode();
-    
-    ProfileEntity retrieveSourceProfileEntity();
-
     String retrieveRealUserOrcid();
 
 }

@@ -2,18 +2,25 @@ package org.orcid.frontend.spring;
 
 import java.io.IOException;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
+
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidAccessDeniedHandler.class);
 
@@ -34,6 +41,13 @@ public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
                 }
                 return;
             }
+        }
+
+        // Check if the current user is authenticated
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            response.sendRedirect(orcidUrlManager.getBaseUrl() + "/404");
+            return;
         }
 
         super.handle(request, response, accessDeniedException);

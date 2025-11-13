@@ -1,6 +1,9 @@
 package org.orcid.pojo.grouping;
 
-import org.orcid.core.togglz.Features;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
@@ -8,16 +11,23 @@ import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
-import org.orcid.pojo.ajaxForm.*;
+import org.orcid.pojo.ajaxForm.ActivityExternalIdentifier;
+import org.orcid.pojo.ajaxForm.Date;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Resource;
+
+import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
 public class WorkGroup extends ActivityGroup {
 
     private static final long serialVersionUID = 1L;
 
     private List<WorkForm> works;
+
+    private int featuredDisplayIndex;
 
     public List<WorkForm> getWorks() {
         return works;
@@ -27,6 +37,21 @@ public class WorkGroup extends ActivityGroup {
         this.works = works;
     }
 
+    public int getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
+    }
+
+    public void setFeaturedDisplayIndex(int featuredDisplayIndex) {
+        this.featuredDisplayIndex = featuredDisplayIndex;
+    }
+
+    public void addWork(WorkForm work) {
+        if(this.works == null) {
+            this.works = new ArrayList<WorkForm>();
+        }
+        this.works.add(work);
+    }
+    
     public static WorkGroup valueOf(org.orcid.jaxb.model.v3.release.record.summary.WorkGroup workGroup, int id, String orcid) {
         WorkGroup group = new WorkGroup();
         group.setGroupId(id);
@@ -37,7 +62,6 @@ public class WorkGroup extends ActivityGroup {
         Long maxDisplayIndex = null;
         for (WorkSummary workSummary : workGroup.getWorkSummary()) {
             WorkForm workForm = getWorkForm(workSummary);
-            workForm.setUserSource(workSummary.getSource().retrieveSourcePath() != null && workSummary.getSource().retrieveSourcePath().equals(orcid));
             group.getWorks().add(workForm);
 
             Long displayIndex = Long.parseLong(workSummary.getDisplayIndex());
@@ -93,7 +117,6 @@ public class WorkGroup extends ActivityGroup {
         Long maxDisplayIndex = null;
         for (WorkSummaryExtended workSummary : workGroup.getWorkSummary()) {
             WorkForm workForm = getWorkForm(workSummary);
-            workForm.setUserSource(workSummary.getSource().retrieveSourcePath() != null && workSummary.getSource().retrieveSourcePath().equals(orcid));
             group.getWorks().add(workForm);
 
             Long displayIndex = Long.parseLong(workSummary.getDisplayIndex());
@@ -138,95 +161,4 @@ public class WorkGroup extends ActivityGroup {
 
         return group;
     }
-
-    private static WorkForm getWorkForm(WorkSummary workSummary) {
-        WorkForm workForm = new WorkForm();
-        workForm.setPutCode(Text.valueOf(workSummary.getPutCode()));
-
-        String title = workSummary.getTitle() != null && workSummary.getTitle().getTitle() != null ? workSummary.getTitle().getTitle().getContent() : "";
-        workForm.setTitle(Text.valueOf(title));
-
-        if (workSummary.getJournalTitle() != null) {
-            workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
-        }
-
-        if (workSummary.getPublicationDate() != null) {
-            workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
-        }
-
-        workForm.setSource(workSummary.getSource().retrieveSourcePath());
-        if (workSummary.getSource().getSourceName() != null) {
-            workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginClientId() != null) {
-            workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginOrcid() != null) {
-            workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
-        }
-        
-        if (workSummary.getSource().getAssertionOriginName() != null) {
-            workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
-        }
-
-        workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
-        workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
-        WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
-        workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
-        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));      
-        return workForm;
-    }
-
-    private static WorkForm getWorkForm(WorkSummaryExtended workSummary) {
-        WorkForm workForm = new WorkForm();
-        workForm.setPutCode(Text.valueOf(workSummary.getPutCode()));
-
-        String title = workSummary.getTitle() != null && workSummary.getTitle().getTitle() != null ? workSummary.getTitle().getTitle().getContent() : "";
-        workForm.setTitle(Text.valueOf(title));
-
-        if (workSummary.getJournalTitle() != null) {
-            workForm.setJournalTitle(Text.valueOf(workSummary.getJournalTitle().getContent()));
-        }
-
-        if (workSummary.getPublicationDate() != null) {
-            workForm.setPublicationDate(getPublicationDate(workSummary.getPublicationDate()));
-        }
-
-        if (workSummary.getSource() != null) {
-            workForm.setSource(workSummary.getSource().retrieveSourcePath());
-            if (workSummary.getSource().getSourceName() != null) {
-                workForm.setSourceName(workSummary.getSource().getSourceName().getContent());
-            }
-
-            if (workSummary.getSource().getAssertionOriginClientId() != null) {
-                workForm.setAssertionOriginClientId(workSummary.getSource().getAssertionOriginClientId().getPath());
-            }
-
-            if (workSummary.getSource().getAssertionOriginOrcid() != null) {
-                workForm.setAssertionOriginOrcid(workSummary.getSource().getAssertionOriginOrcid().getPath());
-            }
-
-            if (workSummary.getSource().getAssertionOriginName() != null) {
-                workForm.setAssertionOriginName(workSummary.getSource().getAssertionOriginName().getContent());
-            }
-        }
-
-        workForm.setWorkType(Text.valueOf(workSummary.getType().value()));
-        workForm.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(workSummary.getVisibility()));
-        WorkForm.populateExternalIdentifiers(workSummary.getExternalIdentifiers(), workForm, workSummary.getType());
-        workForm.setCreatedDate(Date.valueOf(workSummary.getCreatedDate()));
-        workForm.setLastModified(Date.valueOf(workSummary.getLastModifiedDate()));
-        if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-            workForm.setContributorsGroupedByOrcid(workSummary.getContributorsGroupedByOrcid());
-            workForm.setNumberOfContributors(workSummary.getNumberOfContributors());
-        }
-        return workForm;
-    }
-
-    private static Date getPublicationDate(PublicationDate publicationDate) {
-        return PojoUtil.convertDate(publicationDate);
-    }
-
 }

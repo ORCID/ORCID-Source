@@ -1,20 +1,12 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
+import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
-import org.orcid.persistence.util.OrcidStringUtils;
+import org.orcid.utils.NullUtils;
 
 /**
  * 
@@ -27,56 +19,44 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
 
     private static final long serialVersionUID = 1L;
 
+    private String clientId;
     private String clientSecret;
-    private String decryptedClientSecret;
-    private ClientDetailsEntity clientDetailsEntity;
     private boolean primary;
+    private String decryptedClientSecret;
     
     public ClientSecretEntity() {
         super();
     }
 
-    public ClientSecretEntity(String clientSecret, ClientDetailsEntity clientDetailsEntity) {
+    public ClientSecretEntity(String clientSecret, String clientDetailsId) {
         this.clientSecret = clientSecret;
-        this.clientDetailsEntity = clientDetailsEntity;
+        this.clientId = clientDetailsId;
     }
     
-    public ClientSecretEntity(String clientSecret, ClientDetailsEntity clientDetailsEntity, boolean primary) {
+    public ClientSecretEntity(String clientSecret, String clientDetailsId, boolean primary) {
         this.clientSecret = clientSecret;
-        this.clientDetailsEntity = clientDetailsEntity;
+        this.clientId = clientDetailsId;
         this.primary = primary;
     }
 
-    /**
-     * As this uses a composite key this is ignored always returns null
-     * 
-     * @return always returns null
-     */
-    @Override
-    @Transient
-    public ClientSecretPk getId() {
-        return null;
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Id
-    @Column(name = "client_secret", length = 150)
+    @Column(name = "client_secret")
     public String getClientSecret() {
         return clientSecret;
     }
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
-    }
-
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
-    @JoinColumn(name = "client_details_id")
-    public ClientDetailsEntity getClientDetailsEntity() {
-        return clientDetailsEntity;
-    }
-
-    public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
     }
 
     @Column(name = "is_primary")
@@ -101,7 +81,7 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
     public int compareTo(ClientSecretEntity other) {
         Date otherLastModified = other.getLastModified();
         Date thisLastModified = getLastModified();
-        int dateComparison = OrcidStringUtils.compareObjectsNullSafe(thisLastModified, otherLastModified);
+        int dateComparison = NullUtils.compareObjectsNullSafe(thisLastModified, otherLastModified);
         if (dateComparison != 0) {
             return -dateComparison;
         }
@@ -109,42 +89,31 @@ public class ClientSecretEntity extends BaseEntity<ClientSecretPk> implements Co
         if(isPrimary() != other.isPrimary()) {
             return -1;
         }
-        
-        return clientSecret.compareTo(other.getClientSecret());
+
+        return NullUtils.compareObjectsNullSafe(clientSecret, other.clientSecret);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientSecretEntity that = (ClientSecretEntity) o;
+        return primary == that.primary && Objects.equals(clientId, that.clientId) && Objects.equals(clientSecret, that.clientSecret) && Objects.equals(decryptedClientSecret, that.decryptedClientSecret);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((clientSecret == null) ? 0 : clientSecret.hashCode());
-        result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
-        result = prime * result + (primary ? 1231 : 1237);
-        return result;
+        return Objects.hash(clientId, clientSecret, primary, decryptedClientSecret);
     }
 
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ClientSecretEntity other = (ClientSecretEntity) obj;
-        if (clientSecret == null) {
-            if (other.clientSecret != null)
-                return false;
-        } else if (!clientSecret.equals(other.clientSecret))
-            return false;
-        if (decryptedClientSecret == null) {
-            if (other.decryptedClientSecret != null)
-                return false;
-        } else if (!decryptedClientSecret.equals(other.decryptedClientSecret))
-            return false;
-        if (primary != other.primary)
-            return false;
-        return true;
-    }        
-
+    @Transient
+    public ClientSecretPk getId() {
+        return null;
+    }
 }

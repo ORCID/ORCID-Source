@@ -1,29 +1,47 @@
 package org.orcid.persistence.dao.impl;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
 
     private static final String PRIVATE_VISIBILITY = "PRIVATE";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileDaoImpl.class);
+
+    private static final String FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER = "SELECT e.orcid, e.email, e.is_primary " + "FROM email e, profile p "
+            + "WHERE e.is_verified = false " + "        AND p.orcid = e.orcid " + "        AND p.deprecated_date is null "
+            + "        AND p.profile_deactivation_date is null " + "        AND p.account_expiry is null "
+            + "        AND e.date_created BETWEEN (DATE_TRUNC('day', now()) - CAST('{RANGE_START}' AS INTERVAL DAY)) AND (DATE_TRUNC('day', now()) - CAST('{RANGE_END}' AS INTERVAL DAY)) "
+            + "        AND NOT EXISTS " + "        (SELECT x.email FROM email_event x WHERE x.email = e.email AND email_event_type IN ('{EVENT_SENT}')) "
+            + "order by e.last_modified";
 
     @Value("${org.orcid.postgres.query.timeout:30000}")
     private Integer queryTimeout;
@@ -53,7 +71,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
+    public Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Integer delay) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST, delay);
     }
 
@@ -75,25 +93,45 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status = :indexingStatus ");
+    public Map<String, Date> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude, Integer delay) {
+        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.last_modified FROM profile p WHERE p.indexing_status = :indexingStatus");
+
         if (delay != null && delay > 0) {
-            builder.append(" AND (p.last_indexed_date is null OR p.last_indexed_date < now() - INTERVAL '" + delay + " min') ");
+            // By calculating the date in Java, we create a portable and secure
+            // query
+            builder.append(" AND (p.last_indexed_date IS NULL OR p.last_indexed_date < :thresholdDate)");
         }
-        if (!orcidsToExclude.isEmpty()) {
-            builder.append(" AND p.orcid NOT IN :orcidsToExclude");
+
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
+            builder.append(" AND p.orcid NOT IN (:orcidsToExclude)");
         }
-        // Ordering by last modified so we get the oldest modified first
-        builder.append(" ORDER BY p.last_modified");
+
+        // Ordering by last_modified to process the oldest records first
+        builder.append(" ORDER BY p.last_modified ASC");
+
         Query query = entityManager.createNativeQuery(builder.toString());
+
+        // Set parameters
         query.setParameter("indexingStatus", indexingStatus.name());
-        if (!orcidsToExclude.isEmpty()) {
+
+        if (delay != null && delay > 0) {
+            // Calculate the threshold date here and pass it as a parameter
+            Instant threshold = Instant.now().minus(delay, ChronoUnit.MINUTES);
+            query.setParameter("thresholdDate", Date.from(threshold));
+        }
+
+        if (orcidsToExclude != null && !orcidsToExclude.isEmpty()) {
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
+
         query.setMaxResults(maxResults);
-        // Sets a timeout for this query
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        return query.getResultList();
+
+        List<Object[]> results = query.getResultList();
+
+        return results.stream().collect(Collectors.toMap(row -> (String) row[0], row -> (Date) row[1], (existing, replacement) -> {
+            throw new IllegalStateException("Duplicate ORCID found: " + existing);
+        }, LinkedHashMap::new));
     }
 
     @SuppressWarnings("unchecked")
@@ -131,23 +169,20 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Pair<String, Date>> findEmailsUnverfiedDays(int daysUnverified, int maxResults) {
-        StringBuilder queryString = new StringBuilder("SELECT e.email, e.date_created FROM email e ");
-        queryString.append("LEFT JOIN email_event ev ON e.email = ev.email ");
-        queryString.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true ");
-        queryString.append("AND p.deprecated_date is null AND p.profile_deactivation_date is null AND p.account_expiry is null ");
-        queryString.append("where ev.email IS NULL " + "and e.is_verified = false ");
-        queryString.append("and e.date_created < (now() - CAST('").append(daysUnverified).append("' AS INTERVAL DAY)) ");
-        queryString.append("and (e.source_id = e.orcid OR e.source_id is null)");
-        queryString.append(" ORDER BY e.last_modified");
+    public List<Triple<String, String, Boolean>> findEmailsUnverfiedDays(int daysUnverified, EmailEventType eventSent) {
+        int rangeStart = daysUnverified;
+        int rangeEnd = daysUnverified - 1;
 
+        String queryString = FIND_EMAILS_TO_SEND_VERIFICATION_REMINTER.replace("{RANGE_START}", String.valueOf(rangeStart))
+                .replace("{RANGE_END}", String.valueOf(rangeEnd)).replace("{EVENT_SENT}", eventSent.name());
+        LOGGER.debug("Query to search unverified emails");
+        LOGGER.debug(queryString);
         Query query = entityManager.createNativeQuery(queryString.toString());
-        query.setMaxResults(maxResults);
         List<Object[]> dbInfo = query.getResultList();
-        List<Pair<String, Date>> results = new ArrayList<Pair<String, Date>>();
+        List<Triple<String, String, Boolean>> results = new ArrayList<Triple<String, String, Boolean>>();
         dbInfo.stream().forEach(element -> {
-            Pair<String, Date> pair = Pair.of((String) element[0], (Date) element[1]);
-            results.add(pair);
+            Triple<String, String, Boolean> q = Triple.of((String) element[0], (String) element[1], (Boolean) element[2]);
+            results.add(q);
         });
         return results;
     }
@@ -571,6 +606,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
+    public boolean isReviewed(String orcid) {
+        TypedQuery<Boolean> query = entityManager.createQuery("select reviewed from ProfileEntity where orcid = :orcid", Boolean.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
+
+    @Override
     @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         Query query = entityManager.createNativeQuery("update profile set last_login=now(), user_last_ip=:ipAddr where orcid=:orcid");
@@ -785,7 +827,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
         return;
     }
-    
+
     @Override
     @Transactional
     public void resetSigninLock(String orcid) {
@@ -808,6 +850,58 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("count", count);
         query.executeUpdate();
         return;
+    }
+
+    public boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId) {
+        try {
+            String queryString = "select p.orcid from profile p where p.orcid = :orcid and ( exists (select 1 from work w where w.orcid = p.orcid and w.client_source_id = :clientId) or exists (select 1 from org_affiliation_relation o where o.orcid = p.orcid and o.client_source_id = :clientId));";
+            Query query = entityManager.createNativeQuery(queryString);
+            query.setParameter("orcid", orcid);
+            query.setParameter("clientId", clientId);
+            String result = (String) query.getSingleResult();
+            if (orcid.equals(result)) {
+                return true;
+            }
+        } catch (NoResultException nre) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public List<Pair<String, String>> findEmailsToSendAddWorksEmail(int profileCreatedNumberOfDaysAgo) {
+        StringBuilder qs = new StringBuilder("SELECT e.email, p.orcid FROM email e ");
+        qs.append("LEFT JOIN email_frequency ef ON e.orcid = ef.orcid ");
+        qs.append("LEFT OUTER JOIN work w ON e.orcid = w.orcid ");
+        qs.append("JOIN profile p on p.orcid = e.orcid and p.claimed = true AND p.deprecated_date is null AND ");
+        qs.append("p.profile_deactivation_date is null AND p.account_expiry is null ");
+        qs.append("WHERE ");
+        qs.append("e.is_verified = true and e.is_primary = true and ");
+        qs.append("ef.send_quarterly_tips = true and ");
+        qs.append("w.orcid is null and ");
+        qs.append("CAST(p.date_created as date) = CAST(CURRENT_DATE - INTERVAL '");
+        qs.append(profileCreatedNumberOfDaysAgo);
+        qs.append("' day as date) ");
+        qs.append("GROUP BY e.email, p.orcid");
+
+        Query query = entityManager.createNativeQuery(qs.toString());
+        List<Object[]> dbInfo = query.getResultList();
+        List<Pair<String, String>> results = new ArrayList<Pair<String, String>>();
+        dbInfo.stream().forEach(element -> {
+            Pair<String, String> pair = Pair.of((String) element[0], (String) element[1]);
+            results.add(pair);
+        });
+        return results;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateDeprecation(String deprecated, String primaryOrcid) {
+        String queryString = "UPDATE profile SET last_modified = now(), primary_record = :primaryOrcid where orcid = :deprecated";
+        Query query = entityManager.createNativeQuery(queryString);
+        query.setParameter("deprecated", deprecated);
+        query.setParameter("primaryOrcid", primaryOrcid);
+        return query.executeUpdate() > 0;
     }
 
 }

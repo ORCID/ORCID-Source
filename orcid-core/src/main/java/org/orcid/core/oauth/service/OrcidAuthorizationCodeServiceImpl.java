@@ -7,16 +7,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -25,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -88,16 +91,23 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
             LOGGER.info("No such authorization code to remove: code={}",
                     new Object[] { code });
             return null;
-        } 
-        OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(detail.getClientDetailsEntity().getId(), detail.getScopes(), detail.getOrcid());         
-        LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, authInfo.getClientId(), authInfo.getScopes(),
-                    authInfo.getUserOrcid() });
+        }
+
+        ////////
+        // TODO: The name should change to `scopes` once the authorization server generates all authorization codes
+        ////////
+        Set<String> newScopes = StringUtils.isNotBlank(detail.getNewScopes()) ? Stream.of(detail.getNewScopes().split(",")).map(String::trim).collect(Collectors.toSet()) : Set.of();
+        Set<String> scopes = detail.getScopes();
+        scopes.addAll(newScopes);
+        String clientId = detail.getClientDetailsEntity().getId();
+
+        LOGGER.info("Removed authorization code: code={}, clientId={}, scopes={}, userOrcid={}", new Object[] { code, clientId, scopes,
+                    detail.getOrcid() });
         
         
-        OAuth2Request oAuth2Request = new OAuth2Request(Collections.<String, String> emptyMap(), authInfo.getClientId(), Collections.<GrantedAuthority> emptyList(), true, authInfo.getScopes(), detail.getResourceIds(), detail.getRedirectUri(), new HashSet<String>(Arrays.asList(detail.getResponseType())), Collections.<String, Serializable> emptyMap());
+        OAuth2Request oAuth2Request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, scopes, detail.getResourceIds(), detail.getRedirectUri(), new HashSet<String>(Arrays.asList(detail.getResponseType())), Collections.<String, Serializable> emptyMap());
         Authentication userAuth = getUserAuthentication(detail);
-        OAuth2Authentication result = new OAuth2Authentication(oAuth2Request, userAuth);
-        return result;        
+        return new OAuth2Authentication(oAuth2Request, userAuth);
     }        
 
     private OrcidOauth2UserAuthentication getUserAuthentication(OrcidOauth2AuthoriziationCodeDetail detail) {
@@ -106,7 +116,6 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
     }
     
     private OrcidOauth2AuthoriziationCodeDetail getDetailFromAuthorization(String code, OAuth2Authentication authentication) {
-
         OAuth2Request oAuth2Request = authentication.getOAuth2Request();
         OrcidOauth2AuthoriziationCodeDetail detail = new OrcidOauth2AuthoriziationCodeDetail();
         Map<String, String> requestParameters = oAuth2Request.getRequestParameters();
@@ -134,12 +143,7 @@ public class OrcidAuthorizationCodeServiceImpl extends RandomValueAuthorizationC
         Authentication userAuthentication = authentication.getUserAuthentication();
         Object principal = userAuthentication.getDetails();
 
-        String orcid = null;
-
-        if (principal instanceof OrcidProfileUserDetails) {
-            OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) principal;
-            orcid = userDetails.getOrcid();
-        }
+        String orcid = userAuthentication.getName();
 
         if (orcid == null) {
             return null;

@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 @Entity
 @Table(name = "client_details")
 public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     // Default is 20 years!
@@ -56,16 +56,18 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private String groupProfileId;
     private String authenticationProviderId;
 
-    private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
     private boolean persistentTokensEnabled = false;
     private String emailAccessReason;
     private boolean allowAutoDeprecate = false;
     private boolean userOBOEnabled = false;
-    
+    private boolean userNotificationEnabled = false;
+    private String notificationWebpageUrl;
+    private String notificationDomains;
+
     private Date deactivatedDate;
     private String deactivatedBy;
-    
+
     public ClientDetailsEntity() {
     }
 
@@ -74,11 +76,11 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     }
 
     public ClientDetailsEntity(String clientId, String clientName) {
-    	this.clientId = clientId;
-    	this.clientName = clientName;
-	}
+        this.clientId = clientId;
+        this.clientName = clientName;
+    }
 
-	/**
+    /**
      * This should be implemented by all entity classes to return the id of the
      * entity represented by the &lt;T&gt; generic argument
      * 
@@ -130,7 +132,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientWebsite = clientWebsite;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientScopeEntity> getClientScopes() {
         return clientScopes;
     }
@@ -139,7 +141,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientScopes = clientScopes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientResourceIdEntity> getClientResourceIds() {
         return clientResourceIds;
     }
@@ -148,7 +150,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientResourceIds = clientResourceIds;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientAuthorisedGrantTypeEntity> getClientAuthorizedGrantTypes() {
         return clientAuthorizedGrantTypes;
     }
@@ -157,7 +159,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientAuthorizedGrantTypes = clientAuthorizedGrantTypes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris() {
         return clientRegisteredRedirectUris;
@@ -167,14 +169,14 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientRegisteredRedirectUris = clientRegisteredRedirectUris;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities() {
         return clientGrantedAuthorities;
     }
 
     public void setClientGrantedAuthorities(List<ClientGrantedAuthorityEntity> clientGrantedAuthorities) {
         this.clientGrantedAuthorities = clientGrantedAuthorities;
-    }    
+    }
 
     @Column(name = "group_orcid")
     @JoinColumn(name = "group_orcid")
@@ -238,7 +240,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return getDecryptedClientSecret();
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public Set<ClientSecretEntity> getClientSecrets() {
         return clientSecrets;
@@ -248,15 +250,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         this.clientSecrets = clientSecrets;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientDetailsEntity", orphanRemoval = true)
-    public Set<CustomEmailEntity> getCustomEmails() {
-        return customEmails;
-    }
-
-    public void setCustomEmails(Set<CustomEmailEntity> customEmails) {
-        this.customEmails = customEmails;
-    }
-    
     @Column(name = "persistent_tokens_enabled")
     public boolean isPersistentTokensEnabled() {
         return persistentTokensEnabled;
@@ -265,7 +258,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setPersistentTokensEnabled(boolean persistentTokensEnabled) {
         this.persistentTokensEnabled = persistentTokensEnabled;
     }
-    
+
     /**
      * Reason, if any, client wants to access users' private email addresses.
      * 
@@ -292,14 +285,14 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         if (clientSecrets == null) {
             clientSecrets = new TreeSet<>();
         }
-        clientSecrets.add(new ClientSecretEntity(clientSecret, this));
+        clientSecrets.add(new ClientSecretEntity(clientSecret, this.getClientId()));
     }
 
     public void setClientSecretForJpa(String clientSecret, boolean primary) {
         if (clientSecrets == null) {
             clientSecrets = new TreeSet<>();
         }
-        clientSecrets.add(new ClientSecretEntity(clientSecret, this, primary));
+        clientSecrets.add(new ClientSecretEntity(clientSecret, this.getClientId(), primary));
     }
 
     @Transient
@@ -423,7 +416,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
 
     @Override
     @Transient
-    public boolean isAutoApprove(String scope) {        
+    public boolean isAutoApprove(String scope) {
         return false;
     }
 
@@ -444,7 +437,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setAllowAutoDeprecate(boolean allowAutoDeprecate) {
         this.allowAutoDeprecate = allowAutoDeprecate;
     }
-    
+
     @Column(name = "user_obo_enabled")
     public boolean isUserOBOEnabled() {
         return userOBOEnabled;
@@ -453,7 +446,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     public void setUserOBOEnabled(boolean userOBOEnabled) {
         this.userOBOEnabled = userOBOEnabled;
     }
-    
+
     @Column(name = "deactivated_date")
     public Date getDeactivatedDate() {
         return deactivatedDate;
@@ -500,7 +493,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         result = prime * result + ((clientSecrets == null) ? 0 : clientSecrets.hashCode());
         result = prime * result + ((clientType == null) ? 0 : clientType.hashCode());
         result = prime * result + ((clientWebsite == null) ? 0 : clientWebsite.hashCode());
-        result = prime * result + ((customEmails == null) ? 0 : customEmails.hashCode());
         result = prime * result + ((decryptedClientSecret == null) ? 0 : decryptedClientSecret.hashCode());
         result = prime * result + ((emailAccessReason == null) ? 0 : emailAccessReason.hashCode());
         result = prime * result + ((groupProfileId == null) ? 0 : groupProfileId.hashCode());
@@ -584,11 +576,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
                 return false;
         } else if (!clientWebsite.equals(other.clientWebsite))
             return false;
-        if (customEmails == null) {
-            if (other.customEmails != null)
-                return false;
-        } else if (!customEmails.equals(other.customEmails))
-            return false;
         if (decryptedClientSecret == null) {
             if (other.decryptedClientSecret != null)
                 return false;
@@ -606,8 +593,35 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
             return false;
         if (persistentTokensEnabled != other.persistentTokensEnabled)
             return false;
-        if (userOBOEnabled != other.userOBOEnabled) 
+        if (userOBOEnabled != other.userOBOEnabled)
             return false;
         return true;
-    }                  
+    }
+
+    @Column(name = "user_notification_enabled")
+    public boolean isUserNotificationEnabled() {
+        return userNotificationEnabled;
+    }
+
+    public void setUserNotificationEnabled(boolean userNotificationEnabled) {
+        this.userNotificationEnabled = userNotificationEnabled;
+    }
+
+    @Column(name = "notification_webpage_url")
+    public String getNotificationWebpageUrl() {
+        return notificationWebpageUrl;
+    }
+
+    public void setNotificationWebpageUrl(String notificationWebpageUrl) {
+        this.notificationWebpageUrl = notificationWebpageUrl;
+    }
+
+    @Column(name = "notification_domains")
+    public String getNotificationDomains() {
+        return notificationDomains;
+    }
+
+    public void setNotificationDomains(String notificationDomains) {
+        this.notificationDomains = notificationDomains;
+    }
 }

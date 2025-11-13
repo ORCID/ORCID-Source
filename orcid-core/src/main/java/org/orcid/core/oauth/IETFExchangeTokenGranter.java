@@ -28,6 +28,8 @@ import org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -50,7 +52,8 @@ import com.nimbusds.jwt.SignedJWT;
  */
 public class IETFExchangeTokenGranter implements TokenGranter {
 
-    public static final String IETF_EXCHANGE = "urn:ietf:params:oauth:grant-type:token-exchange";
+    private static final Logger LOGGER = LoggerFactory.getLogger(IETFExchangeTokenGranter.class);
+
     private AuthorizationServerTokenServices tokenServices;
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
@@ -75,7 +78,7 @@ public class IETFExchangeTokenGranter implements TokenGranter {
     @Resource
     OpenIDConnectTokenEnhancer openIDConnectTokenEnhancer;
     
-    private List<String> doNotAllowDeleteOnTheseRevokeReasons = List.of(RevokeReason.CLIENT_REVOKED.name(), RevokeReason.STAFF_REVOKED.name());
+    private final List<RevokeReason> doNotAllowDeleteOnTheseRevokeReasons = List.of(RevokeReason.CLIENT_REVOKED, RevokeReason.STAFF_REVOKED, RevokeReason.RECORD_DEACTIVATED, RevokeReason.AUTH_CODE_REUSED);
 
     public IETFExchangeTokenGranter(AuthorizationServerTokenServices tokenServices) {
         this.tokenServices = tokenServices;
@@ -233,16 +236,19 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         // get list of all tokens for original client. We have to base this on
         // previous tokens, as you can't revoke a code.
         // this means only "token id_token" requests will work (not code
-        // id_token). Balls. Just means we must never enable "code id_token".
+        // id_token). Just means we must never enable "code id_token".
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByClientIdAndUserName(OBOClient, OBOOrcid);
         Set<ScopePathType> activeScopesOBO = Sets.newHashSet();
         Set<ScopePathType> inactiveScopesOBO = Sets.newHashSet();
         boolean issueRevokedToken = false;
+        boolean isRevoked = false;
         RevokeReason revokeReason = null;
+        // Lets consider token expiration time anything that goes beyond this date
+        Date now = new Date();
         for (OrcidOauth2TokenDetail d : details) {
             Set<ScopePathType> scopesInToken = ScopePathType.getScopesFromSpaceSeparatedString(d.getScope());
             // If token is expired, we should ignore it
-            if (d.getTokenExpiration().after(new Date())) {
+            if (d.getTokenExpiration().after(now)) {
                 // If token is disabled, we should know if it have the /activities/update scope on it
                 if(d.getTokenDisabled() == null || !d.getTokenDisabled()) {
                     activeScopesOBO.addAll(scopesInToken);
@@ -255,10 +261,16 @@ public class IETFExchangeTokenGranter implements TokenGranter {
                             //In case a weird revoke reason was added or is empty, leave the revoke reason null                            
                         }
                         // Keep only the /activities/update scope if the token was not revoked by a client or staff member
-                        if(revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
+                        if (revokeReason == null || !doNotAllowDeleteOnTheseRevokeReasons.contains(revokeReason)) {
+                            // We keen this scope even on user deactivated tokens so the member can still delete their own data from records
+                            LOGGER.info("Storing /activites/update scope from deactivated token, this will allow members to delete even if the permission was revoked");
                             inactiveScopesOBO.add(ScopePathType.ACTIVITIES_UPDATE);
+                        } else {
+                            isRevoked = true;
                         }
-                    } 
+                    } else {
+                        LOGGER.info("Ignoring disabled token because it is disabled and doesn't have the /activities/update scope");
+                    }
                 }                
             }
         }
@@ -275,6 +287,9 @@ public class IETFExchangeTokenGranter implements TokenGranter {
         }        
         
         if (scopesOBO.isEmpty()) {
+            if (isRevoked) {
+                throw new OrcidInvalidScopeException("There are no active tokens with valid scopes for this account");
+            }
             throw new OrcidInvalidScopeException("The id_token is not associated with a valid scope");
         }
         Set<ScopePathType> combinedOBOScopes = new HashSet<ScopePathType>();

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SalesforceManagerImpl implements SalesforceManager {
 
+    private static final List<String> visibleStatuses = List.of("In Development", "Complete", "Certified Service Provider", "NONE_PLANNED");
+    
     @Resource
     private SalesForceAdapter salesForceAdapter;
 
@@ -64,7 +66,7 @@ public class SalesforceManagerImpl implements SalesforceManager {
                 String consortiumLeadId = memberJsonObject.has("Consortium_Lead__c") ? memberJsonObject.getString("Consortium_Lead__c") : null;
                 details.setParentId(consortiumLeadId);
                 // Set member details
-                Member member = salesForceAdapter.createMemberFromSalesForceRecord(memberJsonObject);
+                Member member = salesForceAdapter.createMemberFromSalesForceRecord(memberJsonObject);                
                 details.setMember(member);
             }
 
@@ -72,7 +74,19 @@ public class SalesforceManagerImpl implements SalesforceManager {
                 JSONArray integrations = memberDetailsJsonObject.getJSONArray("integrations");
                 if (integrations != null && integrations.length() > 0) {
                     List<Integration> integrationList = salesForceAdapter.createIntegrationsList(integrations);
-                    details.setIntegrations(integrationList);
+                    // Filter by integration status
+                    List<Integration> filteredIntegrationList = integrationList.stream()
+                            .filter(x -> {
+                                if(visibleStatuses.contains(x.getStage())) {
+                                    // NONE_PLANNED should be displayed as "None Planned" 
+                                    if(x.getStage().equals("NONE_PLANNED")) {
+                                        x.setStage("None Planned");
+                                    }
+                                    return true;
+                                }
+                                return false;
+                            }).collect(Collectors.toList());
+                    details.setIntegrations(filteredIntegrationList);
                 } else {
                     details.setIntegrations(List.of());
                 }

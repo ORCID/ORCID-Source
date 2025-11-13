@@ -1,7 +1,5 @@
 package org.orcid.core.utils.v3;
 
-import java.util.List;
-
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -44,7 +42,11 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+
+import java.util.List;
 
 public class SourceUtils {
     private SourceNameCacheManager sourceNameCacheManager;
@@ -54,19 +56,25 @@ public class SourceUtils {
     }
 
     public void setSourceName(SourceAware sourceAware) {
-        if (sourceAware != null) {
-            Source source = sourceAware.getSource();
-            if (source != null) {
-                String sourceId = source.retrieveSourcePath();
-                if (!PojoUtil.isEmpty(sourceId)) {
-                    String sourceName = sourceNameCacheManager.retrieve(sourceId);
-                    if (!PojoUtil.isEmpty(sourceName)) {
-                        source.setSourceName(new SourceName(sourceName));
-                    } else {
-                        source.setSourceName(null);
-                    }
-                }
-            }
+        if (sourceAware == null) {
+            return;
+        }
+
+        Source source = sourceAware.getSource();
+        if (source == null) {
+            return;
+        }
+
+        String sourceId = source.retrieveSourcePath();
+        if (PojoUtil.isEmpty(sourceId)) {
+            return;
+        }
+
+        String sourceName = sourceNameCacheManager.retrieve(sourceId);
+        if (!PojoUtil.isEmpty(sourceName)) {
+            source.setSourceName(new SourceName(sourceName));
+        } else {
+            source.setSourceName(null);
         }
     }
 
@@ -305,5 +313,23 @@ public class SourceUtils {
                 }
             }
         }
+    }
+    
+    public static boolean isSelfAsserted(Source source, String orcid) {
+        String sourceId = source.retrieveSourcePath();
+        String assertionOriginOrcid = null;
+        if (source.getAssertionOriginOrcid() != null && source.getAssertionOriginOrcid().getPath() != null) {
+            assertionOriginOrcid = source.getAssertionOriginOrcid().getPath();
+        }
+        // If the affiliation source is the user himself or any member with OBO, then, it is considered self asserted
+        return orcid.equals(sourceId) || orcid.equals(assertionOriginOrcid);
+    }
+
+    public static boolean isSelfAsserted(AffiliationForm af, String orcid) {
+        return (orcid.equals(af.getSource()) || orcid.equals(af.getAssertionOriginOrcid()));
+    }
+
+    public static boolean isSelfAsserted(FundingForm ff, String orcid) {
+        return (orcid.equals(ff.getSource()) || orcid.equals(ff.getAssertionOriginOrcid()));
     }
 }

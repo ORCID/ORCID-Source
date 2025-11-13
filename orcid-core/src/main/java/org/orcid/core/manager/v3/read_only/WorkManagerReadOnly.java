@@ -8,12 +8,14 @@ import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.orcid.pojo.ActivityTitle;
+import org.orcid.pojo.ActivityTitleSearchResult;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
+import org.orcid.pojo.ajaxForm.WorkForm;
 
 public interface WorkManagerReadOnly extends ManagerReadOnlyBase {           
-    
     /**
      * Find the works for a specific user
      * 
@@ -64,9 +66,10 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
      * Get the list of works that belongs to a user
      *
      * @param orcid
+     * @param featuredOnly
      * @return the list of works that belongs to this user
      * */
-    List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid);
+    List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid, boolean featuredOnly);
 
     /**
      * Generate a grouped list of works with the given list of works
@@ -103,6 +106,15 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
     WorksExtended getWorksExtendedAsGroups(String orcid);
 
     /**
+     * Returns a org.orcid.jaxb.model.v3.release.record.summary.Works object containing grouped WorkSummary objects of featured works for the given user.
+     * @param orcid
+     * @return WorksExtended object
+     */
+    List<WorkSummaryExtended> getFeaturedWorksSummaryExtended(String orcid);
+
+    List<WorkForm> getFeaturedWorks(String orcid);
+
+    /**
      * Returns a list of works that matches the given list of WorkLastModifiedEntity entities
      * @param elements
      * @return a list of Work elements 
@@ -123,4 +135,8 @@ public interface WorkManagerReadOnly extends ManagerReadOnlyBase {
     WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid);
 
     WorkExtended getWorkExtended(String orcid, Long workId);
+
+    List<ActivityTitle> getWorksTitle(String orcid);
+    
+    ActivityTitleSearchResult searchWorksTitle(String orcid, String searchTerm, int size, int offset, boolean publicOnly, boolean defaultOnly);
 }

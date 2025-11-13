@@ -1,0 +1,50 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-ISSN_LOADER_FAIL_COUNT" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="group_id_record" columnName="issn_loader_fail_count"/>
+            </not>
+        </preConditions>
+        <sql>ALTER TABLE group_id_record ADD COLUMN issn_loader_fail_count INTEGER default 0;</sql>
+    </changeSet>
+
+    <changeSet id="ADD-FAIL_REASON" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="group_id_record" columnName="fail_reason"/>
+            </not>
+        </preConditions>
+        <sql>ALTER TABLE group_id_record ADD COLUMN fail_reason VARCHAR(50);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-SYNC_DATE" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="group_id_record" columnName="sync_date"/>
+            </not>
+        </preConditions>
+        <sql>ALTER TABLE group_id_record ADD COLUMN sync_date timestamp;</sql>
+    </changeSet>
+
+    <changeSet id="ISSN_LOADER_FAIL_COUNT-INDEX" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="group_id_record_issn_loader_fail_count_index" tableName="group_id_record" />
+            </not>
+        </preConditions>
+        <sql>create index group_id_record_issn_loader_fail_count_index on group_id_record(issn_loader_fail_count);</sql>
+    </changeSet>
+
+    <changeSet id="ISSN_LOADER_SYNC_DATE-INDEX" author="Angel Montenegro">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="group_id_record_sync_date_index" tableName="group_id_record" />
+            </not>
+        </preConditions>
+        <sql>create index group_id_record_sync_date_index on group_id_record(sync_date);</sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.impl.OrcidUrlManager;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -35,6 +36,9 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
 
     @Resource
     private OauthHelper oauthHelper;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
     
     @Override
     public void destroy() {
@@ -62,7 +66,10 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
                 if (session != null) {
                     new HttpSessionRequestCache().saveRequest(request, response);
                     RequestInfoForm rif = oauthHelper.generateRequestInfoForm(request.getQueryString());
-                    request.getSession().setAttribute(OauthHelper.REQUEST_INFO_FORM, rif);
+
+                    // Store the request info form in the cache
+                    requestInfoFormLocalCache.put(request.getSession().getId(), rif);
+
                     request.getSession().setAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING, queryString);
                 }                
                 response.sendRedirect(orcidUrlManager.getBaseUrl() + "/signin?oauth&" + queryString);                                             

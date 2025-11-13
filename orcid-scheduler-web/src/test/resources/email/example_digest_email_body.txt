@@ -15,6 +15,7 @@ ORCID would like to let you know
         The ORCID registry is now available in Orc
 
 
+					
                     Super Institution 1: Request to add items (2014-07-10)
                         Works (2)
                             Work 1 (doi: 123446/67654)
@@ -23,6 +24,7 @@ ORCID would like to let you know
                         ADD NOW: https://testserver.orcid.org/inbox/encrypted/ZW5jcnlwdGVk/action
                         MORE INFO: https://testserver.orcid.org/inbox#1
 
+					
                     Super Institution 1: Request to add items (2014-08-17)
                         Employment (1)
                             Employment 1 (doi: 12345/abc)
@@ -31,6 +33,7 @@ ORCID would like to let you know
                         MORE INFO: https://testserver.orcid.org/inbox#2
 
 
+					
                     Lovely Publisher 1: Request to add items (2014-07-10)
                         Works (2)
                             Work 3 (doi: 12345/def)
@@ -40,7 +43,7 @@ ORCID would like to let you know
                         MORE INFO: https://testserver.orcid.org/inbox#3
 EducationNew items added:                            * <i>org name</i> education-1 (2014-07-12)
 
-WorksNew items added:                            * work-1 doi: doi01 (2014-07-12)
+WorksNew items added:                            * work-1 doi: doi01 (2014-07-12)<ul><li style="padding-left: 0;margin-top: 2px;">doi: doi01</li><li style="padding-left: 0;margin-top: 2px;">doi: <a style="text-decoration: underline;color: #085c77;" target="_blank" href="https://doi.org/100/100">https://doi.org/100/100</a></li></ul>
 
 
 Why did I get this email?

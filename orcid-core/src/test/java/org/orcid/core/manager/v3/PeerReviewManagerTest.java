@@ -192,7 +192,7 @@ public class PeerReviewManagerTest extends BaseTest {
         assertNotNull(entity1.getDisplayIndex());
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
-        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
+        assertEquals(Long.valueOf(1), entity3.getDisplayIndex());
         
         //Rollback all changes
         peerReviewDao.remove(entity1.getId());
@@ -201,25 +201,25 @@ public class PeerReviewManagerTest extends BaseTest {
     }
     
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromUI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, false);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
         
         assertNotNull(p);
-        assertEquals(Long.valueOf(1), p.getDisplayIndex());
+        assertEquals(Long.valueOf(0), p.getDisplayIndex());
     }
     
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {
+    public void displayIndexIsSetTo_1_FromAPI() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
         PeerReview p1 = getPeerReview("fromAPI-1");
         p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
         PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
         
         assertNotNull(91);
-        assertEquals(Long.valueOf(0), p.getDisplayIndex());
+        assertEquals(Long.valueOf(1), p.getDisplayIndex());
     }
     
     @Test
@@ -462,9 +462,9 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Test
     public void nonGroupableIdsGenerateEmptyIdsListTest() {
-        PeerReviewSummary s1 = getPeerReviewSummary("Element 1", "ext-id-1", Visibility.PUBLIC);
-        PeerReviewSummary s2 = getPeerReviewSummary("Element 2", "ext-id-2", Visibility.LIMITED);
-        PeerReviewSummary s3 = getPeerReviewSummary("Element 3", "ext-id-3", Visibility.PRIVATE);
+        PeerReviewSummary s1 = getPeerReviewSummary("element 1", "ext-id-1", Visibility.PUBLIC);
+        PeerReviewSummary s2 = getPeerReviewSummary("element 2", "ext-id-2", Visibility.LIMITED);
+        PeerReviewSummary s3 = getPeerReviewSummary("element 3", "ext-id-3", Visibility.PRIVATE);
         
         // Remove the grouping id from s1
         s1.setGroupId(null);
@@ -736,5 +736,25 @@ public class PeerReviewManagerTest extends BaseTest {
         peerReview.setVisibility(Visibility.PUBLIC);
         
         return peerReview;
+    }
+    
+    @Test
+    public void testGetPeerReviewSummaryListByGroupId() {
+        List<PeerReviewSummary> all = peerReviewManager.getPeerReviewSummaryListByGroupId(claimedOrcid, "issn:shared", false);
+        assertNotNull(all);
+        assertEquals(3, all.size());
+        assertEquals(Long.valueOf(14), all.get(0).getPutCode());
+        assertEquals(Visibility.PRIVATE, all.get(0).getVisibility());
+        assertEquals(Long.valueOf(15), all.get(1).getPutCode());
+        assertEquals(Visibility.LIMITED, all.get(1).getVisibility());
+        assertEquals(Long.valueOf(16), all.get(2).getPutCode());
+        assertEquals(Visibility.PUBLIC, all.get(2).getVisibility());
+        
+        List<PeerReviewSummary> onlyPublic = peerReviewManager.getPeerReviewSummaryListByGroupId(claimedOrcid, "issn:shared", true);
+        assertNotNull(onlyPublic);
+        assertEquals(1, onlyPublic.size());
+        assertEquals(Long.valueOf(16), onlyPublic.get(0).getPutCode());
+        assertEquals(Visibility.PUBLIC, onlyPublic.get(0).getVisibility());
+        
     }
 }

@@ -77,6 +77,9 @@ public class OrcidCoreExceptionMapper {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidAmountException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9054));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(StartDateAfterEndDateException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9055));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidContributorRoleException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9058));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidOrgAddressException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9060));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidOrgAddressNoCountryButCityRegionException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9061));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(InvalidNoOrgOrExternalIdException.class, new ImmutablePair<>(Response.Status.BAD_REQUEST, 9062));
         
         // 401
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(AuthenticationException.class, new ImmutablePair<>(Response.Status.UNAUTHORIZED, 9002));
@@ -189,7 +192,31 @@ public class OrcidCoreExceptionMapper {
         orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
         return orcidError;
     }   
-     
+    
+    public org.orcid.jaxb.model.error_v2.OrcidError getDeprecatedOrcidErrorV2(int errorCode, int status, Map<String, String> params) {
+        Locale locale = localeManager.getLocale();
+        org.orcid.jaxb.model.error_v2.OrcidError orcidError = new org.orcid.jaxb.model.error_v2.OrcidError();
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);        
+        orcidError.setMoreInfo(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale), params));        
+        String message =resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params);
+        orcidError.setDeveloperMessage(message);
+        orcidError.setUserMessage(message);
+        return orcidError;
+    }
+    
+    public org.orcid.jaxb.model.v3.release.error.OrcidError getDeprecatedOrcidErrorV3(int errorCode, int status, Map<String, String> params) {
+        Locale locale = localeManager.getLocale();
+        org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);
+        orcidError.setMoreInfo(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale), params));
+        String message = resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params);
+        orcidError.setDeveloperMessage(message);
+        orcidError.setUserMessage(message);
+        return orcidError;
+    }
+    
     public org.orcid.jaxb.model.v3.release.error.OrcidError getOrcidErrorV3(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.v3.release.error.OrcidError orcidError = new org.orcid.jaxb.model.v3.release.error.OrcidError();

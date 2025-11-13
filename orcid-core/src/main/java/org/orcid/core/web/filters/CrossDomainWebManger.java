@@ -1,6 +1,8 @@
 package org.orcid.core.web.filters;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class CrossDomainWebManger {
 
     private List<String> domainsRegex;
 
-    public boolean allowed(HttpServletRequest request) throws MalformedURLException {
+    public boolean allowed(HttpServletRequest request) throws URISyntaxException {
         String path = OrcidUrlManager.getPathWithoutContextPath(request);
 
         // Check origin header
@@ -33,15 +35,6 @@ public class CrossDomainWebManger {
             if (validateDomain(request.getHeader("origin"))) {
                 return true;
             } 
-        } else {
-            // Check referer header for localhost
-            if (!PojoUtil.isEmpty(request.getHeader("referer"))) {
-                URL netUrl = new URL(request.getHeader("referer"));
-                String domain = netUrl.getHost();
-                if (LOCALHOST.equals(domain)) {
-                    return true;
-                }
-            }
         }
 
         // If it is and invalid domain, validate the path
@@ -52,12 +45,14 @@ public class CrossDomainWebManger {
         return false;
     }
 
-    public boolean validateDomain(String url) throws MalformedURLException {
-        URL netUrl = new URL(url);
-        String domain = netUrl.getHost();
-        for (String allowedDomain : getAllowedDomainsRegex()) {
-            if (domain.matches(allowedDomain)) {
-                return true;
+    public boolean validateDomain(String url) throws URISyntaxException {
+        URI uri = new URI(url);
+        String domain = uri.getHost();
+        if(domain != null) {
+            for (String allowedDomain : getAllowedDomainsRegex()) {
+                if (domain.matches(allowedDomain)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -76,8 +71,7 @@ public class CrossDomainWebManger {
     }
 
     private String transformPatternIntoRegex(String domainPattern) {
-        String result = domainPattern.replace(".", "\\.");
-        return result;
+        return domainPattern.replace(".", "\\.");
     }
 
     public boolean validatePath(String path) {

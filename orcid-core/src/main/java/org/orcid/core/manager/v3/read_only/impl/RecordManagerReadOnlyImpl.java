@@ -9,7 +9,7 @@ import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
-import org.orcid.core.togglz.Features;
+import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +88,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(activitiesSummaryManager.getActivitiesSummary(orcid, filterVersionOfIdentifiers));
-        record.setPerson(personDetailsManager.getPersonDetails(orcid, !Features.HIDE_UNVERIFIED_EMAILS.isActive()));        
+        record.setPerson(personDetailsManager.getPersonDetails(orcid, false));
         return record;
     }
     

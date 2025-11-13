@@ -8,7 +8,11 @@ public interface ClientManager {
     
     Client createPublicClient(Client newClient);
 
+    Client createWithConfigValues(Client newClient);
+
     Client edit(Client existingClient, boolean updateConfigValues);
-    
+
     Boolean resetClientSecret(String clientId);
+
+    String resetAndGetClientSecret(String clientId);
 }

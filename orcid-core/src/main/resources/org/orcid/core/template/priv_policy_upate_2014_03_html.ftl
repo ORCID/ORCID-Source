@@ -89,7 +89,7 @@
 			   <br>
 			   Regards,<br>
 			   The ORCID Team<br>
-			   https://support.orcid.org/hc/en-us/requests/new<br>
+			   https://support.orcid.org/<br>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #494A4C;">
                You have received this email as a service announcement related to your ORCID Account. 

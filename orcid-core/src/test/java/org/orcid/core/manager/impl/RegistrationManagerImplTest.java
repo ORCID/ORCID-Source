@@ -30,23 +30,29 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
+import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.record_v2.Emails;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
+import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
+import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -54,6 +60,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class RegistrationManagerImplTest extends DBUnitTest {
 
+    private static final String CLIENT_1_ID = "4444-4444-4444-4498";
     private static final String CLIENT_ID_AUTODEPRECATE_ENABLED = "APP-5555555555555555";
     private static final String CLIENT_ID_AUTODEPRECATE_DISABLED = "APP-5555555555555556";    
     
@@ -65,13 +72,13 @@ public class RegistrationManagerImplTest extends DBUnitTest {
 
     @Resource
     EmailManagerReadOnly emailManager;    
-    
-    @Resource
-    SourceManager sourceManager;
-    
+
     @Mock
     SourceManager mockSourceManager;
-    
+
+    @Mock
+    org.orcid.core.manager.v3.SourceManager mockSourceManagerV3;
+
     @Mock
     EmailFrequencyManager mockEmailFrequencyManager;
     
@@ -89,24 +96,26 @@ public class RegistrationManagerImplTest extends DBUnitTest {
     
     @Resource(name = "notificationManagerV3")
     org.orcid.core.manager.v3.NotificationManager notificationV3Manager;
-    
-    @Mock
-    private TwoFactorAuthenticationManager mockTwoFactorAuthenticationManager;
-    
-    @Resource
-    TwoFactorAuthenticationManager twoFactorAuthenticationManager;
-    
+
+    @Resource(name = "affiliationsManagerV3")
+    private AffiliationsManager affiliationsManager;
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml"));
-    }       
-    
+        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/OrgsEntityData.xml"));
+    }
+
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);        
+        TargetProxyHelper.injectIntoProxy(registrationManager, "emailFrequencyManager", mockEmailFrequencyManager);
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "sourceManager", mockSourceManagerV3);
+        TargetProxyHelper.injectIntoProxy(affiliationsManager, "notificationManager", mockV3NotificationManager);
         when(mockSourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_ID_AUTODEPRECATE_ENABLED)));
-        
+        when(mockSourceManagerV3.retrieveActiveSource()).thenReturn(new Source("4444-4444-4444-4441"));
+        when(mockV3NotificationManager.sendAmendEmail(Mockito.anyString(), Mockito.any(), Mockito.anyList())).thenReturn(null);
+        when(mockEmailFrequencyManager.createOnRegister(Mockito.anyString(), Mockito.any(SendEmailFrequency.class), Mockito.any(SendEmailFrequency.class), Mockito.any(SendEmailFrequency.class), Mockito.anyBoolean())).thenReturn(true);
+
         TargetProxyHelper.injectIntoProxy(registrationManager, "notificationManager", mockV3NotificationManager);
         doNothing().when(mockV3NotificationManager).sendAutoDeprecateNotification(Mockito.anyString(), Mockito.anyString());               
         
@@ -453,7 +462,24 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         }
                
     }
-    
+
+    @Test
+    public void testRegisterWithAffiliationTest() {
+        String email = "new_user_" + System.currentTimeMillis() + "@test.orcid.org";
+        Registration registrationForm = createRegistrationForm(email, true);
+        registrationForm.setAffiliationForm(getAffiliationForm());
+
+        String userOrcid = registrationManager.createMinimalRegistration(registrationForm, true, java.util.Locale.ENGLISH, "0.0.0.0");
+        registrationManager.createAffiliation(registrationForm, userOrcid);
+        assertNotNull(userOrcid);
+        assertTrue(OrcidStringUtils.isValidOrcid(userOrcid));
+        List<EmploymentSummary> employmentSummaryList = affiliationsManager.getEmploymentSummaryList(userOrcid);
+        assertNotNull(employmentSummaryList);
+        assertEquals(1, employmentSummaryList.size());
+        // Cleanup
+        affiliationsManager.removeAffiliation(userOrcid, employmentSummaryList.get(0).getPutCode());
+    }
+
     private Registration createRegistrationForm(String email, boolean claimed) {
         Registration registration = new Registration();
         registration.setPassword(Text.valueOf("password"));
@@ -473,5 +499,46 @@ public class RegistrationManagerImplTest extends DBUnitTest {
         registration.setGivenNames(Text.valueOf("New"));
         registration.setCreationType(Text.valueOf(CreationMethod.DIRECT.value()));                       
         return registration;
+    }
+
+    protected AffiliationForm getAffiliationForm() {
+        Date created = new Date();
+
+        AffiliationForm form = new AffiliationForm();
+        form.setAffiliationType(Text.valueOf(AffiliationType.EMPLOYMENT.value()));
+        created.setDay(String.valueOf(created.getDay()));
+        created.setMonth(String.valueOf(created.getMonth()));
+        created.setYear(String.valueOf(created.getYear()));
+        form.setCreatedDate(created);
+
+        Date lastModified = new Date();
+        lastModified.setDay(String.valueOf(created.getDay()));
+        lastModified.setMonth(String.valueOf(created.getMonth()));
+        lastModified.setYear(String.valueOf(created.getYear()));
+        form.setLastModified(lastModified);
+
+        form.setDepartmentName(Text.valueOf("department-name"));
+
+        form.setRoleTitle(Text.valueOf("role-title"));
+
+        Date startDate = new Date();
+        startDate.setDay("31");
+        startDate.setMonth("12");
+        startDate.setYear("2019");
+        form.setStartDate(startDate);
+
+        org.orcid.pojo.ajaxForm.Visibility v = new org.orcid.pojo.ajaxForm.Visibility();
+        v.setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE);
+        form.setVisibility(v);
+
+        form.setSource(CLIENT_1_ID);
+
+        form.setCity(Text.valueOf("city"));
+        form.setCountry(Text.valueOf("US"));
+        form.setRegion(Text.valueOf("region"));
+        form.setAffiliationName(Text.valueOf("org-1"));
+        form.setOrgDisambiguatedId(Text.valueOf("1"));
+
+        return form;
     }
 }

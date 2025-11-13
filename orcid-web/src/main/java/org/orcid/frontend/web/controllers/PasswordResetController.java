@@ -24,8 +24,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
@@ -33,6 +31,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -42,6 +41,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Reactivation;
 import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -153,82 +153,37 @@ public class PasswordResetController extends BaseController {
             errors.add(getMessage("Email.resetPasswordForm.invalidEmail"));
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
         }
-        if (Features.RESET_PASSWORD_EMAIL.isActive()) {
-            try {
-                if (emailManager.emailExists(passwordResetRequest.getEmail())) {
-                    String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-                    if (profileEntityManager.isDeactivated(orcid)) {
-                        LOGGER.info("Password reset: Reactivation email sent to '{}'", passwordResetRequest.getEmail());
-                        recordEmailSender.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
-                    } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
-                        LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
-                        recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
-                    } else {
-                        LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
-                        recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
-                    }
-                } else {
-                    Locale locale = localeManager.getLocale();
-                    LOGGER.info("Password reset: Email not found email sent to '{}' with locale '{}'", passwordResetRequest.getEmail(), locale);
-                    recordEmailSender.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
-                }
-                passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-                return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-            } catch(Exception e) {
-                LOGGER.error("Password reset: Unable to reset password for " + passwordResetRequest.getEmail(), e);                
-                errors.add(getMessage("Email.resetPasswordForm.error"));
-                return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
-            }
-        } else {
-            try {
+        try {
+            if (emailManager.emailExists(passwordResetRequest.getEmail())) {
                 String orcid = emailManager.findOrcidIdByEmail(passwordResetRequest.getEmail());
-                ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                if (profile == null) {
-                    String message = getMessage("orcid.frontend.reset.password.email_not_found_1") + " " + passwordResetRequest.getEmail() + " "
-                            + getMessage("orcid.frontend.reset.password.email_not_found_2");
-                    message += "<a href=\"https://support.orcid.org/hc/en-us/requests/new\">";
-                    message += getMessage("orcid.frontend.reset.password.email_not_found_3");
-                    message += "</a>";
-                    message += getMessage("orcid.frontend.reset.password.email_not_found_4");
-                    errors.add(message);
-                    return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-                }
-
-                if (profile.getDeactivationDate() != null) {
-                    /*
-                     * String message = getMessage(
-                     * "orcid.frontend.reset.password.disabled_account_1");
-                     * message += "<a href=\"https://support.orcid.org/hc/en-us/requests/new\">"; message +=
-                     * getMessage(
-                     * "orcid.frontend.reset.password.disabled_account_2");
-                     * message += "</a>"; errors.add(message);
-                     */
-                    errors.add(getMessage("orcid.frontend.security.orcid_deactivated"));
-                    return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-                }
-
-                Boolean isClaimed = profile.getClaimed();
-                String toEmail = passwordResetRequest.getEmail();
-                if (isClaimed == null || !isClaimed) {
-                    LOGGER.debug("Profile is not claimed so re-sending claim email instead of password reset: {}", orcid);
-                    recordEmailSender.sendClaimReminderEmail(orcid, 0, toEmail);
+                if (profileEntityManager.isDeactivated(orcid)) {
+                    LOGGER.info("Password reset: Reactivation email sent to '{}'", passwordResetRequest.getEmail());
+                    recordEmailSender.sendReactivationEmail(passwordResetRequest.getEmail(), orcid);
+                } else if (!profileEntityManager.isProfileClaimedByEmail(passwordResetRequest.getEmail())) {
+                    LOGGER.info("Password reset: API record creation email sent to '{}'", passwordResetRequest.getEmail());
+                    recordEmailSender.sendClaimReminderEmail(orcid,0,passwordResetRequest.getEmail());
                 } else {
-                    recordEmailSender.sendPasswordResetEmail(toEmail, orcid);
+                    LOGGER.info("Password reset: Reset password email sent to '{}'", passwordResetRequest.getEmail());
+                    recordEmailSender.sendPasswordResetEmail(passwordResetRequest.getEmail(), orcid);
                 }
-                
-                passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
-            } catch (NoResultException nre) {
-                errors.add(getMessage("Email.resetPasswordForm.error"));
+            } else {
+                Locale locale = localeManager.getLocale();
+                LOGGER.info("Password reset: Email not found email sent to '{}' with locale '{}'", passwordResetRequest.getEmail(), locale);
+                recordEmailSender.sendPasswordResetNotFoundEmail(passwordResetRequest.getEmail(), locale);
             }
+            passwordResetRequest.setSuccessMessage(getMessage("orcid.frontend.reset.password.successfulReset") + " " + passwordResetRequest.getEmail());
             return new ResponseEntity<>(passwordResetRequest, HttpStatus.OK);
-        }
+        } catch(Exception e) {
+            LOGGER.error("Password reset: Unable to reset password for " + passwordResetRequest.getEmail(), e);                
+            errors.add(getMessage("Email.resetPasswordForm.error"));
+            return new ResponseEntity<>(passwordResetRequest, HttpStatus.BAD_REQUEST);
+        }        
     }
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)
-    public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, RedirectAttributes redirectAttributes) {
+    public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) {
         PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
         if (isTokenExpired(passwordResetToken)) {
-            redirectAttributes.addFlashAttribute("passwordResetLinkExpired", true);
             return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
         }
         ModelAndView result = new ModelAndView("password_one_time_reset");
@@ -327,7 +282,22 @@ public class PasswordResetController extends BaseController {
 
         passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
         
-        String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        String orcid = null;
+        //check first if valid orcid as the admin portal can send either and email or an orcid
+        if(OrcidStringUtils.isValidOrcid(passwordResetToken.getEmail()) ){
+            if(profileEntityManager.orcidExists(passwordResetToken.getEmail())) {
+                orcid = passwordResetToken.getEmail();
+            }
+            else {
+                String message = "invalidPasswordResetToken";
+                oneTimeResetPasswordForm.getErrors().add(message);
+                return oneTimeResetPasswordForm;
+            }
+        }
+        else {
+            orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
+        }
+
         Emails emails = emailManager.getEmails(orcid);
         
         passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
@@ -382,30 +352,43 @@ public class PasswordResetController extends BaseController {
     }
 
     private boolean isTokenExpired(PasswordResetToken passwordResetToken) {
-        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 4);
+        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), passwordResetToken.getDurationInHours());
         Date now = new Date();
         return (expiryDateOfOneHourFromIssueDate.getTime() < now.getTime());
     }
 
     @RequestMapping(value = "/sendReactivation.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-    public ResponseEntity<?> sendReactivation(@RequestParam("email") String email) throws UnsupportedEncodingException {
+    public ResponseEntity<?> sendReactivation(@RequestParam(name="email", required=false) String email, @RequestParam(name="orcid", required=false) String orcid) throws UnsupportedEncodingException {
 
-        if (!email.contains("@")) {
-            email = URLDecoder.decode(email, "UTF-8");
-        }
-
-        email = OrcidStringUtils.filterEmailAddress(email);
-        String orcid = null;
-
-        if (!validateEmailAddress(email)) {
-            String error = getMessage("Email.personalInfoForm.email");
-            return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+        if (email != null) {
+            if (!email.contains("@")) {
+                email = URLDecoder.decode(email, "UTF-8");
+            }
+    
+            email = OrcidStringUtils.filterEmailAddress(email);
+    
+            if (!validateEmailAddress(email)) {
+                String error = getMessage("Email.personalInfoForm.email");
+                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+            } else {
+                try{
+                    orcid = emailManager.findOrcidIdByEmail(email);
+                } catch(NoResultException nre) {
+                    String error = getMessage("Email.resendClaim.invalidEmail");
+                    return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+                }
+            }
         } else {
-            try{
-                orcid = emailManager.findOrcidIdByEmail(email);
-            } catch(NoResultException nre) {
-                String error = getMessage("Email.resendClaim.invalidEmail");
-                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+            if (!OrcidStringUtils.isValidOrcid(orcid)) {
+                String error = getMessage("Email.resetPasswordForm.error");
+                return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");
+            } else {
+                try{
+                    email = emailManager.findPrimaryEmail(orcid).getEmail();
+                } catch(NoResultException nre) {
+                    String error = getMessage("Email.resetPasswordForm.error");
+                    return ResponseEntity.ok("{\"sent\":false, \"error\":\"" + error + "\"}");                
+                }
             }
         }
 
@@ -443,7 +426,7 @@ public class PasswordResetController extends BaseController {
     }
 
     @RequestMapping(value = { "/reactivationConfirm.json", "/shibboleth/reactivationConfirm.json" }, method = RequestMethod.POST)
-    public @ResponseBody Object setReactivationConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Reactivation reg)
+    public @ResponseBody Redirect setReactivationConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Reactivation reg)
             throws UnsupportedEncodingException {
         Redirect r = new Redirect();
 
@@ -459,7 +442,9 @@ public class PasswordResetController extends BaseController {
         // make sure validation still passes
         validateReactivationFields(request, reg);
         if (reg.getErrors() != null && reg.getErrors().size() > 0) {
-            return reg;
+            LOGGER.error("Multiple errors while reactivating an account: " + reg.getErrors().get(0));
+            r.getErrors().add(reg.getErrors().get(0));
+            return r;
         }
 
         if (reg.getValNumServer() == 0 || reg.getValNumClient() != reg.getValNumServer() / 2) {
@@ -535,11 +520,20 @@ public class PasswordResetController extends BaseController {
         // Notify any new email address
         if (!emailsToNotify.isEmpty()) {
             for (String emailToNotify : emailsToNotify) {
-                recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+                boolean isPrimaryEmail = emailManager.isPrimaryEmail(orcid, emailToNotify);
+                recordEmailSender.sendVerificationEmail(orcid, emailToNotify, isPrimaryEmail);
             }
         }
-        
+
+        // Clear the profile entity cache so the new password is loaded
+        LOGGER.info("Clearing profile cache for orcid id: " + orcid);
+        profileEntityCacheManager.remove(orcid);
         // Log user in
         registrationController.logUserIn(request, response, orcid, password);
+
+        // Add the affiliation
+        if (reactivation.getAffiliationForm() != null) {
+            registrationManager.createAffiliation(reactivation, orcid);
+        }
     }
 }

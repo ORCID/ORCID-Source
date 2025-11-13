@@ -28,7 +28,7 @@ import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.jaxb.model.record_v2.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +117,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
             }
             return preferences;
         } catch(Exception e) {
-            LOGGER.error("Exception loading preferences for " + orcid, e);
+            LOGGER.info("Locale for user " + orcid + " is not valid for V2.0/V2.1 API");
         }
         return null;
     }

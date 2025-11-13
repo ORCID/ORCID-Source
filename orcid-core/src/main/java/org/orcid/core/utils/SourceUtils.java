@@ -47,19 +47,25 @@ public class SourceUtils {
     }
 
     public void setSourceName(SourceAware sourceAware) {
-        if (sourceAware != null) {
-            Source source = sourceAware.getSource();
-            if (source != null) {
-                String sourceId = source.retrieveSourcePath();
-                if (!PojoUtil.isEmpty(sourceId)) {
-                    String sourceName = sourceNameCacheManager.retrieve(sourceId);
-                    if (!PojoUtil.isEmpty(sourceName)) {
-                        source.setSourceName(new SourceName(sourceName));
-                    } else {
-                        source.setSourceName(null);
-                    }
-                }
-            }
+        if (sourceAware == null) {
+            return;
+        }
+
+        Source source = sourceAware.getSource();
+        if (source == null) {
+            return;
+        }
+
+        String sourceId = source.retrieveSourcePath();
+        if (PojoUtil.isEmpty(sourceId)) {
+            return;
+        }
+
+        String sourceName = sourceNameCacheManager.retrieve(sourceId);
+        if (!PojoUtil.isEmpty(sourceName)) {
+            source.setSourceName(new SourceName(sourceName));
+        } else {
+            source.setSourceName(null);
         }
     }
 

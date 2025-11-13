@@ -14,23 +14,17 @@
 		    </p>
 			<ul>
 				<li><@emailMacros.msg "email.forgotten_id.try_anohter_email" />
-				<a href="${baseUri}/reset-password"> <@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/></a><@emailMacros.msg "email.common.period"/>
+				<a href="${baseUri}/reset-password"><@emailMacros.msg "email.forgotten_id.try_anohter_email_link"/></a><@emailMacros.space /><@emailMacros.msg "email.forgotten_id.many_users_have"/><@emailMacros.msg "email.common.period"/>
 				</li>
-				<li><@emailMacros.msg "email.forgotten_id.contact_us" />
-				<a href="https://support.orcid.org/hc/en-us/requests/new"> <@emailMacros.msg "email.common.if_you_have_any.contact_us"/></a><@emailMacros.msg "email.common.period"/>
+				<li>
+					<@emailMacros.msg "email.forgotten_id.id_associated_with_email" /><@emailMacros.space /><a href="https://support.orcid.org/?ticket_form_id=360003481994"> <@emailMacros.msg "email.forgotten_id._please_contact_us"/></a>
 				</li>
 
 				<li><@emailMacros.msg "email.forgotten_id.certain_not_regiser" />
 					<a href="${baseUri}/register"><@emailMacros.msg "email.forgotten_id.certain_not_regiser_url" /></a><@emailMacros.msg "email.common.period"/>
 				</li>
 			</ul>
-		  	<p style="white-space: pre;">
-<@emailMacros.msg "email.common.warm_regards" />
-<a href='${baseUri}/home?lang=${locale}" />' target="orcid.contact_us"><@emailMacros.msg "email.common.need_help.description.2.href" /></a>
-			</p>
-			<p>
-				<#include "email_footer_html.ftl"/>
-			</p>
+			<#include "email_footer_html.ftl"/>
 		 </div>
 	 </body>
  </html>

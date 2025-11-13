@@ -22,7 +22,6 @@ public class LoadDataForOrganizationSource {
 
     private OrgLoadSource rorOrgSource;
     private OrgLoadSource fundrefOrgSource;
-    private OrgLoadSource ringgoldOrgSource;
 
     private static final String ROR_TYPE="ROR";
     private static final String FUNDREF_TYPE="FUNDREF";
@@ -44,7 +43,6 @@ public class LoadDataForOrganizationSource {
         orgLoadManager = (OrgLoadManager) context.getBean("orgLoadManager");
         rorOrgSource = (OrgLoadSource) context.getBean("rorOrgDataSource");
         fundrefOrgSource = (OrgLoadSource) context.getBean("fundrefOrgDataSource");
-        ringgoldOrgSource = (OrgLoadSource) context.getBean("ringgoldOrgDataSource");
     }
 
     public static void main(String[] args) {
@@ -58,12 +56,7 @@ public class LoadDataForOrganizationSource {
             if(StringUtils.equalsIgnoreCase(loadData.orgType, FUNDREF_TYPE)) {
                 LOG.info("Loading orgs from Fundref");
                 loadData.orgLoadManager.loadOrg(loadData.fundrefOrgSource);
-            }
-            else if(StringUtils.equalsIgnoreCase(loadData.orgType, RINGGOLD_TYPE)) {
-                LOG.info("Loading orgs from Ringgold");
-                loadData.orgLoadManager.loadOrg(loadData.ringgoldOrgSource);
-            }
-            else { //default to ROR
+            } else { //default to ROR
                 LOG.info("Loading orgs from ROR");
                 loadData.orgLoadManager.loadOrg(loadData.rorOrgSource);
             }

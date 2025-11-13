@@ -2,16 +2,20 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.EmailManager;
+import org.orcid.core.manager.v3.OrcidSecurityManager;
+import org.orcid.core.manager.v3.ProfileEmailDomainManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.impl.EmailManagerReadOnlyImpl;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -23,6 +27,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -38,14 +43,17 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
+    @Resource(name = "profileEmailDomainManager")
+    private ProfileEmailDomainManager profileEmailDomainManager;
+
     @Resource
     private TransactionTemplate transactionTemplate;
 
     @Resource
     private ProfileDao profileDao;
-    
-    @Resource(name = "encryptionManager")
-    private EncryptionManager encryptionManager;
+
+    @Resource(name = "orcidSecurityManagerV3")
+    protected OrcidSecurityManager orcidSecurityManager;
     
     @Override
     @Transactional
@@ -62,9 +70,14 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
+    @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean verifyEmail(String orcid, String email) {
-        return emailDao.verifyEmail(email);
+        boolean result = emailDao.verifyEmail(email);
+        if (result && Features.EMAIL_DOMAINS.isActive()) {
+            profileEmailDomainManager.processDomain(orcid, email);
+        }
+        return result;
     }
 
     @Override
@@ -72,7 +85,12 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     public boolean verifyPrimaryEmail(String orcid) {
         try {
             String primaryEmail = emailDao.findPrimaryEmail(orcid).getEmail();
-            return emailDao.verifyEmail(primaryEmail);
+
+            boolean result = emailDao.verifyEmail(primaryEmail);
+            if (result && Features.EMAIL_DOMAINS.isActive()) {
+                profileEmailDomainManager.processDomain(orcid, primaryEmail);
+            }
+            return result;
         } catch (javax.persistence.NoResultException nre) {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
@@ -99,12 +117,17 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
     }
 
     @Override
+    @Transactional
     public boolean verifySetCurrentAndPrimary(String orcid, String email) {
         if (PojoUtil.isEmpty(orcid) || PojoUtil.isEmpty(email)) {
             throw new IllegalArgumentException("orcid or email param is empty or null");
         }
 
-        return emailDao.updateVerifySetCurrentAndPrimary(orcid, email);
+        boolean result = emailDao.updateVerifySetCurrentAndPrimary(orcid, email);
+        if (result && Features.EMAIL_DOMAINS.isActive()) {
+            profileEmailDomainManager.processDomain(orcid, email);
+        }
+        return result;
     }
 
     /***
@@ -246,8 +269,11 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             entity.setEmail(emailKeys.get(FILTERED_EMAIL));
         }
         entity.setPrimary(true);
-        entity.setVerified(true);        
-        emailDao.merge(entity);  
+        entity.setVerified(true);
+        if (entity.getDateVerified() == null) {
+            entity.setDateVerified(new Date());
+        }
+        emailDao.merge(entity);
         emailDao.flush();
     }
 
@@ -293,5 +319,27 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
             throw new IllegalArgumentException("Profile is claimed");
         }
         emailDao.removeEmail(orcid, emailAddress);
-    }      
+    }
+
+    @Override
+    @Transactional
+    public List<String> removeEmails(String orcid, List<String> emailsToRemove) {
+        if (!orcidSecurityManager.isAdmin()) {
+            throw new AccessDeniedException("Admin privileges required to remove emails");
+        }
+
+        List<EmailEntity> currentEmailsList = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+        if (emailsToRemove.size() == currentEmailsList.size()) {
+            throw new IllegalArgumentException("Can't mark all user's as deleted");
+        }
+
+        for (String email : emailsToRemove) {
+            emailDao.removeEmail(orcid, email);
+        }
+
+        return emailDao.findByOrcid(orcid, System.currentTimeMillis())
+                .stream()
+                .map(EmailEntity::getEmail)
+                .collect(Collectors.toList());
+    }
 }

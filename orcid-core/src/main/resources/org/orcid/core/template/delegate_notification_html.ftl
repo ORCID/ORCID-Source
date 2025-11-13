@@ -17,8 +17,8 @@
                 <@emailMacros.msg "notification.delegate.asTrustedIndividual" />
             <p>
                 <@emailMacros.msg "notification.delegate.accessYourRecord" /><@emailMacros.space />
-            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/account" target="_blank">
-                <@emailMacros.msg "notification.delegate.settings" />
+            <a style="text-decoration: underline;color: #085c77;" href="${baseUri}/trusted-parties" target="_blank">
+                <@emailMacros.msg "notification.delegate.receipt.trustedParties" />.
             </a>
             </p>
         </body>

@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.v3.release.record.Keywords;
 import org.orcid.jaxb.model.v3.release.record.OtherNames;
 import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ThirdPartyRedirect;
@@ -63,7 +62,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-//import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author Will Simpson
@@ -134,17 +132,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             currencyCodeTypes.put(currency.getCurrencyCode(), currency.getCurrencyCode());
         }
         return FunctionsOverCollections.sortMapsByValues(currencyCodeTypes);
-    }    
-
-    @ModelAttribute("workCategories")
-    public Map<String, String> retrieveWorkCategoriesAsMap() {
-        Map<String, String> workCategories = new LinkedHashMap<String, String>();
-
-        for (WorkCategory workCategory : WorkCategory.values()) {
-            workCategories.put(workCategory.value(), getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkCategory.").append(workCategory.value()).toString()));
-        }
-
-        return workCategories;
     }
 
     @ModelAttribute("citationTypes")
@@ -199,16 +186,17 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = { "/my-orcid3", "/my-orcid", "/workspace" }, method = RequestMethod.GET)
-    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "page", defaultValue = "1") int pageNo, @RequestParam(value = "maxResults", defaultValue = "200") int maxResults, @RequestParam(value = "orcid", defaultValue = "") String orcid) throws ServletException, IOException {
-       
-        if (!orcid.equals(getCurrentUserOrcid())){
+    public ModelAndView viewWorkspace3(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "orcid", defaultValue = "") String orcid) throws IOException {
+        String currentUserOrcid = getCurrentUserOrcid();
+        if(currentUserOrcid == null) {
+            return new ModelAndView("redirect:" + calculateRedirectUrl("/login"));
+        } else if (!orcid.equals(currentUserOrcid)){
             String redirectUrl = request.getRequestURL().toString();
             redirectUrl += "?orcid="+getCurrentUserOrcid();
             if (request.getQueryString() != null && orcid.equals("")){
                 redirectUrl += "&"+request.getQueryString();
             }
             response.sendRedirect(redirectUrl);
-            
         }
 
         return new ModelAndView("workspace_v3");

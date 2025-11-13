@@ -1,5 +1,6 @@
 package org.orcid.pojo.ajaxForm;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,8 @@ public class Email implements ErrorsInterface {
 
     private Date lastModified;
 
+    private Date verificationDate;
+
     private List<String> errors = new ArrayList<String>();
 
     public static Email valueOf(org.orcid.jaxb.model.v3.release.record.Email e) {
@@ -42,22 +45,6 @@ public class Email implements ErrorsInterface {
             email.setValue(e.getEmail());
             email.setVerified(e.isVerified());
             email.setVisibility(e.getVisibility());
-
-            if (e.getCreatedDate() != null) {
-                Date createdDate = new Date();
-                createdDate.setYear(String.valueOf(e.getCreatedDate().getValue().getYear()));
-                createdDate.setMonth(String.valueOf(e.getCreatedDate().getValue().getMonth()));
-                createdDate.setDay(String.valueOf(e.getCreatedDate().getValue().getDay()));
-                email.setCreatedDate(createdDate);
-            }
-
-            if (e.getLastModifiedDate() != null) {
-                Date lastModifiedDate = new Date();
-                lastModifiedDate.setYear(String.valueOf(e.getLastModifiedDate().getValue().getYear()));
-                lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
-                lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
-                email.setLastModified(lastModifiedDate);
-            }
 
             if (e.getSource().getSourceName() != null) {
                 email.setSourceName(e.getSource().getSourceName().getContent());
@@ -80,6 +67,7 @@ public class Email implements ErrorsInterface {
                 createdDate.setYear(String.valueOf(e.getCreatedDate().getValue().getYear()));
                 createdDate.setMonth(String.valueOf(e.getCreatedDate().getValue().getMonth()));
                 createdDate.setDay(String.valueOf(e.getCreatedDate().getValue().getDay()));
+                createdDate.setTimestamp(e.getCreatedDate().getValue().toGregorianCalendar().getTimeInMillis());
                 email.setCreatedDate(createdDate);
             }
 
@@ -89,6 +77,14 @@ public class Email implements ErrorsInterface {
                 lastModifiedDate.setMonth(String.valueOf(e.getLastModifiedDate().getValue().getMonth()));
                 lastModifiedDate.setDay(String.valueOf(e.getLastModifiedDate().getValue().getDay()));
                 email.setLastModified(lastModifiedDate);
+            }
+
+            if (e.getVerificationDate() != null) {
+                Date verificationDate = new Date();
+                verificationDate.setYear(String.valueOf(e.getVerificationDate().getValue().getYear()));
+                verificationDate.setMonth(String.valueOf(e.getVerificationDate().getValue().getMonth()));
+                verificationDate.setDay(String.valueOf(e.getVerificationDate().getValue().getDay()));
+                email.setVerificationDate(verificationDate);
             }
         }
         return email;
@@ -199,6 +195,14 @@ public class Email implements ErrorsInterface {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public Date getVerificationDate() {
+        return verificationDate;
+    }
+
+    public void setVerificationDate(Date verificationDate) {
+        this.verificationDate = verificationDate;
     }
 
     public List<String> getErrors() {

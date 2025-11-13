@@ -30,12 +30,9 @@ import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
-import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
-import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
-import org.orcid.persistence.jpa.entities.ClientScopeEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.*;
+import org.orcid.persistence.jpa.entities.keys.*;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -85,18 +82,33 @@ public class ClientManagerImpl implements ClientManager {
     @Override
     @Transactional
     public Client create(Client newClient) throws IllegalArgumentException {
-        return create(newClient, false);
+        return create(newClient, false, false);
     }
 
     @Override
     @Transactional
     public Client createPublicClient(Client newClient) {
-        return create(newClient, true);
+        return create(newClient, true, false);
     }
 
-    private Client create(Client newClient, boolean publicClient) {
-        String memberId = sourceManager.retrieveActiveSourceId();
+    @Override
+    @Transactional
+    public Client createWithConfigValues(Client newClient) {
+        return create(newClient, false, true);
+    }
+
+    private Client create(Client newClient, boolean publicClient, boolean addConfigValues) {
+        // If the member id comes in the newClient, use that one, if not, use the active source id
+        String memberId = PojoUtil.isEmpty(newClient.getGroupProfileId()) ? null : newClient.getGroupProfileId();
+        if(memberId == null) {
+            memberId = sourceManager.retrieveActiveSourceId();
+        }
         ProfileEntity memberEntity = profileEntityCacheManager.retrieve(memberId);
+
+        if(memberEntity == null) {
+            LOGGER.error("Unable to find member with id {}", memberId);
+            throw new IllegalArgumentException("Unable to find member with id " + memberId);
+        }
 
         // Verify if the member type allow him to create another client
         if (publicClient) {
@@ -109,7 +121,6 @@ public class ClientManagerImpl implements ClientManager {
         }
 
         ClientDetailsEntity newEntity = jpaJaxbClientAdapter.toEntity(newClient);
-        Date now = new Date();
         newEntity.setId(appIdGenerationManager.createNewAppId());
         newEntity.setClientSecretForJpa(encryptionManager.encryptForInternalUse(UUID.randomUUID().toString()), true);
         newEntity.setGroupProfileId(memberId);
@@ -130,16 +141,20 @@ public class ClientManagerImpl implements ClientManager {
         // Set ClientResourceIdEntity
         Set<ClientResourceIdEntity> clientResourceIdEntities = new HashSet<ClientResourceIdEntity>();
         ClientResourceIdEntity clientResourceIdEntity = new ClientResourceIdEntity();
-        clientResourceIdEntity.setClientDetailsEntity(newEntity);
+        clientResourceIdEntity.setClientId(newEntity.getClientId());
         clientResourceIdEntity.setResourceId("orcid");
         clientResourceIdEntities.add(clientResourceIdEntity);
         newEntity.setClientResourceIds(clientResourceIdEntities);
+
+        for(ClientRedirectUriEntity rUri : newEntity.getClientRegisteredRedirectUris()) {
+            rUri.setClientId(newEntity.getClientId());
+        }
 
         // Set ClientAuthorisedGrantTypeEntity
         Set<ClientAuthorisedGrantTypeEntity> clientAuthorisedGrantTypeEntities = new HashSet<ClientAuthorisedGrantTypeEntity>();
         for (String clientAuthorisedGrantType : Arrays.asList("client_credentials", "authorization_code", "refresh_token", "implicit")) {
             ClientAuthorisedGrantTypeEntity grantTypeEntity = new ClientAuthorisedGrantTypeEntity();
-            grantTypeEntity.setClientDetailsEntity(newEntity);
+            grantTypeEntity.setClientId(newEntity.getClientId());
             grantTypeEntity.setGrantType(clientAuthorisedGrantType);
             clientAuthorisedGrantTypeEntities.add(grantTypeEntity);
         }
@@ -148,7 +163,7 @@ public class ClientManagerImpl implements ClientManager {
         // Set ClientGrantedAuthorityEntity
         List<ClientGrantedAuthorityEntity> clientGrantedAuthorityEntities = new ArrayList<ClientGrantedAuthorityEntity>();
         ClientGrantedAuthorityEntity clientGrantedAuthorityEntity = new ClientGrantedAuthorityEntity();
-        clientGrantedAuthorityEntity.setClientDetailsEntity(newEntity);
+        clientGrantedAuthorityEntity.setClientId(newEntity.getClientId());
         if (publicClient) {
             clientGrantedAuthorityEntity.setAuthority("ROLE_PUBLIC");
         } else {
@@ -161,16 +176,21 @@ public class ClientManagerImpl implements ClientManager {
         Set<ClientScopeEntity> clientScopeEntities = new HashSet<ClientScopeEntity>();
         for (String clientScope : ClientType.getScopes(ClientType.valueOf(newEntity.getClientType()))) {
             ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-            clientScopeEntity.setClientDetailsEntity(newEntity);
+            clientScopeEntity.setClientId(newEntity.getClientId());
             clientScopeEntity.setScopeType(clientScope);
             clientScopeEntities.add(clientScopeEntity);
         }
         newEntity.setClientScopes(clientScopeEntities);
 
+        if (addConfigValues) {
+            newEntity.setUserOBOEnabled(newClient.isUserOBOEnabled());
+            refreshGrantTypesForObo(newEntity, newClient.isOboEnabled());
+        }
+
         try {
             clientDetailsDao.persist(newEntity);
         } catch (Exception e) {
-            LOGGER.error("Unable to client client with id {}", newEntity.getId(), e);
+            LOGGER.error("Unable to create client with id {}", newEntity.getId(), e);
             throw e;
         }
 
@@ -237,13 +257,35 @@ public class ClientManagerImpl implements ClientManager {
             }
         });
     }
-    
+
+    @Override
+    @Transactional
+    public String resetAndGetClientSecret(String clientId) {
+        try {
+            String newSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
+            clientSecretDao.revokeAllKeys(clientId);
+            boolean created  = clientSecretDao.createClientSecret(clientId, newSecret);
+            if (created) {
+                clientDetailsDao.updateLastModified(clientId);
+                String sourceId = sourceManager.retrieveActiveSourceId();
+                profileLastModifiedDao.updateLastModifiedDateWithoutResult(sourceId);
+            } else {
+                LOGGER.warn("Client secret creation failed for client {}", clientId);
+            }
+
+            return encryptionManager.decryptForInternalUse(newSecret);
+        } catch (Exception e) {
+            LOGGER.error("Unable to reset client secret for client {}", clientId, e);
+            throw e;
+        }
+    }
+
     private void refreshGrantTypesForObo(ClientDetailsEntity clientDetails, boolean enableObo) {
         boolean oboAlreadyEnabled = false;
         Iterator<ClientAuthorisedGrantTypeEntity> grantTypes = clientDetails.getClientAuthorizedGrantTypes().iterator();
         while (grantTypes.hasNext()) {
             ClientAuthorisedGrantTypeEntity g = grantTypes.next();
-            if (OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getGrantType())) {
+            if (g != null && OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE.equals(g.getGrantType())) {
                 oboAlreadyEnabled = true;
                 if (!enableObo) {
                     grantTypes.remove();                    
@@ -254,9 +296,9 @@ public class ClientManagerImpl implements ClientManager {
         
         if (!oboAlreadyEnabled && enableObo) {
             ClientAuthorisedGrantTypeEntity obo = new ClientAuthorisedGrantTypeEntity();
+            obo.setClientId(clientDetails.getClientId());
             obo.setGrantType(OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
-            obo.setClientDetailsEntity(clientDetails);
-            clientDetails.getClientAuthorizedGrantTypes().add(obo);            
+            clientDetails.getClientAuthorizedGrantTypes().add(obo);
         }
     }
     

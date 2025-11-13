@@ -1,191 +1,194 @@
 [main]
 host = https://www.transifex.com
 
-[registry.about]
+[o:orcid-inc-1:p:registry:r:about]
 file_filter = orcid-core/src/main/resources/i18n/about_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/about_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.email-added-as-delegate]
+[o:orcid-inc-1:p:registry:r:email-added-as-delegate]
 file_filter = orcid-core/src/main/resources/i18n/email_added_as_delegate_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_added_as_delegate_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.email-admin-delegate-request]
+[o:orcid-inc-1:p:registry:r:email-admin-delegate-request]
 file_filter = orcid-core/src/main/resources/i18n/email_admin_delegate_request_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_admin_delegate_request_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.email-new-claim-reminder]
-file_filter = orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.email-common]
+[o:orcid-inc-1:p:registry:r:email-common]
 file_filter = orcid-core/src/main/resources/i18n/email_common_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_common_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-deactivate]
+[o:orcid-inc-1:p:registry:r:email-deactivate]
 file_filter = orcid-core/src/main/resources/i18n/email_deactivate_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_deactivate_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-digest]
+[o:orcid-inc-1:p:registry:r:email-digest]
 file_filter = orcid-core/src/main/resources/i18n/email_digest_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_digest_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-forgotten-id]
+[o:orcid-inc-1:p:registry:r:email-forgotten-id]
 file_filter = orcid-core/src/main/resources/i18n/email_forgotten_id_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_forgotten_id_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-institutional-connection]
+[o:orcid-inc-1:p:registry:r:email-institutional-connection]
 file_filter = orcid-core/src/main/resources/i18n/email_institutional_connection_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_institutional_connection_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-locked]
+[o:orcid-inc-1:p:registry:r:email-locked]
 file_filter = orcid-core/src/main/resources/i18n/email_locked_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_locked_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
+[o:orcid-inc-1:p:registry:r:email-new-claim-reminder]
+file_filter = orcid-core/src/main/resources/i18n/email_new_claim_reminder_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email_new_claim_reminder_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
 
-[registry.email-notification]
+[o:orcid-inc-1:p:registry:r:email-notification]
 file_filter = orcid-core/src/main/resources/i18n/email_notification_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_notification_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-reactivation]
+[o:orcid-inc-1:p:registry:r:email-reactivation]
 file_filter = orcid-core/src/main/resources/i18n/email_reactivation_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_reactivation_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.email-removed]
+[o:orcid-inc-1:p:registry:r:email-removed]
 file_filter = orcid-core/src/main/resources/i18n/email_removed_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_removed_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.email-reset-password]
+[o:orcid-inc-1:p:registry:r:email-reset-password]
 file_filter = orcid-core/src/main/resources/i18n/email_reset_password_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_reset_password_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.email-reset-password-not-found]
+[o:orcid-inc-1:p:registry:r:email-reset-password-not-found]
 file_filter = orcid-core/src/main/resources/i18n/email_reset_password_not_found_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_reset_password_not_found_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-subject]
+[o:orcid-inc-1:p:registry:r:email-subject]
 file_filter = orcid-core/src/main/resources/i18n/email_subject_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_subject_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-tips]
+[o:orcid-inc-1:p:registry:r:email-tips]
 file_filter = orcid-core/src/main/resources/i18n/email_tips_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_tips_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-verify]
+[o:orcid-inc-1:p:registry:r:email-verify]
 file_filter = orcid-core/src/main/resources/i18n/email_verify_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_verify_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-
-[registry.email-welcome]
+[o:orcid-inc-1:p:registry:r:email-welcome]
 file_filter = orcid-core/src/main/resources/i18n/email_welcome_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email_welcome_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.identifiers]
-file_filter = orcid-core/src/main/resources/i18n/identifiers_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/identifiers_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.javascript]
-file_filter = orcid-core/src/main/resources/i18n/javascript_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/javascript_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.messages]
-file_filter = orcid-core/src/main/resources/i18n/messages_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/messages_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
-
-[registry.notification-digest]
-file_filter = orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_digest_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
-[registry.notification-delegate]
-file_filter = orcid-core/src/main/resources/i18n/notification_delegate_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_delegate_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-
-[registry.notification-announcement]
-file_filter = orcid-core/src/main/resources/i18n/notification_announcement_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_announcement_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.notification-admin-delegate]
-file_filter = orcid-core/src/main/resources/i18n/notification_admin_delegate_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_admin_delegate_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.notification-share]
-file_filter = orcid-core/src/main/resources/i18n/notification_share_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_share_en.properties
-source_lang = en
-type = UNICODEPROPERTIES
-
-[registry.email2faDisabled]
+[o:orcid-inc-1:p:registry:r:email2faDisabled]
 file_filter = orcid-core/src/main/resources/i18n/email2faDisabled_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/email2faDisabled_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
 
-[registry.layout]
+[o:orcid-inc-1:p:registry:r:identifiers]
+file_filter = orcid-core/src/main/resources/i18n/identifiers_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/identifiers_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:javascript]
+file_filter = orcid-core/src/main/resources/i18n/javascript_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/javascript_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:layout]
 file_filter = orcid-core/src/main/resources/i18n/layout_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/layout_en.properties
 source_lang = en
-type = UNICODEPROPERTIES
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:messages]
+file_filter = orcid-core/src/main/resources/i18n/messages_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/messages_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification-admin-delegate]
+file_filter = orcid-core/src/main/resources/i18n/notification_admin_delegate_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_admin_delegate_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification-announcement]
+file_filter = orcid-core/src/main/resources/i18n/notification_announcement_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_announcement_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification-delegate]
+file_filter = orcid-core/src/main/resources/i18n/notification_delegate_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_delegate_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification-digest]
+file_filter = orcid-core/src/main/resources/i18n/notification_digest_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_digest_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification-share]
+file_filter = orcid-core/src/main/resources/i18n/notification_share_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_share_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:email-add-work]
+file_filter = orcid-core/src/main/resources/i18n/email_add_works_to_record_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/email_add_works_to_record_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:papi_rate_limit_email]
+file_filter = orcid-core/src/main/resources/i18n/papi_rate_limit_email_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/papi_rate_limit_email_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES
+
+[o:orcid-inc-1:p:registry:r:notification_mvp]
+file_filter = orcid-core/src/main/resources/i18n/notification_mvp_<lang>.properties
+source_file = orcid-core/src/main/resources/i18n/notification_mvp_en.properties
+source_lang = en
+type        = UNICODEPROPERTIES

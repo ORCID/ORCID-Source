@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.IdentityProviderManager;
@@ -18,10 +19,11 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.OrcidUserDetailsService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
+import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -35,6 +37,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,6 +84,9 @@ public class ShibbolethController extends BaseController {
     
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
+
+    @Resource
+    private EventManager eventManager;
     
     @RequestMapping(value = { "/2FA/authenticationCode.json" }, method = RequestMethod.GET)
     public @ResponseBody TwoFactorAuthenticationCodes getTwoFactorCodeWrapper() {
@@ -165,6 +171,9 @@ public class ShibbolethController extends BaseController {
             try {
                 notifyUser(shibIdentityProvider, userConnectionEntity);
                 processAuthentication(remoteUser, userConnectionEntity);
+                if (Features.EVENTS.isActive()) {
+                    eventManager.createEvent(EventType.SIGN_IN, request);
+                }
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -178,10 +187,13 @@ public class ShibbolethController extends BaseController {
         if (mav.getViewName().equals("social_link_signin")) {
             String insitutionalLinking = "/institutional-linking";
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+
             if (queryString != null) {
                 insitutionalLinking = insitutionalLinking + "?" + queryString;
             }
             return new ModelAndView("redirect:"+ calculateRedirectUrl(insitutionalLinking));
+        } else {
+            LOGGER.warn("View name is not what we were expecting: " + mav.getView());
         }
         
         return mav;
@@ -267,7 +279,7 @@ public class ShibbolethController extends BaseController {
         }
     }
     
-    private OrcidProfileUserDetails getOrcidProfileUserDetails(String orcid) {
+    private UserDetails getOrcidProfileUserDetails(String orcid) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
         return orcidUserDetailsService.loadUserByProfile(profileEntity);
     }

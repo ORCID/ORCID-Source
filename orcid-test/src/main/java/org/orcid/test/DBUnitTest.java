@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import org.dbunit.DatabaseUnitException;
@@ -23,6 +24,7 @@ import org.springframework.cache.jcache.JCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Base class for testing using DBUnit.
@@ -33,27 +35,34 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  */
 
 @Ignore
+@ActiveProfiles("unitTests")
 public class DBUnitTest {
 
     private static final String TEST_DB_CONTEXT = "classpath:test-db-context.xml";
     private static final String TEST_CORE_CONTEXT = "classpath:test-core-context.xml";
 
     private static final String[] tables = new String[] { "profile", "orcid_social", "profile_event", "work", "researcher_url",
-            "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
+            "given_permission_to", "external_identifier", "email", "email_domain", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent",
             "org_disambiguated", "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address",
             "institution", "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority",
             "orcid_props", "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "invalid_record_data_changes",
-            "research_resource","research_resource_item, spam", "backup_code", "profile_history_event"};
+            "research_resource","research_resource_item, spam", "backup_code", "profile_history_event", "event"};
 
     private static ApplicationContext context;
 
     static {        
         try {
             context = new ClassPathXmlApplicationContext(TEST_CORE_CONTEXT);
-        } catch (Exception e) {
+        } catch (Exception e) {            
             try {
                 context = new ClassPathXmlApplicationContext(TEST_DB_CONTEXT);
             } catch (Exception e2) {
+                System.out.println("Initial error: ");
+                e.printStackTrace();
+                System.out.println();
+                System.out.println();
+                System.out.println();
+                System.out.println("Second error: ");
                 e2.printStackTrace();
                 fail();
             }
@@ -108,13 +117,18 @@ public class DBUnitTest {
     }
 
     private static void cleanClientSourcedProfiles(IDatabaseConnection connection) throws AmbiguousTableNameException, DatabaseUnitException, SQLException {
+        
         QueryDataSet grandChildTableSet = new QueryDataSet(connection);
         grandChildTableSet.addTable("research_resource_item_org");
+        grandChildTableSet.addTable("client_secret");
+        grandChildTableSet.addTable("external_identifier");
+        grandChildTableSet.addTable("email");
         DatabaseOperation.DELETE.execute(connection, grandChildTableSet);
         
         QueryDataSet childTableSet = new QueryDataSet(connection);
         childTableSet.addTable("research_resource_item");
         childTableSet.addTable("research_resource_org");
+        childTableSet.addTable("profile_email_domain");
         DatabaseOperation.DELETE.execute(connection, childTableSet);
 
         QueryDataSet dataSet = new QueryDataSet(connection);
@@ -127,7 +141,7 @@ public class DBUnitTest {
         dataSet.addTable("work");
         dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
-        dataSet.addTable("email");
+        dataSet.addTable("email_domain");
         dataSet.addTable("email_event");
         dataSet.addTable("external_identifier");
         dataSet.addTable("org");
@@ -150,6 +164,7 @@ public class DBUnitTest {
         dataSet.addTable("research_resource");
         dataSet.addTable("find_my_stuff_history");
         dataSet.addTable("spam");
+        dataSet.addTable("event");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);
@@ -158,6 +173,7 @@ public class DBUnitTest {
         theRest.addTable("client_secret");
         theRest.addTable("custom_email");
         DatabaseOperation.DELETE.execute(connection, theRest);
+        
     }
 
     private static void cleanAll(IDatabaseConnection connection) throws DatabaseUnitException, SQLException {

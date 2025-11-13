@@ -2,7 +2,9 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,18 +16,22 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.util.Pair;
 import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
-import org.orcid.core.manager.v3.ClientDetailsManager;
-import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.SpamManager;
+import org.orcid.core.manager.v3.*;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -33,25 +39,34 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.frontend.email.RecordEmailSender;
-import org.orcid.frontend.web.util.PasswordConstants;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.AdminChangePassword;
 import org.orcid.pojo.AdminDelegatesRequest;
+import org.orcid.pojo.AdminResetPasswordLink;
 import org.orcid.pojo.ConvertClient;
 import org.orcid.pojo.LockAccounts;
 import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
+import org.orcid.pojo.RemoveEmailsResponse;
+import org.orcid.pojo.RemoveEmailsRequest;
+import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -67,9 +82,6 @@ public class AdminController extends BaseController {
     @Resource(name = "profileEntityManagerV3")
     ProfileEntityManager profileEntityManager;
 
-    @Resource(name = "notificationManagerV3")
-    NotificationManager notificationManager;
-
     @Resource
     private AdminManager adminManager;
 
@@ -82,26 +94,47 @@ public class AdminController extends BaseController {
     @Resource(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
 
+    @Resource
+    private VerifyEmailUtils verifyEmailUtils;
+
     @Resource(name = "spamManager")
     SpamManager spamManager;
-    
-    @Resource 
+
+    @Resource
     private RecordEmailSender recordEmailSender;
-    
+
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+
+    @Value("${org.orcid.admin.registry.url:https://orcid.org}")
+    private String registryUrl;
+
+    @Resource(name = "clientManagerV3")
+    private ClientManager clientManager;
+
+    @Resource(name = "clientManagerReadOnlyV3")
+    private ClientManagerReadOnly clientManagerReadOnly;
+
+    @Resource(name = "profileDaoReadOnly")
+    private ProfileDao profileDaoReadOnly;
 
     private static final String CLAIMED = "(claimed)";
     private static final String DEACTIVATED = "(deactivated)";
     private static final String DEPRECATED = "(deprecated)";
     private static final String UNCLAIMED = "(unclaimed)";
+    private static final String ENABLED_2FA = "2FAEnabled";
+    private static final String REVIEWED = "reviewed";
+    private static final String PRIMARY_RECORD = "primaryRecord";
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_EMAIL_PRIMARY = "*";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_STRING_SEPARATOR_SINGLE_SPACE = " ";
+    private static final String OUT_STRING_ASSIGNMENT_OPERATOR = "=";
     private static final String OUT_NOT_AVAILABLE = "N/A";
     private static final String OUT_NOT_AVAILABLE_ID = "N/A                ";
     private static final String OUT_NEW_LINE = "\n";
+
+    private static final int RESET_PASSWORD_LINK_DURATION = 24;
 
     private void isAdmin(HttpServletRequest serverRequest, HttpServletResponse response) throws IllegalAccessException {
         if (!orcidSecurityManager.isAdmin()) {
@@ -127,38 +160,11 @@ public class AdminController extends BaseController {
      */
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.POST)
     public @ResponseBody ProfileDeprecationRequest deprecateProfile(HttpServletRequest serverRequest, HttpServletResponse response,
-            @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
-        isAdmin(serverRequest, response);
-        // Cleanup
-        request.setErrors(new ArrayList<String>());
-        request.setSuccessMessage(null);
+                                                                    @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        initializeDeprecation(serverRequest, response, request);
 
-        if (request.getDeprecatedAccount() != null) {
-            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
-        }
-
-        if (request.getPrimaryAccount() != null) {
-            request.getPrimaryAccount().setErrors(new ArrayList<String>());
-        }
-
-        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
-        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
-
-        if (deprecatedOrcid != null) {
-            ProfileDetails pd = request.getDeprecatedAccount();
-            pd.setOrcid(deprecatedOrcid);
-            request.setDeprecatedAccount(pd);
-        } else {
-            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
-        }
-
-        if (primaryOrcid != null) {
-            ProfileDetails pd = request.getPrimaryAccount();
-            pd.setOrcid(primaryOrcid);
-            request.setPrimaryAccount(pd);
-        } else {
-            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
-        }
+        String deprecatedOrcid = getDeprecateOrcid(request);
+        String primaryOrcid = getPrimaryOrcid(request);
 
         // Check for errors
         if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
@@ -193,41 +199,14 @@ public class AdminController extends BaseController {
      */
     @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.POST)
     public @ResponseBody ProfileDeprecationRequest checkOrcidToDeprecate(HttpServletRequest serverRequest, HttpServletResponse response,
-            @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
-        isAdmin(serverRequest, response);
-        // Cleanup
-        request.setErrors(new ArrayList<String>());
-        request.setSuccessMessage(null);
+                                                                         @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        initializeDeprecation(serverRequest, response, request);
 
-        if (request.getDeprecatedAccount() != null) {
-            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
-        }
-
-        if (request.getPrimaryAccount() != null) {
-            request.getPrimaryAccount().setErrors(new ArrayList<String>());
-        }
-
-        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
-        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
-
-        if (deprecatedOrcid != null) {
-            ProfileDetails pd = request.getDeprecatedAccount();
-            pd.setOrcid(deprecatedOrcid);
-            request.setDeprecatedAccount(pd);
-        } else {
-            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
-        }
-
-        if (primaryOrcid != null) {
-            ProfileDetails pd = request.getPrimaryAccount();
-            pd.setOrcid(primaryOrcid);
-            request.setPrimaryAccount(pd);
-        } else {
-            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
-        }
+        String deprecatedOrcid = getDeprecateOrcid(request);
+        String primaryOrcid = getPrimaryOrcid(request);
 
         if (deprecatedOrcid.equals(primaryOrcid)) {
-            request.getPrimaryAccount().getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
+            request.getPrimaryAccount().getErrors().add(getMessage("admin.update_deprecation.errors.deprecated_equals_primary"));
         } else {
             if (request.getDeprecatedAccount() != null) {
                 request.getDeprecatedAccount().setErrors(new ArrayList<String>());
@@ -250,6 +229,82 @@ public class AdminController extends BaseController {
         }
 
         return request;
+    }
+
+    /**
+     * Get a deprecate profile request and process it.
+     *
+     * @param deprecatedOrcid Orcid to deprecate
+     * @param primaryOrcid    Orcid to use as a primary account
+     * @throws IllegalAccessException
+     */
+    @RequestMapping(value = {"/deprecate-profile/update-deprecation.json"}, method = RequestMethod.POST)
+    public @ResponseBody ProfileDeprecationRequest updateDeprecation(HttpServletRequest serverRequest, HttpServletResponse response,
+                                                                     @RequestBody ProfileDeprecationRequest request) throws IllegalAccessException {
+        initializeDeprecation(serverRequest, response, request);
+
+        String deprecatedOrcid = getDeprecateOrcid(request);
+        String primaryOrcid = getPrimaryOrcid(request);
+
+        // Check for errors
+        if (!OrcidStringUtils.isValidOrcid(deprecatedOrcid)) {
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", deprecatedOrcid));
+        } else if (!OrcidStringUtils.isValidOrcid(primaryOrcid)) {
+            request.getErrors().add(getMessage("admin.profile_deprecation.errors.invalid_orcid", primaryOrcid));
+        } else if (deprecatedOrcid.equals(primaryOrcid)) {
+            request.getErrors().add(getMessage("admin.update_deprecation.errors.deprecated_equals_primary"));
+        } else {
+            try {
+                boolean wasDeprecated = adminManager.updateDeprecation(request, deprecatedOrcid, primaryOrcid);
+                if (wasDeprecated) {
+                    request.setSuccessMessage(getMessage("admin.update_deprecation.success_message", deprecatedOrcid, primaryOrcid));
+                }
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                request.getErrors().add(getMessage("admin.update_deprecation.errors.internal_error", deprecatedOrcid));
+            }
+        }
+
+        return request;
+    }
+
+    private void initializeDeprecation(HttpServletRequest serverRequest, HttpServletResponse response, ProfileDeprecationRequest request) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+        // Cleanup
+        request.setErrors(new ArrayList<String>());
+        request.setSuccessMessage(null);
+
+        if (request.getDeprecatedAccount() != null) {
+            request.getDeprecatedAccount().setErrors(new ArrayList<String>());
+        }
+
+        if (request.getPrimaryAccount() != null) {
+            request.getPrimaryAccount().setErrors(new ArrayList<String>());
+        }
+    }
+
+    private String getDeprecateOrcid(ProfileDeprecationRequest request) {
+        String deprecatedOrcid = request.getDeprecatedAccount() == null ? null : getOrcidFromParam(request.getDeprecatedAccount().getOrcid().trim());
+        if (deprecatedOrcid != null) {
+            ProfileDetails pd = request.getDeprecatedAccount();
+            pd.setOrcid(deprecatedOrcid);
+            request.setDeprecatedAccount(pd);
+        } else {
+            deprecatedOrcid = request.getDeprecatedAccount().getOrcid().trim();
+        }
+        return deprecatedOrcid;
+    }
+
+    private String getPrimaryOrcid(ProfileDeprecationRequest request) {
+        String primaryOrcid = request.getPrimaryAccount() == null ? null : getOrcidFromParam(request.getPrimaryAccount().getOrcid().trim());
+        if (primaryOrcid != null) {
+            ProfileDetails pd = request.getPrimaryAccount();
+            pd.setOrcid(primaryOrcid);
+            request.setPrimaryAccount(pd);
+        } else {
+            primaryOrcid = request.getPrimaryAccount().getOrcid().trim();
+        }
+        return primaryOrcid;
     }
 
     private void validateIdForDeprecation(ProfileDetails details) {
@@ -327,12 +382,14 @@ public class AdminController extends BaseController {
         }
 
         if (profileDetails.getErrors() == null || profileDetails.getErrors().size() == 0) {
-            // Return a list of email addresses that should be notified by this change
+            // Return a list of email addresses that should be notified by this
+            // change
             List<String> emailsToNotify = profileEntityManager.reactivate(orcid, email, null);
             // Notify any new email address
             if (!emailsToNotify.isEmpty()) {
                 for (String emailToNotify : emailsToNotify) {
-                    recordEmailSender.sendVerificationEmail(orcid, emailToNotify);
+                    boolean isPrimaryEmail = emailManager.isPrimaryEmail(orcid, emailToNotify);
+                    recordEmailSender.sendVerificationEmail(orcid, emailToNotify, isPrimaryEmail);
                 }
             }
             profileDetails.setStatus(getMessage("admin.success"));
@@ -369,11 +426,11 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public @ResponseBody String lookupIdOrEmails(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody String csvIdOrEmails)
-            throws IllegalAccessException, UnsupportedEncodingException {
+            throws IllegalAccessException {
         isAdmin(serverRequest, response);
         List<String> idEmailList = new ArrayList<String>();
         StringBuilder builder = new StringBuilder();
-        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, "UTF-8");
+        csvIdOrEmails = URLDecoder.decode(csvIdOrEmails, StandardCharsets.UTF_8);
         if (StringUtils.isNotBlank(csvIdOrEmails)) {
             StringTokenizer tokenizer = new StringTokenizer(csvIdOrEmails, INP_STRING_SEPARATOR);
             while (tokenizer.hasMoreTokens()) {
@@ -386,7 +443,7 @@ public class AdminController extends BaseController {
                 if (OrcidStringUtils.getOrcidNumber(idEmail) != null && OrcidStringUtils.isValidOrcid(OrcidStringUtils.getOrcidNumber(idEmail))) {
                     isOrcid = true;
                 }
-                String orcid = idEmail;
+                String orcid;
                 if (!isOrcid) {
                     Map<String, String> email = findIdByEmailHelper(idEmail);
                     orcid = email.get(idEmail);
@@ -409,6 +466,13 @@ public class AdminController extends BaseController {
                             builder.append(orcid).append(OUT_STRING_SEPARATOR_SINGLE_SPACE).append(CLAIMED).append(OUT_STRING_SEPARATOR);
                         }
 
+                        if (profileEntityManager.isProfileDeprecated(orcid)) {
+                            ProfileEntity e = profileEntityCacheManager.retrieve(orcid);
+
+                            builder.append(PRIMARY_RECORD);
+                            builder.append(OUT_STRING_ASSIGNMENT_OPERATOR).append(e.getPrimaryRecord().getId());
+                        }
+
                         Email primary = emailManager.findPrimaryEmail(orcid);
                         if (primary != null) {
                             builder.append(OUT_EMAIL_PRIMARY).append(primary.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
@@ -417,7 +481,7 @@ public class AdminController extends BaseController {
                         }
 
                         Emails emails = emailManagerReadOnly.getEmails(orcid);
-                        if (emails.getEmails().size() > 0) {
+                        if (!emails.getEmails().isEmpty()) {
                             for (Email email : emails.getEmails()) {
                                 if (!email.isPrimary()) {
                                     builder.append(email.getEmail()).append(OUT_STRING_SEPARATOR_SINGLE_SPACE);
@@ -438,6 +502,15 @@ public class AdminController extends BaseController {
                             if (recordName.getCreditName() != null && !PojoUtil.isEmpty(recordName.getCreditName().getContent())) {
                                 builder.append("(").append(recordName.getCreditName().getContent()).append(")");
                             }
+                        }
+
+                        boolean twoFactorAuthenticationEnabled = twoFactorAuthenticationManager.userUsing2FA(orcid);
+                        if (twoFactorAuthenticationEnabled) {
+                            builder.append(OUT_STRING_SEPARATOR).append(ENABLED_2FA);
+                        }
+
+                        if (profileEntityManager.isReviewed(orcid)) {
+                            builder.append(OUT_STRING_SEPARATOR).append(REVIEWED);
                         }
 
                     } else {
@@ -616,6 +689,48 @@ public class AdminController extends BaseController {
         } else {
             form.setError(getMessage("admin.errors.unable_to_fetch_info"));
         }
+        return form;
+    }
+
+    /**
+     * Reset password validate
+     *
+     * @throws IllegalAccessException
+     * @throws UnsupportedEncodingException
+     */
+    @RequestMapping(value = "/reset-password-link.json", method = RequestMethod.POST)
+    public @ResponseBody AdminResetPasswordLink resetPasswordLink(HttpServletRequest serverRequest, HttpServletResponse response,
+            @RequestBody AdminResetPasswordLink form) throws IllegalAccessException, UnsupportedEncodingException {
+        isAdmin(serverRequest, response);
+        form.setError(null);
+        String orcidOrEmail = URLDecoder.decode(form.getOrcidOrEmail(), "UTF-8").trim();
+        boolean isOrcid = OrcidStringUtils.isValidOrcid(orcidOrEmail);
+        String orcid = null;
+        // If it is not an orcid, check the value from the emails table
+        if (!isOrcid) {
+            if (OrcidStringUtils.isEmailValid(orcidOrEmail) && emailManager.emailExists(orcidOrEmail)) {
+                orcid = emailManager.findOrcidIdByEmail(orcidOrEmail);
+            } else {
+                form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+                return form;
+            }
+        } else {
+            orcid = orcidOrEmail;
+        }
+
+        if (!PojoUtil.isEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
+            Pair<String, Date> resetLinkData = verifyEmailUtils.createResetLinkForAdmin(orcid, registryUrl);
+            LOGGER.debug("Reset link to be sent to the client: " + resetLinkData.getKey());
+
+            form.setResetLink(resetLinkData.getKey());
+            form.setIssueDate(resetLinkData.getValue());
+            form.setDurationInHours(RESET_PASSWORD_LINK_DURATION);
+
+        } else {
+            form.setError(getMessage("admin.errors.unexisting_orcid"));
+            return form;
+        }
+
         return form;
     }
 
@@ -810,10 +925,11 @@ public class AdminController extends BaseController {
                         } else if (lockAccounts.getDescription() == null || lockAccounts.getDescription().isEmpty()) {
                             descriptionMissing.add(nextToken);
                         } else {
-                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(), getCurrentUserOrcid());
+                            boolean wasLocked = profileEntityManager.lockProfile(orcidId, lockAccounts.getLockReason(), lockAccounts.getDescription(),
+                                    getCurrentUserOrcid());
                             if (wasLocked) {
                                 recordEmailSender.sendOrcidLockedEmail(orcidId);
-                            }                            
+                            }
                             successIds.add(nextToken);
                         }
                     }
@@ -1001,7 +1117,7 @@ public class AdminController extends BaseController {
                         } else {
                             email = emailOrOrcid;
                         }
-                        recordEmailSender.sendClaimReminderEmail(orcidId,0,email);
+                        recordEmailSender.sendClaimReminderEmail(orcidId, 0, email);
                         successIds.add(emailOrOrcid);
                     }
                 }
@@ -1042,7 +1158,7 @@ public class AdminController extends BaseController {
 
                     if (entity.getUsing2FA()) {
                         twoFactorAuthenticationManager.adminDisable2FA(orcidId, getCurrentUserOrcid());
-                        recordEmailSender.send2FADisabledEmail(orcidId);                        
+                        recordEmailSender.send2FADisabledEmail(orcidId);
                         disabledIds.add(emailOrOrcid);
                     } else {
                         without2FAs.add(emailOrOrcid);
@@ -1060,16 +1176,11 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/validate-client-conversion.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient validateClientConversion(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive() && !Features.MOVE_CLIENT.isActive()) {
-            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
-        }
         data.setGroupIdNotFound(false);
         data.setGroupIdDeactivated(false);
         data.setClientNotFound(false);
         data.setAlreadyMember(false);
         data.setClientDeactivated(false);
-
-
 
         isAdmin(serverRequest, response);
         if (PojoUtil.isEmpty(data.getClientId()) || !clientDetailsManager.exists(data.getClientId())) {
@@ -1095,14 +1206,14 @@ public class AdminController extends BaseController {
                 ProfileEntity group = profileEntityCacheManager.retrieve(data.getGroupId());
                 if (group == null || !OrcidType.GROUP.name().equals(group.getOrcidType())) {
                     data.setGroupIdNotFound(true);
-                } else { 
+                } else {
                     if (!group.isEnabled() || group.getRecordLocked() || group.getDeactivationDate() != null) {
                         data.setGroupIdDeactivated(true);
-                    } else {                    
+                    } else {
                         ClientType clientType = MemberType.PREMIUM.name().equals(group.getGroupType()) ? ClientType.PREMIUM_UPDATER : ClientType.UPDATER;
                         data.setTargetClientType(clientType.name());
                     }
-                    
+
                 }
 
             } catch (IllegalArgumentException e) {
@@ -1111,17 +1222,12 @@ public class AdminController extends BaseController {
             }
         }
 
-
         return data;
     }
 
     @RequestMapping(value = "/convert-client.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient convertClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if (!Features.UPGRADE_PUBLIC_CLIENT.isActive()) {
-            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
-        }
-
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
         if (data.isClientNotFound() || data.isAlreadyMember() || data.isGroupIdNotFound()) {
@@ -1144,9 +1250,6 @@ public class AdminController extends BaseController {
     @RequestMapping(value = "/move-client.json", method = RequestMethod.POST)
     public @ResponseBody ConvertClient moveClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody ConvertClient data)
             throws IllegalAccessException {
-        if (!Features.MOVE_CLIENT.isActive()) {
-            throw new IllegalAccessException("Feature UPGRADE_PUBLIC_CLIENT is disabled");
-        }
         isAdmin(serverRequest, response);
         data = validateClientConversion(serverRequest, response, data);
         if (data.isClientNotFound() || !data.isAlreadyMember() || data.isGroupIdNotFound() || data.isClientDeactivated()) {
@@ -1154,7 +1257,7 @@ public class AdminController extends BaseController {
             data.setSuccess(false);
             return data;
         }
-            
+
         try {
             clientDetailsManager.moveClientGroupId(data.getClientId(), data.getGroupId());
             data.setSuccess(true);
@@ -1163,6 +1266,129 @@ public class AdminController extends BaseController {
             data.setSuccess(false);
             data.setError(e.getMessage());
             return data;
+        }
+    }
+
+    @RequestMapping(value = "/add-client.json", method = RequestMethod.POST)
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @ResponseBody
+    public Client createClient(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody Client client) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+
+        List<String> errors = new ArrayList<>();
+
+        if (client == null) {
+            client = new Client();
+            errors.add("Client object cannot be null");
+        } else if (client.getMemberId() == null || PojoUtil.isEmpty(client.getMemberId())) {
+            errors.add("Member ID is required");
+        } else if (profileDaoReadOnly.getGroupType(client.getMemberId().getValue()) == null) {
+            errors.add("Member with ID " + client.getMemberId().getValue() + " does not exists");
+        } else if (client.getDisplayName() == null || PojoUtil.isEmpty(client.getDisplayName())) {
+            errors.add("Display name is required");
+        } else if (client.getShortDescription() == null || PojoUtil.isEmpty(client.getShortDescription())) {
+            errors.add("Description is required");
+        } else if (client.getWebsite() == null || PojoUtil.isEmpty(client.getWebsite())) {
+            errors.add("Website is required");
+        } else if (client.getRedirectUris() == null || client.getRedirectUris().isEmpty()) {
+            errors.add("Redirect URIs are required");
+        } else {
+            // Validate the redirect uris are valid
+            for (RedirectUri r : client.getRedirectUris()) {
+                if (r.getType() == null || PojoUtil.isEmpty(r.getType())) {
+                    errors.add("Redirect uri type missing on redirect uri " + r.getValue().getValue());
+                }
+            }
+
+            if (errors.isEmpty()) {
+                org.orcid.jaxb.model.v3.release.client.Client newClient = client.toModelObject();
+                try {
+                    newClient = clientManager.createWithConfigValues(newClient);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage());
+                    String errorDescription = getMessage("manage.developer_tools.group.cannot_create_client") + " " + e.getMessage();
+                    client.setErrors(new ArrayList<String>());
+                    client.getErrors().add(errorDescription);
+                    return client;
+                }
+                client = Client.fromModelObject(newClient);
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            client.setErrors(errors);
+            return client;
+        }
+
+
+        return client;
+    }
+
+
+    @PostMapping(value = "/reset-client-secret.json", produces = MediaType.APPLICATION_JSON)
+    public ResponseEntity<Map<String, String>> resetClientSecret(HttpServletRequest serverRequest, HttpServletResponse response, @RequestBody Client client) throws IllegalAccessException {
+        isAdmin(serverRequest, response);
+
+        if (client == null || PojoUtil.isEmpty(client.getClientId())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("error", "Client ID is required"));
+        }
+
+        String clientId = client.getClientId().getValue();
+
+        org.orcid.jaxb.model.v3.release.client.Client existingClient = clientManagerReadOnly.get(clientId);
+        if (existingClient == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Client “" + clientId + "” not found"));
+        }
+
+        try {
+            String newSecret = clientManager.resetAndGetClientSecret(clientId);
+            return ResponseEntity
+                    .ok(Map.of(
+                            "clientId", clientId,
+                            "newSecret", newSecret
+                    ));
+        } catch (Exception e) {
+            LOGGER.error("Error resetting secret for client {}", clientId, e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to reset client secret"));
+        }
+    }
+
+    @PostMapping("/remove-emails.json")
+    @ResponseBody
+    public ResponseEntity<RemoveEmailsResponse> removeEmails(
+            HttpServletRequest serverRequest,
+            HttpServletResponse serverResponse,
+            @RequestBody RemoveEmailsRequest removeEmails
+    ) throws IllegalAccessException {
+        isAdmin(serverRequest, serverResponse);
+
+        if (removeEmails == null || removeEmails.getEmailsToRemove() == null || removeEmails.getEmailsToRemove().isEmpty()) {
+            return ResponseEntity.badRequest().body(new RemoveEmailsResponse("emailsToRemove cannot be empty", null));
+        }
+
+        try {
+            List<String> remainingEmails = emailManager.removeEmails(
+                    removeEmails.getOrcid(),
+                    removeEmails.getEmailsToRemove()
+            );
+
+            return ResponseEntity.ok(new RemoveEmailsResponse(
+                    "Emails removed successfully.",
+                    remainingEmails
+            ));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new RemoveEmailsResponse(e.getMessage(), null));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new RemoveEmailsResponse("Unexpected error: " + e.getMessage(), null));
         }
     }
 }

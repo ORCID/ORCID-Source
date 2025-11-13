@@ -1,0 +1,229 @@
+################
+#   DATABASE   #
+################
+
+# Main database
+org.orcid.persistence.db.class={{ ORG_ORCID_PERSISTENCE_DB_CLASS }}
+org.orcid.persistence.db.dataSource={{ ORG_ORCID_PERSISTENCE_DB_DATA_SOURCE }}
+org.orcid.persistence.db.dialect={{ ORG_ORCID_PERSISTENCE_DB_DIALECT }}
+org.orcid.persistence.db.generateDdl={{ ORG_ORCID_PERSISTENCE_DB_GENERATE_DDL }}
+org.orcid.persistence.db.hibernateStatistics={{ ORG_ORCID_PERSISTENCE_DB_HIBERNATE_STATISTICS }}
+org.orcid.persistence.db.idleConnectionTestPeriod={{ ORG_ORCID_PERSISTENCE_DB_IDLE_CONNECTION_TEST_PERIOD }}
+org.orcid.persistence.db.initialPoolSize={{ ORG_ORCID_PERSISTENCE_DB_INITIAL_POOL_SIZE }}
+org.orcid.persistence.db.maxPoolSize={{ ORG_ORCID_PERSISTENCE_DB_MAX_POOL_SIZE }}
+org.orcid.persistence.db.maxStatements={{ ORG_ORCID_PERSISTENCE_DB_MAX_STATEMENTS }}
+org.orcid.persistence.db.minPoolSize={{ ORG_ORCID_PERSISTENCE_DB_MIN_POOL_SIZE }}
+org.orcid.persistence.db.numHelperThreads={{ ORG_ORCID_PERSISTENCE_DB_NUM_HELPER_THREADS }}
+org.orcid.persistence.db.password={{ ORG_ORCID_PERSISTENCE_DB_PASSWORD }}
+org.orcid.persistence.db.preferredTestQuery={{ ORG_ORCID_PERSISTENCE_DB_PREFERRED_TEST_QUERY }}
+org.orcid.persistence.db.showSql={{ ORG_ORCID_PERSISTENCE_DB_SHOW_SQL }}
+org.orcid.persistence.db.testConnectionOnCheckin={{ ORG_ORCID_PERSISTENCE_DB_TEST_CONNECTION_ON_CHECKIN }}
+org.orcid.persistence.db.url={{ ORG_ORCID_PERSISTENCE_DB_URL }}
+org.orcid.persistence.db.username={{ ORG_ORCID_PERSISTENCE_DB_USERNAME }}
+
+# Read only database
+org.orcid.persistence.db.readonly.class={{ ORG_ORCID_PERSISTENCE_DB_READONLY_CLASS }}
+org.orcid.persistence.db.readonly.dataSource={{ ORG_ORCID_PERSISTENCE_DB_READONLY_DATA_SOURCE }}
+org.orcid.persistence.db.readonly.dialect={{ ORG_ORCID_PERSISTENCE_DB_READONLY_DIALECT }}
+org.orcid.persistence.db.readonly.generateDdl={{ ORG_ORCID_PERSISTENCE_DB_READONLY_GENERATE_DDL }}
+org.orcid.persistence.db.readonly.idleConnectionTestPeriod={{ ORG_ORCID_PERSISTENCE_DB_READONLY_IDLE_CONNECTION_TEST_PERIOD }}
+org.orcid.persistence.db.readonly.initialPoolSize={{ ORG_ORCID_PERSISTENCE_DB_READONLY_INITIAL_POOL_SIZE }}
+org.orcid.persistence.db.readonly.maxPoolSize={{ ORG_ORCID_PERSISTENCE_DB_READONLY_MAX_POOL_SIZE }}
+org.orcid.persistence.db.readonly.maxStatements={{ ORG_ORCID_PERSISTENCE_DB_READONLY_MAX_STATEMENTS }}
+org.orcid.persistence.db.readonly.minPoolSize={{ ORG_ORCID_PERSISTENCE_DB_READONLY_MIN_POOL_SIZE }}
+org.orcid.persistence.db.readonly.password={{ ORG_ORCID_PERSISTENCE_DB_READONLY_PASSWORD }}
+org.orcid.persistence.db.readonly.preferredTestQuery={{ ORG_ORCID_PERSISTENCE_DB_READONLY_PREFERRED_TEST_QUERY }}
+org.orcid.persistence.db.readonly.showSql={{ ORG_ORCID_PERSISTENCE_DB_READONLY_SHOW_SQL }}
+org.orcid.persistence.db.readonly.testConnectionOnCheckin={{ ORG_ORCID_PERSISTENCE_DB_READONLY_TEST_CONNECTION_ON_CHECKIN }}
+org.orcid.persistence.db.readonly.url={{ ORG_ORCID_PERSISTENCE_DB_READONLY_URL }}
+org.orcid.persistence.db.readonly.username={{ ORG_ORCID_PERSISTENCE_DB_READONLY_USERNAME }}
+
+# Features database
+org.orcid.persistence.togglz.cache.ttl={{ ORG_ORCID_PERSISTENCE_TOGGLZ_CACHE_TTL }}
+org.orcid.persistence.togglz.db.class={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_CLASS }}
+org.orcid.persistence.togglz.db.idleConnectionTestPeriod={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_IDLE_CONNECTION_TEST_PERIOD }}
+org.orcid.persistence.togglz.db.initialPoolSize={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_INITIAL_POOL_SIZE }}
+org.orcid.persistence.togglz.db.maxPoolSize={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_MAX_POOL_SIZE }}
+org.orcid.persistence.togglz.db.maxStatements={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_MAX_STATEMENTS }}
+org.orcid.persistence.togglz.db.minPoolSize={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_MIN_POOL_SIZE }}
+org.orcid.persistence.togglz.db.numHelperThreads={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_NUM_HELPER_THREADS }}
+org.orcid.persistence.togglz.db.password={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_PASSWORD }}
+org.orcid.persistence.togglz.db.preferredTestQuery={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_PREFERRED_TEST_QUERY }}
+org.orcid.persistence.togglz.db.testConnectionOnCheckin={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_TEST_CONNECTION_ON_CHECKIN }}
+org.orcid.persistence.togglz.db.url={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_URL }}
+org.orcid.persistence.togglz.db.username={{ ORG_ORCID_PERSISTENCE_TOGGLZ_DB_USERNAME }}
+
+################
+#     CORE     #
+################
+
+# ORCID URI's, no trailing slashes, please
+org.orcid.core.aboutUri={{ ORG_ORCID_CORE_ABOUT_URI }}
+org.orcid.core.apiBaseUri={{ ORG_ORCID_CORE_API_BASE_URI }}
+org.orcid.core.baseUri={{ ORG_ORCID_CORE_BASE_URI }}
+org.orcid.core.internalApiBaseUri={{ ORG_ORCID_CORE_INTERNAL_API_BASE_URI }}
+org.orcid.core.pubBaseUri={{ ORG_ORCID_CORE_PUB_BASE_URI }}
+
+# Used to encrypt some user data before sending it to the database
+org.orcid.core.passPhraseForExternalEncryption={{ ORG_ORCID_CORE_PASS_PHRASE_FOR_EXTERNAL_ENCRYPTION }}
+org.orcid.core.passPhraseForInternalEncryption={{ ORG_ORCID_CORE_PASS_PHRASE_FOR_INTERNAL_ENCRYPTION }}
+
+# Unclaimed records wait period
+org.orcid.core.claimWaitPeriodDays={{ ORG_ORCID_CORE_CLAIM_WAIT_PERIOD_DAYS }}
+
+# Mailgun
+com.mailgun.alt.apiUrl={{ COM_MAILGUN_ALT_API_URL }}
+com.mailgun.alt.notify.apiUrl={{ COM_MAILGUN_ALT_NOTIFY_API_URL }}
+com.mailgun.alt.verify.apiUrl={{ COM_MAILGUN_ALT_VERIFY_API_URL }}
+com.mailgun.apiKey={{ COM_MAILGUN_API_KEY }}
+com.mailgun.apiUrl={{ COM_MAILGUN_API_URL }}
+com.mailgun.marketing.apiUrl={{ COM_MAILGUN_MARKETING_API_URL }}
+com.mailgun.notify.apiUrl={{ COM_MAILGUN_NOTIFY_API_URL }}
+com.mailgun.regexFilter={{ COM_MAILGUN_REGEX_FILTER }}
+com.mailgun.testmode={{ COM_MAILGUN_TESTMODE }}
+com.mailgun.verify.apiUrl={{ COM_MAILGUN_VERIFY_API_URL }}
+
+# Oauth
+org.orcid.core.oauth.auth_code.expiration_minutes={{ ORG_ORCID_CORE_OAUTH_AUTH_CODE_EXPIRATION_MINUTES }}
+org.orcid.core.oauth.supportRefreshToken={{ ORG_ORCID_CORE_OAUTH_SUPPORT_REFRESH_TOKEN }}
+org.orcid.core.token.implicit_validity_seconds={{ ORG_ORCID_CORE_TOKEN_IMPLICIT_VALIDITY_SECONDS }}
+org.orcid.core.token.read_validity_seconds={{ ORG_ORCID_CORE_TOKEN_READ_VALIDITY_SECONDS }}
+org.orcid.core.token.write_validity_seconds={{ ORG_ORCID_CORE_TOKEN_WRITE_VALIDITY_SECONDS }}
+
+# OpenID connect JWKS location.  Use filesystem location for prod, or an escaped JSON string in jwks_test_key for dev.
+# Generate a key here: https://mkjwk.org/
+org.orcid.openid.jwksKeyName={{ ORG_ORCID_OPENID_JWKS_KEY_NAME }}
+org.orcid.openid.jwksLocation={{ ORG_ORCID_OPENID_JWKS_LOCATION }}
+org.orcid.openid.jwksTestKey={{ ORG_ORCID_OPENID_JWKS_TEST_KEY }}
+
+# node number and total number of nodes.
+org.orcid.core.node={{ ORG_ORCID_CORE_NODE }}
+org.orcid.core.numberOfNodes={{ ORG_ORCID_CORE_NUMBER_OF_NODES }}
+
+# CORS allowed domains
+org.orcid.security.cors.allowed_domains={{ ORG_ORCID_SECURITY_CORS_ALLOWED_DOMAINS }}
+
+# Messaging
+# Replace with tcp://domain.com:61616 in live to point at ActiveMQ location
+org.orcid.messaging.brokerURL={{ ORG_ORCID_MESSAGING_BROKER_URL }}
+org.orcid.persistence.messaging.enabled={{ ORG_ORCID_PERSISTENCE_MESSAGING_ENABLED }}
+
+# Slack
+org.orcid.core.slack.channel={{ ORG_ORCID_CORE_SLACK_CHANNEL }}
+org.orcid.core.slack.webhookUrl={{ ORG_ORCID_CORE_SLACK_WEBHOOK_URL }}
+
+# Crossref finder
+org.orcid.core.finder.crossref.clientid={{ ORG_ORCID_CORE_FINDER_CROSSREF_CLIENTID }}
+org.orcid.core.finder.crossref.enabled={{ ORG_ORCID_CORE_FINDER_CROSSREF_ENABLED }}
+org.orcid.core.finder.crossref.endpoint={{ ORG_ORCID_CORE_FINDER_CROSSREF_ENDPOINT }}
+
+# Datacite finder
+org.orcid.core.finder.datacite.clientid={{ ORG_ORCID_CORE_FINDER_DATACITE_CLIENTID }}
+org.orcid.core.finder.datacite.enabled={{ ORG_ORCID_CORE_FINDER_DATACITE_ENABLED }}
+org.orcid.core.finder.datacite.endpoint={{ ORG_ORCID_CORE_FINDER_DATACITE_ENDPOINT }}
+
+# Bulk read max
+org.orcid.core.works.bulk.read.max={{ ORG_ORCID_CORE_WORKS_BULK_READ_MAX }}
+
+# Bulk write max
+org.orcid.core.works.bulk.write.max={{ ORG_ORCID_CORE_WORKS_BULK_WRITE_MAX }}
+
+# Client details id for issn sources
+org.orcid.core.issn.source={{ ORG_ORCID_CORE_ISSN_SOURCE }}
+
+# Orgs grouping
+org.orcid.core.orgs.query={{ ORG_ORCID_CORE_ORGS_QUERY }}
+org.orcid.core.orgsToGroup.query={{ ORG_ORCID_CORE_ORGS_TO_GROUP_QUERY }}
+
+# Solr
+org.orcid.persistence.solr.read.only.url={{ ORG_ORCID_PERSISTENCE_SOLR_READ_ONLY_URL }}
+
+# Control where liquibase runs
+org.orcid.persistence.liquibase.enabled={{ ORG_ORCID_PERSISTENCE_LIQUIBASE_ENABLED }}
+
+################
+#      UI      #
+################
+
+# General
+org.orcid.frontend.web.domainsAllowingRobotsAsWhiteSpaceSeparatedList={{ ORG_ORCID_FRONTEND_WEB_DOMAINS_ALLOWING_ROBOTS_AS_WHITE_SPACE_SEPARATED_LIST }}
+
+# Shibboleth
+org.orcid.shibboleth.enabled={{ ORG_ORCID_SHIBBOLETH_ENABLED }}
+
+# Recaptcha
+org.orcid.recaptcha.secret={{ ORG_ORCID_RECAPTCHA_SECRET }}
+org.orcid.recaptcha.verify_url={{ ORG_ORCID_RECAPTCHA_VERIFY_URL }}
+org.orcid.recaptcha.web_site_key={{ ORG_ORCID_RECAPTCHA_WEB_SITE_KEY }}
+
+# spring-social
+org.orcid.social.fb.key={{ ORG_ORCID_SOCIAL_FB_KEY }}
+org.orcid.social.fb.redirectUri={{ ORG_ORCID_SOCIAL_FB_REDIRECT_URI }}
+org.orcid.social.fb.secret={{ ORG_ORCID_SOCIAL_FB_SECRET }}
+
+# Signing in via Google
+org.orcid.social.gg.key={{ ORG_ORCID_SOCIAL_GG_KEY }}
+org.orcid.social.gg.secret={{ ORG_ORCID_SOCIAL_GG_SECRET }}
+
+# Salesforce integration
+org.orcid.microservice.gateway.url={{ ORG_ORCID_MICROSERVICE_GATEWAY_URL }}
+org.orcid.microservice.salesforce.token={{ ORG_ORCID_MICROSERVICE_SALESFORCE_TOKEN }}
+
+# Account lockout
+org.orcid.core.profile.lockout.threshhold={{ ORG_ORCID_CORE_PROFILE_LOCKOUT_THRESHHOLD }}
+org.orcid.core.profile.lockout.window={{ ORG_ORCID_CORE_PROFILE_LOCKOUT_WINDOW }}
+
+# Redis
+org.orcid.core.utils.cache.redis.host={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_HOST }}
+org.orcid.core.utils.cache.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_PORT }}
+org.orcid.core.utils.cache.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_PASSWORD }}
+org.orcid.core.utils.cache.redis.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_ENABLED }}
+org.orcid.core.utils.cache.redis.summary.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_SUMMARY_ENABLED }}
+org.orcid.core.utils.cache.redis.summary.ttl={{ ORG_ORCID_CORE_UTILS_CACHE_REDIS_SUMMARY_TTL }}
+
+# Maintenance message
+org.orcid.frontend.web.maintenanceHeaderUrl={{ ORG_ORCID_FRONTEND_WEB_MAINTENANCE_HEADER_URL }}
+
+
+#Enable panoply deleted items tracking
+org.orcid.persistence.panoply.cleanup.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_CLEANUP_PRODUCTION }}
+# Panoply redshift database 
+org.orcid.core.utils.panoply.driver={{ ORG_ORCID_CORE_UTILS_PANOPLY_DRIVER }}
+org.orcid.core.utils.panoply.maxPoolSize={{ ORG_ORCID_CORE_UTILS_PANOPLY_MAX_POOL_SIZE }}
+org.orcid.core.utils.panoply.password={{ ORG_ORCID_CORE_UTILS_PANOPLY_PASSWORD }}
+org.orcid.core.utils.panoply.idleConnectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_IDLE_CONNECTION_TIMEOUT }}
+org.orcid.core.utils.panoply.connectionTimeout={{ ORG_ORCID_CORE_UTILS_PANOPLY_CONNECTION_TIMEOUT }}
+#jdbc:redshift://<host>:<port>/<database>
+org.orcid.core.utils.panoply.jdbcUrl={{ ORG_ORCID_CORE_UTILS_PANOPLY_JDBC_URL }}
+org.orcid.core.utils.panoply.username={{ ORG_ORCID_CORE_UTILS_PANOPLY_USERNAME }}
+
+#Enable papi rate exceeded tracking in panoply
+org.orcid.persistence.panoply.papiExceededRate.production={{ ORG_ORCID_PERSISTENCE_PANOPLY_PAPI_EXCEEDED_RATE_PRODUCTION }}
+
+# Papi limits 
+org.orcid.papi.rate.limit.anonymous.requests={{ ORG_ORCID_PAPI_RATE_LIMIT_ANONYMOUS_REQUESTS }}
+org.orcid.papi.rate.limit.known.requests={{ ORG_ORCID_PAPI_RATE_LIMIT_KNOWN_REQUESTS }}
+org.orcid.papi.rate.limit.enabled={{ ORG_ORCID_PAPI_RATE_LIMIT_ENABLED }}
+
+# CSRF Cookie settings
+org.orcid.core.csrf.domain={{ ORG_ORCID_CORE_CSRF_DOMAIN }}
+
+# Redis papi limits
+org.orcid.core.utils.cache.papi.redis.host={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_HOST }}
+org.orcid.core.utils.cache.papi.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_PORT }}
+org.orcid.core.utils.cache.papi.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_PASSWORD }}
+org.orcid.core.utils.cache.papi.redis.enabled={{ ORG_ORCID_CORE_UTILS_CACHE_PAPI_REDIS_ENABLED }}
+
+# This is passed to the admin registry to tell it what the /registry/ domain name is for password resets
+org.orcid.admin.registry.url={{ ORG_ORCID_ADMIN_REGISTRY_URL }}
+
+# Redis to hold session data
+org.orcid.core.session.cookie.domain={{ ORG_ORCID_CORE_SESSION_COOKIE_DOMAIN }}
+org.orcid.core.utils.cache.session.redis.host={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_HOST }}
+org.orcid.core.utils.cache.session.redis.port={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_PORT }}
+org.orcid.core.utils.cache.session.redis.password={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_PASSWORD }}
+org.orcid.core.utils.cache.session.redis.pool.idle.max={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_IDLE_MAX }}
+org.orcid.core.utils.cache.session.redis.pool.max={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_MAX }}
+org.orcid.core.utils.cache.session.redis.pool.wait.millis={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_POOL_WAIT_MILLIS }}
+org.orcid.core.utils.cache.session.redis.connection_timeout_millis={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_CONNECTION_TIMEOUT_MILLIS }}
+org.orcid.core.utils.cache.session.redis.session.timeout={{ ORG_ORCID_CORE_UTILS_CACHE_SESSION_REDIS_SESSION_TIMEOUT }}

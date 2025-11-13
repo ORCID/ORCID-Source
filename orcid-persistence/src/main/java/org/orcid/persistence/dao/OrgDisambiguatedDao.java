@@ -16,6 +16,8 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
     List<OrgDisambiguatedEntity> getOrgs(String searchTerm, int firstResult, int maxResults);
 
     List<OrgDisambiguatedEntity> getChunk(int firstResult, int maxResults);
+    
+    List<OrgDisambiguatedEntity> findBySourceType(String sourceType,int firstResult, int maxResults);
 
     OrgDisambiguatedEntity findBySourceIdAndSourceType(String sourceId, String sourceType);
 
@@ -25,7 +27,7 @@ public interface OrgDisambiguatedDao extends GenericDao<OrgDisambiguatedEntity, 
 
     List<OrgDisambiguatedEntity> findOrgsToGroup(int firstResult, int maxResult);
     
-    List<OrgDisambiguatedEntity> findOrgsPendingIndexing(int firstResult, int maxResult);
+    List<Long> findOrgsPendingIndexing(int maxResult);
 
     void updateIndexingStatus(Long orgDisambiguatedId, IndexingStatus indexingStatus);
 

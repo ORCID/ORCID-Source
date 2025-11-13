@@ -36,28 +36,14 @@
                                     {{'${springMacroRequestContext.getMessage("workspace.notifications")}' }} <span *ngIf="getUnreadCount > 0">({{getUnreadCount}})</span>
                                 </a>
                                 <#--  ACCOUNT SETTINGS  -->
-                                <@orcid.checkFeatureStatus featureName='RESTRICTED_DELEGATORS'>
                                  <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') "  href="{{getBaseUri()}}/account">
                                     <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
-                                </@orcid.checkFeatureStatus>
-                                <@orcid.checkFeatureStatus featureName='RESTRICTED_DELEGATORS' enabled=false>
-                                 <a class="top-menu-item"  href="{{getBaseUri()}}/account">
-                                    <img src="{{assetsPath + '/img/svg/baseline-settings-20px.svg'}}">
-                                    {{'${springMacroRequestContext.getMessage("public-layout.account_setting")?replace("<br />", " ")?replace("'", "\\'")}' }}
-                                 </a>
-                                </@orcid.checkFeatureStatus>
-                    
                                 <#--  TRUSTED PARTIES -->
                                 <a class="top-menu-item" href="{{getBaseUri()}}/trusted-parties">
                                     <img src="{{assetsPath + '/img/svg/vpn_key_FILL1_wght400_GRAD0_opsz20.svg'}}">
                                     {{'${springMacroRequestContext.getMessage("public-layout.trusted_individuals")?replace("<br />", " ")?replace("'", "\\'")}' }}
-                                </a>
-                                <#--  (GROUP) DEVELOPER TOOLS  -->
-                                <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']=='true'" href="{{getBaseUri()}}/group/developer-tools">
-                                    <img src="{{assetsPath + '/img/svg/baseline-code-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("workspace.developer_tools")}' }}
                                 </a>
                                  <#--  DEVELOPER TOOLS  -->
                                 <a class="top-menu-item" *ngIf="(userInfo['IN_DELEGATION_MODE'] == 'false' || userInfo['DELEGATED_BY_ADMIN'] == 'true') && userInfo['MEMBER_MENU']!='true'" href="{{getBaseUri()}}/developer-tools">
@@ -68,11 +54,6 @@
                                 <a  class="top-menu-item"   *ngIf="userInfo['SELF_SERVICE_MENU']"  href="{{getBaseUri()}}/self-service">
                                     <img src="{{assetsPath + '/img/svg/baseline-build-24px.svg'}}"> 
                                     {{'${springMacroRequestContext.getMessage("workspace.self_service")?replace("<br />", " ")?replace("'", "\\'")}'  }}
-                                </a>
-                                <#--  MANAGE MEMBERS  -->
-                                <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/manage-members" >
-                                    <img src="{{assetsPath + '/img/svg/baseline-group-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("admin.members.workspace_link")?replace("<br />", " ")?replace("'", "\\'")}' }}
                                 </a>
                                 <#--  ADMIN ACTIONS  -->
                                 <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/admin-actions">

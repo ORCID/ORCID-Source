@@ -1,16 +1,10 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
+
+import java.util.Objects;
 
 /**
  * @author Declan Newman (declan) Date: 12/03/2012
@@ -19,35 +13,23 @@ import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 @Table(name = "client_scope")
 @IdClass(ClientScopePk.class)
 public class ClientScopeEntity extends BaseEntity<ClientScopePk> {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
-    public ClientScopeEntity() {
-    }
-
-    public ClientScopeEntity(String scopeType) {
-        this.scopeType = scopeType;
-    }
-
+    private String clientId;
     private String scopeType;
-    private ClientDetailsEntity clientDetailsEntity;
 
-    /**
-     * As this uses a composite key this is ignored always returns null
-     * 
-     * @return always returns null
-     */
-    @Override
-    @Transient
-    public ClientScopePk getId() {
-        return null;
+    @Id
+    @Column(name = "client_details_id")
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Id
-    @Column(name = "scope_type", length = 70)
+    @Column(name = "scope_type")
     public String getScopeType() {
         return scopeType;
     }
@@ -56,39 +38,27 @@ public class ClientScopeEntity extends BaseEntity<ClientScopePk> {
         this.scopeType = scopeType;
     }
 
-    @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_details_id")
-    public ClientDetailsEntity getClientDetailsEntity() {
-        return clientDetailsEntity;
-    }
-
-    public void setClientDetailsEntity(ClientDetailsEntity clientDetailsEntity) {
-        this.clientDetailsEntity = clientDetailsEntity;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ClientScopeEntity that = (ClientScopeEntity) o;
+        return Objects.equals(clientId, that.clientId) && Objects.equals(scopeType, that.scopeType);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((scopeType == null) ? 0 : scopeType.hashCode());
-        return result;
+        return Objects.hash(clientId, scopeType);
     }
 
+    /**
+     * As this uses a composite key this is ignored. Always returns null
+     *
+     * @return always null
+     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ClientScopeEntity other = (ClientScopeEntity) obj;
-        if (scopeType == null) {
-            if (other.scopeType != null)
-                return false;
-        } else if (!scopeType.equals(other.scopeType))
-            return false;
-        return true;
-    }        
+    @Transient
+    public ClientScopePk getId() {
+        return null;
+    }
 }

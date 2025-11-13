@@ -7,12 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.hibernate.type.BigIntegerType;
-import org.hibernate.type.DateType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -29,6 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 
 public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements WorkDao {
+
+    private final String WORKS_BY_ORCID_WITH_CONTRIBUTORS = "SELECT "
+            + " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, "
+            + " w.publication_year, w.publication_month, w.publication_day, w.date_created, "
+            + " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," + " w.assertion_origin_source_id, w.assertion_origin_client_source_id, "
+            + " w.top_contributors_json as contributors, w.featured_display_index" + " FROM work w" + " WHERE orcid=:orcid";
+
 
     public WorkDaoImpl() {
         super(WorkEntity.class);
@@ -268,6 +271,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return (result != null && result > 0);
     }
 
+    @Override
+    public boolean isPublic(String orcid, List<Long> ids) {
+        Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC' AND work_id IN :ids");
+        query.setParameter("orcid", orcid);
+        query.setParameter("ids", ids);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return result.equals((long) ids.size());
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForClientSourceCorrection(int limit, List<String> nonPublicClientIds) {
@@ -368,25 +380,12 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     @Override
-    public List<Object[]> getWorksByOrcid(String orcid, boolean topContributorsTogglz) {
-        String contributorsSQL = null;
-        if (topContributorsTogglz) {
-            contributorsSQL = " w.top_contributors_json as contributors";
-        } else {
-            contributorsSQL = " (SELECT to_json(array_agg(row_to_json(t))) FROM (SELECT json_array_elements(json_extract_path(contributors_json, 'contributor')) AS contributor FROM work WHERE work_id=w.work_id limit 100) t) as contributors ";
+    public List<Object[]> getWorksByOrcid(String orcid, boolean featuredOnly) {
+        String queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS;
+        if (featuredOnly) {
+            queryText = WORKS_BY_ORCID_WITH_CONTRIBUTORS + " AND featured_display_index <> 0";
         }
-
-        String sqlString =
-                "SELECT " +
-                        " w.work_id, w.work_type, w.title, w.journal_title, w.external_ids_json, " +
-                        " w.publication_year, w.publication_month, w.publication_day, w.date_created, " +
-                        " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," +
-                        " w.assertion_origin_source_id, w.assertion_origin_client_source_id, " +
-                        contributorsSQL +
-                        " FROM work w" +
-                        " WHERE orcid=:orcid";
-
-        Query query = entityManager.createNativeQuery(sqlString);
+        Query query = entityManager.createNativeQuery(queryText);
         query.setParameter("orcid", orcid)
                 .unwrap(org.hibernate.query.NativeQuery.class)
                 .addScalar("work_id", BigIntegerType.INSTANCE)
@@ -405,7 +404,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
                 .addScalar("date_created", TimestampType.INSTANCE)
                 .addScalar("last_modified", TimestampType.INSTANCE)
-                .addScalar("contributors", StringType.INSTANCE);
+                .addScalar("contributors", StringType.INSTANCE)
+                .addScalar("featured_display_index", IntegerType.INSTANCE);
         return query.getResultList();
     }
 
@@ -423,6 +423,17 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .addScalar("work_id", BigIntegerType.INSTANCE)
                 .addScalar("contributors_json", StringType.INSTANCE);
         return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public boolean updateFeaturedDisplayIndex(String orcid, Long id, Integer featuredDisplayIndex) {
+        Query query = entityManager.createNativeQuery("UPDATE work SET featured_display_index = :featuredDisplayIndex, last_modified=now() where work_id = :id and orcid = :orcid");
+        query.setParameter("featuredDisplayIndex", featuredDisplayIndex);
+        query.setParameter("id", id);
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
     }
 }
 

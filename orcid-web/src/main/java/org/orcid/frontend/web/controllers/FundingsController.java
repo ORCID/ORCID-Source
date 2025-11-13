@@ -6,11 +6,14 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +27,9 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.v3.ContributorUtils;
+import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
+import org.orcid.frontend.web.pagination.WorksPaginator;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.common.FundingType;
 import org.orcid.jaxb.model.common.Relationship;
@@ -196,7 +201,12 @@ public class FundingsController extends BaseWorkspaceController {
             fundingGroups.add(fundingGroup);
         }
 
-        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
+        if ("source".equals(sort)) {
+            fundingGroups = new FundingComparators().sortBySource(fundingGroups, sortAsc, getEffectiveUserOrcid());
+        } else {
+            fundingGroups.sort(new FundingComparators().getInstance(sort, sortAsc, getEffectiveUserOrcid()));
+        }
+
         return fundingGroups;
     }
     

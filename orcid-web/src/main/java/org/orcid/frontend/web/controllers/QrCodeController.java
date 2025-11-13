@@ -20,13 +20,13 @@ public class QrCodeController extends BaseController {
 
     @RequestMapping(value = "/qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody byte[] generateQrCode() {
-        String orcid = getCurrentUser().getOrcid();
+        String orcid = getCurrentUser().getUsername();
         return QRCode.from(getBaseUri() + "/" + orcid).stream().toByteArray();
     }
     
     @RequestMapping(value = "/ORCID.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody byte[] qrCodeForDownload() {
-        String orcid = getCurrentUser().getOrcid();
+        String orcid = getCurrentUser().getUsername();
         return QRCode.from(getBaseUri() + "/" + orcid).withSize(500, 500).stream().toByteArray();
     }
 

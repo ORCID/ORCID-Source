@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
  */
 public class SlackManagerImpl implements SlackManager {
 
-    @Value("${org.orcid.core.slack.webhookUrl:}")
+    @Value("${org.orcid.core.slack.webhookUrl}")
     private String webhookUrl;
 
     @Value("${org.orcid.core.slack.channel}")
@@ -56,12 +56,19 @@ public class SlackManagerImpl implements SlackManager {
     @Override
     public void sendAlert(String message, String customChannel, String from) {
         if (StringUtils.isNotBlank(webhookUrl)) {
+            sendAlert(message,customChannel,from,webhookUrl);
+        }
+    }
+    
+    @Override
+    public void sendAlert(String message, String customChannel, String from, String webhookUrl) {
+        if (StringUtils.isNotBlank(webhookUrl)) {
             Map<String, String> bodyMap = new HashMap<>();
             bodyMap.put("text", message);
             bodyMap.put("channel", customChannel);
             bodyMap.put("username", from);
             try {
-                send(mapper.writeValueAsString(bodyMap));
+                send(mapper.writeValueAsString(bodyMap), webhookUrl);
             } catch (JsonProcessingException e) {
                 LOGGER.error("Unable to transform map into string: " + bodyMap.toString());
                 throw new RuntimeException(e);
@@ -70,6 +77,14 @@ public class SlackManagerImpl implements SlackManager {
     }
     
     private void send(String bodyJson) {
+        JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, new MediaType(), bodyJson, String.class, String.class);
+        int status = response.getStatus();
+        if (status != 200) {
+            LOGGER.warn("Unable to send message to Slack: \n{}", bodyJson);
+        }
+    }
+    
+    private void send(String bodyJson, String webhookUrl) {
         JerseyClientResponse<String, String> response = jerseyClientHelper.executePostRequest(webhookUrl, new MediaType(), bodyJson, String.class, String.class);
         int status = response.getStatus();
         if (status != 200) {

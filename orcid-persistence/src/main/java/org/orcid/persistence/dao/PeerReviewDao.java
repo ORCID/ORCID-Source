@@ -43,11 +43,13 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
 
     List<Object[]> getPeerReviewsByOrcid(String orcid, boolean justPublic);
 
-    List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId);
+    List<PeerReviewEntity> getPeerReviewsByOrcidAndGroupId(String orcid, String groupId, boolean justPublic);
 
     boolean updateToMaxDisplay(String orcid, Long peerReviewId);
     
     boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, String visibility);
+
+    boolean updateVisibilityByGroupId(String orcid, String groupId, String visibility);
     
     /**
      * Returns a list of  ids of peer reviews that still have old external identifiers

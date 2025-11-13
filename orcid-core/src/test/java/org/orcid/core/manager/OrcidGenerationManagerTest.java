@@ -32,30 +32,7 @@ public class OrcidGenerationManagerTest extends BaseTest {
     private static final Logger logger = Logger.getLogger(OrcidGenerationManagerTest.class);
 
     @Test    
-    public void testCreateNewOrcidV1() {
-        togglzRule.disable(Features.ENABLE_NEW_IDS);
-        Set<String> orcids = new HashSet<String>();
-        for (int i = 0; i < 20000; i++) {
-            String orcid = orcidGenerationManager.createNewOrcid();
-
-            assertNotNull("ORCID is null", orcid);
-            assertTrue("ORCID is in wrong format " + orcid, orcid.matches("(\\d{4}-){3}\\d{3}[\\dX]"));
-            assertTrue("ORCID has invalid check character " + orcid, OrcidCheckDigitGenerator.validate(orcid));
-            assertFalse("ORCID has already been used " + orcid + " number of elements cached: " + orcids.size(), orcids.contains(orcid));
-
-            String baseDigits = orcid.substring(0, orcid.length() - 1).replace("-", "");
-            long numericOrcid = Long.valueOf(baseDigits);
-            assertTrue("Numeric value of ORCID is too low " + orcid, numericOrcid >= OrcidGenerationManager.ORCID_BASE_MIN);
-            assertTrue("Numeric value of ORCID is too high " + orcid, numericOrcid <= OrcidGenerationManager.ORCID_BASE_MAX);
-
-            orcids.add(orcid);
-            logger.info("Got ORCID = " + orcid);
-        }
-    }
-
-    @Test    
     public void testCreateNewOrcidV2() {
-        togglzRule.enable(Features.ENABLE_NEW_IDS);
         Set<String> orcids = new HashSet<String>();
         for (int i = 0; i < 1000000; i++) {            
             String orcid = orcidGenerationManager.createNewOrcid();

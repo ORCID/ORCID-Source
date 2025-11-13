@@ -29,8 +29,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
+import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -63,12 +63,14 @@ import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.core.utils.DateUtils;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
@@ -109,17 +111,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
+    @Resource
+    private OrcidUserDetailsService orcidUserDetailsService;
+
     @Override
     public boolean isAdmin() {
-        Authentication authentication = getAuthentication();
-        if (authentication != null) {
-            Object details = authentication.getDetails();
-            if (details instanceof OrcidProfileUserDetails) {
-                OrcidProfileUserDetails userDetails = (OrcidProfileUserDetails) details;
-                return userDetails.getAuthorities().contains(OrcidWebRole.ROLE_ADMIN);
-            }
-        }
-        return false;
+        return orcidUserDetailsService.isAdmin();
     }
 
     @Override
@@ -127,13 +124,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
     }
 
-    private Authentication getAuthentication() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null && context.getAuthentication() != null) {
-            return context.getAuthentication();
-        }
-        return null;
-    }
+
 
     @Override
     public String getClientIdFromAPIRequest() {
@@ -202,15 +193,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         // Check if the user record is locked
         if (!profile.isAccountNonLocked()) {
-            LockedException lockedException = new LockedException();
+            LockedException lockedException = new LockedException(orcid + " is locked");
             lockedException.setOrcid(profile.getId());
             throw lockedException;
         }
 
         // Check if the user record is deactivated
         if (profile.getDeactivationDate() != null) {
-            DeactivatedException exception = new DeactivatedException();
-            exception.setOrcid(orcid);
+            DeactivatedException exception = new DeactivatedException(orcid + " is deactivated");
+            exception.setOrcid(orcid);            
             throw exception;
         }
     }

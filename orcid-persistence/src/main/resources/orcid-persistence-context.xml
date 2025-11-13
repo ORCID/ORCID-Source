@@ -26,18 +26,6 @@
     <bean id="applicationContextProvder"
                         class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
-	<!-- Profile last modified aspect -->
-	<bean id="profileLastModifiedAspect" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileLastModifiedDao" ref="profileLastModifiedDao" />
-		<property name="enabled" value="true" />
-	</bean>
-
-	<bean id="profileLastModifiedAspectReadOnly" class="org.orcid.persistence.aop.ProfileLastModifiedAspect">
-		<property name="profileLastModifiedDao" ref="profileLastModifiedDaoReadOnly" />
-		<property name="enabled" value="false" />
-		<property name="name" value="read_only" />
-	</bean>
-
 	<!-- Person DAO's -->
 	<bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
 	
@@ -93,8 +81,20 @@
 	
 	<bean id="emailDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDaoImpl">
 		<property name="entityManager" ref="entityManagerReadOnly" />
-	</bean>    		
-    
+	</bean>
+
+    <bean id="profileEmailDomainDao" class="org.orcid.persistence.dao.impl.ProfileEmailDomainDaoImpl" />
+
+    <bean id="profileEmailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileEmailDomainDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+
+    <bean id="profileInterstitialFlagDao" class="org.orcid.persistence.dao.impl.ProfileInterstitialFlagDaoImpl" />
+
+    <bean id="profileInterstitialFlagDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileInterstitialFlagDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
+
     <bean id="researcherUrlDao" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl" />
     
     <bean id="researcherUrlDaoReadOnly" class="org.orcid.persistence.dao.impl.ResearcherUrlDaoImpl">
@@ -207,9 +207,7 @@
         <constructor-arg value="org.orcid.persistence.jpa.entities.CountryIsoEntity" />
     </bean>
     
-    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.ProfileEventEntity" />
-    </bean>    
+    <bean id="profileEventDao" class="org.orcid.persistence.dao.impl.ProfileEventDaoImpl" />
 
     <bean id="emailEventDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.EmailEventEntity" />
@@ -285,10 +283,6 @@
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
     
-    <bean id="invalidIssnGroupIdRecordDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.InvalidIssnGroupIdRecordEntity" />
-    </bean>
-    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
@@ -326,6 +320,7 @@
     <bean id="liquibase" class="liquibase.integration.spring.SpringLiquibase">
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
         <property name="changeLog" value="classpath:db-master.xml" />
+        <property name="shouldRun" value="\${org.orcid.persistence.liquibase.enabled:true}" />
     </bean>
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
@@ -355,6 +350,7 @@
     </bean>
 
 	<bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.dataSourceName:orcid}" />
         <property name="driverClass" value="\${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.url}" />
         <property name="user" value="\${org.orcid.persistence.db.username}" />
@@ -366,11 +362,13 @@
         <property name="maxStatements" value="\${org.orcid.persistence.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.db.numHelperThreads:10}"/>
     </bean>
     
     <bean id="pooledDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.db.readonly.dataSourceName:orcidreadonly}" />
         <property name="driverClass" value="\${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.db.readonly.url}" />
         <property name="user" value="\${org.orcid.persistence.db.readonly.username}" />
@@ -382,6 +380,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.db.readonly.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.db.readonly.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.db.readonly.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.db.readonly.numHelperThreads:10}"/>
     </bean>
@@ -402,6 +401,7 @@
     
     <!-- Features -->
     <bean id="featuresDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="dataSourceName" value="\${org.orcid.persistence.togglz.db.dataSourceName:features}" />
         <property name="driverClass" value="\${org.orcid.persistence.togglz.db.class}" />
         <property name="jdbcUrl" value="\${org.orcid.persistence.togglz.db.url}" />
         <property name="user" value="\${org.orcid.persistence.togglz.db.username}" />
@@ -412,6 +412,7 @@
         <property name="maxStatements" value="\${org.orcid.persistence.togglz.db.maxStatements}" />
         <property name="idleConnectionTestPeriod" value="\${org.orcid.persistence.togglz.db.idleConnectionTestPeriod}" />
         <property name="testConnectionOnCheckin" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="\${org.orcid.persistence.togglz.db.testConnectionOnCheckout:false}" />
         <property name="preferredTestQuery" value="\${org.orcid.persistence.togglz.db.preferredTestQuery}" />
         <property name="numHelperThreads" value="\${org.orcid.persistence.togglz.db.numHelperThreads:10}"/>
     </bean>        
@@ -449,18 +450,52 @@
     </bean>
     
     <util:properties id="notification_queries" location="classpath:queries/notifications.xml" />
-	<bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
-	<bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
+    <bean id="researchResourceDao" class="org.orcid.persistence.dao.impl.ResearchResourceDaoImpl"/>
+    <bean id="findMyStuffHistoryDao" class="org.orcid.persistence.dao.impl.FindMyStuffHistoryDaoImpl"/>
 	
-	<bean id="spamDao" class="org.orcid.persistence.dao.impl.SpamDaoImpl" />
+    <bean id="spamDao" class="org.orcid.persistence.dao.impl.SpamDaoImpl" />
 
     <bean id="spamDaoReadOnly" class="org.orcid.persistence.dao.impl.SpamDaoImpl">
         <property name="entityManager" ref="entityManagerReadOnly" />
     </bean>
+
+    <bean id="eventDao" class="org.orcid.persistence.dao.impl.EventDaoImpl" />
+
+    <bean id="eventStatsDao" class="org.orcid.persistence.dao.impl.EventStatsDaoImpl" />
+
+    <bean id="emailDomainDao" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl" />
+
+    <bean id="emailDomainDaoReadOnly" class="org.orcid.persistence.dao.impl.EmailDomainDaoImpl">
+        <property name="entityManager" ref="entityManagerReadOnly" />
+    </bean>
     
+    
+    <!-- Panoply Redshift -->
+	<bean id="panoplyRedshiftDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+		<property name="driverClassName" value="${org.orcid.core.utils.panoply.driver:com.amazon.redshift.jdbc.Driver}" />
+        <property name="jdbcUrl" value="${org.orcid.core.utils.panoply.jdbcUrl}" />
+        <property name="username" value="${org.orcid.core.utils.panoply.username}" />
+        <property name="password" value="${org.orcid.core.utils.panoply.password}" />
+        <property name="maximumPoolSize" value="${org.orcid.core.utils.panoply.maxPoolSize:5}" />
+        <property name="idleTimeout" value="${org.orcid.core.utils.panoply.idleConnectionTimeout:3600}" />
+        <property name="connectionTimeout" value="${org.orcid.core.utils.panoply.connectionTimeout:3600}" />
+	</bean>
+	
+	<!-- Panoply JdbcTemplate Bean Definition -->
+    <bean id="panoplyJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="panoplyRedshiftDataSource" />
+    </bean>
+
     <!-- Statistics -->
     <bean id="statisticsDao" class="org.orcid.persistence.dao.impl.StatisticsDaoImpl">
         <property name="entityManager" ref="entityManager" />
-    </bean>     
+    </bean>   
+    
+    <!-- Redshift panoply -->
+    <bean id="panoplyClient" class="org.orcid.utils.panoply.PanoplyRedshiftClient" />  
+    
+    <!-- PublicApiDailyRate DAO's -->
+	<bean id="papiRateLimitingDao" class="org.orcid.persistence.dao.impl.PublicApiDailyRateLimitDaoImpl" />
+	
     
 </beans>

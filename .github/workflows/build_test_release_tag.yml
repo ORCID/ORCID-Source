@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       version_tag:
-        description: 'version tag to use'
+        description: 'version tag to use(vx.x.x)'
         required: false
         default: "latest"
         type: string
@@ -18,11 +18,17 @@ on:
         required: false
         default: "default"
         type: string
+      rel_tag:
+        description: Whether to tag the code
+        type: boolean
+        required: false
+        default: true
+
 
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'version tag to use'
+        description: 'version tag to use(vx.x.x)'
         required: false
         default: "latest"
         type: string
@@ -42,7 +48,11 @@ on:
         required: false
         default: "default_branch"
         type: string
-
+      rel_tag:
+        description: Whether to tag the code
+        type: boolean
+        required: false
+        default: true
 
 # cancel running job if another commit comes in
 concurrency:
@@ -70,8 +80,8 @@ jobs:
     needs:
       - seed_maven_cache
 
-  unit_tests_publish:
-    uses: ./.github/workflows/unit_tests_publish.yml
+  test_mvn:
+    uses: ./.github/workflows/test_mvn.yml
     with:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
@@ -83,12 +93,12 @@ jobs:
       - seed_maven_cache
       - install_maven_dependencies
 ##############################################################################
-  bld_all:
-    uses: ./.github/workflows/bld_all.yml
+  bld_mvn:
+    uses: ./.github/workflows/bld_mvn.yml
     secrets: inherit # pass all secrets for uploading assets
     needs:
       - lint
-      - unit_tests_publish
+      - test_mvn
       - install_maven_dependencies
     permissions:
       checks: write
@@ -102,11 +112,28 @@ jobs:
       seed_maven_cache: false
       install_maven_dependencies: false
 
+  bld_docker:
+    uses: ./.github/workflows/bld_docker.yml
+    secrets: inherit # pass all secrets for uploading assets
+    needs:
+      - lint
+      - test_mvn
+    permissions:
+      checks: write
+      contents: read
+      issues: read
+      pull-requests: write
+    with:
+      version_tag: ${{ inputs.version_tag }}
+      bump: ${{ inputs.bump }}
+      ref: ${{ inputs.ref }}
+
 ##############################################################################
 
   rel_tag:
     uses: ./.github/workflows/rel_tag.yml
-    needs: bld_all
+    if: ${{ inputs.rel_tag }}
+    needs: bld_mvn    
     with:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
@@ -117,3 +144,4 @@ jobs:
       contents: write
       issues: read
       pull-requests: write
+

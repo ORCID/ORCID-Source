@@ -4,17 +4,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
@@ -124,7 +119,7 @@ public class SecurityContextTestUtils {
     }
     
     static public void setupSecurityContextForWebUser(String userId, String email) {
-        OrcidProfileUserDetails details = new OrcidProfileUserDetails(userId, email, "password");
+        UserDetails details = new User(userId, email, List.of());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, "password");
         auth.setDetails(details);
         SecurityContextImpl securityContext = new SecurityContextImpl();

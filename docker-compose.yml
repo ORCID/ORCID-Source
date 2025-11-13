@@ -1,0 +1,188 @@
+services:
+  dependencies:
+    image: orcid/registry-dependencies:${TAG:-0.0.1}
+    entrypoint: sleep infinity
+    build:
+      context: .
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    profiles:
+      - build
+    networks:
+      app:
+
+  redis:
+    image: orcid/registry/redis:7.2.5-alpine
+    ports:
+      - '6379:6379'
+    build:
+      context: .
+      dockerfile: redis/Dockerfile
+    profiles:
+      - db
+      - dev
+    networks:
+      app:
+
+  postgres:
+    image: postgres:13.13-alpine3.19
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - '5432:5432'
+    profiles:
+      - db
+      - dev
+    networks:
+      app:
+
+  haprouter:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-haprouter:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-haprouter/Dockerfile
+    env_file:
+      - orcid-haprouter/default.env
+      - orcid-haprouter/deployment.env
+    ports:
+      - 0.0.0.0:678:1936 # stats
+      - 0.0.0.0:7983:7983 # solr read
+      - 0.0.0.0:6983:6983 # solr write
+      - 0.0.0.0:7432:7432 # postgres read
+      - 0.0.0.0:6432:6432 # postgres write
+    networks:
+      app:
+    profiles:
+      - dev
+      - ui
+
+  lb:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-lb:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-lb/Dockerfile
+    ports:
+      - 0.0.0.0:891:1936 # stats
+      - 0.0.0.0:80:80
+      - 0.0.0.0:443:443
+    networks:
+      app:
+    profiles:
+      - dev
+
+  papi:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-pub-web:${TAG:-0.0.1}
+    build:
+      cache_from:
+        - orcid/registry-dependencies:${TAG:-0.0.1}
+      context: .
+      dockerfile: orcid-pub-web/Dockerfile
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    env_file:
+      - default.env
+      - properties/default.orcid_core.env
+      - properties/default.misc.env
+      - properties/default.frontend.env
+      - properties/default.persistence.env
+      - orcid-pub-web/default.env
+      - orcid-pub-web/deployment.env
+      - ${DOCKER_DEV_ENV_FILE:-empty.env}
+    ports:
+      - 0.0.0.0:13102:8080
+    networks:
+      app:
+    volumes:
+      - /opt/docker/logs/reg-papi:/usr/local/tomcat/logs
+    profiles:
+      - dev
+      - papi
+
+  papi_proxy:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-pub-web-proxy:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-pub-web-proxy/Dockerfile
+    ports:
+      - 0.0.0.0:13109:80
+      - 0.0.0.0:13110:443
+    volumes:
+      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem:ro
+      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem:ro
+      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem:ro
+    networks:
+      app:
+    profiles:
+      - dev
+      - papi
+
+  ui_frontend:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-frontend-${FRONTEND_LABEL:-qa}:${FRONTEND_TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: 'FIXME: must build in the orcid-angular project first Dockerfile.build'
+    ports:
+      - 0.0.0.0:13106:80
+    profiles:
+      - dev
+      - ui
+    networks:
+      app:
+
+  ui_proxy:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web-proxy:${TAG:-0.0.1}
+    build:
+      context: .
+      dockerfile: orcid-web-proxy/Dockerfile
+    ports:
+      - 0.0.0.0:13107:80
+      - 0.0.0.0:13108:443
+    volumes:
+      - ./certs/dhparam.pem:/etc/nginx/certs/dhparam.pem:ro
+      - ${SSL_CERTIFICATE:-./certs/docker_dev.pem}:/etc/nginx/certs/docker.pem:ro
+      - ${SSL_CERTIFICATE_KEY:-./certs/docker_dev-key.pem}:/etc/nginx/certs/docker-key.pem:ro
+    networks:
+      app:
+    profiles:
+      - dev
+      - ui
+
+  ui:
+    image: ${DOCKER_REG_PRIVATE}/orcid/registry/orcid-web:${TAG:-0.0.1}
+    build:
+      cache_from:
+        - orcid/registry-dependencies:${TAG:-0.0.1}
+      context: .
+      dockerfile: orcid-web/Dockerfile
+      args:
+        tag_numeric: ${TAG:-0.0.1}
+    env_file:
+      - default.env
+      - properties/default.orcid_core.env
+      - properties/default.misc.env
+      - properties/default.frontend.env
+      - properties/default.persistence.env
+      - orcid-web/default.env
+      - orcid-web/deployment.env
+      - ${DOCKER_DEV_ENV_FILE:-empty.env}
+    ports:
+      - 0.0.0.0:13100:8080
+    networks:
+      app:
+    volumes:
+      - /opt/docker/logs/reg-ui:/usr/local/tomcat/logs
+    profiles:
+      - dev
+      - ui
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  postgres_data:

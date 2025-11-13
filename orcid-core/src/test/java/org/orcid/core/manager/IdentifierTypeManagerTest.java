@@ -85,7 +85,7 @@ public class IdentifierTypeManagerTest extends BaseTest {
     @Test
     public void test0FetchEntities(){
         Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName(null);
-        assertEquals(42+v2Ids.size(), map.size());
+        assertEquals(43+v2Ids.size(), map.size());
         checkExists(map,"other-id"); 
         for (String id : v2Ids){
             checkExists(map, id);            

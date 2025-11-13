@@ -1,0 +1,20 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+
+    <changeSet id="CREATE-DW-NOTIFICATION" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_notification" replaceIfExists="true">
+            select id as db_id, notification_type, orcid, client_source_id, date_created, sent_date, read_date, actioned_date, archived_date, last_modified 
+            from notification where notification_type='PERMISSION' and client_source_id is not null and last_modified > date_trunc('day',(now() - interval '12 months'))
+        </createView>
+    </changeSet>
+    
+    <changeSet id="GRANT-READ_PERM-TO-NOTIFICATION-VIEW" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_notification to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>

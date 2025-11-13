@@ -25,9 +25,15 @@ import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.v3.read_only.*;
+import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
@@ -40,10 +46,20 @@ import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
-import org.orcid.jaxb.model.v3.release.record.*;
-import org.orcid.jaxb.model.v3.release.record.summary.*;
+import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.OrgDisambiguated;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.orcid.pojo.PublicRecordPersonDetails;
@@ -53,7 +69,6 @@ import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
 import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
-import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.EmptyJsonResponse;
 import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
@@ -135,6 +150,9 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
+    
+    @Resource(name = "profileEntityManagerReadOnlyV3")
+    private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
@@ -232,6 +250,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 info.put("EFFECTIVE_USER_ORCID", orcid);
                 info.put("IS_LOCKED", String.valueOf(!profile.isAccountNonLocked()));
                 info.put("IS_DEACTIVATED", String.valueOf(!(profile.getDeactivationDate() == null)));
+                info.put("READY_FOR_INDEXING", String.valueOf(isRecordReadyForIndexing(profile)));
                 if (profile.getPrimaryRecord() != null) {
                     info.put("PRIMARY_RECORD", profile.getPrimaryRecord().getId());
                 }
@@ -241,6 +260,41 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
         
         return info;
+    }
+    
+    private boolean isRecordReadyForIndexing(ProfileEntity profile) {
+        // False if it is locked 
+        if(!profile.isAccountNonLocked()) {
+            return false;
+        }
+        
+        // False if it is deprecated
+        if (profile.getPrimaryRecord() != null) {
+            return false;
+        }
+
+        // False if it is not reviewed and doesn't have any integration
+        if(!profile.isReviewed()) {
+            String userOrcid = profile.getId();
+            if (!orcidOauth2TokenService.hasToken(userOrcid, getLastModifiedTime(userOrcid))) {
+                // If the user doesn't have any token, check if it was created by member, if so, 
+                // verify if that member pushed any work of affiliation on creation time
+                SourceEntity source = profile.getSource();
+                if(source != null) {                    
+                    // If it was created by a member, verify if it have any activity that belongs to that member
+                    String clientId = source.getSourceClient() == null ? null : source.getSourceClient().getId();
+                    if(profileEntityManagerReadOnly.haveMemberPushedWorksOrAffiliationsToRecord(userOrcid, clientId)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }                
+            } 
+        }
+        
+        return true;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/person.json", method = RequestMethod.GET)
@@ -348,7 +402,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/fundingGroups.json")
-    public @ResponseBody List<FundingGroup> getFundingsJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
+    public @ResponseBody List<FundingGroup> getFundingsJson(@PathVariable("orcid") String orcid, @RequestParam("sort") String sort,
             @RequestParam("sortAsc") boolean sortAsc) {
         List<FundingGroup> fundingGroups = new ArrayList<>();
         try {
@@ -375,7 +429,11 @@ public class PublicProfileController extends BaseWorkspaceController {
             fundingGroups.add(fundingGroup);
         }
 
-        fundingGroups.sort(FundingComparators.getInstance(sort, sortAsc));
+        if ("source".equals(sort)) {
+            fundingGroups = new FundingComparators().sortBySource(fundingGroups, sortAsc, orcid);
+        } else {
+            fundingGroups.sort(new FundingComparators().getInstance(sort, sortAsc, orcid));
+        }
         return fundingGroups;
     }
 
@@ -405,6 +463,16 @@ public class PublicProfileController extends BaseWorkspaceController {
             return new Page<WorkGroup>();
         }
         return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+    }
+
+    @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/featuredWorks.json", method = RequestMethod.GET)
+    public @ResponseBody List<WorkForm> getFeaturedWorksJson(@PathVariable("orcid") String orcid) {
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+        return workManagerReadOnly.getFeaturedWorks(orcid);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/researchResourcePage.json", method = RequestMethod.GET)
@@ -447,17 +515,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
             return null;
-
-        WorkForm work = null;
-        Work workObj = null;
-        if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-            WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
-            work = WorkForm.valueOf(workExtended, maxContributorsForUI);
-            workObj = workExtended;
-        } else {
-            workObj = workManagerReadOnly.getWork(orcid, workId);
-            work = WorkForm.valueOf(workObj, maxContributorsForUI);
-        }
+         
+        WorkExtended workExtended = workManagerReadOnly.getWorkExtended(orcid, workId);
+        WorkForm work = WorkForm.getExtendedWorkForm(workExtended, maxContributorsForUI);
+        Work workObj = workExtended;        
 
         if (work != null && validateVisibility(workObj.getVisibility())) {
             sourceUtils.setSourceName(workObj);
@@ -475,16 +536,6 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (work.getTranslatedTitle() != null && !StringUtils.isEmpty(work.getTranslatedTitle().getLanguageCode())) {
                 String languageName = languages.get(work.getTranslatedTitle().getLanguageCode());
                 work.getTranslatedTitle().setLanguageName(languageName);
-            }
-
-            if (Features.STORE_TOP_CONTRIBUTORS.isActive()) {
-                if (work.getContributorsGroupedByOrcid() != null) {
-                    contributorUtils.filterContributorsGroupedByOrcidPrivateData(work.getContributorsGroupedByOrcid(), maxContributorsForUI);
-                }
-            } else {
-                if (work.getContributors() != null) {
-                    work.setContributors(filterContributors(work.getContributors(), activityManager));
-                }
             }
 
             return new ResponseEntity<>(work, HttpStatus.OK);
@@ -567,7 +618,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/peer-reviews-by-group-id.json", method = RequestMethod.GET)
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJsonByGroupId(@PathVariable("orcid") String orcid, @RequestParam("groupId") String groupId, @RequestParam("sortAsc") boolean sortAsc) {
         List<PeerReviewGroup> peerReviewGroups = new ArrayList<>();
-        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryListByGroupId(orcid, groupId);
+        List<PeerReviewSummary> summaries = peerReviewManagerReadOnly.getPeerReviewSummaryListByGroupId(orcid, groupId, true);
         PeerReviews peerReviews = peerReviewManagerReadOnly.groupPeerReviews(summaries, false);
         for (org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
             Optional<GroupIdRecord> groupIdRecord = groupIdRecordManagerReadOnly.findByGroupId(group.getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());

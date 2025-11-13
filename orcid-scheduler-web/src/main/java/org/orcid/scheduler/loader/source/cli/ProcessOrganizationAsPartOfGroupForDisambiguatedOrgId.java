@@ -24,11 +24,7 @@ public class ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId.class);
     private OrgDisambiguatedManager orgDisambiguatedManager;
     private OrgDisambiguatedDao orgDisambiguatedDao;
-    
-
-    private OrgLoadSource rorOrgSource;
-    private OrgLoadSource fundrefOrgSource;
-    private OrgLoadSource ringgoldOrgSource;
+   
 
     private static final String ROR_TYPE="ROR";
     private static final String FUNDREF_TYPE="FUNDREF";
@@ -48,9 +44,6 @@ public class ProcessOrganizationAsPartOfGroupForDisambiguatedOrgId {
     private void init() {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-scheduler-context.xml");
         orgDisambiguatedManager = (OrgDisambiguatedManager) context.getBean("orgDisambiguatedManager");
-        rorOrgSource = (OrgLoadSource) context.getBean("rorOrgDataSource");
-        fundrefOrgSource = (OrgLoadSource) context.getBean("fundrefOrgDataSource");
-        ringgoldOrgSource = (OrgLoadSource) context.getBean("ringgoldOrgDataSource");
         orgDisambiguatedDao = (OrgDisambiguatedDao) context.getBean("orgDisambiguatedDao");
     }
 

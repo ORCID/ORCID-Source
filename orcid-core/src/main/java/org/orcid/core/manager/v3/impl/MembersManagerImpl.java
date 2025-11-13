@@ -22,9 +22,9 @@ import org.orcid.core.manager.v3.MembersManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
-import org.orcid.core.security.OrcidWebRole;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -44,9 +44,11 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.keys.ClientScopePk;
 import org.orcid.pojo.ajaxForm.Member;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -74,6 +76,9 @@ public class MembersManagerImpl implements MembersManager {
 
     @Resource(name = "clientManagerReadOnlyV3")
     private ClientManagerReadOnly clientManagerReadOnly;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     private OrcidGenerationManager orcidGenerationManager;
@@ -134,7 +139,7 @@ public class MembersManagerImpl implements MembersManager {
                 // Set authority
                 OrcidGrantedAuthority authority = new OrcidGrantedAuthority();
                 authority.setOrcid(orcid);
-                authority.setAuthority(OrcidWebRole.ROLE_GROUP.getAuthority());
+                authority.setAuthority(OrcidRoles.ROLE_GROUP.getAuthority());
                 Set<OrcidGrantedAuthority> authorities = new HashSet<OrcidGrantedAuthority>(1);
                 authorities.add(authority);
                 newRecord.setAuthorities(authorities);
@@ -276,7 +281,11 @@ public class MembersManagerImpl implements MembersManager {
                     Set<Client> clients = clientManagerReadOnly.getClients(orcid);
                     List<org.orcid.pojo.ajaxForm.Client> clientsList = new ArrayList<org.orcid.pojo.ajaxForm.Client>();
                     clients.forEach(c -> {
-                        clientsList.add(org.orcid.pojo.ajaxForm.Client.fromModelObject(c));
+                        org.orcid.pojo.ajaxForm.Client client = org.orcid.pojo.ajaxForm.Client.fromModelObject(c);
+                        ClientDetailsEntity clientDetails = clientDetailsManagerReadOnly.findByClientId(c.getId());
+                        boolean isDeactivated = clientDetails.getDeactivatedDate() != null;
+                        client.setDeactivated(isDeactivated);
+                        clientsList.add(client);
                     });
                     member.setClients(clientsList);
                 } else {
@@ -337,7 +346,7 @@ public class MembersManagerImpl implements MembersManager {
             // Insert the new scopes
             for (String newScope : newSetOfScopes) {
                 ClientScopeEntity clientScopeEntity = new ClientScopeEntity();
-                clientScopeEntity.setClientDetailsEntity(client);
+                clientScopeEntity.setClientId(client.getClientId());
                 clientScopeEntity.setScopeType(newScope);
                 clientScopeDao.persist(clientScopeEntity);
             }

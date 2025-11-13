@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.orcid.core.utils.NullUtils;
+import org.orcid.utils.NullUtils;
 
 /**
  * 

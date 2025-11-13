@@ -1,11 +1,5 @@
 package org.orcid.api.publicV2.server;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,10 +15,7 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -104,6 +95,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 
+import static org.junit.Assert.*;
+
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-t1-web-context.xml" })
 public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
@@ -113,9 +106,13 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
 
     private final String ORCID = "0000-0000-0000-0003";
+    private String deactivatedUserOrcid = "0000-0000-0000-0007";
 
     @Resource(name = "publicV2ApiServiceDelegator")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
+
+    @Resource
+    SchemaOrgMBWriterV2 writerV2;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -187,7 +184,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(workBulk);
         assertNotNull(workBulk.getBulk());
         assertEquals(3, workBulk.getBulk().size());
-        assertTrue(workBulk.getBulk().get(0) instanceof Work);        
+        assertTrue(workBulk.getBulk().get(0) instanceof Work);
         assertTrue(workBulk.getBulk().get(1) instanceof OrcidError);
         assertTrue(workBulk.getBulk().get(2) instanceof OrcidError);
         Work work = (Work) workBulk.getBulk().get(0);
@@ -226,7 +223,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
         assertNotNull(funding.getContributors().getContributor().get(0).getContributorOrcid());
         assertEquals("0000-0000-0000-0000", funding.getContributors().getContributor().get(0).getContributorOrcid().getPath());
-        assertNull(funding.getContributors().getContributor().get(0).getCreditName());        
+        assertNull(funding.getContributors().getContributor().get(0).getCreditName());
     }
 
     @Test
@@ -468,8 +465,33 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(extIds.getLastModifiedDate());
         assertNotNull(extIds.getLastModifiedDate().getValue());
         assertEquals("/0000-0000-0000-0003/external-identifiers", extIds.getPath());
-        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(3, extIds.getExternalIdentifiers().size());
+
         PersonExternalIdentifier extId = extIds.getExternalIdentifiers().get(0);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(19), extId.getPutCode());
+        assertEquals("self_public_user_obo_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
+        assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
+
+        extId = extIds.getExternalIdentifiers().get(1);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(18), extId.getPutCode());
+        assertEquals("self_public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/18", extId.getPath());
+        assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+
+        extId = extIds.getExternalIdentifiers().get(2);
         assertNotNull(extId);
         assertNotNull(extId.getLastModifiedDate());
         assertNotNull(extId.getLastModifiedDate().getValue());
@@ -529,17 +551,30 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(emails.getLastModifiedDate());
         assertNotNull(emails.getLastModifiedDate().getValue());
         assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());
+        assertEquals(2, emails.getEmails().size());
         Email email = emails.getEmails().get(0);
+        Email email2 = emails.getEmails().get(1);
         assertNotNull(email.getLastModifiedDate());
         assertNotNull(email.getLastModifiedDate().getValue());
+        assertNotNull(email2.getLastModifiedDate());
+        assertNotNull(email2.getLastModifiedDate().getValue());
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", email2.getEmail());
         assertTrue(email.isCurrent());
         assertTrue(email.isPrimary());
         assertTrue(email.isVerified());
+        assertTrue(email2.isCurrent());
+        assertFalse(email2.isPrimary());
+        assertTrue(email2.isVerified());
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+        assertEquals(Visibility.PUBLIC.value(), email2.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/email", emails.getPath());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
+        assertNull(email.getSource().getSourceOrcid());
+        assertEquals("0000-0000-0000-0003", email2.getSource().retrieveSourcePath());
+        assertEquals("Credit Name", email2.getSource().getSourceName().getContent());
+        assertEquals("0000-0000-0000-0003", email2.getSource().getSourceOrcid().getPath());
     }
 
     @Test
@@ -1149,11 +1184,11 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
         search.getResults().add(result);
         OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
-        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>> any())).thenReturn(search);
+        Mockito.when(orcidSearchManager.findOrcidIds(Matchers.<Map<String, List<String>>>any())).thenReturn(search);
 
         PublicV2ApiServiceDelegatorImpl delegator = new PublicV2ApiServiceDelegatorImpl();
         ReflectionTestUtils.setField(delegator, "orcidSearchManager", orcidSearchManager);
-        
+
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
         Mockito.when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
         ReflectionTestUtils.setField(delegator, "orcidSecurityManager", orcidSecurityManager);
@@ -1187,7 +1222,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
 
         LocaleManager localeManager = Mockito.mock(LocaleManagerImpl.class);
         Mockito.when(localeManager.resolveMessage(Mockito.anyString())).thenReturn("a message");
-        
+
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
         Mockito.when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
 
@@ -1207,7 +1242,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
 
         OrcidSearchManager orcidSearchManager = Mockito.mock(OrcidSearchManagerImpl.class);
         Mockito.when(orcidSearchManager.findOrcidIds(Mockito.anyMap())).thenReturn(new Search());
-        
+
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
         Mockito.when(orcidSecurityManager.getClientIdFromAPIRequest()).thenReturn(null);
 
@@ -1260,19 +1295,57 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getEmails());
         assertNotNull(person.getEmails().getLastModifiedDate());
         assertNotNull(person.getEmails().getLastModifiedDate().getValue());
-        assertEquals(1, person.getEmails().getEmails().size());
+        assertEquals(2, person.getEmails().getEmails().size());
         Email email = person.getEmails().getEmails().get(0);
+        Email email2 = person.getEmails().getEmails().get(1);
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
+        assertEquals("public_0000-0000-0000-0003@orcid.org", email2.getEmail());
         assertNotNull(email.getLastModifiedDate());
         assertNotNull(email.getLastModifiedDate().getValue());
+        assertNotNull(email2.getLastModifiedDate());
+        assertNotNull(email2.getLastModifiedDate().getValue());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertEquals("Source Client 1", email.getSource().getSourceName().getContent());
+        assertNull(email.getSource().getSourceOrcid());
+        assertEquals("0000-0000-0000-0003", email2.getSource().retrieveSourcePath());
+        assertEquals("Credit Name", email2.getSource().getSourceName().getContent());
+        assertEquals("0000-0000-0000-0003", email2.getSource().getSourceOrcid().getPath());
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+        assertEquals(Visibility.PUBLIC.value(), email2.getVisibility().value());
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
-        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
+
+        PersonExternalIdentifiers extIds = person.getExternalIdentifiers();
+
+        assertNotNull(extIds);
+        PersonExternalIdentifier extId = extIds.getExternalIdentifiers().get(0);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(19), extId.getPutCode());
+        assertEquals("self_public_user_obo_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/obo/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/19", extId.getPath());
+        assertEquals("APP-5555555555555558", extId.getSource().retrieveSourcePath());
+
+        extId = extIds.getExternalIdentifiers().get(1);
+        assertNotNull(extId);
+        assertNotNull(extId.getLastModifiedDate());
+        assertNotNull(extId.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(18), extId.getPutCode());
+        assertEquals("self_public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/self/public", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/18", extId.getPath());
+        assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+
+        extId = extIds.getExternalIdentifiers().get(2);
         assertNotNull(extId);
         assertNotNull(extId.getLastModifiedDate());
         assertNotNull(extId.getLastModifiedDate().getValue());
@@ -1283,6 +1356,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
         assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getLastModifiedDate());
         assertNotNull(person.getKeywords().getLastModifiedDate().getValue());
@@ -1432,12 +1506,9 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         OrcidIdentifier id = record.getOrcidIdentifier();
         assertEquals("0000-0000-0000-0003", id.getPath());
     }
-    
-    @Resource
-    SchemaOrgMBWriterV2 writerV2;
-    
+
     @Test
-    public void testSchemaOrgMBWriterV2() throws WebApplicationException, IOException{
+    public void testSchemaOrgMBWriterV2() throws WebApplicationException, IOException {
         Response response = serviceDelegator.viewRecord(ORCID);
         Record record = (Record) response.getEntity();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1446,21 +1517,70 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         SchemaOrgDocument doc = objectMapper.readerFor(SchemaOrgDocument.class).readValue(out.toString());
         assertTrue(doc.id.endsWith(ORCID));
-        assertEquals("Person",doc.type);
-        assertEquals("http://schema.org",doc.context);
-        assertEquals("Credit Name",doc.name);
-        assertEquals("Given Names",doc.givenName);
-        assertEquals("Family Name",doc.familyName);
-        assertEquals("Other Name PUBLIC",doc.alternateName.get(0));
-        assertEquals("WDB",doc.alumniOf.iterator().next().identifier.iterator().next().propertyID);
-        assertEquals("WDB",doc.affiliation.iterator().next().identifier.iterator().next().propertyID);
+        assertEquals("Person", doc.type);
+        assertEquals("http://schema.org", doc.context);
+        assertEquals("Credit Name", doc.name);
+        assertEquals("Given Names", doc.givenName);
+        assertEquals("Family Name", doc.familyName);
+        assertEquals("Other Name PUBLIC", doc.alternateName.get(0));
+        assertEquals("WDB", doc.alumniOf.iterator().next().identifier.iterator().next().propertyID);
+        assertEquals("WDB", doc.affiliation.iterator().next().identifier.iterator().next().propertyID);
         Set<String> fundingIds = Sets.newHashSet();
-        for (SchemaOrgExternalID i: doc.worksAndFunding.funder.iterator().next().identifier)
+        for (SchemaOrgExternalID i : doc.worksAndFunding.funder.iterator().next().identifier)
             fundingIds.add(i.propertyID);
-        assertEquals(Sets.newHashSet("WDB","grant_number"),fundingIds);
-        assertEquals("PUBLIC",doc.worksAndFunding.creator.iterator().next().name);
-        assertEquals("http://www.researcherurl.com?id=13",doc.url.get(0));
-        assertEquals("public_type",doc.identifier.get(0).propertyID);
-        assertEquals( "public_ref",doc.identifier.get(0).value);
+        assertEquals(Sets.newHashSet("WDB", "grant_number"), fundingIds);
+        assertEquals("PUBLIC", doc.worksAndFunding.creator.iterator().next().name);
+        assertEquals("http://www.researcherurl.com?id=13", doc.url.get(0));
+        assertEquals("self_public_user_obo_type", doc.identifier.get(0).propertyID);
+        assertEquals("self_public_user_obo_ref", doc.identifier.get(0).value);
+    }
+
+    @Test
+    public void checkSourceOnEmail_RecordEndpointTest() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewRecord(orcid);
+        Record record = (Record) r.getEntity();
+        assertNotNull(record.getPerson());
+        assertNotNull(record.getPerson().getEmails());
+        checkEmails(record.getPerson().getEmails());
+    }
+
+    @Test
+    public void checkSourceOnEmail_PersonEndpointTest() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewPerson(orcid);
+        Person p = (Person) r.getEntity();
+        assertNotNull(p.getEmails());
+        checkEmails(p.getEmails());
+    }
+
+    @Test
+    public void checkSourceOnEmail_EmailEndpointTest() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewEmails(orcid);
+        Emails emails = (Emails) r.getEntity();
+        checkEmails(emails);
+    }
+
+    private void checkEmails(Emails emails) {
+        assertEquals(2, emails.getEmails().size());
+        for(Email e : emails.getEmails()) {
+            if(e.getEmail().equals("public_0000-0000-0000-0001@test.orcid.org")) {
+                assertFalse(e.isVerified());
+                // The source and name on non verified professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else if(e.getEmail().equals("verified_non_professional@nonprofessional.org")) {
+                assertTrue(e.isVerified());
+                // The source and name on non professional email addresses should not change
+                assertEquals("APP-5555555555555555", e.getSource().retrieveSourcePath());
+                assertEquals("Source Client 1", e.getSource().getSourceName().getContent());
+            } else {
+                fail("Unexpected email " + e.getEmail());
+            }
+        }
     }
 }

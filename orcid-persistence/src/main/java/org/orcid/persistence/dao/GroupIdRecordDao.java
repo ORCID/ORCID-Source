@@ -17,5 +17,5 @@ public interface GroupIdRecordDao extends GenericDao<GroupIdRecordEntity, Long> 
     
     boolean duplicateExists(Long putCode, String groupId);
     
-    List<GroupIdRecordEntity> getIssnRecordsNotModifiedSince(int batchSize, Date start);
+    List<GroupIdRecordEntity> getIssnRecordsSortedBySyncDate(int batchSize, Date syncTime);
 }

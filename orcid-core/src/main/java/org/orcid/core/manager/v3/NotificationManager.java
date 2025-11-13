@@ -13,6 +13,7 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 
 public interface NotificationManager {
@@ -20,6 +21,8 @@ public interface NotificationManager {
     void sendNotificationToAddedDelegate(String userGrantingPermission, String userReceivingPermission);
 
     void sendNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission);
+    
+    void sendRevokeNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission);
 
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
@@ -79,6 +82,10 @@ public interface NotificationManager {
     
     void deleteNotificationsForRecord(String orcid);
 
-    NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);    
+    NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl);  
+    
+    void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails, String memberName) throws UnsupportedEncodingException;
+    
+    List<NotificationEntity> findByOrcidAndClientAndNotificationFamilyNoClientToken(String orcid, String clientId,  String notificationFamily);
 
 }

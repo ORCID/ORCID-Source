@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,8 +93,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.ContributorsRolesAndSequences;
-import org.orcid.pojo.WorkExtended;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.springframework.beans.factory.annotation.Value;
@@ -214,23 +214,23 @@ public class WorkManagerTest extends BaseTest {
     }
 
     @Test
-    public void displayIndexIsSetTo_1_FromUI() {
+    public void displayIndexIsSetTo_0_FromUI() {
         Work w1 = getWork("fromUI-1");
         w1 = workManager.createWork(claimedOrcid, w1, false);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
 
     @Test
-    public void displayIndexIsSetTo_0_FromAPI() {        
+    public void displayIndexIsSetTo_1_FromAPI() {        
         Work w1 = getWork("fromAPI-1");
         w1 = workManager.createWork(claimedOrcid, w1, true);
         WorkEntity w = workDao.find(w1.getPutCode());
 
         assertNotNull(w1);
-        assertEquals(Long.valueOf(0), w.getDisplayIndex());
+        assertEquals(Long.valueOf(1), w.getDisplayIndex());
     }
 
     @Test
@@ -562,7 +562,7 @@ public class WorkManagerTest extends BaseTest {
         // no work where user is source
         List<MinimizedWorkEntity> works = new ArrayList<>();
         works.add(work);
-        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyLong())).thenReturn(works);
+        Mockito.when(cacheManagerMock.retrieveMinimizedWorks(Mockito.anyString(), Mockito.anyList(), Mockito.anyLong())).thenReturn(works);
         ReflectionTestUtils.setField(workManager, "workEntityCacheManager", cacheManagerMock);
 
         WorkBulk bulk = new WorkBulk();
@@ -1435,7 +1435,7 @@ public class WorkManagerTest extends BaseTest {
 
         // full work matching user preferred id should be loaded from db (10 is
         // highest display index)
-        Mockito.when(mockDao.find(Mockito.eq(4l))).thenReturn(getUserPreferredWork());
+        Mockito.when(mockDao.find(Mockito.eq(1l))).thenReturn(getUserPreferredWork());
 
         workManager.createNewWorkGroup(Arrays.asList(1l, 2l, 3l, 4l), "some-orcid");
 
@@ -1598,8 +1598,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
-
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
@@ -1624,8 +1622,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "contributorsRolesAndSequencesConverter", mockContributorsRolesAndSequencesConverter);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
-
         Work work = workManager.createWork(orcid, getWorkWith100Contributors(), true);
 
         ArgumentCaptor<List<ContributorsRolesAndSequences>> captor = ArgumentCaptor.forClass((Class) List.class);
@@ -1649,8 +1645,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
-
         Work work = workManager.createWork(orcid, getWork(null), true);
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
@@ -1673,8 +1667,6 @@ public class WorkManagerTest extends BaseTest {
 
         ReflectionTestUtils.setField(workManager, "workDao", mockDao);
 
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
-
         Work workResult = workManager.createWork(orcid, getWorkWithContributorsMultipleRoles());
 
         ArgumentCaptor<WorkEntity> workEntityCaptor = ArgumentCaptor.forClass(WorkEntity.class);
@@ -1695,8 +1687,6 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testUpdateWorkFromUIAndRemoveOneCreditRole() {
         String orcid = "0000-0000-0000-0004";
-
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);        
 
         WorkForm workForm = getWorkWithContributorsMultipleRoles();
 
@@ -1726,8 +1716,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1755,8 +1743,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         Work workSaved = workManager.createWork(claimedOrcid, work, true);
@@ -1773,8 +1759,6 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksNullAndEmptyValues() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
 
         Work work = new Work();
         fillWork(work);
@@ -1803,8 +1787,6 @@ public class WorkManagerTest extends BaseTest {
     public void testCompareWorksPublicationDate() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
 
         Work work = new Work();
         fillWork(work);
@@ -1843,8 +1825,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1876,14 +1856,58 @@ public class WorkManagerTest extends BaseTest {
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
     }
+    
+    @Test
+    public void testCompareIdenticalWorksDifferentSource() {
+        NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
+        ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
+
+        Work work = new Work();
+        fillWork(work);
+        work = workManager.createWork(claimedOrcid, work, true);
+        // make a duplicate as a different assertion origin
+        Work w = workManager.getWork(claimedOrcid, work.getPutCode());
+        WorkForm workSaved = WorkForm.valueOf(w, maxContributorsForUI);
+        
+        // identical same source
+        workManager.updateWork(claimedOrcid, w, true);
+
+        Work workToUpdate = new Work();
+        fillWork(workToUpdate);
+        workToUpdate.setPutCode(work.getPutCode());
+
+        WorkContributors contributors = getContributors();
+        contributors.getContributor().get(0).getContributorAttributes().setContributorRole(ContributorRole.EDITOR.name());
+        contributors.getContributor().get(0).setCreditName(new CreditName("credit name 2"));
+
+        workToUpdate.setWorkContributors(contributors);
+
+        WorkForm workFormToUpdate = WorkForm.valueOf(workToUpdate, 50);
+
+        assertFalse(workSaved.compare(workFormToUpdate));
+        try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, workToUpdate, true);
+            fail();
+        } catch (Exception e) {
+        }
+        
+        //identical different source
+         try {
+            when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClientWithClientOBO(CLIENT_1_ID, CLIENT_3_ID));
+            workManager.updateWork(claimedOrcid, w, true);
+            fail();
+        } catch (Exception e) {
+        	
+        }
+
+        workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
 
     @Test
     public void testCompareWorksContributorsGroupedByOrcidId() {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
-
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-        togglzRule.enable(Features.STORE_TOP_CONTRIBUTORS);
 
         WorkForm workForm = getWorkWithContributorsMultipleRoles();
 
@@ -1919,8 +1943,6 @@ public class WorkManagerTest extends BaseTest {
         NotificationManager mockNotificationManager = Mockito.mock(NotificationManager.class);
         ReflectionTestUtils.setField(workManager, "notificationManager", mockNotificationManager);
 
-        togglzRule.enable(Features.STOP_SENDING_NOTIFICATION_WORK_NOT_UPDATED);
-
         Work work = new Work();
         fillWork(work);
         work = workManager.createWork(claimedOrcid, work, true);
@@ -1949,6 +1971,170 @@ public class WorkManagerTest extends BaseTest {
         Mockito.verify(mockNotificationManager, Mockito.times(2)).sendAmendEmail(any(), any(), any());
 
         workManager.removeWorks(claimedOrcid, Arrays.asList(work.getPutCode()));
+    }
+
+    @Test
+    public void a_testGetWorksExtendedAsGroups() {
+        WorksExtended works = workManager.getWorksExtendedAsGroups(claimedOrcid);
+        List<WorkGroupExtended> workGroup = works.getWorkGroup();
+        assertEquals(3, workGroup.size());
+    }
+
+    @Test
+    public void a_testGetFeaturedWorksSummaryExtended() {
+        List<WorkSummaryExtended> works = workManager.getFeaturedWorksSummaryExtended(claimedOrcid);
+        assertEquals(2, works.size());
+    }
+
+
+    @Test
+    public void updateFeaturedWorks_shouldUpdateIndexes() {
+        String orcid = "0000-0000-0000-0003";
+
+        Map<Long, Integer> map = new java.util.HashMap<>();
+        // Work 11 belongs to 0000-0000-0000-0003 and is PUBLIC in fixtures
+        map.put(11L, 1);
+        boolean ok = workManager.updateFeaturedWorks(orcid, map);
+        assertTrue(ok);
+
+        WorkEntity w11 = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(1), w11.getFeaturedDisplayIndex());
+
+    }
+
+    @Test
+    public void updateFeaturedWorks_nullIndexClearsFeatured() {
+        // Use a profile that has a PUBLIC work so it passes the isPublic check
+        String orcid = "0000-0000-0000-0003";
+        // set to non-zero first
+        assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 5));
+        Map<Long, Integer> map = new java.util.HashMap<>();
+        map.put(11L, null);
+
+        assertTrue(workManager.updateFeaturedWorks(orcid, map));
+
+        WorkEntity w11 = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(0), w11.getFeaturedDisplayIndex());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void updateFeaturedWorks_nonPublicThrows() {
+        String orcid = claimedOrcid;
+        // pick a non-public work id from fixtures, e.g., 2L if LIMITED in data set
+        Map<Long, Integer> map = new java.util.HashMap<>();
+        map.put(2L, 1);
+        workManager.updateFeaturedWorks(orcid, map);
+    }
+
+    @Test
+    public void updateVisibilities_nonPublicResetsFeaturedDisplayIndex() {
+        String orcid = "0000-0000-0000-0003";
+        List<Long> workIds = Arrays.asList(11L);
+        
+        // First set a featured display index to non-zero
+        assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 5));
+        WorkEntity workBefore = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(5), workBefore.getFeaturedDisplayIndex());
+        
+        // Update visibility to PRIVATE (non-PUBLIC)
+        boolean result = workManager.updateVisibilities(orcid, workIds, Visibility.PRIVATE);
+        assertTrue(result);
+        
+        // Verify that featured display index was reset to 0
+        WorkEntity workAfter = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(0), workAfter.getFeaturedDisplayIndex());
+        assertEquals("PRIVATE", workAfter.getVisibility());
+        
+        // Cleanup: restore original visibility and featured display index
+        workManager.updateVisibilities(orcid, workIds, Visibility.PUBLIC);
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
+    }
+
+    @Test
+    public void updateVisibilities_publicPreservesFeaturedDisplayIndex() {
+        String orcid = "0000-0000-0000-0003";
+        List<Long> workIds = Arrays.asList(11L);
+        
+        // First set a featured display index to non-zero
+        assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 3));
+        WorkEntity workBefore = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(3), workBefore.getFeaturedDisplayIndex());
+        
+        // Update visibility to PUBLIC
+        boolean result = workManager.updateVisibilities(orcid, workIds, Visibility.PUBLIC);
+        assertTrue(result);
+        
+        // Verify that featured display index was preserved
+        WorkEntity workAfter = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(3), workAfter.getFeaturedDisplayIndex());
+        assertEquals("PUBLIC", workAfter.getVisibility());
+
+        // Cleanup: restore original featured display index
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
+    } 
+
+    @Test
+    public void updateWork_workForm_nonPublicResetsFeaturedDisplayIndex() {
+        String orcid = "0000-0000-0000-0003";
+        
+        // Set up mock source manager to return the correct client ID for work 11
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
+        
+        // First set a featured display index to non-zero
+        assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 4));
+        WorkEntity workBefore = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(4), workBefore.getFeaturedDisplayIndex());
+        
+        // Get existing work and create WorkForm from it
+        Work existingWork = workManager.getWork(orcid, 11L);
+        WorkForm workForm = WorkForm.valueOf(existingWork, maxContributorsForUI);
+        
+        // Update visibility to PRIVATE
+        workForm.getVisibility().setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PRIVATE);
+        
+        // Update the work
+        workManager.updateWork(orcid, workForm);
+        
+        // Verify that featured display index was reset to 0
+        WorkEntity workAfter = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(0), workAfter.getFeaturedDisplayIndex());
+        assertEquals("PRIVATE", workAfter.getVisibility());
+        
+        // Cleanup: restore original visibility and featured display index
+        workForm.getVisibility().setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+        workManager.updateWork(orcid, workForm);
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
+    }
+
+    @Test
+    public void updateWork_workForm_publicPreservesFeaturedDisplayIndex() {
+        String orcid = "0000-0000-0000-0003";
+        
+        // Set up mock source manager to return the correct client ID for work 11
+        when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_2_ID));
+        
+        // First set a featured display index to non-zero
+        assertTrue(workDao.updateFeaturedDisplayIndex(orcid, 11L, 2));
+        WorkEntity workBefore = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(2), workBefore.getFeaturedDisplayIndex());
+        
+        // Get existing work and create WorkForm from it
+        Work existingWork = workManager.getWork(orcid, 11L);
+        WorkForm workForm = WorkForm.valueOf(existingWork, maxContributorsForUI);
+        
+        // Update visibility to PUBLIC
+        workForm.getVisibility().setVisibility(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC);
+        
+        // Update the work
+        workManager.updateWork(orcid, workForm);
+        
+        // Verify that featured display index was preserved
+        WorkEntity workAfter = workDao.getWork(orcid, 11L);
+        assertEquals(Integer.valueOf(2), workAfter.getFeaturedDisplayIndex());
+        assertEquals("PUBLIC", workAfter.getVisibility());
+        
+        // Cleanup: restore original featured display index
+        workDao.updateFeaturedDisplayIndex(orcid, 11L, 0);
     }
 
     private WorkEntity getUserPreferredWork() {
@@ -2234,5 +2420,57 @@ public class WorkManagerTest extends BaseTest {
         WorkForm workForm = WorkForm.valueOf(work, 50);
         workForm.setContributorsGroupedByOrcid(getContributorsGroupedByOrcidId());
         return workForm;
+    }
+    
+    @Test
+    public void testSearchWorkTitle_onlyPublicWorksWithPreferred() {
+        String orcid = "0000-0000-0000-0008";
+        List<ActivityTitle> titles = workManager.getWorksTitle(orcid);
+        assertNotNull(titles);
+        assertEquals(4, titles.size());
+        assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
+        assertEquals(2, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, true, true).getResults().size()));
+        assertEquals(2, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, true, true).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0, true, true).getResults().size()));
+        assertEquals(2, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, true, true).getResults().size())); 
+    }
+    
+    @Test
+    public void testSearchWorkTitle_onlyPublicWorks() {
+        String orcid = "0000-0000-0000-0008";
+        List<ActivityTitle> titles = workManager.getWorksTitle(orcid);
+        assertNotNull(titles);
+        assertEquals(4, titles.size());
+        assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, true, false).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, true, false).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0, true, false).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, true, false).getResults().size()));    
+    }
+    
+    @Test
+    public void testSearchWorkTitle_AllWorksWithPreferred() {
+        String orcid = "0000-0000-0000-0008";
+        List<ActivityTitle> titles = workManager.getWorksTitle(orcid);
+        assertNotNull(titles);
+        assertEquals(4, titles.size());
+        assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "Journal", 10, 0, false, true).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "journal Article", 10, 0, false, true).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 10, 0,false , true).getResults().size()));
+        assertEquals(3, (workManager.searchWorksTitle(orcid, "JOURNAL", 10, 0, false, true).getResults().size()));   
+    }
+    
+    @Test
+    public void testSearchWorkTitle_onlyPublicWorksWithPreferredSizeOne() {
+        String orcid = "0000-0000-0000-0008";
+        List<ActivityTitle> titles = workManager.getWorksTitle(orcid);
+        assertNotNull(titles);
+        assertEquals(4, titles.size());
+        assertEquals(3, (workManager.getWorksAsGroups(orcid)).getWorkGroup().size()); 
+        assertEquals(1, (workManager.searchWorksTitle(orcid, "Journal", 1, 0, true, true).getResults().size()));
+        assertEquals(1, (workManager.searchWorksTitle(orcid, "journal Article", 1, 0, true, true).getResults().size()));
+        assertEquals(0, (workManager.searchWorksTitle(orcid, "journal none", 1, 0, true, true).getResults().size()));
+        assertEquals(1, (workManager.searchWorksTitle(orcid, "JOURNAL", 1, 0, true, true).getResults().size())); 
     }
 }

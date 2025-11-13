@@ -21,6 +21,9 @@ import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidAmountException;
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.exception.InvalidFuzzyDateException;
+import org.orcid.core.exception.InvalidNoOrgOrExternalIdException;
+import org.orcid.core.exception.InvalidOrgAddressNoCountryButCityRegionException;
+import org.orcid.core.exception.InvalidOrgAddressException;
 import org.orcid.core.exception.InvalidOrgException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MissingStartDateException;
@@ -55,6 +58,9 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.ExternalIdentifiersAwareActivity;
@@ -68,7 +74,7 @@ import org.orcid.jaxb.model.v3.release.record.WorkContributors;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -238,10 +244,10 @@ public class ActivityValidator {
                         LOGGER.warn("Invalid DOI provided: " + extId.getValue());
                     }
                 }
-                
+
                 if (extId.getRelationship() != null && Relationship.FUNDED_BY.value().equals(extId.getRelationship().value())) {
-                    if(!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(extId.getType())) {
-                        throw new OrcidValidationException("External ID " + extId.getType() + " not supported for relationship funded_by"); 
+                    if (!ExternalIdentifierFundedByHelper.isExtIdTypeAllowedForFundedBy(extId.getType())) {
+                        throw new OrcidValidationException("External ID " + extId.getType() + " not supported for relationship funded_by");
                     }
                 }
             }
@@ -375,6 +381,53 @@ public class ActivityValidator {
         }
     }
 
+    private void validateOrgAddress(OrganizationHolder organizationHolder) {
+        if (organizationHolder.getOrganization() == null) {
+            throw new InvalidOrgException();
+        }
+
+        Organization org = organizationHolder.getOrganization();
+        if (org.getAddress() == null || PojoUtil.isEmpty(org.getAddress().getCity()) || org.getAddress().getCountry() == null
+                || PojoUtil.isEmpty(org.getAddress().getCountry().name())) {
+            throw new InvalidOrgAddressException();
+        }
+    }
+
+    /*
+     * Validates that either organization info is provided or external id
+     * present
+     */
+    private void validateDisambiguatedOrgAndExternalIdentifiersForProfessionalActivities(Affiliation affiliation) {
+        if (affiliation.getOrganization() == null) {
+            throw new InvalidOrgException();
+        }
+
+        Organization org = affiliation.getOrganization();
+        
+        if (org.getDisambiguatedOrganization() == null && StringUtils.isEmpty(org.getName())) {
+            throw new InvalidOrgException();
+        }
+
+        if ((org.getDisambiguatedOrganization() == null || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() == null
+                || org.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier().isEmpty())
+                && (affiliation.getExternalIdentifiers() == null || affiliation.getExternalIdentifiers().getExternalIdentifier().isEmpty())) {
+            throw new InvalidNoOrgOrExternalIdException();
+        }
+
+        if (affiliation.getOrganization() != null) {
+
+            if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getCity())
+                    && (org.getAddress().getCountry() == null || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
+                throw new InvalidOrgAddressNoCountryButCityRegionException();
+            }
+            
+            if (org.getAddress() != null && !PojoUtil.isEmpty(org.getAddress().getRegion())
+                    && (org.getAddress().getCountry() == null || PojoUtil.isEmpty(org.getAddress().getCountry().name()))) {
+                throw new InvalidOrgAddressNoCountryButCityRegionException();
+            }
+        }
+    }
+
     private void validateDisambiguatedOrg(MultipleOrganizationHolder organizationHolder) {
         if (organizationHolder.getOrganization() == null) {
             throw new InvalidOrgException();
@@ -404,7 +457,15 @@ public class ActivityValidator {
         }
 
         if (isApiRequest) {
-            validateDisambiguatedOrg(affiliation);
+
+            // validate city/country requirement for education and employment
+            if (affiliation instanceof Education || affiliation instanceof Employment) {
+                validateDisambiguatedOrg(affiliation);
+                validateOrgAddress(affiliation);
+            } else {
+                validateDisambiguatedOrgAndExternalIdentifiersForProfessionalActivities(affiliation);
+            }
+
             if (affiliation.getEndDate() != null) {
                 validateFuzzyDate(affiliation.getEndDate());
             }

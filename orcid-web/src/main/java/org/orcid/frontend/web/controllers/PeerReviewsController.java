@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.groupIds.issn.IssnPortalUrlBuilder;
 import org.orcid.core.locale.LocaleManager;
@@ -32,6 +33,8 @@ import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.grouping.PeerReviewDuplicateGroup;
 import org.orcid.pojo.grouping.PeerReviewGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -48,6 +51,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = { "/peer-reviews" })
 public class PeerReviewsController extends BaseWorkspaceController {
 
+    private static final Logger log = LoggerFactory.getLogger(PeerReviewsController.class);
     @Resource
     private IssnPortalUrlBuilder issnPortalUrlBuilder;
     
@@ -92,7 +96,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/peer-reviews-by-group-id.json", method = RequestMethod.GET)
     public @ResponseBody List<PeerReviewGroup> getPeerReviewsJsonByGroupId(@RequestParam("groupId") String groupId, @RequestParam("sortAsc") boolean sortAsc) {
-        List<PeerReviewGroup> peerReviewGroups = getPeerReviewsGrouped(peerReviewManager.getPeerReviewSummaryListByGroupId(getEffectiveUserOrcid(), groupId));
+        List<PeerReviewGroup> peerReviewGroups = getPeerReviewsGrouped(peerReviewManager.getPeerReviewSummaryListByGroupId(getEffectiveUserOrcid(), groupId, false));
         peerReviewGroups.sort(new PeerReviewGroupComparator(!sortAsc));
         return peerReviewGroups;
     }
@@ -152,19 +156,27 @@ public class PeerReviewsController extends BaseWorkspaceController {
     /**
      * updates visibility of a peer review
      */
-    @RequestMapping(value = "/{peerReviewIdsStr}/visibility/{visibilityStr}", method = RequestMethod.GET)
-    public @ResponseBody ArrayList<Long> updateVisibilitys(@PathVariable("peerReviewIdsStr") String peerReviewIdsStr,
+    @RequestMapping(value = "/{groupId}/visibility/{visibilityStr}", method = RequestMethod.POST)
+    public @ResponseBody boolean updateVisibilitys(@PathVariable("groupId") String groupIdString,
             @PathVariable("visibilityStr") String visibilityStr) {
-        ArrayList<Long> peerReviewIds = new ArrayList<Long>();
-        if (PojoUtil.isEmpty(peerReviewIdsStr)) {
-            return peerReviewIds;
+        if (PojoUtil.isEmpty(groupIdString)) {
+            return false;
         }
         // make sure this is a users work
         String orcid = getEffectiveUserOrcid();
-        for (String peerReviewId : peerReviewIdsStr.split(","))
-            peerReviewIds.add(new Long(peerReviewId));
-        peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
-        return peerReviewIds;
+        try {
+            long groupId = Long.parseLong(groupIdString);
+            GroupIdRecord groupIdRecord = groupIdRecordManager.getGroupIdRecord(groupId);
+            if (groupIdRecord == null) {
+                return false;
+            }
+            return peerReviewManager.updateVisibilitiesByGroupId(orcid, groupIdRecord.getGroupId(), Visibility.fromValue(visibilityStr));
+        } catch(GroupIdRecordNotFoundException e) {
+            log.warn("Unable to find group_id_record with id {}", groupIdString);
+        } catch(NumberFormatException nfe) {
+            log.warn("Invalid id for a group id {}", groupIdString);
+        }
+        return false;
     }
 
     private List<PeerReviewGroup> getPeerReviewsGrouped(List<PeerReviewSummary> summaries) {

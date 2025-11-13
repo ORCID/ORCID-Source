@@ -44,10 +44,8 @@ import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
-import org.orcid.core.security.OrcidUserDetailsService;
-import org.orcid.core.security.OrcidWebRole;
+import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -64,6 +62,9 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.servlet.ModelAndView;
@@ -111,12 +112,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     private EmailManagerReadOnly emailManagerReadOnlyMock;
     
     @Mock
-    private ProfileEntityCacheManager profileEntityCacheManagerMock;
-    
-    @Mock
-    private OrcidUserDetailsService orcidUserDetailsServiceMock;
-    
-    @Mock
     private AuthenticationManager authenticationManagerMock; 
     
     @Rule
@@ -140,8 +135,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityManager", profileEntityManager);        
         TargetProxyHelper.injectIntoProxy(registrationController, "encryptionManager", encryptionManagerMock);
         TargetProxyHelper.injectIntoProxy(registrationController, "emailManagerReadOnly", emailManagerReadOnlyMock);
-        TargetProxyHelper.injectIntoProxy(registrationController, "profileEntityCacheManager", profileEntityCacheManagerMock); 
-        TargetProxyHelper.injectIntoProxy(registrationController, "orcidUserDetailsService", orcidUserDetailsServiceMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "authenticationManager", authenticationManagerMock); 
         TargetProxyHelper.injectIntoProxy(registrationController, "profileHistoryEventManager", profileHistoryEventManager); 
         TargetProxyHelper.injectIntoProxy(registrationController, "recordEmailSender", recordEmailSender);         
@@ -151,27 +144,11 @@ public class RegistrationControllerTest extends DBUnitTest {
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
         
-        when(profileEntityCacheManagerMock.retrieve(Mockito.anyString())).thenAnswer(new Answer<ProfileEntity>() {
-            @Override
-            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
-                ProfileEntity p = new ProfileEntity(invocation.getArgument(0));
-                p.setClaimed(true);
-                return p;
-            }
-        });
-        
-        when(orcidUserDetailsServiceMock.loadUserByProfile(Mockito.any(ProfileEntity.class))).thenAnswer(new Answer<OrcidProfileUserDetails>() {
-            @Override
-            public OrcidProfileUserDetails answer(InvocationOnMock invocation) throws Throwable {
-                return new OrcidProfileUserDetails("0000-0000-0000-0000", "user_1@test.orcid.org", "pwd");
-            }
-        });
-        
         when(authenticationManagerMock.authenticate(Mockito.any())).thenAnswer(new Answer<UsernamePasswordAuthenticationToken>() {
             @Override
             public UsernamePasswordAuthenticationToken answer(InvocationOnMock invocation) throws Throwable {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("0000-0000-0000-0000", "pwd", Arrays.asList(OrcidWebRole.ROLE_USER));
-                auth.setDetails(new OrcidProfileUserDetails("0000-0000-0000-0000", "user_1@test.orcid.org", "pwd"));
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("0000-0000-0000-0000", "pwd", Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_USER.name())));
+                auth.setDetails(new User("0000-0000-0000-0000", "pwd", List.of()));
                 return auth;
             }
         });
@@ -329,7 +306,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     	assertNotNull(reg.getEmail());
     	assertNotNull(reg.getEmail().getErrors());
     	assertEquals(1, reg.getEmail().getErrors().size());
-    	assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href='http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org'>resend the claim email</a>?", reg.getEmail().getErrors().get(0));    	
+    	assertEquals("orcid.frontend.verify.unclaimed_email", reg.getEmail().getErrors().get(0));    	
     }
     
     @Test
@@ -356,7 +333,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         for(Text emailAdditionalListItem : reg.getEmailsAdditional()){
             assertNotNull(emailAdditionalListItem.getErrors());
             assertEquals(1, emailAdditionalListItem.getErrors().size());
-            assertEquals("email1@test.orcid.org already exists in our system as an unclaimed record. Would you like to <a href='http://testserver.orcid.org/resend-claim?email=email1%40test.orcid.org'>resend the claim email</a>?", emailAdditionalListItem.getErrors().get(0));
+            assertEquals("orcid.frontend.verify.unclaimed_email", emailAdditionalListItem.getErrors().get(0));
         }
     }
     
@@ -526,12 +503,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=true", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
     }
@@ -549,13 +523,10 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManager.verifyEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
-        
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/signin", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
     
@@ -573,12 +544,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(emailManagerReadOnlyMock.isPrimaryEmail(orcid, email)).thenReturn(true);
         when(emailManagerReadOnlyMock.isPrimaryEmailVerified(orcid)).thenReturn(true);
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=false", mav.getViewName());
-        assertFalse(ra.getFlashAttributes().containsKey("primaryEmailUnverified"));
         verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
     
@@ -590,13 +558,9 @@ public class RegistrationControllerTest extends DBUnitTest {
         String encodedEmail = new String(Base64.encodeBase64(email.getBytes()));
         when(encryptionManagerMock.decryptForExternalUse(Mockito.anyString())).thenThrow(new EncryptionOperationNotPossibleException());
         
-        RedirectAttributesModelMap ra = new RedirectAttributesModelMap();
-        
-        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail, ra);
+        ModelAndView mav = registrationController.verifyEmail(servletRequest, servletResponse, encodedEmail);
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/signin?invalidVerifyUrl=true", mav.getViewName());
-        assertTrue(ra.getFlashAttributes().containsKey("invalidVerifyUrl"));
-        assertTrue((Boolean) ra.getFlashAttributes().get("invalidVerifyUrl"));
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
     }
 }

@@ -1,0 +1,63 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-PROFILE-INTERSTITIAL-FLAG-TABLE" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="profile_interstitial_flag" />
+			</not>
+		</preConditions>	
+		<createTable tableName="profile_interstitial_flag">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="profile_interstitial_flag_pkey" />
+			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>			
+			<column name="interstitial_name" type="VARCHAR(255)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
+		</createTable>
+		<addForeignKeyConstraint constraintName="profile_interstitial_flag_fk" baseTableName="profile_interstitial_flag" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+	</changeSet>
+	
+	<changeSet id="CREATE-PROFILE-INTERSTITIAL-FLAG-SEQUENCES" author="Andrej Romanov" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="profile_interstitial_flag_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="profile_interstitial_flag_seq" startValue="1000" />
+    </changeSet>
+	
+	<changeSet id="CREATE-PROFILE-INTERSTITIAL-FLAG-AUTOCOLS" author="Andrej Romanov" dbms="hsqldb">
+        <addAutoIncrement tableName="profile_interstitial_flag" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+	
+	<changeSet id="PROFILE-INTERSTITIAL-FLAG-ORCID-INDEX" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="profile_interstitial_flag_orcid_index" tableName="profile_interstitial_flag" />
+			</not>
+		</preConditions>
+		<sql>create index profile_interstitial_flag_orcid_index on profile_interstitial_flag(orcid);</sql>
+	</changeSet>
+	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-PROFILE-INTERSTITIAL-FLAG" author="Andrej Romanov" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON profile_interstitial_flag to orcidro;</sql>
+	</changeSet>
+
+	<changeSet id="ADD-ORCID-INDEX-ON-PROFILE-INTERSTITIAL-FLAG" author="Andrej Romanov">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="profile_interstitial_flag_orcid_index" tableName="profile_interstitial_flag" />
+			</not>
+		</preConditions>
+		<sql>create index profile_interstitial_flag_orcid_index on profile_interstitial_flag(orcid);</sql>
+	</changeSet>
+</databaseChangeLog>		

@@ -23,7 +23,7 @@ Registration
 -   Visibility settings. The default visibility setting for new items added to your record is no longer preselected in the registration form. You can view and update your current setting by going to your Account Settings (https://orcid.org/account) and clicking on the "visibility preferences" tab.
 -   Email frequency. The frequency setting for receiving emails from ORCID is no longer preselected in the registration form. You can view your current setting by going to your Account Settings (https://orcid.org/account) and clicking on the "Email and notification preferences" tab.
 
-As always, please contact (https://support.orcid.org/hc/en-us/requests/new) us if you have questions about ORCID and your data privacy.
+As always, please contact (https://support.orcid.org/) us if you have questions about ORCID and your data privacy.
 
 Cheers,
 

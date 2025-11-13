@@ -57,8 +57,8 @@ public class ViewMQStatistics {
             try {
                 Thread.sleep(5000l);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOG.warn("Thread sleep interrupted", e);
+                Thread.currentThread().interrupt();
             }
         }
     }

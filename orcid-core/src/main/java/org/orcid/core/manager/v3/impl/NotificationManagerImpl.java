@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.common.manager.EmailFrequencyManager;
@@ -38,8 +39,12 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceName;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.NotificationType;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
@@ -47,6 +52,7 @@ import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
 import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
 import org.orcid.jaxb.model.v3.release.notification.permission.Item;
+import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
 import org.orcid.jaxb.model.v3.release.notification.permission.Items;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
@@ -55,13 +61,16 @@ import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
+import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
+import org.orcid.persistence.jpa.entities.NotificationItemEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -83,12 +92,12 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
     public static final int DELETE_BATCH_SIZE = 500;
-    
+
     @Resource(name = "messageSource")
     private MessageSource messages;
-    
+
     @Resource(name = "messageSourceNoFallback")
-    private MessageSource messageSourceNoFallback;      
+    private MessageSource messageSourceNoFallback;
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -101,11 +110,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private EncryptionManager encryptionManager;
 
     @Resource
-    private GenericDao<ProfileEventEntity, Long> profileEventDao;
+    private ProfileEventDao profileEventDao;
 
     @Resource
     private ProfileDao profileDao;
-    
+
     @Resource
     private ProfileDao profileDaoReadOnly;
 
@@ -113,11 +122,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private JpaJaxbNotificationAdapter notificationAdapter;
 
     @Resource
-    private NotificationDao notificationDao;    
-    
+    private NotificationDao notificationDao;
+
     @Resource
-    private NotificationDao notificationDaoReadOnly;    
-    
+    private NotificationDao notificationDaoReadOnly;
+
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
@@ -132,38 +141,40 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManager;
-    
+
     @Resource
     private GenericDao<EmailEventEntity, Long> emailEventDao;
-    
+
     @Resource
     private TransactionTemplate transactionTemplate;
-    
+
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
 
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
-    
+
     @Value("${org.orcid.notifications.archive.offset:100}")
     private Integer notificationArchiveOffset;
-    
+
     @Value("${org.orcid.notifications.delete.offset:10000}")
     private Integer notificationDeleteOffset;
-    
+
     @Value("${org.orcid.notifications.delete.offset.records:10}")
     private Integer recordsPerBatch;
-    
+
     @Resource
     FindMyStuffManager findMyStuffManager;
-    
+
     @Resource
     private SourceEntityUtils sourceEntityUtils;
-    
+
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
+
+    public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
 
     @Required
     public void setTemplateManager(TemplateManager templateManager) {
@@ -175,7 +186,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         this.encryptionManager = encryptionManager;
     }
 
-    public void setProfileEventDao(GenericDao<ProfileEventEntity, Long> profileEventDao) {
+    public void setProfileEventDao(ProfileEventDao profileEventDao) {
         this.profileEventDao = profileEventDao;
     }
 
@@ -202,23 +213,23 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("locale", locale);
         templateParams.put("features", features);
     }
-    
+
     private Map<String, Boolean> getFeatures() {
         Map<String, Boolean> features = new HashMap<String, Boolean>();
-        for(Features f : Features.values()) {
+        for (Features f : Features.values()) {
             features.put(f.name(), f.isActive());
         }
         return features;
-    }        
+    }
 
     private String getSubject(String code, Locale locale) {
         return messages.getMessage(code, null, locale);
     }
-    
-   @Override
+
+    @Override
     public Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> items) {
         String amenderOrcid = sourceManager.retrieveActiveSourceId();
-        
+
         if (amenderOrcid == null) {
             LOGGER.info("Not sending amend email to {} because amender is null", userOrcid);
             return null;
@@ -241,7 +252,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         if (items != null) {
             notification.setItems(new Items(new ArrayList<>(items)));
         }
-        return createNotification(userOrcid, notification);        
+        return createNotification(userOrcid, notification);
     }
 
     @Override
@@ -277,10 +288,10 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
         templateParams.put("subject", subject);
         templateParams.put("assetsUrl", assetsUrl);
-        
+
         addMessageParams(templateParams, userLocale);
 
-        String text = null;        
+        String text = null;
         String html = null;
 
         text = templateManager.processTemplate("delegate_recipient_notification.ftl", templateParams);
@@ -291,7 +302,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         notification.setSubject(subject);
         notification.setBodyHtml(html);
         notification.setBodyText(text);
-        createNotification(userReceivingPermission, notification);        
+        createNotification(userReceivingPermission, notification);
     }
 
     @Override
@@ -341,6 +352,46 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         createNotification(userGrantingPermission, notification);
     }
 
+    @Override
+    public void sendRevokeNotificationToUserGrantingPermission(String userGrantingPermission, String userReceivingPermission) {
+        ProfileEntity userGrantingProfileEntity = profileEntityCacheManager.retrieve(userGrantingPermission);
+        String emailName = recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission);
+        String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(userReceivingPermission);
+        Locale userLocale = getUserLocaleFromProfileEntity(userGrantingProfileEntity);
+
+        String subject = messages.getMessage("email.subject.delegate.revoked", new String[] { emailNameForDelegate }, userLocale);
+
+        org.orcid.jaxb.model.v3.release.record.Email primaryEmail = emailManager.findPrimaryEmail(userGrantingPermission);
+        String grantingOrcidEmail = primaryEmail.getEmail();
+        String assetsUrl = getAssetsUrl();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", emailName);
+        templateParams.put("orcidValue", userGrantingPermission);
+        templateParams.put("emailNameForDelegate", emailNameForDelegate);
+        templateParams.put("orcidValueForDelegate", userReceivingPermission);
+        templateParams.put("grantingOrcidValue", userGrantingPermission);
+        templateParams.put("grantingOrcidName", recordNameManagerV3.deriveEmailFriendlyName(userGrantingPermission));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("grantingOrcidEmail", grantingOrcidEmail);
+        templateParams.put("subject", subject);
+        templateParams.put("assetsUrl", assetsUrl);
+
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String text = templateManager.processTemplate("delegate_revoke_notification.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("delegate_revoke_notification_html.ftl", templateParams);
+
+        NotificationAdministrative notification = new NotificationAdministrative();
+        notification.setNotificationType(NotificationType.ADMINISTRATIVE);
+        notification.setSubject(subject);
+        notification.setBodyHtml(html);
+        notification.setBodyText(text);
+        createNotification(userGrantingPermission, notification);
+    }
+
     public String createEmailBaseUrl(String unencryptedParams, String baseUri, String path) {
         // Encrypt and encode params
         String encryptedUrlParams = encryptionManager.encryptForExternalUse(unencryptedParams);
@@ -356,14 +407,14 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public void sendDelegationRequestEmail(String managedOrcid, String trustedOrcid, String link) {
-        // Create map of template params        
+        // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("link", link);
 
         ProfileEntity managedEntity = profileEntityCacheManager.retrieve(managedOrcid);
-        
+
         String emailNameForDelegate = recordNameManagerV3.deriveEmailFriendlyName(managedOrcid);
         String trustedOrcidName = recordNameManagerV3.deriveEmailFriendlyName(trustedOrcid);
         templateParams.put("emailNameForDelegate", emailNameForDelegate);
@@ -378,24 +429,24 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             LOGGER.info("Cant send admin delegate email if primary email is null: {}", managedOrcid);
             return;
         }
-        
+
         String locale = managedEntity.getLocale();
         Locale userLocale = LocaleUtils.toLocale("en");
-        
-        if(locale != null) {
+
+        if (locale != null) {
             AvailableLocales loc = AvailableLocales.valueOf(managedEntity.getLocale());
             userLocale = LocaleUtils.toLocale(loc.value());
-        }        
+        }
 
         addMessageParams(templateParams, userLocale);
-        
+
         String htmlBody = null;
 
         htmlBody = templateManager.processTemplate("admin_delegate_request_notification_html.ftl", templateParams);
 
         // Send message
         if (apiRecordCreationEmailEnabled) {
-            String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[]{trustedOrcidName}, userLocale);
+            String subject = messages.getMessage("email.subject.admin_as_delegate", new Object[] { trustedOrcidName }, userLocale);
             NotificationAdministrative notification = new NotificationAdministrative();
             notification.setNotificationType(NotificationType.ADMINISTRATIVE);
             notification.setSubject(subject);
@@ -413,10 +464,58 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
         }
-        
+
         return createNotification(orcid, notification);
     }
-    
+
+    private Notification createPermissionNotificationWithFamily(String orcid, NotificationPermission notification, String notificationFamily,
+            ClientDetailsEntity clientDetails) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        if (profile == null) {
+            throw OrcidNotFoundException.newInstance(orcid);
+        }
+
+        return createNotification(orcid, notification, notificationFamily, clientDetails);
+    }
+
+    private Notification createNotification(String orcid, Notification notification, String notificationFamily, ClientDetailsEntity clientDetails) {
+        if (notification.getPutCode() != null) {
+            throw new IllegalArgumentException("Put code must be null when creating a new notification");
+        }
+        NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);
+        notificationEntity.setOrcid(orcid);
+        SourceEntity sourceEntity = null;
+
+        if (clientDetails != null) {
+            sourceEntity = new SourceEntity();
+            sourceEntity.setSourceClient(clientDetails);
+        } else {
+            sourceEntity = sourceManager.retrieveActiveSourceEntity();
+        }
+
+        if (sourceEntity != null) {
+            // Set source id
+            if (sourceEntity.getSourceProfile() != null) {
+                notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+            }
+
+            if (sourceEntity.getSourceClient() != null) {
+                notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+            }
+        } else {
+            // If we can't find source id, set the user as the source
+
+            notificationEntity.setSourceId(orcid);
+        }
+
+        if (StringUtils.isNotBlank(notificationFamily)) {
+            notificationEntity.setNotificationFamily(notificationFamily);
+        }
+
+        notificationDao.persist(notificationEntity);
+        return notificationAdapter.toNotification(notificationEntity);
+    }
+
     private Notification createNotification(String orcid, Notification notification) {
         if (notification.getPutCode() != null) {
             throw new IllegalArgumentException("Put code must be null when creating a new notification");
@@ -437,6 +536,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             }
         } else {
             // If we can't find source id, set the user as the source
+
             notificationEntity.setSourceId(orcid);
         }
 
@@ -476,8 +576,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<Notification> filterActionedNotificationAlerts(Collection<Notification> notifications, String userOrcid) {
         return notifications.stream().filter(n -> {
-            //Filter only INSTITUTIONAL_CONNECTION notifications
-            if(NotificationType.INSTITUTIONAL_CONNECTION.equals(n.getNotificationType())) {
+            // Filter only INSTITUTIONAL_CONNECTION notifications
+            if (NotificationType.INSTITUTIONAL_CONNECTION.equals(n.getNotificationType())) {
                 boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
                 if (alreadyConnected) {
                     flagAsArchived(userOrcid, n.getPutCode(), false);
@@ -550,34 +650,35 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             notificationEntity.setReadDate(now);
             notificationDao.merge(notificationEntity);
         }
-        
-        if (NotificationType.FIND_MY_STUFF.value().equals(notificationEntity.getNotificationType())){
+
+        if (NotificationType.FIND_MY_STUFF.value().equals(notificationEntity.getNotificationType())) {
             findMyStuffManager.markAsActioned(orcid, notificationEntity.getClientSourceId());
         }
 
         return notificationAdapter.toNotification(notificationEntity);
     }
 
-    /** Create a basic notification.  No details, basically says this service has found some stuff.  Includes actionable url.
+    /**
+     * Create a basic notification. No details, basically says this service has
+     * found some stuff. Includes actionable url.
      * 
      * @param userOrcid
      * @param clientId
      * @param authorizationUrl
      */
     @Override
-    public NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl){
+    public NotificationFindMyStuffEntity createFindMyStuffNotification(String userOrcid, String clientId, String authorizationUrl) {
         NotificationFindMyStuff notification = new NotificationFindMyStuff();
         notification.setNotificationType(NotificationType.FIND_MY_STUFF);
         notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
-        NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter
-                .toNotificationEntity(notification);
+        NotificationFindMyStuffEntity notificationEntity = (NotificationFindMyStuffEntity) notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setOrcid(userOrcid);
-        //notificationEntity.setProfile(new ProfileEntity(userOrcid));
+        // notificationEntity.setProfile(new ProfileEntity(userOrcid));
         notificationEntity.setClientSourceId(clientId);
-        notificationDao.persist(notificationEntity);   
+        notificationDao.persist(notificationEntity);
         return notificationEntity;
     }
-    
+
     @Override
     public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
@@ -586,12 +687,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
         notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);
         notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
-        NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter
-                .toNotificationEntity(notification);
+        NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter.toNotificationEntity(notification);
         notificationEntity.setOrcid(userOrcid);
         notificationEntity.setClientSourceId(clientId);
         notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
-        notificationDao.persist(notificationEntity);        
+        notificationDao.persist(notificationEntity);
     }
 
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
@@ -632,8 +732,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         ProfileEntity primaryProfileEntity = profileEntityCacheManager.retrieve(primaryOrcid);
         ProfileEntity deprecatedProfileEntity = profileEntityCacheManager.retrieve(deprecatedOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(SourceEntityUtils.getSourceId(deprecatedProfileEntity.getSource()));
-        Locale userLocale = LocaleUtils
-                .toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.common_v2.Locale.EN.value() : org.orcid.jaxb.model.common_v2.Locale.valueOf(primaryProfileEntity.getLocale()).value());
+        Locale userLocale = LocaleUtils.toLocale(primaryProfileEntity.getLocale() == null ? org.orcid.jaxb.model.common_v2.Locale.EN.value()
+                : org.orcid.jaxb.model.common_v2.Locale.valueOf(primaryProfileEntity.getLocale()).value());
 
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -692,16 +792,16 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
         List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
-        notifications = notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate);          
+        notifications = notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate);
         return notificationAdapter.toNotification(notifications);
     }
-    
+
     private String getAssetsUrl() {
         String baseUrl = orcidUrlManager.getBaseUrl();
-        if(!baseUrl.endsWith("/")) {
+        if (!baseUrl.endsWith("/")) {
             baseUrl += '/';
         }
-        
+
         return baseUrl + "static/" + ReleaseNameUtils.getReleaseName();
     }
 
@@ -710,26 +810,25 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notificationDao.archiveOffsetNotifications(notificationArchiveOffset == null ? 100 : notificationArchiveOffset);
     }
 
-    @Override    
+    @Override
     public Integer deleteOffsetNotifications() {
         List<Object[]> toDelete = new ArrayList<Object[]>();
         Integer deleted = 0;
         do {
             toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
             LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
-            for(Object[] o : toDelete) {
+            for (Object[] o : toDelete) {
                 BigInteger big = (BigInteger) o[0];
                 Long id = big.longValue();
-                String orcid = (String) o[1];            
-                LOGGER.info("About to delete old notification: id={}, orcid={}",
-                            new Object[] { id, orcid });
-                    notificationDao.deleteNotificationItemByNotificationId(id);
-                    notificationDao.deleteNotificationWorkByNotificationId(id);
-                    notificationDao.deleteNotificationById(id);            
-            }         
+                String orcid = (String) o[1];
+                LOGGER.info("About to delete old notification: id={}, orcid={}", new Object[] { id, orcid });
+                notificationDao.deleteNotificationItemByNotificationId(id);
+                notificationDao.deleteNotificationWorkByNotificationId(id);
+                notificationDao.deleteNotificationById(id);
+            }
             deleted += toDelete.size();
-        } while(!toDelete.isEmpty());
-        
+        } while (!toDelete.isEmpty());
+
         return deleted;
     }
 
@@ -739,6 +838,36 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         while (notDoneYet) {
             notDoneYet = notificationDao.deleteNotificationsForRecord(orcid, DELETE_BATCH_SIZE);
         }
+    }
+
+    public void sendOrcidIntegrationNotificationToUser(String orcid, ClientDetailsEntity clientDetails, String memberName) throws UnsupportedEncodingException {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+
+        Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
+        if (memberName == null || memberName.isEmpty()) {
+            memberName = clientDetails.getClientName();
+        }
+        
+        String subject = messages.getMessage("notification.mvp.connectWithOrcidIntegration", new String[] { memberName }, userLocale);
+
+        NotificationPermission notification = new NotificationPermission();
+        Items items = new Items();
+        notification.setItems(items);
+        notification.setSubject(subject);
+        notification.setNotificationIntro(memberName + "::" +clientDetails.getNotificationWebpageUrl());
+        notification.setNotificationSubject(subject);
+        notification.setAuthorizationUrl(new AuthorizationUrl(buildAuthorizationUrlForInstitutionalSignIn(clientDetails)));
+        Source source = new Source();
+        source.setSourceClientId(new SourceClientId(clientDetails.getClientId()));
+        source.setSourceName(new SourceName(memberName));
+        notification.setSource(source);
+        createPermissionNotificationWithFamily(orcid, notification, ORCID_INTEGRATION_NOTIFICATION_FAMILY, clientDetails);
+    }
+
+    public List<NotificationEntity> findByOrcidAndClientAndNotificationFamilyNoClientToken(String orcid, String clientId, String notificationFamily) {
+
+        return notificationDaoReadOnly.findNotificationsByOrcidAndClientAndFamilyNoClientToken(orcid, clientId, notificationFamily);
+
     }
 
 }

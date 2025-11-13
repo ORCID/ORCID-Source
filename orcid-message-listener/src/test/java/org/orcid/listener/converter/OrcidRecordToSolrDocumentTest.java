@@ -48,7 +48,6 @@ public class OrcidRecordToSolrDocumentTest {
             }
         }
         
-        
         OrcidRecordToSolrDocument v3 = new  OrcidRecordToSolrDocument(false);
         OrcidSolrDocument v3Doc = v3.convert(record, Arrays.asList(researchResource));
         
@@ -59,15 +58,15 @@ public class OrcidRecordToSolrDocumentTest {
         assertEquals("give-names family-name", v3Doc.getGivenAndFamilyNames());
         assertEquals(1, v3Doc.getEmailAddresses().size());
         assertEquals("user1@email.com", v3Doc.getEmailAddresses().get(0));
-        assertEquals(5, v3Doc.getCurrentInstitutionAffiliationNames().size());
+        assertEquals(4, v3Doc.getCurrentInstitutionAffiliationNames().size());
         assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("service-org"));
         assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("qualification-org"));
         assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("membership-org"));
-        assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("invited-position-org"));
         assertTrue(v3Doc.getCurrentInstitutionAffiliationNames().contains("employment-org"));        
-        assertEquals(2, v3Doc.getPastInstitutionAffiliationNames().size());
+        assertEquals(3, v3Doc.getPastInstitutionAffiliationNames().size());
         assertTrue(v3Doc.getPastInstitutionAffiliationNames().contains("distinction-org"));
-        assertTrue(v3Doc.getPastInstitutionAffiliationNames().contains("education-org"));        
+        assertTrue(v3Doc.getPastInstitutionAffiliationNames().contains("education-org"));
+        assertTrue(v3Doc.getPastInstitutionAffiliationNames().contains("invited-position-org"));
         assertEquals(1, v3Doc.getExternalIdReferences().size());
         assertEquals("value-1", v3Doc.getExternalIdReferences().get(0));
         assertEquals(1, v3Doc.getExternalIdSources().size());

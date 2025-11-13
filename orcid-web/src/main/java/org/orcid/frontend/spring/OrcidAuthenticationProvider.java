@@ -2,11 +2,12 @@ package org.orcid.frontend.spring;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.orcid.authorization.authentication.MFAWebAuthenticationDetails;
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
@@ -14,11 +15,11 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
-import org.orcid.core.utils.OrcidStringUtils;
 import org.orcid.frontend.web.exception.Bad2FARecoveryCodeException;
 import org.orcid.frontend.web.exception.Bad2FAVerificationCodeException;
 import org.orcid.frontend.web.exception.VerificationCodeFor2FARequiredException;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 
 public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -67,51 +69,51 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         ProfileEntity profile = null;
         Integer signinLockCount = null;
         Date signinLockStart = null;
+        String userOrcid = null;
         boolean succesfulLoginAccountLocked = false;
         try {
-
             result = super.authenticate(auth);
-            // 1.retrieve the existing signin lock info
             profile = getProfileEntity(auth.getName());
-            if (profile == null) {
-                throw new BadCredentialsException("Invalid username or password");
-            }
-
+            userOrcid = profile.getId();
             if (!Features.ACCOUNT_LOCKOUT_SIMULATION.isActive()) {
                 // 2.lock window active
                 if (isLockThreshHoldExceeded(profile.getSigninLockCount(), profile.getSigninLockStart())) {
-                    LOGGER.info("Correct sign in but threshhold exceeded for: " + profile.getId());
+                    LOGGER.info("Correct sign in but threshhold exceeded for: " + userOrcid);
                     succesfulLoginAccountLocked = true;
-                    throw new BadCredentialsException("Lock Threashold Exceeded for " + profile.getId());
+                    throw new BadCredentialsException("Lock Threashold Exceeded for " + userOrcid);
                 } else if ((profile.getSigninLockCount() == null) || (profile.getSigninLockCount() > 0 && Features.ENABLE_ACCOUNT_LOCKOUT.isActive())) {
-                    LOGGER.info("Reset the signin lock after correct login outside of locked window for: " + profile.getId());
-                    profileEntityManager.resetSigninLock(profile.getId());
+                    LOGGER.info("Reset the signin lock after correct login outside of locked window for: " + userOrcid);
+                    profileEntityManager.resetSigninLock(userOrcid);
                 }
             }
 
         } catch (BadCredentialsException bce) {
             // update the DB for lock threshhold fields
-            try {
-                if (Features.ENABLE_ACCOUNT_LOCKOUT.isActive() && !succesfulLoginAccountLocked) {
+            if (Features.ENABLE_ACCOUNT_LOCKOUT.isActive() && !succesfulLoginAccountLocked) {
+                try {
+                    profile = getProfileEntity(auth.getName());
+                    userOrcid = profile.getId();
+
                     LOGGER.info("Invalid password attempt updating signin lock");
-                    if (profile == null) {
-                        profile = getProfileEntity(auth.getName());
-                    }
                     // get the locking info
-                    List<Object[]> lockInfoList = profileEntityManager.getSigninLock(profile.getId());
-                    signinLockCount = (Integer) lockInfoList.get(0)[2];
-                    signinLockStart = (Date) lockInfoList.get(0)[0];
+                    signinLockCount = profile.getSigninLockCount();
+                    signinLockStart = profile.getSigninLockStart();
                     if (signinLockStart == null) {
-                        profileEntityManager.startSigninLock(profile.getId());
+                        profileEntityManager.startSigninLock(userOrcid);
                     }
 
-                    profileEntityManager.updateSigninLock(profile.getId(), signinLockCount + 1);
-                    profileEntityCacheManager.remove(profile.getId());
-                }
-
-            } catch (Exception ex) {
-                if (!(ex instanceof javax.persistence.NoResultException)) {
-                    LOGGER.error("Exception while saving sign in lock.", ex);
+                    profileEntityManager.updateSigninLock(userOrcid, (signinLockCount == null ? 1 : (signinLockCount + 1)));
+                    profileEntityCacheManager.remove(userOrcid);
+                } catch (Exception ex) {
+                    //TODO: This try/catch should be removed as soon as we confirm there are no more exceptions while updating the sign in lock.
+                    if (!(ex instanceof javax.persistence.NoResultException)) {
+                        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+                        if(rootCause != null) {
+                            LOGGER.error("An exception has occurred processing request from user " + auth.getName() + ". " + rootCause.getClass().getSimpleName() + ": " + rootCause.getMessage());
+                        } else {
+                            LOGGER.error("An exception has occurred processing request from user " + auth.getName() + ". " + ex.getClass().getSimpleName() + ": " + ex.getMessage());
+                        }
+                    }
                 }
             }
             throw bce;
@@ -128,13 +130,13 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
         }
 
         if (profile.getUsing2FA()) {
-            String recoveryCode = ((OrcidWebAuthenticationDetails) auth.getDetails()).getRecoveryCode();
+            String recoveryCode = ((MFAWebAuthenticationDetails) auth.getDetails()).getRecoveryCode();
             if (recoveryCode != null && !recoveryCode.isEmpty()) {
                 if (!backupCodeManager.verify(profile.getId(), recoveryCode)) {
                     throw new Bad2FARecoveryCodeException();
                 }
             } else {
-                String verificationCode = ((OrcidWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
+                String verificationCode = ((MFAWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
                 if (verificationCode == null || verificationCode.isEmpty()) {
                     throw new VerificationCodeFor2FARequiredException();
                 }
@@ -144,7 +146,8 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                 }
             }
         }
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(profile.getId(), result.getCredentials(), result.getAuthorities());
+        User user = new User(profile.getId(), (String) auth.getCredentials(), result.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
         authentication.setDetails(orcidUserDetailsService.loadUserByProfile(profile));
         return authentication;
     }

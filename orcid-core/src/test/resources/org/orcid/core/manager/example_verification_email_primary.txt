@@ -1,0 +1,20 @@
+Your ORCID iD: 4444-4444-4444-4446
+Your ORCID record is https://testserver.orcid.org/4444-4444-4444-4446
+
+Hi Josiah Carberry,
+This is a friendly reminder to verify your email address in your ORCID record so that you can unlock advanced editing features in your ORCID record. Until then, you will only be able to manage your names and email addresses in your ORCID record.
+
+How do I verify my email address?
+Or, copy and paste the link below into your browser's address bar:
+http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0?lang=en
+Please visit our <a href="https://info.orcid.org/researchers/" target="orcid.blank">researcher homepage</a> for more information on how to get the most out of your ORCID record.
+Warm Regards,
+ORCID Support Team
+https://support.orcid.org
+
+You have received this email as a service announcement related to your ORCID Account.
+email preferences (https://testserver.orcid.org/account)
+privacy policy (https://testserver.orcid.org/privacy-policy)
+ORCID, Inc.
+10411 Motor City Drive, Suite 750, Bethesda, MD 20817, USA
+https://testserver.orcid.org

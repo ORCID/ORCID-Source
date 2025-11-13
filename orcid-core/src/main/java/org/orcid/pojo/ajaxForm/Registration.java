@@ -1,5 +1,7 @@
 package org.orcid.pojo.ajaxForm;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +54,10 @@ public class Registration implements ErrorsInterface, Serializable {
 
     private String linkType;
 
+    private AffiliationForm affiliationForm;
+
+    private boolean isReactivation;
+
     public Registration() {
         errors = new ArrayList<String>();
         password = new Text();
@@ -72,6 +78,7 @@ public class Registration implements ErrorsInterface, Serializable {
         sendEmailFrequencyDays = new Text();
         grecaptcha = new Text();
         grecaptchaWidgetId = new Text();
+        isReactivation = false;
     }
 
     public List<String> getErrors() {
@@ -241,4 +248,17 @@ public class Registration implements ErrorsInterface, Serializable {
     public void setLinkType(String linkType) {
         this.linkType = linkType;
     }
+
+    public AffiliationForm getAffiliationForm() {
+        return affiliationForm;
+    }
+
+    public void setAffiliationForm(AffiliationForm affiliationForm) {
+        this.affiliationForm = affiliationForm;
+    }
+
+    public boolean isReactivation() { return isReactivation; }
+
+    @JsonProperty("isReactivation")
+    public void setReactivation(boolean isReactivation) { this.isReactivation = isReactivation; }
 }

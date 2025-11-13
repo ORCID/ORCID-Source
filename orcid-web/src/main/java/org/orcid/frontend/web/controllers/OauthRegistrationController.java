@@ -12,13 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.utils.OrcidRequestUtil;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -38,10 +39,17 @@ import org.springframework.web.servlet.view.RedirectView;
 public class OauthRegistrationController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthRegistrationController.class);        
     @Resource
-    private RegistrationController registrationController;        
-    
+    private RegistrationController registrationController;
+
+    @Resource
+    private RequestInfoFormLocalCache requestInfoFormLocalCache;
+
     public RegistrationController getRegistrationController() {
         return registrationController;
+    }
+
+    public void setRequestInfoFormLocalCache(RequestInfoFormLocalCache requestInfoFormLocalCache) {
+        this.requestInfoFormLocalCache = requestInfoFormLocalCache;
     }
 
     public void setRegistrationController(RegistrationController registrationController) {
@@ -65,7 +73,7 @@ public class OauthRegistrationController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
         form.setErrors(new ArrayList<String>());
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
         
         if (form.getApproved()) {
             registrationController.validateRegistrationFields(request, form);
@@ -85,7 +93,7 @@ public class OauthRegistrationController extends OauthControllerBase {
 
     @RequestMapping(value = "/oauth/custom/registerConfirm.json", method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm registerAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthHelper.REQUEST_INFO_FORM);
+        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
         if (form.getApproved()) {
             boolean usedCaptcha = false;            
             

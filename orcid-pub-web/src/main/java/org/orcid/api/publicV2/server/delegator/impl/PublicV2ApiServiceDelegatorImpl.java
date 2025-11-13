@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
@@ -14,9 +15,10 @@ import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.api.publicV2.server.security.PublicAPISecurityManagerV2;
+import org.orcid.core.common.manager.EmailDomainManager;
+import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidNoResultException;
-import org.orcid.core.exception.OrcidNonPublicElementException;
 import org.orcid.core.exception.SearchStartParameterLimitExceededException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -42,10 +44,14 @@ import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.ResearcherUrlManagerReadOnly;
 import org.orcid.core.manager.read_only.WorkManagerReadOnly;
 import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ContributorUtils;
+import org.orcid.core.utils.OrcidRequestUtil;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.core.version.impl.Api2_0_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
+import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.common_v2.Visibility;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_v2.GroupIdRecords;
@@ -60,33 +66,15 @@ import org.orcid.jaxb.model.record.summary_v2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_v2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.Biography;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.PeerReview;
-import org.orcid.jaxb.model.record_v2.Person;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.PersonalDetails;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
+import org.orcid.jaxb.model.record_v2.*;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 /**
  * <p/>
@@ -170,7 +158,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private OrcidSearchManager orcidSearchManager;
-    
+
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
@@ -182,13 +170,19 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private OpenIDConnectKeyService openIDConnectKeyService;
-    
+
     @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
-    
+
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
-    
+
+    @Resource
+    private EventManager eventManager;
+
+    @Resource
+    private EmailDomainManager emailDomainManager;
+
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -222,7 +216,6 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewWork(String orcid, Long putCode) {
         Work w = workManagerReadOnly.getWork(orcid, putCode);
         publicAPISecurityManagerV2.checkIsPublic(w);
-        contributorUtilsReadOnly.filterContributorPrivateData(w);        
         ActivityUtils.cleanEmptyFields(w);
         ActivityUtils.setPathToActivity(w, orcid);
 
@@ -232,10 +225,10 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWorks(String orcid) {
-        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);       
+        List<WorkSummary> works = workManagerReadOnly.getWorksSummaryList(orcid);
         Works publicWorks = workManagerReadOnly.groupWorks(works, true);
         publicAPISecurityManagerV2.filter(publicWorks);
-        
+
         ActivityUtils.cleanEmptyFields(publicWorks);
         ActivityUtils.setPathToWorks(publicWorks, orcid);
         Api2_0_LastModifiedDatesHelper.calculateLastModified(publicWorks);
@@ -573,7 +566,6 @@ public class PublicV2ApiServiceDelegatorImpl
         }
         WorkBulk workBulk = workManagerReadOnly.findWorkBulk(orcid, putCodes);
         publicAPISecurityManagerV2.filter(workBulk);
-        contributorUtilsReadOnly.filterContributorPrivateData(workBulk);        
         ActivityUtils.cleanEmptyFields(workBulk);
         ActivityUtils.setPathToBulk(workBulk, orcid);
         sourceUtils.setSourceName(workBulk);
@@ -587,7 +579,7 @@ public class PublicV2ApiServiceDelegatorImpl
 
     private void validateStart(Map<String, List<String>> queryMap) {
         String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
-        if (clientId == null) { 
+        if (clientId == null) {
             // only validate start param where no client credentials
             List<String> startList = queryMap.get("start");
             if (startList != null && !startList.isEmpty()) {
@@ -629,6 +621,16 @@ public class PublicV2ApiServiceDelegatorImpl
     public Response viewClient(String clientId) {
         ClientSummary client = clientManagerReadOnly.getSummary(clientId);
         return Response.ok(client).build();
+    }
+
+    @Override
+    public void trackEvents(HttpServletRequest httpRequest) {
+        if (Features.PAPI_EVENTS.isActive()) {
+            String clientId = orcidSecurityManager.getClientIdFromAPIRequest();
+            String ip = OrcidRequestUtil.getIpAddress(httpRequest);
+
+            eventManager.createPapiEvent(clientId, ip, clientId == null ? true : false);
+        }
     }
 
 }

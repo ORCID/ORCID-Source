@@ -20,7 +20,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.UnexpectedResponseCodeException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
 import org.orcid.core.utils.v3.identifiers.PIDResolverCache;
 import org.orcid.core.utils.v3.identifiers.normalizers.DOINormalizer;
@@ -41,14 +40,13 @@ import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.record.Citation;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.PIDResolutionResult;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -345,7 +343,7 @@ public class DOIResolver implements LinkResolver, MetadataResolver {
             } catch (JSONException ignored) { }
         }
 
-        if (json.has("author") && Features.ADD_OTHER_WORK_CONTRIBUTORS_WITH_DOI_PUBMED.isActive() ) {
+        if (json.has("author")) {
             List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = new ArrayList<>();
             try {
                 JSONArray contributors = json.getJSONArray("author");

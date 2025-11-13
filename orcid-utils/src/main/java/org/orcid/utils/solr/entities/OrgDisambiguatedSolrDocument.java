@@ -1,7 +1,9 @@
 package org.orcid.utils.solr.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.solr.client.solrj.beans.Field;
 
@@ -52,6 +54,12 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
 
     @Field(SolrConstants.ORG_CHOSEN_BY_MEMBER)
     private boolean isOrgChosenByMember;
+
+    @Field(SolrConstants.ORG_NAMES_JSON)
+    private String orgNamesJson;
+
+    @Field(SolrConstants.ORG_LOCATIONS_JSON)
+    private String orgLocationsJson;
 
     public String getOrgDisambiguatedId() {
         return orgDisambiguatedId;
@@ -163,6 +171,22 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
         this.orgDisambiguatedStatus = orgDisambiguatedStatus;
     }
 
+    public String getOrgNamesJson() {
+        return orgNamesJson;
+    }
+
+    public void setOrgNamesJson(String orgNamesJson) {
+        this.orgNamesJson = orgNamesJson;
+    }
+
+    public String getOrgLocationsJson() {
+        return orgLocationsJson;
+    }
+
+    public void setOrgLocationsJson(String orgLocationsJson) {
+        this.orgLocationsJson = orgLocationsJson;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -180,6 +204,8 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
         result = prime * result + ((orgDisambiguatedStatus == null) ? 0 : orgDisambiguatedStatus.hashCode());
         result = prime * result + ((orgDisambiguatedType == null) ? 0 : orgDisambiguatedType.hashCode());
         result = prime * result + ((orgNames == null) ? 0 : orgNames.hashCode());
+        result = prime * result + ((orgNamesJson == null) ? 0 : orgNamesJson.hashCode());
+        result = prime * result + ((orgLocationsJson == null) ? 0 : orgLocationsJson.hashCode());
         return result;
     }
 
@@ -251,6 +277,37 @@ public class OrgDisambiguatedSolrDocument implements Serializable {
                 return false;
         } else if (!orgNames.equals(other.orgNames))
             return false;
+        if (orgLocationsJson == null) {
+            if (other.orgLocationsJson != null)
+                return false;
+        } else if (!orgLocationsJson.equals(other.orgLocationsJson))
+            return false;
+        if (orgNamesJson == null) {
+            if (other.orgNamesJson != null)
+                return false;
+        } else if (!orgNamesJson.equals(other.orgNamesJson))
+            return false;
         return true;
     }
+    
+   public  OrgDisambiguatedSolrDocument() {};
+    
+   public  OrgDisambiguatedSolrDocument(OrgDisambiguatedSolrDocument originalDoc) {     
+        this.orgDisambiguatedId = String.valueOf(originalDoc.getOrgDisambiguatedId());
+        this.orgDisambiguatedName = originalDoc.getOrgDisambiguatedName();
+        this.orgDisambiguatedCity = originalDoc.getOrgDisambiguatedCity(); 
+        this.orgDisambiguatedRegion = originalDoc.getOrgDisambiguatedRegion();
+        this.orgDisambiguatedCountry = originalDoc.getOrgDisambiguatedCountry();
+        this.orgDisambiguatedIdFromSource = originalDoc.getOrgDisambiguatedIdFromSource();
+        this.orgDisambiguatedIdSourceType = originalDoc.getOrgDisambiguatedIdSourceType();
+        this.orgDisambiguatedType = originalDoc.getOrgDisambiguatedType();
+        this.orgDisambiguatedPopularity =originalDoc.getOrgDisambiguatedPopularity();
+        this.orgNames = originalDoc.getOrgNames();
+        this.isFundingOrg =originalDoc.isFundingOrg();
+        this.orgLocationsJson = originalDoc.getOrgLocationsJson();
+        this.orgNamesJson = originalDoc.getOrgNamesJson();
+        this.isOrgChosenByMember = originalDoc.isOrgChosenByMember();
+        this.orgDisambiguatedStatus = originalDoc.getOrgDisambiguatedStatus();
+    }
+
 }

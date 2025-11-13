@@ -1,9 +1,9 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -32,38 +32,83 @@ public class TemplateManagerTest {
     private OrcidUrlManager orcidUrlManager;
 
     @Resource(name = "messageSource")
-    private MessageSource messages;
+    private MessageSource messages;    
 
     @Test
-    public void testProcessTemplate() {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("name", "Declan");
-        params.put("word", "cucumber");
-        String result = templateManager.processTemplate("test.ftl", params);
-        assertNotNull(result);
-        assertEquals("Hello, Declan. Did you say cucumber?", result);
-    }
-
-    @Test
-    public void testGenerateVerifyEmailBody() throws IOException {
-        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_verification_email_body.txt"));
-        String expectedHtml = IOUtils.toString(getClass().getResourceAsStream("example_verification_email_body.html"));
-
+    public void testGenerateVerifyEmailNonPrimaryPlain() throws IOException {
+        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_verification_email_non_primary.txt"), StandardCharsets.UTF_8);
+        
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("primaryEmail", "josiah_carberry@brown.edu");
-        templateParams.put("emailName", "Josiah Carberry");
+        templateParams.put("userName", "Josiah Carberry");
         templateParams.put("subject", "[ORCID] Reminder to verify your email address");
         templateParams.put("verificationUrl", "http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0");
-        templateParams.put("orcid", "4444-4444-4444-4446");
-        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
-        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("orcidId", "4444-4444-4444-4446");
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
         addStandardParams(templateParams);
 
         // Generate body from template
         String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        
+        assertEquals(expectedText, body);        
+    }
+    
+    @Test
+    public void testGenerateVerifyEmailPrimaryPlain() throws IOException {
+        String expectedText = IOUtils.toString(getClass().getResourceAsStream("example_verification_email_primary.txt"), StandardCharsets.UTF_8);
+        
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("primaryEmail", "josiah_carberry@brown.edu");
+        templateParams.put("userName", "Josiah Carberry");
+        templateParams.put("subject", "[ORCID] Reminder to verify your email address");
+        templateParams.put("verificationUrl", "http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0");
+        templateParams.put("orcidId", "4444-4444-4444-4446");
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("isPrimary", true);
+        addStandardParams(templateParams);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("verification_email_v2.ftl", templateParams);
+        
+        assertEquals(expectedText, body);        
+    }
+    
+    @Test
+    public void testGenerateVerifyEmailNonPrimaryHtml() throws IOException {
+        String expectedHtml = IOUtils.toString(getClass().getResourceAsStream("example_verification_email_non_primary.html"), StandardCharsets.UTF_8);
+
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("primaryEmail", "josiah_carberry@brown.edu");
+        templateParams.put("userName", "Josiah Carberry");
+        templateParams.put("subject", "[ORCID] Reminder to verify your email address");
+        templateParams.put("verificationUrl", "http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0");
+        templateParams.put("orcidId", "4444-4444-4444-4446");
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
+        addStandardParams(templateParams);
+
+        // Generate body from template
         String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
 
-        assertEquals(expectedText, body);
+        assertEquals(expectedHtml, htmlBody);
+    }
+    
+    @Test
+    public void testGenerateVerifyEmailPrimaryHtml() throws IOException {
+        String expectedHtml = IOUtils.toString(getClass().getResourceAsStream("example_verification_email_primary.html"), StandardCharsets.UTF_8);
+
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("primaryEmail", "josiah_carberry@brown.edu");
+        templateParams.put("userName", "Josiah Carberry");
+        templateParams.put("subject", "[ORCID] Reminder to verify your email address");
+        templateParams.put("verificationUrl", "http://testserver.orcid.org/verify-email/WnhVWGhYVk9lTng4bWdqaDl0azBXY3BmN1F4dHExOW95SnNxeVJSMy9Scz0");
+        templateParams.put("orcidId", "4444-4444-4444-4446");
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
+        templateParams.put("isPrimary", true);
+        addStandardParams(templateParams);
+
+        // Generate body from template
+        String htmlBody = templateManager.processTemplate("verification_email_html_v2.ftl", templateParams);
+
         assertEquals(expectedHtml, htmlBody);
     }
 

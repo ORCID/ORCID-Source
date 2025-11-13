@@ -1,0 +1,124 @@
+{
+  "@graph" : [ {
+    "@id" : "http://id.loc.gov/vocabulary/countries/nyu",
+    "label" : "New York (State)"
+  }, {
+    "@id" : "organization/ISSNCenter#_1",
+    "@type" : "http://schema.org/Organization"
+  }, {
+    "@id" : "resource/ISSN-L/0021-9525",
+    "identifiedBy" : "resource/ISSN/0021-9525#ISSN-L"
+  }, {
+    "@id" : "resource/ISSN/0021-9525",
+    "@type" : [ "http://id.loc.gov/ontologies/bibframe/Work", "http://id.loc.gov/ontologies/bibframe/Instance", "http://schema.org/Periodical" ],
+    "identifiedBy" : [ "resource/ISSN/0021-9525#KeyTitle", "resource/ISSN/0021-9525#ISSN", "resource/ISSN/0021-9525#ISSN-L" ],
+    "otherPhysicalFormat" : "resource/ISSN/1540-8140",
+    "title" : "resource/ISSN/0021-9525#KeyTitle",
+    "format" : "vocabularies/medium#Print",
+    "identifier" : "0021-9525",
+    "isFormatOf" : "resource/ISSN/1540-8140",
+    "type" : "http://marc21rdf.info/terms/formofmaterial#a",
+    "http://purl.org/ontology/bibo/issn" : "0021-9525",
+    "isPartOf" : "resource/ISSN-L/0021-9525",
+    "issn" : "0021-9525",
+    "name" : [ "\u0098The \u009CJournal of cell biology - Name Array"],
+    "publication" : "resource/ISSN/0021-9525#ReferencePublicationEvent",
+    "url" : [ "http://www.jcb.org/", "http://www.jstor.org/journals/00219525.html", "http://www.pubmedcentral.nih.gov/tocrender.fcgi?journal=482&action=archive", "http://bibpurl.oclc.org/web/21389" ]
+  }, {
+    "@id" : "resource/ISSN/0021-9525#ISSN",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/Issn",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "0021-9525"
+  }, {
+    "@id" : "resource/ISSN/0021-9525#ISSN-L",
+    "@type" : "http://id.loc.gov/ontologies/bibframe/IssnL",
+    "status" : "vocabularies/IdentifierStatus#Valid",
+    "value" : "0021-9525"
+  }, {
+    "@id" : "resource/ISSN/0021-9525#Record",
+    "@type" : "http://schema.org/CreativeWork",
+    "status" : "vocabularies/RecordStatus#Register",
+    "modified" : "20190205231900.0",
+    "mainEntity" : "resource/ISSN/0021-9525",
+    "wasAttributedTo" : "organization/ISSNCenter#_1"
+  }, {
+    "@id" : "resource/ISSN/0021-9525#ReferencePublicationEvent",
+    "@type" : "http://schema.org/PublicationEvent",
+    "location" : "http://id.loc.gov/vocabulary/countries/nyu"
+  } ],
+  "@context" : {
+    "location" : {
+      "@id" : "http://schema.org/location",
+      "@type" : "@id"
+    },
+    "label" : {
+      "@id" : "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "value" : {
+      "@id" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"
+    },
+    "status" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/status",
+      "@type" : "@id"
+    },
+    "wasAttributedTo" : {
+      "@id" : "http://www.w3.org/ns/prov#wasAttributedTo",
+      "@type" : "@id"
+    },
+    "mainEntity" : {
+      "@id" : "http://schema.org/mainEntity",
+      "@type" : "@id"
+    },
+    "modified" : {
+      "@id" : "http://purl.org/dc/terms/modified",
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTime"
+    },
+    "identifiedBy" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/identifiedBy",
+      "@type" : "@id"
+    },
+    "isFormatOf" : {
+      "@id" : "http://purl.org/dc/terms/isFormatOf",
+      "@type" : "@id"
+    },
+    "name" : {
+      "@id" : "http://schema.org/name"
+    },
+    "url" : {
+      "@id" : "http://schema.org/url"
+    },
+    "publication" : {
+      "@id" : "http://schema.org/publication",
+      "@type" : "@id"
+    },
+    "title" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/title",
+      "@type" : "@id"
+    },
+    "issn" : {
+      "@id" : "http://schema.org/issn"
+    },
+    "format" : {
+      "@id" : "http://purl.org/dc/elements/1.1/format",
+      "@type" : "@id"
+    },
+    "otherPhysicalFormat" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/otherPhysicalFormat",
+      "@type" : "@id"
+    },
+    "type" : {
+      "@id" : "http://purl.org/dc/terms/type",
+      "@type" : "@id"
+    },
+    "identifier" : {
+      "@id" : "http://purl.org/dc/elements/1.1/identifier"
+    },
+    "mainTitle" : {
+      "@id" : "http://id.loc.gov/ontologies/bibframe/mainTitle"
+    },
+    "isPartOf" : {
+      "@id" : "http://schema.org/isPartOf",
+      "@type" : "@id"
+    }
+  }
+}

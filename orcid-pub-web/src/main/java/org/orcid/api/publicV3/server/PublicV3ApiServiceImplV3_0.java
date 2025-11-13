@@ -125,13 +125,14 @@ public class PublicV3ApiServiceImplV3_0 {
   public Response viewSwagger() {
       return swaggerUIBuilder.build();
   }
-  
 
   @GET
-  @Produces(value = { MediaType.TEXT_PLAIN })
+  @Produces(value = { MediaType.APPLICATION_JSON })
   @Path(STATUS_PATH)
-  public Response viewStatusText() {
-      return serviceDelegator.viewStatusText();
+  public Response viewStatusSimple() {
+      httpRequest.setAttribute("skipAccessLog", true);
+      httpRequest.setAttribute("isMonitoring", true);
+      return serviceDelegator.viewStatusSimple();
   }
   
   @GET
@@ -147,6 +148,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(ACTIVITIES)
   public Response viewActivities(@PathParam("orcid") String orcid, @Context HttpServletRequest httpRequest) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewActivities(orcid);
   }
 
@@ -155,6 +157,7 @@ public class PublicV3ApiServiceImplV3_0 {
           OrcidApiConstants.APPLICATION_CITEPROC })
   @Path(WORK + PUTCODE)
   public Response viewWork(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode, @Context HttpServletRequest httpRequest) {
+      serviceDelegator.trackEvents(httpRequest);
       if (OrcidApiConstants.APPLICATION_CITEPROC.equals(httpRequest.getHeader("Accept")))
           return serviceDelegator.viewWorkCitation(orcid, putCode);
       return serviceDelegator.viewWork(orcid, putCode);
@@ -164,6 +167,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(WORK_SUMMARY + PUTCODE)
   public Response viewWorkSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewWorkSummary(orcid, putCode);
   }
 
@@ -171,6 +175,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(WORKS)
   public Response viewWorks(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewWorks(orcid);
   }
   
@@ -178,6 +183,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(BULK_WORKS)
   public Response viewSpecifiedWorks(@PathParam("orcid") String orcid, @PathParam("putCodes") String putCodes) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewBulkWorks(orcid, putCodes);
   }
   
@@ -185,6 +191,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(FUNDING + PUTCODE)
   public Response viewFunding(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewFunding(orcid, putCode);
   }
 
@@ -192,13 +199,15 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(FUNDING_SUMMARY + PUTCODE)
   public Response viewFundingSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewFundingSummary(orcid, putCode);
   }
 
   @GET
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(FUNDINGS)
-  public Response viewFundings(@PathParam("orcid") String orcid) {        
+  public Response viewFundings(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewFundings(orcid);
   }
   
@@ -206,6 +215,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EDUCATION + PUTCODE)
   public Response viewEducation(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEducation(orcid, putCode);
   }
 
@@ -213,6 +223,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EDUCATION_SUMMARY + PUTCODE)
   public Response viewEducationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEducationSummary(orcid, putCode);
   }
 
@@ -220,6 +231,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EDUCATIONS)
   public Response viewEducations(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEducations(orcid);
   }
   
@@ -227,6 +239,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EMPLOYMENT + PUTCODE)
   public Response viewEmployment(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEmployment(orcid, putCode);
   }
 
@@ -234,6 +247,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EMPLOYMENT_SUMMARY + PUTCODE)
   public Response viewEmploymentSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEmploymentSummary(orcid, putCode);
   }
 
@@ -241,6 +255,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EMPLOYMENTS)
   public Response viewEmployments(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEmployments(orcid);
   }
   
@@ -248,6 +263,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(PEER_REVIEW + PUTCODE)
   public Response viewPeerReview(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewPeerReview(orcid, putCode);
   }
 
@@ -255,6 +271,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(PEER_REVIEW_SUMMARY + PUTCODE)
   public Response viewPeerReviewSummary(@PathParam("orcid") String orcid, @PathParam("putCode") Long putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewPeerReviewSummary(orcid, putCode);
   }
 
@@ -262,6 +279,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(PEER_REVIEWS)
   public Response viewPeerReviews(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewPeerReviews(orcid);
   }
   
@@ -269,6 +287,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(RESEARCHER_URLS)
   public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewResearcherUrls(orcid);
   }
 
@@ -276,6 +295,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(RESEARCHER_URLS + PUTCODE)
   public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewResearcherUrl(orcid, Long.valueOf(putCode));
   }
 
@@ -283,6 +303,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EMAIL)
   public Response viewEmails(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewEmails(orcid);
   }
 
@@ -290,6 +311,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(PERSONAL_DETAILS)
   public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewPersonalDetails(orcid);
   }
 
@@ -297,6 +319,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(OTHER_NAMES)
   public Response viewOtherNames(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewOtherNames(orcid);
   }
 
@@ -304,6 +327,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(OTHER_NAMES + PUTCODE)
   public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewOtherName(orcid, Long.valueOf(putCode));
   }
 
@@ -311,6 +335,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EXTERNAL_IDENTIFIERS)
   public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewExternalIdentifiers(orcid);
   }
 
@@ -318,6 +343,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
   public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
   }
 
@@ -325,6 +351,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(KEYWORDS)
   public Response viewKeywords(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);  
       return serviceDelegator.viewKeywords(orcid);
   }
 
@@ -332,6 +359,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(KEYWORDS + PUTCODE)
   public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
   }
          
@@ -339,6 +367,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(ADDRESS)
   public Response viewAddresses(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewAddresses(orcid);
   }
           
@@ -346,6 +375,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(ADDRESS + PUTCODE)
   public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewAddress(orcid, Long.valueOf(putCode));
   }
 
@@ -353,6 +383,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(BIOGRAPHY)
   public Response viewBiography(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewBiography(orcid);
   }
 
@@ -360,6 +391,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(PERSON)
   public Response viewPerson(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewPerson(orcid);
   }
   
@@ -368,6 +400,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON, JSON_LD })
   @Path(OrcidApiConstants.RECORD_SIMPLE)
   public Response viewRecord(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewRecord(orcid);
   }
   
@@ -376,6 +409,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(OrcidApiConstants.RECORD_RECORD)
   public Response viewRecordRecord(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewRecord(orcid);
   }
   
@@ -383,6 +417,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SEARCH_PATH)
   public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+      serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
       return jsonQueryResults;
@@ -392,6 +427,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(TEXT_CSV)
   @Path(CSV_SEARCH_PATH)
   public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+      serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
       return csvQueryResults;
@@ -401,6 +437,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EXPANDED_SEARCH_PATH)
   public Response expandedSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+      serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);
       return queryResults;
@@ -409,6 +446,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Path(CLIENT_PATH)
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   public Response viewClient(@PathParam("client_id") String clientId) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewClient(clientId);
   }
   
@@ -416,6 +454,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(DISTINCTION + PUTCODE)
   public Response viewDistinction(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewDistinction(orcid, Long.valueOf(putCode));
   }
 
@@ -423,6 +462,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(DISTINCTIONS)
   public Response viewDistinctions(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewDistinctions(orcid);
   }
 
@@ -430,6 +470,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(DISTINCTION_SUMMARY + PUTCODE)
   public Response viewDistinctionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewDistinctionSummary(orcid, Long.valueOf(putCode));
   }
 
@@ -437,6 +478,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(INVITED_POSITION + PUTCODE)
   public Response viewInvitedPosition(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewInvitedPosition(orcid, Long.valueOf(putCode));
   }
 
@@ -444,6 +486,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(INVITED_POSITIONS)
   public Response viewInvitedPositions(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewInvitedPositions(orcid);
   }
 
@@ -451,6 +494,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(INVITED_POSITION_SUMMARY + PUTCODE)
   public Response viewInvitedPositionSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewInvitedPositionSummary(orcid, Long.valueOf(putCode));
   }
 
@@ -458,6 +502,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(MEMBERSHIP + PUTCODE)
   public Response viewMembership(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewMembership(orcid, Long.valueOf(putCode));
   }
 
@@ -465,6 +510,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(MEMBERSHIPS)
   public Response viewMemberships(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewMemberships(orcid);
   }
 
@@ -472,6 +518,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(MEMBERSHIP_SUMMARY + PUTCODE)
   public Response viewMembershipSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewMembershipSummary(orcid, Long.valueOf(putCode));
   }
 
@@ -479,6 +526,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(QUALIFICATION + PUTCODE)
   public Response viewQualification(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewQualification(orcid, Long.valueOf(putCode));
   }
 
@@ -486,6 +534,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(QUALIFICATIONS)
   public Response viewQualifications(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewQualifications(orcid);
   }
 
@@ -493,6 +542,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(QUALIFICATION_SUMMARY + PUTCODE)
   public Response viewQualificationSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewQualificationSummary(orcid, Long.valueOf(putCode));
   }
 
@@ -500,6 +550,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SERVICE + PUTCODE)
   public Response viewService(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewService(orcid, Long.valueOf(putCode));
   }
 
@@ -507,6 +558,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SERVICES)
   public Response viewServices(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewServices(orcid);
   }
 
@@ -514,6 +566,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SERVICE_SUMMARY + PUTCODE)
   public Response viewServiceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewServiceSummary(orcid, Long.valueOf(putCode));
   }
   
@@ -521,6 +574,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(RESEARCH_RESOURCE + PUTCODE)
   public Response viewResearchResource(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewResearchResource(orcid, Long.valueOf(putCode));
   }
 
@@ -528,6 +582,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(RESEARCH_RESOURCES)
   public Response viewResearchResources(@PathParam("orcid") String orcid) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewResearchResources(orcid);
   }
   
@@ -535,6 +590,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(RESEARCH_RESOURCE_SUMMARY + PUTCODE)
   public Response viewResearchResourceSummary(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
+      serviceDelegator.trackEvents(httpRequest);
       return serviceDelegator.viewResearchResourceSummary(orcid, Long.valueOf(putCode));
   }
   

@@ -1,0 +1,21 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-ORG-EXTRA-COLUMNS" author="Camelia Dumitru" dbms="postgresql">
+        <addColumn tableName="org_disambiguated">
+            <column name="locations_json" type="json" />
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="names_json" type="json" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="AADD-ORG-EXTRA-COLUMNS-HSQL" author="Camelia Dumitru"  dbms="hsqldb">
+         <addColumn tableName="org_disambiguated">
+            <column name="locations_json" type="text" />
+        </addColumn>
+        <addColumn tableName="org_disambiguated">
+            <column name="names_json" type="text" />
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

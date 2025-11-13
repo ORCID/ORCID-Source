@@ -242,7 +242,6 @@ public class NotificationDaoTest extends DBUnitTest {
         for (Long id : ids) {
             notificationDao.remove(id);
         }
-
     }
 
     private Long createNotification(String orcid, Date sentDate) {
@@ -280,7 +279,7 @@ public class NotificationDaoTest extends DBUnitTest {
     }
 
     @Test
-    public void testFindLatestByOrcid() throws IllegalAccessException {
+    public void testFindLatestByOrcid() throws IllegalAccessException, InterruptedException {
         NotificationEntity entity = notificationDao.findLatestByOrcid("0000-0000-0000-0004");
         assertNull(entity);
         Long lastId = null;
@@ -291,8 +290,8 @@ public class NotificationDaoTest extends DBUnitTest {
             FieldUtils.writeField(newEntity, "lastModified", now, true);
             newEntity.setAmendedSection(AMENDED_SECTION_UNKNOWN);
             newEntity.setClientSourceId("APP-6666666666666666");
-            newEntity.setNotificationIntro("Intro");
-            newEntity.setNotificationSubject("Subject");
+            newEntity.setNotificationIntro("Intro " + i);
+            newEntity.setNotificationSubject("Subject " + i);
             newEntity.setNotificationType(NOTIFICATION_TYPE_AMENDED);
             newEntity.setOrcid("0000-0000-0000-0004");
             newEntity.setSendable(true);
@@ -302,12 +301,16 @@ public class NotificationDaoTest extends DBUnitTest {
             assertNotNull(freshFromDB);
             assertNotNull(freshFromDB.getDateCreated());
             assertNotNull(freshFromDB.getLastModified());
+            assertEquals("Intro " + i, freshFromDB.getNotificationIntro());
+            assertEquals("Subject " + i, freshFromDB.getNotificationSubject());
+            assertNotNull(newEntity.getId());
             if (lastId == null) {
                 lastId = freshFromDB.getId();
             } else {
-                assertTrue(lastId < freshFromDB.getId());
+                assertTrue(lastId + " is not less than " + freshFromDB.getId(), lastId < freshFromDB.getId());
                 lastId = freshFromDB.getId();
             }
+            Thread.sleep(50);
         }
     }
 

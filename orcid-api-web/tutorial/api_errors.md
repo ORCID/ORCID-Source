@@ -24,7 +24,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 
 
 
- For additional help please contact https://support.orcid.org/hc/en-us/requests/new.
+ For additional help please contact https://support.orcid.org/.
 
  ## List of Error codes and solutions
 
@@ -46,6 +46,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |403|	Access Denied	|Check the URL of the request|--|
 |403|Forbidden: You are not the source of the work, so you are not allowed to update it|This is because you are trying to modify something that your API client did not put there in the first place ( if the user added an address for example you wouldn't be able to update it)|--|
 |403|If you get this  an error with HTML tags and 'Oops an error happened!'. This is because you are using the Web URL not the api url. |Make sure your URL has 'api' at the start|
+|404|The resource was not found. |This means either the ORCID id or the put code were not found in the ORCID registry, make sure the ORCID id and the put code are correct|`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><error xmlns="http://www.orcid.org/ns/error"><response-code>404</response-code> <developer-message>404 Not Found: The resource was not found.</developer-message> <user-message>The resource was not found.</user-message> <error-code>9016</error-code> <more-info>https://members.orcid.org/api/resources/troubleshooting</more-info> </error>`
 |406|	The resource identified by this request is only capable of generating responses with characteristics not acceptable according to the request "accept" headers.|	Check the header you are using. It should be either 'Accept: application/xml' or 'Accept: application/json' It also must match the content type header if provided.|--|
 |409|	Conflict: The ORCID record is locked and cannot be edited. ORCID https://orcid.org/xxxx-xxxx-xxxx-xxxx|	This record was flagged as violating ORCID's Terms of Use and has been hidden from public view.|--|
 |409|Conflict: You have already added this activity (matched by external identifiers.)|This one is quite explicit, the activity you are trying to add is already on the record|--|
@@ -56,7 +57,7 @@ This guide is to help diagnose any trouble you may be having with API calls. Bel
 |500|	Internal Server Error|	Ensure that that your XML is valid and that any ORCID records you reference in the file are valid|--|
 |500|	Redirect URI mismatch.	|Check that the redirect_uri in the request for the authorization code matches the redirect_uri used when exchanging the authorization code for an access token|--|
 |500|	Invalid authorization code	|Check that the authorization code has not already been exchanged for an access token, authorization codes can only be used once|--|
-|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact https://support.orcid.org/hc/en-us/requests/new to correct this problem
+|500|	Invalid scope: /webhook	|Your credentials are not authorized to create webhooks. Webhooks are available only to premium members, if you are a premium member contact https://support.orcid.org/ to correct this problem
 |500|	org.hibernate.exception.DataException: could not execute statement	|Something that you are posting doesn't comply with field restrictions, check that fields don't exceed character limits, urls are properly formatted, etc.|--|
 |***|url: (3) [globbing] bad range in column 32|Check that you have filled in all the relevant information, this error came from a missing ORCID|--|
 |***|API 1.2 is disabled, please upgrade to the 2.0 API https://members.orcid.org/api/news/xsd-20-update</error-desc>|You are using API version 1 please use v3.0|--|

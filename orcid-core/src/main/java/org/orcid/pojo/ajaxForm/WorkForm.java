@@ -1,30 +1,22 @@
 package org.orcid.pojo.ajaxForm;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.common.CitationType;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.common.WorkType;
-import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
-import org.orcid.jaxb.model.v3.release.common.CreatedDate;
-import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
-import org.orcid.jaxb.model.v3.release.common.SourceClientId;
-import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
-import org.orcid.jaxb.model.v3.release.common.Url;
+import org.orcid.jaxb.model.v3.release.common.*;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkCategory;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.WorkExtended;
-import org.orcid.core.utils.DateUtils;
-import org.orcid.core.utils.OrcidStringUtils;
+import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorkForm extends VisibilityForm implements ErrorsInterface, Serializable {
 
@@ -69,14 +61,12 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     private String assertionOriginClientId;
     
     private String assertionOriginName;
-
+    
     private Text title;
 
     private Text subtitle;
 
     private TranslatedTitleForm translatedTitle;
-
-    private Text workCategory;
 
     private Text workType;
 
@@ -86,9 +76,15 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
 
     private Date createdDate;
 
-    private Date lastModified;
+    private Date lastModified;        
     
-    private boolean userSource;
+    private Integer featuredDisplayIndex;
+
+    public static WorkForm getExtendedWorkForm(WorkExtended work, int maxContributorsForUI) {
+        WorkForm workForm = valueOf(work, maxContributorsForUI);
+        workForm.setFeaturedDisplayIndex(work.getFeaturedDisplayIndex());
+        return workForm;
+    }
 
     public static WorkForm valueOf(Work work, int maxContributorsForUI) {
         if (work == null)
@@ -109,9 +105,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         // Set type
         if (work.getWorkType() != null) {
             w.setWorkType(Text.valueOf(work.getWorkType().value()));
-            // Set category
-            WorkCategory category = WorkCategory.fromWorkType(work.getWorkType());
-            w.setWorkCategory(Text.valueOf(category.value()));
         }
 
         if (work.getWorkTitle() != null) {
@@ -248,9 +241,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         // Set type
         if (work.getType() != null) {
             w.setWorkType(Text.valueOf(work.getType().value()));
-            // Set category
-            WorkCategory category = WorkCategory.fromWorkType(work.getType());
-            w.setWorkCategory(Text.valueOf(category.value()));
         }
 
         if (work.getTitle() != null) {
@@ -354,9 +344,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         // Set type
         if (work.getWorkType() != null) {
             w.setWorkType(Text.valueOf(work.getWorkType().value()));
-            // Set category
-            org.orcid.jaxb.model.record_v2.WorkCategory category = org.orcid.jaxb.model.record_v2.WorkCategory.fromWorkType(work.getWorkType());
-            w.setWorkCategory(Text.valueOf(category.value()));
         }
 
         if (work.getWorkTitle() != null) {
@@ -552,23 +539,18 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
             List<org.orcid.jaxb.model.common_v2.Contributor> contributors = null;
-            if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
-                    contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
-                } else {
-                    contributors = work.getWorkContributors().getContributor();
-                }
+            if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
+                contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
             } else {
                 contributors = work.getWorkContributors().getContributor();
-            }
-
+            }            
             if (contributors != null) {
                 for (org.orcid.jaxb.model.common_v2.Contributor contributor : contributors) {
                     contributorsList.add(Contributor.valueOf(contributor));
                 }
             }
 
-        }
+        }       
         workForm.setContributors(contributorsList);
     }
 
@@ -576,16 +558,11 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
             List<org.orcid.jaxb.model.v3.release.common.Contributor> contributors = null;
-            if (Features.ORCID_ANGULAR_WORKS_CONTRIBUTORS.isActive()) {
-                if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
-                    contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
-                } else {
-                    contributors = work.getWorkContributors().getContributor();
-                }
+            if (work.getWorkContributors().getContributor().size() > maxContributorsForUI) {
+                contributors = work.getWorkContributors().getContributor().subList(0, maxContributorsForUI);
             } else {
                 contributors = work.getWorkContributors().getContributor();
             }
-
             if (contributors != null) {
                 for (org.orcid.jaxb.model.v3.release.common.Contributor contributor : contributors) {
                     contributorsList.add(Contributor.valueOf(contributor));
@@ -915,14 +892,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         this.workType = workType;
     }
 
-    public Text getWorkCategory() {
-        return workCategory;
-    }
-
-    public void setWorkCategory(Text workCategory) {
-        this.workCategory = workCategory;
-    }
-
     public Text getJournalTitle() {
         return journalTitle;
     }
@@ -1042,13 +1011,13 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
     public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
     }
-    
-    public boolean isUserSource() {
-        return userSource;
+
+    public Integer getFeaturedDisplayIndex() {
+        return featuredDisplayIndex;
     }
 
-    public void setUserSource(boolean userSource) {
-        this.userSource = userSource;
+    public void setFeaturedDisplayIndex(Integer featuredDisplayIndex) {
+        this.featuredDisplayIndex = featuredDisplayIndex;
     }
 
     @Override
@@ -1077,7 +1046,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
         result = prime * result + ((translatedTitle == null) ? 0 : translatedTitle.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
-        result = prime * result + ((workCategory == null) ? 0 : workCategory.hashCode());
         result = prime * result + ((workExternalIdentifiers == null) ? 0 : workExternalIdentifiers.hashCode());
         result = prime * result + ((workType == null) ? 0 : workType.hashCode());
         return result;
@@ -1202,11 +1170,6 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
                 return false;
         } else if (!visibility.equals(other.visibility))
             return false;
-        if (workCategory == null) {
-            if (other.workCategory != null)
-                return false;
-        } else if (!workCategory.equals(other.workCategory))
-            return false;
         if (workExternalIdentifiers == null) {
             if (other.workExternalIdentifiers != null)
                 return false;
@@ -1216,7 +1179,7 @@ public class WorkForm extends VisibilityForm implements ErrorsInterface, Seriali
             if (other.workType != null)
                 return false;
         } else if (!workType.equals(other.workType))
-            return false;
+            return false;        
         return true;
     }
 

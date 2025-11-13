@@ -188,7 +188,7 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
         classMap.field("stage", "Integration_Stage__c");
         classMap.customize(new CustomMapper<Integration, JSONObject>() {
             @Override
-            public void mapBtoA(JSONObject b, Integration a, MappingContext context) {
+            public void mapBtoA(JSONObject b, Integration a, MappingContext context) {                
                 JSONObject opportunitiesObject = b.optJSONObject("Achievements__r");
                 if (opportunitiesObject != null) {
                     JSONArray recordsArray = opportunitiesObject.optJSONArray("records");

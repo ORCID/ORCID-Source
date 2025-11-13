@@ -8,14 +8,17 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,12 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
+    
+    @Resource
+    private RedisClient redisClient;
+    
+    @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
+    private boolean isTokenCacheEnabled;
 
     @Override
     public void setOrcidOauth2TokenDetailDao(OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
@@ -42,6 +51,9 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Override
     public OrcidOauth2TokenDetail findNonDisabledByTokenValue(String token) {
+        if(StringUtils.isBlank(token)) {
+            return null;
+        }
         try {
             return orcidOauth2TokenDetailDaoReadOnly.findNonDisabledByTokenValue(token);
         } catch (NoResultException e) {
@@ -128,6 +140,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void revokeAccessToken(String accessToken) {
+        // Remove the token from the cache
+        if(isTokenCacheEnabled) {
+            redisClient.remove(accessToken);
+        }
+        // Revoke the token
         orcidOauth2TokenDetailDao.revokeAccessToken(accessToken);
     }
     
@@ -221,6 +238,16 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientID, RevokeReason reason) {
+        // Find the tokens to disable
+        List<String> tokensToDisable = orcidOauth2TokenDetailDao.findAccessTokenByCodeAndClient(authorizationCode, clientID); 
+        // Remove them from the cache
+        for(String accessToken : tokensToDisable) {
+            LOGGER.info("Token {} will be disabled because auth code {} was reused", accessToken, authorizationCode);
+            if(isTokenCacheEnabled) {
+                redisClient.remove(accessToken);
+            }            
+        }
+        // Disable them
         return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID, reason.name());
     }
 
@@ -233,6 +260,16 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void disableClientAccess(String clientDetailsId, String userOrcid) {
+        // As a security measure, remove any user tokens from the cache
+        List<OrcidOauth2TokenDetail> userTokens = findByUserName(userOrcid);
+        if(userTokens != null && !userTokens.isEmpty()) {
+            for(OrcidOauth2TokenDetail token : userTokens) {
+                if(clientDetailsId.equals(token.getClientDetailsId())) {
+                    redisClient.remove(token.getTokenValue());
+                }
+            }
+        }
+        // And then disable all user tokens
         orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
     }
     
