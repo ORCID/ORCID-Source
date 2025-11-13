@@ -58,14 +58,13 @@ Editing the affiliations sections of a record requires a 3 step OAuth token with
 
 - **end-date** _(optional)_ The date the affiliation ended or will end
 
-- **organization** _(required)_ Information about the organization the affiliation was with. A Ringgold, Grid, ROR, or Crossref Funder Registry organization identifier is required in 3.0+
+- **organization** _(required [^1])_ Information about the organization the affiliation was with. A Ringgold, Grid, ROR, or Crossref Funder Registry organization identifier is required in 3.0+
 
-- **address** _(required)_ Information about the physical location of the organization the affiliation is with. A city and country are required (region is optional)
+- **address** _(required [^1])_ Information about the physical location of the organization the affiliation is with. A city and country are required (region is optional)
 
 - **url** _(optional in 3.0+ only)_ A URL to a resource about the affiliation
 
-- **external-ids** _(optional in 3.0+ only)_ An identifier for the affiliation itself
-
+- **external-ids** _(optional [^1] in 3.0+ only)_ An identifier for the affiliation itself
 
 ## Read a summary of an affiliation section
 
@@ -158,3 +157,5 @@ curl -i -H 'Content-type: application/vnd.orcid+xml' -H 'Authorization: Bearer d
 
 Example response
 ```HTTP/1.1 204 No Content```
+
+[^1]: ***organization** and **address** fields on distinctions, intived-positions, memberships, services and qualifications is not requiered as long as an external-id is provided
