@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.nimbusds.jwt.JWTClaimsSet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +32,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
@@ -43,6 +45,7 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.v3.release.common.*;
+import org.orcid.pojo.*;
 import org.orcid.utils.DateUtils;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
@@ -54,15 +57,12 @@ import org.orcid.jaxb.model.v3.release.record.GivenNames;
 import org.orcid.jaxb.model.v3.release.record.Name;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.AddEmail;
-import org.orcid.pojo.DelegateForm;
-import org.orcid.pojo.DeprecateProfile;
-import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.TargetProxyHelper;
+import org.orcid.utils.ExpiringLinkService;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -84,6 +84,7 @@ public class ManageProfileControllerTest {
     private static final String DEPRECATED_USER_ORCID = "0000-0000-0000-0002";
     private static final String DEPRECATED_USER_ORCID_URL = "https://localhost:8443/0000-0000-0000-0002";
     private static final String USER_CREDIT_NAME = "Credit Name";
+    private static final String TEST_TOKEN = "test.token.123";
 
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
@@ -145,6 +146,12 @@ public class ManageProfileControllerTest {
     @Mock
     private ExternalIdentifierManagerReadOnly mockExternalIdentifierManagerReadOnly;
 
+    @Mock
+    private ExpiringLinkService mockExpiringLinkService;
+
+    @Mock
+    private BackupCodeManager mockBackupCodeManager;
+
     @Before
     public void initMocks() throws Exception {
         controller = new ManageProfileController();
@@ -171,6 +178,8 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "keywordManagerReadOnly", mockKeywordManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "researcherUrlManagerReadOnly", mockResearcherUrlManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "externalIdentifierManagerReadOnly", mockExternalIdentifierManagerReadOnly);
+        TargetProxyHelper.injectIntoProxy(controller, "expiringLinkService", mockExpiringLinkService);
+        TargetProxyHelper.injectIntoProxy(controller, "backupCodeManager", mockBackupCodeManager);
 
                 
         when(mockOrcidSecurityManager.isPasswordConfirmationRequired()).thenReturn(true);
@@ -1230,5 +1239,209 @@ public class ManageProfileControllerTest {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, "password", roles);
         auth.setDetails(details);
         return auth;
+    }
+
+    private JWTClaimsSet createValidClaims(String orcid) throws java.text.ParseException {
+        return new JWTClaimsSet.Builder()
+                .subject(orcid)
+                .expirationTime(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
+                .build();
+    }
+
+    @Test
+    public void testVerifyDeactivationToken_ValidToken() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(mockProfileEntityManager.isDeactivated(USER_ORCID)).thenReturn(false);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ExpiringLinkService.VerificationResult result = controller.verifyDeactivationToken(mockRequest, null, TEST_TOKEN);
+
+        assertNotNull(result);
+        assertEquals(ExpiringLinkService.VerificationStatus.VALID, result.getStatus());
+        assertEquals(USER_ORCID, result.getClaims().getSubject());
+    }
+
+    @Test
+    public void testVerifyDeactivationToken_ValidTokenButAlreadyDeactivated() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+
+        when(mockProfileEntityManager.isDeactivated(USER_ORCID)).thenReturn(true);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ExpiringLinkService.VerificationResult result = controller.verifyDeactivationToken(mockRequest, null, TEST_TOKEN);
+
+        assertNotNull(result);
+        assertEquals(ExpiringLinkService.VerificationStatus.INVALID, result.getStatus());
+    }
+
+    @Test
+    public void testVerifyDeactivationToken_ExpiredToken() {
+        ExpiringLinkService.VerificationResult expiredResult = ExpiringLinkService.VerificationResult.expired();
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(expiredResult);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ExpiringLinkService.VerificationResult result = controller.verifyDeactivationToken(mockRequest, null, TEST_TOKEN);
+
+        assertNotNull(result);
+        assertEquals(ExpiringLinkService.VerificationStatus.EXPIRED, result.getStatus());
+    }
+
+    @Test
+    public void testVerifyDeactivationToken_InvalidToken() {
+        ExpiringLinkService.VerificationResult invalidResult = ExpiringLinkService.VerificationResult.invalid();
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(invalidResult);
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        ExpiringLinkService.VerificationResult result = controller.verifyDeactivationToken(mockRequest, null, TEST_TOKEN);
+
+        assertNotNull(result);
+        assertEquals(ExpiringLinkService.VerificationStatus.INVALID, result.getStatus());
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Success_No2FA() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(twoFactorAuthenticationManager.userUsing2FA(USER_ORCID)).thenReturn(false);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertTrue("Deactivation should be successful", response.isDeactivationSuccessful());
+        assertEquals(ExpiringLinkService.VerificationStatus.VALID, response.getTokenVerification().getStatus());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
+        verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Fail_InvalidToken() {
+        ExpiringLinkService.VerificationResult invalidResult = ExpiringLinkService.VerificationResult.invalid();
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(invalidResult);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
+        assertEquals(ExpiringLinkService.VerificationStatus.INVALID, response.getTokenVerification().getStatus());
+        verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Fail_InvalidPassword() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("invalid password");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
+        assertTrue("Should be flagged as invalid password", response.isInvalidPassword());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("invalid password"), eq("password"));
+        verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Success_With2FACode() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(twoFactorAuthenticationManager.userUsing2FA(USER_ORCID)).thenReturn(true);
+        when(twoFactorAuthenticationManager.verificationCodeIsValid(eq("123456"), eq(USER_ORCID))).thenReturn(true);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        deactivateForm.setTwoFactorCode("123456");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertTrue("Deactivation should be successful", response.isDeactivationSuccessful());
+        assertTrue("2FA should be enabled", response.isTwoFactorEnabled());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
+        verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Success_With2FARecoveryCode() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(twoFactorAuthenticationManager.userUsing2FA(USER_ORCID)).thenReturn(true);
+        when(mockBackupCodeManager.verify(eq(USER_ORCID), eq("recovery-code"))).thenReturn(true);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        deactivateForm.setTwoFactorRecoveryCode("recovery-code");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertTrue("Deactivation should be successful", response.isDeactivationSuccessful());
+        assertTrue("2FA should be enabled", response.isTwoFactorEnabled());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
+        verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Fail_With2FA_NoCodeProvided() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(twoFactorAuthenticationManager.userUsing2FA(USER_ORCID)).thenReturn(true);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
+        assertTrue("Should flag that 2FA is enabled", response.isTwoFactorEnabled());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
+        verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Fail_With2FA_InvalidCode() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(twoFactorAuthenticationManager.userUsing2FA(USER_ORCID)).thenReturn(true);
+        when(twoFactorAuthenticationManager.verificationCodeIsValid(eq("bad-code"), eq(USER_ORCID))).thenReturn(false);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        deactivateForm.setTwoFactorCode("bad-code");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
+        assertTrue("Should be flagged as invalid 2FA code", response.isInvalidTwoFactorCode());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
+        verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+    }
+
+    @Test
+    public void testConfirmDeactivateOrcid_Fail_With2FA_InvalidRecoveryCode() throws java.text.ParseException {
+        ExpiringLinkService.VerificationResult validResult = ExpiringLinkService.VerificationResult.valid(createValidClaims(USER_ORCID));
+        when(mockExpiringLinkService.verifyToken(TEST_TOKEN)).thenReturn(validResult);
+        when(twoFactorAuthenticationManager.userUsing2FA(USER_ORCID)).thenReturn(true);
+        when(mockBackupCodeManager.verify(eq(USER_ORCID), eq("bad-recovery-code"))).thenReturn(false);
+
+        DeactivateOrcid deactivateForm = new DeactivateOrcid();
+        deactivateForm.setPassword("good-password");
+        deactivateForm.setTwoFactorRecoveryCode("bad-recovery-code");
+        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        DeactivateOrcid response = controller.confirmDeactivateOrcid(mockRequest, null, TEST_TOKEN, deactivateForm);
+
+        assertNotNull(response);
+        assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
+        assertTrue("Should be flagged as invalid recovery code", response.isInvalidTwoFactorRecoveryCode());
+        verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
+        verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
     }
 }
