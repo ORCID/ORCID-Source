@@ -1,6 +1,7 @@
 <#import "email_macros.ftl" as emailMacros />
 
 <@emailMacros.msg "email.deactivate.you_have_asked" />
+
 (${baseUri}/${orcid}?lang=${locale})
 
 <@emailMacros.msg "email.deactivate.please_click_the_link" />
