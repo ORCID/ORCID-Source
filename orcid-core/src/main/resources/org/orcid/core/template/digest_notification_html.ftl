@@ -94,7 +94,7 @@
                                         cursor: pointer;
                                         user-select: none;
                                         border: transparent;">
-                                    <span style="text-transform: uppercase;">
+                                    <span>
                                         <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space /><b>${memberName}</b>
                                     </span>
                                 </button>
