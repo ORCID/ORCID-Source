@@ -10,9 +10,9 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-    			<@emailMacros.msg "email.deactivate.you_have_asked" /><a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">(${baseUri}/${orcid})</a>
+    			<@emailMacros.msg "email.deactivate.you_have_asked" /> <a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">(${baseUri}/${orcid})</a>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-    			<@emailMacros.msg "email.deactivate.please_click_the_link" /><a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}" target="_blank">${baseUri}${deactivateUrlEndpointUrl}</a>
+    			<@emailMacros.msg "email.deactivate.please_click_the_link" /> <a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}" target="_blank">${baseUri}${deactivateUrlEndpointUrl}</a>
     		</p>
 			<p>
 				<em><@emailMacros.msg "email.deactivate.please_note" /></em>
