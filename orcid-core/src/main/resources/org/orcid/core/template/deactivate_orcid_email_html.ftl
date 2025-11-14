@@ -14,8 +14,8 @@
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
     			<@emailMacros.msg "email.deactivate.please_click_the_link" /> <a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}" target="_blank">${baseUri}${deactivateUrlEndpointUrl}</a>
     		</p>
-			<p>
-				<em><@emailMacros.msg "email.deactivate.please_note" /></em>
+			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; font-style: italic">
+				<@emailMacros.msg "email.deactivate.please_note" />
 			</p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 	    		<@emailMacros.msg "email.deactivate.if_you_no_longer_want" />
@@ -24,8 +24,12 @@
 		        <@emailMacros.msg "email.deactivate.after_your_account_is_deactivated" />
 		    </p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		        <@emailMacros.msg "email.deactivate.reactivate_anytime" /> <a href="https://support.orcid.org/hc/articles/360006973813" rel="noopener noreferrer" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
+		        <@emailMacros.msg "email.deactivate.you_can_reactivate" />
 		    </p>
+			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+				<@emailMacros.msg "email.deactivate.for_more_information" /> <a href="https://support.orcid.org/hc/articles/360006973813" rel="noopener noreferrer" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
+			</p>
+			<p
 			<#include "email_footer_html.ftl"/>
 		 </div>
 	 </body>
