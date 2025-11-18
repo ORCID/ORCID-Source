@@ -68,7 +68,7 @@
                             <p>
                                 <@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space /><b>${memberName}</b>.<@emailMacros.space /><@emailMacros.msg "notification.mvp.ifYouAreAnActiveFaculty" /><b>${memberName}</b>,<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space /><b>${memberName}</b><@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />	
 							</p> 
-							<p><@emailMacros.msg "notification.mvp.ifYouAreNoLongerAffiliated" /><@emailMacros.space /><b>${memberName}</b><@emailMacros.space /><@emailMacros.msg "notification.mvp.youMayDisregard" />
+							<p><@emailMacros.msg "notification.mvp.ifYouAreNoLongerAffiliated" /><@emailMacros.space /><b>${memberName}</b>,<@emailMacros.space /><@emailMacros.msg "notification.mvp.youMayDisregard" />
 							
 							<p>
 							               <a href="${memberWebUrl}"
