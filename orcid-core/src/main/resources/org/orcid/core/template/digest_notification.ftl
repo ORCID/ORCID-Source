@@ -31,7 +31,7 @@ ${'\n'}${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.
                             <@emailMacros.msg "notification.mvp.youCanBenefit" />
                             
                             <@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space />${memberName}.<@emailMacros.space /><@emailMacros.msg "notification.mvp.ifYouAreAnActiveFaculty" />${memberName},<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />
-					        <@emailMacros.msg "notification.mvp.ifYouAreNoLongerAffiliated" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.youMayDisregard" />
+					        <@emailMacros.msg "notification.mvp.ifYouAreNoLongerAffiliated" /><@emailMacros.space />${memberName},<@emailMacros.space /><@emailMacros.msg "notification.mvp.youMayDisregard" />
 					        
 					        <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space />${memberName}: <@emailMacros.space /> ${memberWebUrl}
 					        
