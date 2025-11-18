@@ -139,6 +139,7 @@ public class OrcidTokenStoreServiceImpl implements OrcidTokenStore {
      * @param authentication
      *            The authentication associated with the token.
      */
+    @Deprecated(since = "Once the authorization server is deployed", forRemoval = true)
     @Override
     public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
         OrcidOauth2TokenDetail detail = populatePropertiesFromTokenAndAuthentication(token, authentication, null);

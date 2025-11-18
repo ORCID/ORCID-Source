@@ -9,7 +9,10 @@ import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.core.oauth.OrcidOboOAuth2Authentication;
 import org.orcid.core.security.OrcidRoles;
+import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.common.SourceName;
@@ -78,16 +81,35 @@ public class SourceManagerImpl implements SourceManager {
             source.setSourceName(new SourceName(clientDetails.getClientName()));  
             
             //OBO if needed
-            OAuth2AuthenticationDetails authDetails = (OAuth2AuthenticationDetails)((OAuth2Authentication) authentication).getDetails();
-            if (authDetails !=null && authDetails.getTokenValue() != null) { //check here because mock tests can't cope otherwise.
-                OrcidOauth2TokenDetail tokenDetail = orcidOauth2TokenDetailDao.findByTokenValue(authDetails.getTokenValue());
-                if (!StringUtils.isEmpty(tokenDetail.getOboClientDetailsId())){
-                    ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
-                    source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
-                    source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));  
-                } else if (tokenDetail.getOrcid() != null && clientDetails.isUserOBOEnabled()) {
-                    source.setAssertionOriginOrcid(new SourceOrcid(tokenDetail.getOrcid()));
-                    source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(tokenDetail.getOrcid())));
+            if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
+                if(OrcidOboOAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                    OrcidOboOAuth2Authentication authDetails = (OrcidOboOAuth2Authentication) authentication;
+                    if (StringUtils.isNotBlank(authDetails.getOboClientId())) {
+                        ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(authDetails.getOboClientId());
+                        source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
+                        source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));
+                    } else {
+                        if(clientDetails.isUserOBOEnabled() && authDetails.getUserAuthentication() != null && OrcidOauth2UserAuthentication.class.isAssignableFrom(authDetails.getUserAuthentication().getClass())) {
+                            OrcidOauth2UserAuthentication userAuth = (OrcidOauth2UserAuthentication) authDetails.getUserAuthentication();
+                            ProfileEntity profile = (ProfileEntity) userAuth.getPrincipal();
+                            source.setAssertionOriginOrcid(new SourceOrcid(profile.getId()));
+                            source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(profile.getId())));
+                        }
+                    }
+                }
+            } else {
+                OAuth2AuthenticationDetails authDetails = (OAuth2AuthenticationDetails) ((OAuth2Authentication) authentication).getDetails();
+                if (authDetails != null && authDetails.getTokenValue() != null) { //check here because mock tests can't cope otherwise.
+                    // TODO: Use the authorization server to build this list of tokens
+                    OrcidOauth2TokenDetail tokenDetail = orcidOauth2TokenDetailDao.findByTokenValue(authDetails.getTokenValue());
+                    if (!StringUtils.isEmpty(tokenDetail.getOboClientDetailsId())) {
+                        ClientDetailsEntity oboClientDetails = clientDetailsManager.findByClientId(tokenDetail.getOboClientDetailsId());
+                        source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
+                        source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));
+                    } else if (tokenDetail.getOrcid() != null && clientDetails.isUserOBOEnabled()) {
+                        source.setAssertionOriginOrcid(new SourceOrcid(tokenDetail.getOrcid()));
+                        source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(tokenDetail.getOrcid())));
+                    }
                 }
             }
             return source;
