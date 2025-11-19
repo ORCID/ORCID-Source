@@ -94,9 +94,9 @@ public class AuthorizationServerUtil {
         Map<String, String> parameters = new HashMap<String, String>();
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
-        addToMapOrThrow(OrcidOauth2Constants.SCOPE_PARAM, scope, parameters);
 
         // Set the grant type
+        parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope == null ? "" : scope);
         parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS);
 
         // Post and respond
