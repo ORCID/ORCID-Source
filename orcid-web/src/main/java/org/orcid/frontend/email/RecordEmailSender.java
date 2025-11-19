@@ -127,7 +127,6 @@ public class RecordEmailSender {
 
         String subject = verifyEmailUtils.getSubject("email.subject.deactivate", userLocale);
         String email = primaryEmail.getEmail();
-        String encryptedEmail = encryptionManager.encryptForExternalUse(email);
         String deactivateUrlEndpointPath = "/account/deactivate";
 
         String token;
