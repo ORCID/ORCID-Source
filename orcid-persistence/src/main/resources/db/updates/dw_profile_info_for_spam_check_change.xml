@@ -2,7 +2,7 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-    <changeSet id="CREATE-DW-PROFILE-INFO-SPAM-CHECK-WITH-LM-V2" author="Camelia Dumitru" dbms="postgresql">
+    <changeSet id="CREATE-DW-PROFILE-INFO-SPAM-CHECK-WITH-LMF" author="Camelia Dumitru" dbms="postgresql">
         <createView viewName="dw_profile_info_for_spam_check" replaceIfExists="true">
 			SELECT 
 			    p.orcid, 
@@ -61,13 +61,13 @@
    				(NOT EXISTS (SELECT 1 FROM public.work WHERE work.orcid = p.orcid) 
     			OR NOT EXISTS (SELECT 1 FROM public.peer_review pr WHERE pr.orcid = p.orcid)
     			OR NOT EXISTS (SELECT 1 FROM public.profile_email_domain ped WHERE ped.orcid = p.orcid))
-    			AND p.record_locked IS NOT TRUE 
-    			AND p.reviewed IS NOT TRUE 
+    			AND (p.record_locked IS NOT TRUE 
+    			OR p.reviewed IS NOT TRUE)
     			AND p.last_modified > DATE_TRUNC('day', (NOW() - INTERVAL '3 month'));
         </createView>
     </changeSet>
 
-    <changeSet id="GRANT-READ-TO-DW_USER-TO-DW-PROFILE-INFO-SPAM-WITH-LM-V2" author="Camelia Dumitru" dbms="postgresql">
+    <changeSet id="GRANT-READ-TO-DW_USER-TO-DW-PROFILE-INFO-SPAM-WITH-LMF" author="Camelia Dumitru" dbms="postgresql">
         <preConditions>
             <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
         </preConditions>
