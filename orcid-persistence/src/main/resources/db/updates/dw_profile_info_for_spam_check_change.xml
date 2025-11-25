@@ -58,9 +58,13 @@
 			-- BIOGRAPHY
 			LEFT JOIN public.biography AS b ON b.orcid = p.orcid 
 			WHERE 
-   				(NOT EXISTS (SELECT 1 FROM public.work WHERE work.orcid = p.orcid) 
-    			OR NOT EXISTS (SELECT 1 FROM public.peer_review pr WHERE pr.orcid = p.orcid)
-    			OR NOT EXISTS (SELECT 1 FROM public.profile_email_domain ped WHERE ped.orcid = p.orcid))
+   				(
+        		NOT EXISTS (SELECT 1 FROM public.work w WHERE w.orcid = p.orcid)
+        		AND 
+        		NOT EXISTS (SELECT 1 FROM public.peer_review pr WHERE pr.orcid = p.orcid)
+        		AND
+        		NOT EXISTS (SELECT 1 FROM public.profile_email_domain ped WHERE ped.orcid = p.orcid)
+    			)
     			AND p.record_locked IS NOT TRUE 
     			AND p.reviewed IS NOT TRUE
     			AND p.last_modified > DATE_TRUNC('day', (NOW() - INTERVAL '3 month'));
