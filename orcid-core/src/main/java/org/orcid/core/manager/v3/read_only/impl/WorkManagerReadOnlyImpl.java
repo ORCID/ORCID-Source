@@ -468,7 +468,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                     if (w.getTitle() != null && w.getTitle().getTitle() != null && !PojoUtil.isEmpty(w.getTitle().getTitle().getContent())) {
                         title.setTitle(w.getTitle().getTitle().getContent());
                     } else {
-                        throw new IllegalStateException("Work with put code " + w.getPutCode() + " doesn't have a title!");
+                    	title.setTitle("");
                     }
 
                     title.setPublic(org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(w.getVisibility()));
