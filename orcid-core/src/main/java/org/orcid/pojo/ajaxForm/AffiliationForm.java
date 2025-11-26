@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
 import org.orcid.jaxb.model.v3.release.common.FuzzyDate;
@@ -128,30 +129,41 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         initDateFields(form, summary.getStartDate(), summary.getEndDate());
         
         Organization organization = summary.getOrganization();
-
         form.setDateSortString(PojoUtil.createDateSortString(summary));
-        form.setAffiliationName(Text.valueOf(organization.getName()));
-        OrganizationAddress address = organization.getAddress();
-        form.setCity(Text.valueOf(address.getCity()));
-        if (organization.getDisambiguatedOrganization() != null) {
-            if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
-                form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
-                form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
-                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));  
+        if(organization != null) {
+      
+            if(organization.getName() != null) {
+                form.setAffiliationName(Text.valueOf(organization.getName()));
+            } 
+            OrganizationAddress address = organization.getAddress();
+            if(address != null) {
+                form.setCity(Text.valueOf(address.getCity()));
             }
-        }
-        if (address.getRegion() != null) {
-            form.setRegion(Text.valueOf(address.getRegion()));
-        } else {
-            form.setRegion(new Text());
-        }
+            if (organization.getDisambiguatedOrganization() != null) {
+                if (organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier() != null) {
+                    form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguatedOrganizationIdentifier()));
+                    form.setDisambiguationSource(Text.valueOf(organization.getDisambiguatedOrganization().getDisambiguationSource()));
+                    form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getDisambiguatedOrganization().getId())));  
+                }
+            }
+            if (address.getRegion() != null) {
+                form.setRegion(Text.valueOf(address.getRegion()));
+            } else {
+                form.setRegion(new Text());
+            }
+    
+            if (address.getCountry() != null) {
+                form.setCountry(Text.valueOf(address.getCountry().name()));
+            } else {
+                form.setCountry(new Text());
+            }
 
-        if (address.getCountry() != null) {
-            form.setCountry(Text.valueOf(address.getCountry().name()));
-        } else {
-            form.setCountry(new Text());
         }
-
+        // DO we need to set the affiliation text to something generic here?
+        if (form.getAffiliationName() == null) {
+            form.setAffiliationName(new Text());
+        }
+        
         if (summary.getDepartmentName() != null) {
             form.setDepartmentName(Text.valueOf(summary.getDepartmentName()));
         } else {
@@ -365,9 +377,10 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         organization.setName(affiliationName.getValue());
         OrganizationAddress organizationAddress = new OrganizationAddress();
         organization.setAddress(organizationAddress);
-        organizationAddress.setCity(city.getValue());
-        
-        if (!PojoUtil.isEmpty(region)) {
+        if(!PojoUtil.isEmpty(city) && StringUtils.isNotBlank(city.getValue())) {
+        	organizationAddress.setCity(city.getValue());
+        }
+        if (!PojoUtil.isEmpty(region) && StringUtils.isNotBlank(country.getValue())) {
             organizationAddress.setRegion(region.getValue());
         } else {
             organizationAddress.setRegion("");
@@ -378,7 +391,9 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
             organization.getDisambiguatedOrganization().setDisambiguatedOrganizationIdentifier(disambiguatedAffiliationSourceId.getValue());
             organization.getDisambiguatedOrganization().setDisambiguationSource(disambiguationSource.getValue());
         }
-        organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
+        if(!PojoUtil.isEmpty(country) && StringUtils.isNotBlank(country.getValue())) {
+        	organizationAddress.setCountry(Iso3166Country.fromValue(country.getValue()));
+        }
         if (!PojoUtil.isEmpty(roleTitle)) {
             affiliation.setRoleTitle(roleTitle.getValue());
         }
@@ -414,7 +429,6 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
                        
             affiliation.setSource(source);
         }
-        
         return affiliation;
     }
 
@@ -873,6 +887,37 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
         date.setMonth(new String());
         date.setYear(new String());
         return date;
+    }
+    
+    
+    /**
+     * Checks if this affiliation qualifies as an "Editorial Service".
+     * <p>
+     * An affiliation is considered an editorial service if it meets two conditions:
+     * <ol>
+     * <li>Its {@code affiliationType} is {@code SERVICE}.</li>
+     * <li>It contains at least one external identifier of type {@code issn}.</li>
+     * </ol>
+     *
+     * @param form The AffiliationForm instance to check.
+     * @return {@code true} if the affiliation is an editorial service, {@code false} otherwise.
+     */
+    public static boolean isEditorialService(AffiliationForm form) {
+        // Return false immediately if the form is null or critical fields are missing
+        if (form == null || form.getAffiliationType() == null || form.getAffiliationExternalIdentifiers() == null) {
+            return false;
+        }
+        
+        boolean isServiceType = AffiliationType.SERVICE.value().equals(form.getAffiliationType().getValue());
+
+        if (!isServiceType) {
+            return false;
+        }
+        //Check if any external identifier has the type 'issn'
+        return form.getAffiliationExternalIdentifiers().stream()
+                .anyMatch(id -> id != null && 
+                                 id.getExternalIdentifierType() != null && 
+                                 "issn".equals(id.getExternalIdentifierType().getValue()));
     }
 
 }

@@ -65,8 +65,11 @@
     						<#assign memberWebUrl = splitValues[1] />
     						<p><b>${notification.notificationSubject}</b></p>
                             <p><@emailMacros.msg "notification.mvp.youCanBenefit" /></p>
-                            <p><@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space /><b>${memberName}</b>.<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />
+                            <p>
+                                <@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space /><b>${memberName}</b>.<@emailMacros.space /><@emailMacros.msg "notification.mvp.ifYouAreAnActiveFaculty" /><b>${memberName}</b>,<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space /><b>${memberName}</b><@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />	
 							</p> 
+							<p><@emailMacros.msg "notification.mvp.ifYouAreNoLongerAffiliated" /><@emailMacros.space /><b>${memberName}</b>,<@emailMacros.space /><@emailMacros.msg "notification.mvp.youMayDisregard" />
+							
 							<p>
 							               <a href="${memberWebUrl}"
                                rel="noopener noreferrer"
@@ -91,13 +94,12 @@
                                         cursor: pointer;
                                         user-select: none;
                                         border: transparent;">
-                                    <span style="text-transform: uppercase;">
-                                        <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space />${memberName}
+                                    <span>
+                                        <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space /><b>${memberName}</b>
                                     </span>
                                 </button>
                             </a>
-                            <p/>
-                            <br>
+                            </p>
                             <p style="word-break: break-word">
                                 <@emailMacros.msg "notification.digest.cantClick" />
                                 <a href="${memberWebUrl}"
@@ -105,7 +107,7 @@
                                    style="text-decoration: underline;color: #085c77;display: inline-block;"
                                 >${memberWebUrl}</a>
                             </p>
-							<#else>
+  							<#else>
                             <#if notification.notificationIntro??><p>${notification.notificationIntro}</p></#if>
                             <p><#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if></p>
                             <#assign itemsByType=notification.items.itemsByType>

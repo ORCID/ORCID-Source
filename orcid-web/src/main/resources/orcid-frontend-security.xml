@@ -10,7 +10,7 @@
 
 	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
 
-	<context:component-scan base-package="org.orcid"/>
+	<context:component-scan base-package="org.orcid, org.orcid.api.common"/>
 	<context:annotation-config />
 
 	<sec:global-method-security pre-post-annotations="enabled" />
@@ -301,6 +301,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/lang.json(.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/csrf.json(.*)?"
+			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/signin/facebook(\?.*)?"
@@ -381,6 +383,8 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/countryNamesToCountryCodes.json(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<sec:intercept-url pattern="/account/deactivate/.*"
+		   	access="IS_AUTHENTICATED_ANONYMOUSLY"/>
 		<sec:intercept-url pattern="/developer-tools"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools/.*"

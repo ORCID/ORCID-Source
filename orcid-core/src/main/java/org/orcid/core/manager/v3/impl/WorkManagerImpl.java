@@ -135,7 +135,16 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      * @return true if the relationship was updated
      * */
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
-        return workDao.updateVisibilities(orcid, workIds, visibility.name());
+        boolean result = workDao.updateVisibilities(orcid, workIds, visibility.name());
+        
+        // If visibility is not PUBLIC (EVERYONE), set featured display index to 0
+        if (result && !Visibility.PUBLIC.equals(visibility)) {
+            for (Long workId : workIds) {
+                workDao.updateFeaturedDisplayIndex(orcid, workId, 0);
+            }
+        }
+        
+        return result;
     }
 
     /**
@@ -399,6 +408,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     		workEntity.setVisibility(originalVisibility.name());  
     	}
         
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
+        }
+        
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
@@ -578,6 +593,12 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             workEntity.setVisibility(originalVisibility.name());
         }
 
+        // If visibility is not PUBLIC, reset featured display index to 0
+        Visibility newVisibility = Visibility.valueOf(workEntity.getVisibility());
+        if (!Visibility.PUBLIC.equals(newVisibility)) {
+            workEntity.setFeaturedDisplayIndex(0);
+        }
+
         //Be sure it doesn't overwrite the source
         workEntity.setSourceId(existingSourceId);
         workEntity.setClientSourceId(existingClientSourceId);
@@ -592,6 +613,27 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItemList(workEntity, work.getExternalIdentifiers(), ActionType.UPDATE));
         return jpaJaxbWorkAdapter.toWork(workEntity);
+    }
+
+    @Override
+    @Transactional
+    public boolean updateFeaturedWorks(String orcid, Map<Long, Integer> featuredDisplayIndexMap) {
+        boolean isPublic = workDao.isPublic(orcid, new ArrayList<>(featuredDisplayIndexMap.keySet()));
+        boolean result = true;
+        if (!isPublic) {
+            throw new IllegalStateException(String.format("Error when processing works %s for user %s",featuredDisplayIndexMap.keySet(), orcid));
+        }
+        if (featuredDisplayIndexMap.size() > 10) {
+            LOGGER.warn("Featured works limit exceeded - " + featuredDisplayIndexMap.keySet());
+        }
+        for (Map.Entry<Long, Integer> workIndexPair : featuredDisplayIndexMap.entrySet()) {
+            Long workId = workIndexPair.getKey();
+            Integer featuredDisplayIndex = workIndexPair.getValue();
+            // If null provided, clear the featured index by setting it to 0
+            int normalizedIndex = (featuredDisplayIndex == null) ? 0 : featuredDisplayIndex.intValue();
+            result = workDao.updateFeaturedDisplayIndex(orcid, workId, normalizedIndex);
+        };
+        return result;
     }
 
     private WorkEntity createCopyOfUserPreferredWork(MinimizedWorkEntity preferred) {

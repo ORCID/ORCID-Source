@@ -1,3 +1,170 @@
+## v2.130.16 - 2025-11-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.15...v2.130.16)
+
+## v2.130.15 - 2025-11-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.14...v2.130.15)
+
+## v2.130.14 - 2025-11-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.13...v2.130.14)
+
+## v2.130.13 - 2025-11-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.12...v2.130.13)
+
+## v2.130.12 - 2025-11-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.11...v2.130.12)
+
+## v2.130.11 - 2025-11-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.10...v2.130.11)
+
+## v2.130.10 - 2025-11-14
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.9...v2.130.10)
+
+## v2.130.9 - 2025-11-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.8...v2.130.9)
+
+## v2.130.8 - 2025-11-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.7...v2.130.8)
+
+## v2.130.7 - 2025-11-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.6...v2.130.7)
+
+## v2.130.6 - 2025-11-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.5...v2.130.6)
+
+## v2.130.5 - 2025-11-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.4...v2.130.5)
+
+## v2.130.4 - 2025-10-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.3...v2.130.4)
+
+## v2.130.3 - 2025-10-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.2...v2.130.3)
+
+## v2.130.2 - 2025-10-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.1...v2.130.2)
+
+## v2.130.1 - 2025-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.130.0...v2.130.1)
+
+## v2.130.0 - 2025-10-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.5...v2.130.0)
+
+## v2.129.5 - 2025-10-07
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.4...v2.129.5)
+
+- [#7376](https://github.com/ORCID/ORCID-Source/pull/7376): PD-2418
+
+## v2.129.4 - 2025-10-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.3...v2.129.4)
+
+## v2.129.3 - 2025-10-03
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.2...v2.129.3)
+
+## v2.129.2 - 2025-10-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.1...v2.129.2)
+
+## v2.129.1 - 2025-10-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.129.0...v2.129.1)
+
+## v2.129.0 - 2025-09-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.6...v2.129.0)
+
+## v2.128.6 - 2025-09-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.5...v2.128.6)
+
+## v2.128.5 - 2025-09-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.4...v2.128.5)
+
+## v2.128.4 - 2025-09-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.3...v2.128.4)
+
+## v2.128.3 - 2025-09-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.2...v2.128.3)
+
+## v2.128.2 - 2025-09-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.1...v2.128.2)
+
+## v2.128.1 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.128.0...v2.128.1)
+
+- [#7364](https://github.com/ORCID/ORCID-Source/pull/7364): PD-2042 Empty PR 
+- [#7363](https://github.com/ORCID/ORCID-Source/pull/7363): Lmendoza/pd 2042
+
+## v2.128.0 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.127.1...v2.128.0)
+
+## v2.127.1 - 2025-09-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.127.0...v2.127.1)
+
+## v2.127.0 - 2025-09-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.126.0...v2.127.0)
+
+## v2.126.0 - 2025-09-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.125.0...v2.126.0)
+
+## v2.125.0 - 2025-09-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.124.0...v2.125.0)
+
+## v2.124.0 - 2025-08-29
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.123.0...v2.124.0)
+
+## v2.123.0 - 2025-08-28
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.122.0...v2.123.0)
+
+## v2.122.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.121.0...v2.122.0)
+
+- [#7350](https://github.com/ORCID/ORCID-Source/pull/7350): ${PD-1993} add update featured works logic
+
+## v2.121.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.120.0...v2.121.0)
+
+### Refactor
+
+- Remove `Manage members` and `Member developer tools` from old user menu options (#7354)
+
+## v2.120.0 - 2025-08-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.119.0...v2.120.0)
+
 ## v2.119.0 - 2025-08-20
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.118.0...v2.119.0)

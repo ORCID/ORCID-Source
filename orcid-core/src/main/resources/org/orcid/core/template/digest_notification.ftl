@@ -29,8 +29,13 @@ ${'\n'}${emailName}<@emailMacros.space /><@emailMacros.msg "notification.digest.
     						${notification.notificationSubject}
     						
                             <@emailMacros.msg "notification.mvp.youCanBenefit" />
-                            <@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space />${memberName}.<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />
+                            
+                            <@emailMacros.msg "notification.mvp.basedOnYourVerifiedEmail" /><@emailMacros.space />${memberName}.<@emailMacros.space /><@emailMacros.msg "notification.mvp.ifYouAreAnActiveFaculty" />${memberName},<@emailMacros.space /><@emailMacros.msg "notification.mvp.connectingWithThisIntegration" /><@emailMacros.space />${memberName}<@emailMacros.space /><@emailMacros.msg "notification.mvp.toAutomaticallyAdd" />
+					        <@emailMacros.msg "notification.mvp.ifYouAreNoLongerAffiliated" /><@emailMacros.space />${memberName},<@emailMacros.space /><@emailMacros.msg "notification.mvp.youMayDisregard" />
+					        
 					        <@emailMacros.msg "notification.mvp.connectWith" /><@emailMacros.space />${memberName}: <@emailMacros.space /> ${memberWebUrl}
+					        
+					        
 					<#else>	
 					<#if notification.notificationIntro??>${notification.notificationIntro}</#if>
                     ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if>

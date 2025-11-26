@@ -20,7 +20,10 @@
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers, org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors" />
+		base-package="org.orcid.core.manager.validator, org.orcid.core.manager.impl, org.orcid.core.oauth.service,
+		org.orcid.core.security, org.orcid.core.messaging, org.orcid.core.togglz, org.orcid.core.utils.v3.identifiers,
+		org.orcid.core.groupIds, org.orcid.core.solr, org.orcid.core.orgs, org.orcid.core.contributors,
+		org.orcid.core.oauth.authorizationServer" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -66,7 +69,15 @@
 		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
 		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
 	</bean>
-	
+
+	<bean id="expiringLinkServiceConfig" class="org.orcid.utils.ExpiringLinkService.ExpiringLinkServiceConfig">
+		<property name="key" value="${org.orcid.utils.jwtKey}"/>
+	</bean>
+
+	<bean id="expiringLinkService" class="org.orcid.utils.ExpiringLinkService">
+		<constructor-arg ref="expiringLinkServiceConfig" />
+	</bean>
+
 	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService.OpenIDConnectDiscoveryServiceConfig"/>
 	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService"/>
 	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
@@ -1128,10 +1139,18 @@
 		<property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
 		<property name="retriever" ref="featuredGroupedWorksExtendedRetriever" />
 	</bean>
+	
+	<bean id="worksTitleGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
+		<property name="cache" ref="worksTitleCache" />
+		<property name="profileEntityManager" ref="profileEntityManagerReadOnlyV3" />
+		<property name="retriever" ref="worksTitleRetriever" />
+	</bean>
 
 	<bean id="groupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.GroupedWorksExtendedRetriever" />
 
 	<bean id="featuredGroupedWorksExtendedRetriever" class="org.orcid.core.cache.impl.FeaturedGroupedWorksExtendedRetriever" />
+	
+	<bean id="worksTitleRetriever" class="org.orcid.core.cache.impl.WorksTitleRetriever" />
 
 	<bean id="statusManager" class="org.orcid.core.manager.impl.StatusManagerImpl" />
 	

@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Header Compact")
+    HEADER_COMPACT,
+
     @Label("OAuth - affiliation interstitial")
     OAUTH_AFFILIATION_INTERSTITIAL,
 
@@ -75,6 +78,12 @@ public enum Features implements Feature {
 
     @Label("Use the authorization server to authorize OAUTH requests")
     OAUTH_AUTHORIZATION,
+
+    @Label("Use the authorization server to exchange authorization codes for authentication tokens")
+    OAUTH_AUTHORIZATION_CODE_EXCHANGE,
+
+    @Label("Use the authorization server to validate the token on every API request that contains one")
+    OAUTH_TOKEN_VALIDATION,
 
     @Label("Enable featured works logic in the UI")
     FEATURED_WORKS_UI;

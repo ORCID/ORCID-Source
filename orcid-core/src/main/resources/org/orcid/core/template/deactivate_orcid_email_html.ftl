@@ -10,19 +10,26 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-    			<@emailMacros.msg "email.deactivate.gdpr_you_have_asked.1" /><a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">${baseUri}/${orcid}</a>
+    			<@emailMacros.msg "email.deactivate.you_have_asked" /> <a href="${baseUri}/${orcid}?lang=${locale}" target="_blank">(${baseUri}/${orcid})</a>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-    			<@emailMacros.msg "email.deactivate.you_have_requested.2" /><a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}" target="_blank">${baseUri}${deactivateUrlEndpointUrl}</a>
+    			<@emailMacros.msg "email.deactivate.please_click_the_link" /> <a href="${baseUri}${deactivateUrlEndpoint}?lang=${locale}" target="_blank">${baseUri}${deactivateUrlEndpointUrl}</a>
     		</p>
+			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C; font-style: italic">
+				<@emailMacros.msg "email.deactivate.please_note" />
+			</p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-	    		<@emailMacros.msg "email.deactivate.gdpr_if_you_do_not" />
+	    		<@emailMacros.msg "email.deactivate.if_you_no_longer_want" />
 		    </p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		        <@emailMacros.msg "email.deactivate.please_note.1" /> <a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function" rel="noopener noreferrer" target="_blank"><@emailMacros.msg "email.deactivate.please_note.2" /></a> <@emailMacros.msg "email.deactivate.please_note.3" />
+		        <@emailMacros.msg "email.deactivate.after_your_account_is_deactivated" />
 		    </p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-		        <@emailMacros.msg "email.deactivate.reactivate_anytime" /> <a href="https://support.orcid.org/hc/articles/360006973813" rel="noopener noreferrer" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
+		        <@emailMacros.msg "email.deactivate.you_can_reactivate" />
 		    </p>
+			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
+				<@emailMacros.msg "email.deactivate.for_more_information" /> <a href="https://support.orcid.org/hc/articles/360006973813" rel="noopener noreferrer" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
+			</p>
+			<p
 			<#include "email_footer_html.ftl"/>
 		 </div>
 	 </body>
