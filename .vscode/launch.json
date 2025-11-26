@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "ORCID Local (Tomcat)",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 8000,
+      "projectName": "orcid-web",
+      "preLaunchTask": "Start Tomcat with ORCID"
+    },
+    {
+      "type": "java",
+      "name": "Attach to Tomcat (port 8000)",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 8000
+    }
+  ]
+}

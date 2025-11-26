@@ -11,7 +11,7 @@
 * [3) Databases](#3-databases)
 * [4) Redis](#4-redis)
 * [5) JWKs (OpenID Connect)](#5-jwks-for-openid-connect)
-* [6) IntelliJ IDEA Setup (step-by-step)](#6-intellij-idea-setup)
+* [6) IDE Setup](#6-ide-setup)
 * [7) Test your setup](#7-test-your-setup)
 * [8) Configure Message Listener - optional](#8-configure-message-listener)
 * [9) Configure SOLR - optional](#9-configure-solr)
@@ -199,95 +199,62 @@ org.orcid.openid.jwksLocation=
 org.orcid.openid.jwksTestKey= xxxxxx
 ```
 
+---
 
-## 6) IntelliJ IDEA Setup
+## 6) IDE Setup
 
-**Prereqs**
+### Option A: IntelliJ IDEA
 
-* Install IntelliJ (**Ultimate** recommended; **Community** works with **Smart Tomcat**).
-* Ensure **Project SDK = Java 11**:
+**📕 [IntelliJ IDEA Setup Guide →](SETUP_INTELLIJ.md)**
 
-  * `File → Project Structure → Project → Project SDK = 11`
-* Ensure Maven importer JDK = **11**:
+* Full-featured Java IDE with excellent Maven support
+* IntelliJ Ultimate recommended (Community works with Smart Tomcat plugin)
+* Powerful refactoring and debugging tools
+* Great for developers familiar with JetBrains IDEs
 
-  * `Settings → Build, Execution, Deployment → Build Tools → Maven → Importing → JDK for importer = 11`
-* Import the project as a **Maven** project and enable auto-import.
+---
 
-**Add Tomcat to IntelliJ**
+Both IDEs support:
+* ✅ Debugging with breakpoints
+* ✅ Hot code reload (limited)
+* ✅ Maven integration
+* ✅ Git integration
+* ✅ Tomcat integration
 
-1. **Ultimate**:
+---
 
-   * `Settings → Plugins` → ensure **Tomcat and TomEE** is enabled.
-   * `Settings → Build, Execution, Deployment → Application Servers` → **+ Tomcat**.
-2. **Community**:
+Choose your preferred IDE and follow the corresponding setup guide:
 
-   * `Settings → Plugins → Marketplace` → install **Smart Tomcat**.
-   * Smart Tomcat typically requires both **HTTP (8080)** and **HTTPS (8443)** unless you change plugin settings.
+### Option B: VS Code
 
-**Tell IntelliJ where Tomcat lives**
+**📘 [VS Code Setup Guide →](SETUP_VSCODE.md)**
 
-* **Windows:** `C:\Tomcat9`
-* **macOS (Homebrew):** `/opt/homebrew/Cellar/tomcat@9/<version>/libexec`
+* Modern, lightweight editor with excellent Java support
+* Free and open source
+* Built-in Git integration
+* Automated setup script included
+* Great for developers familiar with VS Code
 
-**Create a Run/Debug configuration**
+**Quick start:**
+```bash
+./vscode-setup.sh  # Automated configuration
+code .             # Open in VS Code
+```
 
-1. `Run → Edit Configurations → +`
+Also see: [VSCODE_QUICKSTART.md](VSCODE_QUICKSTART.md) for a quick reference guide.
 
-   * Ultimate: **Tomcat Server (Local)**
-   * Community: **Smart Tomcat**
-2. **Name** your config (e.g., `orcid-local-https`).
-3. **Ports**
-
-   * HTTPS: `8443`
-   * HTTP: `8080` (Smart Tomcat default; keep or disable in plugin settings)
-4. **VM options (required)**
-
-   ```bash
-   -Dorg.orcid.config.file="file:/ABS/PATH/ORCID-Source/properties/development.properties"
-   -Dlog4j.configurationFile="file:/ABS/PATH/ORCID-Source/orcid-web/log4j2.xml"
-   ```
-
-   * Use **absolute paths** and keep the surrounding quotes.
-5. **Deployment tab → Add Artifact(s)**
-
-   * Choose **WAR exploded** for faster redeploy:
-
-     * `orcid-web`
-     * `orcid-api-web`
-     * `orcid-pub-web`
-     * `orcid-scheduler-web`
-   * ⚠️ Set Application contexts cleanly, e.g. change `/orcid_web_war` → `/orcid-web` (and similarly for the others).
-6. **Enable HTTPS in Tomcat** (server.xml)
-
-   ```xml
-   <Connector SSLEnabled="true" clientAuth="want" keystoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-keystore.jks" keystorePass="changeit" maxThreads="150" port="8443" protocol="HTTP/1.1" scheme="https" secure="true" sslProtocol="TLS" truststoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-truststore.jks" truststorePass="changeit"/>
-   ```
-
-   * Replace `[ROOT_PATH]` with your absolute `ORCID-Source` path.
-   * Typical `server.xml`:
-
-     * Windows: `C:\Tomcat9\conf\server.xml`
-     * macOS (Homebrew): `<tomcat-home>/conf/server.xml` (e.g., `/opt/homebrew/Cellar/tomcat@9/9.0.108/libexec/conf/server.xml`)
-
-**Gotchas (read me!)**
-
-* **Artifact not listed** in Deploy tab → run:
-
-  ```bash
-  mvn -q -T 1C -DskipTests package
-  ```
-
-  or build from the Maven tool window, then reopen Deployment.
-* **404 or wrong URL** → your browser path must match the **Application context** (e.g. `/orcid-web`).
-* **SSL errors** → verify keystore/truststore paths in `server.xml` and that files exist.
 
 ---
 
 ## 7) Test your setup
 
-* In IntelliJ, select your Tomcat config → **Debug**
+Once your IDE is configured:
+
+* Start Tomcat in debug mode (see your IDE setup guide)
 * Browse to `http://localhost:8080/orcid-web/ping`
 * You should see a blank page with the text `{tomcatUp:true}`
+
+If you see this response, your setup is working correctly! 🎉
 ---
 
 ## 8) Configure Message Listener

@@ -47,7 +47,20 @@ Version number used with releases will look to follow a similar format like [sem
 Pull requests are welcome to improve the Registry. See [CONTRIBUTING.md](CONTRIBUTING.md) for details on making contributions,  feature requests, and creating issue/bug reports.
 
 # Development Environment Setup
-See [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
+
+**New developers:** Start with [SETUP_GUIDE.md](SETUP_GUIDE.md) for a complete overview of all setup documentation.
+
+### Quick Links
+- **[DEVSETUP.md](DEVSETUP.md)** - Prerequisites and common setup (Java, PostgreSQL, Tomcat, Redis, JWKs)
+- **[SETUP_VSCODE.md](SETUP_VSCODE.md)** - Complete VS Code setup guide (includes automated setup script)
+- **[SETUP_INTELLIJ.md](SETUP_INTELLIJ.md)** - Complete IntelliJ IDEA setup guide
+
+### Quick Start (VS Code)
+```bash
+# Complete prerequisites (sections 1-5 in DEVSETUP.md), then:
+./vscode-setup.sh  # Automated configuration
+code .             # Open in VS Code
+```
 
 # License
 See [LICENSE](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE)

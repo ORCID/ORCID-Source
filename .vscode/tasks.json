@@ -1,0 +1,119 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Maven: Clean Install",
+      "type": "shell",
+      "command": "mvn",
+      "args": ["clean", "install", "-DskipTests"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Maven: Package (skip tests)",
+      "type": "shell",
+      "command": "mvn",
+      "args": ["-q", "-T", "1C", "-DskipTests", "package"],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Start Tomcat with ORCID",
+      "type": "shell",
+      "command": "catalina",
+      "args": ["jpda", "run"],
+      "isBackground": true,
+      "options": {
+        "env": {
+          "CATALINA_BASE": "/opt/homebrew/Cellar/tomcat@9/9.0.108/libexec",
+          "CATALINA_HOME": "/opt/homebrew/Cellar/tomcat@9/9.0.108/libexec",
+          "JAVA_HOME": "/opt/homebrew/Cellar/openjdk@11/11.0.25/libexec/openjdk.jdk/Contents/Home",
+          "JPDA_ADDRESS": "8000",
+          "JPDA_TRANSPORT": "dt_socket",
+          "CATALINA_OPTS": "-Dorg.orcid.config.file=file:/Users/l.mendoza/code/ORCID-Source/properties/development.properties -Dlog4j.configurationFile=file:/Users/l.mendoza/code/ORCID-Source/orcid-web/log4j2.xml"
+        }
+      },
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "^(.*)$",
+          "file": 1,
+          "location": 2,
+          "message": 3
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*Catalina.start.*",
+          "endsPattern": ".*Server startup.*"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Stop Tomcat",
+      "type": "shell",
+      "command": "catalina",
+      "args": ["stop"],
+      "options": {
+        "env": {
+          "CATALINA_BASE": "/opt/homebrew/Cellar/tomcat@9/9.0.108/libexec",
+          "CATALINA_HOME": "/opt/homebrew/Cellar/tomcat@9/9.0.108/libexec"
+        }
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Initialize Database",
+      "type": "shell",
+      "command": "cd orcid-core && mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "mvn",
+      "args": ["test"],
+      "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Deploy WARs to Tomcat",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "mvn -q -T 1C -DskipTests package && cp orcid-web/target/orcid-web.war /opt/homebrew/Cellar/tomcat@9/9.0.108/libexec/webapps/ && cp orcid-api-web/target/orcid-api-web.war /opt/homebrew/Cellar/tomcat@9/9.0.108/libexec/webapps/ && cp orcid-pub-web/target/orcid-pub-web.war /opt/homebrew/Cellar/tomcat@9/9.0.108/libexec/webapps/ && cp orcid-scheduler-web/target/orcid-scheduler-web.war /opt/homebrew/Cellar/tomcat@9/9.0.108/libexec/webapps/ && echo 'WAR files deployed successfully'"
+      ],
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ]
+}

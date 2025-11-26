@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "vscjava.vscode-java-pack",
+    "vscjava.vscode-maven",
+    "redhat.java",
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-test",
+    "vscjava.vscode-java-dependency",
+    "redhat.vscode-xml",
+    "cweijan.vscode-postgresql-client2",
+    "ms-azuretools.vscode-docker"
+  ]
+}
