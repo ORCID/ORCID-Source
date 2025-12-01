@@ -1312,6 +1312,8 @@ public class ManageProfileControllerTest {
         assertEquals(ExpiringLinkService.VerificationStatus.VALID, response.getTokenVerification().getStatus());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+        verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(eq(USER_ORCID));
+
     }
 
     @Test
@@ -1328,6 +1330,7 @@ public class ManageProfileControllerTest {
         assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
         assertEquals(ExpiringLinkService.VerificationStatus.INVALID, response.getTokenVerification().getStatus());
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1345,6 +1348,7 @@ public class ManageProfileControllerTest {
         assertTrue("Should be flagged as invalid password", response.isInvalidPassword());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("invalid password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1365,6 +1369,7 @@ public class ManageProfileControllerTest {
         assertTrue("2FA should be enabled", response.isTwoFactorEnabled());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+        verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(eq(USER_ORCID));
     }
 
     @Test
@@ -1385,6 +1390,7 @@ public class ManageProfileControllerTest {
         assertTrue("2FA should be enabled", response.isTwoFactorEnabled());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+        verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(eq(USER_ORCID));
     }
 
     @Test
@@ -1403,6 +1409,7 @@ public class ManageProfileControllerTest {
         assertTrue("Should flag that 2FA is enabled", response.isTwoFactorEnabled());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1423,6 +1430,7 @@ public class ManageProfileControllerTest {
         assertTrue("Should be flagged as invalid 2FA code", response.isInvalidTwoFactorCode());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1443,5 +1451,6 @@ public class ManageProfileControllerTest {
         assertTrue("Should be flagged as invalid recovery code", response.isInvalidTwoFactorRecoveryCode());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 }

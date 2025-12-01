@@ -160,6 +160,30 @@ public class RecordEmailSender {
         mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
+    public void sendOrcidDeactivatedEmail(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        Email primaryEmail = emailManager.findPrimaryEmail(orcid);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = verifyEmailUtils.getSubject("email.subject.deactivated", userLocale);
+        String email = primaryEmail.getEmail();
+
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcid);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", orcid);
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("account_deactivated_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("account_deactivated_email_html.ftl", templateParams);
+
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
+    }
+
     public void sendOrcidLockedEmail(String orcidToLock) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcidToLock);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
