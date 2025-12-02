@@ -127,6 +127,17 @@ public class RecordEmailSenderTest {
     }
 
     @Test
+    public void testSendOrcidDeactivatedEmail() throws JAXBException, IOException, URISyntaxException {
+        Email email = new Email();
+        email.setEmail("josiah_carberry@brown.edu");
+        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
+
+        recordEmailSender.sendOrcidDeactivatedEmail("4444-4444-4444-4446");
+
+        verify(mockMailGunManager, times(1)).sendEmail(eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG), eq("josiah_carberry@brown.edu"), eq("[ORCID] Your ORCID account has been deactivated"), anyString(), anyString());
+    }
+
+    @Test
     public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
         ProfileEntity p = new ProfileEntity();
         p.setLocale("EN");

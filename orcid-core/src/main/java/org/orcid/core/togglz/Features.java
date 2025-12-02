@@ -86,8 +86,11 @@ public enum Features implements Feature {
     OAUTH_TOKEN_VALIDATION,
 
     @Label("Enable featured works logic in the UI")
-    FEATURED_WORKS_UI;
-    
+    FEATURED_WORKS_UI,
+
+    @Label("Send email to primary address on deactivation")
+    SEND_EMAIL_ON_DEACTIVATION;
+
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }

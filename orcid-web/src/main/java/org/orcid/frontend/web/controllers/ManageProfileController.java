@@ -524,6 +524,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
             }
         }
+        if (Features.SEND_EMAIL_ON_DEACTIVATION.isActive()) {
+            recordEmailSender.sendOrcidDeactivatedEmail(orcid);
+        }
         profileEntityManager.deactivateRecord(orcid);
         deactivateResponse.setDeactivationSuccessful(true);
         return deactivateResponse;
