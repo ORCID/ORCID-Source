@@ -226,7 +226,9 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileDetails primary = new ProfileDetails();
         primary.setOrcid("4444-4444-4444-4443");
         r.setPrimaryAccount(primary);
-        
+
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
+
         // Test deprecating a deprecated account
         ProfileDeprecationRequest result = adminController.deprecateProfile(mockRequest, mockResponse, r);
         assertEquals(1, result.getErrors().size());
@@ -384,6 +386,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
         ProfileEntityManager profileEntityManager = (ProfileEntityManager) ReflectionTestUtils.getField(adminController, "profileEntityManager");
         ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
         Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
         
         // Test deactivate
@@ -434,6 +437,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         
         // Test deactivate
         result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "https://orcid.org/4444-4444-4444-4445");
+        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendClaimReminderEmail(Mockito.anyString(),Mockito.anyInt(), Mockito.nullable(String.class));
         assertEquals(1, result.get("success").size());
 
         // Test deactivate
@@ -1423,6 +1427,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileDetails primary = new ProfileDetails();
         primary.setOrcid("4444-4444-4444-4443");
         r.setPrimaryAccount(primary);
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
 
 
         // Test update deprecation to account that is not deprecated
