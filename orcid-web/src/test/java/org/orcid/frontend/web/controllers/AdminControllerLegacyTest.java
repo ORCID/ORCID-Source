@@ -996,7 +996,8 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
-        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);        
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
 
         String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-deactivated-email1@test.com,record-deactivated-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
         
@@ -1058,6 +1059,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
 
         Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());        
         Mockito.verify(profileEntityManager, Mockito.times(6)).deactivateRecord(Mockito.anyString());
+        Mockito.verify(mockRecordEmailSender, Mockito.times(6)).sendOrcidDeactivatedEmail(Mockito.anyString());
 
     }
 
