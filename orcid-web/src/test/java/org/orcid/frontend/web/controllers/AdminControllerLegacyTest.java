@@ -437,7 +437,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         
         // Test deactivate
         result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "https://orcid.org/4444-4444-4444-4445");
-        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendClaimReminderEmail(Mockito.anyString(),Mockito.anyInt(), Mockito.nullable(String.class));
+        Mockito.verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(Mockito.anyString());
         assertEquals(1, result.get("success").size());
 
         // Test deactivate
