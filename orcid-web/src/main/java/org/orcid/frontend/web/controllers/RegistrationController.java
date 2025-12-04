@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EventType;
+import org.orcid.pojo.EmailListChange;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
@@ -69,7 +70,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -500,6 +500,12 @@ public class RegistrationController extends BaseController {
                 if (verified) {
                     profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     sb.append("emailVerified=true");
+
+                    if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive()) {
+                        EmailListChange emailListChange = new EmailListChange();
+                        emailListChange.getVerifiedEmails().add(decryptedEmail);
+                        recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
+                    }
 
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {

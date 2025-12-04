@@ -404,6 +404,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
+        if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive()) {
+            if (!emailListChange.getAddedEmails().isEmpty() || !emailListChange.getRemovedEmails().isEmpty()) {
+                recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
+            }
+        }
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
@@ -596,6 +601,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<Email> newEmails = new ArrayList<Email>();
         String orcid = getCurrentUserOrcid();
         List<String> errors = new ArrayList<String>();
+        EmailListChange emailListChange = new EmailListChange();
 
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
             boolean isNewEmail = true;
@@ -616,6 +622,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (isNewEmail) {
                 // List emails to be added
                 newEmails.add(newJsonEmail);
+                emailListChange.getAddedEmails().add(newJsonEmail);
             }
         }
         
@@ -629,6 +636,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (emailWasDeleted) {
                 // List emails to be deleted
                 deletedEmails.add(oldJsonEmail);
+                emailListChange.getRemovedEmails().add(oldJsonEmail);
             }
         }
                       
@@ -651,7 +659,12 @@ public class ManageProfileController extends BaseWorkspaceController {
         for (org.orcid.jaxb.model.v3.release.record.Email deletedEmail : deletedEmails) {
             deleteEmailJson ( deletedEmail.getEmail() );    
         }
-        
+
+        if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive()) {
+            if (!emailListChange.getAddedEmails().isEmpty() || !emailListChange.getRemovedEmails().isEmpty()) {
+                recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
+            }
+        }
         Emails updatedSet = emailManager.getEmails(getCurrentUserOrcid());
         List<ProfileEmailDomainEntity> updatedDomains = null;
         if (Features.EMAIL_DOMAINS.isActive()) {
