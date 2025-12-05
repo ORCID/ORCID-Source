@@ -8,7 +8,7 @@ public class EmailListChange {
 
     private List<org.orcid.jaxb.model.v3.release.record.Email> removedEmails = new ArrayList<>();
 
-    private List<org.orcid.pojo.ajaxForm.Email> addedEmails = new ArrayList<>();
+    private List<org.orcid.jaxb.model.v3.release.record.Email> addedEmails = new ArrayList<>();
 
     public List<String> getVerifiedEmails() {
         return verifiedEmails;
@@ -26,11 +26,11 @@ public class EmailListChange {
         this.removedEmails = removedEmails;
     }
 
-    public List<org.orcid.pojo.ajaxForm.Email> getAddedEmails() {
+    public List<org.orcid.jaxb.model.v3.release.record.Email> getAddedEmails() {
         return addedEmails;
     }
 
-    public void setAddedEmails(List<org.orcid.pojo.ajaxForm.Email> addedEmails) {
+    public void setAddedEmails(List<org.orcid.jaxb.model.v3.release.record.Email> addedEmails) {
         this.addedEmails = addedEmails;
     }
 }

@@ -25,9 +25,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
@@ -151,6 +149,9 @@ public class ManageProfileControllerTest {
 
     @Mock
     private BackupCodeManager mockBackupCodeManager;
+
+    @Captor
+    private ArgumentCaptor<EmailListChange> emailListChangeCaptor;
 
     @Before
     public void initMocks() throws Exception {
@@ -639,6 +640,12 @@ public class ManageProfileControllerTest {
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
+        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
+        EmailListChange capturedChange = emailListChangeCaptor.getValue();
+        assertEquals(capturedChange.getAddedEmails().get(0).getEmail(),"0000-0000-0000-0002_1@test.orcid.org");
+        assertEquals(capturedChange.getRemovedEmails().size(),0);
+        assertEquals(capturedChange.getVerifiedEmails().size(),0);
+        assertEquals(capturedChange.getAddedEmails().size(),3);
     }
     
     @Test
@@ -658,6 +665,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.this_profile_deprecated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
     
     @Test
@@ -677,6 +685,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.this_profile_deactivated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -691,6 +700,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.problem_deprecating", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -708,6 +718,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("check_password_modal.incorrect_password", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
 
         // Using orcid
         deprecateProfile = new DeprecateProfile();
@@ -719,6 +730,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("check_password_modal.incorrect_password", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -738,6 +750,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deprecated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
 
         // Using email
         deprecateProfile = new DeprecateProfile();
@@ -749,6 +762,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deprecated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -769,6 +783,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deactivated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
 
         // Using email
         deprecateProfile = new DeprecateProfile();
@@ -780,6 +795,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deactivated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -795,6 +811,7 @@ public class ManageProfileControllerTest {
         assertNull(deprecateProfile.getDeprecatingAccountName());
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
         assertEquals("deprecate_orcid.profile_matches_current", deprecateProfile.getErrors().get(0));
     }
 

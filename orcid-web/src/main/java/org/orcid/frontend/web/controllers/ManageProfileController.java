@@ -402,15 +402,16 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
-
-        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
-        if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive()) {
-            if (!emailListChange.getAddedEmails().isEmpty() || !emailListChange.getRemovedEmails().isEmpty()) {
-                recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
-            }
+        EmailListChange emailListChange = new EmailListChange();
+        Emails deprecatedAccountEmails = emailManager.getEmails(deprecatingEntity.getId());
+        for (org.orcid.jaxb.model.v3.release.record.Email email : deprecatedAccountEmails.getEmails()) {
+            emailListChange.getAddedEmails().add(email);
         }
+        boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
+        } else if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive() && !emailListChange.getAddedEmails().isEmpty()) {
+            recordEmailSender.sendEmailListChangeEmail(primaryEntity.getId(), emailListChange);
         }
         return deprecateProfile;
     }
@@ -601,6 +602,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         List<Email> newEmails = new ArrayList<Email>();
         String orcid = getCurrentUserOrcid();
         List<String> errors = new ArrayList<String>();
+        // Used to list emails in security email notification
         EmailListChange emailListChange = new EmailListChange();
 
         for (org.orcid.pojo.ajaxForm.Email newJsonEmail : newEmailSet.getEmails()) {
@@ -622,7 +624,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (isNewEmail) {
                 // List emails to be added
                 newEmails.add(newJsonEmail);
-                emailListChange.getAddedEmails().add(newJsonEmail);
             }
         }
         
@@ -636,6 +637,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (emailWasDeleted) {
                 // List emails to be deleted
                 deletedEmails.add(oldJsonEmail);
+                // Add emails to email notification
                 emailListChange.getRemovedEmails().add(oldJsonEmail);
             }
         }
@@ -660,6 +662,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             deleteEmailJson ( deletedEmail.getEmail() );    
         }
 
+        // send security email
         if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive()) {
             if (!emailListChange.getAddedEmails().isEmpty() || !emailListChange.getRemovedEmails().isEmpty()) {
                 recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);

@@ -143,7 +143,7 @@ public class RecordEmailSender {
 
         Emails emails = emailManager.getEmails(orcid);
 
-        // send email to all current verified emails
+        // send email to all verified emails on the provided orcid account
         for (Email email : emails.getEmails()) {
             if (email.isVerified()) {
                 mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email.getEmail(), subject, body, html);
