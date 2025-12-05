@@ -229,6 +229,7 @@ public class ManageProfileControllerTest {
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setSource(new Source());
                 email1.setVisibility(Visibility.PUBLIC);
+                email1.setVerified(true);
                 emails.getEmails().add(email1);
 
                 Email email2 = new Email();
@@ -236,6 +237,7 @@ public class ManageProfileControllerTest {
                 email2.setSource(new Source());
                 email2.getSource().setSourceName(new SourceName(USER_CREDIT_NAME));
                 email2.setVisibility(Visibility.PUBLIC);
+                email2.setVerified(true);
                 emails.getEmails().add(email2);
 
                 Email email3 = new Email();
@@ -243,6 +245,7 @@ public class ManageProfileControllerTest {
                 email3.setSource(new Source());
                 email3.getSource().setSourceClientId(new SourceClientId(USER_ORCID));
                 email3.setVisibility(Visibility.PUBLIC);
+                email3.setVerified(false);
                 emails.getEmails().add(email3);
                 return emails;
             }
@@ -643,9 +646,9 @@ public class ManageProfileControllerTest {
         verify(mockRecordEmailSender, Mockito.times(1)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
         EmailListChange capturedChange = emailListChangeCaptor.getValue();
         assertEquals(capturedChange.getAddedEmails().get(0).getEmail(),"0000-0000-0000-0002_1@test.orcid.org");
-        assertEquals(capturedChange.getRemovedEmails().size(),0);
-        assertEquals(capturedChange.getVerifiedEmails().size(),0);
-        assertEquals(capturedChange.getAddedEmails().size(),3);
+        assertTrue(capturedChange.getRemovedEmails().isEmpty());
+        assertTrue(capturedChange.getVerifiedEmails().isEmpty());
+        assertEquals(capturedChange.getAddedEmails().size(),2);
     }
     
     @Test
