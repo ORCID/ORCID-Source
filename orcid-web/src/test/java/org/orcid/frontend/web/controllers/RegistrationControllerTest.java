@@ -492,6 +492,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     @Test
     public void verifyEmailTest() throws UnsupportedEncodingException {
+        togglzRule.enable(Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE);
         String orcid = "0000-0000-0000-0000";
         String email = "user_1@test.orcid.org";
         SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
@@ -508,10 +509,12 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=true", mav.getViewName());
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
+        verify(recordEmailSender, times(1)).sendEmailListChangeEmail(eq(orcid), Mockito.any());
     }
         
     @Test
     public void verifyEmail_InvalidEmailTest() throws UnsupportedEncodingException {
+        togglzRule.enable(Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE);
         String orcid = "0000-0000-0000-0000";
         String email = "user_1@test.orcid.org";
         SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
@@ -528,10 +531,12 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/signin", mav.getViewName());
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
+        verify(recordEmailSender, times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
     
     @Test
     public void verifyEmail_NotVerifiedTest() throws UnsupportedEncodingException {
+        togglzRule.enable(Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE);
         String orcid = "0000-0000-0000-0000";
         String email = "user_1@test.orcid.org";
         SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
@@ -548,10 +553,12 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=false", mav.getViewName());
         verify(emailManager, times(1)).verifyEmail(Mockito.anyString(), Mockito.anyString());
+        verify(recordEmailSender, times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
     
     @Test
     public void verifyEmail_UnableToDecryptEmailTest() throws UnsupportedEncodingException {
+        togglzRule.enable(Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE);
         String orcid = "0000-0000-0000-0000";
         String email = "user_1@test.orcid.org";
         SecurityContextTestUtils.setupSecurityContextForWebUser(orcid, email);
@@ -562,5 +569,6 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertNotNull(mav);
         assertEquals("redirect:https://testserver.orcid.org/signin?invalidVerifyUrl=true", mav.getViewName());
         verify(emailManager, times(0)).verifyEmail(Mockito.anyString(), Mockito.anyString());
+        verify(recordEmailSender, times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 }

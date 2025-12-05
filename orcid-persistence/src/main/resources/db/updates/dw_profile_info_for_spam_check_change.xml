@@ -1,0 +1,81 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="CREATE-DW-PROFILE-INFO-SPAM-CHECK-WITH-LMF" author="Camelia Dumitru" dbms="postgresql">
+        <createView viewName="dw_profile_info_for_spam_check" replaceIfExists="true">
+			SELECT 
+			    p.orcid, 
+			    rn.given_names, 
+			    rn.family_name, 
+			    rn.credit_name, 
+			    x_urls.urls, 
+			    x_keywords.keywords, 
+			    x_other.other_names, 
+			    b.biography, 
+			    x_email.emails, 
+			    '?' AS spam, 
+			    p.last_modified 
+			FROM public.profile AS p 
+			INNER JOIN public.record_name AS rn ON rn.orcid = p.orcid 
+			-- URLs
+			LEFT JOIN (
+			    SELECT 
+			        orcid, 
+			        COUNT(id) AS url_count, 
+			        STRING_AGG(url_name, '|') AS urls 
+			    FROM public.researcher_url 
+			    GROUP BY orcid
+			) AS x_urls ON x_urls.orcid = p.orcid 
+			-- KEYWORDS
+			LEFT JOIN (
+			    SELECT 
+			        profile_orcid, 
+			        COUNT(id) AS keyword_count, 
+			        STRING_AGG(keywords_name, '|') AS keywords 
+			    FROM public.profile_keyword 
+			    GROUP BY profile_orcid
+			) AS x_keywords ON x_keywords.profile_orcid = p.orcid 
+			-- OTHER NAMES
+			LEFT JOIN (
+			    SELECT 
+			        orcid, 
+			        COUNT(display_name) AS other_name_count, 
+			        STRING_AGG(display_name, '|') AS other_names 
+			    FROM public.other_name 
+			    GROUP BY orcid
+			) AS x_other ON x_other.orcid = p.orcid 
+			-- EMAILS (Unique Domains Only)
+			LEFT JOIN (
+			    SELECT 
+			        orcid, 
+			        COUNT(email) AS email_count, 
+			        -- Added DISTINCT to remove duplicate domains
+			        STRING_AGG(DISTINCT substring(email FROM '@(.*)$'), '|') AS emails 
+			    FROM public.email 
+			    GROUP BY orcid
+			) AS x_email ON x_email.orcid = p.orcid 
+			-- BIOGRAPHY
+			LEFT JOIN public.biography AS b ON b.orcid = p.orcid 
+			WHERE 
+   				(
+        		NOT EXISTS (SELECT 1 FROM public.work w WHERE w.orcid = p.orcid)
+        		AND 
+        		NOT EXISTS (SELECT 1 FROM public.peer_review pr WHERE pr.orcid = p.orcid)
+        		AND
+        		NOT EXISTS (SELECT 1 FROM public.profile_email_domain ped WHERE ped.orcid = p.orcid)
+    			)
+    			AND p.record_locked IS NOT TRUE 
+    			AND p.reviewed IS NOT TRUE
+    			AND p.last_modified > DATE_TRUNC('day', (NOW() - INTERVAL '3 month'));
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-TO-DW_USER-TO-DW-PROFILE-INFO-SPAM-WITH-LMF" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_profile_info_for_spam_check to dw_user;</sql>
+    </changeSet>
+
+</databaseChangeLog>
