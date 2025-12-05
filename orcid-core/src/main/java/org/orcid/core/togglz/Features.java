@@ -89,7 +89,10 @@ public enum Features implements Feature {
     FEATURED_WORKS_UI,
 
     @Label("Send email to primary address on deactivation")
-    SEND_EMAIL_ON_DEACTIVATION;
+    SEND_EMAIL_ON_DEACTIVATION,
+
+    @Label("Send email on email list change")
+    SEND_EMAIL_ON_EMAIL_LIST_CHANGE;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
