@@ -405,7 +405,9 @@ public class ManageProfileController extends BaseWorkspaceController {
         EmailListChange emailListChange = new EmailListChange();
         Emails deprecatedAccountEmails = emailManager.getEmails(deprecatingEntity.getId());
         for (org.orcid.jaxb.model.v3.release.record.Email email : deprecatedAccountEmails.getEmails()) {
-            emailListChange.getAddedEmails().add(email);
+            if (email.isVerified()) {
+                emailListChange.getAddedEmails().add(email);
+            }
         }
         boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
@@ -637,8 +639,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (emailWasDeleted) {
                 // List emails to be deleted
                 deletedEmails.add(oldJsonEmail);
-                // Add emails to email notification
-                emailListChange.getRemovedEmails().add(oldJsonEmail);
+                if (oldJsonEmail.isVerified()) {
+                    // Add emails to email notification
+                    emailListChange.getRemovedEmails().add(oldJsonEmail);
+                }
             }
         }
                       
