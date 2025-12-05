@@ -137,10 +137,17 @@ public class RecordEmailSenderTest {
         when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
 
         org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
+
         org.orcid.jaxb.model.v3.release.record.Email email = new org.orcid.jaxb.model.v3.release.record.Email();
         email.setEmail(currentVerifiedEmail);
         email.setVerified(true);
+
+        org.orcid.jaxb.model.v3.release.record.Email email2 = new org.orcid.jaxb.model.v3.release.record.Email();
+        email2.setEmail("2_" + currentVerifiedEmail);
+        email2.setVerified(false);
+
         emails.getEmails().add(email);
+        emails.getEmails().add(email2);
         when(mockEmailManager.getEmails(orcid)).thenReturn(emails);
 
         EmailListChange emailListChange = new EmailListChange();
@@ -154,6 +161,12 @@ public class RecordEmailSenderTest {
                 anyString(),
                 anyString());
 
+        verify(mockMailGunManager, times(1)).sendEmail(
+                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString());
     }
 
     @Test
@@ -170,13 +183,18 @@ public class RecordEmailSenderTest {
         org.orcid.jaxb.model.v3.release.record.Email currentEmail = new org.orcid.jaxb.model.v3.release.record.Email();
         currentEmail.setEmail(currentVerifiedEmail);
         currentEmail.setVerified(true);
+        org.orcid.jaxb.model.v3.release.record.Email currentEmail2 = new org.orcid.jaxb.model.v3.release.record.Email();
+        currentEmail2.setEmail("2_" + currentVerifiedEmail);
+        currentEmail2.setVerified(false);
         emails.getEmails().add(currentEmail);
+        emails.getEmails().add(currentEmail2);
         when(mockEmailManager.getEmails(orcid)).thenReturn(emails);
 
-        EmailListChange emailListChange = new EmailListChange();
         org.orcid.jaxb.model.v3.release.record.Email removedEmail = new org.orcid.jaxb.model.v3.release.record.Email();
         removedEmail.setEmail(removedVerifiedEmail);
         removedEmail.setVerified(true);
+
+        EmailListChange emailListChange = new EmailListChange();
         emailListChange.getRemovedEmails().add(removedEmail);
 
         recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
