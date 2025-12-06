@@ -39,6 +39,8 @@ import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.Visibility;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -534,6 +536,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         String orcid = getCurrentUserOrcid();
         AffiliationGroupContainer result = new AffiliationGroupContainer();
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);
+        Map<Long, Boolean> featuredFlags = affiliationsManagerReadOnly.getFeaturedFlags(orcid);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
@@ -547,6 +550,15 @@ public class AffiliationsController extends BaseWorkspaceController {
                         if (!PojoUtil.isEmpty(groupForm.getDefaultAffiliation().getCountry())) {
                             // Set country name
                             defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
+                        }
+                        // Set featured flag on default
+                        if (defaultAffiliation.getPutCode() != null && defaultAffiliation.getPutCode().getValue() != null) {
+                            try {
+                                Long pc = Long.valueOf(defaultAffiliation.getPutCode().getValue());
+                                defaultAffiliation.setFeatured(featuredFlags.get(pc));
+                            } catch (NumberFormatException nfe) {
+                                // ignore invalid putCode
+                            }
                         }
                         // Set org disambiguated data
                         if (!PojoUtil.isEmpty(defaultAffiliation.getOrgDisambiguatedId())) {
@@ -568,6 +580,15 @@ public class AffiliationsController extends BaseWorkspaceController {
                         if (!PojoUtil.isEmpty(aff.getCountry())) {
                             // Set country name
                             aff.setCountryForDisplay(aff.getCountry().getValue());
+                        }
+                        // Set featured flag on each affiliation
+                        if (aff.getPutCode() != null && aff.getPutCode().getValue() != null) {
+                            try {
+                                Long pc = Long.valueOf(aff.getPutCode().getValue());
+                                aff.setFeatured(featuredFlags.get(pc));
+                            } catch (NumberFormatException nfe) {
+                                // ignore invalid putCode
+                            }
                         }
                         // Set org disambiguated data
                         if (!PojoUtil.isEmpty(aff.getOrgDisambiguatedId())) {
@@ -597,5 +618,27 @@ public class AffiliationsController extends BaseWorkspaceController {
     public @ResponseBody boolean updateToMaxDisplay(@RequestParam(value = "putCode") Long putCode) {
         String orcid = getEffectiveUserOrcid();
         return affiliationsManager.updateToMaxDisplay(orcid, putCode);
+    }
+
+    @RequestMapping(value = "/featuredAffiliation.json", method = RequestMethod.PUT)
+    public @ResponseBody ResponseEntity<Map<String, Object>> setFeaturedAffiliation(@RequestBody Map<String, Long> payload) {
+        String orcid = getEffectiveUserOrcid();
+        Map<String, Object> body = new HashMap<String, Object>();
+        Long putCode = null;
+        if (payload != null) {
+            // accept either "putCode" or "affiliationId"
+            putCode = payload.get("putCode");
+            if (putCode == null) {
+                putCode = payload.get("affiliationId");
+            }
+        }
+        if (putCode == null) {
+            body.put("ok", Boolean.FALSE);
+            body.put("message", "putCode is required");
+            return new ResponseEntity<Map<String, Object>>(body, HttpStatus.BAD_REQUEST);
+        }
+        boolean updated = affiliationsManager.setOnlyFeatured(orcid, putCode);
+        body.put("ok", Boolean.valueOf(updated));
+        return new ResponseEntity<Map<String, Object>>(body, HttpStatus.OK);
     }
 }

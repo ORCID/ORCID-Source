@@ -103,6 +103,8 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
     private List<OrgDisambiguatedExternalIdentifiers> orgDisambiguatedExternalIdentifiers;
 
     private List<ActivityExternalIdentifier> affiliationExternalIdentifiers;
+    
+    private Boolean featured;
 
     public static AffiliationForm valueOf(AffiliationSummary summary) {
         AffiliationForm form = new AffiliationForm();
@@ -686,6 +688,14 @@ public class AffiliationForm extends VisibilityForm implements ErrorsInterface, 
 
     public void setAffiliationExternalIdentifiers(List<ActivityExternalIdentifier> affiliationExternalIdentifiers) {
         this.affiliationExternalIdentifiers = affiliationExternalIdentifiers;
+    }
+    
+    public Boolean getFeatured() {
+        return featured;
+    }
+    
+    public void setFeatured(Boolean featured) {
+        this.featured = featured;
     }
     
     @Override

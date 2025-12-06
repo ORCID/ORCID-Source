@@ -280,4 +280,10 @@ public interface AffiliationsManagerReadOnly {
      * */
     Boolean hasPublicAffiliations(String orcid);
 
+    /**
+     * Returns a map of affiliation putCode to featured flag for a record.
+     * Values may be null when the flag is not set.
+     */
+    Map<Long, Boolean> getFeaturedFlags(String orcid);
+
 }

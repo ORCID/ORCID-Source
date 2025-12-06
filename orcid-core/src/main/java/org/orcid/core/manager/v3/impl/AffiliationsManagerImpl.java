@@ -31,7 +31,6 @@ import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.pojo.ajaxForm.Member;
 
 public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl implements AffiliationsManager {
 
@@ -575,5 +574,18 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Override
     public Boolean updateToMaxDisplay(String orcid, Long putCode) {
         return orgAffiliationRelationDao.updateToMaxDisplay(orcid, putCode);
+    }
+    
+    @Override
+    @Transactional
+    public boolean setOnlyFeatured(String orcid, Long affiliationId) {
+        // Ensure the target affiliation exists and belongs to the user
+        OrgAffiliationRelationEntity entity = orgAffiliationRelationDao.getOrgAffiliationRelation(orcid, affiliationId);
+        if (entity == null) {
+            return false;
+        }
+        // Clear featured on all, then set it for the selected one
+        orgAffiliationRelationDao.clearFeatured(orcid);
+        return orgAffiliationRelationDao.updateFeatured(orcid, affiliationId, Boolean.TRUE);
     }
 }

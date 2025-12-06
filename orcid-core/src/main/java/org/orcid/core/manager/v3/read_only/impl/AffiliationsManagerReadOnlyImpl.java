@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -464,5 +465,21 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
             return false;
         }
         return orgAffiliationRelationDao.hasPublicAffiliations(orcid);
+    }
+    
+    @Override
+    public Map<Long, Boolean> getFeaturedFlags(String orcid) {
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);
+        Map<Long, Boolean> result = new HashMap<>();
+        if (entities == null) {
+            return result;
+        }
+        for (OrgAffiliationRelationEntity entity : entities) {
+            Long id = entity.getId();
+            if (id != null && Boolean.TRUE.equals(entity.getFeatured())) {
+                result.put(id, Boolean.TRUE);
+            }
+        }
+        return result;
     }
 }
