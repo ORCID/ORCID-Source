@@ -54,7 +54,7 @@ public class AuthorizationServerUtil {
         addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
 
         // Set the grant type
-        parameters.put(OrcidOauth2Constants.CODE_PARAM, code);
+        parameters.put(OrcidOauth2Constants.CODE_PARAM, StringUtils.isBlank(code) ? "" : code);
         parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE);
         // Set the redirect uri if it is not blank
         if(!StringUtils.isBlank(redirectUri)) {
@@ -88,7 +88,7 @@ public class AuthorizationServerUtil {
 
     public Response forwardClientCredentialsRequest(String clientId, String clientSecret, String scope) throws IOException, URISyntaxException, InterruptedException {
         if(logger.isTraceEnabled()) {
-            logger.trace("Using authorization server to refresh a token");
+            logger.trace("Using authorization server for a client credential request");
         }
 
         Map<String, String> parameters = new HashMap<String, String>();
@@ -121,6 +121,28 @@ public class AuthorizationServerUtil {
 
         // Set the grant type
         parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
+
+        // Post and respond
+        return this.doPost(parameters);
+    }
+
+    public Response forwardOtherTokenExchangeRequest(String clientId, String clientSecret, String grantType, String code, String scope) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server for " + grantType);
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
+        parameters.put(OrcidOauth2Constants.GRANT_TYPE, StringUtils.isBlank(grantType) ? "" : grantType);
+
+        if(!StringUtils.isBlank(scope)) {
+            parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope == null ? "" : scope);
+        }
+
+        if(!StringUtils.isBlank(code)) {
+            parameters.put(OrcidOauth2Constants.CODE_PARAM, code == null ? "" : code);
+        }
 
         // Post and respond
         return this.doPost(parameters);

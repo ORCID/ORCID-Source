@@ -20,8 +20,13 @@ import org.springframework.security.oauth2.provider.client.ClientCredentialsToke
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * @author Declan Newman (declan) Date: 08/05/2012
- */
+ +
+ +
+ + This filter should be removed once the authorization server is inplace
+ +
+ +
+ + */
+@Deprecated(forRemoval = true)
 public class OrcidOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpointFilter {
 
     private final static String PUBLIC_ROLE = "ROLE_PUBLIC";
