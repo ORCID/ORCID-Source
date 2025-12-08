@@ -25,9 +25,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.aop.ProfileLastModifiedAspect;
@@ -152,6 +150,9 @@ public class ManageProfileControllerTest {
     @Mock
     private BackupCodeManager mockBackupCodeManager;
 
+    @Captor
+    private ArgumentCaptor<EmailListChange> emailListChangeCaptor;
+
     @Before
     public void initMocks() throws Exception {
         controller = new ManageProfileController();
@@ -228,6 +229,7 @@ public class ManageProfileControllerTest {
                 email1.setEmail(invocation.getArgument(0) + "_1@test.orcid.org");
                 email1.setSource(new Source());
                 email1.setVisibility(Visibility.PUBLIC);
+                email1.setVerified(true);
                 emails.getEmails().add(email1);
 
                 Email email2 = new Email();
@@ -235,6 +237,7 @@ public class ManageProfileControllerTest {
                 email2.setSource(new Source());
                 email2.getSource().setSourceName(new SourceName(USER_CREDIT_NAME));
                 email2.setVisibility(Visibility.PUBLIC);
+                email2.setVerified(true);
                 emails.getEmails().add(email2);
 
                 Email email3 = new Email();
@@ -242,6 +245,7 @@ public class ManageProfileControllerTest {
                 email3.setSource(new Source());
                 email3.getSource().setSourceClientId(new SourceClientId(USER_ORCID));
                 email3.setVisibility(Visibility.PUBLIC);
+                email3.setVerified(false);
                 emails.getEmails().add(email3);
                 return emails;
             }
@@ -639,6 +643,12 @@ public class ManageProfileControllerTest {
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
+        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
+        EmailListChange capturedChange = emailListChangeCaptor.getValue();
+        assertEquals(capturedChange.getAddedEmails().get(0).getEmail(),"0000-0000-0000-0002_1@test.orcid.org");
+        assertTrue(capturedChange.getRemovedEmails().isEmpty());
+        assertTrue(capturedChange.getVerifiedEmails().isEmpty());
+        assertEquals(capturedChange.getAddedEmails().size(),2);
     }
     
     @Test
@@ -658,6 +668,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.this_profile_deprecated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
     
     @Test
@@ -677,6 +688,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.this_profile_deactivated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -691,6 +703,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile);
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.problem_deprecating", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -708,6 +721,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("check_password_modal.incorrect_password", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
 
         // Using orcid
         deprecateProfile = new DeprecateProfile();
@@ -719,6 +733,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("check_password_modal.incorrect_password", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -738,6 +753,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deprecated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
 
         // Using email
         deprecateProfile = new DeprecateProfile();
@@ -749,6 +765,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deprecated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -769,6 +786,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deactivated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
 
         // Using email
         deprecateProfile = new DeprecateProfile();
@@ -780,6 +798,7 @@ public class ManageProfileControllerTest {
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
         assertEquals("deprecate_orcid.already_deactivated", deprecateProfile.getErrors().get(0));
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
     }
 
     @Test
@@ -795,6 +814,7 @@ public class ManageProfileControllerTest {
         assertNull(deprecateProfile.getDeprecatingAccountName());
         assertNotNull(deprecateProfile.getErrors());
         assertEquals(1, deprecateProfile.getErrors().size());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(Mockito.anyString(), Mockito.any());
         assertEquals("deprecate_orcid.profile_matches_current", deprecateProfile.getErrors().get(0));
     }
 
@@ -1312,6 +1332,8 @@ public class ManageProfileControllerTest {
         assertEquals(ExpiringLinkService.VerificationStatus.VALID, response.getTokenVerification().getStatus());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+        verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(eq(USER_ORCID));
+
     }
 
     @Test
@@ -1328,6 +1350,7 @@ public class ManageProfileControllerTest {
         assertFalse("Deactivation should fail", response.isDeactivationSuccessful());
         assertEquals(ExpiringLinkService.VerificationStatus.INVALID, response.getTokenVerification().getStatus());
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1345,6 +1368,7 @@ public class ManageProfileControllerTest {
         assertTrue("Should be flagged as invalid password", response.isInvalidPassword());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("invalid password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1365,6 +1389,7 @@ public class ManageProfileControllerTest {
         assertTrue("2FA should be enabled", response.isTwoFactorEnabled());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+        verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(eq(USER_ORCID));
     }
 
     @Test
@@ -1385,6 +1410,7 @@ public class ManageProfileControllerTest {
         assertTrue("2FA should be enabled", response.isTwoFactorEnabled());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(1)).deactivateRecord(USER_ORCID);
+        verify(mockRecordEmailSender, Mockito.times(1)).sendOrcidDeactivatedEmail(eq(USER_ORCID));
     }
 
     @Test
@@ -1403,6 +1429,7 @@ public class ManageProfileControllerTest {
         assertTrue("Should flag that 2FA is enabled", response.isTwoFactorEnabled());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1423,6 +1450,7 @@ public class ManageProfileControllerTest {
         assertTrue("Should be flagged as invalid 2FA code", response.isInvalidTwoFactorCode());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 
     @Test
@@ -1443,5 +1471,6 @@ public class ManageProfileControllerTest {
         assertTrue("Should be flagged as invalid recovery code", response.isInvalidTwoFactorRecoveryCode());
         verify(mockEncryptionManager, times(1)).hashMatches(eq("good-password"), eq("password"));
         verify(mockProfileEntityManager, times(0)).deactivateRecord(anyString());
+        verify(mockRecordEmailSender, Mockito.times(0)).sendOrcidDeactivatedEmail(anyString());
     }
 }

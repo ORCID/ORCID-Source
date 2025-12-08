@@ -29,6 +29,7 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
@@ -557,6 +558,9 @@ public class AdminController extends BaseController {
                         } else if (OrcidType.GROUP.name().equals(entity.getOrcidType())) {
                             members.add(nextToken);
                         } else {
+                            if (Features.SEND_EMAIL_ON_DEACTIVATION.isActive()) {
+                                recordEmailSender.sendOrcidDeactivatedEmail(orcidId);
+                            }
                             profileEntityManager.deactivateRecord(orcidId);
                             successIds.add(nextToken);
                         }

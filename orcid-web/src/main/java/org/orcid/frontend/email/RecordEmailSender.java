@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.nimbusds.jose.JOSEException;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EncryptionManager;
@@ -27,6 +25,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.EmailListChange;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
@@ -119,6 +118,47 @@ public class RecordEmailSender {
         mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, subject, body, html);
     }
 
+    public void sendEmailListChangeEmail(String orcid, EmailListChange emailListChange) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = messages.getMessage("email.subject.email_list_change", null, userLocale);
+
+        String userName = recordNameManager.deriveEmailFriendlyName(orcid);
+        String baseUri = orcidUrlManager.getBaseUrl();
+
+        templateParams.put("subject", subject);
+        templateParams.put("userName", OrcidStringUtils.isValidEmailFriendlyName(userName)?userName:orcid);
+        templateParams.put("emailListChange", emailListChange);
+        templateParams.put("orcid", orcid);
+        templateParams.put("baseUri", baseUri);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("email_list_changes_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_list_changes_email_html.ftl", templateParams);
+
+        Emails emails = emailManager.getEmails(orcid);
+
+        // send email to all verified emails on the provided orcid account
+        for (Email email : emails.getEmails()) {
+            if (email.isVerified()) {
+                mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+            }
+        }
+        // send email to all removed verified emails
+        if (emailListChange.getRemovedEmails() != null && !emailListChange.getRemovedEmails().isEmpty()) {
+            for (org.orcid.jaxb.model.v3.release.record.Email email : emailListChange.getRemovedEmails()) {
+                if (email.isVerified()) {
+                    mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+                }
+            }
+        }
+    }
+
     public void sendOrcidDeactivateEmail(String userOrcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
         Locale userLocale = getUserLocaleFromProfileEntity(profile);
@@ -156,6 +196,30 @@ public class RecordEmailSender {
         String body = templateManager.processTemplate("deactivate_orcid_email.ftl", templateParams);
         // Generate html from template
         String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
+
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
+    }
+
+    public void sendOrcidDeactivatedEmail(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        Email primaryEmail = emailManager.findPrimaryEmail(orcid);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = verifyEmailUtils.getSubject("email.subject.deactivated", userLocale);
+        String email = primaryEmail.getEmail();
+
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcid);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", orcid);
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("account_deactivated_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("account_deactivated_email_html.ftl", templateParams);
 
         mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
     }

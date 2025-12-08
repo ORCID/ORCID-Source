@@ -16,10 +16,7 @@ import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.oauth.OrcidOAuth2Authentication;
-import org.orcid.core.oauth.OrcidOauth2AuthInfo;
-import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
-import org.orcid.core.oauth.OrcidRandomValueTokenServices;
+import org.orcid.core.oauth.*;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
@@ -325,6 +322,12 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             GrantedAuthority ga = new SimpleGrantedAuthority(tokenInfo.getString("clientGrantedAuthority"));
             request.setAuthorities(List.of(ga));
         }
+
+        if(tokenInfo.has("OBO_CLIENT_ID")) {
+            String oboClientId = tokenInfo.getString("OBO_CLIENT_ID");
+            return new OrcidOboOAuth2Authentication(oboClientId, request, authentication, accessTokenValue);
+        }
+
         return new OrcidOAuth2Authentication(request, authentication, accessTokenValue);
     }
 
