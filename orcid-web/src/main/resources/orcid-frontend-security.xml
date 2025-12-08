@@ -159,6 +159,7 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id.json(\?.*)?" security="none" create-session="stateless" />
 
 	<!-- Authenticate the client before reaching the token endpoint -->
+    <!-- TODO: This should be removed once the authorization server is inplace -->
 	<sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
 		<sec:csrf disabled="true"/>
 		<sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
@@ -507,6 +508,7 @@
 			</list>
 		</property>
 	</bean>
+    <!-- TODO: This filter should be removed once the authorization server is inplace -->
 	<bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
 		<property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
 		<property name="authenticationManager" ref="clientAuthenticationManager"/>
