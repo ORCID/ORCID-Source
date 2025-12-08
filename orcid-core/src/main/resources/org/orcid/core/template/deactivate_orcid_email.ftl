@@ -1,7 +1,6 @@
 <#import "email_macros.ftl" as emailMacros />
 
-<@emailMacros.msg "email.deactivate.you_have_asked" />
-(${baseUri}/${orcid}?lang=${locale})
+<@emailMacros.msg "email.deactivate.you_have_asked" /> (${baseUri}/${orcid}?lang=${locale})
 
 <@emailMacros.msg "email.deactivate.please_click_the_link" />
 
@@ -13,6 +12,8 @@ ${baseUri}${deactivateUrlEndpoint}?lang=${locale}
 
 <@emailMacros.msg "email.deactivate.after_your_account_is_deactivated" />
 
-<@emailMacros.msg "email.deactivate.reactivate_anytime" /> <a href="https://support.orcid.org/hc/articles/360006973813" rel="noopener noreferrer" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
+<@emailMacros.msg "email.deactivate.you_can_reactivate" />
+
+<@emailMacros.msg "email.deactivate.for_more_information" /> <a href="https://support.orcid.org/hc/articles/360006973813" rel="noopener noreferrer" target="_blank">https://support.orcid.org/hc/articles/360006973813</a>
 
 <#include "email_footer.ftl"/>

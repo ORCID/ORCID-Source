@@ -40,6 +40,7 @@ import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.pojo.EmailListChange;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.email.MailGunManager;
 import org.springframework.test.context.ActiveProfiles;
@@ -124,6 +125,111 @@ public class RecordEmailSenderTest {
         recordEmailSender.sendWelcomeEmail("4444-4444-4444-4446", "josiah_carberry@brown.edu");
         
         verify(mockMailGunManager, times(1)).sendEmail(eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG), eq("josiah_carberry@brown.edu"), eq("[ORCID] Welcome to ORCID - verify your email address"), anyString(), anyString());
+    }
+
+    @Test
+    public void testSendEmailListChangeEmail_onlyCurrentEmails() throws JAXBException, IOException, URISyntaxException {
+        final String orcid = "0000-0000-0000-0003";
+        final String currentVerifiedEmail = "current_verified@test.com";
+
+        ProfileEntity profile = new ProfileEntity(orcid);
+        profile.setLocale("EN");
+        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
+
+        org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
+
+        org.orcid.jaxb.model.v3.release.record.Email email = new org.orcid.jaxb.model.v3.release.record.Email();
+        email.setEmail(currentVerifiedEmail);
+        email.setVerified(true);
+
+        org.orcid.jaxb.model.v3.release.record.Email email2 = new org.orcid.jaxb.model.v3.release.record.Email();
+        email2.setEmail("2_" + currentVerifiedEmail);
+        email2.setVerified(false);
+
+        emails.getEmails().add(email);
+        emails.getEmails().add(email2);
+        when(mockEmailManager.getEmails(orcid)).thenReturn(emails);
+
+        EmailListChange emailListChange = new EmailListChange();
+
+        recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
+
+        verify(mockMailGunManager, times(1)).sendEmail(
+                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(currentVerifiedEmail),
+                anyString(),
+                anyString(),
+                anyString());
+
+        verify(mockMailGunManager, times(1)).sendEmail(
+                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString());
+    }
+
+    @Test
+    public void testSendEmailListChangeEmail_withRemovedVerifiedEmail() throws JAXBException, IOException, URISyntaxException {
+        final String orcid = "0000-0000-0000-0003";
+        final String currentVerifiedEmail = "current_verified@test.com";
+        final String removedVerifiedEmail = "removed_verified@test.com";
+
+        ProfileEntity profile = new ProfileEntity(orcid);
+        profile.setLocale("EN");
+        when(mockProfileEntityCacheManager.retrieve(orcid)).thenReturn(profile);
+
+        org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
+        org.orcid.jaxb.model.v3.release.record.Email currentEmail = new org.orcid.jaxb.model.v3.release.record.Email();
+        currentEmail.setEmail(currentVerifiedEmail);
+        currentEmail.setVerified(true);
+        org.orcid.jaxb.model.v3.release.record.Email currentEmail2 = new org.orcid.jaxb.model.v3.release.record.Email();
+        currentEmail2.setEmail("2_" + currentVerifiedEmail);
+        currentEmail2.setVerified(false);
+        emails.getEmails().add(currentEmail);
+        emails.getEmails().add(currentEmail2);
+        when(mockEmailManager.getEmails(orcid)).thenReturn(emails);
+
+        org.orcid.jaxb.model.v3.release.record.Email removedEmail = new org.orcid.jaxb.model.v3.release.record.Email();
+        removedEmail.setEmail(removedVerifiedEmail);
+        removedEmail.setVerified(true);
+
+        EmailListChange emailListChange = new EmailListChange();
+        emailListChange.getRemovedEmails().add(removedEmail);
+
+        recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
+
+        verify(mockMailGunManager, times(1)).sendEmail(
+                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(currentVerifiedEmail),
+                anyString(),
+                anyString(),
+                anyString());
+
+        verify(mockMailGunManager, times(1)).sendEmail(
+                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(removedVerifiedEmail),
+                anyString(),
+                anyString(),
+                anyString());
+
+        verify(mockMailGunManager, times(2)).sendEmail(
+                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                anyString(),
+                anyString(),
+                anyString(),
+                anyString());
+    }
+
+    @Test
+    public void testSendOrcidDeactivatedEmail() throws JAXBException, IOException, URISyntaxException {
+        Email email = new Email();
+        email.setEmail("josiah_carberry@brown.edu");
+        when(mockEmailManager.findPrimaryEmail(anyString())).thenReturn(email);
+
+        recordEmailSender.sendOrcidDeactivatedEmail("4444-4444-4444-4446");
+
+        verify(mockMailGunManager, times(1)).sendEmail(eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG), eq("josiah_carberry@brown.edu"), eq("[ORCID] Your ORCID account has been deactivated"), anyString(), anyString());
     }
 
     @Test
