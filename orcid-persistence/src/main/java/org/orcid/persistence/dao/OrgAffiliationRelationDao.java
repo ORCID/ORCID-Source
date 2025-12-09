@@ -178,4 +178,5 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     void clearFeatured(String orcid);
 
     boolean updateFeatured(String orcid, Long affiliationId, Boolean featured);
+
 }

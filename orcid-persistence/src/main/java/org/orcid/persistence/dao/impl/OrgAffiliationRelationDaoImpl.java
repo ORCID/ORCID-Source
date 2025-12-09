@@ -457,7 +457,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateFeatured(String orcid, Long affiliationId, Boolean featured) {
         Query query = entityManager.createNativeQuery(
-                "UPDATE org_affiliation_relation SET featured = :featured, last_modified = now() WHERE orcid = :orcid AND id = :id AND featured IS NOT NULL");
+                "UPDATE org_affiliation_relation SET featured = :featured, last_modified = now() WHERE orcid = :orcid AND id = :id");
         query.setParameter("featured", featured);
         query.setParameter("orcid", orcid);
         query.setParameter("id", affiliationId);
