@@ -536,7 +536,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         String orcid = getCurrentUserOrcid();
         AffiliationGroupContainer result = new AffiliationGroupContainer();
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManager.getGroupedAffiliations(orcid, false);
-        Map<Long, Boolean> featuredFlags = affiliationsManagerReadOnly.getFeaturedFlags(orcid);
+        Long featuredId = affiliationsManagerReadOnly.getFeaturedFlag(orcid);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
@@ -555,7 +555,9 @@ public class AffiliationsController extends BaseWorkspaceController {
                         if (defaultAffiliation.getPutCode() != null && defaultAffiliation.getPutCode().getValue() != null) {
                             try {
                                 Long pc = Long.valueOf(defaultAffiliation.getPutCode().getValue());
-                                defaultAffiliation.setFeatured(featuredFlags.get(pc));
+                                if (featuredId != null && featuredId.equals(pc)) {
+                                    defaultAffiliation.setFeatured(Boolean.TRUE);
+                                }
                             } catch (NumberFormatException nfe) {
                                 // ignore invalid putCode
                             }
@@ -585,7 +587,9 @@ public class AffiliationsController extends BaseWorkspaceController {
                         if (aff.getPutCode() != null && aff.getPutCode().getValue() != null) {
                             try {
                                 Long pc = Long.valueOf(aff.getPutCode().getValue());
-                                aff.setFeatured(featuredFlags.get(pc));
+                                if (featuredId != null && featuredId.equals(pc)) {
+                                    aff.setFeatured(Boolean.TRUE);
+                                }
                             } catch (NumberFormatException nfe) {
                                 // ignore invalid putCode
                             }

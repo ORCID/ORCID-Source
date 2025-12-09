@@ -281,9 +281,12 @@ public interface AffiliationsManagerReadOnly {
     Boolean hasPublicAffiliations(String orcid);
 
     /**
-     * Returns a map of affiliation putCode to featured flag for a record.
-     * Values may be null when the flag is not set.
+     * Returns the single featured affiliation putCode for a record, if set.
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return the featured affiliation putCode or null if none
      */
-    Map<Long, Boolean> getFeaturedFlags(String orcid);
+    Long getFeaturedFlag(String orcid);
 
 }

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -468,18 +467,19 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
     }
     
     @Override
-    public Map<Long, Boolean> getFeaturedFlags(String orcid) {
+    public Long getFeaturedFlag(String orcid) {
         List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);
-        Map<Long, Boolean> result = new HashMap<>();
         if (entities == null) {
-            return result;
+            return null;
         }
         for (OrgAffiliationRelationEntity entity : entities) {
-            Long id = entity.getId();
-            if (id != null && Boolean.TRUE.equals(entity.getFeatured())) {
-                result.put(id, Boolean.TRUE);
+            if (Boolean.TRUE.equals(entity.getFeatured())) {
+                Long id = entity.getId();
+                if (id != null) {
+                    return id;
+                }
             }
         }
-        return result;
+        return null;
     }
 }

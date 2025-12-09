@@ -717,7 +717,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return result;
         }
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
-        Map<Long, Boolean> featuredFlags = affiliationsManagerReadOnly.getFeaturedFlags(orcid);
+        Long featuredId = affiliationsManagerReadOnly.getFeaturedFlag(orcid);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
@@ -734,7 +734,9 @@ public class PublicProfileController extends BaseWorkspaceController {
                         if (defaultAffiliation.getPutCode() != null && defaultAffiliation.getPutCode().getValue() != null) {
                             try {
                                 Long pc = Long.valueOf(defaultAffiliation.getPutCode().getValue());
-                                defaultAffiliation.setFeatured(featuredFlags.get(pc));
+                                if (featuredId != null && featuredId.equals(pc)) {
+                                    defaultAffiliation.setFeatured(Boolean.TRUE);
+                                }
                             } catch (NumberFormatException nfe) {
                                 // ignore invalid putCode
                             }
@@ -750,7 +752,9 @@ public class PublicProfileController extends BaseWorkspaceController {
                         if (aff.getPutCode() != null && aff.getPutCode().getValue() != null) {
                             try {
                                 Long pc = Long.valueOf(aff.getPutCode().getValue());
-                                aff.setFeatured(featuredFlags.get(pc));
+                                if (featuredId != null && featuredId.equals(pc)) {
+                                    aff.setFeatured(Boolean.TRUE);
+                                }
                             } catch (NumberFormatException nfe) {
                                 // ignore invalid putCode
                             }
