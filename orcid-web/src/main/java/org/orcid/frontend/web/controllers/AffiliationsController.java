@@ -625,14 +625,24 @@ public class AffiliationsController extends BaseWorkspaceController {
         String orcid = getEffectiveUserOrcid();
         Map<String, Object> body = new HashMap<String, Object>();
         Long putCode = null;
+        boolean hasKey = false;
         if (payload != null) {
-            // accept either "putCode" or "affiliationId"
-            putCode = payload.get("putCode");
-            if (putCode == null) {
+            if (payload.containsKey("putCode")) {
+                hasKey = true;
+                putCode = payload.get("putCode");
+            } else if (payload.containsKey("affiliationId")) {
+                hasKey = true;
                 putCode = payload.get("affiliationId");
             }
         }
-        if (putCode == null) {
+        // If client explicitly sent a null value, clear all featured flags
+        if (hasKey && putCode == null) {
+            affiliationsManager.clearFeatured(orcid);
+            body.put("ok", Boolean.TRUE);
+            return new ResponseEntity<Map<String, Object>>(body, HttpStatus.OK);
+        }
+        // If no key provided or null without explicit key, return bad request
+        if (!hasKey || putCode == null) {
             body.put("ok", Boolean.FALSE);
             body.put("message", "putCode is required");
             return new ResponseEntity<Map<String, Object>>(body, HttpStatus.BAD_REQUEST);

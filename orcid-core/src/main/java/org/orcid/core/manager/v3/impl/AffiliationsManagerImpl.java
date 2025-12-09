@@ -588,4 +588,11 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         orgAffiliationRelationDao.clearFeatured(orcid);
         return orgAffiliationRelationDao.updateFeatured(orcid, affiliationId, Boolean.TRUE);
     }
+
+    @Override
+    @Transactional
+    public boolean clearFeatured(String orcid) {
+        orgAffiliationRelationDao.clearFeatured(orcid);
+        return true;
+    }
 }

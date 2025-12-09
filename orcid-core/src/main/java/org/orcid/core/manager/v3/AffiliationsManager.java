@@ -249,4 +249,13 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * @return true if the operation completed successfully
      */
     boolean setOnlyFeatured(String orcid, Long affiliationId);
+
+    /**
+     * Clears the featured flag for all affiliations belonging to the given user.
+     *
+     * @param orcid
+     *            The affiliation owner
+     * @return true if the operation completed successfully
+     */
+    boolean clearFeatured(String orcid);
 }
