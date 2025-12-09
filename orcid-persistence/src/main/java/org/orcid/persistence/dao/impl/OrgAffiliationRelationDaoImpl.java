@@ -443,6 +443,27 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public void clearFeatured(String orcid) {
+        Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET featured = NULL, last_modified = now() WHERE orcid = :orcid AND featured IS NOT NULL");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public boolean updateFeatured(String orcid, Long affiliationId, Boolean featured) {
+        Query query = entityManager.createNativeQuery(
+                "UPDATE org_affiliation_relation SET featured = :featured, last_modified = now() WHERE orcid = :orcid AND id = :id");
+        query.setParameter("featured", featured);
+        query.setParameter("orcid", orcid);
+        query.setParameter("id", affiliationId);
+        return query.executeUpdate() > 0;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public List<BigInteger> getIdsForUserOBORecords(int max) {

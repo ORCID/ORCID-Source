@@ -280,4 +280,13 @@ public interface AffiliationsManagerReadOnly {
      * */
     Boolean hasPublicAffiliations(String orcid);
 
+    /**
+     * Returns the single featured affiliation putCode for a record, if set.
+     * 
+     * @param orcid
+     *          the Id of the user
+     * @return the featured affiliation putCode or null if none
+     */
+    Long getFeaturedFlag(String orcid);
+
 }
