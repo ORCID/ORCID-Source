@@ -447,7 +447,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void clearFeatured(String orcid) {
-        Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET featured = NULL, last_modified = now() WHERE orcid = :orcid");
+        Query query = entityManager.createNativeQuery("UPDATE org_affiliation_relation SET featured = NULL, last_modified = now() WHERE orcid = :orcid AND featured IS NOT NULL");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
