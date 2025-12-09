@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.security.MethodNotAllowedException;
+import org.orcid.core.togglz.Features;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * @author Shobhit Tyagi
  */
+@Deprecated(forRemoval = true)
 public class OrcidWebOauth2TokenEndPointFilter extends ClientCredentialsTokenEndpointFilter {
 
     @Resource
@@ -36,6 +39,13 @@ public class OrcidWebOauth2TokenEndPointFilter extends ClientCredentialsTokenEnd
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+        /**
+         *
+         *
+         * This filter should be removed once the authorization server is inplace
+         *
+         *
+         * */
         if (request.getMethod().equals(RequestMethod.GET.name())) {
             InvalidRequestException ire = new InvalidRequestException(localeManager.resolveMessage("apiError.token_request_callmethod.exception"));
             throw new MethodNotAllowedException(localeManager.resolveMessage("apiError.token_request_callmethod.exception"), ire);

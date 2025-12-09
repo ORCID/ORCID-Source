@@ -1,0 +1,13 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-INDEX-ON-LOWER-EMAIL" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_email_event_email_normalized" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_email_event_email_normalized ON email_event(btrim(lower(email)));</sql>
+    </changeSet>
+
+</databaseChangeLog>
