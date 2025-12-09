@@ -175,13 +175,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
 
     List<BigInteger> getIdsOfOrgAffiliationRelationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 
-    /**
-     * Clears the featured flag for all affiliations belonging to the given user
-     */
     void clearFeatured(String orcid);
 
-    /**
-     * Updates the featured flag for a specific affiliation, ensuring the orcid matches.
-     */
     boolean updateFeatured(String orcid, Long affiliationId, Boolean featured);
 }
