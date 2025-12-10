@@ -739,30 +739,6 @@ public class AdminController extends BaseController {
     }
 
     /**
-     * Admin switch user
-     * 
-     * @throws IllegalAccessException
-     * @throws UnsupportedEncodingException
-     */
-    @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> adminSwitchUser(HttpServletRequest serverRequest, HttpServletResponse response,
-            @ModelAttribute("orcidOrEmail") String orcidOrEmail) throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        Map<String, String> result = new HashMap<String, String>();
-        String orcidId = getOrcidFromParam(orcidOrEmail);
-        if (orcidId == null) {
-            result.put("errorMessg", "Invalid id " + orcidOrEmail);
-        } else {
-            if (StringUtils.isEmpty(orcidId) || !profileEntityManager.orcidExists(orcidId)) {
-                result.put("errorMessg", "Invalid id " + orcidOrEmail);
-            } else {
-                result.put("id", orcidId);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Admin verify email
      * 
      * @throws IllegalAccessException
