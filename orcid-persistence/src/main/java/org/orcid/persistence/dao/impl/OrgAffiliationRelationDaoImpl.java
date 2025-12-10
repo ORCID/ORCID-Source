@@ -123,7 +123,16 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         query.setParameter("visibility", visibility);
-        return query.executeUpdate() > 0 ? true : false;
+        boolean updated = query.executeUpdate() > 0 ? true : false;
+        // If changing to PRIVATE or LIMITED, clear featured flag on that affiliation
+        if (updated && !"PUBLIC".equals(visibility)) {
+            Query clearQuery = entityManager.createNativeQuery(
+                    "UPDATE org_affiliation_relation SET featured = NULL, last_modified = now() WHERE orcid = :userOrcid AND id = :orgAffiliationRelationId AND featured IS NOT NULL");
+            clearQuery.setParameter("userOrcid", userOrcid);
+            clearQuery.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
+            clearQuery.executeUpdate();
+        }
+        return updated;
     }
 
     /**
@@ -151,7 +160,16 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationIds", orgAffiliationRelationIds);
         query.setParameter("visibility", visibility);
-        return query.executeUpdate() > 0 ? true : false;
+        boolean updated = query.executeUpdate() > 0 ? true : false;
+        // If changing to PRIVATE or LIMITED, clear featured flag on affected affiliations
+        if (updated && !"PUBLIC".equals(visibility)) {
+            Query clearQuery = entityManager.createNativeQuery(
+                    "UPDATE org_affiliation_relation SET featured = NULL, last_modified = now() WHERE orcid = :userOrcid AND id IN (:ids) AND featured IS NOT NULL");
+            clearQuery.setParameter("userOrcid", userOrcid);
+            clearQuery.setParameter("ids", orgAffiliationRelationIds);
+            clearQuery.executeUpdate();
+        }
+        return updated;
     }
 
     /**
