@@ -55,11 +55,6 @@
                                     <img src="{{assetsPath + '/img/svg/baseline-build-24px.svg'}}"> 
                                     {{'${springMacroRequestContext.getMessage("workspace.self_service")?replace("<br />", " ")?replace("'", "\\'")}'  }}
                                 </a>
-                                <#--  ADMIN ACTIONS  -->
-                                <a  class="top-menu-item" *ngIf="userInfo['ADMIN_MENU']" href="{{getBaseUri()}}/admin-actions">
-                                    <img src="{{assetsPath + '/img/svg/baseline-verified_user-24px.svg'}}"> 
-                                    {{'${springMacroRequestContext.getMessage("admin.workspace_link")?replace("<br />", " ")?replace("'", "\\'")}'}}
-                                </a>
                                 <#--  SIGN OUT  -->
                                 <a  class="top-menu-item" href="{{getBaseUri()}}/signout">
                                     <img src="{{assetsPath + '/img/svg/baseline-exit_to_app-24px.svg'}}"> 

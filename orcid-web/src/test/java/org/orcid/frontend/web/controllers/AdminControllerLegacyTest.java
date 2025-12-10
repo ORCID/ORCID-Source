@@ -1140,48 +1140,6 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
     }
     
     @Test
-    public void adminSwitchUser() throws Exception {
-        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
-        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
-        EmailManager emailManager = Mockito.mock(EmailManager.class);        
-        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
-
-        AdminController adminController = new AdminController();
-               
-        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
-        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
-        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
-        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);                
-        
-        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
-        
-        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
-        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                            
-        
-        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                
-      
-        Map<String, String> results = adminController.adminSwitchUser(mockRequest, mockResponse, "not-found-email1@test.com");
-
-        assertEquals("Invalid id not-found-email1@test.com", results.get("errorMessg"));        
-   
-        results = adminController.adminSwitchUser(mockRequest, mockResponse, "not-found-email2@test.com");
-        
-        assertEquals("Invalid id not-found-email2@test.com", results.get("errorMessg"));
-        
-        results = adminController.adminSwitchUser(mockRequest, mockResponse, "0000-0000-0000-0001");
-        
-        assertEquals("0000-0000-0000-0001", results.get("id"));
-        
-        results = adminController.adminSwitchUser(mockRequest, mockResponse, "https://orcid.org/0000-0000-0000-0002");
-        
-        assertEquals("0000-0000-0000-0002", results.get("id"));
-
-    }     
- 
-    @Test
     public void resetPasswordValidateId() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
         ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
