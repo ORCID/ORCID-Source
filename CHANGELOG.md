@@ -1,3 +1,33 @@
+## v2.131.8 - 2025-12-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.7...v2.131.8)
+
+- [#7406](https://github.com/ORCID/ORCID-Source/pull/7406): PD-3704
+
+## v2.131.7 - 2025-12-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.6...v2.131.7)
+
+## v2.131.6 - 2025-12-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.5...v2.131.6)
+
+## v2.131.5 - 2025-12-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.4...v2.131.5)
+
+## v2.131.4 - 2025-12-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.3...v2.131.4)
+
+## v2.131.3 - 2025-12-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.2...v2.131.3)
+
+## v2.131.2 - 2025-12-05
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.1...v2.131.2)
+
 ## v2.131.1 - 2025-12-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.0...v2.131.1)

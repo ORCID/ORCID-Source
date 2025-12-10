@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OboNotValidForApiVersionException;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.oauth.OrcidOboOAuth2Authentication;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -55,7 +57,15 @@ public class OboApiVersionCheckFilter implements ContainerRequestFilter {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            // If the auth server token validation is on, then, the authentication type for OBO requests will be OrcidOboOAuth2Authentication
+            if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
+                if(OrcidOboOAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+                    OrcidOboOAuth2Authentication authDetails = (OrcidOboOAuth2Authentication) authentication;
+                    if (StringUtils.isNotBlank(authDetails.getOboClientId())) {
+                        return true;
+                    }
+                }
+            } else if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
                 OAuth2AuthenticationDetails authDetails = (OAuth2AuthenticationDetails) ((OAuth2Authentication) authentication).getDetails();
                 if (authDetails != null && authDetails.getTokenValue() != null) {
                     Map<String, String> cachedAccessToken = getTokenFromCache(authDetails.getTokenValue());

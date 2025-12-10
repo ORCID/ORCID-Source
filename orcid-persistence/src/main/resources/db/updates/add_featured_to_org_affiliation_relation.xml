@@ -1,0 +1,17 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="ADD-FEATURED-TO-AFFILIATION" author="lmendoza">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="org_affiliation_relation" columnName="featured"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="org_affiliation_relation">
+			<column name="featured" type="BOOLEAN"/>
+		</addColumn>
+	</changeSet>
+
+</databaseChangeLog>
+

@@ -174,4 +174,9 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     List<BigInteger> getIdsForUserOBORecords(int max);
 
     List<BigInteger> getIdsOfOrgAffiliationRelationsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
+
+    void clearFeatured(String orcid);
+
+    boolean updateFeatured(String orcid, Long affiliationId, Boolean featured);
+
 }

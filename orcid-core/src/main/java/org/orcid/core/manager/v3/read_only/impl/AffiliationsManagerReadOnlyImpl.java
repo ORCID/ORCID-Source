@@ -465,4 +465,21 @@ public class AffiliationsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl imp
         }
         return orgAffiliationRelationDao.hasPublicAffiliations(orcid);
     }
+    
+    @Override
+    public Long getFeaturedFlag(String orcid) {
+        List<OrgAffiliationRelationEntity> entities = orgAffiliationRelationEntityCacheManager.getAffiliationEntities(orcid);
+        if (entities == null) {
+            return null;
+        }
+        for (OrgAffiliationRelationEntity entity : entities) {
+            if (Boolean.TRUE.equals(entity.getFeatured())) {
+                Long id = entity.getId();
+                if (id != null) {
+                    return id;
+                }
+            }
+        }
+        return null;
+    }
 }

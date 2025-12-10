@@ -122,7 +122,15 @@ public class RegistrationManagerImpl implements RegistrationManager {
         affiliationForm.setCity(Text.valueOf(orgDisambiguated.getCity()));
         affiliationForm.setCountry(Text.valueOf(orgDisambiguated.getCountry()));
         Affiliation affiliation = registration.getAffiliationForm().toAffiliation();
-        affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
+        Employment created = affiliationsManager.createEmploymentAffiliation(orcid, (Employment) affiliation, false);
+        // If and only if an affiliation is included and default visibility is PUBLIC, mark as featured
+        if (registration.getActivitiesVisibilityDefault() != null 
+                && registration.getActivitiesVisibilityDefault().getVisibility() != null
+                && org.orcid.jaxb.model.v3.release.common.Visibility.PUBLIC.equals(registration.getActivitiesVisibilityDefault().getVisibility())
+                && created != null
+                && created.getPutCode() != null) {
+            affiliationsManager.setOnlyFeatured(orcid, created.getPutCode());
+        }
     }
 
     @Override
