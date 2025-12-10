@@ -1,3 +1,9 @@
+## v2.131.8 - 2025-12-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.7...v2.131.8)
+
+- [#7406](https://github.com/ORCID/ORCID-Source/pull/7406): PD-3704
+
 ## v2.131.7 - 2025-12-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.6...v2.131.7)
