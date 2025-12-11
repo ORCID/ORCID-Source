@@ -44,3 +44,4 @@ orcid-api-common/.factorypath
 orcid-api-web/.factorypath
 orcid-core/.factorypath
 orcid-integration-test/.factorypath
+env.json

@@ -717,6 +717,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             return result;
         }
         Map<AffiliationType, List<AffiliationGroup<AffiliationSummary>>> affiliationsMap = affiliationsManagerReadOnly.getGroupedAffiliations(orcid, true);
+        Long featuredId = affiliationsManagerReadOnly.getFeaturedFlag(orcid);
         for (AffiliationType type : AffiliationType.values()) {
             if (affiliationsMap.containsKey(type)) {
                 List<AffiliationGroup<AffiliationSummary>> elementsList = affiliationsMap.get(type);
@@ -730,6 +731,16 @@ public class PublicProfileController extends BaseWorkspaceController {
                             // Set country name
                             defaultAffiliation.setCountryForDisplay(groupForm.getDefaultAffiliation().getCountry().getValue());
                         }
+                        if (defaultAffiliation.getPutCode() != null && defaultAffiliation.getPutCode().getValue() != null) {
+                            try {
+                                Long pc = Long.valueOf(defaultAffiliation.getPutCode().getValue());
+                                if (featuredId != null && featuredId.equals(pc)) {
+                                    defaultAffiliation.setFeatured(Boolean.TRUE);
+                                }
+                            } catch (NumberFormatException nfe) {
+                                // ignore invalid putCode
+                            }
+                        }
                     }
 
                     // Fill country for each affiliation
@@ -737,6 +748,16 @@ public class PublicProfileController extends BaseWorkspaceController {
                         if (!PojoUtil.isEmpty(aff.getCountry())) {
                             // Set country name
                             aff.setCountryForDisplay(aff.getCountry().getValue());
+                        }
+                        if (aff.getPutCode() != null && aff.getPutCode().getValue() != null) {
+                            try {
+                                Long pc = Long.valueOf(aff.getPutCode().getValue());
+                                if (featuredId != null && featuredId.equals(pc)) {
+                                    aff.setFeatured(Boolean.TRUE);
+                                }
+                            } catch (NumberFormatException nfe) {
+                                // ignore invalid putCode
+                            }
                         }
                     }
 

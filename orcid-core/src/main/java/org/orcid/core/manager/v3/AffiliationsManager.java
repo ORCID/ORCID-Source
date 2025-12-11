@@ -237,4 +237,25 @@ public interface AffiliationsManager extends AffiliationsManagerReadOnly {
      * @return true if it was able to update the display index
      * */
     Boolean updateToMaxDisplay(String orcid, Long putCode);
+    
+    /**
+     * Sets the given affiliation as the only featured one for the user,
+     * clearing the featured flag on all others.
+     * 
+     * @param orcid
+     *            The affiliation owner
+     * @param affiliationId
+     *            The affiliation id to feature
+     * @return true if the operation completed successfully
+     */
+    boolean setOnlyFeatured(String orcid, Long affiliationId);
+
+    /**
+     * Clears the featured flag for all affiliations belonging to the given user.
+     *
+     * @param orcid
+     *            The affiliation owner
+     * @return true if the operation completed successfully
+     */
+    boolean clearFeatured(String orcid);
 }
