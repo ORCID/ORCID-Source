@@ -92,7 +92,13 @@ public enum Features implements Feature {
     SEND_EMAIL_ON_DEACTIVATION,
 
     @Label("Send email on email list change")
-    SEND_EMAIL_ON_EMAIL_LIST_CHANGE;
+    SEND_EMAIL_ON_EMAIL_LIST_CHANGE,
+    
+    @Label("Send email on deprecate record")
+    SEND_EMAIL_ON_DEPRECATE_RECORD,
+    
+    @Label("Send email on reset password")
+    SEND_EMAIL_ON_RESET_PASSWORD;
 
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);

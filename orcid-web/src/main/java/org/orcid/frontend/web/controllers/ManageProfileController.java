@@ -388,6 +388,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
         
+        
+        
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -415,6 +417,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         } else if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive() && !emailListChange.getAddedEmails().isEmpty()) {
             recordEmailSender.sendEmailListChangeEmail(primaryEntity.getId(), emailListChange);
         }
+        
+        if(deprecated && Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
+			recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
+		}
         return deprecateProfile;
     }
 
