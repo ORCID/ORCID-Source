@@ -146,14 +146,14 @@ public class RecordEmailSender {
         // send email to all verified emails on the provided orcid account
         for (Email email : emails.getEmails()) {
             if (email.isVerified()) {
-                mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+                mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
             }
         }
         // send email to all removed verified emails
         if (emailListChange.getRemovedEmails() != null && !emailListChange.getRemovedEmails().isEmpty()) {
             for (org.orcid.jaxb.model.v3.release.record.Email email : emailListChange.getRemovedEmails()) {
                 if (email.isVerified()) {
-                    mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+                    mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
                 }
             }
         }

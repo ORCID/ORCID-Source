@@ -155,14 +155,14 @@ public class RecordEmailSenderTest {
         recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
 
         verify(mockMailGunManager, times(1)).sendEmail(
-                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG),
                 eq(currentVerifiedEmail),
                 anyString(),
                 anyString(),
                 anyString());
 
         verify(mockMailGunManager, times(1)).sendEmail(
-                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG),
                 anyString(),
                 anyString(),
                 anyString(),
@@ -200,21 +200,21 @@ public class RecordEmailSenderTest {
         recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
 
         verify(mockMailGunManager, times(1)).sendEmail(
-                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG),
                 eq(currentVerifiedEmail),
                 anyString(),
                 anyString(),
                 anyString());
 
         verify(mockMailGunManager, times(1)).sendEmail(
-                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG),
                 eq(removedVerifiedEmail),
                 anyString(),
                 anyString(),
                 anyString());
 
         verify(mockMailGunManager, times(2)).sendEmail(
-                eq(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG),
+                eq(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG),
                 anyString(),
                 anyString(),
                 anyString(),
