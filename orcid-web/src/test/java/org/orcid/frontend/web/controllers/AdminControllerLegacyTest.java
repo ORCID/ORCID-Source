@@ -226,7 +226,9 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileDetails primary = new ProfileDetails();
         primary.setOrcid("4444-4444-4444-4443");
         r.setPrimaryAccount(primary);
-        
+
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
+
         // Test deprecating a deprecated account
         ProfileDeprecationRequest result = adminController.deprecateProfile(mockRequest, mockResponse, r);
         assertEquals(1, result.getErrors().size());
@@ -384,6 +386,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileHistoryEventManager profileHistoryEventManager = Mockito.mock(ProfileHistoryEventManagerImpl.class);
         ProfileEntityManager profileEntityManager = (ProfileEntityManager) ReflectionTestUtils.getField(adminController, "profileEntityManager");
         ReflectionTestUtils.setField(profileEntityManager, "profileHistoryEventManager", profileHistoryEventManager);
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
         Mockito.doNothing().when(profileHistoryEventManager).recordEvent(Mockito.any(ProfileHistoryEventType.class), Mockito.anyString(), Mockito.anyString());
         
         // Test deactivate
@@ -434,6 +437,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         
         // Test deactivate
         result = adminController.deactivateOrcidRecords(mockRequest, mockResponse, "https://orcid.org/4444-4444-4444-4445");
+        Mockito.verify(mockRecordEmailSender, Mockito.times(2)).sendOrcidDeactivatedEmail(Mockito.anyString());
         assertEquals(1, result.get("success").size());
 
         // Test deactivate
@@ -996,7 +1000,8 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
         ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
         ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
-        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);        
+        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
 
         String commaSeparatedValues = "not-found-email1@test.com,not-found-email2@test.com,record-deactivated-email1@test.com,record-deactivated-email2@test.com,successful-email1@test.com,successful-email2@test.com,successful-email3@test.com,successful-email4@test.com,0000-0000-0000-0001,https://orcid.org/0000-0000-0000-0002,0000-0000-0000-0003,https://orcid.org/0000-0000-0000-0004,notAnOrcidIdOrEmail";
         
@@ -1058,6 +1063,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
 
         Mockito.verify(emailManager, Mockito.times(8)).emailExists(Mockito.anyString());        
         Mockito.verify(profileEntityManager, Mockito.times(6)).deactivateRecord(Mockito.anyString());
+        Mockito.verify(mockRecordEmailSender, Mockito.times(6)).sendOrcidDeactivatedEmail(Mockito.anyString());
 
     }
 
@@ -1133,48 +1139,6 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         assertEquals(1, results.getTrusted().getErrors().size());
     }
     
-    @Test
-    public void adminSwitchUser() throws Exception {
-        ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
-        ProfileEntityManager profileEntityManager = Mockito.mock(ProfileEntityManager.class);
-        EmailManager emailManager = Mockito.mock(EmailManager.class);        
-        OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
-
-        AdminController adminController = new AdminController();
-               
-        ReflectionTestUtils.setField(adminController, "orcidSecurityManager", orcidSecurityManager);
-        ReflectionTestUtils.setField(adminController, "profileEntityManager", profileEntityManager);
-        ReflectionTestUtils.setField(adminController, "emailManager", emailManager);
-        ReflectionTestUtils.setField(adminController, "profileEntityCacheManager", profileEntityCacheManager);                
-        
-        Mockito.when(orcidSecurityManager.isAdmin()).thenReturn(true);
-        
-        Mockito.when(emailManager.emailExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
-        Mockito.when(emailManager.emailExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                            
-        
-        Mockito.when(profileEntityManager.orcidExists(Mockito.anyString())).thenReturn(true);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email1@test.com"))).thenReturn(false);
-        Mockito.when(profileEntityManager.orcidExists(Mockito.eq("not-found-email2@test.com"))).thenReturn(false);                
-      
-        Map<String, String> results = adminController.adminSwitchUser(mockRequest, mockResponse, "not-found-email1@test.com");
-
-        assertEquals("Invalid id not-found-email1@test.com", results.get("errorMessg"));        
-   
-        results = adminController.adminSwitchUser(mockRequest, mockResponse, "not-found-email2@test.com");
-        
-        assertEquals("Invalid id not-found-email2@test.com", results.get("errorMessg"));
-        
-        results = adminController.adminSwitchUser(mockRequest, mockResponse, "0000-0000-0000-0001");
-        
-        assertEquals("0000-0000-0000-0001", results.get("id"));
-        
-        results = adminController.adminSwitchUser(mockRequest, mockResponse, "https://orcid.org/0000-0000-0000-0002");
-        
-        assertEquals("0000-0000-0000-0002", results.get("id"));
-
-    }     
- 
     @Test
     public void resetPasswordValidateId() throws Exception {
         ProfileEntityCacheManager profileEntityCacheManager = Mockito.mock(ProfileEntityCacheManager.class);
@@ -1421,6 +1385,7 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
         ProfileDetails primary = new ProfileDetails();
         primary.setOrcid("4444-4444-4444-4443");
         r.setPrimaryAccount(primary);
+        ReflectionTestUtils.setField(adminController, "recordEmailSender", mockRecordEmailSender);
 
 
         // Test update deprecation to account that is not deprecated

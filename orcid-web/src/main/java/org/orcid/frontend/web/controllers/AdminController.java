@@ -29,6 +29,7 @@ import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
@@ -557,6 +558,9 @@ public class AdminController extends BaseController {
                         } else if (OrcidType.GROUP.name().equals(entity.getOrcidType())) {
                             members.add(nextToken);
                         } else {
+                            if (Features.SEND_EMAIL_ON_DEACTIVATION.isActive()) {
+                                recordEmailSender.sendOrcidDeactivatedEmail(orcidId);
+                            }
                             profileEntityManager.deactivateRecord(orcidId);
                             successIds.add(nextToken);
                         }
@@ -732,30 +736,6 @@ public class AdminController extends BaseController {
         }
 
         return form;
-    }
-
-    /**
-     * Admin switch user
-     * 
-     * @throws IllegalAccessException
-     * @throws UnsupportedEncodingException
-     */
-    @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
-    public @ResponseBody Map<String, String> adminSwitchUser(HttpServletRequest serverRequest, HttpServletResponse response,
-            @ModelAttribute("orcidOrEmail") String orcidOrEmail) throws IllegalAccessException, UnsupportedEncodingException {
-        isAdmin(serverRequest, response);
-        Map<String, String> result = new HashMap<String, String>();
-        String orcidId = getOrcidFromParam(orcidOrEmail);
-        if (orcidId == null) {
-            result.put("errorMessg", "Invalid id " + orcidOrEmail);
-        } else {
-            if (StringUtils.isEmpty(orcidId) || !profileEntityManager.orcidExists(orcidId)) {
-                result.put("errorMessg", "Invalid id " + orcidOrEmail);
-            } else {
-                result.put("id", orcidId);
-            }
-        }
-        return result;
     }
 
     /**

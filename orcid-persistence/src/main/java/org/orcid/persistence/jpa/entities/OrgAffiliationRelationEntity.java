@@ -37,6 +37,7 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
     private String url;
     private String externalIdentifiersJson;
     protected Long displayIndex;
+    private Boolean featured;
 
     @Override
     @Id
@@ -145,6 +146,15 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
 
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
+    }
+    
+    @Column(name = "featured")
+    public Boolean getFeatured() {
+        return featured;
+    }
+    
+    public void setFeatured(Boolean featured) {
+        this.featured = featured;
     }
 
     @Override
