@@ -1,0 +1,23 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    
+   <changeSet id="ALTER_DW-ORG_AFFLIATION_RELATION_WITH_FEATURED" author="Camelia Dumitru" dbms="postgresql">
+        <dropView  viewName="dw_org_affiliation_relation"/>  
+        
+        <createView viewName="dw_org_affiliation_relation">
+            select id as db_id, org_id, orcid, assertion_origin_client_source_id, org_affiliation_relation_role, org_affiliation_relation_title,
+            department, start_day, start_month, start_year, end_day, end_month, end_year, visibility,
+            case when orcid = source_id then true else false end as self_asserted, client_source_id, url, external_ids_json,
+            date_created::timestamp, last_modified::timestamp, featured
+            from org_affiliation_relation
+        </createView>
+    </changeSet>
+
+    <changeSet id="GRANT-READ-PERMISSIONS-TO-DW-USER-ORG_AFF_REL" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions>
+            <sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='dw_user'</sqlCheck>
+        </preConditions>
+        <sql>GRANT SELECT ON TABLE dw_org_affiliation_relation to dw_user;</sql>
+    </changeSet>   
+    
+</databaseChangeLog>
