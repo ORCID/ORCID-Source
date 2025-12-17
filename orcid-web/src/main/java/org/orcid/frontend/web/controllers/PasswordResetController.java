@@ -24,6 +24,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
+import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.PasswordResetToken;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
@@ -305,6 +306,10 @@ public class PasswordResetController extends BaseController {
         }
 
         profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+        //send the security notification email on change password
+        if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
+			recordEmailSender.sendOrcidSecurityResetPasswordEmail(orcid);
+		}
         //reset the lock fields
         profileEntityManager.resetSigninLock(orcid);
         profileEntityCacheManager.remove(orcid);

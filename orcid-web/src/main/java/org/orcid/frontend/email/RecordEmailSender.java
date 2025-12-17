@@ -465,5 +465,61 @@ public class RecordEmailSender {
             LOGGER.error("Locale is not supported in the available locales, defaulting to en", ex);
         }
         return LocaleUtils.toLocale("en");
-    }       
+    }  
+
+	public void sendOrcidSecurityResetPasswordEmail(String userOrcid) {
+		ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+		Locale userLocale = getUserLocaleFromProfileEntity(profile);
+		Email primaryEmail = emailManager.findPrimaryEmail(userOrcid);
+		Map<String, Object> templateParams = new HashMap<String, Object>();
+
+		String subject = verifyEmailUtils.getSubject("email.subject.security.reset_pwd", userLocale);
+		String email = primaryEmail.getEmail();
+
+		String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+		templateParams.put("emailName", emailFriendlyName);
+		templateParams.put("orcid", userOrcid);
+		templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+		templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+		templateParams.put("subject", subject);
+
+		verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+		// Generate body from template
+		String body = templateManager.processTemplate("email_security_reset_pwd.ftl", templateParams);
+		// Generate html from template
+		String html = templateManager.processTemplate("email_security_reset_pwd_html.ftl", templateParams);
+		mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
+	}
+
+	public void sendOrcidSecurityDeprecatedEmail(String userOrcid, String orcidToDeprecate, Emails emails) {
+		ProfileEntity profile = profileEntityCacheManager.retrieve(orcidToDeprecate);
+		Locale userLocale = getUserLocaleFromProfileEntity(profile);
+		Email deprecatedPrimaryEmail = emailManager.findPrimaryEmail(userOrcid);
+		Map<String, Object> templateParams = new HashMap<String, Object>();
+
+		String subject = verifyEmailUtils.getSubject("email.subject.security.record_deprecated", userLocale);
+		String email = deprecatedPrimaryEmail.getEmail();
+
+		String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcidToDeprecate);
+		templateParams.put("emailName", emailFriendlyName);
+		templateParams.put("orcid", userOrcid);
+		templateParams.put("deprecated_orcid", orcidToDeprecate);
+		if (emails != null && emails.getEmails() != null) {
+			templateParams.put("emailList", emails.getEmails());
+		} else {
+			templateParams.put("emailList", new java.util.ArrayList<Email>());
+		}
+		templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+		templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+		templateParams.put("subject", subject);
+
+		verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+		// Generate body from template
+		String body = templateManager.processTemplate("email_security_deprecate_record.ftl", templateParams);
+		// Generate html from template
+		String html = templateManager.processTemplate("email_security_deprecate_record_html.ftl", templateParams);
+		mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
+	}
 }
