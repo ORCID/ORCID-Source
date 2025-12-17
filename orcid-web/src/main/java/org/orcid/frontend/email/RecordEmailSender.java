@@ -270,7 +270,6 @@ public class RecordEmailSender {
         // Generate body from template
         String body = templateManager.processTemplate("reset_password_email.ftl", templateParams);
         String htmlBody = templateManager.processTemplate("reset_password_email_html.ftl", templateParams);
-        System.out.println("!!!! HTML Sending password reset email to: " + htmlBody);
         mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, submittedEmail, verifyEmailUtils.getSubject("email.subject.reset", locale), body, htmlBody);
     }
 
@@ -467,8 +466,7 @@ public class RecordEmailSender {
         }
         return LocaleUtils.toLocale("en");
     }  
-    
-    
+
 	public void sendOrcidSecurityResetPasswordEmail(String userOrcid) {
 		ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
 		Locale userLocale = getUserLocaleFromProfileEntity(profile);

@@ -387,9 +387,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         
         ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
-        
-        
-        
+
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -764,8 +762,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
 
     }
-
-    
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
     public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {

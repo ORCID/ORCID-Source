@@ -181,7 +181,7 @@ public class AdminController extends BaseController {
                 boolean wasDeprecated = adminManager.deprecateProfile(request, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
                 if (wasDeprecated) {
                     //send the security notification email on change password
-                	if(wasDeprecated && Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
+                	if(Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
             			recordEmailSender.sendOrcidSecurityDeprecatedEmail(primaryOrcid, deprecatedOrcid, deprecatedAccountEmails);
             		}
                     request.setSuccessMessage(getMessage("admin.profile_deprecation.deprecate_account.success_message", deprecatedOrcid, primaryOrcid));
