@@ -9,6 +9,7 @@ import org.orcid.core.common.util.AuthenticationUtils;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidOboOAuth2Authentication;
 import org.orcid.core.security.OrcidRoles;
@@ -95,6 +96,14 @@ public class SourceManagerImpl implements SourceManager {
                             source.setAssertionOriginOrcid(new SourceOrcid(profile.getId()));
                             source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(profile.getId())));
                         }
+                    }
+                } else {
+                    OrcidOAuth2Authentication authDetails = (OrcidOAuth2Authentication) authentication;
+                    if(clientDetails.isUserOBOEnabled() && authDetails.getUserAuthentication() != null && OrcidOauth2UserAuthentication.class.isAssignableFrom(authDetails.getUserAuthentication().getClass())) {
+                        OrcidOauth2UserAuthentication userAuth = (OrcidOauth2UserAuthentication) authDetails.getUserAuthentication();
+                        ProfileEntity profile = (ProfileEntity) userAuth.getPrincipal();
+                        source.setAssertionOriginOrcid(new SourceOrcid(profile.getId()));
+                        source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(profile.getId())));
                     }
                 }
             } else {
