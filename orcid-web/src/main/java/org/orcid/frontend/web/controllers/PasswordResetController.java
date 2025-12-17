@@ -268,7 +268,6 @@ public class PasswordResetController extends BaseController {
         
         try {
              passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
-
         } catch (EncryptionOperationNotPossibleException e) {
             oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
             return oneTimeResetPasswordForm;
@@ -311,6 +310,9 @@ public class PasswordResetController extends BaseController {
         profileEntityCacheManager.remove(orcid);
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
+        // Remove credentials before return
+        oneTimeResetPasswordForm.setPassword(null);
+        oneTimeResetPasswordForm.setRetypedPassword(null);
         return oneTimeResetPasswordForm;
     }
     
