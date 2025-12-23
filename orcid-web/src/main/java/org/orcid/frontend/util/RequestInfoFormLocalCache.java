@@ -16,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RequestInfoFormLocalCache {
 
-    @Value("${org.orcid.core.session.localCache.ttl:900}")
+    @Value("${org.orcid.core.session.localCache.ttl:10800}")
     private int cacheTTLInSeconds;
 
-    @Value("${org.orcid.core.session.localCache.heap:10000}")
+    @Value("${org.orcid.core.session.localCache.heap:50000}")
     private int heapSize;
 
     private CacheManager cacheManager;

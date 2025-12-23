@@ -1,0 +1,68 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="ADD-INDEX-ON-PROFILE-DEACTIVATION-DATE" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_profile_deactivation_date" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_profile_deactivation_date ON profile(profile_deactivation_date);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-INDEX-ON-PRIMARY-RECORD" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_primary_record" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_primary_record ON profile(primary_record);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-INDEX-ON-RECORD-LOCKED" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_record_locked" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_record_locked ON profile(record_locked);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-INDEX-ON-CLAIMED" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_claimed" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_claimed ON profile(claimed);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-INDEX-ON-SEND-ADMINISTRATIVE-CHANGE-NOTIFICATIONS" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_send_administrative_change_notifications" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_send_administrative_change_notifications ON email_frequency(send_administrative_change_notifications);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-INDEX-ON-SEND-CHANGE-NOTIFICATIONS" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_send_change_notifications" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_send_change_notifications ON email_frequency(send_change_notifications);</sql>
+    </changeSet>
+
+    <changeSet id="ADD-INDEX-ON-SEND-MEMBER-UPDATE-REQUESTS" author="Angel Montenegro" dbms="postgresql" runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_send_member_update_requests" />
+            </not>
+        </preConditions>
+        <sql>CREATE INDEX CONCURRENTLY idx_send_member_update_requests ON email_frequency(send_member_update_requests);</sql>
+    </changeSet>
+
+</databaseChangeLog>
