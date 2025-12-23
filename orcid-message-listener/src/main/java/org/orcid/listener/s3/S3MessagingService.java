@@ -54,9 +54,6 @@ public class S3MessagingService {
             this.s3 = AmazonS3ClientBuilder.standard()
                     .withRegion(Regions.US_EAST_2)
                     .build();
-            // Fastest and more generic way to know if the connection is working
-            this.s3.getS3AccountOwner();
-            LOG.info("Connected to Amazon S3");
             this.v2SummariesBucketName = summariesBucketName;
             this.v2ActivitiesBucketName = activitiesBucketName;
             this.v3ActivitiesBucketName = v3ActivitiesBucketName;
