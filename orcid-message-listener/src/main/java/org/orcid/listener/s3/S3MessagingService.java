@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,23 +43,20 @@ public class S3MessagingService {
     
     /**
      * Initialize the Amazon S3 connection object
-     * 
-     * @param secretKey
-     *            Secret key to connect to S3
-     * @param accessKey
-     *            Access key to connect to S3
      */
     @Autowired
-    public S3MessagingService(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey,
-            @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, 
-            @Value("${org.orcid.message-listener.index.summaries.bucket_name}") String summariesBucketName, 
+    public S3MessagingService(@Value("${org.orcid.message-listener.index.summaries.bucket_name}") String summariesBucketName,
             @Value("${org.orcid.message-listener.index.activities.bucket_name}") String activitiesBucketName,
             @Value("${org.orcid.message-listener.index.summaries.v3.bucket_name}") String v3SummariesBucketName, 
             @Value("${org.orcid.message-listener.index.activities.v3.bucket_name}") String v3ActivitiesBucketName)
             throws JAXBException {
         try {
-            AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-            this.s3 = new AmazonS3Client(credentials);
+            this.s3 = AmazonS3ClientBuilder.standard()
+                    .withRegion(Regions.US_EAST_2)
+                    .build();
+            // Fastest and more generic way to know if the connection is working
+            this.s3.getS3AccountOwner();
+            LOG.info("Connected to Amazon S3");
             this.v2SummariesBucketName = summariesBucketName;
             this.v2ActivitiesBucketName = activitiesBucketName;
             this.v3ActivitiesBucketName = v3ActivitiesBucketName;
