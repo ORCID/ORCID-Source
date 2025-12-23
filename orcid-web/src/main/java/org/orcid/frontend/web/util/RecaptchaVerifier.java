@@ -7,6 +7,9 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Adapted from
  * http://www.journaldev.com/7133/how-to-integrate-google-recaptcha-
@@ -17,6 +20,8 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class RecaptchaVerifier {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecaptchaVerifier.class);
+    
     private final static String USER_AGENT = "Mozilla/5.0";
     private final String url;
     private final String secret;
@@ -28,6 +33,7 @@ public class RecaptchaVerifier {
 
     public boolean verify(String gRecaptchaResponse) {
         if (gRecaptchaResponse == null || "".equals(gRecaptchaResponse)) {
+            LOGGER.warn("Recaptcha verification failed: response is null or empty");
             return false;
         }
 
@@ -57,9 +63,17 @@ public class RecaptchaVerifier {
                 response.append(inputLine);
             }
             in.close();
-            return response.toString().contains("true");
+            
+            String responseStr = response.toString();
+            boolean verified = responseStr.contains("true");
+            
+            if (!verified) {
+                LOGGER.warn("Recaptcha verification failed: response does not contain 'true'. Response: {}", responseStr);
+            }
+            
+            return verified;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Recaptcha verification error", e);
             return false;
         }
     }
