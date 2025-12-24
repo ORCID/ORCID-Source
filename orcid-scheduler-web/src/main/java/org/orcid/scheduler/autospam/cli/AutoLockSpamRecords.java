@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.admin.LockReason;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -67,12 +68,6 @@ public class AutoLockSpamRecords {
 
     @Value("${org.orcid.core.orgs.load.slackUser}")
     private String slackUser;
-
-    @Value("${org.orcid.message-listener.s3.accessKey}")
-    private String S3_ACCESS_KEY;
-
-    @Value("${org.orcid.message-listener.s3.secretKey}")
-    private String S3_SECRET_KEY;
 
     @Value("${org.orcid.scheduler.aws.bucket:auto-spam-folder}")
     private String SPAM_BUCKET;
@@ -135,7 +130,6 @@ public class AutoLockSpamRecords {
     private void autolockRecords(List<String> toLock) {
         String lastOrcidProcessed = "";
         slackManager.sendAlert("Start time for batch: " + System.currentTimeMillis() + " the batch size is: " + toLock.size(), slackChannel, slackUser, webhookUrl);
-        System.out.println("Start for batch: " + System.currentTimeMillis() + " to lock batch is: " + toLock.size());
         int accountsLocked = 0;
         for (String orcidId : toLock) {
             try {
@@ -165,11 +159,8 @@ public class AutoLockSpamRecords {
             } catch (Exception e) {
                 LOG.error("Exception when locking spam record " + orcidId, e);
                 LOG.info("LastOrcid processed is: " + lastOrcidProcessed);
-                e.printStackTrace();
             }
         }
-        System.out.println("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed
-                + " acccounts locked in DB: " + accountsLocked);
         LOG.info("Spam locking for the batch processed on the day: " + System.currentTimeMillis() + " lastOrcid processed is: " + lastOrcidProcessed
                 + " acccounts locked in DB: " + accountsLocked);
         slackManager.sendAlert(
@@ -228,13 +219,21 @@ public class AutoLockSpamRecords {
     private ArrayList<String> getAllSpamIDs(boolean fromS3) throws IOException {
         Reader reader;
         if (fromS3) {
-            BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY, S3_SECRET_KEY);
-            AmazonS3 s3 = AmazonS3Client.builder().withRegion(Regions.US_EAST_2).withCredentials(new AWSStaticCredentialsProvider(creds)).build();
+            try {
+                AmazonS3 s3 = AmazonS3ClientBuilder.standard()
+                        .withRegion(Regions.US_EAST_2)
+                        .build();
+                // Fastest and more generic way to know if the connection is working
+                s3.getS3AccountOwner();
+                LOG.info("Connected to Amazon S3");
 
-            S3Object response = s3.getObject(new GetObjectRequest(SPAM_BUCKET, ORCID_S3_SPAM_FILE));
-            byte[] byteArray = IOUtils.toByteArray(response.getObjectContent());
-            reader = new InputStreamReader(new ByteArrayInputStream(byteArray));
-
+                S3Object response = s3.getObject(new GetObjectRequest(SPAM_BUCKET, ORCID_S3_SPAM_FILE));
+                byte[] byteArray = IOUtils.toByteArray(response.getObjectContent());
+                reader = new InputStreamReader(new ByteArrayInputStream(byteArray));
+            } catch (Exception e) {
+                LOG.error("Error processing spam ids from Amazon S3", e);
+                throw e;
+            }
         } else {
             reader = new FileReader(ORCID_SPAM_FILE);
         }
