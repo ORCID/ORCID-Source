@@ -220,9 +220,18 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
-        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
+        RequestInfoForm requestInfoForm = new RequestInfoForm();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuthorizationRequest authorizationRequest = authorizationRequestLocalCache.get(request.getSession().getId());
+        if (requestInfoFormLocalCache.containsKey(request.getSession().getId())) {
+            requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
+        } else if (authorizationRequest != null) {
+            requestInfoForm.setRedirectUrl(authorizationRequest.getRedirectUri());
+            requestInfoForm.setClientId(authorizationRequest.getClientId());
+        } else {
+            LOGGER.warn("Both authorizationRequest and requestInfoForm caches are empty");
+        }
+
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
         Map<String, String> approvalParams = new HashMap<String, String>();
 

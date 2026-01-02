@@ -43,6 +43,8 @@ import org.orcid.pojo.ajaxForm.*;
 import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -65,7 +67,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private static final String FOUND = "found";   
 
-    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";   
+    private static final String IS_ALREADY_ADDED = "isAlreadyAdded";
+    private static final Logger log = LoggerFactory.getLogger(ManageProfileController.class);
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -387,7 +390,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         
         ProfileEntity primaryEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         ProfileEntity deprecatingEntity = getDeprecatingEntity(deprecateProfile);
-        
+
         validateDeprecatingEntity(deprecatingEntity, primaryEntity, deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -415,6 +418,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         } else if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive() && !emailListChange.getAddedEmails().isEmpty()) {
             recordEmailSender.sendEmailListChangeEmail(primaryEntity.getId(), emailListChange);
         }
+        
+        if(deprecated && Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
+			recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
+		}
         return deprecateProfile;
     }
 
@@ -543,18 +550,24 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors verifyEmail(HttpServletRequest request, @RequestParam("email") String email) {  
     	String currentUserOrcid = getCurrentUserOrcid();
-    	
-    	String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
-        if(!currentUserOrcid.equals(emailOwner)) {
+
+        try {
+            String emailOwner = emailManagerReadOnly.findOrcidIdByEmail(email);
+            if (!currentUserOrcid.equals(emailOwner)) {
                 throw new IllegalArgumentException("Invalid email address provided");
+            }
+
+            boolean isPrimaryEmail = emailManagerReadOnly.isPrimaryEmail(currentUserOrcid, email);
+            if (isPrimaryEmail) {
+                request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);
+            }
+
+            recordEmailSender.sendVerificationEmail(currentUserOrcid, email, isPrimaryEmail);
+        } catch (NoResultException e) {
+            log.warn("Trying to verify an email address that is not associated with the current user: " + email);
+        } catch (Exception x) {
+            log.error("Error sending verification email", x);
         }
-    	
-        boolean isPrimaryEmail = emailManagerReadOnly.isPrimaryEmail(currentUserOrcid, email);
-        if (isPrimaryEmail) {
-            request.getSession().setAttribute(EmailConstants.CHECK_EMAIL_VALIDATED, false);        
-        }
-        
-        recordEmailSender.sendVerificationEmail(currentUserOrcid, email, isPrimaryEmail);
         return new Errors();
     }
 
@@ -758,8 +771,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
 
     }
-
-    
 
     @RequestMapping(value = "/deleteEmail.json", method = RequestMethod.DELETE)
     public @ResponseBody Errors deleteEmailJson(@RequestParam("email") String email) {
