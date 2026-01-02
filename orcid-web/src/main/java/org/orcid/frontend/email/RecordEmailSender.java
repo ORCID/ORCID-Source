@@ -495,7 +495,7 @@ public class RecordEmailSender {
 	public void sendOrcidSecurityDeprecatedEmail(String userOrcid, String orcidToDeprecate, Emails emails) {
 		ProfileEntity profile = profileEntityCacheManager.retrieve(orcidToDeprecate);
 		Locale userLocale = getUserLocaleFromProfileEntity(profile);
-		Email deprecatedPrimaryEmail = emailManager.findPrimaryEmail(userOrcid);
+		Email deprecatedPrimaryEmail = emailManager.findPrimaryEmail(orcidToDeprecate);
 		Map<String, Object> templateParams = new HashMap<String, Object>();
 
 		String subject = verifyEmailUtils.getSubject("email.subject.security.record_deprecated", userLocale);
