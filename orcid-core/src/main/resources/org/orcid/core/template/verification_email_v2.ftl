@@ -2,7 +2,7 @@
 <@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}
 <@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space />${baseUri}/${orcidId}
 
-<@emailMacros.msg "email.verify.hi" /><@emailMacros.space />${userName},
+<@emailMacros.msg "email.verify.hi" /><@emailMacros.space />,
  <#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary.reminder" /><#else><@emailMacros.msg "email.verify.alternate.reminder" /></#if>
 
 

@@ -33,7 +33,7 @@
             </p>
             <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
-                <@emailMacros.msg "email.welcome" /><@emailMacros.space />${userName},<br/>
+                <@emailMacros.msg "email.welcome" /><@emailMacros.space />,<br/>
                 <@emailMacros.msg "email.welcome.congrats" />
             </p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
