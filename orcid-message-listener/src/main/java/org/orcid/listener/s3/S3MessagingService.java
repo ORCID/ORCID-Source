@@ -48,11 +48,19 @@ public class S3MessagingService {
     public S3MessagingService(@Value("${org.orcid.message-listener.index.summaries.bucket_name}") String summariesBucketName,
             @Value("${org.orcid.message-listener.index.activities.bucket_name}") String activitiesBucketName,
             @Value("${org.orcid.message-listener.index.summaries.v3.bucket_name}") String v3SummariesBucketName, 
-            @Value("${org.orcid.message-listener.index.activities.v3.bucket_name}") String v3ActivitiesBucketName)
+            @Value("${org.orcid.message-listener.index.activities.v3.bucket_name}") String v3ActivitiesBucketName,
+            @Value("${org.orcid.message-listener.index.use_eu_west_1:false}") Boolean useEuWest1)
             throws JAXBException {
         try {
+            Regions region = Regions.US_EAST_2;
+            if(useEuWest1) {
+                region = Regions.EU_WEST_1;
+            }
+
+            LOG.warn("Using AWS region " + region.getName());
+
             this.s3 = AmazonS3ClientBuilder.standard()
-                    .withRegion(Regions.US_EAST_2)
+                    .withRegion(region)
                     .build();
             this.v2SummariesBucketName = summariesBucketName;
             this.v2ActivitiesBucketName = activitiesBucketName;
