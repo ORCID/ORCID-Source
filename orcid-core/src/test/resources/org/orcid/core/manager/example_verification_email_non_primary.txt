@@ -1,7 +1,7 @@
 Your ORCID iD: 4444-4444-4444-4446
 Your ORCID record is https://testserver.orcid.org/4444-4444-4444-4446
 
-Hi Josiah Carberry,
+Hi,
 You need to verify your email address.
 
 How do I verify my email address?

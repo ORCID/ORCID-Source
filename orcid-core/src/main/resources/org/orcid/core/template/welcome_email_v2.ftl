@@ -21,7 +21,7 @@
 <@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}<br/>
 <@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUri}/${orcidId}" target="orcid.blank">${baseUri}/${orcidId}</a>
 
-<@emailMacros.msg "email.welcome" /><@emailMacros.space />
+<@emailMacros.msg "email.welcome" />
 <@emailMacros.msg "email.welcome.congrats" />
 
 <@emailMacros.msg "email.welcome.verify.1" />
