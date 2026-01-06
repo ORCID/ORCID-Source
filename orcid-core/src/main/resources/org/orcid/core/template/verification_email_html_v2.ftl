@@ -15,7 +15,7 @@
             </p>
             <hr />
             <p style="font-family: arial, helvetica, sans-serif; font-size: 16px; color: #494A4C;">
-                <@emailMacros.msg "email.verify.hi" /><@emailMacros.space />${userName},<br/>
+                <@emailMacros.msg "email.verify.hi" />,<br/>
                 <#if isPrimary?? && isPrimary><@emailMacros.msg "email.verify.primary.reminder" /><#else><@emailMacros.msg "email.verify.alternate.reminder" /></#if>
             </p>
             <#include "how_do_i_verify_my_email_address_html.ftl"/>
