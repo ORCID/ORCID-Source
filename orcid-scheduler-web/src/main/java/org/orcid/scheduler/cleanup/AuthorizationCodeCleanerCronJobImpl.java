@@ -22,6 +22,7 @@ public class AuthorizationCodeCleanerCronJobImpl implements AuthorizationCodeCle
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationCodeCleanerCronJobImpl.class);
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
+
     @Value("${org.orcid.scheduler.cleanup.AuthorizationCodeCleanerCronJob.archive_days:60}")
     private int authorizationCodeArchivedDays;
 
