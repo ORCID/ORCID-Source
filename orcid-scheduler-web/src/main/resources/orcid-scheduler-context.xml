@@ -49,11 +49,12 @@
         <task:scheduled ref="papiLimitCleanup" method="removeOldEvents" cron="${org.orcid.scheduler.papiLimitReport.cleanup:0 30 22 * * MON}"/>
         <task:scheduled ref="orcidIntegrationMvp" method="createOrcidIntegrationNotifications" cron="${org.orcid.scheduler.mvp.orcidIntegration:0 0 23 * * WED}"/>
         <task:scheduled ref="redisExpiredMainIndexCleanup" method="execute" cron="${org.orcid.scheduler.cleanup.RedisExpiredMainIndexCleanup.cron:0 35 18 * * SAT}" />
+        <task:scheduled ref="authorizationCodeCleaner" method="removeArchivedAuthorizationCodes" cron="${org.orcid.scheduler.cleanup.AuthorizationCodeCleanerCronJob.cron:35 35 1 * * SAT}" />
     </task:scheduled-tasks>
 
 	<task:scheduler id="scheduler" pool-size="${org.orcid.scheduler.tasks.pool_size:60}"/>
 
-    <bean id="authorizationCodeCleaner" class="org.orcid.core.cron.impl.AuthorizationCodeCleanerCronJobImpl" />
+    <bean id="authorizationCodeCleaner" class="org.orcid.scheduler.cleanup.AuthorizationCodeCleanerCronJobImpl" />
 
 	<!-- JMS Messaging -->
 	<!-- enable the configuration of jms on annotations -->
