@@ -28,6 +28,16 @@
     </context-param>
 
     <filter>
+        <filter-name>pingFilter</filter-name>
+        <filter-class>org.orcid.core.filters.PingFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>pingFilter</filter-name>
+        <url-pattern>/ping</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>acceptFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>

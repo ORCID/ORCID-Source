@@ -12,7 +12,10 @@
 	<sec:http-firewall ref="httpFirewall"/>
 
 	<sec:http pattern="/resources/**" security="none"/>
-	
+
+    <!-- health check endpoint bypasses security -->
+    <sec:http pattern="/ping" security="none" create-session="stateless" />
+
 	<!-- enable swagger -->
 	<sec:http pattern="/static/**" security="none" create-session="stateless" />
 	
