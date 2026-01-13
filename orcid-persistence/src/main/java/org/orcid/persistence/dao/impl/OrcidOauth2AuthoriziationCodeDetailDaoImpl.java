@@ -1,6 +1,7 @@
 package org.orcid.persistence.dao.impl;
 
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
@@ -9,6 +10,8 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * @author Declan Newman (declan) Date: 24/04/2012
@@ -49,7 +52,18 @@ public class OrcidOauth2AuthoriziationCodeDetailDaoImpl extends GenericDaoImpl<O
         OrcidOauth2AuthoriziationCodeDetail result = query.getSingleResult();
         return result.isPersistent();
     }
-    
+
+    @Override
+    @Transactional
+    public boolean removeArchivedAuthorizationCodes(Date maxArchiveDate) {
+        LOGGER.info("Removing authoriziation codes created before: '" + maxArchiveDate + "'");
+        Query query = entityManager.createNativeQuery("DELETE FROM oauth2_authoriziation_code_detail WHERE date_created < :maxArchiveDate");
+        query.setParameter("maxArchiveDate", maxArchiveDate);
+        int deleted = query.executeUpdate();
+        LOGGER.info("Deleted {} authoriziation codes", deleted);
+        return deleted > 0;
+    }
+
     @Override
     @Transactional
     public void persist(OrcidOauth2AuthoriziationCodeDetail authCode) {
