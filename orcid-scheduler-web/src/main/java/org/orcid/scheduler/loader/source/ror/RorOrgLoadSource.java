@@ -146,7 +146,8 @@ public class RorOrgLoadSource implements OrgLoadSource {
         ZipEntry zipEntry = zis.getNextEntry();
         while (zipEntry != null) {
             String zipEntryName = zipEntry.getName();
-            if (zipEntryName.endsWith("v2.json")) {
+            
+            if (zipEntryName.endsWith(".json")) {
                 File jsonData = new File(localDataPath);
                 FileOutputStream fos = new FileOutputStream(jsonData);
                 int len;
