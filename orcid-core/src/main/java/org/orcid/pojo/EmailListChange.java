@@ -9,7 +9,7 @@ public class EmailListChange {
     // Used when emails are removed using the UI
     private List<org.orcid.jaxb.model.v3.release.record.Email> removedEmails = new ArrayList<>();
 
-    // Used when emails are transferred to another record via deprecation
+    // Used when new emails are added to a record using the UI
     private List<org.orcid.pojo.ajaxForm.Email> addedEmails = new ArrayList<>();
 
     public List<org.orcid.jaxb.model.v3.release.record.Email> getRemovedEmails() {
