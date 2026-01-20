@@ -405,18 +405,11 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
-        EmailListChange emailListChange = new EmailListChange();
         Emails deprecatedAccountEmails = emailManager.getEmails(deprecatingEntity.getId());
-        for (org.orcid.jaxb.model.v3.release.record.Email email : deprecatedAccountEmails.getEmails()) {
-            if (email.isVerified()) {
-                emailListChange.getAddedEmails().add(email);
-            }
-        }
+
         boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
-        } else if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive() && !emailListChange.getAddedEmails().isEmpty()) {
-            recordEmailSender.sendEmailListChangeEmail(primaryEntity.getId(), emailListChange);
         }
         
         if(deprecated && Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
@@ -639,6 +632,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (isNewEmail) {
                 // List emails to be added
                 newEmails.add(newJsonEmail);
+                emailListChange.getAddedEmails().add(newJsonEmail);
             }
         }
         
