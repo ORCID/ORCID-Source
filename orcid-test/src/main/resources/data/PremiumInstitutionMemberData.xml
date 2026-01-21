@@ -41,9 +41,9 @@
         source_id="5555-5555-5555-0000"
     />
             
-	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 1" client_description="Client # 1 description." client_website="http://www.google.com/APP-0000000000000001" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
-	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 2" client_description="Client # 2 description." client_website="http://www.google.com/APP-0000000000000002" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
-	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="Client # 3" client_description="Client # 3 description." client_website="http://www.google.com/APP-0000000000000003" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25 00:00:00.00" last_modified="2012-04-25 00:00:00.00" client_name="Client # 1" client_description="Client # 1 description." client_website="http://www.google.com/APP-0000000000000001" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25 00:00:00.00" last_modified="2012-04-25 00:00:00.00" client_name="Client # 2" client_description="Client # 2 description." client_website="http://www.google.com/APP-0000000000000002" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
+	<client_details client_type="PREMIUM_CREATOR" client_details_id="APP-0000000000000003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25 00:00:00.00" last_modified="2012-04-25 00:00:00.00" client_name="Client # 3" client_description="Client # 3 description." client_website="http://www.google.com/APP-0000000000000003" group_orcid="5555-5555-5555-0000" persistent_tokens_enabled="true"/>
 	
 	<client_authorised_grant_type client_details_id="APP-0000000000000001" grant_type="authorization_code" />
     <client_authorised_grant_type client_details_id="APP-0000000000000001" grant_type="refresh_token" />
@@ -124,7 +124,7 @@
 	<client_scope client_details_id="APP-0000000000000003" scope_type="/read-public"/> 
 	<client_scope client_details_id="APP-0000000000000003" scope_type="/webhook"/>
 	
-	<client_secret client_details_id="APP-0000000000000001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
-	<client_secret client_details_id="APP-0000000000000002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>         
-	<client_secret client_details_id="APP-0000000000000003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25"/>
+	<client_secret client_details_id="APP-0000000000000001" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25 00:00:00.00" last_modified="2012-04-25 00:00:00.00"/>
+	<client_secret client_details_id="APP-0000000000000002" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25 00:00:00.00" last_modified="2012-04-25 00:00:00.00"/>         
+	<client_secret client_details_id="APP-0000000000000003" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25 00:00:00.00" last_modified="2012-04-25 00:00:00.00"/>
 </dataset>
