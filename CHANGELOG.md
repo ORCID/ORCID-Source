@@ -1,3 +1,11 @@
+## v2.134.0 - 2026-01-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.3...v2.134.0)
+
+- [#7429](https://github.com/ORCID/ORCID-Source/pull/7429): feat/activemq-dlt-named-queues
+- [#7425](https://github.com/ORCID/ORCID-Source/pull/7425): PD-3787 Update orcid-model to 3.3.9
+- [#7431](https://github.com/ORCID/ORCID-Source/pull/7431): ${PD-3845} update email list change message logic
+
 ## v2.133.3 - 2026-01-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.2...v2.133.3)
