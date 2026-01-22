@@ -3,7 +3,7 @@
 <@emailMacros.msg "email.welcome.your_id.id" /> ${orcid}
 <@emailMacros.msg "email.welcome.your_id.link" />:<@emailMacros.space /><a href="${baseUri}/${orcid}" target="orcid.blank">${baseUri}/${orcid}</a>
 
-<@emailMacros.msg "email.changes.we_have_detected" />
+<@emailMacros.msg "email.changes.we_have_detected_a_change" />
 <br>
 <#if (emailListChange.addedEmails?has_content)>
 <#list emailListChange.addedEmails as email>
