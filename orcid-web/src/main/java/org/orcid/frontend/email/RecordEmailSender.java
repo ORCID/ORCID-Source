@@ -123,7 +123,7 @@ public class RecordEmailSender {
         Locale userLocale = getUserLocaleFromProfileEntity(profileEntity);
         Map<String, Object> templateParams = new HashMap<String, Object>();
 
-        String subject = messages.getMessage("email.subject.email_list_change", null, userLocale);
+        String subject = messages.getMessage("email.subject.email_list_change_detected", null, userLocale);
 
         String userName = recordNameManager.deriveEmailFriendlyName(orcid);
         String baseUri = orcidUrlManager.getBaseUrl();

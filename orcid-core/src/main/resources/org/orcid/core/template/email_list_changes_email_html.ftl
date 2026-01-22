@@ -15,7 +15,7 @@
 				<@emailMacros.msg "email.welcome.your_id.link" />:<@emailMacros.space /><a href="${baseUri}/${orcid}" target="orcid.blank">${baseUri}/${orcid}</a>
 			</p>
     		<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-				<@emailMacros.msg "email.changes.we_have_detected" />
+				<@emailMacros.msg "email.changes.we_have_detected_a_change" />
     		</p>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C">
 				<#if (emailListChange.addedEmails?has_content)>
