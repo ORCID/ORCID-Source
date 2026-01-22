@@ -1,3 +1,91 @@
+## v2.135.0 - 2026-01-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.134.0...v2.135.0)
+
+## v2.134.0 - 2026-01-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.3...v2.134.0)
+
+- [#7429](https://github.com/ORCID/ORCID-Source/pull/7429): feat/activemq-dlt-named-queues
+- [#7425](https://github.com/ORCID/ORCID-Source/pull/7425): PD-3787 Update orcid-model to 3.3.9
+- [#7431](https://github.com/ORCID/ORCID-Source/pull/7431): ${PD-3845} update email list change message logic
+
+## v2.133.3 - 2026-01-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.2...v2.133.3)
+
+## v2.133.2 - 2026-01-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.1...v2.133.2)
+
+## v2.133.1 - 2026-01-09
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.0...v2.133.1)
+
+## v2.133.0 - 2026-01-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.13...v2.133.0)
+
+## v2.132.13 - 2026-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.12...v2.132.13)
+
+## v2.132.12 - 2026-01-06
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.11...v2.132.12)
+
+## v2.132.11 - 2026-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.10...v2.132.11)
+
+## v2.132.10 - 2026-01-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.9...v2.132.10)
+
+## v2.132.9 - 2025-12-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.8...v2.132.9)
+
+## v2.132.8 - 2025-12-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.7...v2.132.8)
+
+## v2.132.7 - 2025-12-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.6...v2.132.7)
+
+## v2.132.6 - 2025-12-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.5...v2.132.6)
+
+## v2.132.5 - 2025-12-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.4...v2.132.5)
+
+## v2.132.4 - 2025-12-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.3...v2.132.4)
+
+## v2.132.3 - 2025-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.2...v2.132.3)
+
+## v2.132.2 - 2025-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.1...v2.132.2)
+
+## v2.132.1 - 2025-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.132.0...v2.132.1)
+
+## v2.132.0 - 2025-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.11...v2.132.0)
+
+## v2.131.11 - 2025-12-17
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.10...v2.131.11)
+
 ## v2.131.10 - 2025-12-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.131.9...v2.131.10)

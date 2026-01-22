@@ -176,8 +176,14 @@ public class AdminController extends BaseController {
             request.getErrors().add(getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"));
         } else {
             try {
+            	Emails deprecatedAccountEmails = emailManager.getEmails(deprecatedOrcid);
+            	
                 boolean wasDeprecated = adminManager.deprecateProfile(request, deprecatedOrcid, primaryOrcid, getCurrentUserOrcid());
                 if (wasDeprecated) {
+                    //send the security notification email on change password
+                	if(Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
+            			recordEmailSender.sendOrcidSecurityDeprecatedEmail(primaryOrcid, deprecatedOrcid, deprecatedAccountEmails);
+            		}
                     request.setSuccessMessage(getMessage("admin.profile_deprecation.deprecate_account.success_message", deprecatedOrcid, primaryOrcid));
                 }
             } catch (Exception e) {
@@ -656,6 +662,11 @@ public class AdminController extends BaseController {
             if (orcid != null) {
                 if (profileEntityManager.orcidExists(orcid)) {
                     profileEntityManager.updatePassword(orcid, password);
+                    
+                    //send the security notification email on change password
+                    if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
+                    	recordEmailSender.sendOrcidSecurityResetPasswordEmail(orcid);
+            		}
                     // reset the lock fields
                     profileEntityManager.resetSigninLock(orcid);
                     profileEntityCacheManager.remove(orcid);

@@ -13,7 +13,7 @@ public class S3MessagingServiceTest {
     
     @Before
     public void before() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, JAXBException {
-        s3MessagingService = new S3MessagingService("","","v2Summaries", "v2Activites","v3Summaries","v3Activites");
+        s3MessagingService = new S3MessagingService("v2Summaries", "v2Activites","v3Summaries","v3Activites", false);
     }
     
     @Test

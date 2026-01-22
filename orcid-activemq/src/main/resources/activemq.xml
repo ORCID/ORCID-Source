@@ -28,6 +28,19 @@
 			<transportConnector name="tcp" uri="tcp://0.0.0.0:61616" />
 		</transportConnectors>
 
+		<!-- ensure dead letter messages retain the source queue name (DLQ.<queue>) -->
+		<destinationPolicy>
+			<policyMap>
+				<policyEntries>
+					<policyEntry queue=">">
+						<deadLetterStrategy>
+							<individualDeadLetterStrategy useQueueForQueueMessages="true" queuePrefix="DLQ." />
+						</deadLetterStrategy>
+					</policyEntry>
+				</policyEntries>
+			</policyMap>
+		</destinationPolicy>
+
 		<destinations>
 			<queue physicalName="${org.orcid.messaging.reindex.solr}"
 				name="${org.orcid.messaging.reindex.solr}" />

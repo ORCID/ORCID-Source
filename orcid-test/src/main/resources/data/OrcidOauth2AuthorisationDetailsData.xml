@@ -123,8 +123,8 @@
 		client_details_id="4444-4444-4444-4442"
 		session_id=""
 		is_authenticated="true"
-		date_created="2010-01-01"
-		last_modified="2010-01-01"
+		date_created="2015-01-01"
+		last_modified="2015-01-01"
 		persistent="false"
 		/>
 
@@ -138,10 +138,25 @@
 		client_details_id="4444-4444-4444-4442"
 		session_id=""
 		is_authenticated="true"
-		date_created="2010-01-01"
-		last_modified="2010-01-01"
+		date_created="2020-01-01"
+		last_modified="2020-01-01"
 		persistent="true"
 		/>
+
+    <oauth2_authoriziation_code_detail
+            authoriziation_code_value="code4"
+            is_aproved="true"
+            orcid="4444-4444-4444-4442"
+            redirect_uri="http://www.4444-4444-4444-4442.com/redirect/oauth"
+            response_type="code"
+            state=""
+            client_details_id="4444-4444-4444-4442"
+            session_id=""
+            is_authenticated="true"
+            date_created="2200-01-01"
+            last_modified="2200-01-01"
+            persistent="true"
+    />
 		
 	<oauth2_token_detail
 		id="6"
