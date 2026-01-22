@@ -1,3 +1,14 @@
+## v2.135.2 - 2026-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.1...v2.135.2)
+
+## v2.135.1 - 2026-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.0...v2.135.1)
+
+- [#7432](https://github.com/ORCID/ORCID-Source/pull/7432): PD-3874  Null check for sourcePath
+- [#7433](https://github.com/ORCID/ORCID-Source/pull/7433): PD-3845 email list change update email text
+
 ## v2.135.0 - 2026-01-21
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.134.0...v2.135.0)
