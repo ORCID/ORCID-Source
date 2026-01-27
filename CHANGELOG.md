@@ -1,3 +1,9 @@
+## v2.135.4 - 2026-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.3...v2.135.4)
+
+- [#7435](https://github.com/ORCID/ORCID-Source/pull/7435): Transifex
+
 ## v2.135.3 - 2026-01-26
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.2...v2.135.3)
