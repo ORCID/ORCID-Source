@@ -1,69 +1,19 @@
 package org.orcid.api.memberV3.server.delegator.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.memberV3.server.delegator.MemberV3ApiServiceDelegator;
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.SummaryManager;
-import org.orcid.core.exception.DeactivatedException;
-import org.orcid.core.exception.DuplicatedGroupIdRecordException;
-import org.orcid.core.exception.MismatchedPutCodeException;
-import org.orcid.core.exception.OrcidAccessControlException;
-import org.orcid.core.exception.OrcidBadRequestException;
-import org.orcid.core.exception.OrcidCoreExceptionMapper;
-import org.orcid.core.exception.OrcidNoBioException;
-import org.orcid.core.exception.OrcidNoResultException;
+import org.orcid.core.exception.*;
 import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.StatusManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.read_only.ClientDetailsManagerReadOnly;
-import org.orcid.core.manager.v3.AddressManager;
-import org.orcid.core.manager.v3.AffiliationsManager;
-import org.orcid.core.manager.v3.ExternalIdentifierManager;
-import org.orcid.core.manager.v3.GroupIdRecordManager;
-import org.orcid.core.manager.v3.OrcidSearchManager;
-import org.orcid.core.manager.v3.OrcidSecurityManager;
-import org.orcid.core.manager.v3.OtherNameManager;
-import org.orcid.core.manager.v3.PeerReviewManager;
-import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.ProfileFundingManager;
-import org.orcid.core.manager.v3.ProfileKeywordManager;
-import org.orcid.core.manager.v3.ResearchResourceManager;
-import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.manager.v3.WorkManager;
-import org.orcid.core.manager.v3.read_only.ActivitiesSummaryManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.BiographyManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ExternalIdentifierManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.OtherNameManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PeerReviewManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.PersonalDetailsManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ProfileKeywordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.ResearcherUrlManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.manager.v3.*;
+import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.model.RecordSummary;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -74,68 +24,27 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
-import org.orcid.jaxb.model.v3.release.record.Address;
-import org.orcid.jaxb.model.v3.release.record.Addresses;
-import org.orcid.jaxb.model.v3.release.record.Biography;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Email;
-import org.orcid.jaxb.model.v3.release.record.Emails;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.ExternalID;
-import org.orcid.jaxb.model.v3.release.record.Funding;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Keyword;
-import org.orcid.jaxb.model.v3.release.record.Keywords;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.OtherName;
-import org.orcid.jaxb.model.v3.release.record.OtherNames;
-import org.orcid.jaxb.model.v3.release.record.PeerReview;
-import org.orcid.jaxb.model.v3.release.record.Person;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.release.record.PersonalDetails;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.Record;
-import org.orcid.jaxb.model.v3.release.record.ResearchResource;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
-import org.orcid.jaxb.model.v3.release.record.Service;
-import org.orcid.jaxb.model.v3.release.record.SourceAware;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
-import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
-import org.orcid.jaxb.model.v3.release.record.summary.EducationSummary;
+import org.orcid.jaxb.model.v3.release.record.*;
+import org.orcid.jaxb.model.v3.release.record.summary.*;
 import org.orcid.jaxb.model.v3.release.record.summary.Educations;
-import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Employments;
-import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
-import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositionSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions;
-import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Memberships;
-import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
-import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
-import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
-import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
-import org.orcid.jaxb.model.v3.release.record.summary.Services;
-import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
-import org.orcid.persistence.jpa.entities.EmailDomainEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.util.*;
 
 @Component
 public class MemberV3ApiServiceDelegatorImpl implements
         MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(MemberV3ApiServiceDelegatorImpl.class);
 
     // Managers that goes to the primary database
     @Resource(name = "workManagerV3")
@@ -344,8 +253,11 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
+        long begintime = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
-
+        long finish = System.currentTimeMillis();
+        LOGGER.debug("1. Time taken reading summaries " + (finish - start));
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
         if (worksList != null) {
@@ -353,8 +265,12 @@ public class MemberV3ApiServiceDelegatorImpl implements
         }
         worksList = filteredList;
 
+        start = System.currentTimeMillis();
         orcidSecurityManager.checkAndFilter(orcid, worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
+        finish = System.currentTimeMillis();
+        LOGGER.debug("2. Time taken filtering summaries " + (finish - start));
         // Should we filter the version-of identifiers before grouping?
+        start = System.currentTimeMillis();
         if(filterVersionOfIdentifiers) {
             for(WorkSummary w : worksList) {
                 if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
@@ -368,11 +284,26 @@ public class MemberV3ApiServiceDelegatorImpl implements
                 }
             }
         }
+        finish = System.currentTimeMillis();
+        LOGGER.debug("Time taken removing VERSION_OF identifiers " + (finish - start));
+
+        start = System.currentTimeMillis();
         Works works = workManager.groupWorks(worksList, false);
+        finish = System.currentTimeMillis();
+        LOGGER.debug("Time taken grouping works " + (finish - start));
+
         Api3_0LastModifiedDatesHelper.calculateLastModified(works);
+
         ActivityUtils.cleanEmptyFields(works);
+
         ActivityUtils.setPathToWorks(works, orcid);
+        finish = System.currentTimeMillis();
+
+        start = System.currentTimeMillis();
         sourceUtils.setSourceName(works);
+        finish = System.currentTimeMillis();
+        LOGGER.debug("Time taken setting source names " + (finish - start));
+        LOGGER.debug("Total Time taken processing the summaries " + (begintime - finish));
         return Response.ok(works).build();
     }
 

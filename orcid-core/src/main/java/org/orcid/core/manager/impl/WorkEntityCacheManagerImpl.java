@@ -168,17 +168,15 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified) {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
-        List<MinimizedWorkEntity> retrieveWorkList = retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache,
+        return retrieveWorkList(orcid, workIdsWithLastModified, minimizedWorkEntityCache,
                 idList -> workDao.getMinimizedWorkEntities(idList));
-        return retrieveWorkList;
     }
 
     @Override
     public List<MinimizedExtendedWorkEntity> retrieveMinimizedExtendedWorks(String orcid, long profileLastModified) {
         Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
-        List<MinimizedExtendedWorkEntity> retrieveWorkList = retrieveWorkList(orcid, workIdsWithLastModified, minimizedExtendedWorkEntityCache,
+        return retrieveWorkList(orcid, workIdsWithLastModified, minimizedExtendedWorkEntityCache,
                 idList -> workDao.getMinimizedExtendedWorkEntities(idList));
-        return retrieveWorkList;
     }
 
     @Override
