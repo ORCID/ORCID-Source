@@ -23,12 +23,15 @@ import ma.glasnost.orika.metadata.Type;
 
 public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConverter<ExternalIDs, String> {
 
-    private PIDNormalizationService norm;
-    private LocaleManager localeManager;
-    
+    private final PIDNormalizationService norm;
+    private final String normalizationFailedErrorCode;
+    private final String normalizationFailedErrorDescription;
+
     public JSONWorkExternalIdentifiersConverterV3(PIDNormalizationService norm, PIDResolverService resolverService, LocaleManager localeManager) {
         this.norm = norm;
-        this.localeManager = localeManager;
+        // API errors are not localized
+        normalizationFailedErrorCode = localeManager.resolveMessage("transientError.normalization_failed.code");
+        normalizationFailedErrorDescription = localeManager.resolveMessage("transientError.normalization_failed.message");
     }
     
     private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
@@ -76,7 +79,7 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                 if (normalised != null && !normalised.trim().isEmpty()) {
                     id.setNormalized(new TransientNonEmptyString(normalised));
                 } else {
-                    id.setNormalizedError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
+                    id.setNormalizedError(new TransientError(normalizationFailedErrorCode, normalizationFailedErrorDescription.replace("{0}", id.getType()).replace("{1}", workExternalIdentifier.getWorkExternalIdentifierId().content)));
                 }
                 
                 if (workExternalIdentifier.getUrl() != null) {
@@ -100,7 +103,7 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
                 }
                 
                 if (id.getNormalizedUrl() == null || StringUtils.isEmpty(id.getNormalizedUrl().getValue())){
-                    id.setNormalizedUrlError(new TransientError(localeManager.resolveMessage("transientError.normalization_failed.code"),localeManager.resolveMessage("transientError.normalization_failed.message",id.getType(),workExternalIdentifier.getWorkExternalIdentifierId().content )));
+                    id.setNormalizedUrlError(new TransientError(normalizationFailedErrorCode, normalizationFailedErrorDescription.replace("{0}", id.getType()).replace("{1}", workExternalIdentifier.getWorkExternalIdentifierId().content)));
                 }                
             }
             if (workExternalIdentifier.getUrl() != null) {
@@ -108,7 +111,7 @@ public class JSONWorkExternalIdentifiersConverterV3 extends BidirectionalConvert
             }
             if (workExternalIdentifier.getRelationship() != null) {
                 id.setRelationship(Relationship.fromValue(conv.convertFrom(workExternalIdentifier.getRelationship(), null)));
-            }            
+            }
             externalIDs.getExternalIdentifier().add(id);
         }
         return externalIDs;

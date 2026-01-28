@@ -124,8 +124,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
     }
 
-
-
     @Override
     public String getClientIdFromAPIRequest() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -239,8 +237,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkScopes(ScopePathType... requiredScopes) {
+        checkScopes(false, requiredScopes);
+    }
+
+    private void checkScopes(boolean tokenAlreadyChecked, ScopePathType... requiredScopes) {
         // Verify the client is not a public client
-        checkClientType();
+        if(!tokenAlreadyChecked) {
+            checkClientType();
+        }
 
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
@@ -299,12 +303,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkAndFilter(String orcid, ActivitiesSummary activities) {
+        checkAndFilter(orcid, activities, false);
+    }
+
+    private void checkAndFilter(String orcid, ActivitiesSummary activities, boolean tokenAlreadyChecked) {
         if (activities == null) {
             return;
         }
 
         // Check the token
-        isMyToken(orcid);
+        if(!tokenAlreadyChecked) {
+            isMyToken(orcid);
+        }
 
         // Distinctions
         if (activities.getDistinctions() != null) {
@@ -440,12 +450,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkAndFilter(String orcid, Person person) {
+        checkAndFilter(orcid, person, false);
+    }
+
+    private void checkAndFilter(String orcid, Person person, boolean tokenAlreadyChecked) {
         if (person == null) {
             return;
         }
 
         // Check the token
-        isMyToken(orcid);
+        if(!tokenAlreadyChecked) {
+            isMyToken(orcid);
+        }
 
         if (person.getAddresses() != null) {
             checkAndFilter(orcid, person.getAddresses().getAddress(), READ_BIO_REQUIRED_SCOPE, true);
@@ -498,11 +514,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         isMyToken(orcid);
 
         if (record.getActivitiesSummary() != null) {
-            checkAndFilter(orcid, record.getActivitiesSummary());
+            checkAndFilter(orcid, record.getActivitiesSummary(), true);
         }
 
         if (record.getPerson() != null) {
-            checkAndFilter(orcid, record.getPerson());
+            checkAndFilter(orcid, record.getPerson(), true);
         }
     }
 
@@ -514,10 +530,10 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // be allowed
         boolean publicElementsOnly = false;
         try {
-            checkScopes(scopePathType);
+            checkScopes(true, scopePathType);
         } catch (OrcidAccessControlException e) {
             try {
-                checkScopes(ScopePathType.READ_PUBLIC);
+                checkScopes(true, ScopePathType.READ_PUBLIC);
                 publicElementsOnly = true;
             } catch (OrcidAccessControlException e2) {
                 throw e;
@@ -574,7 +590,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         // Check the token belongs to the user
         isMyToken(orcid);
         // Check you have the required scopes
-        checkScopes(requiredScopes);
+        checkScopes(true, requiredScopes);
     }
 
     /**
@@ -632,7 +648,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
 
         try {
-            checkScopes(ScopePathType.EMAIL_READ_PRIVATE);
+            checkScopes(tokenAlreadyChecked, ScopePathType.EMAIL_READ_PRIVATE);
             return;
         } catch (OrcidAccessControlException oace) {
             checkAndFilter(orcid, (VisibilityType) email, READ_BIO_REQUIRED_SCOPE, true);
@@ -693,6 +709,19 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             isMyToken(orcid);
         }
 
+        // Check if the element is public and the token contains the
+        // /read-public scope
+        if (Visibility.PUBLIC.equals(element.getVisibility())) {
+            try {
+                checkScopes(tokenAlreadyChecked, ScopePathType.READ_PUBLIC);
+                // This means it have ScopePathType.READ_PUBLIC scope, so, we
+                // can return it
+                return;
+            } catch (OrcidAccessControlException e) {
+                // Just continue filtering
+            }
+        }
+
         // Check if the client is the source of the element
         if (element instanceof Filterable) {
             Filterable filterable = (Filterable) element;
@@ -707,21 +736,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
 
-        // Check if the element is public and the token contains the
-        // /read-public scope
-        if (Visibility.PUBLIC.equals(element.getVisibility())) {
-            try {
-                checkScopes(ScopePathType.READ_PUBLIC);
-                // This means it have ScopePathType.READ_PUBLIC scope, so, we
-                // can return it
-                return;
-            } catch (OrcidAccessControlException e) {
-                // Just continue filtering
-            }
-        }
+        // Check the request have the required scope
+        checkScopes(tokenAlreadyChecked, requiredScope);
 
-        // Filter
-        filter(element, requiredScope);
+        // Check element visibility
+        checkVisibility(element, requiredScope);
     }
 
     /**
@@ -752,14 +771,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 extIdsIt.remove();
             }
         }
-    }
-
-    private void filter(VisibilityType element, ScopePathType requiredScope) {
-        // Check the request have the required scope
-        checkScopes(requiredScope);
-
-        // Check element visibility
-        checkVisibility(element, requiredScope);
     }
 
     private void checkVisibility(VisibilityType element, ScopePathType requiredScope) {
@@ -824,7 +835,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         checkClientType();
 
         String clientId = sourceManager.retrieveActiveSourceId();
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
             Object principal = userAuthentication.getPrincipal();
@@ -836,8 +846,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             } else {
                 throw new OrcidUnauthorizedException("Missing user authentication");
             }
-        } else if (isNonClientCredentialScope(oAuth2Authentication) && !clientIsProfileSource(clientId, profile)) {
-            throw new IllegalStateException("Non client credential scope found in client request");
+        } else if (isNonClientCredentialScope(oAuth2Authentication)) {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            if(!clientIsProfileSource(clientId, profile)) {
+                throw new IllegalStateException("Non client credential scope found in client request");
+            }
         }
     }
 
@@ -856,7 +869,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidUnauthorizedException("No OAuth2 authentication found");
         }
 
-        checkScopes(ScopePathType.AUTHENTICATE);
+        checkScopes(false, ScopePathType.AUTHENTICATE);
 
         Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
         if (userAuthentication != null) {
