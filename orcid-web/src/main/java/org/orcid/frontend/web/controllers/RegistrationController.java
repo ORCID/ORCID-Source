@@ -501,12 +501,6 @@ public class RegistrationController extends BaseController {
                     profileEntityManager.updateLocale(orcid, AvailableLocales.fromValue(RequestContextUtils.getLocale(request).toString()));
                     sb.append("emailVerified=true");
 
-                    if (Features.SEND_EMAIL_ON_EMAIL_LIST_CHANGE.isActive()) {
-                        EmailListChange emailListChange = new EmailListChange();
-                        emailListChange.getVerifiedEmails().add(decryptedEmail);
-                        recordEmailSender.sendEmailListChangeEmail(orcid, emailListChange);
-                    }
-
                     if (!emailManagerReadOnly.isPrimaryEmail(orcid, decryptedEmail)) {
                         if (!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
                             sb.append("&");

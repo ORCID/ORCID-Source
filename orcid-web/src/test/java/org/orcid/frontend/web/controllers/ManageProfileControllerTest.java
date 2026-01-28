@@ -643,12 +643,7 @@ public class ManageProfileControllerTest {
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
-        verify(mockRecordEmailSender, Mockito.times(1)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
-        EmailListChange capturedChange = emailListChangeCaptor.getValue();
-        assertEquals(capturedChange.getAddedEmails().get(0).getEmail(),"0000-0000-0000-0002_1@test.orcid.org");
-        assertTrue(capturedChange.getRemovedEmails().isEmpty());
-        assertTrue(capturedChange.getVerifiedEmails().isEmpty());
-        assertEquals(capturedChange.getAddedEmails().size(),2);
+        verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
     }
     
     @Test

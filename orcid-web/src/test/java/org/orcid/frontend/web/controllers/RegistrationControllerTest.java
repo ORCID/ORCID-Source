@@ -509,7 +509,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         assertEquals("redirect:https://testserver.orcid.org/my-orcid?emailVerified=true", mav.getViewName());
         verify(emailManager, times(1)).verifyEmail(orcid, email);
         verify(profileEntityManager, times(1)).updateLocale(eq(orcid), eq(AvailableLocales.EN));
-        verify(recordEmailSender, times(1)).sendEmailListChangeEmail(eq(orcid), Mockito.any());
+        verify(recordEmailSender, times(0)).sendEmailListChangeEmail(eq(orcid), Mockito.any());
     }
         
     @Test
