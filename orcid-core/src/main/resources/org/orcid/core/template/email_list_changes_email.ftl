@@ -3,16 +3,11 @@
 <@emailMacros.msg "email.welcome.your_id.id" /> ${orcid}
 <@emailMacros.msg "email.welcome.your_id.link" />:<@emailMacros.space /><a href="${baseUri}/${orcid}" target="orcid.blank">${baseUri}/${orcid}</a>
 
-<@emailMacros.msg "email.changes.we_have_detected" />
+<@emailMacros.msg "email.changes.we_have_detected_a_change" />
 <br>
-<#if (emailListChange.verifiedEmails?has_content)>
-<#list emailListChange.verifiedEmails as email>
-<@emailMacros.msg "email.changes.the_email_address" /> <a href="mailto:${email}">${email}</a> <@emailMacros.msg "email.changes.has_been_verified" />
-</#list>
-</#if>
 <#if (emailListChange.addedEmails?has_content)>
 <#list emailListChange.addedEmails as email>
-<@emailMacros.msg "email.changes.the_email_address" /> <a href="mailto:${email.getEmail()}">${email.getEmail()}</a> <@emailMacros.msg "email.changes.has_been_added" />
+<@emailMacros.msg "email.changes.the_email_address" /> <a href="mailto:${email.getValue()}">${email.getValue()}</a> <@emailMacros.msg "email.changes.has_been_added" />
 </#list>
 </#if>
 <#if (emailListChange.removedEmails?has_content)>

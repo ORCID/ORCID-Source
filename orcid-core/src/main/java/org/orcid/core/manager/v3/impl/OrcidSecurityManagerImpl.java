@@ -563,7 +563,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                     continue;
                 }
 
-                if (work.retrieveSourcePath().equals(clientId)) {
+                if (work.retrieveSourcePath() != null && work.retrieveSourcePath().equals(clientId)) {
                     filteredElements.add(work);
                     continue;
                 }
