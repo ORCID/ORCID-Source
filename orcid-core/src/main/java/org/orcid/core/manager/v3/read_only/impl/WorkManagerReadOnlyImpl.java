@@ -119,7 +119,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
 
-    @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.max.threads:8}")
+    @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.max.threads:4}")
     private int maxThreadsToNormalize;
 
     @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.min.works.to.parallelize:20}")
