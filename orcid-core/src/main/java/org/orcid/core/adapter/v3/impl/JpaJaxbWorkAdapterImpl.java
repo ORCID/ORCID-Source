@@ -58,7 +58,15 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
             return null;
         }
         return mapperFacade.map(workEntity, WorkSummary.class);
-    }                    
+    }
+
+    @Override
+    public WorkSummary toWorkSummary(MinimizedWorkEntity minimizedWorkEntity) {
+        if (minimizedWorkEntity == null) {
+            return null;
+        }
+        return mapperFacade.map(minimizedWorkEntity, WorkSummary.class);
+    }
     
     @Override
     public List<Work> toWork(Collection<WorkEntity> workEntities) {
