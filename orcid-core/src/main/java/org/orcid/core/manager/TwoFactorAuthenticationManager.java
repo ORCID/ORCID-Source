@@ -3,6 +3,7 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.TwoFactorAuthForm;
 
 public interface TwoFactorAuthenticationManager {
 
@@ -22,4 +23,5 @@ public interface TwoFactorAuthenticationManager {
 
     boolean verificationCodeIsValid(String code, ProfileEntity profileEntity);
 
+    boolean validateTwoFactorAuthForm(String orcid, TwoFactorAuthForm form);
 }

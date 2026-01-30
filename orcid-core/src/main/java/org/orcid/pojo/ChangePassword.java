@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
-public class ChangePassword implements ErrorsInterface {
+public class ChangePassword extends TwoFactorAuthForm {
     private List<String> errors = new ArrayList<String>();
 
     private String password;
@@ -13,6 +13,8 @@ public class ChangePassword implements ErrorsInterface {
     private String retypedPassword;
 
     private String oldPassword;
+
+    private boolean success = false;
 
     public List<String> getErrors() {
         return errors;
@@ -46,4 +48,11 @@ public class ChangePassword implements ErrorsInterface {
         this.oldPassword = oldPassword;
     }
 
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 }
