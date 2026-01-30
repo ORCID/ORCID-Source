@@ -20,6 +20,7 @@ import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
@@ -32,6 +33,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
             + " w.last_modified, w.visibility, w.display_index, w.source_id, w.client_source_id," + " w.assertion_origin_source_id, w.assertion_origin_client_source_id, "
             + " w.top_contributors_json as contributors, w.featured_display_index" + " FROM work w" + " WHERE orcid=:orcid";
 
+    @Value("${org.orcid.persistence.dao.impl.WorkDaoImpl.batchSize:100}")
+    private Integer batchSize;
 
     public WorkDaoImpl() {
         super(WorkEntity.class);
@@ -47,9 +50,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids) {
-        // batch up list into sets of 50;
+        // batch up list into sets of 'batchSize';
         List<MinimizedWorkEntity> list = new ArrayList<>();
-        for (List<Long> partition : Lists.partition(ids, 50)) {
+        for (List<Long> partition : Lists.partition(ids, batchSize)) {
             TypedQuery<MinimizedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
             query.setParameter("ids", partition);
             list.addAll(query.getResultList());
