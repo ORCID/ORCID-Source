@@ -1,4 +1,5 @@
 package org.orcid.pojo;
+
 import org.orcid.pojo.ajaxForm.ErrorsInterface;
 
 import java.util.ArrayList;
@@ -14,20 +15,45 @@ public class TwoFactorAuthForm implements ErrorsInterface {
     private boolean invalidTwoFactorCode;
     private boolean invalidTwoFactorRecoveryCode;
 
-    public String getTwoFactorCode() { return twoFactorCode; }
-    public void setTwoFactorCode(String twoFactorCode) { this.twoFactorCode = twoFactorCode; }
+    public String getTwoFactorCode() {
+        return twoFactorCode;
+    }
 
-    public String getTwoFactorRecoveryCode() { return twoFactorRecoveryCode; }
-    public void setTwoFactorRecoveryCode(String twoFactorRecoveryCode) { this.twoFactorRecoveryCode = twoFactorRecoveryCode; }
+    public void setTwoFactorCode(String twoFactorCode) {
+        this.twoFactorCode = twoFactorCode;
+    }
 
-    public boolean isTwoFactorEnabled() { return twoFactorEnabled; }
-    public void setTwoFactorEnabled(boolean twoFactorEnabled) { this.twoFactorEnabled = twoFactorEnabled; }
+    public String getTwoFactorRecoveryCode() {
+        return twoFactorRecoveryCode;
+    }
 
-    public boolean isInvalidTwoFactorCode() { return invalidTwoFactorCode; }
-    public void setInvalidTwoFactorCode(boolean invalidTwoFactorCode) { this.invalidTwoFactorCode = invalidTwoFactorCode; }
+    public void setTwoFactorRecoveryCode(String twoFactorRecoveryCode) {
+        this.twoFactorRecoveryCode = twoFactorRecoveryCode;
+    }
 
-    public boolean isInvalidTwoFactorRecoveryCode() { return invalidTwoFactorRecoveryCode; }
-    public void setInvalidTwoFactorRecoveryCode(boolean invalidTwoFactorRecoveryCode) { this.invalidTwoFactorRecoveryCode = invalidTwoFactorRecoveryCode; }
+    public boolean isTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
+    public boolean isInvalidTwoFactorCode() {
+        return invalidTwoFactorCode;
+    }
+
+    public void setInvalidTwoFactorCode(boolean invalidTwoFactorCode) {
+        this.invalidTwoFactorCode = invalidTwoFactorCode;
+    }
+
+    public boolean isInvalidTwoFactorRecoveryCode() {
+        return invalidTwoFactorRecoveryCode;
+    }
+
+    public void setInvalidTwoFactorRecoveryCode(boolean invalidTwoFactorRecoveryCode) {
+        this.invalidTwoFactorRecoveryCode = invalidTwoFactorRecoveryCode;
+    }
 
     @Override
     public List<String> getErrors() {
