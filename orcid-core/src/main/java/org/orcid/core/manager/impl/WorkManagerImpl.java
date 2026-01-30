@@ -318,7 +318,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
         for (Work work : existingWorks) {
             // If it is the same source
-            if (work.retrieveSourcePath().equals(sourceId)) {
+            if (work.retrieveSourcePath() !=null && work.retrieveSourcePath().equals(sourceId)) {
                 if (work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
                     for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
                         if(extIDPutCodeMap != null) {

@@ -223,9 +223,6 @@ public class AutoLockSpamRecords {
                 AmazonS3 s3 = AmazonS3ClientBuilder.standard()
                         .withRegion(Regions.US_EAST_2)
                         .build();
-                // Fastest and more generic way to know if the connection is working
-                s3.getS3AccountOwner();
-                LOG.info("Connected to Amazon S3");
 
                 S3Object response = s3.getObject(new GetObjectRequest(SPAM_BUCKET, ORCID_S3_SPAM_FILE));
                 byte[] byteArray = IOUtils.toByteArray(response.getObjectContent());

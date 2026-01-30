@@ -1,3 +1,36 @@
+## v2.135.4 - 2026-01-27
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.3...v2.135.4)
+
+- [#7435](https://github.com/ORCID/ORCID-Source/pull/7435): Transifex
+
+## v2.135.3 - 2026-01-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.2...v2.135.3)
+
+## v2.135.2 - 2026-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.1...v2.135.2)
+
+## v2.135.1 - 2026-01-22
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.135.0...v2.135.1)
+
+- [#7432](https://github.com/ORCID/ORCID-Source/pull/7432): PD-3874  Null check for sourcePath
+- [#7433](https://github.com/ORCID/ORCID-Source/pull/7433): PD-3845 email list change update email text
+
+## v2.135.0 - 2026-01-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.134.0...v2.135.0)
+
+## v2.134.0 - 2026-01-21
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.3...v2.134.0)
+
+- [#7429](https://github.com/ORCID/ORCID-Source/pull/7429): feat/activemq-dlt-named-queues
+- [#7425](https://github.com/ORCID/ORCID-Source/pull/7425): PD-3787 Update orcid-model to 3.3.9
+- [#7431](https://github.com/ORCID/ORCID-Source/pull/7431): ${PD-3845} update email list change message logic
+
 ## v2.133.3 - 2026-01-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.133.2...v2.133.3)
