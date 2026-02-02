@@ -301,7 +301,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
         sourceUtils.setSourceName(works);
         finish = System.currentTimeMillis();
         LOGGER.debug("6. Time taken setting source names " + (finish - start));
-        LOGGER.debug("7. Total Time taken processing the summaries " + (begintime - finish));
+        LOGGER.debug("7. Total Time taken processing the summaries " + (finish - begintime));
         return Response.ok(works).build();
     }
 
