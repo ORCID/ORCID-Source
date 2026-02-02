@@ -18,15 +18,19 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.v3.identifiers.normalizers.CaseSensitiveNormalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransform;
 import org.orcid.pojo.IdentifierType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component("PIDNormalizationService")
 public class PIDNormalizationService {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PIDNormalizationService.class);
+
     @Resource
     List<Normalizer> normalizers = new ArrayList<Normalizer>();
 
@@ -43,6 +47,7 @@ public class PIDNormalizationService {
     public void init() {
         Collections.sort(normalizers, AnnotationAwareOrderComparator.INSTANCE);
         this.idTypeMap = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+        LOGGER.info("Initialised idTypeMap on PIDNormalizationService");
         for (String type : this.idTypeMap.keySet()) {
             map.put(type, new LinkedList<Normalizer>());
         }

@@ -7,13 +7,18 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.pojo.IdentifierType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CaseSensitiveNormalizer implements Normalizer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CaseSensitiveNormalizer.class);
 
     @Resource
     IdentifierTypeManager idman;
@@ -28,6 +33,7 @@ public class CaseSensitiveNormalizer implements Normalizer {
     @PostConstruct
     public void init() {
         this.idTypeMap = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+        LOGGER.info("Initialised idTypeMap on CaseSensitiveNormalizer");
     }
 
     @Override
