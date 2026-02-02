@@ -35,7 +35,8 @@ public class PIDNormalizationService {
 
     Map<String, LinkedList<Normalizer>> map = new HashMap<String, LinkedList<Normalizer>>();
 
-    private UrlValidator urlValidator = new UrlValidator();
+    private final Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
+    private final UrlValidator urlValidator = new UrlValidator();
     
     @PostConstruct
     public void init() {
@@ -90,7 +91,6 @@ public class PIDNormalizationService {
         if (apiTypeName == null)
             return value;
         String norm = value;
-        
         //generate normalized value (some have additional transform here)
         for (Normalizer n : map.get(apiTypeName)) {
             if (n instanceof NormalizerWithURLTransform)
@@ -110,8 +110,7 @@ public class PIDNormalizationService {
                         String compare = norm;
                         if (compare.toLowerCase().startsWith(prefix.toLowerCase())) {
                             result = norm;
-                        } else {                                                                                      
-                            Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
+                        } else {
                             Matcher matcher = pattern.matcher(compare);
                             if (matcher.find()) {
                                 if (prefix.equals(matcher.group(1) + matcher.group(2)) || prefix.contains(matcher.group(2))) {
