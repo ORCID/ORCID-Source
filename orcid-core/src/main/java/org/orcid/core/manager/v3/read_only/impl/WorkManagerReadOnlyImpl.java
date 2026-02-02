@@ -8,7 +8,6 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -57,9 +56,7 @@ import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkGroupExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
-import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
@@ -119,15 +116,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
 
-    @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.max.threads:4}")
-    private int maxThreadsToNormalize;
-
     @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.min.works.to.parallelize:20}")
     private int minWorksToParallelize;
 
     @PostConstruct
     public void init() {
-        LOGGER.info("Initializing WorkManagerReadOnlyImpl: minWorksToParallelize = " + minWorksToParallelize + ", maxThreadsToNormalize = " + maxThreadsToNormalize);
+        LOGGER.info("Initializing WorkManagerReadOnlyImpl: minWorksToParallelize = " + minWorksToParallelize);
     }
 
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
@@ -211,27 +205,29 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
+        long start = System.currentTimeMillis();
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        List<WorkSummary> workSummaryResult = Arrays.asList();
+        long finish = System.currentTimeMillis();
+        LOGGER.debug("1A. Time taken reading from DB " + (finish - start));
 
+        List<WorkSummary> workSummaryResult = Arrays.asList();
+        start = System.currentTimeMillis();
         // Lets implement a parallel stream for when there are more than 10 works to be processed
         if(works.size() < minWorksToParallelize) {
             workSummaryResult = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
         } else {
-            ForkJoinPool customThreadPool = new ForkJoinPool(maxThreadsToNormalize);
-
             try {
                 // Execute the parallel stream within the custom thread pool
-                workSummaryResult = customThreadPool.submit(() ->
+                workSummaryResult = ForkJoinPool.commonPool().submit(() ->
                         works.parallelStream().map(minimizedWorkEntity -> jpaJaxbWorkAdapter.toWorkSummary(minimizedWorkEntity)).collect(Collectors.toList())
                 ).get(); // use .get() to wait for completion and propagate exceptions
 
             } catch (Exception e) {
                 LOGGER.error("Error while generating the list of work summaries in parallel", e);
-            } finally {
-                customThreadPool.shutdown();
             }
         }
+        finish = System.currentTimeMillis();
+        LOGGER.debug("1B. Time taken converting to WorkSummary list " + (finish - start));
         return workSummaryResult;
     }
 
