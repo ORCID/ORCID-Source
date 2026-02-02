@@ -34,6 +34,7 @@ public class PIDNormalizationService {
     IdentifierTypeManager idman;
 
     Map<String, LinkedList<Normalizer>> map = new HashMap<String, LinkedList<Normalizer>>();
+    private Map<String, IdentifierType> idTypeMap;
 
     private final Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
     private final UrlValidator urlValidator = new UrlValidator();
@@ -41,7 +42,8 @@ public class PIDNormalizationService {
     @PostConstruct
     public void init() {
         Collections.sort(normalizers, AnnotationAwareOrderComparator.INSTANCE);
-        for (String type : idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).keySet()) {
+        this.idTypeMap = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+        for (String type : this.idTypeMap.keySet()) {
             map.put(type, new LinkedList<Normalizer>());
         }
         for (Normalizer n : normalizers) {
@@ -101,7 +103,7 @@ public class PIDNormalizationService {
         
         //add the prefix
         if (!norm.isEmpty()){
-            IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
+            IdentifierType type = this.idTypeMap.get(apiTypeName);
             String prefix = type.getResolutionPrefix();
             if (!StringUtils.isEmpty(prefix)) {
                 try {

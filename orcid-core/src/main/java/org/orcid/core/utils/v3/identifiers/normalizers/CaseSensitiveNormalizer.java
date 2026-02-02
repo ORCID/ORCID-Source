@@ -2,7 +2,9 @@ package org.orcid.core.utils.v3.identifiers.normalizers;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.IdentifierTypeManager;
@@ -15,15 +17,22 @@ public class CaseSensitiveNormalizer implements Normalizer {
 
     @Resource
     IdentifierTypeManager idman;
-    
+
     @Override
     public List<String> canHandle() {
         return CAN_HANDLE_EVERYTHING;
     }
 
+    private Map<String, IdentifierType> idTypeMap;
+
+    @PostConstruct
+    public void init() {
+        this.idTypeMap = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+    }
+
     @Override
     public String normalise(String apiTypeName, String value) {
-        IdentifierType t = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
+        IdentifierType t = this.idTypeMap.get(apiTypeName);
         if (t != null && !t.getCaseSensitive()){
             return value.toLowerCase();
         }
