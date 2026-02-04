@@ -285,25 +285,23 @@ public class MemberV3ApiServiceDelegatorImpl implements
             }
         }
         finish = System.currentTimeMillis();
-        LOGGER.debug("Time taken removing VERSION_OF identifiers " + (finish - start));
+        LOGGER.debug("3. Time taken removing VERSION_OF identifiers " + (finish - start));
 
         start = System.currentTimeMillis();
         Works works = workManager.groupWorks(worksList, false);
         finish = System.currentTimeMillis();
-        LOGGER.debug("Time taken grouping works " + (finish - start));
-
+        LOGGER.debug("4. Time taken grouping works " + (finish - start));
+        start = System.currentTimeMillis();
         Api3_0LastModifiedDatesHelper.calculateLastModified(works);
-
         ActivityUtils.cleanEmptyFields(works);
-
         ActivityUtils.setPathToWorks(works, orcid);
         finish = System.currentTimeMillis();
-
+        LOGGER.debug("5. Time taken to set metadata " + (finish - start));
         start = System.currentTimeMillis();
         sourceUtils.setSourceName(works);
         finish = System.currentTimeMillis();
-        LOGGER.debug("Time taken setting source names " + (finish - start));
-        LOGGER.debug("Total Time taken processing the summaries " + (begintime - finish));
+        LOGGER.debug("6. Time taken setting source names " + (finish - start));
+        LOGGER.debug("7. Total Time taken processing the summaries " + (finish - begintime));
         return Response.ok(works).build();
     }
 
