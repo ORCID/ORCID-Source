@@ -26,12 +26,11 @@ import org.orcid.core.exception.UserAlreadyUsing2FAException;
 import org.orcid.core.manager.impl.TwoFactorAuthenticationManagerImpl;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.record_v2.Email;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.pojo.TwoFactorAuthForm;
+import org.orcid.pojo.AuthChallenge;
 
 public class TwoFactorAuthenticationManagerTest {
     
@@ -166,7 +165,7 @@ public class TwoFactorAuthenticationManagerTest {
     @Test
     public void testValidateTwoFactorAuthForm_UserNotUsing2FA() {
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(getNon2FAProfile());
-        TwoFactorAuthForm form = new TwoFactorAuthForm();
+        AuthChallenge form = new AuthChallenge();
 
         boolean result = twoFactorAuthenticationManager.validateTwoFactorAuthForm("orcid", form);
         assertTrue(result);
@@ -175,7 +174,7 @@ public class TwoFactorAuthenticationManagerTest {
     @Test
     public void testValidateTwoFactorAuthForm_Enabled_EmptyForm() {
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(get2FAProfile());
-        TwoFactorAuthForm form = new TwoFactorAuthForm();
+        AuthChallenge form = new AuthChallenge();
 
         boolean result = twoFactorAuthenticationManager.validateTwoFactorAuthForm("orcid", form);
         assertFalse(result);
@@ -186,7 +185,7 @@ public class TwoFactorAuthenticationManagerTest {
     public void testValidateTwoFactorAuthForm_Enabled_ValidRecoveryCode() {
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(get2FAProfile());
         when(backupCodeManager.verify(anyString(), anyString())).thenReturn(true);
-        TwoFactorAuthForm form = new TwoFactorAuthForm();
+        AuthChallenge form = new AuthChallenge();
         form.setTwoFactorRecoveryCode("valid-recovery-code");
 
         boolean result = twoFactorAuthenticationManager.validateTwoFactorAuthForm("orcid", form);
@@ -198,7 +197,7 @@ public class TwoFactorAuthenticationManagerTest {
     public void testValidateTwoFactorAuthForm_Enabled_InvalidRecoveryCode() {
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(get2FAProfile());
         when(backupCodeManager.verify(anyString(), anyString())).thenReturn(false);
-        TwoFactorAuthForm form = new TwoFactorAuthForm();
+        AuthChallenge form = new AuthChallenge();
         form.setTwoFactorRecoveryCode("invalid-code");
 
         boolean result = twoFactorAuthenticationManager.validateTwoFactorAuthForm("orcid", form);
@@ -219,7 +218,7 @@ public class TwoFactorAuthenticationManagerTest {
         Totp totp = new Totp(secret);
         String validCode = totp.now();
 
-        TwoFactorAuthForm form = new TwoFactorAuthForm();
+        AuthChallenge form = new AuthChallenge();
         form.setTwoFactorCode(validCode);
 
         boolean result = twoFactorAuthenticationManager.validateTwoFactorAuthForm("orcid", form);
@@ -232,7 +231,7 @@ public class TwoFactorAuthenticationManagerTest {
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(get2FAProfile());
         when(encryptionManager.decryptForInternalUse(anyString())).thenReturn(Base32.random());
 
-        TwoFactorAuthForm form = new TwoFactorAuthForm();
+        AuthChallenge form = new AuthChallenge();
         form.setTwoFactorCode("000000");
 
         boolean result = twoFactorAuthenticationManager.validateTwoFactorAuthForm("orcid", form);

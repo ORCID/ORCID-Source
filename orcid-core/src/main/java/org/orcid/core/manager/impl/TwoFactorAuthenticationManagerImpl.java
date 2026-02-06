@@ -18,7 +18,7 @@ import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.pojo.TwoFactorAuthForm;
+import org.orcid.pojo.AuthChallenge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +128,7 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
-    public boolean validateTwoFactorAuthForm(String orcid, TwoFactorAuthForm form) {
+    public boolean validateTwoFactorAuthForm(String orcid, AuthChallenge form) {
         if (!userUsing2FA(orcid)) {
             return true;
         }
