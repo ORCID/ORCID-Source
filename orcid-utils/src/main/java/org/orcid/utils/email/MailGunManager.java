@@ -48,7 +48,7 @@ public class MailGunManager {
     @Value("${com.mailgun.apiKey}")
     private String apiKey;
 
-    @Value("${com.mailgun.regexFilter:.*(orcid\\.org|mailinator\\.com)$}")
+    @Value("${com.mailgun.regexFilter:(?i).*(orcid\\.org|mailinator\\.com)$}")
     private String filter;
     
     private JerseyClientHelper jerseyClientHelper;

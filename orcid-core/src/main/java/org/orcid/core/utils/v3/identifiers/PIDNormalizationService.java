@@ -18,15 +18,19 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.orcid.core.manager.IdentifierTypeManager;
+import org.orcid.core.utils.v3.identifiers.normalizers.CaseSensitiveNormalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.Normalizer;
 import org.orcid.core.utils.v3.identifiers.normalizers.NormalizerWithURLTransform;
 import org.orcid.pojo.IdentifierType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.stereotype.Component;
 
 @Component("PIDNormalizationService")
 public class PIDNormalizationService {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(PIDNormalizationService.class);
+
     @Resource
     List<Normalizer> normalizers = new ArrayList<Normalizer>();
 
@@ -34,13 +38,17 @@ public class PIDNormalizationService {
     IdentifierTypeManager idman;
 
     Map<String, LinkedList<Normalizer>> map = new HashMap<String, LinkedList<Normalizer>>();
+    private Map<String, IdentifierType> idTypeMap;
 
-    private UrlValidator urlValidator = new UrlValidator();
+    private final Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
+    private final UrlValidator urlValidator = new UrlValidator();
     
     @PostConstruct
     public void init() {
         Collections.sort(normalizers, AnnotationAwareOrderComparator.INSTANCE);
-        for (String type : idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).keySet()) {
+        this.idTypeMap = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH);
+        LOGGER.info("Initialised idTypeMap on PIDNormalizationService");
+        for (String type : this.idTypeMap.keySet()) {
             map.put(type, new LinkedList<Normalizer>());
         }
         for (Normalizer n : normalizers) {
@@ -90,7 +98,6 @@ public class PIDNormalizationService {
         if (apiTypeName == null)
             return value;
         String norm = value;
-        
         //generate normalized value (some have additional transform here)
         for (Normalizer n : map.get(apiTypeName)) {
             if (n instanceof NormalizerWithURLTransform)
@@ -101,7 +108,7 @@ public class PIDNormalizationService {
         
         //add the prefix
         if (!norm.isEmpty()){
-            IdentifierType type = idman.fetchIdentifierTypesByAPITypeName(Locale.ENGLISH).get(apiTypeName);
+            IdentifierType type = this.idTypeMap.get(apiTypeName);
             String prefix = type.getResolutionPrefix();
             if (!StringUtils.isEmpty(prefix)) {
                 try {
@@ -110,8 +117,7 @@ public class PIDNormalizationService {
                         String compare = norm;
                         if (compare.toLowerCase().startsWith(prefix.toLowerCase())) {
                             result = norm;
-                        } else {                                                                                      
-                            Pattern pattern = Pattern.compile("^(http[s]?://www\\.|http[s]?://|www\\.)([^/]*)");
+                        } else {
                             Matcher matcher = pattern.matcher(compare);
                             if (matcher.find()) {
                                 if (prefix.equals(matcher.group(1) + matcher.group(2)) || prefix.contains(matcher.group(2))) {
