@@ -1,3 +1,9 @@
+## v2.136.7 - 2026-02-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.136.6...v2.136.7)
+
+- [#7447](https://github.com/ORCID/ORCID-Source/pull/7447): ${PD-4790} revert  "add 2fa to account settings password reset (#7438)"
+
 ## v2.136.6 - 2026-02-03
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.136.5...v2.136.6)
