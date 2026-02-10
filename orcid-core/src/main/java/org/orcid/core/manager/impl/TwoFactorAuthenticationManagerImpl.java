@@ -18,7 +18,6 @@ import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.pojo.TwoFactorAuthForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,39 +126,4 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
         return encryptionManager.decryptForInternalUse(profileEntity.getSecretFor2FA());
     }
 
-    @Override
-    public boolean validateTwoFactorAuthForm(String orcid, TwoFactorAuthForm form) {
-        if (!userUsing2FA(orcid)) {
-            return true;
-        }
-
-        form.setTwoFactorEnabled(true);
-
-        String code = form.getTwoFactorCode();
-        String recovery = form.getTwoFactorRecoveryCode();
-        boolean hasCode = code != null && !code.isEmpty();
-        boolean hasRecovery = recovery != null && !recovery.isEmpty();
-
-        // used when 2fa is not immediately provided
-        // i.e. tells the UI that 2fa is enabled and the user needs to provide a code
-        if (!hasCode && !hasRecovery) {
-            return false;
-        }
-
-        if (hasRecovery) {
-            if (backupCodeManager.verify(orcid, recovery)) {
-                return true;
-            } else {
-                form.setInvalidTwoFactorRecoveryCode(true);
-                return false;
-            }
-        } else {
-            if (verificationCodeIsValid(code, orcid)) {
-                return true;
-            } else {
-                form.setInvalidTwoFactorCode(true);
-                return false;
-            }
-        }
-    }
 }
