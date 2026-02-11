@@ -155,6 +155,14 @@
         </ehcache:expiry>
         <ehcache:heap unit="entries">2000</ehcache:heap>
     </ehcache:cache>
+
+    <ehcache:cache alias="member-name" uses-template="defaultTemplate">
+        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
+        <ehcache:expiry>
+            <ehcache:tti unit="minutes">30</ehcache:tti>
+        </ehcache:expiry>
+        <ehcache:heap unit="entries">25000</ehcache:heap>
+    </ehcache:cache>
     
     
     <ehcache:cache alias="count-tokens" uses-template="defaultTemplate">

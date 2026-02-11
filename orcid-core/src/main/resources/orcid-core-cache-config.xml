@@ -86,6 +86,14 @@
 		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.client_details.timeToIdleSeconds:36000}" />
         <property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.client_details.maxMegaBytesInMemory:16}" />
         <property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.client_details.maxMegaBytesOnDisk:128}" />
+	</bean>
+
+	<bean id="memberNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="member-name" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.cache.member_name.timeToIdleSeconds:3600}" />
+		<property name="maxMegaBytesInMemory" value="${org.orcid.core.cache.member_name.maxMegaBytesInMemory:16}" />
+		<property name="maxMegaBytesOnDisk" value="${org.orcid.core.cache.member_name.maxMegaBytesOnDisk:128}" />
 	</bean>		       
     
     <bean id="identityProviderNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
