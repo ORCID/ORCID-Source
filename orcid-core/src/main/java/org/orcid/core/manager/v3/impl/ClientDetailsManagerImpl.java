@@ -43,6 +43,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.keys.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl implements ClientDetailsManager {
@@ -310,13 +311,14 @@ public class ClientDetailsManagerImpl extends ClientDetailsManagerReadOnlyImpl i
     }
     
     /**
-     * Get member name
-     * 
+     * Get member name (cacheable by client id).
+     *
      * @param clientId
      *            The client id
-     * @return the name of the member owner of the given client 
-     * */
+     * @return the name of the member owner of the given client
+     */
     @Override
+    @Cacheable(value = "member-name", key = "#clientId")
     public String getMemberName(String clientId) {
         return clientDetailsDao.getMemberName(clientId);
     }
