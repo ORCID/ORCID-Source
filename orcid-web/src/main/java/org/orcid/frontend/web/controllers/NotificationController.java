@@ -21,6 +21,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
 import org.orcid.jaxb.model.v3.release.notification.NotificationType;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
@@ -252,20 +253,22 @@ public class NotificationController extends BaseController {
     private void addSourceDescription(List<Notification> notifications) {
         for (Notification notification : notifications) {
             Source source = notification.getSource();
-            if (source == null) {
-                continue;
-            }
-            String sourcePath = source.retrieveSourcePath();
-            if (StringUtils.isBlank(sourcePath)) {
-                continue;
-            }
-            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
-            if (clientDetails != null) {
-                notification.setSourceDescription(clientDetails.getClientDescription());
-            }
+            if (source != null) {
+                SourceClientId clientId = source.getSourceClientId();
+                if (clientId != null) {
+                    String sourcePath = source.retrieveSourcePath();
+                    if (sourcePath != null) {
+                        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
+                        if (clientDetails != null) {
+                            notification.setSourceDescription(clientDetails.getClientDescription());
+                        }
+
+                    }
+                }
+  
+            } 
         }
     }
-    
     /**
      * Override {@code sourceDescription} for PERMISSION notifications with the owning member name
      * (group record credit name; i.e. who owns the client id).
