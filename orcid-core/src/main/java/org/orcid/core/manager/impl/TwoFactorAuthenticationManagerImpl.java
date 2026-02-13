@@ -131,38 +131,37 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
 
     @Override
     public boolean validateTwoFactorAuthForm(String orcid, AuthChallenge form) {
-        return true;
-    }
-
-    form.setTwoFactorEnabled(true);
-
-    String code = form.getTwoFactorCode();
-    String recovery = form.getTwoFactorRecoveryCode();
-    boolean hasCode = code != null && !code.isEmpty();
-    boolean hasRecovery = recovery != null && !recovery.isEmpty();
-
-    // used when 2fa is not immediately provided
-    // i.e. tells the UI that 2fa is enabled and the user needs to provide a code
-    if(!hasCode&&!hasRecovery)
-    {
-        return false;
-    }
-
-    if(hasRecovery)
-    {
-        if (backupCodeManager.verify(orcid, recovery)) {
+        if (!userUsing2FA(orcid)) {
             return true;
-        } else {
-            form.setInvalidTwoFactorRecoveryCode(true);
+        }
+
+        form.setTwoFactorEnabled(true);
+
+        String code = form.getTwoFactorCode();
+        String recovery = form.getTwoFactorRecoveryCode();
+        boolean hasCode = code != null && !code.isEmpty();
+        boolean hasRecovery = recovery != null && !recovery.isEmpty();
+
+        // used when 2fa is not immediately provided
+        // i.e. tells the UI that 2fa is enabled and the user needs to provide a code
+        if (!hasCode && !hasRecovery) {
             return false;
         }
-    }else
-    {
-        if (verificationCodeIsValid(code, orcid)) {
-            return true;
+
+        if (hasRecovery) {
+            if (backupCodeManager.verify(orcid, recovery)) {
+                return true;
+            } else {
+                form.setInvalidTwoFactorRecoveryCode(true);
+                return false;
+            }
         } else {
-            form.setInvalidTwoFactorCode(true);
-            return false;
+            if (verificationCodeIsValid(code, orcid)) {
+                return true;
+            } else {
+                form.setInvalidTwoFactorCode(true);
+                return false;
+            }
         }
     }
-}}
+}

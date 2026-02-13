@@ -314,15 +314,18 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         }
 
+        cp.setErrors(errors);
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), cp)) {
+            return cp;
+        }
+
         if (errors.size() == 0) {            
             profileEntityManager.updatePassword(getCurrentUserOrcid(), cp.getPassword());
             //reset the lock fields
             profileEntityManager.resetSigninLock(getCurrentUserOrcid());
             profileEntityCacheManager.remove(getCurrentUserOrcid());
-            cp = new ChangePassword();
-            errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
+            cp.setSuccess(true);
         }
-        cp.setErrors(errors);
         return cp;
     }
 
