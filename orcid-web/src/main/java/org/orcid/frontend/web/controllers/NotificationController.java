@@ -1,7 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -66,9 +64,6 @@ public class NotificationController extends BaseController {
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManagerReadOnly;
     
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-    
     @Resource
     private EmailFrequencyManager emailFrequencyManager;
     
@@ -94,7 +89,6 @@ public class NotificationController extends BaseController {
         addSubjectToNotifications(notifications);
         setOverwrittenSourceName(notifications);
         addSourceDescription(notifications);
-        addMemberNameToPermissionNotifications(notifications);
         return notifications;
     }
 
@@ -266,44 +260,7 @@ public class NotificationController extends BaseController {
                     }
                 }
   
-            } 
-        }
-    }
-    /**
-     * Override {@code sourceDescription} for PERMISSION notifications with the owning member name
-     * (group record credit name; i.e. who owns the client id).
-     */
-    private void addMemberNameToPermissionNotifications(List<Notification> notifications) {
-        Map<String, String> memberNameByClientId = new HashMap<>();
-        for (Notification notification : notifications) {
-            if (!(notification instanceof NotificationPermission)) {
-                continue;
-            }
-            Source source = notification.getSource();
-            if (source == null) {
-                continue;
-            }
-            
-            String clientId = source.retrieveSourcePath();
-            if (StringUtils.isBlank(clientId)) {
-                continue;
-            }
-            
-            String memberName = memberNameByClientId.get(clientId);
-            if (!memberNameByClientId.containsKey(clientId)) {
-                try {
-                    memberName = clientDetailsManagerReadOnly.getMemberName(clientId);
-                } catch (Exception e) {
-                    memberName = null;
-                }
-                memberNameByClientId.put(clientId, memberName);
-            }
-            
-            if (StringUtils.isBlank(memberName)) {
-                continue;
-            }
-            
-            notification.setSourceDescription(memberName);
+            }        
         }
     }
 }

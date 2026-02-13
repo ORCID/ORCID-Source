@@ -113,12 +113,7 @@
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:heap unit="entries">2000</ehcache:heap>
     </ehcache:cache>
-
-    <ehcache:cache alias="member-name" uses-template="defaultTemplate">
-        <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
-        <ehcache:heap unit="entries">25000</ehcache:heap>
-    </ehcache:cache>
-
+    
     <ehcache:cache alias="custom-email" uses-template="defaultTemplate">
         <ehcache:value-type copier="org.ehcache.impl.copy.IdentityCopier"/>
         <ehcache:heap unit="entries">2000</ehcache:heap>

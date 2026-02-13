@@ -7,9 +7,6 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
-    @Label("Permission Notifications")
-    PERMISSION_NOTIFICATIONS,
-
     @Label("FEATURED_AFFILIATIONS")
     FEATURED_AFFILIATIONS,
 
