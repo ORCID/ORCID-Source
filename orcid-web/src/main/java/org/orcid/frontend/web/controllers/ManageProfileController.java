@@ -301,14 +301,22 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
-        if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
-        	final String newPassword  = cp.getPassword();
-        	 emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
-	        	if (!email.getEmail().isEmpty()  && newPassword.contains(email.getEmail())) {
-	        		errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
-	        	}
-	        	
-	        });
+
+        final String password = cp.getPassword();
+        if (password != null && !password.isEmpty()) {
+            List<org.orcid.jaxb.model.v3.release.record.Email> userEmails = emailManager.getEmails(getCurrentUserOrcid()).getEmails();
+            for (org.orcid.jaxb.model.v3.release.record.Email emailObj : userEmails) {
+                String email = emailObj.getEmail();
+                if (email != null && !email.isEmpty() && password.contains(email)) {
+                    cp.setPasswordContainsEmail(true);
+                    return cp;
+                }
+            }
+        }
+
+        cp.setErrors(errors);
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), cp)) {
+            return cp;
         }
 
         if (errors.size() == 0) {            
@@ -316,10 +324,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             //reset the lock fields
             profileEntityManager.resetSigninLock(getCurrentUserOrcid());
             profileEntityCacheManager.remove(getCurrentUserOrcid());
-            cp = new ChangePassword();
-            errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
+            cp.setSuccess(true);
         }
-        cp.setErrors(errors);
         return cp;
     }
 
