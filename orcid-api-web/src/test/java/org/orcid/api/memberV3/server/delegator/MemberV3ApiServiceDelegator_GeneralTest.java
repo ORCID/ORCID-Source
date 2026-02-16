@@ -98,12 +98,6 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     @Resource
     private GroupIdRecordDao groupIdRecordDao;
 
-    @Resource
-    protected EmailFrequencyManager emailFrequencyManager;
-    
-    @Mock
-    protected EmailFrequencyManager mockEmailFrequencyManager;
-        
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
@@ -125,16 +119,6 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     @Before
     public void before() throws Exception {
         MockitoAnnotations.initMocks(this);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
-        
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
-        
-        
         IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
         when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
         TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", mockIssnValidator); 
@@ -162,7 +146,6 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     
     @After
     public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);    
         TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnValidator", issnValidator);
         TargetProxyHelper.injectIntoProxy(groupIdRecordManager, "issnClient", issnClient);
     }
