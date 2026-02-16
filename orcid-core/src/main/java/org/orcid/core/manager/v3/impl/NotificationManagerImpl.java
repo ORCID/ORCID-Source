@@ -4,13 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -88,6 +82,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  */
 public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
+
+    public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
@@ -95,9 +92,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "messageSource")
     private MessageSource messages;
-
-    @Resource(name = "messageSourceNoFallback")
-    private MessageSource messageSourceNoFallback;
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -114,9 +108,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private ProfileDao profileDao;
-
-    @Resource
-    private ProfileDao profileDaoReadOnly;
 
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
@@ -142,18 +133,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManager;
 
-    @Resource
-    private GenericDao<EmailEventEntity, Long> emailEventDao;
-
-    @Resource
-    private TransactionTemplate transactionTemplate;
-
-    @Resource
-    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
-
-    @Resource
-    private EmailFrequencyManager emailFrequencyManager;
-
     @Value("${org.orcid.notifications.archive.offset:100}")
     private Integer notificationArchiveOffset;
 
@@ -166,15 +145,20 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     FindMyStuffManager findMyStuffManager;
 
-    @Resource
-    private SourceEntityUtils sourceEntityUtils;
-
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
+    @Value("${org.orcid.notifications.auto.archive.months:6}")
+    private Integer autoArchiveMonths;
 
-    public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
+    @Value("${org.orcid.notifications.auto.archive.batchsize:25000}")
+    private Integer autoArchiveBatchSize;
+
+    @Value("${org.orcid.notifications.auto.delete.months:12}")
+    private Integer autoDeleteMonths;
+
+    @Value("${org.orcid.notifications.auto.delete.batchsize:25000}")
+    private Integer autoDeleteBatchSize;
 
     @Required
     public void setTemplateManager(TemplateManager templateManager) {
@@ -869,5 +853,34 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notificationDaoReadOnly.findNotificationsByOrcidAndClientAndFamilyNoClientToken(orcid, clientId, notificationFamily);
 
     }
+
+    @Override
+    public void autoArchiveNotifications() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.MONTH, - autoArchiveMonths);
+        Date createdBefore = calendar.getTime();
+        LOGGER.info("About to auto archive notifications created before {}", createdBefore);
+        int numArchived = 0;
+        do {
+            numArchived = notificationDao.archiveNotificationsCreatedBefore(createdBefore, autoArchiveBatchSize);
+            LOGGER.info("Archived {} old notifications", numArchived);
+        } while (numArchived > 0);
+    }
+
+    @Override
+    public void autoDeleteNotifications() {
+        Calendar calendar = new GregorianCalendar();
+        calendar.add(Calendar.MONTH, - autoDeleteMonths);
+        Date createdBefore = calendar.getTime();
+        LOGGER.info("About to auto delete notifications created before {}", createdBefore);
+        List<NotificationEntity> notificationsToDelete = Collections.<NotificationEntity> emptyList();
+        int numDeleted = 0;
+        do {
+            numDeleted = notificationDao.deleteNotificationsCreatedBefore(createdBefore, autoArchiveBatchSize);
+            LOGGER.info("Deleted {} old notifications", numDeleted);
+        } while (numDeleted > 0);
+    }
+
+
 
 }

@@ -230,25 +230,19 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize) {
-        Query selectQuery = entityManager.createQuery("select id from NotificationEntity where archivedDate is null and dateCreated < :createdBefore");
-        selectQuery.setParameter("createdBefore", createdBefore);
-        selectQuery.setMaxResults(batchSize);
-        @SuppressWarnings("unchecked")
-        List<Long> ids = selectQuery.getResultList();
-        if (ids.isEmpty()) {
-            return 0;
-        }
-        Query updateQuery = entityManager.createQuery("update NotificationEntity set archivedDate = now() where id in :ids");
-        updateQuery.setParameter("ids", ids);
-        return updateQuery.executeUpdate();
+        Query archiveQuery = entityManager.createNativeQuery("update notification set archive_date=now() where id in (select id from notification where archived_date is null and date_created < :createdBefore)");
+        archiveQuery.setParameter("createdBefore", createdBefore);
+        archiveQuery.setMaxResults(batchSize);
+        return archiveQuery.executeUpdate();
     }
 
     @Override
-    public List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where dateCreated < :createdBefore", NotificationEntity.class);
-        query.setParameter("createdBefore", createdBefore);
-        query.setMaxResults(batchSize);
-        return query.getResultList();
+    @Transactional
+    public int deleteNotificationsCreatedBefore(Date createdBefore, int batchSize) {
+        Query archiveQuery = entityManager.createNativeQuery("delete notification where id in (select id from notification where date_created < :createdBefore)");
+        archiveQuery.setParameter("createdBefore", createdBefore);
+        archiveQuery.setMaxResults(batchSize);
+        return archiveQuery.executeUpdate();
     }
 
     @SuppressWarnings("unchecked")
