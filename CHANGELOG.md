@@ -1,3 +1,9 @@
+## v2.136.10 - 2026-02-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.136.9...v2.136.10)
+
+- [#7451](https://github.com/ORCID/ORCID-Source/pull/7451): Revert "PD-3855,PD-4963,PD-4968,PD-4972"
+
 ## v2.136.9 - 2026-02-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.136.8...v2.136.9)
