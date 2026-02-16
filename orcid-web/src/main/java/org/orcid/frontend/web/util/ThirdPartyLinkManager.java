@@ -10,7 +10,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
@@ -72,6 +71,13 @@ public class ThirdPartyLinkManager {
             clientForm.setScopes(entity.getPredefinedClientScope());
             clientForm.setStatus(entity.getStatus().name());
             clientForm.setClientWebsite(clientDetails.getClientWebsite());
+            // Backwards compatible: only include metadata when non-empty and not "{}"
+            if (!PojoUtil.isEmpty(entity.getRedirectUriMetadata())) {
+                JsonNode metadataNode = JsonUtils.readTree(entity.getRedirectUriMetadata());
+                if (!(metadataNode != null && metadataNode.isObject() && metadataNode.size() == 0)) {
+                    clientForm.setRedirectUriMetadata(metadataNode);
+                }
+            }
             if (RedirectUriType.IMPORT_WORKS_WIZARD.equals(rut)) {
                 processImportWorksWizzard(entity, clientForm, locale);
             }
