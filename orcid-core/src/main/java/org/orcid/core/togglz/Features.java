@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Search and Link Wizard with certified and featured links") 
+    SEARCH_AND_LINK_WIZARD_WITH_CERTIFIED_AND_FEATURED_LINKS,
+
     @Label("Permission Notifications")
     PERMISSION_NOTIFICATIONS,
 
