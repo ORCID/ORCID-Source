@@ -230,19 +230,35 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize) {
-        Query archiveQuery = entityManager.createNativeQuery("update notification set archive_date=now() where id in (select id from notification where archived_date is null and date_created < :createdBefore)");
+        Query archiveQuery = entityManager.createNativeQuery("update notification set archived_date=now() where id in (select id from notification where archived_date is null and date_created < :createdBefore limit :batchSize)");
         archiveQuery.setParameter("createdBefore", createdBefore);
-        archiveQuery.setMaxResults(batchSize);
+        archiveQuery.setParameter("batchSize", batchSize);
         return archiveQuery.executeUpdate();
     }
 
     @Override
     @Transactional
     public int deleteNotificationsCreatedBefore(Date createdBefore, int batchSize) {
-        Query archiveQuery = entityManager.createNativeQuery("delete notification where id in (select id from notification where date_created < :createdBefore)");
-        archiveQuery.setParameter("createdBefore", createdBefore);
-        archiveQuery.setMaxResults(batchSize);
-        return archiveQuery.executeUpdate();
+        TypedQuery<Long> query = entityManager.createQuery("select id from NotificationEntity where dateCreated < :createdBefore", Long.class);
+        query.setParameter("createdBefore", createdBefore);
+        query.setMaxResults(batchSize);
+        List<Long> ids = query.getResultList();
+        if(ids != null && !ids.isEmpty()) {
+            // Remove notification items
+            Query deleteNotificationItems = entityManager.createNativeQuery("delete from notification_item where notification_id in (:ids)");
+            deleteNotificationItems.setParameter("ids", ids);
+            deleteNotificationItems.executeUpdate();
+
+            // Remove notification works
+            Query deleteNotificationWorks = entityManager.createNativeQuery("delete from notification_work where notification_id in (:ids)");
+            deleteNotificationWorks.setParameter("ids", ids);
+            deleteNotificationWorks.executeUpdate();
+
+            Query deleteNotification = entityManager.createNativeQuery("delete from notification where id in (:ids)");
+            deleteNotification.setParameter("ids", ids);
+            return deleteNotification.executeUpdate();
+        }
+        return 0;
     }
 
     @SuppressWarnings("unchecked")

@@ -850,14 +850,17 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         calendar.add(Calendar.MONTH, - autoDeleteMonths);
         Date createdBefore = calendar.getTime();
         LOGGER.info("About to auto delete notifications created before {}", createdBefore);
-        List<NotificationEntity> notificationsToDelete = Collections.<NotificationEntity> emptyList();
         int numDeleted = 0;
         do {
-            numDeleted = notificationDao.deleteNotificationsCreatedBefore(createdBefore, autoArchiveBatchSize);
-            LOGGER.info("Deleted {} old notifications", numDeleted);
+            try {
+                numDeleted = notificationDao.deleteNotificationsCreatedBefore(createdBefore, autoDeleteBatchSize);
+                LOGGER.info("Deleted {} old notifications", numDeleted);
+            } catch (Exception e) {
+                LOGGER.error("Error deleting notifications", e);
+                // Exit the loop if we get an error
+                numDeleted = 0;
+            }
         } while (numDeleted > 0);
     }
-
-
 
 }
