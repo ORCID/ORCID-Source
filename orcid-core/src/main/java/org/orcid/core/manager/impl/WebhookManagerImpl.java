@@ -6,8 +6,10 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -45,6 +47,8 @@ public class WebhookManagerImpl implements WebhookManager {
     private TransactionTemplate transactionTemplate;
 
     private Map<String, Integer> clientWebhooks = new HashMap<String, Integer>();
+
+    private Set<String> blacklistedClients = new HashSet<String>();
 
     private Object mainWebhooksLock = new Object();
 
@@ -84,6 +88,7 @@ public class WebhookManagerImpl implements WebhookManager {
         LOGGER.info("Waiting for main webhooks lock");
         synchronized (mainWebhooksLock) {
             LOGGER.info("Obtained main webhooks lock");
+            blacklistedClients.clear();
             processWebhooksInternal();
         }
         LOGGER.info("Released main webhooks lock");
@@ -108,27 +113,62 @@ public class WebhookManagerImpl implements WebhookManager {
             // Log the chunk size
             LOGGER.info("Found batch of {} webhooks to process", webhooks.size());
             int executedCountAtStartOfChunk = executedCount;
-            // For each callback in chunk
-            for (final WebhookEntity webhook : webhooks) {
-                if (executedCount == maxPerRun) {
-                    LOGGER.info("Reached maxiumum of {} webhooks for this run", executedCount);
-                    break OUTER;
-                }
-                // Need to ignore anything in previous chunk
-                if (mapOfpreviousBatch.containsKey(webhook.getId())) {
-                    LOGGER.debug("Skipping webhook as was in previous batch: {}", webhook.getId());
-                    continue;
-                }
-                // Submit job to thread pool
-                executorService.execute(new Runnable() {
-                    public void run() {
-                        processWebhookInTransaction(webhook);
+
+            // Process the fetched chunk, deferring any webhook whose client is currently maxed
+            List<WebhookEntity> toProcessNow = new ArrayList<>(webhooks);
+            while (!toProcessNow.isEmpty()) {
+                List<WebhookEntity> deferred = new ArrayList<>();
+                int scheduledThisRound = 0;
+                for (final WebhookEntity webhook : toProcessNow) {
+                    if (executedCount == maxPerRun) {
+                        LOGGER.info("Reached maxiumum of {} webhooks for this run", executedCount);
+                        break OUTER;
                     }
-                });
-                executedCount++;
+                    // Need to ignore anything in previous chunk
+                    if (mapOfpreviousBatch.containsKey(webhook.getId())) {
+                        LOGGER.debug("Skipping webhook as was in previous batch: {}", webhook.getId());
+                        continue;
+                    }
+                    // If this client's concurrent limit is reached, defer this webhook to try later in the same batch
+                    String clientId = webhook.getClientDetailsId();
+                    if (webhookMaxed(clientId)) {
+                        LOGGER.debug("Deferring webhook {} for client {} as max concurrent limit reached; will retry in current batch", webhook.getId(), clientId);
+                        deferred.add(webhook);
+                        continue;
+                    }
+
+                    // Submit job to thread pool
+                    executorService.execute(new Runnable() {
+                        public void run() {
+                            processWebhookInTransaction(webhook);
+                        }
+                    });
+                    scheduledThisRound++;
+                    executedCount++;
+                }
+
+                if (deferred.isEmpty()) {
+                    break; // nothing left to retry within this batch
+                }
+
+                if (scheduledThisRound == 0) {
+                    // All remaining webhooks are maxed for their clients. Wait briefly for in-flight tasks to finish, then try again.
+                    try {
+                        LOGGER.debug("All remaining webhooks deferred due to client limits; waiting briefly before retrying current batch");
+                        Thread.sleep(250L);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        LOGGER.warn("Interrupted while waiting to retry deferred webhooks in current batch", ie);
+                        break;
+                    }
+                }
+
+                // Retry only the deferred set in this batch before fetching again from DB
+                toProcessNow = deferred;
             }
+
             if (executedCount == executedCountAtStartOfChunk) {
-                LOGGER.info("No more webhooks added to pool, because all were in previous chunk");
+                LOGGER.info("No more webhooks added to pool in this iteration (all were in previous chunk or deferred with no capacity)");
                 break;
             }
         } while (!webhooks.isEmpty());
@@ -163,6 +203,11 @@ public class WebhookManagerImpl implements WebhookManager {
         String orcid = webhook.getProfile();
         String uri = webhook.getUri();
 
+        if (isBlacklisted(clientId)) {
+            LOGGER.warn("Client: {} is blacklisted in this run; cannot process webhook: {}", new Object[] { clientId, webhook.getUri() });
+            return;
+        }
+
         if (webhookMaxed(clientId)) {
             LOGGER.warn("Thread limit exceeded by Client: {} With ORCID: {}; cannot process webhook: {}", new Object[] { clientId, orcid, webhook.getUri() });
             return;
@@ -170,26 +215,36 @@ public class WebhookManagerImpl implements WebhookManager {
 
         increaseWebhook(clientId);
 
-        // Log attempt to process webhook
-        LOGGER.info("Processing webhook {} for Client: {} With ORCID: {}", new Object[] { webhook.getUri(), clientId, orcid });
         // Execute the request and get the client response
         try {
             int statusCode = doPost(uri);
             if (statusCode >= 200 && statusCode < 300) {
                 LOGGER.debug("Webhook {} for Client: {} With ORCID: {} has been processed", new Object[] { webhook.getUri(), clientId, orcid });
-                webhookDao.markAsSent(orcid, uri);                
-            } else {
-                LOGGER.warn("Webhook {} for Client: {} With ORCID: {} could not be processed because of response status code: {}", new Object[] { webhook.getUri(),
-                        clientId, orcid, statusCode });
+                webhookDao.markAsSent(orcid, uri);
+            } else if (statusCode == 429) {
+                LOGGER.warn("Webhook {} for Client: {} With ORCID: {} failed with 429. Blacklisting client for this run.", new Object[] { webhook.getUri(), clientId,
+                        orcid });
+                blacklistClient(clientId);
                 webhookDao.markAsFailed(orcid, uri);
-            }            
-        } catch(Exception e) {
-            LOGGER.warn("Exception processing webhook '{}' for '{}':'{}'. Error: {}", new Object[] { webhook.getUri(),
-                    clientId, orcid, e.getMessage()});
+            } else {
+                LOGGER.warn("Webhook {} for Client: {} With ORCID: {} failed with status code {}. Incrementing failure count for later retry.", new Object[] {
+                        webhook.getUri(), clientId, orcid, statusCode });
+                webhookDao.markAsFailed(orcid, uri);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Exception processing webhook '{}' for '{}':'{}'. Error: {}", new Object[] { webhook.getUri(), clientId, orcid, e.getMessage() });
             webhookDao.markAsFailed(orcid, uri);
         } finally {
             decreaseWebhook(clientId);
         }
+    }
+
+    private synchronized void blacklistClient(String clientId) {
+        blacklistedClients.add(clientId);
+    }
+
+    private synchronized boolean isBlacklisted(String clientId) {
+        return blacklistedClients.contains(clientId);
     }
 
     /**
