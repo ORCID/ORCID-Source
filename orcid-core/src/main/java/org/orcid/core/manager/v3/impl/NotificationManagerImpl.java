@@ -52,6 +52,10 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -125,14 +129,14 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
 
-    @Value("${org.orcid.notifications.auto.archive.months:6}")
-    private Integer autoArchiveMonths;
+    @Value("${org.orcid.notifications.auto.archive.days:181}")
+    private Integer autoArchiveDays;
 
     @Value("${org.orcid.notifications.auto.archive.batchsize:25000}")
     private Integer autoArchiveBatchSize;
 
-    @Value("${org.orcid.notifications.auto.delete.months:12}")
-    private Integer autoDeleteMonths;
+    @Value("${org.orcid.notifications.auto.delete.days:365}")
+    private Integer autoDeleteDays;
 
     @Value("${org.orcid.notifications.auto.delete.batchsize:25000}")
     private Integer autoDeleteBatchSize;
@@ -833,9 +837,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public void autoArchiveNotifications() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.MONTH, - autoArchiveMonths);
-        Date createdBefore = calendar.getTime();
+        LocalDate time = LocalDate.now();
+        time = time.minusDays(autoArchiveDays);
+        ZonedDateTime zdt = time.atStartOfDay(ZoneId.systemDefault());
+        Instant instant = zdt.toInstant();
+        Date createdBefore = Date.from(instant);
         LOGGER.info("About to auto archive notifications created before {}", createdBefore);
         int numArchived = 0;
         do {
@@ -846,9 +852,11 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public void autoDeleteNotifications() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.MONTH, - autoDeleteMonths);
-        Date createdBefore = calendar.getTime();
+        LocalDate time = LocalDate.now();
+        time = time.minusDays(autoDeleteDays);
+        ZonedDateTime zdt = time.atStartOfDay(ZoneId.systemDefault());
+        Instant instant = zdt.toInstant();
+        Date createdBefore = Date.from(instant);
         LOGGER.info("About to auto delete notifications created before {}", createdBefore);
         int numDeleted = 0;
         do {
