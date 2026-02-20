@@ -103,35 +103,11 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
     @Resource(name = "memberV3ApiServiceDelegator")
     protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
 
-    @Resource
-    protected EmailFrequencyManager emailFrequencyManager;
-    
-    @Mock
-    protected EmailFrequencyManager mockEmailFrequencyManager;
-    
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     
     @Value("${org.orcid.core.works.bulk.read.max:100}")
     private Long bulkReadSize;
-    
-    @Before
-    public void before() {
-        MockitoAnnotations.initMocks(this);
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
-        map.put(EmailFrequencyManager.QUARTERLY_TIPS, String.valueOf(true));
-        
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager); 
-    }
-    
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);         
-    }
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {

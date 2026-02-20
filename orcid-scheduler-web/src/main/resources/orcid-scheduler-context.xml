@@ -26,14 +26,14 @@
         <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails7Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails7Days:0 20 * * * *}"/>
         <task:scheduled ref="emailMessageSender" method="processUnverifiedEmails28Days" cron="${org.orcid.scheduler.web.processUnverifiedEmails28Days:0 30 * * * *}"/>
         <task:scheduled ref="identityProviderLoader" method="loadIdentityProviders" cron="${org.orcid.scheduler.web.loadIdentityProviders:05 05 0-2 * * *}"/>
-        <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoArchive" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
-        <task:scheduled ref="notificationManager" method="processOldNotificationsToAutoDelete" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
+        <task:scheduled ref="notificationManagerV3" method="autoArchiveNotifications" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoArchive:06 06 1 * * *}"/>
+        <task:scheduled ref="notificationManagerV3" method="autoDeleteNotifications" cron="${org.orcid.scheduler.web.processOldNotificationsToAutoDelete:07 07 2 * * *}"/>
         <task:scheduled ref="notificationManagerV3" method="archiveOffsetNotifications" cron="${org.orcid.scheduler.web.archiveOffsetNotifications:08 08 3 * * *}"/>
         <task:scheduled ref="notificationManagerV3" method="deleteOffsetNotifications" cron="${org.orcid.scheduler.web.deleteOffsetNotifications:09 09 4 * * *}"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithPendingFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
         <task:scheduled ref="orcidRecordIndexer" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesReindexIndexingDelaySeconds:90}000"/>
-        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:900}000"/>
-        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:900}000"/>
+        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnSolr" fixed-delay="${org.orcid.scheduler.web.solrUpdateDelaySeconds:7200}000"/>
+        <task:scheduled ref="orcidRecordIndexer" method="reindexRecordsOnS3" fixed-delay="${org.orcid.scheduler.web.s3UpdateDelaySeconds:7200}000"/>
         <task:scheduled ref="publicProfileValidator" method="processValidationCycle" cron="${org.orcid.scheduler.api.profile.validation.cronConfig:0 */10 * * * *}"/>
         <task:scheduled ref="orgLoadManager" method="loadOrgs" cron="${org.orcid.scheduler.web.orgImportsCronConfig}" />
         <task:scheduled ref="issnLoadManager" method="loadIssn" cron="${org.orcid.scheduler.web.loadIssnCronConfig:0 0 0 * * FRI}"/>

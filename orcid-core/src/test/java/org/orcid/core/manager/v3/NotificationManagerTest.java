@@ -1,40 +1,6 @@
 package org.orcid.core.manager.v3;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.IntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -45,7 +11,6 @@ import org.mockito.stubbing.Answer;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
@@ -60,20 +25,11 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
-import org.orcid.persistence.dao.ClientDetailsDao;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.EmailEventEntity;
-import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
-import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.*;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -81,14 +37,28 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 @Transactional
 public class NotificationManagerTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml",
-            "/data/BiographyEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     @Mock
     private ProfileEventDao profileEventDao;
@@ -112,22 +82,10 @@ public class NotificationManagerTest extends DBUnitTest {
     private ProfileDao mockProfileDao;
 
     @Mock
-    private ProfileDao mockProfileDaoReadOnly;
-
-    @Mock
     private JpaJaxbNotificationAdapter mockNotificationAdapter;
-
-    @Mock
-    public GenericDao<EmailEventEntity, Long> mockEmailEventDao;
-
-    @Mock
-    public EmailFrequencyManager mockEmailFrequencyManager;
 
     @Resource(name = "profileDao")
     private ProfileDao profileDao;
-
-    @Resource(name = "profileDaoReadOnly")
-    private ProfileDao profileDaoReadOnly;
 
     @Resource
     private EncryptionManager encryptionManager;
@@ -139,16 +97,10 @@ public class NotificationManagerTest extends DBUnitTest {
     private NotificationDao notificationDao;
 
     @Resource
-    private ClientDetailsDao clientDetailsDao;
-
-    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManager;
-
-    @Resource
-    public GenericDao<EmailEventEntity, Long> emailEventDao;
 
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
@@ -156,9 +108,6 @@ public class NotificationManagerTest extends DBUnitTest {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
 
-    @Resource
-    private EmailFrequencyManager emailFrequencyManager;
-    
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
@@ -180,22 +129,12 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", mockSourceManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDaoReadOnly", mockProfileDaoReadOnly);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", mockEmailEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", mockProfileDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", mockNotificationAdapter);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", mockEmailFrequencyManager);
         when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);
-
-        Map<String, String> map = new HashMap<>();
-        map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, "0.0");
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, "0.0");
-        map.put(EmailFrequencyManager.CHANGE_NOTIFICATIONS, "0.0");
-        map.put(EmailFrequencyManager.QUARTERLY_TIPS, "true");
-        when(mockEmailFrequencyManager.getEmailFrequency(anyString())).thenReturn(map);
     }
 
     @After
@@ -210,15 +149,11 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "profileDaoReadOnly", profileDaoReadOnly);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailEventDao", emailEventDao);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", emailManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", profileDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", notificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", notificationAdapter);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "emailFrequencyManager", emailFrequencyManager);        
     }
 
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
@@ -403,10 +338,6 @@ public class NotificationManagerTest extends DBUnitTest {
 
         when(mockNotificationAdapter.toNotificationEntity(Mockito.any(Notification.class))).thenReturn(new NotificationInstitutionalConnectionEntity());
 
-        Map<String, String> map = new HashMap<>();
-        map.put(EmailFrequencyManager.MEMBER_UPDATE_REQUESTS, String.valueOf(Float.MAX_VALUE));
-        when(mockEmailFrequencyManager.getEmailFrequency(orcidNever)).thenReturn(map);
-
         // Should generate the notification ignoring the emailFrequency
         notificationManager.sendAcknowledgeMessage(orcidNever, clientId);
         // Should generate the notification
@@ -421,9 +352,34 @@ public class NotificationManagerTest extends DBUnitTest {
         ReflectionTestUtils.setField(notificationManager, "notificationDao", mockNotificationDao);
         Mockito.when(mockNotificationDao.deleteNotificationsForRecord(Mockito.eq("orcid"), Mockito.eq(NotificationManagerImpl.DELETE_BATCH_SIZE))).thenReturn(true)
                 .thenReturn(true).thenReturn(true).thenReturn(false);
-        
+
         notificationManager.deleteNotificationsForRecord("orcid");
         Mockito.verify(mockNotificationDao, Mockito.times(4)).deleteNotificationsForRecord(Mockito.eq("orcid"), Mockito.eq(NotificationManagerImpl.DELETE_BATCH_SIZE));
+
+        ReflectionTestUtils.setField(notificationManager, "notificationDao", notificationDao);
+    }
+
+    @Test
+    public void testAutoArchiveNotifications() {
+        ReflectionTestUtils.setField(notificationManager, "notificationDao", mockNotificationDao);
+        when(mockNotificationDao.archiveNotificationsCreatedBefore(Mockito.any(Date.class), Mockito.anyInt())).thenReturn(1)
+                .thenReturn(2).thenReturn(3).thenReturn(0).thenReturn(4);
+
+        notificationManager.autoArchiveNotifications();
+        // The method will be invoked 4 times, when it get 1, 2, 3 and then 0 on the last call
+        Mockito.verify(mockNotificationDao, Mockito.times(4)).archiveNotificationsCreatedBefore(Mockito.any(), Mockito.anyInt());
+        ReflectionTestUtils.setField(notificationManager, "notificationDao", notificationDao);
+    }
+
+    @Test
+    public void testAutoDeleteNotifications() {
+        ReflectionTestUtils.setField(notificationManager, "notificationDao", mockNotificationDao);
+        when(mockNotificationDao.deleteNotificationsCreatedBefore(Mockito.any(Date.class), Mockito.anyInt())).thenReturn(1)
+                .thenReturn(2).thenReturn(3).thenReturn(0).thenReturn(4);
+
+        notificationManager.autoDeleteNotifications();
+        // The method will be invoked 4 times, when it get 1, 2, 3 and then 0 on the last call
+        Mockito.verify(mockNotificationDao, Mockito.times(4)).deleteNotificationsCreatedBefore(Mockito.any(), Mockito.anyInt());
         ReflectionTestUtils.setField(notificationManager, "notificationDao", notificationDao);
     }
                    

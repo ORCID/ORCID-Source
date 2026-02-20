@@ -1,25 +1,9 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.net.URLEncoder;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
-import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.WrongSourceException;
@@ -33,13 +17,12 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.common.ActionType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.common.OrcidType;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -50,44 +33,39 @@ import org.orcid.jaxb.model.v3.release.notification.NotificationType;
 import org.orcid.jaxb.model.v3.release.notification.amended.AmendedSection;
 import org.orcid.jaxb.model.v3.release.notification.amended.NotificationAmended;
 import org.orcid.jaxb.model.v3.release.notification.custom.NotificationAdministrative;
-import org.orcid.jaxb.model.v3.release.notification.permission.AuthorizationUrl;
-import org.orcid.jaxb.model.v3.release.notification.permission.Item;
-import org.orcid.jaxb.model.v3.release.notification.permission.ItemType;
-import org.orcid.jaxb.model.v3.release.notification.permission.Items;
-import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermission;
-import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermissions;
+import org.orcid.jaxb.model.v3.release.notification.permission.*;
 import org.orcid.model.v3.release.notification.institutional_sign_in.NotificationInstitutionalConnection;
 import org.orcid.model.v3.release.notification.internal.NotificationFindMyStuff;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
-import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.persistence.jpa.entities.EmailEventEntity;
-import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
-import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.NotificationFindMyStuffEntity;
-import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
-import org.orcid.persistence.jpa.entities.NotificationItemEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventType;
-import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.core.utils.ReleaseNameUtils;
+import org.orcid.persistence.jpa.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Will Simpson
  */
 public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements NotificationManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
+
+    public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
 
     private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
@@ -95,9 +73,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "messageSource")
     private MessageSource messages;
-
-    @Resource(name = "messageSourceNoFallback")
-    private MessageSource messageSourceNoFallback;
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -114,9 +89,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private ProfileDao profileDao;
-
-    @Resource
-    private ProfileDao profileDaoReadOnly;
 
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
@@ -142,18 +114,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "emailManagerReadOnlyV3")
     private EmailManagerReadOnly emailManager;
 
-    @Resource
-    private GenericDao<EmailEventEntity, Long> emailEventDao;
-
-    @Resource
-    private TransactionTemplate transactionTemplate;
-
-    @Resource
-    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
-
-    @Resource
-    private EmailFrequencyManager emailFrequencyManager;
-
     @Value("${org.orcid.notifications.archive.offset:100}")
     private Integer notificationArchiveOffset;
 
@@ -166,15 +126,20 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     FindMyStuffManager findMyStuffManager;
 
-    @Resource
-    private SourceEntityUtils sourceEntityUtils;
-
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
+    @Value("${org.orcid.notifications.auto.archive.days:181}")
+    private Integer autoArchiveDays;
 
-    public static final String ORCID_INTEGRATION_NOTIFICATION_FAMILY = "ORCID_INTEGRATION";
+    @Value("${org.orcid.notifications.auto.archive.batchsize:25000}")
+    private Integer autoArchiveBatchSize;
+
+    @Value("${org.orcid.notifications.auto.delete.days:365}")
+    private Integer autoDeleteDays;
+
+    @Value("${org.orcid.notifications.auto.delete.batchsize:25000}")
+    private Integer autoDeleteBatchSize;
 
     @Required
     public void setTemplateManager(TemplateManager templateManager) {
@@ -868,6 +833,42 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
         return notificationDaoReadOnly.findNotificationsByOrcidAndClientAndFamilyNoClientToken(orcid, clientId, notificationFamily);
 
+    }
+
+    @Override
+    public void autoArchiveNotifications() {
+        LocalDate time = LocalDate.now();
+        time = time.minusDays(autoArchiveDays);
+        ZonedDateTime zdt = time.atStartOfDay(ZoneId.systemDefault());
+        Instant instant = zdt.toInstant();
+        Date createdBefore = Date.from(instant);
+        LOGGER.info("About to auto archive notifications created before {}", createdBefore);
+        int numArchived = 0;
+        do {
+            numArchived = notificationDao.archiveNotificationsCreatedBefore(createdBefore, autoArchiveBatchSize);
+            LOGGER.info("Archived {} old notifications", numArchived);
+        } while (numArchived > 0);
+    }
+
+    @Override
+    public void autoDeleteNotifications() {
+        LocalDate time = LocalDate.now();
+        time = time.minusDays(autoDeleteDays);
+        ZonedDateTime zdt = time.atStartOfDay(ZoneId.systemDefault());
+        Instant instant = zdt.toInstant();
+        Date createdBefore = Date.from(instant);
+        LOGGER.info("About to auto delete notifications created before {}", createdBefore);
+        int numDeleted = 0;
+        do {
+            try {
+                numDeleted = notificationDao.deleteNotificationsCreatedBefore(createdBefore, autoDeleteBatchSize);
+                LOGGER.info("Deleted {} old notifications", numDeleted);
+            } catch (Exception e) {
+                LOGGER.error("Error deleting notifications", e);
+                // Exit the loop if we get an error
+                numDeleted = 0;
+            }
+        } while (numDeleted > 0);
     }
 
 }
