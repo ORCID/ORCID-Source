@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -33,7 +32,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class WebhookManagerImpl implements WebhookManager {
 
     private int maxJobsPerClient;
-    private int numberOfWebhookThreads;
     private int retryDelayMinutes;
     private int maxPerRun;
 
@@ -62,10 +60,6 @@ public class WebhookManagerImpl implements WebhookManager {
     
     public void setMaxJobsPerClient(int maxJobs) {
         this.maxJobsPerClient = maxJobs;
-    }
-
-    public void setNumberOfWebhookThreads(int numberOfWebhookThreads) {
-        this.numberOfWebhookThreads = numberOfWebhookThreads;
     }
 
     public void setRetryDelayMinutes(int retryDelayMinutes) {
@@ -117,9 +111,10 @@ public class WebhookManagerImpl implements WebhookManager {
             // Process the fetched chunk, deferring any webhook whose client is currently maxed
             List<WebhookEntity> toProcessNow = new ArrayList<>(webhooks);
             while (!toProcessNow.isEmpty()) {
-                List<WebhookEntity> deferred = new ArrayList<>();
                 int scheduledThisRound = 0;
-                for (final WebhookEntity webhook : toProcessNow) {
+                Iterator<WebhookEntity> iterator = toProcessNow.iterator();
+                while (iterator.hasNext()) {
+                    final WebhookEntity webhook = iterator.next();
                     if (executedCount == maxPerRun) {
                         LOGGER.info("Reached maxiumum of {} webhooks for this run", executedCount);
                         break OUTER;
@@ -127,13 +122,13 @@ public class WebhookManagerImpl implements WebhookManager {
                     // Need to ignore anything in previous chunk
                     if (mapOfpreviousBatch.containsKey(webhook.getId())) {
                         LOGGER.debug("Skipping webhook as was in previous batch: {}", webhook.getId());
+                        iterator.remove();
                         continue;
                     }
                     // If this client's concurrent limit is reached, defer this webhook to try later in the same batch
                     String clientId = webhook.getClientDetailsId();
                     if (webhookMaxed(clientId)) {
                         LOGGER.debug("Deferring webhook {} for client {} as max concurrent limit reached; will retry in current batch", webhook.getId(), clientId);
-                        deferred.add(webhook);
                         continue;
                     }
 
@@ -143,11 +138,12 @@ public class WebhookManagerImpl implements WebhookManager {
                             processWebhookInTransaction(webhook);
                         }
                     });
+                    iterator.remove();
                     scheduledThisRound++;
                     executedCount++;
                 }
 
-                if (deferred.isEmpty()) {
+                if (toProcessNow.isEmpty()) {
                     break; // nothing left to retry within this batch
                 }
 
@@ -162,9 +158,6 @@ public class WebhookManagerImpl implements WebhookManager {
                         break;
                     }
                 }
-
-                // Retry only the deferred set in this batch before fetching again from DB
-                toProcessNow = deferred;
             }
 
             if (executedCount == executedCountAtStartOfChunk) {
@@ -183,10 +176,8 @@ public class WebhookManagerImpl implements WebhookManager {
     }
 
     private ExecutorService createThreadPoolForWebhooks() {
-        // The queue size is half the batch size, to make sure the thread pool
-        // has a chance to do some stuff before we go back to the DB for more,
-        return new ThreadPoolExecutor(numberOfWebhookThreads, numberOfWebhookThreads, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(
-                webhooksBatchSize / 2), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
+        LOGGER.info("Creating thread pool with {} threads", Runtime.getRuntime().availableProcessors());
+        return Executors.newWorkStealingPool(Runtime.getRuntime().availableProcessors());
     }
 
     private void processWebhookInTransaction(final WebhookEntity webhook) {
@@ -306,7 +297,7 @@ public class WebhookManagerImpl implements WebhookManager {
             HttpResponse<String> response = httpRequestUtils.doPost(url);
             return response.statusCode();
         } catch (IOException | InterruptedException | URISyntaxException e) {
-            LOGGER.error(String.format("Error processing webhook %s", url), e);
+            LOGGER.error(String.format("Error processing webhook %s", url), (e.getCause() == null) ? e.toString() : e.getCause().getMessage());
         } 
         return 0;
     }

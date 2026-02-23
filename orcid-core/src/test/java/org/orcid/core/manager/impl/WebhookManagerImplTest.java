@@ -76,7 +76,6 @@ public class WebhookManagerImplTest {
         TargetProxyHelper.injectIntoProxy(webhookManager, "httpRequestUtils", httpRequestUtilsMock);
 
         webhookManager.setMaxJobsPerClient(5);
-        webhookManager.setNumberOfWebhookThreads(2);
         webhookManager.setRetryDelayMinutes(5);
         webhookManager.setMaxPerRun(10);
         TargetProxyHelper.injectIntoProxy(webhookManager, "webhooksBatchSize", 100);
