@@ -92,7 +92,7 @@ public class ThirdPartyLinkManager implements InitializingBean {
             try {
                 return LIST_MAPPER.readValue(cached, new TypeReference<List<SearchAndLinkWizardFormSummary>>() {});
             } catch (Exception e) {
-                LOGGER.warn("Failed to deserialize search-and-link wizard list from Redis, rebuilding", e);
+                LOGGER.warn("Failed to deserialize works search-and-link wizard list from Redis, rebuilding", e);
                 return populateCache();
             }
         }
@@ -106,7 +106,7 @@ public class ThirdPartyLinkManager implements InitializingBean {
     }
 
     /**
-     * Returns search-and-link wizard clients. Base list (id, name, redirectUri, scopes, redirectUriMetadata)
+     * Returns works search-and-link wizard clients. Base list (id, name, redirectUri, scopes, redirectUriMetadata)
      * is cached in Redis; isConnected is computed per request from
      * orcidOauth2TokenDetailService.doesClientKnowUser(clientId, currentUserOrcid).
      */
@@ -233,7 +233,7 @@ public class ThirdPartyLinkManager implements InitializingBean {
     }
 
     /**
-     * Builds the base list of search-and-link wizard clients (no isConnected set).
+     * Builds the base list of works search-and-link wizard clients (no isConnected set).
      * Used for Redis cache storage and when cache is disabled.
      */
     private List<SearchAndLinkWizardFormSummary> generateSearchAndLinkWizardFormBase(RedirectUriType rut) {
