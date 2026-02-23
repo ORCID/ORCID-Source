@@ -105,7 +105,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport(localeManager.getLocale());        
     }
 
-    @RequestMapping(value = { "/workspace/retrieve-search-and-link-wizard.json" }, method = RequestMethod.GET)
+    @RequestMapping(value = { "/workspace/retrieve-works-search-and-link-wizard.json" }, method = RequestMethod.GET)
     public @ResponseBody List<SearchAndLinkWizardFormSummary> retrieveSearchAndLinkWizard() {
         return thirdPartyLinkManager.findSearchAndLinkWizardClients(getCurrentUserOrcid());
     }

@@ -20,6 +20,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.SearchAndLinkWizardFormSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -29,7 +30,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ThirdPartyLinkManager {
+public class ThirdPartyLinkManager implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyLinkManager.class);
 
     @Resource(name = "clientRedirectDaoReadOnly")
@@ -47,19 +48,51 @@ public class ThirdPartyLinkManager {
     @Resource
     private RedisClient redisClient;
 
-    @Value("${org.orcid.core.utils.cache.redis.search-and-link-wizard.enabled:false}")
-    private boolean searchAndLinkWizardCacheEnabled;
+    @Value("${org.orcid.core.utils.cache.redis.works-search-and-link-wizard.enabled:false}")
+    private boolean worksSearchAndLinkWizardCacheEnabled;
 
-    @Value("${org.orcid.core.utils.cache.redis.search-and-link-wizard.ttl:3600}")
-    private int searchAndLinkWizardCacheTtl;
+    @Value("${org.orcid.core.utils.cache.redis.works-search-and-link-wizard.ttl:3600}")
+    private int worksSearchAndLinkWizardCacheTtl;
 
-    private static final String SEARCH_AND_LINK_WIZARD_CACHE_KEY = "search-and-link-wizard-clients";
+    private static final String SEARCH_AND_LINK_WIZARD_CACHE_KEY = "works-search-and-link-wizard-clients";
     private static final ObjectMapper LIST_MAPPER = new ObjectMapper();
 
     @Cacheable("import-works-clients")
     public List<ImportWizzardClientForm> findOrcidClientsWithPredefinedOauthScopeWorksImport(Locale locale) {
         LOGGER.debug("Generating IMPORT_WORKS_WIZARD list");
         return generateImportWizzardForm(RedirectUriType.IMPORT_WORKS_WIZARD, locale);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        initCache();
+    }
+
+    /**
+     * Initializes the works search-and-link wizard cache in Redis when cache is enabled.
+     * Called on Spring startup so the cache is warm before Tomcat accepts requests.
+     */
+    public void initCache() {
+        if (!worksSearchAndLinkWizardCacheEnabled) {
+            return;
+        }
+        String cached = redisClient.get(SEARCH_AND_LINK_WIZARD_CACHE_KEY);
+        if (StringUtils.isNotBlank(cached)) {
+            try {
+                LIST_MAPPER.readValue(cached, new TypeReference<List<SearchAndLinkWizardFormSummary>>() {});
+            } catch (Exception e) {
+                LOGGER.warn("Failed to deserialize search-and-link wizard list from Redis, rebuilding", e);
+                populateCache();
+            }
+        } else {
+            populateCache();
+        }
+    }
+
+    private List<SearchAndLinkWizardFormSummary> populateCache() {
+        List<SearchAndLinkWizardFormSummary> list = generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);
+        redisClient.set(SEARCH_AND_LINK_WIZARD_CACHE_KEY, JsonUtils.convertToJsonString(list), worksSearchAndLinkWizardCacheTtl);
+        return list;
     }
 
     /**
@@ -70,19 +103,17 @@ public class ThirdPartyLinkManager {
     public List<SearchAndLinkWizardFormSummary> findSearchAndLinkWizardClients(String currentUserOrcid) {
         List<SearchAndLinkWizardFormSummary> list;
 
-        if (searchAndLinkWizardCacheEnabled) {
+        if (worksSearchAndLinkWizardCacheEnabled) {
             String cached = redisClient.get(SEARCH_AND_LINK_WIZARD_CACHE_KEY);
             if (StringUtils.isNotBlank(cached)) {
                 try {
                     list = LIST_MAPPER.readValue(cached, new TypeReference<List<SearchAndLinkWizardFormSummary>>() {});
                 } catch (Exception e) {
                     LOGGER.warn("Failed to deserialize search-and-link wizard list from Redis, rebuilding", e);
-                    list = generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);
-                    redisClient.set(SEARCH_AND_LINK_WIZARD_CACHE_KEY, JsonUtils.convertToJsonString(list), searchAndLinkWizardCacheTtl);
+                    list = populateCache();
                 }
             } else {
-                list = generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);
-                redisClient.set(SEARCH_AND_LINK_WIZARD_CACHE_KEY, JsonUtils.convertToJsonString(list), searchAndLinkWizardCacheTtl);
+                list = populateCache();
             }
         } else {
             list = generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);

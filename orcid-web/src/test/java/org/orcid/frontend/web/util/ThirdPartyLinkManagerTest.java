@@ -220,7 +220,7 @@ public class ThirdPartyLinkManagerTest {
     @Test
     public void findSearchAndLinkWizardClients_cacheDisabled_buildsListAndSetsConnected() {
         initSearchAndLinkWizardData();
-        ReflectionTestUtils.setField(thirdPartyLinkManager, "searchAndLinkWizardCacheEnabled", false);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", false);
 
         Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
         Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00002"), eq("0000-0000-0000-0001"))).thenReturn(false);
@@ -249,11 +249,11 @@ public class ThirdPartyLinkManagerTest {
 
     @Test
     public void findSearchAndLinkWizardClients_cacheEnabled_usesCachedValueAndSkipsDao() {
-        ReflectionTestUtils.setField(thirdPartyLinkManager, "searchAndLinkWizardCacheEnabled", true);
-        ReflectionTestUtils.setField(thirdPartyLinkManager, "searchAndLinkWizardCacheTtl", 123);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", true);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheTtl", 123);
 
         String cachedJson = "[{\"id\":\"APP-00001\",\"name\":\"Client One\",\"redirectUri\":\"https://test.orcid.org/search-link/1\",\"scopes\":\"/read-limited\",\"redirectUriMetadata\":{\"certified\":true}}]";
-        Mockito.when(redisClient.get(eq("search-and-link-wizard-clients"))).thenReturn(cachedJson);
+        Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn(cachedJson);
         Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
 
         List<SearchAndLinkWizardFormSummary> forms = thirdPartyLinkManager.findSearchAndLinkWizardClients("0000-0000-0000-0001");
@@ -270,10 +270,10 @@ public class ThirdPartyLinkManagerTest {
     @Test
     public void findSearchAndLinkWizardClients_cacheEnabled_badCachedValue_rebuildsAndStores() {
         initSearchAndLinkWizardData();
-        ReflectionTestUtils.setField(thirdPartyLinkManager, "searchAndLinkWizardCacheEnabled", true);
-        ReflectionTestUtils.setField(thirdPartyLinkManager, "searchAndLinkWizardCacheTtl", 99);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", true);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheTtl", 99);
 
-        Mockito.when(redisClient.get(eq("search-and-link-wizard-clients"))).thenReturn("{bad json");
+        Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn("{bad json");
         Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
         Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00002"), eq("0000-0000-0000-0001"))).thenReturn(false);
 
@@ -281,7 +281,58 @@ public class ThirdPartyLinkManagerTest {
         assertNotNull(forms);
         assertEquals(2, forms.size());
 
-        Mockito.verify(redisClient).set(eq("search-and-link-wizard-clients"), Mockito.anyString(), eq(99));
+        Mockito.verify(redisClient).set(eq("works-search-and-link-wizard-clients"), Mockito.anyString(), eq(99));
+    }
+
+    @Test
+    public void afterPropertiesSet_cacheDisabled_doesNotTouchRedis() {
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", false);
+
+        thirdPartyLinkManager.afterPropertiesSet();
+
+        Mockito.verify(redisClient, Mockito.never()).get(Mockito.anyString());
+        Mockito.verify(redisClient, Mockito.never()).set(Mockito.anyString(), Mockito.anyString(), Mockito.anyInt());
+    }
+
+    @Test
+    public void afterPropertiesSet_cacheEnabled_cacheEmpty_populatesCache() {
+        Mockito.when(clientRedirectDaoReadOnly.findClientDetailsWithRedirectScope(eq(RedirectUriType.IMPORT_WORKS_WIZARD.value())))
+                .thenReturn(Arrays.asList());
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", true);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheTtl", 3600);
+        Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn(null);
+
+        thirdPartyLinkManager.afterPropertiesSet();
+
+        Mockito.verify(redisClient).get(eq("works-search-and-link-wizard-clients"));
+        Mockito.verify(redisClient).set(eq("works-search-and-link-wizard-clients"), Mockito.anyString(), eq(3600));
+    }
+
+    @Test
+    public void afterPropertiesSet_cacheEnabled_readsFromRedis() {
+        Mockito.when(clientRedirectDaoReadOnly.findClientDetailsWithRedirectScope(eq(RedirectUriType.IMPORT_WORKS_WIZARD.value())))
+                .thenReturn(Arrays.asList());
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", true);
+        Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn(null);
+
+        thirdPartyLinkManager.afterPropertiesSet();
+
+        // Cache enabled: initCache() reads from Redis (and populates when empty)
+        Mockito.verify(redisClient).get(eq("works-search-and-link-wizard-clients"));
+    }
+
+    @Test
+    public void afterPropertiesSet_cacheEnabled_cacheInvalid_rebuildsCache() {
+        Mockito.when(clientRedirectDaoReadOnly.findClientDetailsWithRedirectScope(eq(RedirectUriType.IMPORT_WORKS_WIZARD.value())))
+                .thenReturn(Arrays.asList());
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheEnabled", true);
+        ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheTtl", 1800);
+        Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn("{invalid json");
+
+        thirdPartyLinkManager.afterPropertiesSet();
+
+        Mockito.verify(redisClient).get(eq("works-search-and-link-wizard-clients"));
+        Mockito.verify(redisClient).set(eq("works-search-and-link-wizard-clients"), Mockito.anyString(), eq(1800));
     }
     
 }
