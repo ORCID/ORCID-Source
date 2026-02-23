@@ -243,10 +243,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notificationAdapter.toNotification(notificationEntity);
     }
 
-    @Override
-    public List<Notification> findUnsentByOrcid(String orcid) {
-        return notificationAdapter.toNotification(notificationDaoReadOnly.findUnsentByOrcid(orcid));
-    }
 
     @Override
     @Transactional(readOnly = true)
@@ -289,12 +285,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     @Transactional(readOnly = true)
-    public Notification findById(Long id) {
-        return notificationAdapter.toNotification(notificationDao.find(id));
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Notification findByOrcidAndId(String orcid, Long id) {
         return notificationAdapter.toNotification(notificationDao.findByOricdAndId(orcid, id));
     }
@@ -327,29 +317,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             notificationEntity.setArchivedDate(new Date());
             notificationDao.merge(notificationEntity);
         }
-        return notificationAdapter.toNotification(notificationEntity);
-    }
-
-    @Override
-    @Transactional
-    public Notification setActionedAndReadDate(String orcid, Long id) {
-        NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
-        if (notificationEntity == null) {
-            return null;
-        }
-
-        Date now = new Date();
-
-        if (notificationEntity.getActionedDate() == null) {
-            notificationEntity.setActionedDate(now);
-            notificationDao.merge(notificationEntity);
-        }
-
-        if (notificationEntity.getReadDate() == null) {
-            notificationEntity.setReadDate(now);
-            notificationDao.merge(notificationEntity);
-        }
-
         return notificationAdapter.toNotification(notificationEntity);
     }
 
@@ -407,56 +374,8 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     }
 
     @Override
-    public void flagAsRead(String orcid, Long id) {
-        notificationDao.flagAsRead(orcid, id);
-    }
-
-    @Override
     public ActionableNotificationEntity findActionableNotificationEntity(Long id) {
         return (ActionableNotificationEntity) notificationDao.find(id);
     }
-
-    @Override
-    public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate) {
-        List<NotificationEntity> notifications = new ArrayList<NotificationEntity>();
-        notifications = notificationDao.findNotificationsToSend(new Date(), orcid, recordActiveDate);          
-        return notificationAdapter.toNotification(notifications);
-    }
-
-    @Override
-    public void processOldNotificationsToAutoArchive() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.MONTH, -6);
-        Date createdBefore = calendar.getTime();
-        LOGGER.info("About to auto archive notifications created before {}", createdBefore);
-        int numArchived = 0;
-        do {
-            numArchived = notificationDao.archiveNotificationsCreatedBefore(createdBefore, 100);
-            LOGGER.info("Archived {} old notifications", numArchived);
-        } while (numArchived != 0);
-    }
-
-    @Override
-    public void processOldNotificationsToAutoDelete() {
-        Calendar calendar = new GregorianCalendar();
-        calendar.add(Calendar.YEAR, -1);
-        Date createdBefore = calendar.getTime();
-        LOGGER.info("About to auto delete notifications created before {}", createdBefore);
-        List<NotificationEntity> notificationsToDelete = Collections.<NotificationEntity> emptyList();
-        do {
-            notificationsToDelete = notificationDao.findNotificationsCreatedBefore(createdBefore, 100);
-            LOGGER.info("Got batch of {} old notifications to delete", notificationsToDelete.size());
-            for (NotificationEntity notification : notificationsToDelete) {
-                LOGGER.info("About to delete old notification: id={}, orcid={}, dateCreated={}",
-                        new Object[] { notification.getId(), notification.getOrcid(), notification.getDateCreated() });
-                removeNotification(notification.getId());
-            }
-        } while (!notificationsToDelete.isEmpty());
-    }
-    
-    @Override
-    public void removeNotification(Long notificationId) {
-        notificationDao.remove(notificationId);
-    }    
 
 }
