@@ -206,11 +206,8 @@ public class WebhookManagerImpl implements WebhookManager {
 
         increaseWebhook(clientId);
 
-<<<<<<< ImprovementsOnWebhooks
-=======
         // Log attempt to process webhook
         LOGGER.debug("Processing webhook {} for Client: {} With ORCID: {}", new Object[] { webhook.getUri(), clientId, orcid });
->>>>>>> main
         // Execute the request and get the client response
         try {
             int statusCode = doPost(uri);
