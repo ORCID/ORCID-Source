@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class ImportWizzardClientForm implements Serializable {
     private static final long serialVersionUID = -8197311524314039635L;
     public String id;
@@ -15,6 +18,7 @@ public class ImportWizzardClientForm implements Serializable {
     public List<String> geoAreas = new ArrayList<String>();
     private String status;
     private String clientWebsite;
+    private transient JsonNode redirectUriMetadata;
 
     public String getId() {
         return id;
@@ -86,6 +90,15 @@ public class ImportWizzardClientForm implements Serializable {
 
     public void setClientWebsite(String clientWebsite) {
         this.clientWebsite = clientWebsite;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public JsonNode getRedirectUriMetadata() {
+        return redirectUriMetadata;
+    }
+
+    public void setRedirectUriMetadata(JsonNode redirectUriMetadata) {
+        this.redirectUriMetadata = redirectUriMetadata;
     }
 
 }

@@ -46,6 +46,7 @@ import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
 import org.orcid.pojo.ajaxForm.ImportWizzardClientForm;
+import org.orcid.pojo.ajaxForm.SearchAndLinkWizardFormSummary;
 import org.orcid.pojo.ajaxForm.KeywordForm;
 import org.orcid.pojo.ajaxForm.KeywordsForm;
 import org.orcid.pojo.ajaxForm.OtherNameForm;
@@ -102,6 +103,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = { "/workspace/retrieve-work-import-wizards.json" }, method = RequestMethod.GET)
     public @ResponseBody List<ImportWizzardClientForm> retrieveWorkImportWizards() {
         return thirdPartyLinkManager.findOrcidClientsWithPredefinedOauthScopeWorksImport(localeManager.getLocale());        
+    }
+
+    @RequestMapping(value = { "/workspace/retrieve-works-search-and-link-wizard.json" }, method = RequestMethod.GET)
+    public @ResponseBody List<SearchAndLinkWizardFormSummary> retrieveSearchAndLinkWizard() {
+        return thirdPartyLinkManager.findSearchAndLinkWizardClients(getCurrentUserOrcid());
     }
     
     @RequestMapping(value = { "/workspace/retrieve-funding-import-wizards.json" }, method = RequestMethod.GET)

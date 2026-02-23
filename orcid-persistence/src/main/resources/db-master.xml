@@ -423,4 +423,5 @@
   <include file="/db/updates/dw_add_featured_to_dw_org_affiliation_relation.xml" />
   <include file="/db/updates/add_indexes_on_profile_and_email_frequency.xml" />
   <include file="/db/updates/dw_client_details_with_mvp.xml" />
+  <include file="/db/updates/add_redirect_uri_metadata_to_client_redirect_uri.xml" />
 </databaseChangeLog>

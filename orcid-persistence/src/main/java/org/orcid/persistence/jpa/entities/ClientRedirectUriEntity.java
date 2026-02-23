@@ -26,6 +26,7 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
     private String predefinedClientScope;
     private String uriActType;
     private String uriGeoArea;
+    private String redirectUriMetadata;
     private ClientRedirectUriStatus status = ClientRedirectUriStatus.OK;
 
     public ClientRedirectUriEntity() {
@@ -88,6 +89,15 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
         this.uriGeoArea = uriGeoArea;
     }
 
+    @Column(name = "redirect_uri_metadata")
+    public String getRedirectUriMetadata() {
+        return redirectUriMetadata;
+    }
+
+    public void setRedirectUriMetadata(String redirectUriMetadata) {
+        this.redirectUriMetadata = redirectUriMetadata;
+    }
+
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -120,12 +130,12 @@ public class ClientRedirectUriEntity extends BaseEntity<ClientRedirectUriPk> imp
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClientRedirectUriEntity that = (ClientRedirectUriEntity) o;
-        return Objects.equals(clientId, that.clientId) && Objects.equals(redirectUri, that.redirectUri) && Objects.equals(redirectUriType, that.redirectUriType) && Objects.equals(predefinedClientScope, that.predefinedClientScope) && Objects.equals(uriActType, that.uriActType) && Objects.equals(uriGeoArea, that.uriGeoArea) && status == that.status;
+        return Objects.equals(clientId, that.clientId) && Objects.equals(redirectUri, that.redirectUri) && Objects.equals(redirectUriType, that.redirectUriType) && Objects.equals(predefinedClientScope, that.predefinedClientScope) && Objects.equals(uriActType, that.uriActType) && Objects.equals(uriGeoArea, that.uriGeoArea) && Objects.equals(redirectUriMetadata, that.redirectUriMetadata) && status == that.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(clientId, redirectUri, redirectUriType, predefinedClientScope, uriActType, uriGeoArea, status);
+        return Objects.hash(clientId, redirectUri, redirectUriType, predefinedClientScope, uriActType, uriGeoArea, redirectUriMetadata, status);
     }
 
     @Override
