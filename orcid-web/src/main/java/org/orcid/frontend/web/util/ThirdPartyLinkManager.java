@@ -76,17 +76,27 @@ public class ThirdPartyLinkManager implements InitializingBean {
         if (!worksSearchAndLinkWizardCacheEnabled) {
             return;
         }
+        getWorksSearchAndLinkWizardBaseList();
+    }
+
+    /**
+     * Returns the works search-and-link wizard base list: from Redis when cache is enabled and valid,
+     * otherwise builds and (when cache enabled) populates Redis.
+     */
+    private List<SearchAndLinkWizardFormSummary> getWorksSearchAndLinkWizardBaseList() {
+        if (!worksSearchAndLinkWizardCacheEnabled) {
+            return generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);
+        }
         String cached = redisClient.get(SEARCH_AND_LINK_WIZARD_CACHE_KEY);
         if (StringUtils.isNotBlank(cached)) {
             try {
-                LIST_MAPPER.readValue(cached, new TypeReference<List<SearchAndLinkWizardFormSummary>>() {});
+                return LIST_MAPPER.readValue(cached, new TypeReference<List<SearchAndLinkWizardFormSummary>>() {});
             } catch (Exception e) {
                 LOGGER.warn("Failed to deserialize search-and-link wizard list from Redis, rebuilding", e);
-                populateCache();
+                return populateCache();
             }
-        } else {
-            populateCache();
         }
+        return populateCache();
     }
 
     private List<SearchAndLinkWizardFormSummary> populateCache() {
@@ -101,24 +111,7 @@ public class ThirdPartyLinkManager implements InitializingBean {
      * orcidOauth2TokenDetailService.doesClientKnowUser(clientId, currentUserOrcid).
      */
     public List<SearchAndLinkWizardFormSummary> findSearchAndLinkWizardClients(String currentUserOrcid) {
-        List<SearchAndLinkWizardFormSummary> list;
-
-        if (worksSearchAndLinkWizardCacheEnabled) {
-            String cached = redisClient.get(SEARCH_AND_LINK_WIZARD_CACHE_KEY);
-            if (StringUtils.isNotBlank(cached)) {
-                try {
-                    list = LIST_MAPPER.readValue(cached, new TypeReference<List<SearchAndLinkWizardFormSummary>>() {});
-                } catch (Exception e) {
-                    LOGGER.warn("Failed to deserialize search-and-link wizard list from Redis, rebuilding", e);
-                    list = populateCache();
-                }
-            } else {
-                list = populateCache();
-            }
-        } else {
-            list = generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);
-        }
-
+        List<SearchAndLinkWizardFormSummary> list = getWorksSearchAndLinkWizardBaseList();
         for (SearchAndLinkWizardFormSummary form : list) {
             form.setConnected(StringUtils.isNotBlank(currentUserOrcid)
                     && orcidOauth2TokenDetailService.doesClientKnowUser(form.getId(), currentUserOrcid));

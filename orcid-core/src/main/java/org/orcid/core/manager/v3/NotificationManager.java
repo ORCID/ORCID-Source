@@ -88,4 +88,7 @@ public interface NotificationManager {
     
     List<NotificationEntity> findByOrcidAndClientAndNotificationFamilyNoClientToken(String orcid, String clientId,  String notificationFamily);
 
+    void autoArchiveNotifications();
+
+    void autoDeleteNotifications();
 }
