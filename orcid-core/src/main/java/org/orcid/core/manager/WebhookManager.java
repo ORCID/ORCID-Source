@@ -9,8 +9,6 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 public interface WebhookManager {
 
     void processWebhooks();
-
-    void processWebhook(WebhookEntity webhook);
     
     WebhookEntity find(WebhookEntityPk webhookPk);
     

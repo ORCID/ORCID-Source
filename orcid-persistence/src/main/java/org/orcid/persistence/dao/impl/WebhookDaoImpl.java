@@ -3,6 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -25,10 +26,13 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
     }
 
     @Override
-    public List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults) {
+    public List<WebhookEntity> findWebhooksReadyToProcess(Date profileModifiedBefore, int retryDelayMinutes, int maxResults, Set<String> clientsToExclude) {
         TypedQuery<WebhookEntity> query = entityManager.createNamedQuery(WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, WebhookEntity.class);
         query.setParameter("retryDelayMinutes", retryDelayMinutes);
         query.setParameter("maxAttemptCount", maxAttemptCount);
+        // This query will not work fine if the clientsToExclude is null or empty because if the in clase, so, replace it with a list with an empty string will fix that
+        query.setParameter("clientsToExclude", (clientsToExclude == null || clientsToExclude.isEmpty()) ? Set.of(" ") : clientsToExclude);
+        query.setMaxResults(maxResults);
         return query.getResultList();
     }
 

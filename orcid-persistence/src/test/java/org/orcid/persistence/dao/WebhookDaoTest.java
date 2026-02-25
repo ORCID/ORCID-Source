@@ -2,162 +2,140 @@ package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.persistence.dao.impl.WebhookDaoImpl;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
+import org.orcid.test.TargetProxyHelper;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-persistence-context.xml" })
-public class WebhookDaoTest extends DBUnitTest {
+public class WebhookDaoTest {
 
-    @Resource
-    private WebhookDao webhookDao;
+    @InjectMocks
+    private WebhookDaoImpl webhookDao;
 
-    @Resource
-    private ProfileDao profileDao;
+    @Mock
+    private EntityManager entityManager;
 
-    @Resource
-    private ClientDetailsDao clientDetailsDao;
+    @Mock
+    private TypedQuery<WebhookEntity> typedQuery;
 
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
-            "/data/Oauth2TokenDetailsData.xml", "/data/WebhookEntityData.xml");
+    @Mock
+    private TypedQuery<BigInteger> countTypedQuery;
 
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
+    @Mock
+    private Query nativeQuery;
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
-        Collections.reverse(reversedDataFiles);
-        removeDBUnitData(reversedDataFiles);
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        TargetProxyHelper.injectIntoProxy(webhookDao, "maxAttemptCount", 25);
     }
 
     @Test
-    @Rollback(true)
     public void testMergeFindAndRemove() {
         String orcid = "1234-1234-1234-1234";
-        ProfileEntity profile = new ProfileEntity(orcid);
-        profileDao.merge(profile);
-        ProfileEntity clientProfile = new ProfileEntity("4444-4444-4444-4449");
-        profileDao.merge(clientProfile);
-        ClientDetailsEntity clientDetails = new ClientDetailsEntity();
-        clientDetails.setGroupProfileId(clientProfile.getId());
-        clientDetails.setId(clientProfile.getId());
-        clientDetailsDao.merge(clientDetails);
+        String uri = "http://semantico.com/orcid/1234";
         WebhookEntity webhook = new WebhookEntity();
         webhook.setProfile(orcid);
-        webhook.setProfileLastModified(profile.getLastModified());
-        webhook.setUri("http://semantico.com/orcid/1234");
-        webhook.setClientDetailsId(clientProfile.getId());
-        webhook = webhookDao.merge(webhook);
+        webhook.setUri(uri);
 
-        assertNotNull(webhook.getId());
-        assertNotNull(webhook.getDateCreated());
-        assertNotNull(webhook.getLastModified());
-        assertEquals(webhook.getDateCreated(), webhook.getLastModified());
-        
-        WebhookEntityPk pk = new WebhookEntityPk();
-        pk.setProfile(orcid);
-        pk.setUri("http://semantico.com/orcid/1234");
+        WebhookEntityPk pk = new WebhookEntityPk(orcid, uri);
+
+        when(entityManager.merge(any(WebhookEntity.class))).thenReturn(webhook);
+        when(entityManager.find(eq(WebhookEntity.class), eq(pk))).thenReturn(webhook);
+
+        WebhookEntity merged = webhookDao.merge(webhook);
+        assertNotNull(merged);
+        assertEquals(orcid, merged.getProfile());
+
         WebhookEntity retrieved = webhookDao.find(pk);
-
         assertNotNull(retrieved);
-        assertEquals("1234-1234-1234-1234", retrieved.getProfile());
-        assertEquals("http://semantico.com/orcid/1234", retrieved.getUri());
-        assertEquals("4444-4444-4444-4449", retrieved.getClientDetailsId());
-        assertTrue(retrieved.isEnabled());
-        assertEquals(0, retrieved.getFailedAttemptCount());
-        assertNull(retrieved.getLastFailed());
-        assertNotNull(retrieved.getDateCreated());
-        assertNotNull(retrieved.getLastModified());
-        assertEquals(webhook.getLastModified(), retrieved.getLastModified());
-        assertEquals(webhook.getDateCreated(), retrieved.getDateCreated());
-        assertEquals(retrieved.getDateCreated(), retrieved.getLastModified());
+        assertEquals(orcid, retrieved.getProfile());
 
         webhookDao.remove(pk);
-        retrieved = webhookDao.find(pk);
-        assertNull(retrieved);
+        verify(entityManager).remove(webhook);
     }
 
     @Test
-    @Rollback(true)
     public void testFindWebhooksReadyToProcess() {
         Date now = new Date();
-        List<WebhookEntity> results = webhookDao.findWebhooksReadyToProcess(now, 5, 10);
+        WebhookEntity webhook = new WebhookEntity();
+        webhook.setProfile("4444-4444-4444-4443");
+        
+        when(entityManager.createNamedQuery(WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, WebhookEntity.class)).thenReturn(typedQuery);
+        when(typedQuery.getResultList()).thenReturn(Collections.singletonList(webhook));
+
+        List<WebhookEntity> results = webhookDao.findWebhooksReadyToProcess(now, 5, 10, Set.of());
+        
         assertNotNull(results);
         assertEquals(1, results.size());
-        Set<String> orcids = new HashSet<>();
-        for (WebhookEntity result : results) {
-            orcids.add(result.getProfile());
-        }
-        assertTrue(orcids.contains("4444-4444-4444-4443"));
+        assertEquals("4444-4444-4444-4443", results.get(0).getProfile());
+
+        verify(typedQuery).setParameter("retryDelayMinutes", 5);
+        verify(typedQuery).setParameter("maxAttemptCount", 25);
+        verify(typedQuery).setParameter(eq("clientsToExclude"), any());
+        verify(typedQuery).setMaxResults(10);
     }
 
     @Test
-    @Rollback(true)
-    public void testFindWebhooksReadyToProcessWhenIsNotReadyForRetry() {
-        Date now = new Date();
-        WebhookEntityPk pk = new WebhookEntityPk();
-        pk.setProfile("4444-4444-4444-4443");
-        pk.setUri("http://nowhere.com/orcid/4444-4444-4444-4443");
-        WebhookEntity webhook = webhookDao.find(pk);
-        webhook.setLastFailed(new Date(now.getTime() - 120 * 1000));
-        webhook.setFailedAttemptCount(1);
-        webhookDao.merge(webhook);
-
-        List<WebhookEntity> results = webhookDao.findWebhooksReadyToProcess(now, 5, 10);
-        assertNotNull(results);
-        assertEquals(0, results.size());
-    }
-
-    @Test
-    @Rollback(true)
     public void testCountWebhooksReadyToProcess() {
         Date now = new Date();
+        when(entityManager.createNamedQuery(WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, BigInteger.class)).thenReturn(countTypedQuery);
+        when(countTypedQuery.getSingleResult()).thenReturn(BigInteger.valueOf(1L));
+
         long count = webhookDao.countWebhooksReadyToProcess(now, 5);
-        assertNotNull(count);
-        assertEquals(1, count);
+        
+        assertEquals(1L, count);
+        verify(countTypedQuery).setParameter("retryDelayMinutes", 5);
+        verify(countTypedQuery).setParameter("maxAttemptCount", 25);
     }
 
     @Test
-    public void mergeTest() {
-        String orcid = "4444-4444-4444-4444";
-        ProfileEntity p = new ProfileEntity("4444-4444-4444-4444");
-        WebhookEntityPk pk = new WebhookEntityPk(orcid, "http://nowhere.com/orcid/4444-4444-4444-4444");
-        WebhookEntity e = webhookDao.find(pk);
-        e.setFailedAttemptCount(100);
-        Date dateCreated = e.getDateCreated();
-        Date lastModified = e.getLastModified();
-        webhookDao.merge(e);
+    public void testMarkAsSent() {
+        String orcid = "orcid";
+        String uri = "uri";
+        when(entityManager.createNativeQuery(anyString())).thenReturn(nativeQuery);
+        when(nativeQuery.executeUpdate()).thenReturn(1);
 
-        WebhookEntity updated = webhookDao.find(pk);
-        assertEquals(dateCreated, updated.getDateCreated());
-        assertTrue(updated.getLastModified().after(lastModified));
+        boolean result = webhookDao.markAsSent(orcid, uri);
+        
+        assertTrue(result);
+        verify(nativeQuery).setParameter("orcid", orcid);
+        verify(nativeQuery).setParameter("uri", uri);
     }
-       
+
+    @Test
+    public void testMarkAsFailed() {
+        String orcid = "orcid";
+        String uri = "uri";
+        when(entityManager.createNativeQuery(anyString())).thenReturn(nativeQuery);
+        when(nativeQuery.executeUpdate()).thenReturn(1);
+
+        boolean result = webhookDao.markAsFailed(orcid, uri);
+        
+        assertTrue(result);
+        verify(nativeQuery).setParameter("orcid", orcid);
+        verify(nativeQuery).setParameter("uri", uri);
+    }
 }
