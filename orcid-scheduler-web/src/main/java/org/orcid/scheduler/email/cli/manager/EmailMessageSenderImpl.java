@@ -311,26 +311,28 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
 
-                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                if (primaryEmail == null) {
-                    LOGGER.info("No primary email for orcid: " + orcid);
-                    return;
-                }
+                EmailEntity primaryEmail = null;
 
-                if (!notifications.isEmpty()) {
-                    LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                    EmailMessage digestMessage = createDigest(orcid, notifications);
-                    digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
-                    digestMessage.setTo(primaryEmail.getEmail());
+                try {
+                    primaryEmail = emailDao.findPrimaryEmail(orcid);
+                    if (primaryEmail != null && !notifications.isEmpty()) {
+                        LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
+                        EmailMessage digestMessage = createDigest(orcid, notifications);
+                        digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
+                        digestMessage.setTo(primaryEmail.getEmail());
 
-                    boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
-                            digestMessage.getBodyText(), digestMessage.getBodyHtml());
-                    if (successfullySent) {
-                        for (Notification notification : notifications) {
-                            notificationDao.flagAsSent(notification.getPutCode());
+                        boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
+                                digestMessage.getBodyText(), digestMessage.getBodyHtml());
+                        if (successfullySent) {
+                            for (Notification notification : notifications) {
+                                notificationDao.flagAsSent(notification.getPutCode());
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    LOGGER.error("No primary email found for ORCID: " + orcid + " - " + e.getMessage());
                 }
+
             } catch (RuntimeException e) {
                 LOGGER.warn("Problem sending email message to user: " + orcid, e);
             }
