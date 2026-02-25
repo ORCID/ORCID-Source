@@ -524,7 +524,6 @@ public class RecordEmailSender {
 		String body = templateManager.processTemplate("email_security_deprecate_record.ftl", templateParams);
 		// Generate html from template
 		String html = templateManager.processTemplate("email_security_deprecate_record_html.ftl", templateParams);
-		mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
         if (!deprecatedPrimaryEmail.isEmpty()) {
             mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, deprecatedPrimaryEmail, subject, body, html);
         } else {
