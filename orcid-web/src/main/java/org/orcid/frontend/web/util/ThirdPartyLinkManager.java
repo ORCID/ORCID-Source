@@ -247,10 +247,16 @@ public class ThirdPartyLinkManager implements InitializingBean {
             form.setName(clientDetails.getClientName());
             form.setRedirectUri(entity.getRedirectUri());
             form.setScopes(entity.getPredefinedClientScope());
+            if (!PojoUtil.isEmpty(clientDetails.getClientDescription())) {
+                form.setDescription(clientDetails.getClientDescription());
+            }
             if (!PojoUtil.isEmpty(entity.getRedirectUriMetadata())) {
                 JsonNode metadataNode = JsonUtils.readTree(entity.getRedirectUriMetadata());
                 if (!(metadataNode != null && metadataNode.isObject() && metadataNode.size() == 0)) {
                     form.setRedirectUriMetadata(metadataNode);
+                    if (metadataNode.has("defaultDescription") && metadataNode.get("defaultDescription").isTextual()) {
+                        form.setDescription(metadataNode.get("defaultDescription").asText());
+                    }
                 }
             }
             clients.add(form);
