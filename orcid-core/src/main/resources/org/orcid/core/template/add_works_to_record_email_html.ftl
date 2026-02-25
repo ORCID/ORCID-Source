@@ -27,7 +27,6 @@
     </div>
     <div style="display: block">
         <p><@emailMacros.msg "email.addWorks.weHaveNoticed" /></p>
-        <p style="font-weight: bolder;font-size: 16px"><@emailMacros.msg "email.addWorks.getStarted" /></p>
         <p><@emailMacros.msg "email.addWorks.belowAreLinks" /><@emailMacros.space /><b><@emailMacros.msg "email.addWorks.connectingToTheseServices" /></b></p>
        	<p>
        		<ul>

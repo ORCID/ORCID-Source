@@ -4,20 +4,12 @@ Your ORCID record is https://testserver.orcid.org/0000-0000-0000-0000
 Dear John Watson
 
 We have noticed that you have not yet added any research outputs to your ORCID record. Adding these will help reduce your administrative burden when read and imported into other systems, ensure you are recognized for your research contributions, and disambiguate you from other researchers with the same name!
+Below are links to 2 ORCID-certified services that allow you to sign in to your ORCID account, and add your selected research outputs to your ORCID record. Connecting to these services also grants permission to automatically update your ORCID record over time as new research outputs become available.  * Web of Science: Add research outputs to your ORCID record, and connect your Web of Science researcher profile to automatically update your ORCID record over time. (https://orcid.org/oauth/authorize?client_id=APP-OKON44OLRIOZU944&response_type=code&scope=/read-limited%20/activities/update&redirect_uri=https://www.webofscience.com/wos/author/orcid-wizard)
+  * The Lens: Create or connect your Lens Profile to add patents and other scholarly works and automatically update your ORCID record over time. (https://orcid.org/oauth/authorize?client_id=APP-EN52WHSMFO6TZT6B&response_type=code&scope=/activities/update%20/read-limited%20/person/update&redirect_uri=https://www.lens.org/lens/orcid/wizard)	
 
-Get started with these popular ORCID integrations:
-
-Below are links to 4 popular ORCID integrations that allow you to sign in to your ORCID record, grant permission to the service to add your selected research outputs to your ORCID record.
-
-For adding journal articles: Crossref Metadata Search allows you to search and add works by title or DOI.
-
-For adding life sciences literature: Europe PubMed Central allows you to import works from the Europe PubMed database, which includes all articles indexed by PubMed Central.
-
-For adding multiple published articles: Scopus allows you to add your Scopus Author ID to your record as well as importing works associated with your Scopus Author ID.
-
-BASE (Bielefeld Academic Search Engine) allows you to claim and import works from the Bielefeld Academic Search Engine. To use, you must first create a BASE user account. Recommended for authors of open access publications.
-
-We have more 'search and link' wizards available within your ORCID record.
+Other popular services allow you to sign in to your ORCID account, granting permission to the service to add your selected research outputs to your ORCID record.  * Crossref Metadata Search: Search by title, author, DOI, or ORCID iD for journal articles, books, standards, datasets and more to import works to your ORCID record  (https://orcid.org/oauth/authorize?client_id=0000-0002-3054-1567&response_type=code&scope=%2Factivities%2Fupdate%20%2Fread-limited&redirect_uri=https:%2F%2Fsearch.crossref.org%2Fauth%2Forcid%2Fsearch-and-link)
+  * Europe PubMed Central: Import life sciences literature, journal articles, preprints, and patents, including all articles indexed by PubMed Central, to your ORCID record (https://orcid.org/oauth/authorize?client_id=0000-0002-9157-3431&response_type=code&scope=%2Fread-limited%20%2Factivities%2Fupdate&redirect_uri=https:%2F%2Feuropepmc.org%2Forcid%2Fimport)
+  * Scopus: Create and connect your Scopus account to add your Scopus Author ID to your ORCID record and import works (https://orcid.org/oauth/authorize?client_id=0000-0002-5982-8983&response_type=code&scope=%2Fperson%2Fupdate%20%2Fread-limited%20%2Factivities%2Fupdate&redirect_uri=https:%2F%2Forcid.scopusfeedback.com%2Finward%2Forcid)
 
 If you are having trouble adding your research outputs or you would like to know more about how to add data to your ORCID record, please visit our ORCID Help Center.
 
