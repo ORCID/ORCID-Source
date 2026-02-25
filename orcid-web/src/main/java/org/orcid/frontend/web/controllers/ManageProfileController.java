@@ -646,10 +646,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             if (emailWasDeleted) {
                 // List emails to be deleted
                 deletedEmails.add(oldJsonEmail);
-                if (oldJsonEmail.isVerified()) {
-                    // Add emails to email notification
-                    emailListChange.getRemovedEmails().add(oldJsonEmail);
-                }
+                // Add emails to email notification
+                emailListChange.getRemovedEmails().add(oldJsonEmail);
             }
         }
                       
