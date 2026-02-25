@@ -324,7 +324,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
                 if (primaryEmail == null) {
                     LOGGER.info("No primary email for orcid: " + orcid);
-                    return;
+                    continue;
                 }
 
                 if (!notifications.isEmpty()) {
