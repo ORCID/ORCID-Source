@@ -495,17 +495,21 @@ public class RecordEmailSender {
 	public void sendOrcidSecurityDeprecatedEmail(String userOrcid, String orcidToDeprecate, Emails emails) {
 		ProfileEntity profile = profileEntityCacheManager.retrieve(orcidToDeprecate);
 		Locale userLocale = getUserLocaleFromProfileEntity(profile);
-		Email deprecatedPrimaryEmail = emailManager.findPrimaryEmail(orcidToDeprecate);
 		Map<String, Object> templateParams = new HashMap<String, Object>();
-
 		String subject = verifyEmailUtils.getSubject("email.subject.security.record_deprecated", userLocale);
-		String email = deprecatedPrimaryEmail.getEmail();
+        String deprecatedPrimaryEmail = "";
 
 		String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcidToDeprecate);
 		templateParams.put("emailName", emailFriendlyName);
 		templateParams.put("orcid", userOrcid);
 		templateParams.put("deprecated_orcid", orcidToDeprecate);
 		if (emails != null && emails.getEmails() != null) {
+            for (org.orcid.jaxb.model.v3.release.record.Email email : emails.getEmails()) {
+                if (email.isPrimary()) {
+                    deprecatedPrimaryEmail = email.getEmail();
+                    break;
+                }
+            }
 			templateParams.put("emailList", emails.getEmails());
 		} else {
 			templateParams.put("emailList", new java.util.ArrayList<Email>());
@@ -520,6 +524,10 @@ public class RecordEmailSender {
 		String body = templateManager.processTemplate("email_security_deprecate_record.ftl", templateParams);
 		// Generate html from template
 		String html = templateManager.processTemplate("email_security_deprecate_record_html.ftl", templateParams);
-		mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
+        if (!deprecatedPrimaryEmail.isEmpty()) {
+            mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, deprecatedPrimaryEmail, subject, body, html);
+        } else {
+            LOGGER.error("Primary email not found in user {}", orcidToDeprecate);
+        }
 	}
 }
