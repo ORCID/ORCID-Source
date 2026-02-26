@@ -10,7 +10,7 @@
         </preConditions>
         
         <sql>
-            CREATE INDEX notification_unsent_idx 
+            CREATE INDEX CONCURRENTLY IF NOT EXISTS notification_unsent_idx 
             ON public.notification (orcid, notification_type) 
             WHERE sent_date IS NULL;
         </sql>
