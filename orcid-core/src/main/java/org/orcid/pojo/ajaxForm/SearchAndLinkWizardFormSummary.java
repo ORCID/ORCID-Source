@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
- * Summary of search and link wizard client: id, name, redirectUri, scopes, redirectUriMetadata, isConnected.
+ * Summary of search and link wizard client: id, name, description, redirectUri, scopes, redirectUriMetadata, isConnected.
  */
 public class SearchAndLinkWizardFormSummary implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;
     private String name;
+    private String description;
     private String redirectUri;
     private String scopes;
     private transient JsonNode redirectUriMetadata;
@@ -31,6 +32,15 @@ public class SearchAndLinkWizardFormSummary implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRedirectUri() {
