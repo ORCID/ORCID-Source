@@ -321,15 +321,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
 
-                EmailEntity primaryEmail = emailDao.findPrimaryEmail(orcid);
-                if (primaryEmail == null) {
-                    LOGGER.info("No primary email for orcid: " + orcid);
-                    continue;
-                }
-
+                EmailEntity primaryEmail = null;  
                 try {
-                    primaryEmail = emailDao.findPrimaryEmail(orcid);
-                    if (primaryEmail != null && !notifications.isEmpty()) {
+                	primaryEmail = emailDao.findPrimaryEmail(orcid);
+	                if(primaryEmail != null && !notifications.isEmpty()) {
                         LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                         EmailMessage digestMessage = createDigest(orcid, notifications);
                         digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
