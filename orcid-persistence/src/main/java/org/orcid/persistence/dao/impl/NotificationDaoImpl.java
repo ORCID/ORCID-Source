@@ -15,6 +15,7 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long> implements NotificationDao {
 
     private static final String NOTIFICATION_TYPE_PERMISSION = "PERMISSION";
+    
+    @Value("${org.orcid.postgres.query.timeout:30000}")
+    private Integer queryTimeout;
     
     @Autowired
     @Qualifier("notification_queries")
@@ -58,6 +62,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     public List<NotificationEntity> findUnsentByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where sentDate is null and orcid = :orcid", NotificationEntity.class);
         query.setParameter("orcid", orcid);
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         return query.getResultList();
     }
 
@@ -201,7 +206,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
-        query.setParameter("never", Float.MAX_VALUE);               
+        query.setParameter("never", Float.MAX_VALUE);  
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         return query.getResultList();
     }
                

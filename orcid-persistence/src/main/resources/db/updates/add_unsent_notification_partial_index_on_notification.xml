@@ -1,0 +1,23 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+    <changeSet id="add-notification-unsent-idx" author="Camelia Dumitru" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="notification_unsent_idx" tableName="notification"/>
+            </not>
+        </preConditions>
+        
+        <sql>
+            CREATE INDEX CONCURRENTLY IF NOT EXISTS notification_unsent_idx 
+            ON public.notification (orcid, notification_type) 
+            WHERE sent_date IS NULL;
+        </sql>
+
+        <rollback>
+            <dropIndex indexName="notification_unsent_idx" tableName="notification"/>
+        </rollback>
+    </changeSet>
+    	
+</databaseChangeLog>
