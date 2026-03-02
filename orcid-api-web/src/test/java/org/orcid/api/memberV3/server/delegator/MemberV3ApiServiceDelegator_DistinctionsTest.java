@@ -2,40 +2,90 @@ package org.orcid.api.memberV3.server.delegator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
+import org.apache.http.HttpStatus;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidAccessControlException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.common.Relationship;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.release.common.Source;
-import org.orcid.jaxb.model.v3.release.common.SourceClientId;
-import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
+import org.orcid.jaxb.model.v3.release.common.DisambiguatedOrganization;
+import org.orcid.jaxb.model.v3.release.common.LastModifiedDate;
+import org.orcid.jaxb.model.v3.release.common.Url;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Address;
+import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.ExternalID;
+import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivitiesSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Distinctions;
+import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
+import org.springframework.test.context.ContextConfiguration;
 
-public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiServiceDelegatorMockTest {
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
+public class MemberV3ApiServiceDelegator_DistinctionsTest extends DBUnitTest {
+    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
+            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
+    // Now on, for any new test, PLAESE USE THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
+
+    @Resource(name = "memberV3ApiServiceDelegator")
+    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
+
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
+    }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewDistinctionsWrongToken() {
@@ -52,9 +102,6 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
     @Test
     public void testViewDistinctionReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        Distinction distinction = new Distinction();
-        distinction.setPutCode(27L);
-        when(affiliationsManagerReadOnly.getDistinctionAffiliation(eq(ORCID), eq(27L))).thenReturn(distinction);
         Response r = serviceDelegator.viewDistinction(ORCID, 27L);
         Distinction element = (Distinction) r.getEntity();
         assertNotNull(element);
@@ -62,25 +109,30 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
         Utils.assertIsPublicOrSource(element, "APP-5555555555555555");
     }
 
+    @Test(expected = OrcidUnauthorizedException.class)
+    public void testViewDistinctionSummaryWrongToken() {
+        SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
+        serviceDelegator.viewDistinctionSummary(ORCID, 27L);
+    }
+
     @Test
     public void testViewDistinctionsReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        List<DistinctionSummary> summaries = new ArrayList<>();
-        when(affiliationsManagerReadOnly.getDistinctionSummaryList(eq(ORCID))).thenReturn(summaries);
-        when(affiliationsManagerReadOnly.groupAffiliations(eq(summaries), anyBoolean())).thenReturn(new ArrayList<>());
-        
         Response r = serviceDelegator.viewDistinctions(ORCID);
         Distinctions element = (Distinctions) r.getEntity();
         assertNotNull(element);
         assertEquals("/0000-0000-0000-0003/distinctions", element.getPath());
+        
+        for (AffiliationGroup<DistinctionSummary> group : element.getDistinctionGroups()) {
+            for (DistinctionSummary summary : group.getActivities()) {
+                Utils.assertIsPublicOrSource(summary, "APP-5555555555555555");
+            }
+        }
     }
 
     @Test
     public void testViewDistinctionSummaryReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        DistinctionSummary summary = new DistinctionSummary();
-        summary.setPutCode(27L);
-        when(affiliationsManagerReadOnly.getDistinctionSummary(eq(ORCID), eq(27L))).thenReturn(summary);
         Response r = serviceDelegator.viewDistinctionSummary(ORCID, 27L);
         DistinctionSummary element = (DistinctionSummary) r.getEntity();
         assertNotNull(element);
@@ -91,24 +143,48 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
     @Test
     public void testViewPublicDistinction() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        Distinction distinction = createDistinction(27L, Visibility.PUBLIC, ORCID, null);
-        distinction.setDepartmentName("PUBLIC Department");
-        when(affiliationsManagerReadOnly.getDistinctionAffiliation(eq(ORCID), eq(27L))).thenReturn(distinction);
         Response response = serviceDelegator.viewDistinction(ORCID, 27L);
         assertNotNull(response);
-        Distinction result = (Distinction) response.getEntity();
-        assertNotNull(result);
-        assertEquals(Long.valueOf(27L), result.getPutCode());
-        assertEquals("/0000-0000-0000-0003/distinction/27", result.getPath());
-        assertEquals("PUBLIC Department", result.getDepartmentName());
-        assertEquals(Visibility.PUBLIC, result.getVisibility());
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        Utils.verifyLastModified(distinction.getLastModifiedDate());
+        assertEquals(Long.valueOf(27L), distinction.getPutCode());
+        assertEquals("/0000-0000-0000-0003/distinction/27", distinction.getPath());
+        assertEquals("PUBLIC Department", distinction.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), distinction.getVisibility().value());
+    }
+
+    @Test
+    public void testViewLimitedDistinction() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewDistinction(ORCID, 30L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        Utils.verifyLastModified(distinction.getLastModifiedDate());
+        assertEquals(Long.valueOf(30L), distinction.getPutCode());
+        assertEquals("/0000-0000-0000-0003/distinction/30", distinction.getPath());
+        assertEquals("SELF LIMITED Department", distinction.getDepartmentName());
+        assertEquals(Visibility.LIMITED.value(), distinction.getVisibility().value());
+    }
+
+    @Test
+    public void testViewPrivateDistinction() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewDistinction(ORCID, 29L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        Utils.verifyLastModified(distinction.getLastModifiedDate());
+        assertEquals(Long.valueOf(29L), distinction.getPutCode());
+        assertEquals("/0000-0000-0000-0003/distinction/29", distinction.getPath());
+        assertEquals("PRIVATE Department", distinction.getDepartmentName());
+        assertEquals(Visibility.PRIVATE.value(), distinction.getVisibility().value());
     }
 
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateDistinctionWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
-        when(affiliationsManagerReadOnly.getDistinctionAffiliation(eq(ORCID), eq(31L))).thenReturn(createDistinction(31L));
-        doThrow(new OrcidVisibilityException()).when(orcidSecurityManager).checkAndFilter(eq(ORCID), any(Distinction.class), any(ScopePathType.class));
         serviceDelegator.viewDistinction(ORCID, 31L);
         fail();
     }
@@ -116,49 +192,365 @@ public class MemberV3ApiServiceDelegator_DistinctionsTest extends MemberV3ApiSer
     @Test(expected = NoResultException.class)
     public void testViewDistinctionThatDontBelongToTheUser() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
-        when(affiliationsManagerReadOnly.getDistinctionAffiliation(eq("4444-4444-4444-4446"), anyLong())).thenThrow(new NoResultException());
+        // Distinction 27 belongs to 0000-0000-0000-0003
         serviceDelegator.viewDistinction("4444-4444-4444-4446", 27L);
         fail();
     }
 
     @Test
+    public void testViewDistinctions() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED);
+        Response r = serviceDelegator.viewDistinctions(ORCID);
+        assertNotNull(r);
+        Distinctions distinctions = (Distinctions) r.getEntity();
+        assertNotNull(distinctions);
+        assertEquals("/0000-0000-0000-0003/distinctions", distinctions.getPath());
+        Utils.verifyLastModified(distinctions.getLastModifiedDate());
+        assertNotNull(distinctions.retrieveGroups());
+        assertEquals(3, distinctions.retrieveGroups().size());
+        boolean found1 = false, found2 = false, found3 = false;
+        
+        for (AffiliationGroup<DistinctionSummary> group : distinctions.retrieveGroups()) {
+            DistinctionSummary element0 = group.getActivities().get(0);
+            Utils.verifyLastModified(element0.getLastModifiedDate());
+            if (Long.valueOf(28).equals(element0.getPutCode())) {
+                assertEquals("LIMITED Department", element0.getDepartmentName());
+                found1 = true;
+            } else if (Long.valueOf(29).equals(element0.getPutCode())) {
+                assertEquals("PRIVATE Department", element0.getDepartmentName());
+                found2 = true;
+            } else if (Long.valueOf(30).equals(element0.getPutCode())) {
+                assertEquals("SELF LIMITED Department", element0.getDepartmentName());
+                assertEquals(2, group.getActivities().size());
+                assertEquals(Long.valueOf(27), group.getActivities().get(1).getPutCode());
+                found3 = true;
+            } else {
+                fail("Invalid distinction found: " + element0.getPutCode());
+            }            
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);        
+    }
+
+    @Test
+    public void testReadPublicScope_Distinctions() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewDistinction(ORCID, 27L);
+        assertNotNull(r);
+        assertEquals(Distinction.class.getName(), r.getEntity().getClass().getName());
+
+        r = serviceDelegator.viewDistinctionSummary(ORCID, 27L);
+        assertNotNull(r);
+        assertEquals(DistinctionSummary.class.getName(), r.getEntity().getClass().getName());
+
+        // Limited that am the source of should work
+        serviceDelegator.viewDistinction(ORCID, 28L);
+        serviceDelegator.viewDistinctionSummary(ORCID, 28L);
+        // Limited that am not the source of should fail
+        try {
+            serviceDelegator.viewDistinction(ORCID, 30L);
+            fail();
+        } catch (OrcidAccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            serviceDelegator.viewDistinctionSummary(ORCID, 30L);
+            fail();
+        } catch (OrcidAccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Private that am the source of should work
+        serviceDelegator.viewDistinction(ORCID, 29L);
+        serviceDelegator.viewDistinctionSummary(ORCID, 29L);
+        // Private that am not the source of should fails
+        try {
+            serviceDelegator.viewDistinction(ORCID, 31L);
+            fail();
+        } catch (OrcidAccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            serviceDelegator.viewDistinctionSummary(ORCID, 31L);
+            fail();
+        } catch (OrcidAccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
     public void testAddDistinction() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        ActivitiesSummary summary = new ActivitiesSummary();
-        summary.setDistinctions(new Distinctions());
-        when(activitiesSummaryManagerReadOnly.getActivitiesSummary(eq(ORCID), anyBoolean())).thenReturn(summary);
-        
-        Distinction saved = createDistinction(12345L);
-        saved.setDepartmentName("My department name");
-        when(affiliationsManager.createDistinctionAffiliation(eq(ORCID), any(Distinction.class), anyBoolean())).thenReturn(saved);
-        when(apiUtils.buildApiResponse(any(), any(), any(), any())).thenReturn(Response.status(Response.Status.CREATED).build());
-        
-        Response response = serviceDelegator.createDistinction(ORCID, createDistinction(null));
+        Response response = serviceDelegator.viewActivities(ORCID);
+        assertNotNull(response);
+        ActivitiesSummary originalSummary = (ActivitiesSummary) response.getEntity();
+        assertNotNull(originalSummary);
+        Utils.verifyLastModified(originalSummary.getLastModifiedDate());
+        assertNotNull(originalSummary.getDistinctions());
+        Utils.verifyLastModified(originalSummary.getDistinctions().getLastModifiedDate());
+        assertNotNull(originalSummary.getDistinctions().retrieveGroups());
+        assertNotNull(originalSummary.getDistinctions().retrieveGroups().iterator().next());
+        Utils.verifyLastModified(originalSummary.getDistinctions().retrieveGroups().iterator().next().getLastModifiedDate());
+        assertEquals(3, originalSummary.getDistinctions().retrieveGroups().size());
+
+        response = serviceDelegator.createDistinction(ORCID, (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-    }
+        Long putCode = Utils.getPutCode(response);
 
-    private Distinction createDistinction(Long putCode) {
-        return createDistinction(putCode, Visibility.PUBLIC, null, null);
-    }
+        response = serviceDelegator.viewActivities(ORCID);
+        assertNotNull(response);
+        ActivitiesSummary summaryWithNewElement = (ActivitiesSummary) response.getEntity();
+        assertNotNull(summaryWithNewElement);
+        Utils.verifyLastModified(summaryWithNewElement.getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getDistinctions());
+        Utils.verifyLastModified(summaryWithNewElement.getDistinctions().getLastModifiedDate());
+        assertNotNull(summaryWithNewElement.getDistinctions().retrieveGroups());
+        assertEquals(4, summaryWithNewElement.getDistinctions().retrieveGroups().size());
+        
+        boolean haveNew = false;
 
-    private Distinction createDistinction(Long putCode, Visibility visibility, String sourceOrcid, String sourceClientId) {
-        Distinction d = new Distinction();
-        d.setPutCode(putCode);
-        d.setVisibility(visibility);
-        if (sourceOrcid != null || sourceClientId != null) {
-            Source s = new Source();
-            if (sourceOrcid != null) s.setSourceOrcid(new SourceOrcid(sourceOrcid));
-            if (sourceClientId != null) s.setSourceClientId(new SourceClientId(sourceClientId));
-            d.setSource(s);
+        for (AffiliationGroup<DistinctionSummary> group : summaryWithNewElement.getDistinctions().retrieveGroups()) {
+            for (DistinctionSummary distinctionSummary : group.getActivities()) {
+                assertNotNull(distinctionSummary.getPutCode());
+                Utils.verifyLastModified(distinctionSummary.getLastModifiedDate());
+                if (distinctionSummary.getPutCode().equals(putCode)) {
+                    assertEquals("My department name", distinctionSummary.getDepartmentName());
+                    haveNew = true;
+                } else {
+                    boolean originalContainsDistinctionSummary = false;
+                    for (AffiliationGroup<DistinctionSummary> originalGroup : originalSummary.getDistinctions().retrieveGroups()) {
+                        for (DistinctionSummary s : originalGroup.getActivities()) {
+                            if (s.equals(distinctionSummary)) {
+                                originalContainsDistinctionSummary = true;
+                            }
+                        }
+                    }
+                    assertTrue(originalContainsDistinctionSummary);
+                }
+            }
         }
-        return d;
+        
+        assertTrue(haveNew);
+        
+        //Remove new element
+        serviceDelegator.deleteAffiliation(ORCID, putCode);
+    }
+    
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testAddDistinctionsDuplicateExternalIDs() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+
+        Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
+        distinction.setExternalIDs(externalIDs);
+
+        Response response = serviceDelegator.createDistinction(ORCID, distinction);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+
+        Long putCode = Utils.getPutCode(response);
+
+        try {
+            Distinction duplicate = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
+            duplicate.setExternalIDs(externalIDs);
+            serviceDelegator.createDistinction(ORCID, duplicate);
+        } finally {
+            serviceDelegator.deleteAffiliation(ORCID, putCode);
+        }
     }
 
-    private DistinctionSummary createDistinctionSummary(Long putCode) {
-        DistinctionSummary d = new DistinctionSummary();
-        d.setPutCode(putCode);
-        d.setVisibility(Visibility.PUBLIC);
-        return d;
+
+    @Test
+    public void testUpdateDistinction() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        assertEquals("PUBLIC Department", distinction.getDepartmentName());
+        assertEquals("PUBLIC", distinction.getRoleTitle());
+        Utils.verifyLastModified(distinction.getLastModifiedDate());
+
+        LastModifiedDate before = distinction.getLastModifiedDate();
+
+        distinction.setDepartmentName("Updated department name");
+        distinction.setRoleTitle("The updated role title");
+        
+        // disambiguated org is required in API v3
+        DisambiguatedOrganization disambiguatedOrg = new DisambiguatedOrganization();
+        disambiguatedOrg.setDisambiguatedOrganizationIdentifier("abc456");
+        disambiguatedOrg.setDisambiguationSource("WDB");
+        distinction.getOrganization().setDisambiguatedOrganization(disambiguatedOrg);
+
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.viewDistinction(ORCID, 27L);
+        assertNotNull(response);
+        distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        Utils.verifyLastModified(distinction.getLastModifiedDate());
+        assertTrue(distinction.getLastModifiedDate().after(before));
+        assertEquals("Updated department name", distinction.getDepartmentName());
+        assertEquals("The updated role title", distinction.getRoleTitle());
+
+        // Rollback changes
+        distinction.setDepartmentName("PUBLIC Department");
+        distinction.setRoleTitle("PUBLIC");
+
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     }
+
+    @Test(expected = WrongSourceException.class)
+    public void testUpdateDistinctionYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 30L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        distinction.setDepartmentName("Updated department name");
+        distinction.setRoleTitle("The updated role title");
+        serviceDelegator.updateDistinction(ORCID, 30L, distinction);
+        fail();
+    }
+
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateDistinctionChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        assertEquals(Visibility.PUBLIC, distinction.getVisibility());
+
+        distinction.setVisibility(Visibility.PRIVATE);
+
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
+        fail();
+    }
+
+    @Test
+    public void testUpdateDistinctionLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction(ORCID, 27L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        assertEquals(Visibility.PUBLIC, distinction.getVisibility());
+        
+        distinction.setVisibility(null);
+
+        response = serviceDelegator.updateDistinction(ORCID, 27L, distinction);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+        assertEquals(Visibility.PUBLIC, distinction.getVisibility());
+    }
+    
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testUpdateDistinctionDuplicateExternalIDs() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        ExternalID e1 = new ExternalID();
+        e1.setRelationship(Relationship.SELF);
+        e1.setType("erm");
+        e1.setUrl(new Url("https://orcid.org"));
+        e1.setValue("err");
+
+        ExternalID e2 = new ExternalID();
+        e2.setRelationship(Relationship.SELF);
+        e2.setType("err");
+        e2.setUrl(new Url("http://bbc.co.uk"));
+        e2.setValue("erm");
+
+        ExternalIDs externalIDs = new ExternalIDs();
+        externalIDs.getExternalIdentifier().add(e1);
+        externalIDs.getExternalIdentifier().add(e2);
+
+        Distinction distinction = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
+        distinction.setExternalIDs(externalIDs);
+
+        Response response = serviceDelegator.createDistinction(ORCID, distinction);
+        assertNotNull(response);
+        assertEquals(HttpStatus.SC_CREATED, response.getStatus());
+        
+        Long putCode1 = Utils.getPutCode(response);
+
+        Distinction another = (Distinction) Utils.getAffiliation(AffiliationType.DISTINCTION);
+        response = serviceDelegator.createDistinction(ORCID, another);
+        
+        Long putCode2 = Utils.getPutCode(response);
+        
+        response = serviceDelegator.viewDistinction(ORCID, putCode2);
+        another = (Distinction) response.getEntity();
+        another.setExternalIDs(externalIDs);
+        
+        try {
+            serviceDelegator.updateDistinction(ORCID, putCode2, another);
+        } finally {
+            serviceDelegator.deleteAffiliation(ORCID, putCode1);
+            serviceDelegator.deleteAffiliation(ORCID, putCode2);
+        }
+    }
+
+    @Test
+    public void testDeleteDistinction() {
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0002", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewDistinction("0000-0000-0000-0002", 1000L);
+        assertNotNull(response);
+        Distinction distinction = (Distinction) response.getEntity();
+        assertNotNull(distinction);
+
+        response = serviceDelegator.deleteAffiliation("0000-0000-0000-0002", 1000L);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+
+        try {
+        serviceDelegator.viewDistinction("0000-0000-0000-0002", 1000L);
+        fail();
+        }catch(NoResultException nre) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+
+    @Test(expected = WrongSourceException.class)
+    public void testDeleteDistinctionYouAreNotTheSourceOf() {
+        SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        serviceDelegator.deleteAffiliation(ORCID, 30L);
+        fail();
+    }
+
 }

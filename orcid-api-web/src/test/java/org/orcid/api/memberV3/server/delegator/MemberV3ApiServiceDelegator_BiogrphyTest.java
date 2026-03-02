@@ -3,27 +3,69 @@ package org.orcid.api.memberV3.server.delegator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
+import org.orcid.jaxb.model.groupid_v2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.v3.release.record.Address;
 import org.orcid.jaxb.model.v3.release.record.Biography;
+import org.orcid.jaxb.model.v3.release.record.Distinction;
+import org.orcid.jaxb.model.v3.release.record.Education;
+import org.orcid.jaxb.model.v3.release.record.Employment;
+import org.orcid.jaxb.model.v3.release.record.Funding;
+import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
+import org.orcid.jaxb.model.v3.release.record.Keyword;
+import org.orcid.jaxb.model.v3.release.record.Membership;
+import org.orcid.jaxb.model.v3.release.record.OtherName;
+import org.orcid.jaxb.model.v3.release.record.PeerReview;
+import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifier;
+import org.orcid.jaxb.model.v3.release.record.Qualification;
+import org.orcid.jaxb.model.v3.release.record.ResearchResource;
+import org.orcid.jaxb.model.v3.release.record.ResearcherUrl;
+import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.Work;
+import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.v3.Utils;
+import org.springframework.test.context.ContextConfiguration;
 
-public class MemberV3ApiServiceDelegator_BiogrphyTest extends MemberV3ApiServiceDelegatorMockTest {
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
+public class MemberV3ApiServiceDelegator_BiogrphyTest extends DBUnitTest {
+    protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
+            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     // Now on, for any new test, PLAESE USER THIS ORCID ID
     protected final String ORCID = "0000-0000-0000-0003";
+
+    @Resource(name = "memberV3ApiServiceDelegator")
+    protected MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> serviceDelegator;
+
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
+    }
 
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewBiographyWrongToken() {
@@ -34,7 +76,6 @@ public class MemberV3ApiServiceDelegator_BiogrphyTest extends MemberV3ApiService
     @Test
     public void testViewBiographyReadPublic() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.READ_PUBLIC);
-        when(biographyManagerReadOnly.getPublicBiography(eq(ORCID))).thenReturn(new Biography());
         Response r = serviceDelegator.viewBiography(ORCID);
         Biography element = (Biography) r.getEntity();
         assertNotNull(element);
@@ -45,7 +86,6 @@ public class MemberV3ApiServiceDelegator_BiogrphyTest extends MemberV3ApiService
     @Test
     public void testReadPublicScope_Biography() {
         SecurityContextTestUtils.setUpSecurityContext(ORCID, ScopePathType.READ_PUBLIC);
-        when(biographyManagerReadOnly.getPublicBiography(eq(ORCID))).thenReturn(new Biography());
         Response r = serviceDelegator.viewBiography(ORCID);
         assertNotNull(r);
         assertEquals(Biography.class.getName(), r.getEntity().getClass().getName());
@@ -53,7 +93,6 @@ public class MemberV3ApiServiceDelegator_BiogrphyTest extends MemberV3ApiService
         try {
             // Bio for 0000-0000-0000-0002 should be limited
             String otherOrcid = "0000-0000-0000-0002";
-            doThrow(new OrcidUnauthorizedException("unauthorized")).when(orcidSecurityManager).checkClientAccessAndScopes(eq(otherOrcid), eq(ScopePathType.READ_PUBLIC));
             r = serviceDelegator.viewBiography(otherOrcid);
             fail();
         } catch (OrcidUnauthorizedException e) {
