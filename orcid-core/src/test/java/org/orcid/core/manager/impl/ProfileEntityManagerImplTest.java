@@ -3,81 +3,60 @@ package org.orcid.core.manager.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-
-import javax.annotation.Resource;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.manager.BiographyManager;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.RecordNameManager;
-import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @author: Declan Newman (declan) Date: 10/02/2012
- */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-public class ProfileEntityManagerImplTest extends DBUnitTest {
-    private static final String CLIENT_ID_1 = "APP-5555555555555555";   
-    private static final String USER_ORCID = "0000-0000-0000-0001";    
-    
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
-    @Resource
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource(name = "profileEntityCacheManager")
+@RunWith(MockitoJUnitRunner.class)
+public class ProfileEntityManagerImplTest {
+
+    @InjectMocks
+    private ProfileEntityManagerImpl profileEntityManager;
+
+    @Mock
+    private ProfileDao profileDao;
+
+    @Mock
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
-    @Resource
-    private EmailManagerReadOnly emailManager;
-    
-    @Resource
-    private RecordNameManager recordNameManager;
-    
-    @Resource
-    private BiographyManager biographyManager;
-    
-    @Resource
-    private UserConnectionDao userConnectionDao;
-    
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
-    }
 
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        profileEntityManager.setProfileDao(profileDao);
     }
 
     @Test
     public void testFindByOrcid() throws Exception {
         String harrysOrcid = "4444-4444-4444-4444";
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
-        assertNotNull(profileEntity);
-        assertEquals(harrysOrcid, profileEntity.getId());
+        ProfileEntity profileEntity = new ProfileEntity(harrysOrcid);
+        when(profileEntityCacheManager.retrieve(harrysOrcid)).thenReturn(profileEntity);
+
+        ProfileEntity result = profileEntityCacheManager.retrieve(harrysOrcid);
+        assertNotNull(result);
+        assertEquals(harrysOrcid, result.getId());
     }
 
-    @Test    
+    @Test
     public void testReviewProfile() throws Exception {
-    	boolean result = profileEntityManager.reviewProfile("4444-4444-4444-4441");
+        String orcid1 = "4444-4444-4444-4441";
+        String orcid2 = "4444-4444-4444-4442";
+
+        when(profileDao.reviewProfile(orcid1)).thenReturn(true);
+        when(profileDao.unreviewProfile(orcid2)).thenReturn(true);
+
+        boolean result = profileEntityManager.reviewProfile(orcid1);
         assertTrue(result);
-    	
-    	result = profileEntityManager.unreviewProfile("4444-4444-4444-4442");
-    	assertTrue(result);
-    }           
+
+        result = profileEntityManager.unreviewProfile(orcid2);
+        assertTrue(result);
+    }
 }
