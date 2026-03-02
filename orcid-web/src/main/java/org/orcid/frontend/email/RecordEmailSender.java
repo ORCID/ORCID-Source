@@ -498,9 +498,8 @@ public class RecordEmailSender {
 		Map<String, Object> templateParams = new HashMap<String, Object>();
 		String subject = verifyEmailUtils.getSubject("email.subject.security.record_deprecated", userLocale);
         String deprecatedPrimaryEmail = "";
+        String mainPrimaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
 
-		String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(orcidToDeprecate);
-		templateParams.put("emailName", emailFriendlyName);
 		templateParams.put("orcid", userOrcid);
 		templateParams.put("deprecated_orcid", orcidToDeprecate);
 		if (emails != null && emails.getEmails() != null) {
@@ -524,6 +523,11 @@ public class RecordEmailSender {
 		String body = templateManager.processTemplate("email_security_deprecate_record.ftl", templateParams);
 		// Generate html from template
 		String html = templateManager.processTemplate("email_security_deprecate_record_html.ftl", templateParams);
+
+        // Send email to main primary email address
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, mainPrimaryEmail, subject, body, html);
+
+        // Send email to deprecated primary email address
         if (!deprecatedPrimaryEmail.isEmpty()) {
             mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, deprecatedPrimaryEmail, subject, body, html);
         } else {
