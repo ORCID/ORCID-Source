@@ -507,13 +507,6 @@ the software.
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- temporary patch repo until 2.0.6 is out -->
-            <dependency>
-                <groupId>org.springframework.security.oauth</groupId>
-                <artifactId>spring-security-oauth2</artifactId>
-                <version>2.5.2.RELEASE</version>
-                <scope>compile</scope>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>

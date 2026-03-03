@@ -25,7 +25,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.util.StringUtils;
 
 /**
@@ -33,7 +32,7 @@ import org.springframework.util.StringUtils;
  */
 @Entity
 @Table(name = "client_details")
-public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, Serializable {
+public class ClientDetailsEntity extends BaseEntity<String> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -194,7 +193,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The client id.
      */
-    @Override
     @Transient
     public String getClientId() {
         return clientId;
@@ -205,7 +203,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The resources of this client.
      */
-    @Override
     @Transient
     public Set<String> getResourceIds() {
         Set<String> rids = new HashSet<String>();
@@ -222,7 +219,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return Whether a secret is required to authenticate this client.
      */
-    @Override
     @Transient
     public boolean isSecretRequired() {
         return StringUtils.hasText(clientSecret);
@@ -234,7 +230,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The client secret.
      */
-    @Override
     @Transient
     public String getClientSecret() {
         return getDecryptedClientSecret();
@@ -310,7 +305,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return Whether this client is limited to a specific scope.
      */
-    @Override
     @Transient
     public boolean isScoped() {
         return this.clientScopes != null && !this.clientScopes.isEmpty();
@@ -322,7 +316,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The scope of this client.
      */
-    @Override
     @Transient
     public Set<String> getScope() {
         Set<String> sps = new HashSet<String>();
@@ -339,7 +332,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The grant types for which this client is authorized.
      */
-    @Override
     @Transient
     public Set<String> getAuthorizedGrantTypes() {
         Set<String> grants = new HashSet<String>();
@@ -357,7 +349,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The pre-defined redirect URI for this client.
      */
-    @Override
     @Transient
     public Set<String> getRegisteredRedirectUri() {
         Set<String> redirects = null;
@@ -378,7 +369,6 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return The authorities.
      */
-    @Override
     @Transient
     public Collection<GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> gas = new ArrayList<GrantedAuthority>();
@@ -394,31 +384,11 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
      * 
      * @return the access token validity period
      */
-    @Override
     @Transient
     public Integer getAccessTokenValiditySeconds() {
         return accessTokenValiditySeconds;
     }
 
-    @Override
-    @Transient
-    public Integer getRefreshTokenValiditySeconds() {
-        // Not currently required
-        return null;
-    }
-
-    @Override
-    @Transient
-    public Map<String, Object> getAdditionalInformation() {
-        // Not currently required
-        return null;
-    }
-
-    @Override
-    @Transient
-    public boolean isAutoApprove(String scope) {
-        return false;
-    }
 
     @Column(name = "authentication_provider_id")
     public String getAuthenticationProviderId() {

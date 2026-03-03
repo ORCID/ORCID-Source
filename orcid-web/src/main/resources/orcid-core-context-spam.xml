@@ -38,28 +38,8 @@
 	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
 	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
-	
-	<!-- Effectively a wrapper around the client details service, converting client to user details -->
-    <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-        <constructor-arg ref="clientDetailsManager"/>
-    </bean>
 
-    <bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
-
-    <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
-    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
-        <property name="orcidtokenStore" ref="orcidTokenStore" />        
-        <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
-        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
-        <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
-    </bean>
-	
 	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker" />
-	
-	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">		
-		<constructor-arg ref="orcidRefreshTokenChecker" />		
-		<constructor-arg ref="tokenServices" />
-	</bean>
 	
 	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
 		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
@@ -71,17 +51,7 @@
 	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService"/>
 	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
 	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
-	<bean id="orcidTokenEnhancer" class="org.springframework.security.oauth2.provider.token.TokenEnhancerChain">
-		<property name="tokenEnhancers">
-		<list>
-			<bean class="org.orcid.core.oauth.OrcidTokenEnhancer" />
-			<ref bean="openIDConnectTokenEnhancer" />
-		</list>
-		</property>
-	</bean>	
-	
-	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
-	
+
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>

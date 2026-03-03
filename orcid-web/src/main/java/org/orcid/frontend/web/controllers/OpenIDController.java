@@ -16,8 +16,6 @@ import org.orcid.jaxb.model.v3.release.record.Person;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,9 +38,6 @@ public class OpenIDController {
     
     @Resource(name = "personDetailsManagerReadOnlyV3")
     private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
-    
-    @Resource(name="orcidTokenStore")
-    private TokenStore tokenStore;
     
     @Resource OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
     
@@ -91,6 +86,8 @@ public class OpenIDController {
     //lookup token, check it's valid, check scope.
     //deal with incorrect bearer case in request (I'm looking at you spring security!)
     private OpenIDConnectUserInfo getInfoFromToken(String tokenValue) {
+        //TODO: Refactor this to get the information from the database
+        // This is unexpected and should be done with token introspection form the oauth server
         OAuth2AccessToken tok = tokenStore.readAccessToken(tokenValue);
         if (tok != null && !tok.isExpired()){
             boolean hasScope = false;
