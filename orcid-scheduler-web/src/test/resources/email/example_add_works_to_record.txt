@@ -1,7 +1,7 @@
 Your ORCID iD: 0000-0000-0000-0000
 Your ORCID record is https://testserver.orcid.org/0000-0000-0000-0000
 
-Dear John Watson
+Dear John Watson:
 
 We have noticed that you have not yet added any research outputs to your ORCID record. Adding these will help reduce your administrative burden when read and imported into other systems, ensure you are recognized for your research contributions, and disambiguate you from other researchers with the same name!
 Below are links to 2 ORCID-certified services that allow you to sign in to your ORCID account, and add your selected research outputs to your ORCID record. Connecting to these services also grants permission to automatically update your ORCID record over time as new research outputs become available.  * Web of Science: Add research outputs to your ORCID record, and connect your Web of Science researcher profile to automatically update your ORCID record over time. (https://orcid.org/oauth/authorize?client_id=APP-OKON44OLRIOZU944&response_type=code&scope=/read-limited%20/activities/update&redirect_uri=https://www.webofscience.com/wos/author/orcid-wizard)
