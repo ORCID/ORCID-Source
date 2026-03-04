@@ -2,7 +2,7 @@
 <@emailMacros.msg "email.addWorks.header.yourOrcidId" /> ${orcidId}
 <@emailMacros.msg "email.addWorks.header.yourOrcidRecordIs" /> ${baseUri}/${orcidId}
 
-<@emailMacros.msg "email.common.dear" /> ${emailName}
+<@emailMacros.msg "email.common.dear" /> ${emailName}:
 
 <@emailMacros.msg "email.addWorks.weHaveNoticed" />
 
