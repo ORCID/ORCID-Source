@@ -7,12 +7,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
-import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
-import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.v3.release.record.Person;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,26 +18,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import net.minidev.json.JSONObject;
 
 @Controller
 public class OpenIDController {
-
-    @Resource
-    private OpenIDConnectKeyService openIDConnectKeyService;
     
     @Resource(name = "personDetailsManagerReadOnlyV3")
     private PersonDetailsManagerReadOnly personDetailsManagerReadOnly;
     
-    @Resource OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
-    
+    @Resource
+    private AuthorizationServerUtil authorizationServerUtil;
+
     @Value("${org.orcid.core.baseUri}")
     private String path;
     
@@ -54,7 +44,8 @@ public class OpenIDController {
      */
     @RequestMapping(value = "/oauth/jwks", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody JSONObject getJWKS(HttpServletRequest request) {
-        return openIDConnectKeyService.getPublicJWK().toJSONObject();     
+        //TODO: This should be a FW proxy to the auth server, maybe from nginx
+        throw new UnsupportedOperationException("Should be requested from the auth server");
     }
     
     /** Manually checks bearer token in header, looks up user or throws 403.
@@ -88,21 +79,28 @@ public class OpenIDController {
     private OpenIDConnectUserInfo getInfoFromToken(String tokenValue) {
         //TODO: Refactor this to get the information from the database
         // This is unexpected and should be done with token introspection form the oauth server
-        OAuth2AccessToken tok = tokenStore.readAccessToken(tokenValue);
-        if (tok != null && !tok.isExpired()){
-            boolean hasScope = false;
-            Set<ScopePathType> requestedScopes = ScopePathType.getScopesFromStrings(tok.getScope());
-            for (ScopePathType scope : requestedScopes) {
-                if (scope.hasScope(ScopePathType.AUTHENTICATE)) {
-                    hasScope = true;
+        JSONObject tokenInfo = authorizationServerUtil.tokenIntrospection(tokenValue);
+        if(tokenInfo == null) {
+            return null;
+        }
+
+        boolean isTokenActive = tokenInfo.getBoolean("active");
+
+        if(isTokenActive) {
+            // If the token is user revoked it might be used for DELETE requests
+            Set<String> scopes = OAuth2Utils.parseParameterList(tokenInfo.getString("scope"));
+            OpenIDConnectUserInfo info = scopes.stream().forEach(s ->
+            {
+                ScopePathType scope = ScopePathType.fromValue(s);
+                if(scope.hasScope(ScopePathType.AUTHENTICATE)) {
+                    OpenIDConnectUserInfo t = new OpenIDConnectUserInfo();
+                    //TODO set data to the token
+                    //TODO the name doesn't come in the token introspection data, so, we should get it from the names cache
+                    return t;
                 }
-            }
-            if (hasScope){
-                String orcid = tok.getAdditionalInformation().get("orcid").toString();
-                Person person = personDetailsManagerReadOnly.getPublicPersonDetails(orcid);
-                return new OpenIDConnectUserInfo(orcid,person,path);
-            }
-        }  
+            });
+            return info;
+        }
         return null;
     }
 
@@ -115,20 +113,8 @@ public class OpenIDController {
      */
     @RequestMapping(value = "/.well-known/openid-configuration", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody String getOpenIDDiscovery(HttpServletRequest request) throws JsonProcessingException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(openIDConnectDiscoveryService.getConfig());
-        return json;     
+        //TODO: This should be a FW proxy to the auth server, maybe from nginx
+        throw new UnsupportedOperationException("Should be requested from the auth server");
     }
-    
 
-    @JsonInclude(Include.NON_NULL) 
-    public static class OpenIDConnectUserInfoAccessDenied extends OpenIDConnectUserInfo{
-        @JsonProperty("error")
-        String error = "access_denied";
-        @JsonProperty("error-description")
-        String errorDescription="access_token is invalid";
-        OpenIDConnectUserInfoAccessDenied(){
-            
-        }
-    }
 }

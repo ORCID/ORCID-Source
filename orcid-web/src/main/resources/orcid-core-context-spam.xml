@@ -25,10 +25,6 @@
 	
     <context:mbean-server />
 
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator">
-		<constructor-arg ref="profileEntityCacheManager" />
-	</bean>
-
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
@@ -40,17 +36,6 @@
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
 
 	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker" />
-	
-	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
-		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
-		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
-		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
-	</bean>
-	
-	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService.OpenIDConnectDiscoveryServiceConfig"/>
-	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService"/>
-	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
-	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
@@ -759,8 +744,6 @@
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
-
-
 	
 	<bean id="v2_1VersionConverterChain" class="org.orcid.core.version.impl.V2_1VersionConverterChainImpl">
 	    <property name="converters">
@@ -769,8 +752,7 @@
 	        </list>
 	    </property>
 	</bean>
-	
-	
+
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
 
     <!-- HTTP client connection beans -->

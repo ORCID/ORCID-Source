@@ -50,17 +50,6 @@
 		<constructor-arg ref="expiringLinkServiceConfig" />
 	</bean>
 
-	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService.OpenIDConnectDiscoveryServiceConfig"/>
-	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService"/>
-	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
-	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
-
-    <bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
-        <property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
-        <property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
-        <property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
-    </bean>
-
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>
@@ -393,7 +382,7 @@
 		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
 	
-	   <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
+    <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
         <property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
     </bean>
     
@@ -694,7 +683,6 @@
     </bean>
     
     <bean id="sourceManagerV3" class="org.orcid.core.manager.v3.impl.SourceManagerImpl" />
-    
 
 	<!-- Other Managers -->
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
@@ -782,8 +770,6 @@
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
 
-
-	
 	<bean id="v2_1VersionConverterChain" class="org.orcid.core.version.impl.V2_1VersionConverterChainImpl">
 	    <property name="converters">
             <list>
@@ -791,8 +777,7 @@
 	        </list>
 	    </property>
 	</bean>
-	
-	
+
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
 
     <!-- HTTP client connection beans -->
@@ -1227,8 +1212,7 @@
 		<constructor-arg index="3" value="${org.orcid.core.utils.cache.redis.expiration_in_secs:600}" />
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
 	</bean>
-	
-	
+
 	<!-- Redis cache -->
 	<bean id="redisClientPapi" class="org.orcid.core.utils.cache.redis.RedisClient">
 		<constructor-arg index="0" value="${org.orcid.core.utils.cache.papi.redis.host}"/>
