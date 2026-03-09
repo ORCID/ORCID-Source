@@ -1,3 +1,71 @@
+## v2.137.16 - 2026-03-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.15...v2.137.16)
+
+## v2.137.15 - 2026-03-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.14...v2.137.15)
+
+## v2.137.14 - 2026-03-02
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.13...v2.137.14)
+
+## v2.137.13 - 2026-02-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.12...v2.137.13)
+
+## v2.137.12 - 2026-02-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.11...v2.137.12)
+
+## v2.137.11 - 2026-02-26
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.10...v2.137.11)
+
+## v2.137.10 - 2026-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.9...v2.137.10)
+
+## v2.137.9 - 2026-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.8...v2.137.9)
+
+## v2.137.8 - 2026-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.7...v2.137.8)
+
+## v2.137.7 - 2026-02-25
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.6...v2.137.7)
+
+## v2.137.6 - 2026-02-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.5...v2.137.6)
+
+## v2.137.5 - 2026-02-24
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.4...v2.137.5)
+
+## v2.137.4 - 2026-02-23
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.3...v2.137.4)
+
+## v2.137.3 - 2026-02-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.2...v2.137.3)
+
+## v2.137.2 - 2026-02-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.1...v2.137.2)
+
+## v2.137.1 - 2026-02-20
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.0...v2.137.1)
+
+## v2.137.0 - 2026-02-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.136.10...v2.137.0)
+
 ## v2.136.10 - 2026-02-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.136.9...v2.136.10)

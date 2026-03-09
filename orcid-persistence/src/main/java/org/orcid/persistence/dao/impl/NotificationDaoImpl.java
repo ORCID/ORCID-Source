@@ -15,6 +15,7 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -25,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long> implements NotificationDao {
 
     private static final String NOTIFICATION_TYPE_PERMISSION = "PERMISSION";
+    
+    @Value("${org.orcid.postgres.query.timeout:30000}")
+    private Integer queryTimeout;
     
     @Autowired
     @Qualifier("notification_queries")
@@ -58,6 +62,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     public List<NotificationEntity> findUnsentByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where sentDate is null and orcid = :orcid", NotificationEntity.class);
         query.setParameter("orcid", orcid);
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         return query.getResultList();
     }
 
@@ -201,7 +206,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
-        query.setParameter("never", Float.MAX_VALUE);               
+        query.setParameter("never", Float.MAX_VALUE);  
+        query.setHint("javax.persistence.query.timeout", queryTimeout);
         return query.getResultList();
     }
                
@@ -230,25 +236,35 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public int archiveNotificationsCreatedBefore(Date createdBefore, int batchSize) {
-        Query selectQuery = entityManager.createQuery("select id from NotificationEntity where archivedDate is null and dateCreated < :createdBefore");
-        selectQuery.setParameter("createdBefore", createdBefore);
-        selectQuery.setMaxResults(batchSize);
-        @SuppressWarnings("unchecked")
-        List<Long> ids = selectQuery.getResultList();
-        if (ids.isEmpty()) {
-            return 0;
-        }
-        Query updateQuery = entityManager.createQuery("update NotificationEntity set archivedDate = now() where id in :ids");
-        updateQuery.setParameter("ids", ids);
-        return updateQuery.executeUpdate();
+        Query archiveQuery = entityManager.createNativeQuery("update notification set archived_date=now() where id in (select id from notification where archived_date is null and date_created < :createdBefore limit :batchSize)");
+        archiveQuery.setParameter("createdBefore", createdBefore);
+        archiveQuery.setParameter("batchSize", batchSize);
+        return archiveQuery.executeUpdate();
     }
 
     @Override
-    public List<NotificationEntity> findNotificationsCreatedBefore(Date createdBefore, int batchSize) {
-        TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where dateCreated < :createdBefore", NotificationEntity.class);
+    @Transactional
+    public int deleteNotificationsCreatedBefore(Date createdBefore, int batchSize) {
+        TypedQuery<Long> query = entityManager.createQuery("select id from NotificationEntity where dateCreated < :createdBefore", Long.class);
         query.setParameter("createdBefore", createdBefore);
         query.setMaxResults(batchSize);
-        return query.getResultList();
+        List<Long> ids = query.getResultList();
+        if(ids != null && !ids.isEmpty()) {
+            // Remove notification items
+            Query deleteNotificationItems = entityManager.createNativeQuery("delete from notification_item where notification_id in (:ids)");
+            deleteNotificationItems.setParameter("ids", ids);
+            deleteNotificationItems.executeUpdate();
+
+            // Remove notification works
+            Query deleteNotificationWorks = entityManager.createNativeQuery("delete from notification_work where notification_id in (:ids)");
+            deleteNotificationWorks.setParameter("ids", ids);
+            deleteNotificationWorks.executeUpdate();
+
+            Query deleteNotification = entityManager.createNativeQuery("delete from notification where id in (:ids)");
+            deleteNotification.setParameter("ids", ids);
+            return deleteNotification.executeUpdate();
+        }
+        return 0;
     }
 
     @SuppressWarnings("unchecked")

@@ -18,14 +18,10 @@ public interface NotificationManager {
     
     Notification sendAmendEmail(String userOrcid, AmendedSection amendedSection, Collection<Item> activities);
 
-    public List<Notification> findUnsentByOrcid(String orcid);
-
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
 
     public List<Notification> findNotificationAlertsByOrcid(String orcid);
-    
-    public List<Notification> findNotificationsToSend(String orcid, Float emailFrequencyDays, Date recordActiveDate);
-    
+
     /**
      * Filters the list of notification alerts by archiving any that have
      * already been actioned
@@ -38,15 +34,11 @@ public interface NotificationManager {
      */
     public List<Notification> filterActionedNotificationAlerts(Collection<Notification> notifications, String userOrcid);
 
-    public Notification findById(Long id);
-
-    public Notification findByOrcidAndId(String orcid, Long id);    
+    public Notification findByOrcidAndId(String orcid, Long id);
 
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
     Notification flagAsArchived(String orcid, Long id, boolean validateForApi) throws OrcidNotificationAlreadyReadException;
-
-    public Notification setActionedAndReadDate(String orcid, Long id);
 
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
 
@@ -55,16 +47,8 @@ public interface NotificationManager {
     NotificationPermissions findPermissionsByOrcidAndClient(String orcid, String client, int firstResult, int maxResults);
 
     int getUnreadCount(String orcid);
-    
-    void flagAsRead(String orcid, Long id);
 
     ActionableNotificationEntity findActionableNotificationEntity(Long id); //pass trough to (ActionableNotificationEntity) find(id) and cast.
-    
-    void processOldNotificationsToAutoArchive();
-
-    void processOldNotificationsToAutoDelete();
-
-    void removeNotification(Long notificationId);
 
     Notification createPermissionNotification(String orcid, NotificationPermission notification);
     
