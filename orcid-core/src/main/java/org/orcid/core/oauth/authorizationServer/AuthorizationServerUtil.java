@@ -126,6 +126,14 @@ public class AuthorizationServerUtil {
         return this.doPost(parameters);
     }
 
+    public Response forwardTokenRevocationRequest(String clientId, String clientSecret, String token) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server to revoke a token");
+        }
+
+        return null;
+    }
+
     public Response forwardOtherTokenExchangeRequest(String clientId, String clientSecret, String grantType, String code, String scope) throws IOException, URISyntaxException, InterruptedException {
         if(logger.isTraceEnabled()) {
             logger.trace("Using authorization server for " + grantType);

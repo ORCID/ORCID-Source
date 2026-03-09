@@ -19,6 +19,9 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 public class RevokeControllerTest {
 
     @Mock
@@ -83,7 +86,7 @@ public class RevokeControllerTest {
     }
 
     @Test
-    public void notOwnerTest() {
+    public void notOwnerTest() throws IOException, URISyntaxException, InterruptedException {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("other-client-id");
         
         revokeController.revoke(request);
@@ -94,7 +97,7 @@ public class RevokeControllerTest {
     }
 
     @Test
-    public void tokenAlreadyDisabledOrNonExistingTest() {
+    public void tokenAlreadyDisabledOrNonExistingTest() throws IOException, URISyntaxException, InterruptedException {
         when(request.getParameter("token")).thenReturn("disabled-or-unexisting");
         
         revokeController.revoke(request);
@@ -105,7 +108,7 @@ public class RevokeControllerTest {
     }
 
     @Test
-    public void disableByTokenTest() {
+    public void disableByTokenTest() throws IOException, URISyntaxException, InterruptedException {
         when(request.getParameter("token")).thenReturn("token-value");
         
         revokeController.revoke(request);
@@ -116,7 +119,7 @@ public class RevokeControllerTest {
     }
 
     @Test
-    public void disableByRefreshTokenTest() {
+    public void disableByRefreshTokenTest() throws IOException, URISyntaxException, InterruptedException {
         when(request.getParameter("token")).thenReturn("refresh-token-value");
         
         revokeController.revoke(request);
@@ -127,7 +130,7 @@ public class RevokeControllerTest {
     }
     
     @Test
-    public void refreshTokenAlreadyDisabledTest() {
+    public void refreshTokenAlreadyDisabledTest() throws IOException, URISyntaxException, InterruptedException {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setClientDetailsId("client-id");
         token.setTokenValue("token-value");
