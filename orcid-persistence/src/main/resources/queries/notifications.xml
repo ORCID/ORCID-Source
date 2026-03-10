@@ -2,37 +2,49 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <comment>Select unsent notifications</comment>
-    <entry key="notifications.unsent">
-SELECT n.* 
-FROM notification n, 
-(SELECT MAX(sub.sent_date) AS max_sent_date FROM (select sent_date from notification WHERE orcid=:orcid AND notification_type = 'AMENDED' order by sent_date) as sub) amend, (SELECT (send_change_notifications * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) amend_freq, 
-(SELECT MAX(sub.sent_date) AS max_sent_date FROM (select sent_date from notification WHERE orcid=:orcid AND notification_type in ('ADMINISTRATIVE', 'CUSTOM') order by sent_date) as sub) administrative, (SELECT (send_administrative_change_notifications * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) administrative_freq, 
-(SELECT MAX(sub.sent_date) AS max_sent_date FROM (select sent_date from notification WHERE orcid=:orcid AND notification_type in ('PERMISSION', 'INSTITUTIONAL_CONNECTION') order by sent_date) as sub) permission, (SELECT (send_member_update_requests * 24 * 60 * 60) as freq FROM email_frequency WHERE orcid =:orcid) permission_freq
-WHERE n.orcid = :orcid 
-AND (
-	(n.notification_type in ('ADMINISTRATIVE', 'CUSTOM')
-		AND (
-			(n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(administrative.max_sent_date) + (administrative_freq.freq)))
-			OR
-			(administrative.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (administrative_freq.freq)))
-		)		
+	<entry key="notifications.unsent"><![CDATA[
+	WITH user_freq AS (
+	    SELECT 
+	        (send_change_notifications * 86400) AS amend_freq,
+	        (send_administrative_change_notifications * 86400) AS admin_freq,
+	        (send_member_update_requests * 86400) AS perm_freq
+	    FROM email_frequency 
+	    WHERE orcid = :orcid
+	),
+	user_sent_stats AS (
+	    SELECT 
+	        MAX(sent_date) FILTER (WHERE notification_type = 'AMENDED') AS amend_max,
+	        MAX(sent_date) FILTER (WHERE notification_type IN ('ADMINISTRATIVE', 'CUSTOM')) AS admin_max,
+	        MAX(sent_date) FILTER (WHERE notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION')) AS perm_max
+	    FROM notification 
+	    WHERE orcid = :orcid
 	)
-	OR
-	(n.notification_type='AMENDED' 
-		AND ( 
-			(n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(amend.max_sent_date) + (amend_freq.freq)))
-			OR
-			(amend.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (amend_freq.freq)))
-		)
-	)
-	OR
-	(n.notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION') 
-		AND (
-			(n.sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(permission.max_sent_date) + (permission_freq.freq)))
-			OR
-			(permission.max_sent_date IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + (permission_freq.freq)))
-		) 		
-	)	
-);    
-    </entry>
+	SELECT n.* FROM notification n
+	CROSS JOIN user_freq f
+	CROSS JOIN user_sent_stats s
+	WHERE n.orcid = :orcid 
+	  AND n.sent_date IS NULL 
+	  AND (
+	    (n.notification_type IN ('ADMINISTRATIVE', 'CUSTOM')
+	        AND (
+	            unix_timestamp(:effective_date) > (unix_timestamp(s.admin_max) + f.admin_freq)
+	            OR (s.admin_max IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + f.admin_freq))
+	        )       
+	    )
+	    OR
+	    (n.notification_type = 'AMENDED' 
+	        AND ( 
+	            unix_timestamp(:effective_date) > (unix_timestamp(s.amend_max) + f.amend_freq)
+	            OR (s.amend_max IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + f.amend_freq))
+	        )
+	    )
+	    OR
+	    (n.notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION') 
+	        AND (
+	            unix_timestamp(:effective_date) > (unix_timestamp(s.perm_max) + f.perm_freq)
+	            OR (s.perm_max IS NULL AND unix_timestamp(:effective_date) > (unix_timestamp(:record_active_date) + f.perm_freq))
+	        )       
+	    )   
+	  );
+	    ]]></entry>
 </properties>

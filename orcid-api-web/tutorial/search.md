@@ -434,7 +434,7 @@ Description: Search for records that have a personal identifier "ResearcherID:A-
 
 Paging: Default
 
-URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=external-id-type-and-value:ResearcherID\:%22A-1111-2011%22```
+URL ```https://pub.sandbox.orcid.org/v3.0/search/?q=external-id-type-and-value:ResearcherID=%22A-1111-2011%22```
 
 ### Example 18
 
