@@ -205,13 +205,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
      */
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
-        long start = System.currentTimeMillis();
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        long finish = System.currentTimeMillis();
-        LOGGER.debug("1A. Time taken reading from DB " + (finish - start));
-
         List<WorkSummary> workSummaryResult = Arrays.asList();
-        start = System.currentTimeMillis();
         // Lets implement a parallel stream for when there are more than 10 works to be processed
         if(works.size() < minWorksToParallelize) {
             workSummaryResult = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
@@ -226,8 +221,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 LOGGER.error("Error while generating the list of work summaries in parallel", e);
             }
         }
-        finish = System.currentTimeMillis();
-        LOGGER.debug("1B. Time taken converting to WorkSummary list " + (finish - start));
         return workSummaryResult;
     }
 
