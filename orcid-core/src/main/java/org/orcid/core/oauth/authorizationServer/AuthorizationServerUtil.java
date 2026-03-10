@@ -31,6 +31,8 @@ public class AuthorizationServerUtil {
 
     private final String authorizationServerIntrospectionEndpoint;
 
+    private final String authorizationServerRevocationEndpoint;
+
     @Resource
     private HttpRequestUtils httpRequestUtils;
 
@@ -42,6 +44,7 @@ public class AuthorizationServerUtil {
     public AuthorizationServerUtil(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl) {
         this.authorizationServerTokenExchangeEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth/token" : authorizationServerUrl + "/oauth/token";
         this.authorizationServerIntrospectionEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/introspect" : authorizationServerUrl + "/oauth2/introspect";
+        this.authorizationServerRevocationEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/revoke" : authorizationServerUrl + "/oauth2/revoke";
     }
 
     public Response forwardAuthorizationCodeExchangeRequest(String clientId, String clientSecret, String redirectUri, String code) throws IOException, URISyntaxException, InterruptedException {
@@ -131,7 +134,13 @@ public class AuthorizationServerUtil {
             logger.trace("Using authorization server to revoke a token");
         }
 
-        return null;
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.TOKEN, token, parameters);
+
+        // Post and respond
+        return this.doPost(this.authorizationServerRevocationEndpoint, parameters);
     }
 
     public Response forwardOtherTokenExchangeRequest(String clientId, String clientSecret, String grantType, String code, String scope) throws IOException, URISyntaxException, InterruptedException {
