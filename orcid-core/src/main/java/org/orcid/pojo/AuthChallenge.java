@@ -16,6 +16,7 @@ public class AuthChallenge implements ErrorsInterface {
     private boolean invalidTwoFactorCode;
     private boolean invalidTwoFactorRecoveryCode;
     private boolean invalidPassword;
+    private boolean success;
 
     public String getPassword() {
         return password;
@@ -71,6 +72,14 @@ public class AuthChallenge implements ErrorsInterface {
 
     public void setInvalidPassword(boolean invalidPassword) {
         this.invalidPassword = invalidPassword;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     @Override

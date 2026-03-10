@@ -8,8 +8,6 @@ public class ChangePassword extends AuthChallenge {
 
     private String oldPassword;
 
-    private boolean success = false;
-
     private boolean passwordContainsEmail = false;
 
     public String getRetypedPassword() {
@@ -26,14 +24,6 @@ public class ChangePassword extends AuthChallenge {
 
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
     }
 
     public boolean isPasswordContainsEmail() {
