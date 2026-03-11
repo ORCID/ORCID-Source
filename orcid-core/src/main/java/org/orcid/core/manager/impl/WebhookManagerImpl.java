@@ -114,6 +114,7 @@ public class WebhookManagerImpl implements WebhookManager {
                 latch.await();
             } catch (InterruptedException e) {
                 LOGGER.warn("Received an interrupt exception whilst waiting for the webhook processing complete", e);
+                Thread.currentThread().interrupt();
             }
 
             if (iterations >= maxIterations) {
@@ -171,8 +172,10 @@ public class WebhookManagerImpl implements WebhookManager {
                     incrementFailedCount();
                 }
             });
+        } finally {
+            //The latch will always decrement, preventing a frozen thread.
+            latch.countDown();
         }
-        latch.countDown();
     }
 
     private void updateWebhookOnDatabase(Integer statusCode, String uri, String orcid, String clientId) {
