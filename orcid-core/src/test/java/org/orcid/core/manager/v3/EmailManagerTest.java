@@ -562,6 +562,7 @@ public class EmailManagerTest extends BaseTest {
         EmailEntity email2 = getEmailEntity("remove2@example.com");
         EmailEntity email3 = getEmailEntity("remaining1@example.com");
         EmailEntity email4 = getEmailEntity("remaining2@example.com");
+        email3.setPrimary(Boolean.TRUE);
 
         List<String> emailsToRemove = Arrays.asList("remove1@example.com", "remove2@example.com");
         List<EmailEntity> currentEmailsList = Arrays.asList(email1, email2, email3, email4);
@@ -571,16 +572,49 @@ public class EmailManagerTest extends BaseTest {
         Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong()))
                 .thenReturn(currentEmailsList)
                 .thenReturn(remainingEmailsList);
-        Mockito.when(mockEmailDao.isPrimaryEmail(Mockito.eq("orcid"), Mockito.eq("email@email.com"))).thenReturn(false);
 
-        List<String> result = emailManager.removeEmails("orcid", emailsToRemove);
+        List<Email> result = emailManager.removeEmails("orcid", emailsToRemove);
 
         assertEquals(2, result.size());
-        assertTrue(result.contains("remaining1@example.com"));
-        assertTrue(result.contains("remaining2@example.com"));
+        assertEquals("remaining1@example.com", result.get(0).getEmail());
+        assertEquals("remaining2@example.com", result.get(1).getEmail());
 
-        Mockito.verify(mockEmailDao, Mockito.times(2)).removeEmail(Mockito.anyString(), Mockito.anyString());
-        Mockito.verify(mockEmailDao, Mockito.times(2)).findByOrcid(Mockito.anyString(), Mockito.anyLong());
+        Mockito.verify(mockEmailDao, Mockito.times(1)).removeEmail("orcid", "remove1@example.com");
+        Mockito.verify(mockEmailDao, Mockito.times(1)).removeEmail("orcid", "remove2@example.com");
+        Mockito.verify(mockEmailDao, Mockito.times(2)).findByOrcid(Mockito.eq("orcid"), Mockito.anyLong());
+        Mockito.verify(mockEmailDao, Mockito.never()).updatePrimary(Mockito.anyString(), Mockito.anyString());
+
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+    }
+
+    @Test
+    public void testRemoveEmails_primaryEmailChange() throws IllegalAccessException {
+        OrcidSecurityManager mockOrcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        ReflectionTestUtils.setField(emailManager, "orcidSecurityManager", mockOrcidSecurityManager);
+
+        EmailEntity oldPrimary = getEmailEntity("oldPrimary@example.com");
+        oldPrimary.setPrimary(Boolean.TRUE);
+        EmailEntity newPrimary = getEmailEntity("newPrimary@example.com");
+
+        List<String> emailsToRemove = List.of("oldPrimary@example.com");
+        List<EmailEntity> currentEmailsList = List.of(oldPrimary, newPrimary);
+        List<EmailEntity> remainingEmailsList = List.of(newPrimary);
+
+        Mockito.when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong()))
+                .thenReturn(currentEmailsList)
+                .thenReturn(remainingEmailsList);
+
+        List<Email> result = emailManager.removeEmails("orcid", emailsToRemove);
+
+        assertEquals(1, result.size());
+        assertEquals("newPrimary@example.com", result.get(0).getEmail());
+        assertEquals(Boolean.TRUE, newPrimary.getPrimary());
+
+        Mockito.verify(mockEmailDao, Mockito.times(1)).removeEmail("orcid", "oldPrimary@example.com");
+        Mockito.verify(mockEmailDao, Mockito.times(1)).updatePrimary("orcid", "newPrimary@example.com");
+        Mockito.verify(mockEmailDao, Mockito.times(2)).findByOrcid(Mockito.eq("orcid"), Mockito.anyLong());
 
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
