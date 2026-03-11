@@ -66,6 +66,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.pojo.DigestEmail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.alerting.SlackManager;
 import org.orcid.utils.email.MailGunManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,6 +169,9 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     
     @Value("${org.orcid.core.email.addWorks.thirdAttempt:90}")
     private int addWorksThirdAttemptEmail;
+    
+    @Resource
+    private SlackManager slackManager;
 
     public EmailMessageSenderImpl(@Value("${org.notifications.service_announcements.maxThreads:8}") Integer maxThreads,
             @Value("${org.notifications.service_announcements.maxRetry:3}") Integer maxRetry) {
@@ -298,9 +302,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     @Override
     public void sendEmailMessages() {
         List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
-        LOGGER.info("Searching for records with unsent notifications");
-        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
-        LOGGER.info("Records with unsent notifications: " + orcidsWithUnsentNotifications.size());
+        try {
+	        LOGGER.info("Searching for records with unsent notifications");
+	        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+	        LOGGER.info("Records with unsent notifications: " + orcidsWithUnsentNotifications.size());
+        } catch (Exception e) {
+			LOGGER.error("Exception fetching records with unsent notifications", e);
+            String message = String.format("Problem while searching for records with unsent notifications");
+            slackManager.sendSystemAlert(message);
+		}
 
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];
@@ -311,11 +321,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
 
-                EmailEntity primaryEmail = null;
-
+                EmailEntity primaryEmail = null;  
                 try {
-                    primaryEmail = emailDao.findPrimaryEmail(orcid);
-                    if (primaryEmail != null && !notifications.isEmpty()) {
+                	primaryEmail = emailDao.findPrimaryEmail(orcid);
+	                if(primaryEmail != null && !notifications.isEmpty()) {
                         LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
                         EmailMessage digestMessage = createDigest(orcid, notifications);
                         digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
