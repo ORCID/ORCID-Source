@@ -253,11 +253,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     @Override
     public Response viewWorks(String orcid) {
         checkProfileStatus(orcid, true);
-        long begintime = System.currentTimeMillis();
-        long start = System.currentTimeMillis();
         List<WorkSummary> worksList = workManagerReadOnly.getWorksSummaryList(orcid);
-        long finish = System.currentTimeMillis();
-        LOGGER.debug("1. Time taken reading summaries " + (finish - start));
         // Lets copy the list so we don't modify the cached collection
         List<WorkSummary> filteredList = null;
         if (worksList != null) {
@@ -265,12 +261,8 @@ public class MemberV3ApiServiceDelegatorImpl implements
         }
         worksList = filteredList;
 
-        start = System.currentTimeMillis();
         orcidSecurityManager.checkAndFilter(orcid, worksList, ScopePathType.ORCID_WORKS_READ_LIMITED);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("2. Time taken filtering summaries " + (finish - start));
         // Should we filter the version-of identifiers before grouping?
-        start = System.currentTimeMillis();
         if(filterVersionOfIdentifiers) {
             for(WorkSummary w : worksList) {
                 if(w.getExternalIdentifiers() != null && !w.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
@@ -284,24 +276,11 @@ public class MemberV3ApiServiceDelegatorImpl implements
                 }
             }
         }
-        finish = System.currentTimeMillis();
-        LOGGER.debug("3. Time taken removing VERSION_OF identifiers " + (finish - start));
-
-        start = System.currentTimeMillis();
         Works works = workManager.groupWorks(worksList, false);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("4. Time taken grouping works " + (finish - start));
-        start = System.currentTimeMillis();
         Api3_0LastModifiedDatesHelper.calculateLastModified(works);
         ActivityUtils.cleanEmptyFields(works);
         ActivityUtils.setPathToWorks(works, orcid);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("5. Time taken to set metadata " + (finish - start));
-        start = System.currentTimeMillis();
         sourceUtils.setSourceName(works);
-        finish = System.currentTimeMillis();
-        LOGGER.debug("6. Time taken setting source names " + (finish - start));
-        LOGGER.debug("7. Total Time taken processing the summaries " + (finish - begintime));
         return Response.ok(works).build();
     }
 

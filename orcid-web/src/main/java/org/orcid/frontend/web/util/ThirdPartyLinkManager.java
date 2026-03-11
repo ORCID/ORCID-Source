@@ -48,9 +48,6 @@ public class ThirdPartyLinkManager implements InitializingBean {
     @Resource
     private RedisClient redisClient;
 
-    @Value("${org.orcid.core.utils.cache.redis.works-search-and-link-wizard.enabled:false}")
-    private boolean worksSearchAndLinkWizardCacheEnabled;
-
     @Value("${org.orcid.core.utils.cache.redis.works-search-and-link-wizard.ttl:3600}")
     private int worksSearchAndLinkWizardCacheTtl;
 
@@ -69,24 +66,18 @@ public class ThirdPartyLinkManager implements InitializingBean {
     }
 
     /**
-     * Initializes the works search-and-link wizard cache in Redis when cache is enabled.
+     * Initializes the works search-and-link wizard cache in Redis.
      * Called on Spring startup so the cache is warm before Tomcat accepts requests.
      */
     public void initCache() {
-        if (!worksSearchAndLinkWizardCacheEnabled) {
-            return;
-        }
         getWorksSearchAndLinkWizardBaseList();
     }
 
     /**
-     * Returns the works search-and-link wizard base list: from Redis when cache is enabled and valid,
-     * otherwise builds and (when cache enabled) populates Redis.
+     * Returns the works search-and-link wizard base list: from Redis when valid,
+     * otherwise builds and populates Redis.
      */
     private List<SearchAndLinkWizardFormSummary> getWorksSearchAndLinkWizardBaseList() {
-        if (!worksSearchAndLinkWizardCacheEnabled) {
-            return generateSearchAndLinkWizardFormBase(RedirectUriType.IMPORT_WORKS_WIZARD);
-        }
         String cached = redisClient.get(SEARCH_AND_LINK_WIZARD_CACHE_KEY);
         if (StringUtils.isNotBlank(cached)) {
             try {
