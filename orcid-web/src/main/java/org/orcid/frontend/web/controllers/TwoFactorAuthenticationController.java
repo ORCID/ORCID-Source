@@ -5,9 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.BackupCodeManager;
+import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TwoFactorAuthenticationManager;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,9 @@ public class TwoFactorAuthenticationController extends BaseController {
     @Resource 
     private RecordEmailSender recordEmailSender;
 
+    @Resource
+    private EncryptionManager encryptionManager;
+
     @RequestMapping("/status.json")
     public @ResponseBody TwoFactorAuthStatus get2FAStatus() {
         TwoFactorAuthStatus status = new TwoFactorAuthStatus();
@@ -60,11 +65,22 @@ public class TwoFactorAuthenticationController extends BaseController {
     }
 
     @RequestMapping(value = "/disable.json", method = RequestMethod.POST)
-    public @ResponseBody TwoFactorAuthStatus disable2FA() {
+    public @ResponseBody TwoFactorAuthStatus disable2FA(HttpServletRequest request, @RequestBody TwoFactorAuthStatus form) {
         String orcid = getCurrentUserOrcid();
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+
+        if (form.getPassword() == null || !encryptionManager.hashMatches(form.getPassword(), profile.getEncryptedPassword())) {
+            form.setInvalidPassword(true);
+            return form;
+        }
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), form)) {
+            return form;
+        }
+
         twoFactorAuthenticationManager.disable2FA(orcid);
         recordEmailSender.send2FADisabledEmail(orcid);
-        return get2FAStatus();
+        form.setSuccess(true);
+        return form;
     }
 
     @RequestMapping("/QRCode.json")
