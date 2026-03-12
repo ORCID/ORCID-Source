@@ -26,22 +26,22 @@ import javax.persistence.Table;
 @NamedNativeQueries({
     @NamedNativeQuery(
         name = NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE, 
-        query = "SELECT DISTINCT p.orcid, COALESCE(p.completed_date, p.date_created) " +
-                " FROM profile p " +
-                " JOIN notification n ON p.orcid = n.orcid " +
-                " JOIN email_frequency f ON p.orcid = f.orcid " +
+        query = "SELECT DISTINCT n.orcid, COALESCE(p.completed_date, p.date_created) " +
+                " FROM notification n " +
+                " JOIN profile p ON n.orcid = p.orcid " +
+                " JOIN email_frequency f ON n.orcid = f.orcid " +
                 " WHERE n.sent_date IS NULL " +
                 " AND n.archived_date IS NULL " +
-                " AND n.date_created > now() - INTERVAL '4' MONTH " + 
+                " AND n.date_created > now() - INTERVAL '4' MONTH " +
                 " AND p.claimed = true " +
-                " AND p.profile_deactivation_date IS NULL " +  
-                " AND p.primary_record IS NULL " +  
+                " AND p.profile_deactivation_date IS NULL " +
+                " AND p.primary_record IS NULL " +
                 " AND p.record_locked = false " +
                 " AND (" +
-                "   (n.notification_type IN ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " + 
+                "   (n.notification_type IN ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " +
                 "   OR (n.notification_type = 'AMENDED' AND f.send_change_notifications < :never) " +
-                "   OR (n.notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" + 
-                " ) ORDER BY p.orcid;"
+                "   OR (n.notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" +
+                " ) ORDER BY n.orcid;"
     ),
     @NamedNativeQuery(
         name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
