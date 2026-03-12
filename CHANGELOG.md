@@ -1,3 +1,31 @@
+## v2.138.4 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.3...v2.138.4)
+
+### Feature
+
+- promote another email to primary when removing the current one (#7473)
+
+## v2.138.3 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.2...v2.138.3)
+
+## v2.138.2 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.1...v2.138.2)
+
+## v2.138.1 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.0...v2.138.1)
+
+## v2.138.0 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.19...v2.138.0)
+
+## v2.137.19 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.18...v2.137.19)
+
 ## v2.137.18 - 2026-03-10
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.17...v2.137.18)

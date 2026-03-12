@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -1355,31 +1356,68 @@ public class AdminController extends BaseController {
     public ResponseEntity<RemoveEmailsResponse> removeEmails(
             HttpServletRequest serverRequest,
             HttpServletResponse serverResponse,
-            @RequestBody RemoveEmailsRequest removeEmails
+            @RequestBody RemoveEmailsRequest removeEmailsRequest
     ) throws IllegalAccessException {
         isAdmin(serverRequest, serverResponse);
 
-        if (removeEmails == null || removeEmails.getEmailsToRemove() == null || removeEmails.getEmailsToRemove().isEmpty()) {
-            return ResponseEntity.badRequest().body(new RemoveEmailsResponse("emailsToRemove cannot be empty", null));
+        if (removeEmailsRequest == null
+                || StringUtils.isBlank(removeEmailsRequest.getOrcid())
+                || removeEmailsRequest.getEmailsToRemove() == null
+                || removeEmailsRequest.getEmailsToRemove().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new RemoveEmailsResponse("orcid and emailsToRemove are required", null));
         }
 
+        String orcid = removeEmailsRequest.getOrcid();
+
         try {
-            List<String> remainingEmails = emailManager.removeEmails(
-                    removeEmails.getOrcid(),
-                    removeEmails.getEmailsToRemove()
-            );
+            Email oldPrimary = findPrimaryEmail(emailManager.getEmails(orcid));
+            List<Email> remainingEmails = emailManager.removeEmails(orcid, removeEmailsRequest.getEmailsToRemove());
+            Email newPrimary = findPrimaryEmail(remainingEmails);
+
+            if (oldPrimary != null
+                    && newPrimary != null
+                    && !StringUtils.equals(oldPrimary.getEmail(), newPrimary.getEmail())) {
+                recordEmailSender.sendVerificationEmail(orcid, newPrimary.getEmail(), true);
+            }
+
+            List<String> remainingEmailValues = remainingEmails.stream()
+                    .map(Email::getEmail)
+                    .collect(Collectors.toList());
 
             return ResponseEntity.ok(new RemoveEmailsResponse(
                     "Emails removed successfully.",
-                    remainingEmails
+                    remainingEmailValues
             ));
-
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new RemoveEmailsResponse(e.getMessage(), null));
-
+            return ResponseEntity.badRequest()
+                    .body(new RemoveEmailsResponse(e.getMessage(), null));
         } catch (Exception e) {
+            LOGGER.error("Error removing emails for orcid {}", orcid, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new RemoveEmailsResponse("Unexpected error: " + e.getMessage(), null));
+                    .body(new RemoveEmailsResponse("An unexpected error occurred", null));
         }
+    }
+
+    private Email findPrimaryEmail(Emails emails) {
+        if (emails == null || emails.getEmails() == null) {
+            return null;
+        }
+
+        return emails.getEmails().stream()
+                .filter(Email::isPrimary)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Email findPrimaryEmail(List<Email> emails) {
+        if (emails == null || emails.isEmpty()) {
+            return null;
+        }
+
+        return emails.stream()
+                .filter(Email::isPrimary)
+                .findFirst()
+                .orElse(null);
     }
 }

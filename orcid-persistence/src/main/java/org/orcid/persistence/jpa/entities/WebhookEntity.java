@@ -44,7 +44,7 @@ public class WebhookEntity extends BaseEntity<WebhookEntityPk>  {
     public static final String FIND_WEBHOOKS_READY_TO_PROCESS = "findWebhooksReadyToProcess";
     public static final String COUNT_WEBHOOKS_READY_TO_PROCESS = "countWebhooksReadyToProcess";
     public static final String WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE = "FROM webhook w "
-            + "JOIN client_details c ON c.client_details_id = w.client_details_id AND c.deactivated_date is null AND c.webhooks_enabled = 'true'" 
+            + "JOIN client_details c ON c.client_details_id not in (:clientsToExclude) AND c.client_details_id = w.client_details_id AND c.deactivated_date is null AND c.webhooks_enabled = 'true'"
             + "   WHERE w.enabled = 'true' "
             + "   AND w.failed_attempt_count < :maxAttemptCount "
             + "   AND (w.profile_last_modified >= w.last_sent OR (w.last_sent IS NULL AND w.profile_last_modified >= w.date_created))"
