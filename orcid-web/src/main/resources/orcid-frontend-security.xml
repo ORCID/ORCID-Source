@@ -442,6 +442,8 @@
 			access="ROLE_USER" />
         <sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
 			access="ROLE_USER" />
+        <sec:intercept-url pattern="/2FA/qr-code.png?"
+			access="ROLE_USER" />
 		<sec:intercept-url pattern="/my-orcid(\?.*)?"
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/my-orcid/.*?"
