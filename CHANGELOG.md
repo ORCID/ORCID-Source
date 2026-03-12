@@ -1,3 +1,13 @@
+## v2.138.6 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.5...v2.138.6)
+
+- [#7474](https://github.com/ORCID/ORCID-Source/pull/7474): PD-3659
+
+## v2.138.5 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.4...v2.138.5)
+
 ## v2.138.4 - 2026-03-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.3...v2.138.4)
