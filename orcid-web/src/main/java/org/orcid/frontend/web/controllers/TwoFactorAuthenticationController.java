@@ -90,8 +90,10 @@ public class TwoFactorAuthenticationController extends BaseController {
         return code;
     }
     
-    @RequestMapping(value = "/qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE, headers = "Cache-Control=no-cache,no-store,must-revalidate")
-    public @ResponseBody byte[] generateQrCode() {
+    @RequestMapping(value = "/qr-code.png", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] generateQrCode(HttpServletResponse response) {
+        response.addHeader("Cache-Control", "no-cache,no-store,must-revalidate");
         return QRCode.from(twoFactorAuthenticationManager.getQRCode(getCurrentUserOrcid())).withSize(250, 250).stream().toByteArray();
     }
 
