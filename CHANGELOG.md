@@ -1,3 +1,25 @@
+## v2.138.11 - 2026-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.10...v2.138.11)
+
+## v2.138.10 - 2026-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.9...v2.138.10)
+
+- [#7479](https://github.com/ORCID/ORCID-Source/pull/7479): Remove ?
+
+## v2.138.9 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.8...v2.138.9)
+
+## v2.138.8 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.7...v2.138.8)
+
+## v2.138.7 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.6...v2.138.7)
+
 ## v2.138.6 - 2026-03-12
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.5...v2.138.6)
