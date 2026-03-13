@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.api.common.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -42,6 +45,8 @@ import static org.orcid.core.constants.OrcidOauth2Constants.IETF_EXCHANGE_GRANT_
 
 @Controller("oauthGenericCallsController")
 public class OauthGenericCallsController extends OauthControllerBase {
+    private static final Logger logger = Logger.getLogger(OauthGenericCallsController.class);
+
     @Resource
     private RegistrationController registrationController;
     
@@ -103,6 +108,16 @@ public class OauthGenericCallsController extends OauthControllerBase {
                 return ResponseEntity.status(response.getStatus()).headers(responseHeaders).body(response.getEntity());
             } catch(Exception e) {
                 OAuthError error = OAuthErrorUtils.getOAuthError(e);
+                Map<String, String[]> params = request.getParameterMap();
+                if(params != null && !params.isEmpty()) {
+                    String paramList = params.entrySet().stream()
+                            .map(entry -> {
+                                String paramValues = (entry.getValue() == null || entry.getValue().length == 0) ? "-NOTHING-" : String.join(",", entry.getValue());
+                                return entry.getKey() + "=" + paramValues;
+                            })
+                            .collect(Collectors.joining(", "));
+                    logger.error("Exception sending request to authorization server: " + error.getErrorDescription() + " - Param list: " + paramList, e);
+                }
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
             }
         } else {
