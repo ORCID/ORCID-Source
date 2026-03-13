@@ -43,7 +43,7 @@ public class AuthorizationServerUtil {
 
     public AuthorizationServerUtil(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl,
                                    @Value("${org.orcid.authorization.server.tokenIntrospection.clientId}") String tokenIntrospectionClientId,
-                                   @Value("${org.orcid.authorization.server.tokenIntrospection.clientSecret}") String tokenIntrospectionClientSecret) throws UnsupportedEncodingException {
+                                   @Value("${org.orcid.authorization.server.tokenIntrospection.clientSecret}") String tokenIntrospectionClientSecret) {
         this.authorizationServerTokenExchangeEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth/token" : authorizationServerUrl + "/oauth/token";
         this.authorizationServerIntrospectionEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/introspect" : authorizationServerUrl + "/oauth2/introspect";
         this.authorizationServerRevocationEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/revoke" : authorizationServerUrl + "/oauth2/revoke";
