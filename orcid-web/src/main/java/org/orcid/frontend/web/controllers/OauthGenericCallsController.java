@@ -73,35 +73,14 @@ public class OauthGenericCallsController extends OauthControllerBase {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
         if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive()) {
-            String clientId = request.getParameter("client_id");
-            String clientSecret = request.getParameter("client_secret");
-            String redirectUri = request.getParameter("redirect_uri");
-            String code = request.getParameter("code");
-            String scopeList = request.getParameter("scope");
-            String refreshToken = request.getParameter("refresh_token");
-            String subjectToken = request.getParameter("subject_token");
-            String subjectTokenType = request.getParameter("subject_token_type");
-            String requestedTokenType = request.getParameter("requested_token_type");
-
-            Response response = null;
             try {
-                switch (grantType) {
-                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                        response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
-                        break;
-                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                        response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
-                        break;
-                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                        response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
-                        break;
-                    case IETF_EXCHANGE_GRANT_TYPE:
-                        response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
-                        break;
-                    default:
-                        response = authorizationServerUtil.forwardOtherTokenExchangeRequest(clientId, clientSecret, grantType, code, scopeList);
-                        break;
+                Response response = null;
+                if(StringUtils.isNotBlank(request.getHeader("Authorization"))) {
+                    response = handleBasicAuthentication(grantType, request);
+                } else {
+                    response = handlePlainClientCredentials(grantType, request);
                 }
+
                 HttpHeaders responseHeaders = new HttpHeaders();
                 responseHeaders.set(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.name(),
                         "ON");
@@ -139,7 +118,72 @@ public class OauthGenericCallsController extends OauthControllerBase {
             }
         }
     }
-    
+
+    private Response handlePlainClientCredentials(String grantType, HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
+        String clientId = request.getParameter("client_id");
+        String clientSecret = request.getParameter("client_secret");
+        String redirectUri = request.getParameter("redirect_uri");
+        String code = request.getParameter("code");
+        String scopeList = request.getParameter("scope");
+        String refreshToken = request.getParameter("refresh_token");
+        String subjectToken = request.getParameter("subject_token");
+        String subjectTokenType = request.getParameter("subject_token_type");
+        String requestedTokenType = request.getParameter("requested_token_type");
+
+        Response response = null;
+        switch (grantType) {
+            case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                break;
+            case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
+                break;
+            case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
+                break;
+            case IETF_EXCHANGE_GRANT_TYPE:
+                response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                break;
+            default:
+                response = authorizationServerUtil.forwardOtherTokenExchangeRequest(clientId, clientSecret, grantType, code, scopeList);
+                break;
+        }
+        return response;
+    }
+
+    private Response handleBasicAuthentication(String grantType, HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
+        String authorization = request.getHeader("Authorization");
+        String redirectUri = request.getParameter("redirect_uri");
+        String code = request.getParameter("code");
+        String scopeList = request.getParameter("scope");
+        String refreshToken = request.getParameter("refresh_token");
+        String subjectToken = request.getParameter("subject_token");
+        String subjectTokenType = request.getParameter("subject_token_type");
+        String requestedTokenType = request.getParameter("requested_token_type");
+
+        Response response = null;
+
+        switch (grantType) {
+            case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(authorization, redirectUri, code);
+                break;
+            case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                response = authorizationServerUtil.forwardRefreshTokenRequest(authorization, refreshToken, scopeList);
+                break;
+            case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                response = authorizationServerUtil.forwardClientCredentialsRequest(authorization, scopeList);
+                break;
+            case IETF_EXCHANGE_GRANT_TYPE:
+                response = authorizationServerUtil.forwardTokenExchangeRequest(authorization, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                break;
+            default:
+                response = authorizationServerUtil.forwardOtherTokenExchangeRequest(authorization, grantType, code, scopeList);
+                break;
+        }
+        return response;
+    }
+
+
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
     public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {                    
         RequestInfoForm requestInfoForm = new RequestInfoForm();
