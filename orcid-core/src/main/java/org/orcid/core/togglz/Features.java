@@ -7,6 +7,9 @@ import org.togglz.core.context.FeatureContext;
 
 public enum Features implements Feature {
 
+    @Label("Real User Monitoring")
+    RUM,
+
     @Label("Search and Link Wizard with certified and featured links") 
     SEARCH_AND_LINK_WIZARD_WITH_CERTIFIED_AND_FEATURED_LINKS,
 
@@ -31,8 +34,6 @@ public enum Features implements Feature {
     @Label("OAUTH - domains interstitial")
     OAUTH_DOMAINS_INTERSTITIAL,
 
-    @Label("New Relic Browser Monitoring")
-    NEW_RELIC_BROWSER_MONITORING,
   
     @Label("Homepage Headless WordPress")
     WORDPRESS_HOME_PAGE,
@@ -108,7 +109,6 @@ public enum Features implements Feature {
     
     @Label("Send email on reset password")
     SEND_EMAIL_ON_RESET_PASSWORD;
-
     public boolean isActive() {
         return FeatureContext.getFeatureManager().isActive(this);
     }
