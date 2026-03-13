@@ -139,7 +139,7 @@ public class TwoFactorAuthenticationControllerTest {
     @Test
     public void testGenerateQrCode() {
         when(twoFactorAuthenticationManager.getQRCode(ORCID)).thenReturn("otpauth://totp/ORCID:0000-0000-0000-0001?secret=ABC&issuer=ORCID");
-        byte[] qrCode = controller.generateQrCode();
+        byte[] qrCode = controller.generateQrCode(response);
         assertNotNull(qrCode);
         assertTrue(qrCode.length > 0);
     }
