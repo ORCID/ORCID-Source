@@ -250,12 +250,10 @@ public class HomeController extends BaseController {
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
         configDetails.setMessage("LIVE_IDS", statisticsManager.getFormattedLiveIds(localeManager.getLocale()));   
         configDetails.setMessage("SEARCH_BASE", getSearchBaseUrl());
-        // Add features (boolean state and 0-100 percentage)
+        // Add features: each is either "true"/"false" or a number 0-100 (percentage)
         FeatureManager featureManager = FeatureContext.getFeatureManager();
         for (Features f : Features.values()) {
-            configDetails.setMessage(f.name(), String.valueOf(f.isActive()));
-            int percentage = getFeaturePercentage(featureManager, f);
-            configDetails.setMessage(f.name() + "_PERCENTAGE", String.valueOf(percentage));
+            configDetails.setMessage(f.name(), getFeatureValue(featureManager, f));
         }
         return configDetails;        
     }
@@ -304,25 +302,32 @@ public class HomeController extends BaseController {
     }
 
     /**
-     * Returns a percentage 0-100 for the feature. When the feature is disabled, returns 0.
-     * When enabled with no percentage parameter, returns 100. When the feature uses a strategy
-     * with a "percentage" parameter (e.g. Togglz Gradual Rollout), returns that value (clamped to 0-100).
+     * Returns the config value for a feature: either "true"/"false" or a number 0-100 as string.
+     * When disabled, returns "false". When enabled with no percentage parameter (or 100%), returns "true".
+     * When enabled with a percentage 0-99, returns that number as string so the client can do sampling.
      */
-    protected int getFeaturePercentage(FeatureManager featureManager, Features feature) {
+    protected String getFeatureValue(FeatureManager featureManager, Features feature) {
         FeatureState state = featureManager.getFeatureState(feature);
         if (state == null || !state.isEnabled()) {
-            return 0;
+            return "false";
         }
         String param = state.getParameter("percentage");
         if (param != null && !param.isEmpty()) {
             try {
                 int p = Integer.parseInt(param.trim());
-                return Math.max(0, Math.min(100, p));
+                int pct = Math.max(0, Math.min(100, p));
+                if (pct >= 100) {
+                    return "true";
+                }
+                if (pct <= 0) {
+                    return "false";
+                }
+                return String.valueOf(pct);
             } catch (NumberFormatException e) {
                 LOGGER.debug("Invalid percentage parameter for feature {}: {}", feature.name(), param);
             }
         }
-        return 100;
+        return "true";
     }
     
     class ConfigDetails {
