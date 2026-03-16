@@ -23,6 +23,9 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.stats.StatisticsManager;
 import org.orcid.core.togglz.Features;
+import org.togglz.core.context.FeatureContext;
+import org.togglz.core.manager.FeatureManager;
+import org.togglz.core.repository.FeatureState;
 import org.orcid.core.utils.UTF8Control;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -247,9 +250,10 @@ public class HomeController extends BaseController {
         configDetails.setMessage("MAINTENANCE_MESSAGE", getMaintenanceMessage());
         configDetails.setMessage("LIVE_IDS", statisticsManager.getFormattedLiveIds(localeManager.getLocale()));   
         configDetails.setMessage("SEARCH_BASE", getSearchBaseUrl());
-        // Add features
-        for(Features f : Features.values()) {
-            configDetails.setMessage(f.name(), String.valueOf(f.isActive()));
+        // Add features: each is either "true"/"false" or a number 0-100 (percentage)
+        FeatureManager featureManager = FeatureContext.getFeatureManager();
+        for (Features f : Features.values()) {
+            configDetails.setMessage(f.name(), getFeatureValue(featureManager, f));
         }
         return configDetails;        
     }
@@ -295,6 +299,35 @@ public class HomeController extends BaseController {
     
     protected String getSearchBaseUrl() {
         return orcidUrlManager.getPubBaseUrl() + "/v3.0/search/";                 
+    }
+
+    /**
+     * Returns the config value for a feature: either "true"/"false" or a number 0-100 as string.
+     * When disabled, returns "false". When enabled with no percentage parameter (or 100%), returns "true".
+     * When enabled with a percentage 0-99, returns that number as string so the client can do sampling.
+     */
+    protected String getFeatureValue(FeatureManager featureManager, Features feature) {
+        FeatureState state = featureManager.getFeatureState(feature);
+        if (state == null || !state.isEnabled()) {
+            return "false";
+        }
+        String param = state.getParameter("percentage");
+        if (param != null && !param.isEmpty()) {
+            try {
+                int p = Integer.parseInt(param.trim());
+                int pct = Math.max(0, Math.min(100, p));
+                if (pct >= 100) {
+                    return "true";
+                }
+                if (pct <= 0) {
+                    return "false";
+                }
+                return String.valueOf(pct);
+            } catch (NumberFormatException e) {
+                LOGGER.debug("Invalid percentage parameter for feature {}: {}", feature.name(), param);
+            }
+        }
+        return "true";
     }
     
     class ConfigDetails {
