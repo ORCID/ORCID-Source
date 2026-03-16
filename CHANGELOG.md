@@ -1,3 +1,9 @@
+## v2.138.13 - 2026-03-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.12...v2.138.13)
+
+- [#7481](https://github.com/ORCID/ORCID-Source/pull/7481): Lmendoza/pd 5176
+
 ## v2.138.12 - 2026-03-13
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.11...v2.138.12)
