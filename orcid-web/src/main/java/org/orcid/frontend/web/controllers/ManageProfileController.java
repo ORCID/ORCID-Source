@@ -235,15 +235,18 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
     public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
-        // Check password
-        String password = manageSocialAccount.getPassword();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
-            manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+
+        if (manageSocialAccount.getPassword() == null || !encryptionManager.hashMatches(manageSocialAccount.getPassword(), profile.getEncryptedPassword())) {
+            manageSocialAccount.setInvalidPassword(true);
             return manageSocialAccount;
         }
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), manageSocialAccount)) {
+            return manageSocialAccount;
+        }
+
         userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getIdToManage());
+        manageSocialAccount.setSuccess(true);
         return manageSocialAccount;
     }
 
