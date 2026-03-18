@@ -1,3 +1,85 @@
+## v2.138.13 - 2026-03-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.12...v2.138.13)
+
+- [#7481](https://github.com/ORCID/ORCID-Source/pull/7481): Lmendoza/pd 5176
+
+## v2.138.12 - 2026-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.11...v2.138.12)
+
+## v2.138.11 - 2026-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.10...v2.138.11)
+
+## v2.138.10 - 2026-03-13
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.9...v2.138.10)
+
+- [#7479](https://github.com/ORCID/ORCID-Source/pull/7479): Remove ?
+
+## v2.138.9 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.8...v2.138.9)
+
+## v2.138.8 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.7...v2.138.8)
+
+## v2.138.7 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.6...v2.138.7)
+
+## v2.138.6 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.5...v2.138.6)
+
+- [#7474](https://github.com/ORCID/ORCID-Source/pull/7474): PD-3659
+
+## v2.138.5 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.4...v2.138.5)
+
+## v2.138.4 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.3...v2.138.4)
+
+### Feature
+
+- promote another email to primary when removing the current one (#7473)
+
+## v2.138.3 - 2026-03-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.2...v2.138.3)
+
+## v2.138.2 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.1...v2.138.2)
+
+## v2.138.1 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.138.0...v2.138.1)
+
+## v2.138.0 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.19...v2.138.0)
+
+## v2.137.19 - 2026-03-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.18...v2.137.19)
+
+## v2.137.18 - 2026-03-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.17...v2.137.18)
+
+## v2.137.17 - 2026-03-10
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.16...v2.137.17)
+
+## v2.137.16 - 2026-03-04
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.15...v2.137.16)
+
 ## v2.137.15 - 2026-03-02
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.137.14...v2.137.15)

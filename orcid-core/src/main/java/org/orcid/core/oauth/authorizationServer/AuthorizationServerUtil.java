@@ -1,5 +1,6 @@
 package org.orcid.core.oauth.authorizationServer;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -15,8 +16,10 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -31,17 +34,22 @@ public class AuthorizationServerUtil {
 
     private final String authorizationServerIntrospectionEndpoint;
 
+    private final String authorizationServerRevocationEndpoint;
+
     @Resource
     private HttpRequestUtils httpRequestUtils;
 
-    @Value("${org.orcid.authorization.server.tokenIntrospection.clientId}")
-    private String tokenIntrospectionClientId;
-    @Value("${org.orcid.authorization.server.tokenIntrospection.clientSecret}")
-    private String tokenIntrospectionClientSecret;
+    private final String basicAuthorizationHeaderForTokenIntrospection;
 
-    public AuthorizationServerUtil(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl) {
+    public AuthorizationServerUtil(@Value("${org.orcid.authorization.server.url}") String authorizationServerUrl,
+                                   @Value("${org.orcid.authorization.server.tokenIntrospection.clientId}") String tokenIntrospectionClientId,
+                                   @Value("${org.orcid.authorization.server.tokenIntrospection.clientSecret}") String tokenIntrospectionClientSecret) {
         this.authorizationServerTokenExchangeEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth/token" : authorizationServerUrl + "/oauth/token";
         this.authorizationServerIntrospectionEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/introspect" : authorizationServerUrl + "/oauth2/introspect";
+        this.authorizationServerRevocationEndpoint = authorizationServerUrl.endsWith("/") ? authorizationServerUrl + "oauth2/revoke" : authorizationServerUrl + "/oauth2/revoke";
+
+        String credentials = tokenIntrospectionClientId + ":" + tokenIntrospectionClientSecret;
+        basicAuthorizationHeaderForTokenIntrospection = "Basic " + Base64.encodeBase64URLSafeString(credentials.getBytes(StandardCharsets.UTF_8));
     }
 
     public Response forwardAuthorizationCodeExchangeRequest(String clientId, String clientSecret, String redirectUri, String code) throws IOException, URISyntaxException, InterruptedException {
@@ -65,6 +73,24 @@ public class AuthorizationServerUtil {
         return this.doPost(parameters);
     }
 
+    public Response forwardAuthorizationCodeExchangeRequest(String basicAuthorizationHeader, String redirectUri, String code) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server to exchange authorization code");
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        // Set the grant type
+        parameters.put(OrcidOauth2Constants.CODE_PARAM, StringUtils.isBlank(code) ? "" : code);
+        parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE);
+        // Set the redirect uri if it is not blank
+        if(!StringUtils.isBlank(redirectUri)) {
+            parameters.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, redirectUri);
+        }
+
+        // Post and respond
+        return this.doPost(authorizationServerTokenExchangeEndpoint, basicAuthorizationHeader, parameters);
+    }
+
     public Response forwardRefreshTokenRequest(String clientId, String clientSecret, String refreshToken, String scope) throws IOException, URISyntaxException, InterruptedException {
         if(logger.isTraceEnabled()) {
             logger.trace("Using authorization server to refresh a token");
@@ -86,6 +112,25 @@ public class AuthorizationServerUtil {
         return this.doPost(parameters);
     }
 
+    public Response forwardRefreshTokenRequest(String basicAuthorizationHeader, String refreshToken, String scope) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server to refresh a token");
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.REFRESH_TOKEN, refreshToken, parameters);
+        // Scope is not required
+        if(!StringUtils.isBlank(scope)) {
+            parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope);
+        }
+
+        // Set the grant type
+        parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN);
+
+        // Post and respond
+        return this.doPost(authorizationServerTokenExchangeEndpoint, basicAuthorizationHeader, parameters);
+    }
+
     public Response forwardClientCredentialsRequest(String clientId, String clientSecret, String scope) throws IOException, URISyntaxException, InterruptedException {
         if(logger.isTraceEnabled()) {
             logger.trace("Using authorization server for a client credential request");
@@ -101,6 +146,20 @@ public class AuthorizationServerUtil {
 
         // Post and respond
         return this.doPost(parameters);
+    }
+
+    public Response forwardClientCredentialsRequest(String basicAuthorizationHeader, String scope) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server for a client credential request");
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        // Set the grant type
+        parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope == null ? "" : scope);
+        parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS);
+
+        // Post and respond
+        return this.doPost(authorizationServerTokenExchangeEndpoint, basicAuthorizationHeader, parameters);
     }
 
     public Response forwardTokenExchangeRequest(String clientId, String clientSecret, String subjectToken, String subjectTokenType, String requestedTokenType, String scope) throws IOException, URISyntaxException, InterruptedException {
@@ -126,6 +185,53 @@ public class AuthorizationServerUtil {
         return this.doPost(parameters);
     }
 
+    public Response forwardTokenExchangeRequest(String basicAuthorizationHeader, String subjectToken, String subjectTokenType, String requestedTokenType, String scope) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server to exchange a token");
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN, subjectToken, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.IETF_EXCHANGE_SUBJECT_TOKEN_TYPE, subjectTokenType, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.IETF_EXCHANGE_REQUESTED_TOKEN_TYPE, requestedTokenType, parameters);
+        // Scope is not required
+        if(!StringUtils.isBlank(scope)) {
+            parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope);
+        }
+
+        // Set the grant type
+        parameters.put(OrcidOauth2Constants.GRANT_TYPE, OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE);
+
+        // Post and respond
+        return this.doPost(authorizationServerTokenExchangeEndpoint, basicAuthorizationHeader, parameters);
+    }
+
+    public Response forwardTokenRevocationRequest(String clientId, String clientSecret, String token) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server to revoke a token");
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, clientId, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, clientSecret, parameters);
+        addToMapOrThrow(OrcidOauth2Constants.TOKEN, token, parameters);
+
+        // Post and respond
+        return this.doPost(this.authorizationServerRevocationEndpoint, parameters);
+    }
+
+    public Response forwardTokenRevocationRequest(String basicAuthorizationHeader, String token) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server to revoke a token");
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        addToMapOrThrow(OrcidOauth2Constants.TOKEN, token, parameters);
+
+        // Post and respond
+        return this.doPost(this.authorizationServerRevocationEndpoint, basicAuthorizationHeader, parameters);
+    }
+
     public Response forwardOtherTokenExchangeRequest(String clientId, String clientSecret, String grantType, String code, String scope) throws IOException, URISyntaxException, InterruptedException {
         if(logger.isTraceEnabled()) {
             logger.trace("Using authorization server for " + grantType);
@@ -148,16 +254,34 @@ public class AuthorizationServerUtil {
         return this.doPost(parameters);
     }
 
+    public Response forwardOtherTokenExchangeRequest(String basicAuthorizationHeader, String grantType, String code, String scope) throws IOException, URISyntaxException, InterruptedException {
+        if(logger.isTraceEnabled()) {
+            logger.trace("Using authorization server for " + grantType);
+        }
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(OrcidOauth2Constants.GRANT_TYPE, StringUtils.isBlank(grantType) ? "" : grantType);
+
+        if(!StringUtils.isBlank(scope)) {
+            parameters.put(OrcidOauth2Constants.SCOPE_PARAM, scope == null ? "" : scope);
+        }
+
+        if(!StringUtils.isBlank(code)) {
+            parameters.put(OrcidOauth2Constants.CODE_PARAM, code == null ? "" : code);
+        }
+
+        // Post and respond
+        return this.doPost(authorizationServerTokenExchangeEndpoint, basicAuthorizationHeader, parameters);
+    }
+
     public JSONObject tokenIntrospection(String tokenValue) throws IOException, URISyntaxException, InterruptedException, JSONException {
         if(logger.isTraceEnabled()) {
             logger.trace("Using authorization server for token introspection");
         }
         Map<String, String> parameters = new HashMap<String, String>();
-        addToMapOrThrow(OrcidOauth2Constants.CLIENT_ID_PARAM, tokenIntrospectionClientId, parameters);
-        addToMapOrThrow(OrcidOauth2Constants.CLIENT_SECRET_PARAM, tokenIntrospectionClientSecret, parameters);
         addToMapOrThrow(OrcidOauth2Constants.TOKEN, tokenValue, parameters);
 
-        Response response = this.doPost(this.authorizationServerIntrospectionEndpoint, parameters);
+        Response response = this.doPost(this.authorizationServerIntrospectionEndpoint, basicAuthorizationHeaderForTokenIntrospection, parameters);
 
         if (response != null && (response.getStatus() == 200)) {
             String responseString = (String) response.getEntity();
@@ -176,11 +300,22 @@ public class AuthorizationServerUtil {
     }
 
     private Response doPost(Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
-        return doPost(authorizationServerTokenExchangeEndpoint, parameters);
+        return doPost(authorizationServerTokenExchangeEndpoint, null, parameters);
     }
 
     private Response doPost(String uri, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
-        HttpResponse<String> tokenResponse = httpRequestUtils.doPost(uri, parameters);
+        return doPost(uri, null, parameters);
+    }
+
+    private Response doPost(String uri, String basicAuthorizationHeader, Map<String, String> parameters) throws IOException, URISyntaxException, InterruptedException {
+        HttpResponse<String> tokenResponse = null;
+
+        if(StringUtils.isNotBlank(basicAuthorizationHeader)) {
+            tokenResponse = httpRequestUtils.doPost(uri, basicAuthorizationHeader, parameters);
+        } else {
+            tokenResponse = httpRequestUtils.doPost(uri, parameters);
+        }
+
         int statusCode = tokenResponse.statusCode();
         String tokenResult = tokenResponse.body();
 

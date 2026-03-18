@@ -23,7 +23,7 @@
                 style="text-decoration: underline;color: #085c77;" href="${baseUri}/${orcidId}"
                 target="_blank">${baseUri}/${orcidId}</a>
         </p>
-        <p><@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}</p>
+        <p><@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}:</p>
     </div>
     <div style="display: block">
         <p><@emailMacros.msg "email.addWorks.weHaveNoticed" /></p>
@@ -33,11 +33,11 @@
            		<li><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
                     href="https://orcid.org/oauth/authorize?client_id=APP-OKON44OLRIOZU944&response_type=code&scope=/read-limited%20/activities/update&redirect_uri=https://www.webofscience.com/wos/author/orcid-wizard" 
-                    target="_blank">Web of Science</a><@emailMacros.space /><@emailMacros.msg "email.addWorks.webOfScience" /></li>
+                    target="_blank">Web of Science</a>:<@emailMacros.space /><@emailMacros.msg "email.addWorks.webOfScience" /></li>
            		<li><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
                     href="https://orcid.org/oauth/authorize?client_id=APP-EN52WHSMFO6TZT6B&response_type=code&scope=/activities/update%20/read-limited%20/person/update&redirect_uri=https://www.lens.org/lens/orcid/wizard" 
-                    target="_blank">The Lens</a><@emailMacros.space /><@emailMacros.msg "email.addWorks.theLens" /></li>
+                    target="_blank">The Lens</a>:<@emailMacros.space /><@emailMacros.msg "email.addWorks.theLens" /></li>
        	  	</ul>
        	</p>
          
@@ -47,15 +47,15 @@
            		<li><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
                     href="https://orcid.org/oauth/authorize?client_id=0000-0002-3054-1567&response_type=code&scope=%2Factivities%2Fupdate%20%2Fread-limited&redirect_uri=https:%2F%2Fsearch.crossref.org%2Fauth%2Forcid%2Fsearch-and-link" 
-                    target="_blank">Crossref Metadata Search</a><@emailMacros.space /><@emailMacros.msg "email.addWorks.crossrefMetaSearch" /></li>
+                    target="_blank">Crossref Metadata Search</a>:<@emailMacros.space /><@emailMacros.msg "email.addWorks.crossrefMetaSearch" /></li>
            		<li><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
                     href="https://orcid.org/oauth/authorize?client_id=0000-0002-9157-3431&response_type=code&scope=%2Fread-limited%20%2Factivities%2Fupdate&redirect_uri=https:%2F%2Feuropepmc.org%2Forcid%2Fimport" 
-                    target="_blank">Europe PubMed Central</a><@emailMacros.space /><@emailMacros.msg "email.addWorks.europePubMedCentral" /></li>
+                    target="_blank">Europe PubMed Central</a>:<@emailMacros.space /><@emailMacros.msg "email.addWorks.europePubMedCentral" /></li>
                 <li><a
                     style="text-decoration: underline;color: #085c77;display: inline-block;"
                     href="https://orcid.org/oauth/authorize?client_id=0000-0002-5982-8983&response_type=code&scope=%2Fperson%2Fupdate%20%2Fread-limited%20%2Factivities%2Fupdate&redirect_uri=https:%2F%2Forcid.scopusfeedback.com%2Finward%2Forcid" 
-                    target="_blank">Scopus</a><@emailMacros.space /><@emailMacros.msg "email.addWorks.scopus" /></li>
+                    target="_blank">Scopus</a>:<@emailMacros.space /><@emailMacros.msg "email.addWorks.scopus" /></li>
        	  	</ul>
        	</p>             
         <p><@emailMacros.msg "email.addWorks.ifYouAreHavingTrouble" /><@emailMacros.space /><a

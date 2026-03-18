@@ -1,6 +1,6 @@
 package org.orcid.pojo;
 
-public class TwoFactorAuthStatus {
+public class TwoFactorAuthStatus extends AuthChallenge {
     
     private boolean enabled;
 

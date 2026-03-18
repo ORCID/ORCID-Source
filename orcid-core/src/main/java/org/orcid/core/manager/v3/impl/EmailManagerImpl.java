@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -323,23 +322,37 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
     @Override
     @Transactional
-    public List<String> removeEmails(String orcid, List<String> emailsToRemove) {
+    public List<Email> removeEmails(String orcid, List<String> emailsToRemove) {
         if (!orcidSecurityManager.isAdmin()) {
             throw new AccessDeniedException("Admin privileges required to remove emails");
         }
 
-        List<EmailEntity> currentEmailsList = emailDao.findByOrcid(orcid, System.currentTimeMillis());
-        if (emailsToRemove.size() == currentEmailsList.size()) {
+        List<EmailEntity> currentEmails = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+
+        if (emailsToRemove.size() >= currentEmails.size()) {
             throw new IllegalArgumentException("Can't mark all user's as deleted");
         }
 
-        for (String email : emailsToRemove) {
-            emailDao.removeEmail(orcid, email);
-        }
+        emailsToRemove.forEach(email -> emailDao.removeEmail(orcid, email));
 
-        return emailDao.findByOrcid(orcid, System.currentTimeMillis())
-                .stream()
-                .map(EmailEntity::getEmail)
-                .collect(Collectors.toList());
+        List<EmailEntity> remainingEmails = emailDao.findByOrcid(orcid, System.currentTimeMillis());
+        ensurePrimaryEmail(orcid, remainingEmails);
+
+        return toEmailList(remainingEmails);
+    }
+
+    private void ensurePrimaryEmail(String orcid, List<EmailEntity> emails) {
+        boolean hasPrimaryEmail = emails.stream()
+                .anyMatch(email -> Boolean.TRUE.equals(email.getPrimary()));
+
+        if (!hasPrimaryEmail && !emails.isEmpty()) {
+            String newPrimaryEmail = emails.get(0).getEmail();
+            emailDao.updatePrimary(orcid, newPrimaryEmail);
+            emails.get(0).setPrimary(Boolean.TRUE);
+        }
+    }
+
+    private List<Email> toEmailList(List<EmailEntity> entities) {
+        return jpaJaxbEmailAdapter.toEmailList(entities);
     }
 }

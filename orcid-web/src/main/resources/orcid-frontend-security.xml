@@ -414,8 +414,6 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/account/.*"
 			access="ROLE_USER"/>
-		<sec:intercept-url pattern="/qr-code.png"
-			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/find-my-stuff/.*"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/fundings/.*"
@@ -441,6 +439,8 @@
 		<sec:intercept-url pattern="/2FA/authenticationCode.json(\?.*)?"
 			access="ROLE_USER" />
         <sec:intercept-url pattern="/2FA/submitCode.json(\?.*)?"
+			access="ROLE_USER" />
+        <sec:intercept-url pattern="/2FA/qr-code.png"
 			access="ROLE_USER" />
 		<sec:intercept-url pattern="/my-orcid(\?.*)?"
 			access="ROLE_USER" />
