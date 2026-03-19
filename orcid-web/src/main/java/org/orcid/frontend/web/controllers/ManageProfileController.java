@@ -247,6 +247,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getIdToManage());
         manageSocialAccount.setSuccess(true);
+        
         return manageSocialAccount;
     }
 
