@@ -13,7 +13,6 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ProfileEntityManagerReadOnlyImpl;
 import org.orcid.core.manager.v3.EmailManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.record_v2.Name;
@@ -32,9 +31,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource(name = "emailManagerV3")
     private EmailManager emailManagerV3;
-
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource
     private RecordNameManager recordNameManager;
@@ -130,11 +126,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     public boolean unreviewProfile(String orcid) {
         return profileDao.unreviewProfile(orcid);
-    }
-
-    @Override
-    public void disableApplication(Long tokenId, String userOrcid) {
-        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
     }
 
     @Override

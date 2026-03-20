@@ -18,8 +18,6 @@ import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerReadOnly {
 
@@ -51,31 +49,6 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
 		this.clientRedirectDao = clientRedirectDao;
 	}
 
-	/**
-     * Load a client by the client id. This method must NOT return null.
-     * 
-     * @param clientId
-     *            The client id.
-     * @return The client details.
-     * @throws org.springframework.security.oauth2.common.exceptions.OAuth2Exception
-     *             If the client account is locked, expired, disabled, or for
-     *             any other reason.
-     */
-    @Override
-    public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
-        ClientDetailsEntity clientDetails = findByClientId(clientId);
-        if (clientDetails != null) {
-            if (!clientDetails.getClientId().equals(clientId))
-                LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getClientId());
-            if (!clientDetails.getId().equals(clientId))
-                LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getId());
-            clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
-            return clientDetails;
-        } else {
-            throw new InvalidClientException("Client not found: " + clientId);
-        }
-    }
-    
     @Override
     public ClientDetailsEntity findByClientId(String clientId) {
         ClientDetailsEntity result = null;

@@ -14,13 +14,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.exception.ClientDeactivatedException;
-import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.UserConnectionManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
-import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.OrcidUserDetailsService;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
@@ -31,7 +27,6 @@ import org.orcid.frontend.web.controllers.helper.OauthHelper;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Name;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -45,9 +40,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
-import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
-import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,12 +57,6 @@ public class LoginController extends OauthControllerBase {
 
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    protected OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
-
-    @Resource
-    protected OrcidAuthorizationEndpoint authorizationEndpoint;
 
     @Resource(name = "recordNameManagerV3")
     private RecordNameManagerReadOnly recordNameManager;
@@ -162,7 +148,7 @@ public class LoginController extends OauthControllerBase {
         RequestInfoForm requestInfoForm;
         try {
             requestInfoForm = oauthHelper.generateRequestInfoForm(queryString);
-        } catch (InvalidRequestException | InvalidClientException e) {
+        } catch (Exception e) {
             // convert to a 400
             ModelAndView mav = new ModelAndView("oauth-error");
             mav.setStatus(HttpStatus.BAD_REQUEST);
@@ -200,25 +186,6 @@ public class LoginController extends OauthControllerBase {
         String clientId = requestInfoForm.getClientId();
         if (PojoUtil.isEmpty(clientId)) {
             String redirectUriWithParams = redirectUri + "?error=invalid_client&error_description=invalid client_id";
-            return new ModelAndView(new RedirectView(redirectUriWithParams));
-        }
-        // Validate client details
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        try {
-            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (LockedException e) {
-            String redirectUriWithParams = redirectUri + "?error=client_locked&error_description=" + e.getMessage();
-            return new ModelAndView(new RedirectView(redirectUriWithParams));
-        } catch (ClientDeactivatedException e) {
-            String redirectUriWithParams = redirectUri + "?error=client_deactivated&error_description=" + e.getMessage();
-            return new ModelAndView(new RedirectView(redirectUriWithParams));
-        }
-
-        // validate client scopes
-        try {
-            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails, requestInfoForm.getResponseType());
-        } catch (InvalidScopeException e) {
-            String redirectUriWithParams = redirectUri + "?error=invalid_scope&error_description=" + e.getMessage();
             return new ModelAndView(new RedirectView(redirectUriWithParams));
         }
 

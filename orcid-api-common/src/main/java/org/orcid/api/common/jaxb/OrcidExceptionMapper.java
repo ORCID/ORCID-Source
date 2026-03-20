@@ -41,9 +41,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
-import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -112,8 +109,6 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof OrcidBadRequestException) {
             logShortError(t, clientId);
-        } else if (t instanceof RedirectMismatchException) {
-            logShortError(t, clientId);
         } else if (t instanceof DuplicatedGroupIdRecordException) {
             logShortError(t, clientId);
         } else if (t instanceof OrcidNotificationException) {
@@ -137,8 +132,6 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (t instanceof InvalidJSONException) {
             logShortError(t, clientId);
         } else if(t instanceof StartDateAfterEndDateException) {
-            logShortError(t, clientId);
-        } else if(t instanceof InvalidClientException) {
             logShortError(t, clientId);
         } else if (t instanceof SearchStartParameterLimitExceededException) {
             logShortError(t, clientId);
@@ -207,9 +200,6 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             return Response.status(webException.getResponse().getStatus()).entity(entity).build();
         } else if (AuthenticationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Authentication problem : ", t);
-            return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
-        } else if (OAuth2Exception.class.isAssignableFrom(t.getClass())) {
-            OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem : ", t);
             return Response.status(Response.Status.UNAUTHORIZED).entity(entity).build();
         } else if (OrcidInvalidScopeException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("OAuth2 problem : ", t);
