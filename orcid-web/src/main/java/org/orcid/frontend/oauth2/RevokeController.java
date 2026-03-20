@@ -5,11 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.togglz.Features;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +33,22 @@ public class RevokeController {
     @RequestMapping
     public ResponseEntity<?> revoke(HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
         // Forward the request to the authorization server
-        String clientId = SecurityContextHolder.getContext().getAuthentication().getName();
-        String clientSecret = request.getParameter("client_secret");
         String tokenToRevoke = request.getParameter("token");
         if (PojoUtil.isEmpty(tokenToRevoke)) {
             throw new IllegalArgumentException("Please provide the token to be param");
         }
-        Response r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
+        Response r = null;
+        if(StringUtils.isNotBlank(request.getHeader("Authorization"))) {
+            String authorization = request.getHeader("Authorization");
+            r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
+        } else {
+            String clientId = SecurityContextHolder.getContext().getAuthentication().getName();
+            String clientSecret = request.getParameter("client_secret");
+            if (PojoUtil.isEmpty(tokenToRevoke)) {
+                throw new IllegalArgumentException("Please provide the token to be param");
+            }
+            r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
+        }
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(),
                 "ON");
