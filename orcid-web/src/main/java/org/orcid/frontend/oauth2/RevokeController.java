@@ -54,9 +54,6 @@ public class RevokeController {
             } else {
                 String clientId = SecurityContextHolder.getContext().getAuthentication().getName();
                 String clientSecret = request.getParameter("client_secret");
-                if (PojoUtil.isEmpty(tokenToRevoke)) {
-                    throw new IllegalArgumentException("Please provide the token to be param");
-                }
                 r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
             }
             HttpHeaders responseHeaders = new HttpHeaders();
