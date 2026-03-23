@@ -64,7 +64,7 @@ public class OrcidRandomValueTokenServicesImpl  {
     private AuthorizationServerUtil authorizationServerUtil;
 
     @Override
-    public OAuth2Authentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
+    public OrcidBearerTokenAuthentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
         try {
             JSONObject tokenInfo = authorizationServerUtil.tokenIntrospection(accessTokenValue);
             if(tokenInfo == null) {
