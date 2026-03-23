@@ -1,25 +1,36 @@
 package org.orcid.core.oauth;
 
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import java.util.Collection;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
+import org.springframework.util.Assert;
 
 /**
  * @author Declan Newman (declan) Date: 17/04/2012
  */
-public class OrcidOauth2ClientAuthentication implements Authentication {
+public class OrcidUserAuthentication implements Authentication {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
-    private ClientDetailsEntity clientDetails;
+    private static final long serialVersionUID = 2499121955477502667L;
+    private ProfileEntity profileEntity;
     private boolean authenticated = false;
+    
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
-    public OrcidOauth2ClientAuthentication(ClientDetailsEntity clientDetails) {
-        this.clientDetails = clientDetails;
+    public OrcidUserAuthentication(ProfileEntity profileEntity, boolean authenticated) {
+        Assert.notNull(profileEntity, "Cannot instantiate an OrcidOauth2UserAuthentication will a null profile");
+        this.profileEntity = profileEntity;
+        this.authenticated = authenticated;
     }
 
     /**
@@ -38,7 +49,7 @@ public class OrcidOauth2ClientAuthentication implements Authentication {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return clientDetails.getAuthorities();
+        return profileEntity.getAuthorities();
     }
 
     /**
@@ -52,7 +63,7 @@ public class OrcidOauth2ClientAuthentication implements Authentication {
      */
     @Override
     public Object getCredentials() {
-        return clientDetails.getClientSecret();
+        return profileEntity.getEncryptedPassword();
     }
 
     /**
@@ -64,7 +75,7 @@ public class OrcidOauth2ClientAuthentication implements Authentication {
      */
     @Override
     public Object getDetails() {
-        return clientDetails.getAuthorizedGrantTypes();
+        return profileEntity.getOrcidType();
     }
 
     /**
@@ -83,7 +94,7 @@ public class OrcidOauth2ClientAuthentication implements Authentication {
      */
     @Override
     public Object getPrincipal() {
-        return clientDetails;
+        return profileEntity;
     }
 
     /**
@@ -141,6 +152,8 @@ public class OrcidOauth2ClientAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return clientDetails.getClientName();
+        String name = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(profileEntity.getId());
+        
+        return PojoUtil.isEmpty(name) ? StringUtils.EMPTY : name;
     }
 }

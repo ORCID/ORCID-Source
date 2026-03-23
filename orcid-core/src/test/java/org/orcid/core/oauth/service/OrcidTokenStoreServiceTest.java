@@ -33,7 +33,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.core.oauth.OrcidUserAuthentication;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -134,7 +134,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         OAuth2Request request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         
         ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
-        OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
+        OrcidUserAuthentication userAuthentication = new OrcidUserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
 
@@ -199,7 +199,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
                 new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList(scope)), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
 
         ProfileEntity profileEntity = profileEntityManager.findByOrcid(orcid);
-        OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
+        OrcidUserAuthentication userAuthentication = new OrcidUserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);        
         

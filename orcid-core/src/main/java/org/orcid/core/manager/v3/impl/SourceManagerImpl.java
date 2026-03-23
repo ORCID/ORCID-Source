@@ -1,7 +1,5 @@
 package org.orcid.core.manager.v3.impl;
 
-import java.util.Collection;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,9 +8,8 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
-import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.core.oauth.OrcidUserAuthentication;
 import org.orcid.core.oauth.OrcidOboOAuth2Authentication;
-import org.orcid.core.security.OrcidRoles;
 import org.orcid.core.togglz.Features;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.SourceClientId;
@@ -24,15 +21,11 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 
 /**
  * 
@@ -90,8 +83,8 @@ public class SourceManagerImpl implements SourceManager {
                         source.setAssertionOriginClientId(new SourceClientId(oboClientDetails.getClientId()));
                         source.setAssertionOriginName(new SourceName(oboClientDetails.getClientName()));
                     } else {
-                        if(clientDetails.isUserOBOEnabled() && authDetails.getUserAuthentication() != null && OrcidOauth2UserAuthentication.class.isAssignableFrom(authDetails.getUserAuthentication().getClass())) {
-                            OrcidOauth2UserAuthentication userAuth = (OrcidOauth2UserAuthentication) authDetails.getUserAuthentication();
+                        if(clientDetails.isUserOBOEnabled() && authDetails.getUserAuthentication() != null && OrcidUserAuthentication.class.isAssignableFrom(authDetails.getUserAuthentication().getClass())) {
+                            OrcidUserAuthentication userAuth = (OrcidUserAuthentication) authDetails.getUserAuthentication();
                             ProfileEntity profile = (ProfileEntity) userAuth.getPrincipal();
                             source.setAssertionOriginOrcid(new SourceOrcid(profile.getId()));
                             source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(profile.getId())));
@@ -99,8 +92,8 @@ public class SourceManagerImpl implements SourceManager {
                     }
                 } else {
                     OrcidOAuth2Authentication authDetails = (OrcidOAuth2Authentication) authentication;
-                    if(clientDetails.isUserOBOEnabled() && authDetails.getUserAuthentication() != null && OrcidOauth2UserAuthentication.class.isAssignableFrom(authDetails.getUserAuthentication().getClass())) {
-                        OrcidOauth2UserAuthentication userAuth = (OrcidOauth2UserAuthentication) authDetails.getUserAuthentication();
+                    if(clientDetails.isUserOBOEnabled() && authDetails.getUserAuthentication() != null && OrcidUserAuthentication.class.isAssignableFrom(authDetails.getUserAuthentication().getClass())) {
+                        OrcidUserAuthentication userAuth = (OrcidUserAuthentication) authDetails.getUserAuthentication();
                         ProfileEntity profile = (ProfileEntity) userAuth.getPrincipal();
                         source.setAssertionOriginOrcid(new SourceOrcid(profile.getId()));
                         source.setAssertionOriginName(new SourceName(sourceNameCacheManager.retrieve(profile.getId())));
