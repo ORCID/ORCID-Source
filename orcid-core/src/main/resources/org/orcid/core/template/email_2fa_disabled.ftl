@@ -1,5 +1,7 @@
 <#import "email_macros.ftl" as emailMacros />
 
+<@emailMacros.msg "email.welcome.your_id.id" /> ${orcid}
+
 <@emailMacros.msg "email.2fa_disabled.two_factor_disabled" />
 
 <@emailMacros.msg "email.common.need_help.description.2.href" />
