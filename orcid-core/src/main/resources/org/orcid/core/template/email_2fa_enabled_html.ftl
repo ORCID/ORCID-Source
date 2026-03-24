@@ -13,7 +13,7 @@
     			<@emailMacros.msg "email.welcome.your_id.id" /> ${orcid}
 		</p>
         <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-          <@emailMacros.msg "email.2fa_disabled.two_factor_disabled" />
+          <@emailMacros.msg "email.2fa_enabled.two_factor_enabled" />
         </p>
         <#include "email_footer_html.ftl"/>
      </div>
