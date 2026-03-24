@@ -400,6 +400,33 @@ public class RecordEmailSender {
             mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
         }
     }
+    
+    public void send2FAEnabledEmail(String userOrcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(userOrcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(profile);
+        Emails emails = emailManager.getEmails(userOrcid);
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = verifyEmailUtils.getSubject("email.2fa_enabled.subject", userLocale);
+
+        String emailFriendlyName = recordNameManager.deriveEmailFriendlyName(userOrcid);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", subject);
+
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("email_2fa_enabled.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_2fa_enabled_html.ftl", templateParams);
+
+        for (Email email : emails.getEmails()) {
+            mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+        }
+    }
 
     public void sendForgottenIdEmail(String email, String orcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(orcid);
