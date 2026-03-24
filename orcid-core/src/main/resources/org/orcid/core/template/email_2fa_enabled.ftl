@@ -2,7 +2,7 @@
 
 <@emailMacros.msg "email.welcome.your_id.id" /> ${orcid}
 
-<@emailMacros.msg "email.2fa_disabled.two_factor_disabled" />
+<@emailMacros.msg "email.2fa_enabled.two_factor_enabled" />
 
 <@emailMacros.msg "email.common.need_help.description.2.href" />
 

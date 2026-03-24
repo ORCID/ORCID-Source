@@ -109,7 +109,9 @@ public class TwoFactorAuthenticationController extends BaseController {
         registration.setValid(valid);
         if (valid) {
             List<String> backupCodes = twoFactorAuthenticationManager.enable2FA(orcid);
-            registration.setBackupCodes(backupCodes);
+            registration.setBackupCodes(backupCodes);            
+            //send email notification
+            recordEmailSender.send2FAEnabledEmail(orcid);
         }
         return registration;
     }
