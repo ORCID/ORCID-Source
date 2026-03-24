@@ -41,7 +41,7 @@ import javax.persistence.Table;
                 "   (n.notification_type IN ('ADMINISTRATIVE', 'CUSTOM') AND f.send_administrative_change_notifications < :never) " +
                 "   OR (n.notification_type = 'AMENDED' AND f.send_change_notifications < :never) " +
                 "   OR (n.notification_type IN ('PERMISSION', 'INSTITUTIONAL_CONNECTION') AND f.send_member_update_requests < :never)" +
-                " ) ORDER BY n.orcid;"
+                " );"
     ),
     @NamedNativeQuery(
         name = NotificationEntity.FIND_NOTIFICATIONS_TO_SEND_BY_ORCID,
