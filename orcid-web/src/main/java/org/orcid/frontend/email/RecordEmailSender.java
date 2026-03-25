@@ -424,7 +424,10 @@ public class RecordEmailSender {
         String html = templateManager.processTemplate("email_2fa_enabled_html.ftl", templateParams);
 
         for (Email email : emails.getEmails()) {
-            mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+            if (email.isPrimary()) {
+                mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email.getEmail(), subject, body, html);
+                return;
+            }
         }
     }
 
