@@ -1,6 +1,7 @@
 package org.orcid.core.oauth.service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.persistence.PersistenceException;
@@ -13,6 +14,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.exception.ClientDeactivatedException;
+import org.orcid.core.exception.InvalidTokenException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -39,15 +41,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.orcid.core.exception.InvalidTokenException
-
+import org.orcid.core.exception.OrcidInvalidScopeException;
 import com.google.common.collect.Sets;
 
 /**
  * @author Declan Newman (declan) Date: 11/05/2012
  */
 @Deprecated
-//TODO: This have to be removed!!!!
+//TODO: This have to be removed, just a placeholder to remember where we validate the tokens!!!!
 public class OrcidRandomValueTokenServicesImpl  {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidRandomValueTokenServicesImpl.class);
     
@@ -63,7 +64,6 @@ public class OrcidRandomValueTokenServicesImpl  {
     @Resource
     private AuthorizationServerUtil authorizationServerUtil;
 
-    @Override
     public OrcidBearerTokenAuthentication loadAuthentication(String accessTokenValue) throws AuthenticationException {
         try {
             JSONObject tokenInfo = authorizationServerUtil.tokenIntrospection(accessTokenValue);
@@ -96,31 +96,25 @@ public class OrcidRandomValueTokenServicesImpl  {
     }
 
     private OrcidBearerTokenAuthentication buildAuthentication(String accessTokenValue, JSONObject tokenInfo) throws JSONException {
-        // What will we get when the token does not exists?
         String clientId = tokenInfo.getString("client_id");
-        Authentication authentication = null;
-        Set<String> scopes = OAuth2Utils.parseParameterList(tokenInfo.getString("scope"));
-        AuthorizationRequest request = new AuthorizationRequest(clientId, scopes);
-        request.setApproved(true);
-        if(tokenInfo.has("username")) {
-            String orcid = tokenInfo.getString("username");
-            ProfileEntity profile = new ProfileEntity(orcid);
-            authentication = new OrcidOauth2UserAuthentication(profile, true);
-        }
-        // `orcid` is the only resource id and it is applied to all clients
-        request.setResourceIds(Set.of("orcid"));
+        String userOrcid = tokenInfo.getString("username");
+
+        OrcidBearerTokenAuthentication.Builder builder = OrcidBearerTokenAuthentication.builder(clientId, userOrcid, accessTokenValue);
+
+        Set<String> scopes = Arrays.stream(tokenInfo.getString("scope").split("[\\s,]+"))
+                .collect(Collectors.toSet());
+        builder.scopes(scopes);
 
         // Set granted authorities
         if(tokenInfo.has("clientGrantedAuthority")) {
-            GrantedAuthority ga = new SimpleGrantedAuthority(tokenInfo.getString("clientGrantedAuthority"));
-            request.setAuthorities(List.of(ga));
+            builder.authorities(Sets.newHashSet(new SimpleGrantedAuthority(tokenInfo.getString("clientGrantedAuthority"))));
         }
 
         if(tokenInfo.has("OBO_CLIENT_ID")) {
             String oboClientId = tokenInfo.getString("OBO_CLIENT_ID");
-            return new OrcidOboOAuth2Authentication(oboClientId, request, authentication, accessTokenValue);
+            builder.oboClientId(oboClientId);
         }
 
-        return new OrcidOAuth2Authentication(request, authentication, accessTokenValue);
+        return builder.build();
     }
 }

@@ -56,5 +56,4 @@ public interface OrcidSecurityManager {
 
     void checkAndFilter(String orcid, Record record);
 
-    String getOrcidFromToken();
 }

@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author Declan Newman (declan) Date: 17/04/2012
@@ -15,11 +16,26 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private ClientDetailsEntity clientDetails;
+    private String clientId;
+    private String userOrcid;
+    private String token;
+    private Set<String> scopes;
+    private Set<GrantedAuthority> authorities;
     private boolean authenticated = false;
+    private String oboClientId;
 
-    public OrcidBearerTokenAuthentication(ClientDetailsEntity clientDetails) {
-        this.clientDetails = clientDetails;
+    private OrcidBearerTokenAuthentication() {
+
+    }
+
+    private OrcidBearerTokenAuthentication(Builder builder) {
+        this.clientId = builder.clientId;
+        this.userOrcid = builder.userOrcid;
+        this.token = builder.token;
+        this.scopes = builder.scopes;
+        this.authorities = builder.authorities;
+        this.authenticated = builder.authenticated;
+        this.oboClientId = builder.oboClientId;
     }
 
     /**
@@ -38,7 +54,7 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return clientDetails.getAuthorities();
+        return this.getAuthorities();
     }
 
     /**
@@ -52,7 +68,7 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      */
     @Override
     public Object getCredentials() {
-        return clientDetails.getClientSecret();
+        return this.token;
     }
 
     /**
@@ -64,7 +80,7 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      */
     @Override
     public Object getDetails() {
-        return clientDetails.getAuthorizedGrantTypes();
+        return null;
     }
 
     /**
@@ -83,7 +99,7 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      */
     @Override
     public Object getPrincipal() {
-        return clientDetails;
+        return clientId;
     }
 
     /**
@@ -123,7 +139,7 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      * parameter (which would indicate the authentication token is trusted - a
      * potential security risk) the implementation should throw an
      * {@link IllegalArgumentException}.
-     * 
+     *
      * @param isAuthenticated
      *            <code>true</code> if the token should be trusted (which may
      *            result in an exception) or <code>false</code> if the token
@@ -141,6 +157,66 @@ public class OrcidBearerTokenAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return clientDetails.getClientName();
+        return this.clientId;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public String getUserOrcid() {
+        return userOrcid;
+    }
+
+    public Set<String> getScopes() {
+        return scopes;
+    }
+
+    public String getOboClientId() {
+        return this.oboClientId;
+    }
+
+    public static Builder builder(String clientId, String userOrcid, String token) {
+        return new Builder(clientId, userOrcid, token);
+    }
+
+    public static class Builder {
+        private final String clientId;
+        private final String userOrcid;
+        private final String token;
+        private Set<String> scopes;
+        private Set<GrantedAuthority> authorities;
+        private boolean authenticated = false;
+        private String oboClientId;
+
+        private Builder(String clientId, String userOrcid, String token) {
+            this.clientId = clientId;
+            this.userOrcid = userOrcid;
+            this.token = token;
+        }
+
+        public Builder scopes(Set<String> scopes) {
+            this.scopes = scopes;
+            return this;
+        }
+
+        public Builder authorities(Set<GrantedAuthority> authorities) {
+            this.authorities = authorities;
+            return this;
+        }
+
+        public Builder authenticated(boolean authenticated) {
+            this.authenticated = authenticated;
+            return this;
+        }
+
+        public Builder oboClientId(String oboClientId) {
+            this.oboClientId = oboClientId;
+            return this;
+        }
+
+        public OrcidBearerTokenAuthentication build() {
+            return new OrcidBearerTokenAuthentication(this);
+        }
     }
 }
