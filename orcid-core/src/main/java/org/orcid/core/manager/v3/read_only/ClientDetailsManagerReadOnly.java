@@ -43,4 +43,5 @@ public interface ClientDetailsManagerReadOnly {
 
     ClientSummary getClientSummary(String clientId);
 
+    boolean doesClientKnowUser(String clientId, String userOrcid);
 }

@@ -30,8 +30,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.read_only.impl.ManagerReadOnlyBaseImpl;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -46,7 +46,6 @@ import org.orcid.jaxb.model.notification.permission_v2.NotificationPermissions;
 import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
@@ -56,7 +55,6 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +100,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private SourceManager sourceManager;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Resource
@@ -121,6 +116,9 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -273,7 +271,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notifications.stream().filter(n -> {
             // Filter only INSTITUTIONAL_CONNECTION notifications
             if (NotificationType.INSTITUTIONAL_CONNECTION.equals(n.getNotificationType())) {
-                boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
+                boolean alreadyConnected = clientDetailsManagerReadOnly.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
                 if (alreadyConnected) {
                     flagAsArchived(userOrcid, n.getPutCode(), false);
                 }

@@ -101,9 +101,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
 
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 

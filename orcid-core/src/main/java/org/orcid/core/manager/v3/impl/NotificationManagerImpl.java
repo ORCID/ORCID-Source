@@ -16,9 +16,9 @@ import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ManagerReadOnlyBaseImpl;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -103,9 +103,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     private SourceManager sourceManager;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Resource
@@ -128,6 +125,9 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource(name = "recordNameManagerV3")
     private RecordNameManager recordNameManagerV3;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Value("${org.orcid.notifications.auto.archive.days:181}")
     private Integer autoArchiveDays;
@@ -543,7 +543,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
         return notifications.stream().filter(n -> {
             // Filter only INSTITUTIONAL_CONNECTION notifications
             if (NotificationType.INSTITUTIONAL_CONNECTION.equals(n.getNotificationType())) {
-                boolean alreadyConnected = orcidOauth2TokenDetailService.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
+                boolean alreadyConnected = clientDetailsManagerReadOnly.doesClientKnowUser(n.getSource().retrieveSourcePath(), userOrcid);
                 if (alreadyConnected) {
                     flagAsArchived(userOrcid, n.getPutCode(), false);
                 }
