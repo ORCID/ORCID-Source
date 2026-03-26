@@ -18,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -51,8 +51,8 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @Resource
-    protected OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     protected NotificationManager notificationManager;
@@ -90,7 +90,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
-            boolean clientKnowsUser = orcidOauth2TokenDetailService.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
+            boolean clientKnowsUser = clientDetailsManagerReadOnly.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
             // If the client doesn't know about the user yet, send a
             // notification
             if (!clientKnowsUser) {

@@ -55,4 +55,6 @@
 		<constructor-arg index="3" value="${org.orcid.core.utils.cache.redis.expiration_in_secs:600}" />
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
 	</bean>
+
+    <bean id="orcidAPIAccessDeniedHandler" class="org.orcid.api.common.security.oauth.OrcidAPIAccessDeniedHandler" />
 </beans>

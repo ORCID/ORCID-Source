@@ -22,8 +22,8 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.impl.ProfileEntityManagerReadOnlyImpl;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -66,9 +66,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Resource(name = "peerReviewManagerV3")
     private PeerReviewManager peerReviewManager;
 
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
-
     @Resource(name = "workManagerV3")
     private WorkManager workManager;
 
@@ -106,13 +103,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     private NotificationManager notificationManager;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
-    @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
 
     @Resource
     private LocaleManager localeManager;
@@ -125,9 +116,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private TransactionTemplate transactionTemplate;
-
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Resource(name = "profileHistoryEventManagerV3")
     private ProfileHistoryEventManager profileHistoryEventManager;
@@ -146,6 +134,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Resource
     private ProfileEmailDomainManager profileEmailDomainManager;
+
+    @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
+
+    @Resource(name="orcidOauth2TokenDetailDao")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+
+    @Resource
+    private RedisClient redisClient;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -292,13 +289,21 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
     @Override
     public void disableClientAccess(String clientDetailsId, String userOrcid) {
-        orcidOauth2TokenService.disableClientAccess(clientDetailsId, userOrcid);
+        List<OrcidOauth2TokenDetail> userTokens = orcidOauth2TokenDetailDaoReadOnly.findByUserName(userOrcid);
+        if(userTokens != null && !userTokens.isEmpty()) {
+            for(OrcidOauth2TokenDetail token : userTokens) {
+                if(clientDetailsId.equals(token.getClientDetailsId())) {
+                    redisClient.remove(token.getTokenValue());
+                }
+            }
+        }
+        // And then disable all user tokens
+        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
     }
 
     @Override
     public List<ApplicationSummary> getApplications(String orcid) {
-        // TODO: Use the authorization server to build this list of tokens
-        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
+        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDaoReadOnly.findByUserName(orcid);
         Map<String, ApplicationSummary> distinctApplications = new HashMap<>();
         for (OrcidOauth2TokenDetail token : tokenDetails) {
             if ((token.getTokenDisabled() == null || !token.getTokenDisabled()) && token.getOboClientDetailsId() == null) {
@@ -649,7 +654,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
 
         if (disableTokens) {
             // Disable any token that belongs to this record
-            orcidOauth2TokenDetailService.disableAccessTokenByUserOrcid(orcid, RevokeReason.RECORD_DEACTIVATED);
+            orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(orcid, RevokeReason.RECORD_DEACTIVATED.name());
         }
 
         // Change default visibility to private

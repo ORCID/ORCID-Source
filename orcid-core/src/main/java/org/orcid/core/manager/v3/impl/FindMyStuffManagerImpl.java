@@ -17,8 +17,8 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.v3.identifiers.finders.Finder;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -50,14 +50,14 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
 
     @Resource
     private FindMyStuffHistoryDao findMyStuffHistoryDao;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     List<Finder> finders = new ArrayList<Finder>();
@@ -111,7 +111,7 @@ public class FindMyStuffManagerImpl implements FindMyStuffManager {
         }
         // check for existing permissions
         for (Finder f : finders) {
-            if (f.isEnabled() && orcidOauth2TokenDetailService.doesClientKnowUser(f.getRelatedClientId(), orcid))
+            if (f.isEnabled() && clientDetailsManagerReadOnly.doesClientKnowUser(f.getRelatedClientId(), orcid))
                 skipServices.add(f.getFinderName());
         }
 
