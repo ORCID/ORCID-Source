@@ -60,22 +60,42 @@ public class OrcidApiCommonEndpoints {
 
         if(Features.OAUTH_AUTHORIZATION_CODE_EXCHANGE.isActive()) {
             Response response = null;
-            switch (grantType) {
-                case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
-                    response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
-                    response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
-                    break;
-                case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
-                    response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
-                    break;
-                case IETF_EXCHANGE_GRANT_TYPE:
-                    response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
-                    break;
-                default:
-                    response = authorizationServerUtil.forwardOtherTokenExchangeRequest(clientId, clientSecret, grantType, code, scopeList);
-                    break;
+            if(StringUtils.isNotBlank(authorization)) {
+                switch (grantType) {
+                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                        response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(authorization, redirectUri, code);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                        response = authorizationServerUtil.forwardRefreshTokenRequest(authorization, refreshToken, scopeList);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                        response = authorizationServerUtil.forwardClientCredentialsRequest(authorization, scopeList);
+                        break;
+                    case IETF_EXCHANGE_GRANT_TYPE:
+                        response = authorizationServerUtil.forwardTokenExchangeRequest(authorization, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                        break;
+                    default:
+                        response = authorizationServerUtil.forwardOtherTokenExchangeRequest(authorization, grantType, code, scopeList);
+                        break;
+                }
+            } else {
+                switch (grantType) {
+                    case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
+                        response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(clientId, clientSecret, redirectUri, code);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_REFRESH_TOKEN:
+                        response = authorizationServerUtil.forwardRefreshTokenRequest(clientId, clientSecret, refreshToken, scopeList);
+                        break;
+                    case OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS:
+                        response = authorizationServerUtil.forwardClientCredentialsRequest(clientId, clientSecret, scopeList);
+                        break;
+                    case IETF_EXCHANGE_GRANT_TYPE:
+                        response = authorizationServerUtil.forwardTokenExchangeRequest(clientId, clientSecret, subjectToken, subjectTokenType, requestedTokenType, scopeList);
+                        break;
+                    default:
+                        response = authorizationServerUtil.forwardOtherTokenExchangeRequest(clientId, clientSecret, grantType, code, scopeList);
+                        break;
+                }
             }
             Object entity = response.getEntity();
             int statusCode = response.getStatus();
@@ -129,5 +149,4 @@ public class OrcidApiCommonEndpoints {
             return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
         }
     }
-
 }

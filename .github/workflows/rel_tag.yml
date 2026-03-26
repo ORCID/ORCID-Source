@@ -56,15 +56,20 @@ jobs:
   rel_tag:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+
       - name: git-checkout-ref-action
         id: ref
-        uses: ORCID/git-checkout-ref-action@main
+        uses: ORCID/git-checkout-ref-action@4258c0cbe4b164e410d0263416034787fb300f26 # main
         with:
           default_branch: ${{ github.event.repository.default_branch }}
           ref: ${{ inputs.ref }}
 
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           # token with write permissions to protected branches
           # standard github token does not allow this
@@ -76,13 +81,13 @@ jobs:
 
       - name: find next version
         id: version
-        uses: ORCID/version-bump-action@main
+        uses: ORCID/version-bump-action@75233259407ae3728171973d09bc66fcf4b15b6a # main
         with:
           version_tag: ${{ inputs.version_tag }}
           bump: ${{ inputs.bump }}
 
       - name: tag repo create changelog and create release
-        uses: ORCID/changelog-action@main
+        uses: ORCID/changelog-action@a5a2787feb8462255492cdfc732b32adf4d0c5d0 # main
         with:
           version_tag: ${{ steps.version.outputs.version_tag }}
           slack_channel: tech-release
