@@ -3,29 +3,22 @@ package org.orcid.api.common.filter;
 import java.security.AccessControlException;
 import java.util.regex.Matcher;
 
-import javax.annotation.Resource;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import org.glassfish.jersey.server.ContainerRequest;
-
+@Deprecated
 @Provider
 public class TokenTargetFilter implements ContainerRequestFilter {
-
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Override
     public void filter(ContainerRequestContext request) {
@@ -38,19 +31,47 @@ public class TokenTargetFilter implements ContainerRequestFilter {
 
     private void validateTargetRecord(String targetOrcid, ContainerRequestContext request) {
         // Verify if it is the owner of the token
+
+        //TODO: CAN WE DELETE THIS FILTER????
+
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+
+        System.out.println("TokenTargetFilter");
+
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------");
+
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
             Authentication authentication = context.getAuthentication();
-            if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-                OAuth2Authentication oauth2Auth = (OAuth2Authentication) authentication;
-                Authentication userAuthentication = oauth2Auth.getUserAuthentication();
-                if (userAuthentication != null) {
-                    Object principal = userAuthentication.getPrincipal();
-                    if (principal instanceof ProfileEntity) {
-                        ProfileEntity tokenOwner = (ProfileEntity) principal;
-                        if (!targetOrcid.equals(tokenOwner.getId())) {
-                            throwException();                            
-                        }
+            if (OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
+                OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
+                if (authDetails != null) {
+                    if (!targetOrcid.equals(authDetails.getUserOrcid())) {
+                        throwException();
                     }
                 }
             }

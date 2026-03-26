@@ -17,7 +17,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -32,9 +31,6 @@ import org.springframework.test.context.ContextConfiguration;
 public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String USER_ORCID = "0000-0000-0000-0001";    
-    
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
     
     @Resource
     private ProfileEntityManager profileEntityManager;

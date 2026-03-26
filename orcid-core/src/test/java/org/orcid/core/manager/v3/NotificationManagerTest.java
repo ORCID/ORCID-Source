@@ -14,7 +14,6 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -68,9 +67,6 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Mock
     private NotificationDao mockNotificationDao;
-
-    @Mock
-    private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
@@ -128,13 +124,11 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", mockSourceManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEntityCacheManager", mockProfileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "emailManager", mockEmailManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", mockProfileDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", mockNotificationAdapter);
-        when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);
     }
 
     @After

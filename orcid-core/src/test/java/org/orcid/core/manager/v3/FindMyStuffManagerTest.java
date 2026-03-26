@@ -21,7 +21,6 @@ import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.v3.identifiers.finders.DataciteFinder;
 import org.orcid.core.utils.v3.identifiers.finders.Finder;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -62,9 +61,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
     @Mock
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @Mock
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-    
     @Resource(name = "jpaJaxbNotificationAdapterV3")
     private JpaJaxbNotificationAdapter notificationAdapter;
 
@@ -86,7 +82,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "workManagerReadOnly", workManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "notificationManager", notificationManager);
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(findMyStuffManager, "orcidOauth2TokenDetailService", orcidOauth2TokenDetailService);
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "findMyStuffHistoryDao", findMyStuffHistoryDao);
         
         //Finder mock
@@ -122,7 +117,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
     @Test
     public void testFindIfAppropriate(){
         //new user
-        when(orcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         when(workManagerReadOnly.getAllExternalIDs(Matchers.contains(""))).thenReturn(new ExternalIDs());
         when(findMyStuffHistoryDao.findAll(Matchers.contains(""))).thenReturn(new ArrayList<FindMyStuffHistoryEntity>());
         
@@ -136,12 +130,10 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         //check history persisted
         verify(findMyStuffHistoryDao, times(1)).persist(Matchers.any());
         //check notification created
-        
     }
     
     @Test
     public void testFindIfAppropriateExistingHistory(){
-        when(orcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         when(workManagerReadOnly.getAllExternalIDs(Matchers.contains(""))).thenReturn(new ExternalIDs());
         //optedOut
         FindMyStuffHistoryEntity e = new FindMyStuffHistoryEntity();
@@ -160,7 +152,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
     
     @Test
     public void testFindIfAppropriateOptedOut(){
-        when(orcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         when(workManagerReadOnly.getAllExternalIDs(Matchers.contains(""))).thenReturn(new ExternalIDs());
         //optedOut
         FindMyStuffHistoryEntity e = new FindMyStuffHistoryEntity();
@@ -181,7 +172,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
        
     @Test
     public void testFindIfAppropriateExistingWorks(){
-        when(orcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         //user with existing works
         ExternalID id = new ExternalID();
         ExternalIDs ids = new ExternalIDs();
@@ -199,7 +189,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
     @Test
     public void testFindIfAppropriateExistingPerms(){
         //user with existing permissions
-        when(orcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);
         when(workManagerReadOnly.getAllExternalIDs(Matchers.contains(""))).thenReturn(new ExternalIDs());
         when(findMyStuffHistoryDao.findAll(Matchers.contains(""))).thenReturn(new ArrayList<FindMyStuffHistoryEntity>());
         
@@ -217,7 +206,6 @@ public class FindMyStuffManagerTest extends DBUnitTest{
     @Test
     public void testFindIfAppropriateExistingNotifications(){
         //new user
-        when(orcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         when(workManagerReadOnly.getAllExternalIDs(Matchers.contains(""))).thenReturn(new ExternalIDs());
         when(findMyStuffHistoryDao.findAll(Matchers.contains(""))).thenReturn(new ArrayList<FindMyStuffHistoryEntity>());
         NotificationFindMyStuff n = new NotificationFindMyStuff();

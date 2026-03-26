@@ -161,69 +161,7 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-        
-        
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>geonames</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>jena.schemagen</mainClass>
-                            <commandlineArgs>
-                                --inference \
-                                -i ${project.basedir}/src/main/vocabs/geonames_v3.1.rdf \
-                                -e RDF \
-                                --package org.orcid.api.common.writer.rdf.vocabs \
-                                -o ${jena.dir} \
-                                -n Geonames
-                            </commandlineArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>pav</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>jena.schemagen</mainClass>
-                            <commandlineArgs>
-                                --inference \
-                                -i ${project.basedir}/src/main/vocabs/pav.rdf \
-                                -e RDF \
-                                --package org.orcid.api.common.writer.rdf.vocabs \
-                                -o ${jena.dir} \
-                                -n PAV
-                            </commandlineArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>prov-o</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>jena.schemagen</mainClass>
-                            <commandlineArgs>
-                                --inference \
-                                -i ${project.basedir}/src/main/vocabs/prov-o.rdf \
-                                -e RDF \
-                                --package org.orcid.api.common.writer.rdf.vocabs \
-                                -o ${jena.dir} \
-                                -n PROV
-                            </commandlineArgs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

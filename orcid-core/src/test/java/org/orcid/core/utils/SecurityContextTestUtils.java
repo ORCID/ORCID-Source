@@ -1,0 +1,89 @@
+package org.orcid.core.utils;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.Serializable;
+import java.util.*;
+
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+
+public class SecurityContextTestUtils {
+
+    public final static String DEFAULT_CLIENT_ID = "APP-5555555555555555";
+
+    static public void setUpSecurityContext() {
+        setUpSecurityContext(ScopePathType.ORCID_WORKS_CREATE);
+    }
+
+    static public void setUpSecurityContext(ScopePathType... scopePathTypes) {
+        setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
+    }
+
+    static public void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
+        setUpSecurityContext(userOrcid, DEFAULT_CLIENT_ID, scopePathTypes);
+    }
+
+    static public void setUpSecurityContext(String userOrcid, String clientId, ScopePathType... scopePathTypes) {
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+        OrcidBearerTokenAuthentication mockedAuthentication = mock(OrcidBearerTokenAuthentication.class);
+        securityContext.setAuthentication(mockedAuthentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
+        when(mockedAuthentication.getUserOrcid()).thenReturn(userOrcid);
+        Set<String> scopes = new HashSet<String>();
+        if (scopePathTypes != null) {
+            for (ScopePathType scopePathType : scopePathTypes) {
+                scopes.add(scopePathType.value());
+            }
+        }
+        when(mockedAuthentication.getScopes()).thenReturn(scopes);
+    }
+
+    static public void setUpSecurityContextForClientOnly() {
+        setUpSecurityContextForClientOnly("APP-5555555555555555");
+    }
+
+    static public void setUpSecurityContextForClientOnly(String clientId) {
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.ORCID_PROFILE_CREATE.value());
+        setUpSecurityContextForClientOnly(clientId, scopes);
+    }
+
+    static public void setUpSecurityContextForClientOnly(String clientId, ScopePathType... scopePathTypes) {
+        Set<String> scopes = new HashSet<String>();
+        for (ScopePathType scope : scopePathTypes) {
+            scopes.add(scope.value());
+        }
+        setUpSecurityContextForClientOnly(clientId, scopes);
+    }
+
+    static public void setUpSecurityContextForClientOnly(String clientId, Set<String> scopes) {
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+        OrcidBearerTokenAuthentication mockedAuthentication = mock(OrcidBearerTokenAuthentication.class);
+        securityContext.setAuthentication(mockedAuthentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
+        when(mockedAuthentication.getScopes()).thenReturn(scopes);
+    }
+
+    static public void setUpSecurityContextForAnonymous() {
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+        ArrayList<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_ANONYMOUS"));
+        AnonymousAuthenticationToken anonToken = new AnonymousAuthenticationToken("testKey", "testToken", authorities);
+        securityContext.setAuthentication(anonToken);
+        SecurityContextHolder.setContext(securityContext);
+    }
+}

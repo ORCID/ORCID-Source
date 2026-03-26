@@ -20,7 +20,6 @@ import org.orcid.core.manager.CountryManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.pojo.ajaxForm.Contributor;
@@ -44,9 +43,6 @@ public class BaseWorkspaceController extends BaseController {
 
     @Resource(name = "profileEntityManagerV3")
     protected ProfileEntityManager profileEntityManager;
-
-    @Resource(name = "visibilityFilter")
-    protected VisibilityFilter visibilityFilter;
 
     @Resource
     private ProfileLastModifiedAspect profileLastModifiedAspect;

@@ -86,21 +86,5 @@
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
     </bean>
-    
-    <!-- Use the composite granter to enable granting of tokens for both client credentials and auth codes -->
-    <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
-        <constructor-arg>
-            <list>
-                <ref bean="clientCredentialsTokenGranter"/>                
-            </list>
-        </constructor-arg>
-    </bean>    
-    
-    <!-- Internal endpoint delegator that will allow creating internal tokens such as /orcid-internal and /orcid-internal/person/last_modified -->
-    <!-- Should overwrite the default OrcidClientCredentialEndPointDelegatorImpl that should be used in the Public and Members API -->
-    <bean id="orcidClientCredentialEndPointDelegator" class="org.orcid.internal.server.delegator.impl.InternalClientCredentialEndPointDelegatorImpl">
-        <property name="tokenGranter" ref="tokenGranter"/>
-        <property name="clientDetailsService" ref="clientDetailsManager"/>        
-    </bean>     
-    
+
 </beans>

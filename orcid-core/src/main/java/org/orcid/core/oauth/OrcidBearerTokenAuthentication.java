@@ -24,10 +24,6 @@ public class OrcidBearerTokenAuthentication implements Authentication {
     private boolean authenticated = false;
     private String oboClientId;
 
-    private OrcidBearerTokenAuthentication() {
-
-    }
-
     private OrcidBearerTokenAuthentication(Builder builder) {
         this.clientId = builder.clientId;
         this.userOrcid = builder.userOrcid;

@@ -2,11 +2,9 @@
 <beans xmlns:sec="http://www.springframework.org/schema/security"
 	   xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context"
-	   xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
 	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.6.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/security/oauth2 https://raw.githubusercontent.com/spring-attic/spring-security-oauth/main/spring-security-oauth2/src/main/resources/org/springframework/security/oauth2/spring-security-oauth2-2.0.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
 
@@ -187,48 +185,6 @@
 		<sec:csrf disabled="true"/>
 		<sec:intercept-url pattern="/oauth/userinfo" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:anonymous enabled="true" />
-	</sec:http>
-
-	<sec:http use-expressions="false" pattern="/oauth/.*"
-			  authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager"
-			  create-session="ifRequired" request-matcher="regex" entry-point-ref="approveOauthAuthenticationEntryPoint">
-		<sec:access-denied-handler error-page="/oauth/signin" />
-		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="oAuthAuthorizeNotSignedInFilter" />
-		<sec:csrf token-repository-ref="csrfTokenRepo"/>
-		<sec:intercept-url pattern="/oauth/login(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/playground(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/login.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/signin.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize/empty.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/register/empty.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/register.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/jwks"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/init.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/requestInfoForm.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
-
-		<sec:session-management session-fixation-protection="migrateSession"/>
-		<sec:logout/>
 	</sec:http>
 
 	<bean id="approveOauthAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">

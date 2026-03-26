@@ -7,8 +7,8 @@ import java.util.Locale;
 import javax.annotation.Resource;
 
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -43,10 +43,10 @@ public class ThirdPartyLinkManager implements InitializingBean {
     private LocaleManager localeManager;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
     private RedisClient redisClient;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Value("${org.orcid.core.utils.cache.redis.works-search-and-link-wizard.ttl:3600}")
     private int worksSearchAndLinkWizardCacheTtl;
@@ -105,7 +105,7 @@ public class ThirdPartyLinkManager implements InitializingBean {
         List<SearchAndLinkWizardFormSummary> list = getWorksSearchAndLinkWizardBaseList();
         for (SearchAndLinkWizardFormSummary form : list) {
             form.setConnected(StringUtils.isNotBlank(currentUserOrcid)
-                    && orcidOauth2TokenDetailService.doesClientKnowUser(form.getId(), currentUserOrcid));
+                    && clientDetailsManagerReadOnly.doesClientKnowUser(form.getId(), currentUserOrcid));
         }
         return list;
     }

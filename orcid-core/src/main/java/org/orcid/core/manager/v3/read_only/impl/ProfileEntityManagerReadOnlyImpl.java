@@ -3,11 +3,18 @@ package org.orcid.core.manager.v3.read_only.impl;
 import java.text.SimpleDateFormat;
 
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 
-public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly { 
+import javax.annotation.Resource;
+
+public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileEntityManagerReadOnly {
+
+    @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
 
     protected ProfileDao profileDao;       
     
@@ -67,5 +74,11 @@ public class ProfileEntityManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl im
             return false;
         }
         return profileDao.haveMemberPushedWorksOrAffiliationsToRecord(orcid, clientId);
+    }
+
+    @Override
+    @Cacheable(value = "count-tokens", key = "#userName.concat('-').concat(#lastModified)")
+    public Boolean hasToken(String userName, long lastModified) {
+        return orcidOauth2TokenDetailDaoReadOnly.hasToken(userName);
     }
 }

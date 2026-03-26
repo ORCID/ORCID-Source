@@ -57,4 +57,5 @@
 	</bean>
 
     <bean id="orcidAPIAccessDeniedHandler" class="org.orcid.api.common.security.oauth.OrcidAPIAccessDeniedHandler" />
+
 </beans>

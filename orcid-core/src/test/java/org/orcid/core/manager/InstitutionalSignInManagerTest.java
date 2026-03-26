@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -52,9 +51,6 @@ public class InstitutionalSignInManagerTest {
     @Mock
     private NotificationManager mock_notificationManager;
 
-    @Mock
-    private OrcidOauth2TokenDetailService mock_orcidOauth2TokenDetailService;
-
     @Resource
     private UserConnectionDao userConnectionDao;
 
@@ -65,9 +61,6 @@ public class InstitutionalSignInManagerTest {
     private NotificationManager notificationManager;
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
     private InstitutionalSignInManager institutionalSignInManager;
 
     @Before
@@ -76,7 +69,6 @@ public class InstitutionalSignInManagerTest {
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "userConnectionDao", mock_userConnectionDao);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsEntityCacheManager", mock_clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "notificationManager", mock_notificationManager);
-        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "orcidOauth2TokenDetailService", mock_orcidOauth2TokenDetailService);
     }
 
     @After
@@ -85,7 +77,6 @@ public class InstitutionalSignInManagerTest {
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "userConnectionDao", userConnectionDao);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "notificationManager", notificationManager);
-        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "orcidOauth2TokenDetailService", orcidOauth2TokenDetailService);
     }
 
     @Test
@@ -94,7 +85,6 @@ public class InstitutionalSignInManagerTest {
 
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -109,7 +99,6 @@ public class InstitutionalSignInManagerTest {
 
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(true);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -122,7 +111,6 @@ public class InstitutionalSignInManagerTest {
     public void testDontSendNotificationIfIdPNotLinkedToClient() throws UnsupportedEncodingException {
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenThrow(new IllegalArgumentException());
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -136,7 +124,6 @@ public class InstitutionalSignInManagerTest {
         ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(new UserconnectionEntity());
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -149,7 +136,6 @@ public class InstitutionalSignInManagerTest {
     public void testDontPersistAndDontNotify() throws UnsupportedEncodingException {
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(new UserconnectionEntity());
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenThrow(new IllegalArgumentException());
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(true);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -211,5 +197,4 @@ public class InstitutionalSignInManagerTest {
         assertEquals("myself@testshib.org", mismatch.getOriginalValue());
         assertEquals("myself@testshib.org;someoneelse@testshib.org", mismatch.getCurrentValue());
     }
-
 }

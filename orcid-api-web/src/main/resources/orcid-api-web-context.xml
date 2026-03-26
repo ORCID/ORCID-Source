@@ -39,7 +39,6 @@
     
     <bean id="notificationsApiServiceDelegatorV3" class="org.orcid.api.notificationsV3.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
 
-
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
     
     <!--  Member_2 API -->

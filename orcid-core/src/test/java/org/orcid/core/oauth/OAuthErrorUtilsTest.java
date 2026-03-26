@@ -17,8 +17,6 @@ package org.orcid.core.oauth;
  * =============================================================================
  */
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
@@ -27,7 +25,6 @@ import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 
 public class OAuthErrorUtilsTest {
 
@@ -41,7 +38,7 @@ public class OAuthErrorUtilsTest {
     
     @Test
     public void testGetOAuthErrorForUnsupportedGrantTypeException() {
-        OAuthError error = OAuthErrorUtils.getOAuthError(new UnsupportedGrantTypeException("message here"));
+        OAuthError error = OAuthErrorUtils.getOAuthError(new IllegalArgumentException("message here"));
         assertEquals(OAuthError.UNSUPPORTED_GRANT_TYPE, error.getError());
         assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
         assertEquals("message here", error.getErrorDescription());

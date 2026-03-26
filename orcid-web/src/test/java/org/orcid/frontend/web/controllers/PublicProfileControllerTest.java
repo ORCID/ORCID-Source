@@ -30,7 +30,6 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common.Iso3166Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.Address;
@@ -101,9 +100,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Mock
     private ProfileEntityCacheManager profileEntityCacheManagerMock;
-    
-    @Mock
-    private OrcidOauth2TokenDetailService orcidOauth2TokenServiceMock;
     
     @Mock
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnlyMock;
@@ -393,7 +389,6 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     private void setupUserInfoMocks() {
         SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-000000000001"));
-        TargetProxyHelper.injectIntoProxy(publicProfileController, "orcidOauth2TokenService", orcidOauth2TokenServiceMock);
         TargetProxyHelper.injectIntoProxy(publicProfileController, "profileEntityCacheManager", profileEntityCacheManagerMock);
         TargetProxyHelper.injectIntoProxy(publicProfileController, "profileEntityManagerReadOnly", profileEntityManagerReadOnlyMock);
         
@@ -407,7 +402,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         reviewedNoIntegrations.setRecordLocked(false);
         reviewedNoIntegrations.setReviewed(true);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(reviewedNoIntegrationsOrcid), anyLong())).thenReturn(false);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(reviewedNoIntegrationsOrcid), anyLong())).thenReturn(false);
         when(profileEntityCacheManagerMock.retrieve(reviewedNoIntegrationsOrcid)).thenReturn(reviewedNoIntegrations);        
         
         // Reviewed record with integrations
@@ -415,7 +410,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         reviewedWithIntegrations.setRecordLocked(false);
         reviewedWithIntegrations.setReviewed(true);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(reviewedWithIntegrationsOrcid), anyLong())).thenReturn(true);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(reviewedWithIntegrationsOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(reviewedWithIntegrationsOrcid)).thenReturn(reviewedWithIntegrations);
         
         // Un-reviewed record with no integrations
@@ -423,7 +418,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         unreviewedNoIntegrations.setRecordLocked(false);
         unreviewedNoIntegrations.setReviewed(false);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedNoIntegrationsOrcid), anyLong())).thenReturn(false);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(unreviewedNoIntegrationsOrcid), anyLong())).thenReturn(false);
         when(profileEntityCacheManagerMock.retrieve(unreviewedNoIntegrationsOrcid)).thenReturn(unreviewedNoIntegrations);
         
         // Un-reviewed record with integrations
@@ -431,7 +426,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         unreviewedWithIntegrations.setRecordLocked(false);
         unreviewedWithIntegrations.setReviewed(false);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedWithIntegrationsOrcid), anyLong())).thenReturn(true);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(unreviewedWithIntegrationsOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(unreviewedWithIntegrationsOrcid)).thenReturn(unreviewedWithIntegrations);
         
         // Un reviewed record, created by member, with no integrations and no activities
@@ -440,7 +435,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         unreviewedWithIntegrations.setRecordLocked(false);
         unreviewedWithIntegrations.setReviewed(false);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedCreatedByMembersWithNoActivitiesOrcid), anyLong())).thenReturn(false);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(unreviewedCreatedByMembersWithNoActivitiesOrcid), anyLong())).thenReturn(false);
         when(profileEntityCacheManagerMock.retrieve(eq(unreviewedCreatedByMembersWithNoActivitiesOrcid))).thenReturn(unreviewedCreatedByMembersWithNoActivities);
         
         
@@ -450,7 +445,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         unreviewedWithIntegrations.setRecordLocked(false);
         unreviewedWithIntegrations.setReviewed(false);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(unreviewedCreatedByMembersWithActivitiesOrcid), anyLong())).thenReturn(false);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(unreviewedCreatedByMembersWithActivitiesOrcid), anyLong())).thenReturn(false);
         when(profileEntityCacheManagerMock.retrieve(eq(unreviewedCreatedByMembersWithActivitiesOrcid))).thenReturn(unreviewedCreatedByMembersWithActivities);
         
         // Deprecated 
@@ -459,7 +454,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         deprecated.setReviewed(true);
         deprecated.setPrimaryRecord(new ProfileEntity(primaryRecord));
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(deprecatedUserOrcid), anyLong())).thenReturn(true);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(deprecatedUserOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(deprecatedUserOrcid)).thenReturn(deprecated);
         
         // Locked
@@ -467,7 +462,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         locked.setRecordLocked(true);
         locked.setReviewed(true);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(lockedUserOrcid), anyLong())).thenReturn(true);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(lockedUserOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(lockedUserOrcid)).thenReturn(locked);
         
         
@@ -476,7 +471,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         allOk.setRecordLocked(false);
         allOk.setReviewed(true);
         
-        when(orcidOauth2TokenServiceMock.hasToken(eq(userOrcid), anyLong())).thenReturn(true);
+        when(profileEntityManagerReadOnlyMock.hasToken(eq(userOrcid), anyLong())).thenReturn(true);
         when(profileEntityCacheManagerMock.retrieve(userOrcid)).thenReturn(allOk);        
     }
 }
