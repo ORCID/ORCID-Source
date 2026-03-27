@@ -3,15 +3,12 @@ package org.orcid.core.utils;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.Serializable;
 import java.util.*;
 
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,5 +82,21 @@ public class SecurityContextTestUtils {
         AnonymousAuthenticationToken anonToken = new AnonymousAuthenticationToken("testKey", "testToken", authorities);
         securityContext.setAuthentication(anonToken);
         SecurityContextHolder.setContext(securityContext);
+    }
+
+    static public void setupSecurityContextForWebUser(String userId, String email) {
+        UserDetails details = new User(userId, email, List.of());
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, "password");
+        auth.setDetails(details);
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+        securityContext.setAuthentication(auth);
+        SecurityContextHolder.setContext(securityContext);
+    }
+
+    static public void setUpSecurityContextForGroupIdClientOnly() {
+        Set<String> scopes = new HashSet<String>();
+        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+        setUpSecurityContextForClientOnly("APP-5555555555555555", scopes);
     }
 }

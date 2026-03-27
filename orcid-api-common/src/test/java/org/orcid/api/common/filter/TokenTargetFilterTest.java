@@ -15,16 +15,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.orcid.api.common.filter.TokenTargetFilter;
 import org.orcid.core.exception.OrcidUnauthorizedException;
-import org.orcid.core.oauth.OrcidOAuth2Authentication;
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.glassfish.jersey.server.ContainerRequest;
@@ -104,29 +102,16 @@ public class TokenTargetFilterTest {
     
     private void setUpSecurityContext(String userOrcid, String clientId, ScopePathType... scopePathTypes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
-        OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
+        OrcidBearerTokenAuthentication mockedAuthentication = mock(OrcidBearerTokenAuthentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         if(userOrcid != null) {
-            ProfileEntity userProfileEntity = new ProfileEntity(userOrcid);
-            when(mockedAuthentication.getPrincipal()).thenReturn(userProfileEntity);
-            Authentication userAuthentication = mock(Authentication.class);
-            when(userAuthentication.getPrincipal()).thenReturn(userProfileEntity);
-            when(mockedAuthentication.getUserAuthentication()).thenReturn(userAuthentication);            
+            when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
+            when(mockedAuthentication.getUserOrcid()).thenReturn(userOrcid);
         } else {
             when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
         }
-        
-        Set<String> scopes = new HashSet<String>();
-        if (scopePathTypes != null) {
-            for (ScopePathType scopePathType : scopePathTypes) {
-                scopes.add(scopePathType.value());
-            }
-        }
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId,
-                Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
-                Collections.<String, Serializable> emptyMap());
-        when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
+
         when(mockedAuthentication.isAuthenticated()).thenReturn(true);
     }
 }

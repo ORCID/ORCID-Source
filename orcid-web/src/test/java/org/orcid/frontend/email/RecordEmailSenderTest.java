@@ -30,7 +30,6 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.SourceManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.persistence.dao.GenericDao;
@@ -39,7 +38,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.pojo.EmailListChange;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.email.MailGunManager;
@@ -58,16 +56,7 @@ public class RecordEmailSenderTest {
     private ProfileEventDao mockProfileEventDao;
 
     @Mock
-    private SourceManager sourceManager;
-
-    @Mock
-    private NotificationDao mockNotificationDao;
-
-    @Mock
     private MailGunManager mockMailGunManager;
-
-    @Mock
-    private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
 
     @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
@@ -75,21 +64,6 @@ public class RecordEmailSenderTest {
     @Mock
     private EmailManager mockEmailManager;
 
-    @Mock
-    private ProfileDao mockProfileDao;
-
-    @Mock
-    private ProfileDao mockProfileDaoReadOnly;
-
-    @Mock
-    private JpaJaxbNotificationAdapter mockNotificationAdapter;
-
-    @Mock
-    public GenericDao<EmailEventEntity, Long> mockEmailEventDao;
-
-    @Mock
-    public EmailFrequencyManager mockEmailFrequencyManager;
-    
     @Mock
     public RecordNameManager mockRecordNameManager;
     

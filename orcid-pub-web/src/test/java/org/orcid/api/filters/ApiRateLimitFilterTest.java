@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.api.rate_limit.PapiRateLimitRedisClient;
-import org.orcid.core.oauth.service.OrcidTokenStore;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,9 +33,6 @@ public class ApiRateLimitFilterTest {
     private FilterChain filterChainMock;
 
     @Mock
-    private OrcidTokenStore orcidTokenStoreMock;
-
-    @Mock
     private PapiRateLimitRedisClient papiRateLimitRedisMock;
 
     MockHttpServletRequest httpServletRequestMock = new MockHttpServletRequest();
@@ -47,13 +43,11 @@ public class ApiRateLimitFilterTest {
     public void doFilterInternal_rateLimitingDisabledTest() throws ServletException, IOException {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", false);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
         verify(filterChainMock, times(1)).doFilter(eq(httpServletRequestMock), eq(httpServletResponseMock));
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
 
         verify(papiRateLimitRedisMock, never()).getDailyLimitsForClient(anyString(), any());
         verify(papiRateLimitRedisMock, never()).setTodayLimitsForClient(anyString(), any());
@@ -65,7 +59,6 @@ public class ApiRateLimitFilterTest {
         String ip = "127.0.0.2";
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
@@ -73,7 +66,6 @@ public class ApiRateLimitFilterTest {
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
         verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
     }
 
@@ -83,15 +75,12 @@ public class ApiRateLimitFilterTest {
         String ip = "127.0.0.2";
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
         httpServletRequestMock.addHeader("X-REAL-IP", ip);
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
-
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
 
         verify(papiRateLimitRedisMock, never()).getDailyLimitsForClient(anyString(), any());
         verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
@@ -103,7 +92,6 @@ public class ApiRateLimitFilterTest {
         String ip = "127.0.0.1";
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
@@ -111,7 +99,6 @@ public class ApiRateLimitFilterTest {
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
         verify(papiRateLimitRedisMock, never()).setTodayLimitsForClient(eq(ip), any());
     }
 
@@ -128,7 +115,6 @@ public class ApiRateLimitFilterTest {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(dailyLimitsObj);
@@ -136,9 +122,7 @@ public class ApiRateLimitFilterTest {
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
         verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(anyString(), any(JSONObject.class));
-
     }
 
     @Test
@@ -148,9 +132,7 @@ public class ApiRateLimitFilterTest {
         String clientId = "clientId1";
 
         httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
-        when(orcidTokenStoreMock.readClientId(eq("TEST_TOKEN"))).thenReturn(clientId);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(null);
@@ -176,9 +158,7 @@ public class ApiRateLimitFilterTest {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         httpServletRequestMock.addHeader("Authorization", "TEST_TOKEN");
-        when(orcidTokenStoreMock.readClientId(eq("TEST_TOKEN"))).thenReturn(clientId);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getDailyLimitsForClient(eq(clientId), any())).thenReturn(dailyLimitsObj);
@@ -203,7 +183,6 @@ public class ApiRateLimitFilterTest {
         dailyLimitsObj.put(PapiRateLimitRedisClient.KEY_LAST_MODIFIED, System.currentTimeMillis());
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip))).thenReturn(dailyLimitsObj);
@@ -224,7 +203,6 @@ public class ApiRateLimitFilterTest {
         String ip_in_cidr = "10.0.0.0";
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip_in_cidr))).thenReturn(null);
@@ -232,7 +210,6 @@ public class ApiRateLimitFilterTest {
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
         verify(papiRateLimitRedisMock, never()).setTodayLimitsForClient(eq(ip_in_cidr), any());
     }
 
@@ -242,7 +219,6 @@ public class ApiRateLimitFilterTest {
         String ip_not_cidr = "20.0.0.0";
 
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "enableRateLimiting", true);
-        TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "orcidTokenStore", orcidTokenStoreMock);
         TargetProxyHelper.injectIntoProxy(apiRateLimitFilter, "papiRedisClient", papiRateLimitRedisMock);
 
         when(papiRateLimitRedisMock.getTodayDailyLimitsForClient(eq(ip_not_cidr))).thenReturn(null);
@@ -250,7 +226,6 @@ public class ApiRateLimitFilterTest {
 
         apiRateLimitFilter.doFilterInternal(httpServletRequestMock, httpServletResponseMock, filterChainMock);
 
-        verify(orcidTokenStoreMock, never()).readClientId(anyString());
         verify(papiRateLimitRedisMock, times(1)).setTodayLimitsForClient(eq(ip_not_cidr), any(JSONObject.class));
     }
 }
