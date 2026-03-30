@@ -157,12 +157,6 @@ source_file = orcid-core/src/main/resources/i18n/notification_admin_delegate_en.
 source_lang = en
 type        = UNICODEPROPERTIES
 
-[o:orcid-inc-1:p:registry:r:notification-announcement]
-file_filter = orcid-core/src/main/resources/i18n/notification_announcement_<lang>.properties
-source_file = orcid-core/src/main/resources/i18n/notification_announcement_en.properties
-source_lang = en
-type        = UNICODEPROPERTIES
-
 [o:orcid-inc-1:p:registry:r:notification-delegate]
 file_filter = orcid-core/src/main/resources/i18n/notification_delegate_<lang>.properties
 source_file = orcid-core/src/main/resources/i18n/notification_delegate_en.properties
