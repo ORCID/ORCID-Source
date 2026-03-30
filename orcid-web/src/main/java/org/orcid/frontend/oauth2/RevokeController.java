@@ -3,17 +3,25 @@ package org.orcid.frontend.oauth2;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
+import org.orcid.core.togglz.Features;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 @Controller
 @RequestMapping(value = { T2OrcidApiService.OAUTH_REVOKE }, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
@@ -24,34 +32,58 @@ public class RevokeController {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
+    @Resource
+    private AuthorizationServerUtil authorizationServerUtil;
+
     public void setOrcidOauth2TokenDetailService(OrcidOauth2TokenDetailService orcidOauth2TokenDetailService) {
         this.orcidOauth2TokenDetailService = orcidOauth2TokenDetailService;
     }
 
     @RequestMapping
-    public ResponseEntity<?> revoke(HttpServletRequest request) {
-        String clientId = SecurityContextHolder.getContext().getAuthentication().getName();        
-        if (PojoUtil.isEmpty(clientId)) {
-            throw new IllegalArgumentException("Unable to validate client credentials");
-        }
-
-        String tokenToRevoke = request.getParameter("token");
-        if (PojoUtil.isEmpty(tokenToRevoke)) {
-            throw new IllegalArgumentException("Please provide the token to be param");
-        }
-
-        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue(tokenToRevoke);
-        if (token == null) {
-            // Try to find it by refresh token
-            token = orcidOauth2TokenDetailService.findByRefreshTokenValue(tokenToRevoke);
-        }
-
-        if (token != null && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
-            String tokenOwner = token.getClientDetailsId();
-            if (clientId.equals(tokenOwner)) {
-                orcidOauth2TokenDetailService.revokeAccessToken(token.getTokenValue());
+    public ResponseEntity<?> revoke(HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
+        if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
+            // Forward the request to the authorization server
+            String tokenToRevoke = request.getParameter("token");
+            if (PojoUtil.isEmpty(tokenToRevoke)) {
+                throw new IllegalArgumentException("Please provide the token to be param");
+            }
+            Response r = null;
+            if(StringUtils.isNotBlank(request.getHeader("Authorization"))) {
+                String authorization = request.getHeader("Authorization");
+                r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
             } else {
-                LOGGER.warn("Client {} is trying to revoke token that belongs to client {}", clientId, tokenOwner);
+                String clientId = SecurityContextHolder.getContext().getAuthentication().getName();
+                String clientSecret = request.getParameter("client_secret");
+                r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
+            }
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(),
+                    "ON");
+            return ResponseEntity.status(r.getStatus()).headers(responseHeaders).body(r.getEntity());
+        } else {
+            String clientId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (PojoUtil.isEmpty(clientId)) {
+                throw new IllegalArgumentException("Unable to validate client credentials");
+            }
+
+            String tokenToRevoke = request.getParameter("token");
+            if (PojoUtil.isEmpty(tokenToRevoke)) {
+                throw new IllegalArgumentException("Please provide the token to be param");
+            }
+
+            OrcidOauth2TokenDetail token = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue(tokenToRevoke);
+            if (token == null) {
+                // Try to find it by refresh token
+                token = orcidOauth2TokenDetailService.findByRefreshTokenValue(tokenToRevoke);
+            }
+
+            if (token != null && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
+                String tokenOwner = token.getClientDetailsId();
+                if (clientId.equals(tokenOwner)) {
+                    orcidOauth2TokenDetailService.revokeAccessToken(token.getTokenValue());
+                } else {
+                    LOGGER.warn("Client {} is trying to revoke token that belongs to client {}", clientId, tokenOwner);
+                }
             }
         }
 

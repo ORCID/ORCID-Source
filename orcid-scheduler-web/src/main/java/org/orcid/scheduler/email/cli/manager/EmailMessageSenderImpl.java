@@ -163,13 +163,13 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     @Value("${org.orcid.core.email.addWorks.firstAttempt:7}")
     private int addWorksFirstAttemptEmail;
-    
+
     @Value("${org.orcid.core.email.addWorks.secondAttempt:28}")
     private int addWorksSecondAttemptEmail;
-    
+
     @Value("${org.orcid.core.email.addWorks.thirdAttempt:90}")
     private int addWorksThirdAttemptEmail;
-    
+
     @Resource
     private SlackManager slackManager;
 
@@ -203,11 +203,12 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 subjectDelegate = notificationAdministrative.getSubject();
                 if (subjectDelegate.endsWith("has made you an Account Delegate for their ORCID record")) {
                     bodyHtmlDelegateRecipient = getHtmlBody(notificationAdministrative);
-                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual") || subjectDelegate.endsWith("has revoked their Account Delegate access to your record")) {
+                } else if (subjectDelegate.endsWith("has been added as a Trusted Individual")
+                        || subjectDelegate.endsWith("has revoked their Account Delegate access to your record")) {
                     bodyHtmlDelegate = getHtmlBody(notificationAdministrative);
                 } else if (subjectDelegate != null && subjectDelegate.startsWith("[ORCID] Trusting")) {
                     bodyHtmlAdminDelegate = getHtmlBody(notificationAdministrative);
-                } 
+                }
             }
             digestEmail.addNotification(notification);
             if (notification.getSource() == null) {
@@ -303,14 +304,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     public void sendEmailMessages() {
         List<Object[]> orcidsWithUnsentNotifications = new ArrayList<Object[]>();
         try {
-	        LOGGER.info("Searching for records with unsent notifications");
-	        orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
-	        LOGGER.info("Records with unsent notifications: " + orcidsWithUnsentNotifications.size());
+            LOGGER.info("Searching for records with unsent notifications");
+            orcidsWithUnsentNotifications = notificationDaoReadOnly.findRecordsWithUnsentNotifications();
+            LOGGER.info("Records with unsent notifications: " + orcidsWithUnsentNotifications.size());
         } catch (Exception e) {
-			LOGGER.error("Exception fetching records with unsent notifications", e);
+            LOGGER.error("Exception fetching records with unsent notifications", e);
             String message = String.format("Problem while searching for records with unsent notifications");
             slackManager.sendSystemAlert(message);
-		}
+        }
 
         for (final Object[] element : orcidsWithUnsentNotifications) {
             String orcid = (String) element[0];
@@ -321,20 +322,22 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
                 List<Notification> notifications = notificationManager.findNotificationsToSend(orcid, emailFrequencyDays, recordActiveDate);
 
-                EmailEntity primaryEmail = null;  
+                EmailEntity primaryEmail = null;
                 try {
-                	primaryEmail = emailDao.findPrimaryEmail(orcid);
-	                if(primaryEmail != null && !notifications.isEmpty()) {
-                        LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
-                        EmailMessage digestMessage = createDigest(orcid, notifications);
-                        digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
-                        digestMessage.setTo(primaryEmail.getEmail());
+                    if (notifications != null && !notifications.isEmpty()) {
+                        primaryEmail = emailDao.findPrimaryEmail(orcid);
+                        if (primaryEmail != null) {
+                            LOGGER.info("Found {} messages to send for orcid: {}", notifications.size(), orcid);
+                            EmailMessage digestMessage = createDigest(orcid, notifications);
+                            digestMessage.setFrom(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG);
+                            digestMessage.setTo(primaryEmail.getEmail());
 
-                        boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
-                                digestMessage.getBodyText(), digestMessage.getBodyHtml());
-                        if (successfullySent) {
-                            for (Notification notification : notifications) {
-                                notificationDao.flagAsSent(notification.getPutCode());
+                            boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
+                                    digestMessage.getBodyText(), digestMessage.getBodyHtml());
+                            if (successfullySent) {
+                                for (Notification notification : notifications) {
+                                    notificationDao.flagAsSent(notification.getPutCode());
+                                }
                             }
                         }
                     }
@@ -548,8 +551,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             case MEMBERSHIP:
             case QUALIFICATION:
             case SERVICE:
-                value.append("<i>").append(item.getAdditionalInfo().get("org_name")).append("</i> ").append((item.getItemName() != null ? item.getItemName() : "")).append(" (")
-                        .append(renderCreationDate(createdDate)).append(')');
+                value.append("<i>").append(item.getAdditionalInfo().get("org_name")).append("</i> ").append((item.getItemName() != null ? item.getItemName() : ""))
+                        .append(" (").append(renderCreationDate(createdDate)).append(')');
                 break;
             default:
                 value.append(item.getItemName() != null ? item.getItemName() : "");
@@ -562,7 +565,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
             // Set the external identifiers list
             String externalIdentifiersList = generateExternalIdentifiersList(item);
-            if(StringUtils.isNotBlank(externalIdentifiersList)) {
+            if (StringUtils.isNotBlank(externalIdentifiersList)) {
                 value.append(externalIdentifiersList);
             }
 
@@ -597,28 +600,31 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         private String generateExternalIdentifiersList(Item item) {
             StringBuilder extIdsHtmlList = new StringBuilder();
             if (item.getAdditionalInfo() != null) {
-                if(item.getAdditionalInfo().containsKey("external_identifiers")) {
+                if (item.getAdditionalInfo().containsKey("external_identifiers")) {
                     Map extIds = (Map) item.getAdditionalInfo().get("external_identifiers");
-                    if(extIds != null && extIds.containsKey("externalIdentifier")) {
+                    if (extIds != null && extIds.containsKey("externalIdentifier")) {
                         List<Map> extIdsList = (List<Map>) extIds.get("externalIdentifier");
-                        if(extIdsList != null) {
+                        if (extIdsList != null) {
                             extIdsHtmlList.append("<ul>");
-                            for(Map extIdMap : extIdsList) {
+                            for (Map extIdMap : extIdsList) {
                                 String extIdType = extIdMap.containsKey("type") ? (String) extIdMap.get("type") : null;
-                                // External id type must not be null, so, in case it is lets log a warning
-                                if(extIdType == null) {
+                                // External id type must not be null, so, in
+                                // case it is lets log a warning
+                                if (extIdType == null) {
                                     LOGGER.warn("External ID type is null for '" + item.getPutCode() + "', '" + item.getItemName() + "'");
                                 }
                                 extIdsHtmlList.append("<li style=\"padding-left: 0;margin-top: 2px;\">").append(extIdType).append(": ");
                                 // Check if there is an URL
-                                if(extractValue(extIdMap, "url") != null) {
+                                if (extractValue(extIdMap, "url") != null) {
                                     String url = extractValue(extIdMap, "url");
-                                    extIdsHtmlList.append("<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"").append(url).append("\">").append(url).append("</a>");
+                                    extIdsHtmlList.append("<a style=\"text-decoration: underline;color: #085c77;\" target=\"_blank\" href=\"").append(url).append("\">")
+                                            .append(url).append("</a>");
                                 } else if (extractValue(extIdMap, "normalized") != null) {
-                                    //If there is no URL, check for the normalized value
+                                    // If there is no URL, check for the
+                                    // normalized value
                                     String value = extractValue(extIdMap, "normalized");
                                     extIdsHtmlList.append(value);
-                                } else if(extIdMap.containsKey("value")) {
+                                } else if (extIdMap.containsKey("value")) {
                                     try {
                                         String value = (String) extIdMap.get("value");
                                         extIdsHtmlList.append(value);
@@ -641,14 +647,14 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     }
 
     private String extractValue(Map extIdMap, String keyName) {
-        if(extIdMap.containsKey(keyName)) {
+        if (extIdMap.containsKey(keyName)) {
             Map keyMap = (Map) extIdMap.get(keyName);
             try {
                 String value = (String) keyMap.get("value");
                 if (StringUtils.isNotBlank(value)) {
                     return value;
                 }
-            } catch(NullPointerException npe) {
+            } catch (NullPointerException npe) {
                 // Value might be null, so, just ignore it
             }
         }
@@ -682,8 +688,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             LOGGER.info("Got {} profiles with email event and unverified emails for {} days reminder", elements.size(), unverifiedDays);
 
             for (Triple<String, String, Boolean> element : elements) {
-                processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), element.getRight(), sent,
-                            failed);
+                processUnverifiedEmailsInTransaction(element.getLeft(), element.getMiddle(), element.getRight(), sent, failed);
             }
         }
     }
@@ -691,48 +696,48 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
     synchronized public void addWorksToRecordFirstReminder() {
         sendAddWorksToRecordEmailAttempt(addWorksFirstAttemptEmail, ProfileEventType.ADD_WORKS_FIRST_REMINDER_SENT);
     }
-    
+
     synchronized public void addWorksToRecordSecondReminder() {
         sendAddWorksToRecordEmailAttempt(addWorksSecondAttemptEmail, ProfileEventType.ADD_WORKS_SECOND_REMINDER_SENT);
     }
-    
+
     synchronized public void addWorksToRecordThirdReminder() {
         sendAddWorksToRecordEmailAttempt(addWorksThirdAttemptEmail, ProfileEventType.ADD_WORKS_THIRD_REMINDER_SENT);
     }
-    
-    private void sendAddWorksToRecordEmailAttempt(int addWorksAttemptEmail, ProfileEventType profileEventType){
+
+    private void sendAddWorksToRecordEmailAttempt(int addWorksAttemptEmail, ProfileEventType profileEventType) {
         if (Features.SEND_ADD_WORKS_EMAILS.isActive()) {
             LOGGER.info("Sending 'Add works' email reminder for {} days", addWorksAttemptEmail);
             List<Pair<String, String>> elements = profileDaoReadOnly.findEmailsToSendAddWorksEmail(addWorksAttemptEmail);
-            LOGGER.debug("Found {} add works reminders to send" , elements.size());
-            for (Pair<String, String> element: elements) {
+            LOGGER.debug("Found {} add works reminders to send", elements.size());
+            for (Pair<String, String> element : elements) {
                 String email = element.getLeft();
                 String userOrcid = element.getRight();
                 String numberAttempt = null;
                 ProfileEventType skipped = null;
-                
+
                 switch (profileEventType) {
-                    case ADD_WORKS_FIRST_REMINDER_SENT:
-                        numberAttempt = "first";
-                        skipped = ProfileEventType.ADD_WORKS_FIRST_REMINDER_SENT_SKIPPED;
-                        break;
-                    case ADD_WORKS_SECOND_REMINDER_SENT:
-                        numberAttempt = "second";
-                        skipped = ProfileEventType.ADD_WORKS_SECOND_REMINDER_SENT_SKIPPED;
-                        break;
-                    case ADD_WORKS_THIRD_REMINDER_SENT:
-                        numberAttempt = "third";
-                        skipped = ProfileEventType.ADD_WORKS_THIRD_REMINDER_SENT_SKIPPED;
-                        break;
+                case ADD_WORKS_FIRST_REMINDER_SENT:
+                    numberAttempt = "first";
+                    skipped = ProfileEventType.ADD_WORKS_FIRST_REMINDER_SENT_SKIPPED;
+                    break;
+                case ADD_WORKS_SECOND_REMINDER_SENT:
+                    numberAttempt = "second";
+                    skipped = ProfileEventType.ADD_WORKS_SECOND_REMINDER_SENT_SKIPPED;
+                    break;
+                case ADD_WORKS_THIRD_REMINDER_SENT:
+                    numberAttempt = "third";
+                    skipped = ProfileEventType.ADD_WORKS_THIRD_REMINDER_SENT_SKIPPED;
+                    break;
                 }
                 if (!profileEventDao.isAttemptSend(userOrcid, profileEventType)) {
                     try {
-                        LOGGER.debug("Sending "+ numberAttempt +" attempt email to encourage user to add works to email address {}, orcid {}", email, userOrcid);
+                        LOGGER.debug("Sending " + numberAttempt + " attempt email to encourage user to add works to email address {}, orcid {}", email, userOrcid);
                         sendAddWorksToRecordEmail(email, userOrcid);
                         profileEventDao.persist(new ProfileEventEntity(userOrcid, profileEventType, email));
                         profileEventDao.flush();
                     } catch (Exception e) {
-                        LOGGER.error("Unable to send "+ numberAttempt +" attempt email to encourage user to add works to email: " + email, e);
+                        LOGGER.error("Unable to send " + numberAttempt + " attempt email to encourage user to add works to email: " + email, e);
                         profileEventDao.persist(new ProfileEventEntity(userOrcid, skipped, email));
                         profileEventDao.flush();
                     }
@@ -741,7 +746,8 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         }
     }
 
-    private void processUnverifiedEmailsInTransaction(final String userOrcid, final String email, final Boolean isPrimaryEmail, EmailEventType eventSent, EmailEventType eventSkipped) {
+    private void processUnverifiedEmailsInTransaction(final String userOrcid, final String email, final Boolean isPrimaryEmail, EmailEventType eventSent,
+            EmailEventType eventSkipped) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             @Transactional
@@ -804,6 +810,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
 
     private void sendAddWorksToRecordEmail(String email, String orcid) {
         EmailMessage addWorksMessage = createAddWorksToRecordEmail(email, orcid);
-        mailGunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, addWorksMessage.getSubject(), addWorksMessage.getBodyText(), addWorksMessage.getBodyHtml());
+        mailGunManager.sendEmail(EmailConstants.DO_NOT_REPLY_VERIFY_ORCID_ORG, email, addWorksMessage.getSubject(), addWorksMessage.getBodyText(),
+                addWorksMessage.getBodyHtml());
     }
 }

@@ -235,15 +235,19 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revokeSocialAccount.json", method = RequestMethod.POST)
     public @ResponseBody ManageSocialAccount revokeSocialAccount(@RequestBody ManageSocialAccount manageSocialAccount) {
-        // Check password
-        String password = manageSocialAccount.getPassword();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        if (orcidSecurityManager.isPasswordConfirmationRequired()
-                && (StringUtils.isBlank(password) || !encryptionManager.hashMatches(password, profile.getEncryptedPassword()))) {
-            manageSocialAccount.getErrors().add(getMessage("check_password_modal.incorrect_password"));
+
+        if (manageSocialAccount.getPassword() == null || !encryptionManager.hashMatches(manageSocialAccount.getPassword(), profile.getEncryptedPassword())) {
+            manageSocialAccount.setInvalidPassword(true);
             return manageSocialAccount;
         }
-        userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getIdToManage());
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), manageSocialAccount)) {
+            return manageSocialAccount;
+        }
+
+        userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getId());
+        manageSocialAccount.setSuccess(true);
+        
         return manageSocialAccount;
     }
 
@@ -299,16 +303,25 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (cp.getOldPassword() == null || !encryptionManager.hashMatches(cp.getOldPassword(), profile.getEncryptedPassword())) {
+            cp.setInvalidPassword(true);
             errors.add(getMessage("orcid.frontend.change.password.current_password_incorrect"));
         }
-        if (cp.getPassword() != null && !cp.getPassword().isEmpty()) {
-        	final String newPassword  = cp.getPassword();
-        	 emailManager.getEmails(getCurrentUserOrcid()).getEmails().forEach(email -> {
-	        	if (!email.getEmail().isEmpty()  && newPassword.contains(email.getEmail())) {
-	        		errors.add(getMessage("Pattern.registrationForm.password.containsEmail"));
-	        	}
-	        	
-	        });
+
+        final String password = cp.getPassword();
+        if (password != null && !password.isEmpty()) {
+            List<org.orcid.jaxb.model.v3.release.record.Email> userEmails = emailManager.getEmails(getCurrentUserOrcid()).getEmails();
+            for (org.orcid.jaxb.model.v3.release.record.Email emailObj : userEmails) {
+                String email = emailObj.getEmail();
+                if (email != null && !email.isEmpty() && password.contains(email)) {
+                    cp.setPasswordContainsEmail(true);
+                    return cp;
+                }
+            }
+        }
+
+        cp.setErrors(errors);
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(getCurrentUserOrcid(), cp)) {
+            return cp;
         }
 
         if (errors.size() == 0) {            
@@ -316,10 +329,8 @@ public class ManageProfileController extends BaseWorkspaceController {
             //reset the lock fields
             profileEntityManager.resetSigninLock(getCurrentUserOrcid());
             profileEntityCacheManager.remove(getCurrentUserOrcid());
-            cp = new ChangePassword();
-            errors.add(getMessage("orcid.frontend.change.password.change.successfully"));
+            cp.setSuccess(true);
         }
-        cp.setErrors(errors);
         return cp;
     }
 

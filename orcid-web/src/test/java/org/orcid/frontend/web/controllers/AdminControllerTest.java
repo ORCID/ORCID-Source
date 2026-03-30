@@ -185,7 +185,8 @@ public class AdminControllerTest {
     public void testRemoveEmails() throws Exception {
         String orcid = "0000-0001-2345-6789";
         List<String> emailsToRemove = Arrays.asList("old1@example.com", "old2@example.com");
-        List<String> remainingEmails = Arrays.asList("primary@example.com", "new@example.com");
+
+        List<org.orcid.jaxb.model.v3.release.record.Email> remainingEmails = List.of(getEmail("primary@example.com", true, false), getEmail("new@example.com", false, false));
         RemoveEmailsRequest removeEmailsRequest = new RemoveEmailsRequest(orcid, emailsToRemove);
 
         when(emailManagerMock.removeEmails(any(), any()))
@@ -197,6 +198,15 @@ public class AdminControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(remainingEmails.size(), responseEmailsList.size());
         verify(emailManagerMock, times(1)).removeEmails(anyString(), any());
+    }
+
+    private static org.orcid.jaxb.model.v3.release.record.Email getEmail(String emailAddress, boolean isPrimary, boolean isVerified) {
+        org.orcid.jaxb.model.v3.release.record.Email email = new org.orcid.jaxb.model.v3.release.record.Email();
+        email.setEmail(emailAddress);
+        email.setPrimary(isPrimary);
+        email.setVerified(isVerified);
+
+        return email;
     }
 
     private Client getClient() {
