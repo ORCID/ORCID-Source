@@ -50,7 +50,7 @@ public class OrcidBearerTokenAuthentication implements Authentication {
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getAuthorities();
+        return this.authorities;
     }
 
     /**

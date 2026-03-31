@@ -44,7 +44,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
-        
+
    		<!-- Jersey Server -->
 		<dependency>
 		    <groupId>org.glassfish.jersey.containers</groupId>

@@ -777,6 +777,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
     }
 
+    //TODO: this method is doing exactly the same that the TokenTargetFilter does, so, lets review it and leave only one.
     private void isMyToken(String orcid) {
         Authentication authentication = getAuthentication();
         if (authentication == null) {
