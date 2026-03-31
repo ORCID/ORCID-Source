@@ -67,10 +67,6 @@
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
     </bean>
 
-	<bean id="orcidAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
-		<property name="userDetailsService" ref="clientDetailsUserService" />
-	</bean>
-
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID T1 API" />
         <property name="typeName" value="Bearer"/>

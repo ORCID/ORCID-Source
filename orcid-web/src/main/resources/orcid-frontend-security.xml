@@ -441,10 +441,6 @@
 		<sec:authentication-provider ref="clientAuthenticationProvider" />
 	</sec:authentication-manager>
 
-	<bean id="clientAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
-		<property name="userDetailsService" ref="clientDetailsUserService" />
-	</bean>
-
 	<bean id="clientDetailsUserService"
 		  class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
 		<constructor-arg ref="clientDetailsManager" />

@@ -28,10 +28,6 @@
 	
     <context:mbean-server />
 
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator">
-		<constructor-arg ref="profileEntityCacheManager" />
-	</bean>
-
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">

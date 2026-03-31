@@ -1,11 +1,9 @@
-package org.orcid.core.oauth;
+package org.orcid.api.common.security.oauth;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ClientSecretEntity;
+import org.orcid.core.userDetails.MultiSecretClient;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,32 +18,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class OrcidMultiSecretAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
     private EncryptionManager encryptionManager;
 
-    @SuppressWarnings("deprecation")
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
             logger.debug("Authentication failed: no credentials provided");
-            throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+            throw new BadCredentialsException("No credentials provided for " + userDetails.getUsername());
         }
 
         String presentedPassword = authentication.getCredentials().toString();
+        if(!presentedPassword.startsWith("{noop}")){
+            presentedPassword = "{noop}" + presentedPassword;
+        }
 
-        ClientDetailsEntity clientDetailsEntity = clientDetailsManager.findByClientId(userDetails.getUsername());
-        for (ClientSecretEntity clientSecretEntity : clientDetailsEntity.getClientSecrets()) {
-            if(!presentedPassword.startsWith("{noop}")){
-                presentedPassword = "{noop}" + presentedPassword;
-            }
-            if (getPasswordEncoder().matches(encryptionManager.decryptForInternalUse(clientSecretEntity.getClientSecret()), presentedPassword)) {
+        MultiSecretClient clientDetails = (MultiSecretClient) this.getUserDetailsService().loadUserByUsername(userDetails.getUsername());
+        for (MultiSecretClient.Secret secret : clientDetails.getSecrets()) {
+            if (getPasswordEncoder().matches(encryptionManager.decryptForInternalUse(secret.getEncryptedSecret()), presentedPassword)) {
                 return;
             }
         }
         logger.debug("Authentication failed: password does not match any value");
-        throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        throw new BadCredentialsException("Invalid client credentials provided for " + userDetails.getUsername());
     }
 
 }

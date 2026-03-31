@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sec="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.6.xsd">
 
 	<!-- Message converters -->
 	<bean id="orcidJsonMessageConverter"
@@ -56,6 +57,19 @@
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
 	</bean>
 
+    <!-- Client authentication beans -->
     <bean id="orcidAPIAccessDeniedHandler" class="org.orcid.api.common.security.oauth.OrcidAPIAccessDeniedHandler" />
 
+    <bean id="clientDetailsUserDetailsService" class="org.orcid.api.common.provider.client.ClientDetailsUserDetailsService" />
+
+    <bean id="apiAuthenticationEntryPoint" class="org.orcid.api.common.security.oauth.APIAuthenticationEntryPoint" />
+
+    <bean id="clientAuthenticationProvider" class="org.orcid.api.common.security.oauth.OrcidMultiSecretAuthenticationProvider">
+        <property name="userDetailsService" ref="clientDetailsUserDetailsService" />
+    </bean>
+
+    <!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
+    <sec:authentication-manager id="clientAuthenticationManager">
+        <sec:authentication-provider ref="clientAuthenticationProvider"/>
+    </sec:authentication-manager>
 </beans>
