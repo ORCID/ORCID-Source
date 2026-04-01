@@ -182,9 +182,6 @@ public class PublicV3ApiServiceDelegatorImpl implements
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
-    private OpenIDConnectKeyService openIDConnectKeyService;
-
-    @Resource
     private StatusManager statusManager;
 
     @Resource(name = "recordNameManagerReadOnlyV3")
@@ -192,15 +189,6 @@ public class PublicV3ApiServiceDelegatorImpl implements
 
     @Resource
     private EventManager eventManager;
-
-    @Resource
-    private EmailDomainManager emailDomainManager;
-
-    @Resource
-    private SourceEntityUtils sourceEntityUtils;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
 
     private Boolean filterVersionOfIdentifiers = false;
 

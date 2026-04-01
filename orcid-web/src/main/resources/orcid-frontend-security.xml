@@ -453,22 +453,7 @@
 	<bean id="languagesMap"
 		  class="org.orcid.frontend.web.util.LanguagesMap" />
 
-	<bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
-		<property name="filters">
-			<list>
-				<ref bean="clientCredentialsTokenEndpointFilter"/>
-			</list>
-		</property>
-	</bean>
-    <!-- TODO: This filter should be removed once the authorization server is inplace -->
-	<bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
-		<property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
-		<property name="authenticationManager" ref="clientAuthenticationManager"/>
-	</bean>
-
 	<bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />
-
-	<bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
 
 	<!-- OAUTH2 -->
 	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />

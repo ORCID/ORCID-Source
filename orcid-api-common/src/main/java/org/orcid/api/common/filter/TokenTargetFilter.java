@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class TokenTargetFilter implements ContainerRequestFilter {
 
     //TODO: this method is doing exactly the same that the OrcidSecutiryManagerImpl.isMyToken does, so, lets review it and leave only one.
-    
+
     @Override
     public void filter(ContainerRequestContext request) {
         Matcher m = OrcidStringUtils.orcidPattern.matcher(request.getUriInfo().getPath());

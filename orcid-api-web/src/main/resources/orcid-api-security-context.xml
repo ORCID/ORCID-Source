@@ -52,7 +52,5 @@
     <bean id="memberDefaultApiVersionFilter" class="org.orcid.api.common.filter.DefaultApiVersionFilter">
         <property name="isPublicApi" value="false" />
     </bean>        
-    
-    <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
-        
+
 </beans>

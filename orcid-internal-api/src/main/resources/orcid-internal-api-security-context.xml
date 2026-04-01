@@ -63,20 +63,7 @@
 	<bean id="acceptFilter" class="org.orcid.core.web.filters.AcceptFilter" />
 
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
-    
-    <!-- Add in order for it to be referenced in the filter order -->
-    <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
-        <property name="filters">
-            <list>
-                <ref bean="clientCredentialsTokenEndpointFilter"/>
-            </list>
-        </property>
-    </bean>
-    <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidOauth2TokenEndPointFilter">
-        <property name="authenticationEntryPoint" ref="orcidOauthAuthenticationEntryPoint"/>
-        <property name="authenticationManager" ref="clientAuthenticationManager"/>
-    </bean>
-        
+
     <bean id="orcidOauthAuthenticationEntryPoint" class="org.orcid.api.common.exception.OrcidOAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID Internal API" />
         <property name="typeName" value="Bearer"/>

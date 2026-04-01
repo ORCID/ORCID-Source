@@ -27,16 +27,10 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Resource
     private V2VersionConverterChain v2_1VersionConverterChain;
-    
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;   
-    
-    @Resource
-    private EventManager eventManager;
-    
+
     @Override
     public Response viewStatusText() {
         return publicV2ApiServiceDelegator.viewStatusText();

@@ -151,9 +151,6 @@ public class PublicV2ApiServiceDelegatorImpl
     private ContributorUtils contributorUtilsReadOnly;
 
     @Resource
-    private RecordManager recordManager;
-
-    @Resource
     private SourceUtils sourceUtils;
 
     @Resource
@@ -169,9 +166,6 @@ public class PublicV2ApiServiceDelegatorImpl
     private LocaleManager localeManager;
 
     @Resource
-    private OpenIDConnectKeyService openIDConnectKeyService;
-
-    @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
 
     @Resource
@@ -179,12 +173,6 @@ public class PublicV2ApiServiceDelegatorImpl
 
     @Resource
     private EventManager eventManager;
-
-    @Resource
-    private EmailDomainManager emailDomainManager;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
 
     @Override
     public Response viewStatusText() {

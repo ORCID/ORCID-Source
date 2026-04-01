@@ -12,7 +12,7 @@
     <import resource="classpath*:orcid-core-context.xml"/>
     <import resource="classpath*:orcid-t1-security-context.xml"/>
         
-    <context:component-scan base-package="org.orcid.api.publicV3.server,org.orcid.api.config, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
     <task:annotation-driven />
          
@@ -30,7 +30,6 @@
     
     <!--  Public_2 API -->
     <bean id="publicV2ApiServiceDelegator" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceDelegatorImpl" />
-    
 
     <bean id="publicV2ApiServiceDelegatorV2" class="org.orcid.api.publicV2.server.delegator.impl.PublicV2ApiServiceVersionedDelegatorImpl">
         <property name="externalVersion" value="2.0" />

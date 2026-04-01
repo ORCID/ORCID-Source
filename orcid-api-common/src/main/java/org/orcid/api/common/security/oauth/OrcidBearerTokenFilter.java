@@ -43,8 +43,8 @@ public class OrcidBearerTokenFilter implements Filter {
 
         String tokenValue = extractToken(request);
         if(StringUtils.isBlank(tokenValue)) {
-            apiAuthenticationEntryPoint.commence(request, response, null);
-            return;
+            // If the token is not present, continue the chain
+            chain.doFilter(request, response);
         }
 
         try {

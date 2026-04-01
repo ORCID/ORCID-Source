@@ -74,4 +74,6 @@
     </sec:authentication-manager>
 
     <bean name="orcidBearerTokenFilter" class="org.orcid.api.common.security.oauth.OrcidBearerTokenFilter" />
+
+    <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
 </beans>
