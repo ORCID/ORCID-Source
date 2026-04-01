@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class PublicRecordApiExceptionHandler {
 
     private static final String LOCATION_HEADER = "location";
+    private static final String PRIMARY_ORCID_HEADER = "x-orcid-primary";
 
     @Resource
     private OrcidCoreExceptionMapper orcidCoreExceptionMapper;
@@ -48,6 +49,10 @@ public class PublicRecordApiExceptionHandler {
 
         HttpHeaders headers = new HttpHeaders();
         if (params != null && params.containsKey(OrcidDeprecatedException.ORCID)) {
+            String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
+            if (primaryOrcid != null) {
+                headers.add(PRIMARY_ORCID_HEADER, primaryOrcid);
+            }
             String location = getPrimaryRecordLocation(request, params);
             if (location != null) {
                 headers.add(LOCATION_HEADER, location);
