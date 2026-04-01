@@ -10,7 +10,7 @@
 	<import resource="classpath*:orcid-core-context.xml"/>
 	<import resource="classpath*:orcid-internal-api-security-context.xml"/>
     
-    <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
      <!-- Override data source configuration so we can customize it for the internal api -->

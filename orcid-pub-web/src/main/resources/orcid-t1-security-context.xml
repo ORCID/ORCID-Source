@@ -13,8 +13,7 @@
 	<!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" security="none" />
 
-	<!-- All other authentication will come through this. If a certificate is not found, it will attempt OAuth2 auth -->
-    <sec:http create-session="stateless" >
+	<sec:http create-session="stateless" >
         <sec:csrf disabled="true"/>
         <sec:anonymous enabled="true" />
         <sec:http-basic entry-point-ref="apiAuthenticationEntryPoint" />
