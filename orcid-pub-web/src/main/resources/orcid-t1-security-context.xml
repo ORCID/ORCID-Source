@@ -79,7 +79,6 @@
          
 	<bean id="publicAPISecurityManagerV2" class="org.orcid.api.publicV2.server.security.impl.PublicAPISecurityManagerV2Impl" />
     
-    <bean id="publicAPISecurityManagerV3" class="org.orcid.api.publicV3.server.security.impl.PublicAPISecurityManagerV3Impl" />
     
     
     <bean id="apiVersionFilter" class="org.orcid.api.common.filter.ApiVersionFilter" />

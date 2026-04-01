@@ -13,9 +13,10 @@ import javax.ws.rs.core.Response.Status;
 
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
+import org.orcid.api.common.util.v3.PublicRecordUtils;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
-import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
+import org.orcid.core.api.publicapi.v3.security.PublicAPISecurityManagerV3;
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -84,13 +85,11 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
-import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
-import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
 @Component
 public class PublicV3ApiServiceDelegatorImpl implements
@@ -619,19 +618,8 @@ public class PublicV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewRecord(String orcid) {
-        checkProfileStatus(orcid);
-        Record record = recordManagerReadOnly.getPublicRecord(orcid, filterVersionOfIdentifiers);
-        publicAPISecurityManagerV3.filter(record);
-        if (record.getPerson() != null) {
-            sourceUtilsReadOnly.setSourceName(record.getPerson());
-        }
-        if (record.getActivitiesSummary() != null) {
-            ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
-            sourceUtilsReadOnly.setSourceName(record.getActivitiesSummary());
-        }
-        ElementUtils.setPathToRecord(record, orcid);
-        Api3_0LastModifiedDatesHelper.calculateLastModified(record);
-        return Response.ok(record).build();
+        return Response.ok(PublicRecordUtils.getPublicRecord(orcid, recordManagerReadOnly, orcidSecurityManager, publicAPISecurityManagerV3, sourceUtilsReadOnly,
+                filterVersionOfIdentifiers)).build();
     }
 
     @Override

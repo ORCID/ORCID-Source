@@ -1,4 +1,4 @@
-package org.orcid.api.publicV3.server.security;
+package org.orcid.core.api.publicapi.v3.security;
 
 import org.orcid.jaxb.model.v3.release.common.VisibilityType;
 import org.orcid.jaxb.model.v3.release.record.ActivitiesContainer;

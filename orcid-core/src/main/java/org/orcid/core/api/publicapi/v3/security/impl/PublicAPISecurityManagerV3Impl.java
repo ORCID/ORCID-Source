@@ -1,4 +1,4 @@
-package org.orcid.api.publicV3.server.security.impl;
+package org.orcid.core.api.publicapi.v3.security.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
+import org.orcid.core.api.publicapi.v3.security.PublicAPISecurityManagerV3;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidNoBioException;
 import org.orcid.core.exception.OrcidNonPublicElementException;
