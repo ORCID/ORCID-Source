@@ -10,6 +10,7 @@
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
     <import resource="classpath*:orcid-core-context.xml"/>
+    <import resource="classpath*:orcid-api-common-public-v3-context.xml"/>
     <import resource="classpath*:orcid-t1-security-context.xml"/>
         
     <context:component-scan base-package="org.orcid.api.publicV3.server,org.orcid.api.config, org.orcid.api.t1, org.orcid.api.common, org.orcid.core.security, org.orcid.api.filters"/>
