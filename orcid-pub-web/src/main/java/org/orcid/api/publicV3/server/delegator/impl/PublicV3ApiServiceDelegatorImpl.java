@@ -14,9 +14,9 @@ import javax.ws.rs.core.Response.Status;
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
 import org.orcid.api.common.util.v3.PublicRecordUtils;
+import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
 import org.orcid.api.common.writer.citeproc.V3WorkToCiteprocTranslator;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
-import org.orcid.core.api.publicapi.v3.security.PublicAPISecurityManagerV3;
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -173,6 +173,9 @@ public class PublicV3ApiServiceDelegatorImpl implements
 
     @Resource(name = "publicAPISecurityManagerV3")
     private PublicAPISecurityManagerV3 publicAPISecurityManagerV3;
+
+    @Resource
+    private PublicRecordUtils publicRecordUtils;
 
     @Resource
     private LocaleManager localeManager;
@@ -618,11 +621,10 @@ public class PublicV3ApiServiceDelegatorImpl implements
 
     @Override
     public Response viewRecord(String orcid) {
-        return Response.ok(PublicRecordUtils.getPublicRecord(orcid, recordManagerReadOnly, orcidSecurityManager, publicAPISecurityManagerV3, sourceUtilsReadOnly,
-                filterVersionOfIdentifiers)).build();
+        return Response.ok(publicRecordUtils.getPublicRecord(orcid, filterVersionOfIdentifiers)).build();
     }
 
-    @Override
+    @Override   
     public Response searchByQuery(Map<String, List<String>> solrParams) {
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);

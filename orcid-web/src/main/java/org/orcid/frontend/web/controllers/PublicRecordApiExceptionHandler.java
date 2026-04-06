@@ -11,11 +11,18 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.utils.OrcidStringUtils;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Maps ORCID core exceptions thrown from {@link PublicRecordApiController} to v3 {@link org.orcid.jaxb.model.v3.release.error.OrcidError} JSON
+ * (Spring MVC {@code @ControllerAdvice}; unit tests exercise {@link #handleThrowable} directly).
+ */
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice(assignableTypes = PublicRecordApiController.class)
 public class PublicRecordApiExceptionHandler {
 

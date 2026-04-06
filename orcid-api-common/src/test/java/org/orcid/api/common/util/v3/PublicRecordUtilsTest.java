@@ -1,8 +1,9 @@
 package org.orcid.api.common.util.v3;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.orcid.core.api.publicapi.v3.security.PublicAPISecurityManagerV3;
+import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.v3.SourceUtils;
@@ -20,6 +21,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.release.record.summary.Services;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.never;
@@ -27,6 +29,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class PublicRecordUtilsTest {
+
+    private PublicRecordUtils publicRecordUtils;
 
     private ActivitiesSummary emptyActivitiesSummary() {
         ActivitiesSummary activitiesSummary = new ActivitiesSummary();
@@ -44,6 +48,11 @@ public class PublicRecordUtilsTest {
         return activitiesSummary;
     }
 
+    @Before
+    public void initUtils() {
+        publicRecordUtils = new PublicRecordUtils();
+    }
+
     @Test
     public void getPublicRecord_callsSecurityFetchFilterAndSourceNameSetters() {
         String orcid = "0009-0004-3164-3380";
@@ -53,20 +62,18 @@ public class PublicRecordUtilsTest {
         PublicAPISecurityManagerV3 publicAPISecurityManagerV3 = Mockito.mock(PublicAPISecurityManagerV3.class);
         SourceUtils sourceUtilsReadOnly = Mockito.mock(SourceUtils.class);
 
+        ReflectionTestUtils.setField(publicRecordUtils, "recordManagerReadOnly", recordManagerReadOnly);
+        ReflectionTestUtils.setField(publicRecordUtils, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(publicRecordUtils, "publicAPISecurityManagerV3", publicAPISecurityManagerV3);
+        ReflectionTestUtils.setField(publicRecordUtils, "sourceUtilsReadOnly", sourceUtilsReadOnly);
+
         Record record = new Record();
         record.setPerson(new Person());
         record.setActivitiesSummary(emptyActivitiesSummary());
 
         when(recordManagerReadOnly.getPublicRecord(orcid, true)).thenReturn(record);
 
-        Record result = PublicRecordUtils.getPublicRecord(
-                orcid,
-                recordManagerReadOnly,
-                orcidSecurityManager,
-                publicAPISecurityManagerV3,
-                sourceUtilsReadOnly,
-                true
-        );
+        Record result = publicRecordUtils.getPublicRecord(orcid, true);
 
         assertSame(record, result);
         verify(orcidSecurityManager).checkProfile(orcid);
@@ -85,17 +92,15 @@ public class PublicRecordUtilsTest {
         PublicAPISecurityManagerV3 publicAPISecurityManagerV3 = Mockito.mock(PublicAPISecurityManagerV3.class);
         SourceUtils sourceUtilsReadOnly = Mockito.mock(SourceUtils.class);
 
+        ReflectionTestUtils.setField(publicRecordUtils, "recordManagerReadOnly", recordManagerReadOnly);
+        ReflectionTestUtils.setField(publicRecordUtils, "orcidSecurityManager", orcidSecurityManager);
+        ReflectionTestUtils.setField(publicRecordUtils, "publicAPISecurityManagerV3", publicAPISecurityManagerV3);
+        ReflectionTestUtils.setField(publicRecordUtils, "sourceUtilsReadOnly", sourceUtilsReadOnly);
+
         Record record = new Record();
         when(recordManagerReadOnly.getPublicRecord(orcid, false)).thenReturn(record);
 
-        Record result = PublicRecordUtils.getPublicRecord(
-                orcid,
-                recordManagerReadOnly,
-                orcidSecurityManager,
-                publicAPISecurityManagerV3,
-                sourceUtilsReadOnly,
-                false
-        );
+        Record result = publicRecordUtils.getPublicRecord(orcid, false);
 
         assertSame(record, result);
         verify(orcidSecurityManager).checkProfile(orcid);
@@ -105,4 +110,3 @@ public class PublicRecordUtilsTest {
         verify(sourceUtilsReadOnly, never()).setSourceName(Mockito.any(ActivitiesSummary.class));
     }
 }
-
