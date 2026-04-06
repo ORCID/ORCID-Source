@@ -16,12 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-/**
- * Spring MVC advice for {@link PublicRecordApiController} only. The {@code /{orcid}/record} endpoint is served by Spring MVC, not JAX-RS, so
- * failures do not pass through the public API's {@code OrcidExceptionMapper}. This class maps ORCID core exceptions to v3
- * {@link org.orcid.jaxb.model.v3.release.error.OrcidError} JSON (via {@link OrcidCoreExceptionMapper}) and applies deprecated-ORCID handling
- * (status, {@code Location}, {@code X-ORCID-Primary}) consistent with the public record API behaviour.
- */
 @RestControllerAdvice(assignableTypes = PublicRecordApiController.class)
 public class PublicRecordApiExceptionHandler {
 

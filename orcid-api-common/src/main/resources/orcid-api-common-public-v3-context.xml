@@ -3,7 +3,5 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
-
-	<!-- Public API v3 visibility filtering; not part of orcid-core so scheduler/internal stacks do not load it by default. -->
 	<bean id="publicAPISecurityManagerV3" class="org.orcid.api.publicV3.server.security.impl.PublicAPISecurityManagerV3Impl" />
 </beans>
