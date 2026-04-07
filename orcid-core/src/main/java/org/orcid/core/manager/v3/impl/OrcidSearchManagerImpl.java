@@ -9,7 +9,7 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
-import org.apache.http.client.ClientProtocolException;
+import org.apache.hc.client5.http.ClientProtocolException;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.v3.OrcidSearchManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;

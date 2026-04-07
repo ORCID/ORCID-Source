@@ -25,7 +25,7 @@ the software.
     <description>The parent ORCID pom that all sub-projects reside under</description>
 
     <properties>
-        <spring.version>5.3.20</spring.version>
+        <spring.version>6.0.23</spring.version>
         <security.version>5.6.2</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>2.27</jersey.version>
@@ -185,17 +185,17 @@ the software.
 		        <artifactId>rewrite-maven-plugin</artifactId>
 		        <version>5.43.0</version> <configuration>
 		          <activeRecipes>
-		            <recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
-		            <!--recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe-->
+		            <recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe>
+		            <!--recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe-->
 		          </activeRecipes>
 		        </configuration>
 		        <dependencies>
 		          <dependency>
 		            <groupId>org.openrewrite.recipe</groupId>
-		            <artifactId>rewrite-migrate-java</artifactId> 
-		            <version>2.20.0</version> 
-		            <!--artifactId>rewrite-spring</artifactId>
-            		<version>5.18.0</version-->
+		            <artifactId>rewrite-spring</artifactId> 
+		            <version>5.18.0</version> 
+		            <!--artifactId>rewrite-migrate-java</artifactId>
+            		<version>2.20.0</version-->
             	   </dependency>
 		        </dependencies>
 		    </plugin>
@@ -381,7 +381,6 @@ the software.
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -673,15 +672,15 @@ the software.
                 <version>${jackson.version}</version>
             </dependency>            
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.3.1</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.4.4</version>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.3.6</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

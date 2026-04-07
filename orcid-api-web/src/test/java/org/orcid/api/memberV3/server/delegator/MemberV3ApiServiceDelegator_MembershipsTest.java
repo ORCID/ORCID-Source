@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

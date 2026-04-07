@@ -91,7 +91,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteOtherName(OtherNameEntity otherName) {
-        Assert.notNull(otherName);
+        Assert.notNull(otherName, "must not be null");
         Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
         query.setParameter("id", otherName.getId());
         return query.executeUpdate() > 0 ? true : false;

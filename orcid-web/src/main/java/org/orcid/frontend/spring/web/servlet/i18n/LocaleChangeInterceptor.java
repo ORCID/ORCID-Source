@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @since 20.06.2003
  * @see org.springframework.web.servlet.LocaleResolver
  */
-public class LocaleChangeInterceptor extends HandlerInterceptorAdapter {
+public class LocaleChangeInterceptor implements HandlerInterceptor {
 
         /**
          * Default name of the locale specification parameter: "locale".
