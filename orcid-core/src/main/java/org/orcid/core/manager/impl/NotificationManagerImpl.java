@@ -58,7 +58,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,7 +121,6 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
-    @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
     }

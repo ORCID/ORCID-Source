@@ -1,6 +1,6 @@
 package org.orcid.core.exception;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class SearchStartParameterLimitExceededException extends OrcidApiException {
 

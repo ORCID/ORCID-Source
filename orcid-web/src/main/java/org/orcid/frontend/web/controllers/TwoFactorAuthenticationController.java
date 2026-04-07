@@ -1,8 +1,8 @@
 package org.orcid.frontend.web.controllers;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.orcid.core.manager.BackupCodeManager;
 import org.orcid.core.manager.EncryptionManager;

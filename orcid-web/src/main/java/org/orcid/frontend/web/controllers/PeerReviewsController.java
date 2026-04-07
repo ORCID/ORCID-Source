@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.groupIds.issn.IssnGroupIdPatternMatcher;

@@ -42,7 +42,6 @@ import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,12 +140,12 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
     @Value("${org.orcid.notifications.auto.delete.batchsize:25000}")
     private Integer autoDeleteBatchSize;
 
-    @Required
+
     public void setTemplateManager(TemplateManager templateManager) {
         this.templateManager = templateManager;
     }
 
-    @Required
+
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
     }

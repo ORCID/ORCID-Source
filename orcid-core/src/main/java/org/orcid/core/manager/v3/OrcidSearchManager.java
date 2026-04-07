@@ -6,6 +6,9 @@ import java.util.Map;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 
+import org.apache.hc.core5.http.ParseException;
+
+
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating
  * to all the information that could be found given the search criteria found.
@@ -25,11 +28,11 @@ public interface OrcidSearchManager {
 
     static final int MAX_SEARCH_ROWS = 1000; 
     
-    Search findOrcidIds(Map<String, List<String>> queryParameters);
+    Search findOrcidIds(Map<String, List<String>> queryParameters) throws ParseException;
     
-    Search findOrcidsByQuery(String query, Integer start, Integer rows);
+    Search findOrcidsByQuery(String query, Integer start, Integer rows) throws ParseException;
 
-    String findOrcidIdsAsCSV(Map<String, List<String>> solrParams);
+    String findOrcidIdsAsCSV(Map<String, List<String>> solrParams) throws ParseException;
 
     ExpandedSearch expandedSearch(Map<String, List<String>> solrParams);
 }

@@ -26,7 +26,7 @@ the software.
 
     <properties>
         <spring.version>6.0.23</spring.version>
-        <security.version>5.6.2</security.version>
+        <security.version>6.0.8</security.version>
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>2.27</jersey.version>
         <jackson.version>2.13.1</jackson.version>
@@ -180,25 +180,44 @@ the software.
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
             </plugin -->
-            <plugin>
-		        <groupId>org.openrewrite.maven</groupId>
-		        <artifactId>rewrite-maven-plugin</artifactId>
-		        <version>5.43.0</version> <configuration>
-		          <activeRecipes>
-		            <recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe>
-		            <!--recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe-->
-		          </activeRecipes>
-		        </configuration>
-		        <dependencies>
-		          <dependency>
+    <plugin>
+    <groupId>org.openrewrite.maven</groupId>
+    <artifactId>rewrite-maven-plugin</artifactId>
+    <version>5.43.0</version> 
+    <configuration>
+        <activeRecipes>
+        	<recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
+        	<recipe>org.openrewrite.java.migrate.jakarta.JavaxMigrationToJakarta</recipe>
+        	<recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe>
+            <recipe>org.openrewrite.hibernate.MigrateToHibernate62</recipe>
+            <recipe>org.openrewrite.apache.httpclient5.UpgradeApacheHttpClient_5</recipe>
+        </activeRecipes>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-migrate-java</artifactId>
+            <version>2.20.0</version> 
+        </dependency>
+         <dependency>
 		            <groupId>org.openrewrite.recipe</groupId>
 		            <artifactId>rewrite-spring</artifactId> 
 		            <version>5.18.0</version> 
 		            <!--artifactId>rewrite-migrate-java</artifactId>
             		<version>2.20.0</version-->
             	   </dependency>
-		        </dependencies>
-		    </plugin>
+        <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-hibernate</artifactId>
+            <version>2.19.1</version> 
+        </dependency>
+        <dependency>
+            <groupId>org.openrewrite.recipe</groupId>
+            <artifactId>rewrite-apache</artifactId>
+            <version>1.4.2</version> 
+        </dependency>
+    </dependencies>
+</plugin>
         </plugins>
 
         <pluginManagement>
@@ -651,11 +670,11 @@ the software.
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
-                <scope>compile</scope>
-            </dependency>
+			    <groupId>jakarta.servlet</groupId>
+			    <artifactId>jakarta.servlet-api</artifactId>
+			    <version>6.0.0</version>
+			    <scope>compile</scope> 
+			</dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -723,6 +742,11 @@ the software.
                 <artifactId>hibernate-validator</artifactId>
                     <version>5.4.3.Final</version>
             </dependency>
+            <dependency>
+    			<groupId>jakarta.persistence</groupId>
+    			<artifactId>jakarta.persistence-api</artifactId>
+    			<version>3.1.0</version>
+			</dependency>
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
@@ -1000,25 +1024,6 @@ the software.
             <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>m2.java.net</id>
-            <name>Java.net Maven 2 Repository</name>
-            <url>https://download.java.net/maven/2</url>
-            <layout>default</layout>
-        </pluginRepository>
-        <pluginRepository>
-            <id>mc-release</id>
-            <name>Local Maven repository of releases</name>
-            <url>https://mc-repo.googlecode.com/svn/maven2/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
 
     <profiles>
         <!--  Localhost deployments -->

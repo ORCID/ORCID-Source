@@ -46,7 +46,6 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
@@ -102,7 +101,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
     
-    @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
     }   

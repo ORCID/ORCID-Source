@@ -163,8 +163,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -290,11 +290,11 @@
             <version>3.6</version>
         </dependency>
 
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
-            <version>2.0.1</version>
-        </dependency>
+		<dependency>
+		    <groupId>jakarta.jms</groupId>
+		    <artifactId>jakarta.jms-api</artifactId>
+		    <version>3.1.0</version>
+		</dependency>
         
 
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->

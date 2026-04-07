@@ -12,6 +12,7 @@ import org.apache.hc.client5.http.ClientProtocolException;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ParseException;
 
 public class CSVSolrClient extends OrcidSolrClient {
 
@@ -21,7 +22,7 @@ public class CSVSolrClient extends OrcidSolrClient {
         this.baseUrl = url;
     }
 
-    public String findCSVByDocumentCriteria(Map<String, List<String>> queryMap) throws URISyntaxException, ClientProtocolException, IOException {
+    public String findCSVByDocumentCriteria(Map<String, List<String>> queryMap) throws URISyntaxException, ClientProtocolException, IOException, ParseException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
 
         try {

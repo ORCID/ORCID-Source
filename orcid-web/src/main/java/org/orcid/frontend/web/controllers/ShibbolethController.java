@@ -7,8 +7,8 @@ import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.constants.OrcidOauth2Constants;
