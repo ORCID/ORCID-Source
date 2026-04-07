@@ -26,9 +26,10 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisClientConfig;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.params.SetParams;
-import redis.clients.jedis.ScanResult;
+import redis.clients.jedis.params.ScanParams;
+import redis.clients.jedis.resps.ScanResult;
+
 
 public class RedisClient {
 
