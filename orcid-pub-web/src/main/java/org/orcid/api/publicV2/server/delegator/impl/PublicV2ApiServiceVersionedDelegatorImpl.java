@@ -15,6 +15,8 @@ import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 
+import org.apache.hc.core5.http.ParseException;
+
 public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
     @Resource
@@ -243,7 +245,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
     
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         return processReponse(publicV2ApiServiceDelegator.searchByQuery(solrParams));
     }
     

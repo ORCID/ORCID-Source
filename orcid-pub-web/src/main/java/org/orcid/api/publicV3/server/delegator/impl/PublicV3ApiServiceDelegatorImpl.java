@@ -93,6 +93,8 @@ import org.springframework.stereotype.Component;
 import de.undercouch.citeproc.csl.CSLItemData;
 import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
+import org.apache.hc.core5.http.ParseException;
+
 @Component
 public class PublicV3ApiServiceDelegatorImpl implements
         PublicV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work> {
@@ -624,21 +626,21 @@ public class PublicV3ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
         return Response.ok(search).build();
     }
 
     @Override
-    public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
+    public Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException{
         validateSearchParams(solrParams);
         String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
         return Response.ok(search).build();
     }
 
     @Override
-    public Response expandedSearchByQuery(Map<String, List<String>> solrParams) {
+    public Response expandedSearchByQuery(Map<String, List<String>> solrParams) throws ParseException{
         validateSearchParams(solrParams);
         ExpandedSearch search = orcidSearchManager.expandedSearch(solrParams);
         return Response.ok(search).build();

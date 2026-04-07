@@ -77,6 +77,8 @@ import org.springframework.stereotype.Component;
 import de.undercouch.citeproc.csl.CSLItemData;
 import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
+import org.apache.hc.core5.http.ParseException;
+
 /**
  * <p/>
  * The delegator for the tier 2 API.
@@ -541,7 +543,7 @@ public class PublicV2ApiServiceDelegatorImpl
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
         return Response.ok(search).build();

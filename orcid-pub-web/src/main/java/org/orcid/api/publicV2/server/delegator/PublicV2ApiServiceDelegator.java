@@ -6,6 +6,8 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
+import org.apache.hc.core5.http.ParseException;
+
 /**
  * 
  * @author Will Simpson
@@ -85,7 +87,7 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     
     Response viewRecord(String orcid);
 
-    Response searchByQuery(Map<String, List<String>> solrParams);
+    Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException;
 
     Response viewClient(String clientId);
     

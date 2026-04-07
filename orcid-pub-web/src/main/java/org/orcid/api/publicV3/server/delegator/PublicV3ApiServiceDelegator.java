@@ -6,6 +6,8 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
+import org.apache.hc.core5.http.ParseException;
+
 /**
  * 
  * @author Will Simpson
@@ -87,7 +89,7 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
     
     Response viewRecord(String orcid);
 
-    Response searchByQuery(Map<String, List<String>> solrParams);
+    Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException;
 
     Response viewClient(String clientId);
     
@@ -129,9 +131,9 @@ public interface PublicV3ApiServiceDelegator<DISTINCTION, EDUCATION, EMPLOYMENT,
 
     Response viewResearchResourceSummary(String orcid, Long putCode);
 
-    Response searchByQueryCSV(Map<String, List<String>> solrParams);
+    Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException;
 
-    Response expandedSearchByQuery(Map<String, List<String>> solrParams);
+    Response expandedSearchByQuery(Map<String, List<String>> solrParams)throws ParseException;
 
     void trackEvents(HttpServletRequest httpRequest);
 

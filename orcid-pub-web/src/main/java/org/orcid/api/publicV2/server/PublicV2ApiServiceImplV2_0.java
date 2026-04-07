@@ -67,7 +67,7 @@ import org.orcid.jaxb.model.record_v2.ResearcherUrl;
 import org.orcid.jaxb.model.record_v2.Work;
 import org.springframework.stereotype.Component;
 
-
+import org.apache.hc.core5.http.ParseException;
 /**
  * 
  * @author Angel Montenegro
@@ -381,7 +381,7 @@ public class PublicV2ApiServiceImplV2_0 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
-    public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+    public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         serviceDelegator.trackEvents(httpRequest);
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
