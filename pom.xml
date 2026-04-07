@@ -180,6 +180,25 @@ the software.
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
             </plugin -->
+            <plugin>
+		        <groupId>org.openrewrite.maven</groupId>
+		        <artifactId>rewrite-maven-plugin</artifactId>
+		        <version>5.43.0</version> <configuration>
+		          <activeRecipes>
+		            <recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
+		            <!--recipe>org.openrewrite.java.spring.framework.UpgradeSpringFramework_6_0</recipe-->
+		          </activeRecipes>
+		        </configuration>
+		        <dependencies>
+		          <dependency>
+		            <groupId>org.openrewrite.recipe</groupId>
+		            <artifactId>rewrite-migrate-java</artifactId> 
+		            <version>2.20.0</version> 
+		            <!--artifactId>rewrite-spring</artifactId>
+            		<version>5.18.0</version-->
+            	   </dependency>
+		        </dependencies>
+		    </plugin>
         </plugins>
 
         <pluginManagement>
@@ -302,6 +321,7 @@ the software.
                     <artifactId>build-helper-maven-plugin</artifactId>
                     <version>1.10</version>
                 </plugin>
+             
             </plugins>
         </pluginManagement>
     </build>

@@ -68,6 +68,7 @@ import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.*;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;

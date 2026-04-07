@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.*;
 import org.orcid.jaxb.model.v3.release.record.summary.Educations;
 import org.orcid.jaxb.model.v3.release.record.summary.Employments;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
+import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
 import org.slf4j.Logger;
