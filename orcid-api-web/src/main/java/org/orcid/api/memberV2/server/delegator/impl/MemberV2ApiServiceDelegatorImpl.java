@@ -105,6 +105,8 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import org.apache.hc.core5.http.ParseException;
+
 /**
  * <p/>
  * The delegator for the tier 2 API.
@@ -1070,7 +1072,7 @@ public class MemberV2ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);

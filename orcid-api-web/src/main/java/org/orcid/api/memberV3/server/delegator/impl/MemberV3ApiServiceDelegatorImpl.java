@@ -42,6 +42,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.util.*;
 
+import org.apache.hc.core5.http.ParseException;
+
 @Component
 public class MemberV3ApiServiceDelegatorImpl implements
         MemberV3ApiServiceDelegator<Distinction, Education, Employment, PersonExternalIdentifier, InvitedPosition, Funding, GroupIdRecord, Membership, OtherName, PeerReview, Qualification, ResearcherUrl, Service, Work, WorkBulk, Address, Keyword, ResearchResource> {
@@ -1078,7 +1080,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         orcidSecurityManager.checkScopes(ScopePathType.READ_PUBLIC);
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
@@ -1086,7 +1088,7 @@ public class MemberV3ApiServiceDelegatorImpl implements
     }
     
     @Override
-    public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
+    public Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
         return Response.ok(search).build();

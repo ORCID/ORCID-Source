@@ -19,6 +19,8 @@ import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.record.bulk.BulkElementContainer;
 
+import org.apache.hc.core5.http.ParseException;
+
 public class MemberV2ApiServiceVersionedDelegatorImpl
         implements MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
@@ -531,7 +533,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         return processReponse(memberV2ApiServiceDelegator.searchByQuery(solrParams));
     }
 

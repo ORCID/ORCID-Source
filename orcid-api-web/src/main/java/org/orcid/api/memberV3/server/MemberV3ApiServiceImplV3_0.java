@@ -111,6 +111,8 @@ import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.WorkBulk;
 import org.springframework.stereotype.Component;
 
+import org.apache.hc.core5.http.ParseException;
+
 @Component
 @Path("/v3.0")
 public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
@@ -749,7 +751,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(SEARCH_PATH)
-    public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+    public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response xmlQueryResults = serviceDelegator.searchByQuery(solrParams);
         return xmlQueryResults;
@@ -758,7 +760,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     @GET
     @Produces(TEXT_CSV)
     @Path(CSV_SEARCH_PATH)
-    public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+    public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException {
         Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
         Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
         return csvQueryResults;
