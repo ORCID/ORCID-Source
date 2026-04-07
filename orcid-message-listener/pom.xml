@@ -62,7 +62,12 @@
 	      <groupId>org.apache.activemq</groupId>
 	      <artifactId>activemq-spring</artifactId>
 	  	  <version>5.13.3</version>
-	  </dependency>	  	
+	  </dependency>	  
+	  
+	  <dependency>
+		   <groupId>jakarta.persistence</groupId>
+		   <artifactId>jakarta.persistence-api</artifactId>
+	  </dependency>	
 	  
 	  <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
 			<dependency>
