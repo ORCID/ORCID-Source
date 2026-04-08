@@ -1,6 +1,6 @@
 package org.orcid.api.common.security.oauth;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.userDetails.MultiSecretClient;

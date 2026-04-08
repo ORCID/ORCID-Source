@@ -3,8 +3,8 @@ package org.orcid.frontend.web.controllers;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

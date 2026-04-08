@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hsqldb.types.NumberType;

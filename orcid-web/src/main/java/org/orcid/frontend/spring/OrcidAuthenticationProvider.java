@@ -3,7 +3,7 @@ package org.orcid.frontend.spring;
 import java.time.Instant;
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;

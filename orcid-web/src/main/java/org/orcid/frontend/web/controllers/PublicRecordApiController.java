@@ -1,6 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.api.common.util.v3.PublicRecordUtils;
 import org.orcid.core.api.OrcidApiConstants;

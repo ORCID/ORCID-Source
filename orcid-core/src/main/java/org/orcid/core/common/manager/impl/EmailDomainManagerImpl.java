@@ -3,7 +3,7 @@ package org.orcid.core.common.manager.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.common.manager.EmailDomainManager;

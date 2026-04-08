@@ -4,7 +4,7 @@ import java.util.List;
 
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.orcid.persistence.dao.FindMyStuffHistoryDao;
 import org.orcid.persistence.jpa.entities.FindMyStuffHistoryEntity;

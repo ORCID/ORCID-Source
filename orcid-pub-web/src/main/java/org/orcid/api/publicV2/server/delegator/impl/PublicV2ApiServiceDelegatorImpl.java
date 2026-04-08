@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
@@ -184,12 +184,12 @@ public class PublicV2ApiServiceDelegatorImpl
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the profile's bio
+     * wrapped in a {@link jakarta.xml.ws.Response} with only the profile's bio
      * details
      * 
      * @param orcid
      *            the ORCID to be used to identify the record
-     * @return the {@link javax.xml.ws.Response} with the
+     * @return the {@link jakarta.xml.ws.Response} with the
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override

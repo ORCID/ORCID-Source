@@ -2,7 +2,7 @@ package org.orcid.api.member.server.validator;
 
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.orcid.api.common.exception.JSONInputValidator;

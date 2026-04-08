@@ -3,7 +3,7 @@ package org.orcid.core.manager.read_only.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;

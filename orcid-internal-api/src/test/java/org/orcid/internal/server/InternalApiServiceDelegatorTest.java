@@ -9,8 +9,8 @@ import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;

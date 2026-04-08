@@ -5,7 +5,7 @@ import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.persistence.jpa.entities.EventStatsEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;

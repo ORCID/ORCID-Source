@@ -2,7 +2,7 @@ package org.orcid.scheduler.report;
 
 import java.time.LocalDate;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.api.rate_limit.PapiRateLimitRedisClient;
 import org.orcid.core.togglz.Features;

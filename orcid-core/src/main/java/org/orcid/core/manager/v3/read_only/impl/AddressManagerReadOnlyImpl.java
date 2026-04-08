@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbAddressAdapter;
 import org.orcid.core.manager.v3.read_only.AddressManagerReadOnly;

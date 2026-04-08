@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;

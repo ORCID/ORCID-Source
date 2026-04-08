@@ -2,8 +2,8 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.MediaType;
 
 import org.orcid.core.common.manager.EmailDomainManager;
 import org.orcid.core.solr.OrcidSolrOrgsClient;

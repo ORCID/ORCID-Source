@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 
 import org.junit.After;

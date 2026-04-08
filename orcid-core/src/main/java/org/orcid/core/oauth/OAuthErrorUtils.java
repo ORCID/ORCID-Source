@@ -1,6 +1,6 @@
 package org.orcid.core.oauth;
 
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.Status;
 
 import de.undercouch.citeproc.helper.tool.MissingArgumentException;
 import org.orcid.core.exception.ClientDeactivatedException;

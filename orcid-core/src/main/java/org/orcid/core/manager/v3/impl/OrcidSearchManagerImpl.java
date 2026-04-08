@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.hc.client5.http.ClientProtocolException;
 import org.orcid.core.exception.ApplicationException;

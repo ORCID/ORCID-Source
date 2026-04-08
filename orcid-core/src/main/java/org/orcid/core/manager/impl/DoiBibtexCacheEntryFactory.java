@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.spi.loaderwriter.CacheLoaderWriter;
 import org.orcid.core.utils.http.HttpRequestUtils;

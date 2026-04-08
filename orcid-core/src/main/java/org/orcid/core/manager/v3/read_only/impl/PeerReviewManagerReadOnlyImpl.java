@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.v3.JpaJaxbPeerReviewAdapter;
 import org.orcid.core.manager.impl.ClientDetailsManagerImpl;

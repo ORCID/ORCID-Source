@@ -1,6 +1,6 @@
 package org.orcid.core.manager.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.PreferenceManager;
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;

@@ -3,7 +3,7 @@ package org.orcid.core.web.filters;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

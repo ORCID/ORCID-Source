@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ReferenceDataManager;
 import org.orcid.persistence.dao.GenericDao;

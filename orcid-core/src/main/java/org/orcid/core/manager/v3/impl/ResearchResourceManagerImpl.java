@@ -2,8 +2,8 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.*;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;

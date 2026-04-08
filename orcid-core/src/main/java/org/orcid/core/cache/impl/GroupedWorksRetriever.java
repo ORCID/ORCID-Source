@@ -16,8 +16,8 @@
  */
 package org.orcid.core.cache.impl;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.cache.OrcidString;
 import org.orcid.core.cache.Retriever;

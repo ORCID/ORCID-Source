@@ -19,8 +19,8 @@ package org.orcid.activitiesindexer.orcid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.MediaType;
 
 import org.orcid.activitiesindexer.exception.DeprecatedRecordException;
 import org.orcid.activitiesindexer.exception.LockedRecordException;

@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import java.util.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;

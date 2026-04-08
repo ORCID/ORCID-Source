@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Query;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.orcid.persistence.dao.EmailScheduleDao;
 import org.orcid.persistence.jpa.entities.EmailScheduleEntity;

@@ -3,7 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
