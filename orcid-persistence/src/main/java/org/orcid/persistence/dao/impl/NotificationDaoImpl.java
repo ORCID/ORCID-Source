@@ -3,6 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -208,7 +209,15 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
         query.setParameter("never", Float.MAX_VALUE);  
         query.setHint("javax.persistence.query.timeout", queryTimeout);
-        return query.getResultList();
+        
+        List<Object[]> results = query.getResultList();
+
+        // Sort the results in memory using Java row[0] is the ORCID string from FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE query
+        if (results != null) {
+            results.sort(Comparator.comparing(row -> (String) row[0]));
+        }
+
+        return results;
     }
                
 
