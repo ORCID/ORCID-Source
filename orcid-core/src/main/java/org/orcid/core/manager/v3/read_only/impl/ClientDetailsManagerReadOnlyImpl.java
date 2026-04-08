@@ -3,7 +3,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 import java.util.*;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.manager.EncryptionManager;

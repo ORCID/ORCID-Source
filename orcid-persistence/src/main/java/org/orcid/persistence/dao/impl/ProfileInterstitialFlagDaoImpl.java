@@ -5,8 +5,8 @@ import org.orcid.persistence.dao.ProfileInterstitialFlagDao;
 import org.orcid.persistence.jpa.entities.ProfileInterstitialFlagEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.math.BigInteger;
 import java.util.List;
 

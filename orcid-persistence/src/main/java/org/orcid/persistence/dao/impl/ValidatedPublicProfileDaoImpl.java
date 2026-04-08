@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import javax.transaction.Transactional;
 
 import org.orcid.persistence.dao.ValidatedPublicProfileDao;

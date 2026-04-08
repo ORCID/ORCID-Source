@@ -1,9 +1,9 @@
 package org.orcid.persistence.dao.impl;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.EventDao;
 import org.orcid.persistence.jpa.entities.EventEntity;

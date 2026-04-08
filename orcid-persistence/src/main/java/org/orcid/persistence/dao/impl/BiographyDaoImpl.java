@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;

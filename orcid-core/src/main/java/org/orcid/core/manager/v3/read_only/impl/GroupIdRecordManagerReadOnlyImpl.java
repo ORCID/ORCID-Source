@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.v3.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;

@@ -113,21 +113,30 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>      
-		<dependency>
-			  <groupId>org.hibernate</groupId>
-			  <artifactId>hibernate-agroal</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-    		<artifactId>hibernate-c3p0</artifactId>
-		</dependency>
-		<dependency>
-			    <groupId>org.hibernate</groupId>
-    			<artifactId>hibernate-validator</artifactId>
-		</dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-agroal</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-c3p0</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+            </dependency>
 		<dependency>
     		<groupId>jakarta.persistence</groupId>
     		<artifactId>jakarta.persistence-api</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>jakarta.transaction</groupId>
+		    <artifactId>jakarta.transaction-api</artifactId>
+		    <version>2.0.1</version>
 		</dependency>
         <dependency>
             <groupId>org.liquibase</groupId>

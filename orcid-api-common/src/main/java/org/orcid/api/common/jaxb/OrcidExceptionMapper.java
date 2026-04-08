@@ -3,7 +3,7 @@ package org.orcid.api.common.jaxb;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

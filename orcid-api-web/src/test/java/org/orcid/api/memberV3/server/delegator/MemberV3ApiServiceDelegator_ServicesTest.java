@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 
 import org.apache.hc.core5.http.HttpStatus;

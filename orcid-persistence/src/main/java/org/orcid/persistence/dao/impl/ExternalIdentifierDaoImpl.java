@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;

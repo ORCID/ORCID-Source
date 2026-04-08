@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 
 import org.junit.Before;
 import org.junit.Test;

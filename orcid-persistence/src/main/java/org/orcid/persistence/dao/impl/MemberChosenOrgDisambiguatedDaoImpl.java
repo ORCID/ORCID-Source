@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.orcid.persistence.dao.MemberChosenOrgDisambiguatedDao;

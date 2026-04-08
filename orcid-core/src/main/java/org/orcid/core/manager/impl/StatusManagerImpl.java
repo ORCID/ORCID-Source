@@ -5,7 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 
 import org.orcid.core.manager.StatusManager;
 import org.orcid.persistence.dao.MiscDao;

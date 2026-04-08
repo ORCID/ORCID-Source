@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -1,6 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.constants.SendEmailFrequency;

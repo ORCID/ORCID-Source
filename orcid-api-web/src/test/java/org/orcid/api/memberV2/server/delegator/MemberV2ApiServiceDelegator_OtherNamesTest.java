@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.helper.Utils;

@@ -5,7 +5,7 @@ import org.orcid.persistence.jpa.entities.keys.ClientAuthorisedGrantTypePk;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * @author Declan Newman (declan) Date: 12/03/2012

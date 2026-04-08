@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbClientAdapter;
 import org.orcid.core.manager.EncryptionManager;

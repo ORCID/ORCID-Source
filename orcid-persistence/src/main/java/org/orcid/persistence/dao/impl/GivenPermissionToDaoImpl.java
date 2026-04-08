@@ -2,9 +2,9 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.GivenPermissionToDao;

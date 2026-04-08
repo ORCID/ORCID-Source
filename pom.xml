@@ -727,20 +727,28 @@ the software.
                 <artifactId>postgresql</artifactId>
                 <version>42.7.2</version>
             </dependency>
+
+
+
             <dependency>
-              <groupId>org.hibernate</groupId>
-              <artifactId>hibernate-agroal</artifactId>
-              <version>5.4.27.Final</version>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>6.4.4.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-agroal</artifactId>
+                <version>6.4.4.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-c3p0</artifactId>
-                <version>5.3.6.Final</version>
+                <version>6.4.4.Final</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                    <version>5.4.3.Final</version>
+                <version>8.0.1.Final</version>
             </dependency>
             <dependency>
     			<groupId>jakarta.persistence</groupId>

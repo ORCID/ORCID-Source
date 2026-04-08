@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.BackupCodeDao;
 import org.orcid.persistence.jpa.entities.BackupCodeEntity;

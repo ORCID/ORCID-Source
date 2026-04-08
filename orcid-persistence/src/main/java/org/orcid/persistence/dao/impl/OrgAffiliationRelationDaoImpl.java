@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Resource;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.utils.panoply.PanoplyDeletedItem;
 import org.orcid.utils.panoply.PanoplyRedshiftClient;

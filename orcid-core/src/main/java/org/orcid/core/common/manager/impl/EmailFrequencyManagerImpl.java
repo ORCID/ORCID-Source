@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;

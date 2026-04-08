@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.reflect.FieldUtils;

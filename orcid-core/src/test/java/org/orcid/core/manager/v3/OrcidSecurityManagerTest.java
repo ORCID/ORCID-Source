@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.junit.After;
 import org.junit.Before;

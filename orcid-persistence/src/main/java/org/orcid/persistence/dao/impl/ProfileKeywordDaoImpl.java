@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;

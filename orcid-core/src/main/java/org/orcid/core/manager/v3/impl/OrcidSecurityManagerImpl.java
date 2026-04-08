@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.core.exception.DeactivatedException;

@@ -12,20 +12,20 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
+
+import org.hibernate.annotations.SortNatural;
 
 /**
  * @author Declan Newman
@@ -159,7 +159,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
+    @SortNatural
     public SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris() {
         return clientRegisteredRedirectUris;
     }
@@ -236,7 +236,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
-    @Sort(type = SortType.NATURAL)
+    @SortNatural
     public Set<ClientSecretEntity> getClientSecrets() {
         return clientSecrets;
     }

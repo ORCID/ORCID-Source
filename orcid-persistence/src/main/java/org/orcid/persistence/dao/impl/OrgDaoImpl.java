@@ -3,8 +3,8 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
