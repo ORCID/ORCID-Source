@@ -38,6 +38,7 @@ public class SecurityContextTestUtils {
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
+        when(mockedAuthentication.getClientId()).thenReturn(clientId);
         when(mockedAuthentication.getUserOrcid()).thenReturn(userOrcid);
         Set<String> scopes = new HashSet<String>();
         if (scopePathTypes != null) {
@@ -72,6 +73,7 @@ public class SecurityContextTestUtils {
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
         when(mockedAuthentication.getPrincipal()).thenReturn(clientId);
+        when(mockedAuthentication.getClientId()).thenReturn(clientId);
         when(mockedAuthentication.getScopes()).thenReturn(scopes);
     }
 

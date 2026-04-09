@@ -30,7 +30,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeResearchResource(String userOrcid, Long researchResourceId) {
-        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity ri where ri.research_resource_id=:researchResourceId");
+        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity ri where ri.researchResourceEntity.id=:researchResourceId");
         queryItem.setParameter("researchResourceId", researchResourceId);
         queryItem.executeUpdate();
         Query query = entityManager.createQuery("delete from ResearchResourceEntity r where r.orcid=:userOrcid and r.id=:researchResourceId");
@@ -51,7 +51,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeResearchResources(String userOrcid) {
-        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity ri where ri.research_resource_id in (SELECT r.id from ResearchResourceEntity r where r.orcid=:userOrcid)");
+        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity ri where ri.researchResourceEntity.id in (SELECT r.id from ResearchResourceEntity r where r.orcid=:userOrcid)");
         queryItem.setParameter("userOrcid", userOrcid);
         queryItem.executeUpdate();
 
