@@ -65,7 +65,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId) {
-        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid=:userOrcid and id=:orgAffiliationRelationId");
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity o where o.orcid=:userOrcid and o.id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         if (query.executeUpdate() > 0) {
@@ -119,7 +119,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility) {
         Query query = entityManager.createQuery(
-                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where orcid=:userOrcid and id=:orgAffiliationRelationId");
+            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=now() where o.orcid=:userOrcid and o.id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         query.setParameter("visibility", visibility);
@@ -156,7 +156,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
         Query query = entityManager.createQuery(
-                "update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where orcid=:userOrcid and id in (:orgAffiliationRelationIds)");
+            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=now() where o.orcid=:userOrcid and o.id in (:orgAffiliationRelationIds)");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationIds", orgAffiliationRelationIds);
         query.setParameter("visibility", visibility);
@@ -348,7 +348,7 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllAffiliations(String orcid) {
-        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from OrgAffiliationRelationEntity o where o.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
         if (query.executeUpdate() > 0) {

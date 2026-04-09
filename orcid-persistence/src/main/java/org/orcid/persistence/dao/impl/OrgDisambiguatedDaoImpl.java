@@ -151,7 +151,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     @Transactional
     public void updatePopularity(Long orgDisambiguatedId, Integer popularity) {
-        Query query = entityManager.createQuery("update OrgDisambiguatedEntity set indexingStatus = 'PENDING', popularity = :popularity where id = :orgDisambiguatedId");
+        Query query = entityManager.createQuery("update OrgDisambiguatedEntity od set od.indexingStatus = 'PENDING', od.popularity = :popularity where od.id = :orgDisambiguatedId");
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("popularity", popularity);
         query.executeUpdate();

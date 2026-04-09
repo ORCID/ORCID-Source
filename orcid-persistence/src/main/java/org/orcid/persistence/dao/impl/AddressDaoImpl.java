@@ -70,7 +70,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteAddress(String orcid, Long putCode) {
-        Query query = entityManager.createQuery("DELETE FROM AddressEntity WHERE id=:id and orcid = :orcid");
+        Query query = entityManager.createQuery("DELETE FROM AddressEntity a WHERE a.id=:id and a.orcid = :orcid");
         query.setParameter("id", putCode);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
@@ -80,7 +80,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Transactional
     @UpdateProfileLastModified
     public void removeAllAddress(String orcid) {
-        Query query = entityManager.createQuery("delete from AddressEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from AddressEntity a where a.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

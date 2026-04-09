@@ -64,7 +64,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeForId(String orcid) {
-        Query query = entityManager.createQuery("DELETE FROM BiographyEntity WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("DELETE FROM BiographyEntity b WHERE b.orcid = :orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0 ? true : false;
     }   

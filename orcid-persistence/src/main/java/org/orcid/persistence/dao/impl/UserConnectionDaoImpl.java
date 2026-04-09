@@ -60,7 +60,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     @Override
     @Transactional
     public void deleteByOrcid(String orcid) {
-        Query query = entityManager.createQuery("delete from UserconnectionEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from UserconnectionEntity u where u.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

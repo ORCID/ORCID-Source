@@ -30,6 +30,7 @@ the software.
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.9</jersey.version>
         <jackson.version>2.15.4</jackson.version>
+        <activemq.version>6.1.5</activemq.version>
         <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
@@ -132,7 +133,7 @@ the software.
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT</argLine>
+                    <argLine>-Duser.timezone=GMT --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
                     <runOrder>alphabetical</runOrder>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 
@@ -965,7 +966,7 @@ the software.
             <dependency>
                <groupId>org.orcid</groupId>
                <artifactId>orcid-model</artifactId>
-               <version>3.3.9</version>
+               <version>4.0.0</version>
             </dependency>
             <dependency>
                <groupId>org.orcid</groupId>

@@ -64,12 +64,7 @@
         <constructor-arg ref="jerseyProperties" />
     </bean>
 
-    <util:map id="jerseyProperties">
-        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
-               value-ref="multiThreadedConnectionManager"/>
-    </util:map>
-
-    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+    <util:map id="jerseyProperties" />
 
 	<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="databasePlatform" value="${org.orcid.message-listener.db.dialect}" />

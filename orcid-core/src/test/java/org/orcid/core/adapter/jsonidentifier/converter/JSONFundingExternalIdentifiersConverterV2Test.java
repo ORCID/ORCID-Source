@@ -71,7 +71,7 @@ public class JSONFundingExternalIdentifiersConverterV2Test {
     }
 
     private Funding getFunding() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
+        JAXBContext context = JAXBContext.newInstance(Funding.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0/samples/read_samples/funding-full-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

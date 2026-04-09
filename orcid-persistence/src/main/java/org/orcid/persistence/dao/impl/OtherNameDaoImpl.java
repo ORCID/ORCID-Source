@@ -92,7 +92,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteOtherName(OtherNameEntity otherName) {
         Assert.notNull(otherName, "must not be null");
-        Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
+        Query query = entityManager.createQuery("DELETE FROM OtherNameEntity n WHERE n.id=:id");
         query.setParameter("id", otherName.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -109,7 +109,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllOtherNames(String orcid) {
-        Query query = entityManager.createQuery("delete from OtherNameEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from OtherNameEntity n where n.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

@@ -52,7 +52,7 @@ public class SpamDaoImpl extends GenericDaoImpl<SpamEntity, Long> implements Spa
     @Transactional
     @UpdateProfileLastModified
     public boolean removeSpam(String orcid) {
-        Query query = entityManager.createQuery("delete from SpamEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from SpamEntity s where s.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
         return query.executeUpdate() > 0 ? true : false;

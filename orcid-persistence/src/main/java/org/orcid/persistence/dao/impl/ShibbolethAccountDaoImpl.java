@@ -40,7 +40,7 @@ public class ShibbolethAccountDaoImpl extends GenericDaoImpl<ShibbolethAccountEn
     @Override
     @Transactional
     public void removeByIdAndOrcid(Long id, String orcid) {
-        Query query = entityManager.createQuery("delete from ShibbolethAccountEntity where id = :id and orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ShibbolethAccountEntity s where s.id = :id and s.orcid = :orcid");
         query.setParameter("id", id);
         query.setParameter("orcid", orcid);
         query.executeUpdate();

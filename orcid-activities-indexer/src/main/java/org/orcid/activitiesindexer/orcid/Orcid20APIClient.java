@@ -20,6 +20,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import jakarta.annotation.Resource;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.MediaType;
 
 import org.orcid.activitiesindexer.exception.DeprecatedRecordException;
@@ -39,12 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.WebResource.Builder;
-import com.sun.jersey.api.client.config.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
 
 @Component
 public class Orcid20APIClient {
@@ -72,93 +72,103 @@ public class Orcid20APIClient {
      * @return Activities
      */
     public Record fetchPublicRecord(String orcid) throws LockedRecordException, DeprecatedRecordException {
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/record");
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
+        WebTarget webTarget = jerseyClient.target(baseUri).path(orcid + "/record");
+        Invocation.Builder builder = webTarget.request(MediaType.APPLICATION_XML)
+                .property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .header("Authorization", "Bearer " + accessToken);
+        try (Response response = builder.get()) {
+            if (response.getStatus() != 200) {
             OrcidError orcidError = null;
             switch (response.getStatus()) {
             case 301:
-                orcidError = response.getEntity(OrcidError.class);
+                orcidError = response.readEntity(OrcidError.class);
                 throw new DeprecatedRecordException(orcidError);
             case 409:
-                orcidError = response.getEntity(OrcidError.class);
+                orcidError = response.readEntity(OrcidError.class);
                 throw new LockedRecordException(orcidError);
             default:
                 LOG.error("Unable to fetch public activities for " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
+            }
+            return response.readEntity(Record.class);
         }
-        return response.getEntity(Record.class);        
     }
     
     public Affiliation fetchAffiliation(String orcid, Long putCode, AffiliationType type){
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/" + type.value() + "/" + putCode);
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
+        WebTarget webTarget = jerseyClient.target(baseUri).path(orcid + "/" + type.value() + "/" + putCode);
+        Invocation.Builder builder = webTarget.request(MediaType.APPLICATION_XML)
+                .property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .header("Authorization", "Bearer " + accessToken);
+        try (Response response = builder.get()) {
+            if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:
                 LOG.error("Unable to fetch affiliation from record " + orcid + "/" + type.value() + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
+            }
+
+            Affiliation aff;
+
+            if(AffiliationType.EDUCATION.equals(type)) {
+            	aff = response.readEntity(Education.class);
+            } else {
+            	aff = response.readEntity(Employment.class);
+            }
+
+            return aff;
         }
-        
-        Affiliation aff;
-        
-        if(AffiliationType.EDUCATION.equals(type)) {
-        	aff = response.getEntity(Education.class);
-        } else {
-        	aff = response.getEntity(Employment.class);
-        }
-        
-        return aff;
     }
     
     public Funding fetchFunding(String orcid, Long putCode){
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/funding/"+ putCode);
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
+        WebTarget webTarget = jerseyClient.target(baseUri).path(orcid + "/funding/"+ putCode);
+        Invocation.Builder builder = webTarget.request(MediaType.APPLICATION_XML)
+                .property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .header("Authorization", "Bearer " + accessToken);
+        try (Response response = builder.get()) {
+            if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:
                 LOG.error("Unable to fetch funding record " + orcid + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
+            }
+            return response.readEntity(Funding.class);
         }
-        return response.getEntity(Funding.class);
     }
     
     public Work fetchWork(String orcid, Long putCode){
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/work/"+ putCode);
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
+        WebTarget webTarget = jerseyClient.target(baseUri).path(orcid + "/work/"+ putCode);
+        Invocation.Builder builder = webTarget.request(MediaType.APPLICATION_XML)
+                .property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .header("Authorization", "Bearer " + accessToken);
+        try (Response response = builder.get()) {
+            if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:
                 LOG.error("Unable to fetch work from record " + orcid + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
+            }
+            return response.readEntity(Work.class);
         }
-        return response.getEntity(Work.class);
     }
     
     public PeerReview fetchPeerReview(String orcid, Long putCode){
-        WebResource webResource = jerseyClient.resource(baseUri).path(orcid + "/peer-review/"+ putCode);
-        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
-        Builder builder = webResource.accept(MediaType.APPLICATION_XML).header("Authorization", "Bearer " + accessToken);
-        ClientResponse response = builder.get(ClientResponse.class);
-        if (response.getStatus() != 200) {
+        WebTarget webTarget = jerseyClient.target(baseUri).path(orcid + "/peer-review/"+ putCode);
+        Invocation.Builder builder = webTarget.request(MediaType.APPLICATION_XML)
+                .property(ClientProperties.FOLLOW_REDIRECTS, false)
+                .header("Authorization", "Bearer " + accessToken);
+        try (Response response = builder.get()) {
+            if (response.getStatus() != 200) {
             switch (response.getStatus()) {
                 default:
                 LOG.error("Unable to fetch peer review from record " + orcid + "/" + putCode+" on API 2.0 HTTP error code: " + response.getStatus());
                 throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
             }
+            }
+            return response.readEntity(PeerReview.class);
         }
-        return response.getEntity(PeerReview.class);
     }
 }

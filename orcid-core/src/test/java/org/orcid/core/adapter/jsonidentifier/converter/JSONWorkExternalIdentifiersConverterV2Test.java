@@ -78,7 +78,7 @@ public class JSONWorkExternalIdentifiersConverterV2Test {
     }
     
     private Work getWork() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
+        JAXBContext context = JAXBContext.newInstance(Work.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0/samples/read_samples/work-full-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

@@ -31,7 +31,7 @@ public class IdentityProviderDaoImpl extends GenericDaoImpl<IdentityProviderEnti
     @Override
     @Transactional
     public void incrementFailedCount(String providerid) {
-        Query query = entityManager.createQuery("update IdentityProviderEntity set lastFailed = now(), failedCount = failedCount + 1 where providerid = :providerid");
+        Query query = entityManager.createQuery("update IdentityProviderEntity i set i.lastFailed = now(), i.failedCount = i.failedCount + 1 where i.providerid = :providerid");
         query.setParameter("providerid", providerid);
         query.executeUpdate();
     }

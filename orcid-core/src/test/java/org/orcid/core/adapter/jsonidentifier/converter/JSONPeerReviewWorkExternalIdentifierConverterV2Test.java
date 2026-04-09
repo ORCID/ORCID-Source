@@ -47,7 +47,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
     }
 
     private PeerReview getPeerReview() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
+        JAXBContext context = JAXBContext.newInstance(PeerReview.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0/samples/read_samples/peer-review-full-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

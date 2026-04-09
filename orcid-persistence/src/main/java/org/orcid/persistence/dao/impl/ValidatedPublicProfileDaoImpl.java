@@ -26,7 +26,7 @@ public class ValidatedPublicProfileDaoImpl extends GenericDaoImpl<ValidatedPubli
     @Override
     @Transactional
     public void removeOldRecords(Date maxAge) {
-        Query query = entityManager.createQuery("DELETE from ValidatedPublicProfileEntity where dateCreated < :maxAge");
+        Query query = entityManager.createQuery("DELETE from ValidatedPublicProfileEntity v where v.dateCreated < :maxAge");
         query.setParameter("maxAge", maxAge);
         query.executeUpdate();
     }

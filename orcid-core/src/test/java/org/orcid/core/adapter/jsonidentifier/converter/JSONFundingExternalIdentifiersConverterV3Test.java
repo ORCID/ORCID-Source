@@ -70,7 +70,7 @@ public class JSONFundingExternalIdentifiersConverterV3Test {
     }
 
     private Funding getFunding() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { Funding.class });
+        JAXBContext context = JAXBContext.newInstance(Funding.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_3.0/samples/read_samples/funding-full-3.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);
