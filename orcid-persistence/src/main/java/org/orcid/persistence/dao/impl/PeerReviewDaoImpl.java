@@ -142,7 +142,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     public Boolean hasPublicPeerReviews(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from peer_review where orcid=:orcid and visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 

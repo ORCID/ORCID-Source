@@ -48,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -782,8 +781,7 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             toDelete = notificationDao.findNotificationsToDeleteByOffset((notificationDeleteOffset == null ? 10000 : notificationDeleteOffset), recordsPerBatch);
             LOGGER.info("Got batch of {} notifications to delete", toDelete.size());
             for (Object[] o : toDelete) {
-                BigInteger big = (BigInteger) o[0];
-                Long id = big.longValue();
+                Long id = ((Number) o[0]).longValue();
                 String orcid = (String) o[1];
                 LOGGER.info("About to delete old notification: id={}, orcid={}", new Object[] { id, orcid });
                 notificationDao.deleteNotificationItemByNotificationId(id);

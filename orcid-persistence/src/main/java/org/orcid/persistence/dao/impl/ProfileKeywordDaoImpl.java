@@ -108,7 +108,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllKeywords(String orcid) {
-        Query query = entityManager.createQuery("delete from ProfileKeywordEntity where profile_orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ProfileKeywordEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

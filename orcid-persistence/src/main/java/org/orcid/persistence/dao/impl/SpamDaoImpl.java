@@ -22,7 +22,7 @@ public class SpamDaoImpl extends GenericDaoImpl<SpamEntity, Long> implements Spa
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from spam where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }   
 

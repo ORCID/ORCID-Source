@@ -22,6 +22,7 @@ import org.orcid.core.solr.OrcidSolrProfileClient;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.search_v2.Search;
 import org.orcid.test.TargetProxyHelper;
+import org.apache.hc.core5.http.ParseException;
 import org.orcid.core.solr.OrcidSolrResult;
 import org.orcid.core.solr.OrcidSolrResults;
 
@@ -68,7 +69,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindOrcidIds() {
+    public void testFindOrcidIds() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
@@ -79,7 +80,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindOrcidIdsNoResults() {
+    public void testFindOrcidIdsNoResults() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);

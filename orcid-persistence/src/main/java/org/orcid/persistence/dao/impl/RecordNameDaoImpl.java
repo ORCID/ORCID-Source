@@ -64,7 +64,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from record_name where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }   
     

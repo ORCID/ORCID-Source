@@ -196,7 +196,7 @@ public class CorrectBadOrgData {
             String city = (String) o[1];
             String region = (String) o[2];
             String country = (String) o[3];
-            Long orgDisambiguatedId = ((BigInteger) o[4]).longValue();
+            Long orgDisambiguatedId = ((Number) o[4]).longValue();
             duplicateOrgDetails.add(new OrgDetails(name, city, region, country, orgDisambiguatedId));
         });
     }

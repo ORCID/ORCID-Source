@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
-import java.math.BigInteger;
 import java.util.List;
 
 public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInterstitialFlagEntity, Long> implements ProfileInterstitialFlagDao {
@@ -31,7 +30,7 @@ public class ProfileInterstitialFlagDaoImpl extends GenericDaoImpl<ProfileInters
         Query query = entityManager.createNativeQuery("select count(*) from profile_interstitial_flag where orcid = :orcid and interstitial_name = :interstitialName");
         query.setParameter("orcid", orcid);
         query.setParameter("interstitialName", interstitialName);
-        long result = ((BigInteger)query.getSingleResult()).longValue();
+        long result = ((Number)query.getSingleResult()).longValue();
         return result > 0;
     }
 

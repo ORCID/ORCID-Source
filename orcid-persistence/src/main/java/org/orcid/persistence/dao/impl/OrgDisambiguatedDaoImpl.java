@@ -140,8 +140,8 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         List<Object[]> results = query.getResultList();
         List<Pair<Long, Integer>> pairs = new ArrayList<>();
         for (Object[] row : results) {
-            Long id = ((BigInteger) row[0]).longValue();
-            Integer popularity = ((BigInteger) row[1]).intValue();
+            Long id = ((Number) row[0]).longValue();
+            Integer popularity = ((Number) row[1]).intValue();
             Pair<Long, Integer> pair = new ImmutablePair<Long, Integer>(id, popularity);
             pairs.add(pair);
         }

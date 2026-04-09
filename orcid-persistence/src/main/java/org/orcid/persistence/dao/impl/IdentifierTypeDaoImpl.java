@@ -45,14 +45,14 @@ public class IdentifierTypeDaoImpl extends GenericDaoImpl<IdentifierTypeEntity, 
 
     @Override
     public IdentifierTypeEntity getEntityByName(String idName) {
-        TypedQuery<IdentifierTypeEntity> query = entityManager.createQuery("FROM IdentifierTypeEntity WHERE id_name = :idName", IdentifierTypeEntity.class);
+        TypedQuery<IdentifierTypeEntity> query = entityManager.createQuery("FROM IdentifierTypeEntity WHERE name = :idName", IdentifierTypeEntity.class);
         query.setParameter("idName", idName);
         return query.getSingleResult();
     }
 
     @Override
     public List<IdentifierTypeEntity> getEntities() {
-        TypedQuery<IdentifierTypeEntity> query = entityManager.createQuery("FROM IdentifierTypeEntity order by id_name", IdentifierTypeEntity.class);
+        TypedQuery<IdentifierTypeEntity> query = entityManager.createQuery("FROM IdentifierTypeEntity order by name", IdentifierTypeEntity.class);
         return query.getResultList();
     }
 

@@ -94,7 +94,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     public Boolean hasPublicResearchResources(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM research_resource WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 
