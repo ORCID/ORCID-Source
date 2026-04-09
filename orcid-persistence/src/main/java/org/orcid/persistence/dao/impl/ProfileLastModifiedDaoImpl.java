@@ -33,7 +33,7 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("indexingStatus", indexingStatus);
         // Sets a timeout for this query
-        updateQuery.setHint("javax.persistence.query.timeout", queryTimeout);
+        updateQuery.setHint("jakarta.persistence.query.timeout", queryTimeout);
         updateQuery.executeUpdate();
     }
 
@@ -43,7 +43,7 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         // Sets a timeout for this query
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
     }
 

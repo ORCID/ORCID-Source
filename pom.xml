@@ -87,7 +87,7 @@ the software.
                                     <version>3.6.3</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>11</version>
+                                    <version>[11,)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -123,8 +123,8 @@ the software.
                 <artifactId>maven-compiler-plugin</artifactId>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -924,7 +924,7 @@ the software.
         <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.10.5</version>
+            <version>1.14.12</version>
         </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>

@@ -125,7 +125,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         }
 
         query.setMaxResults(maxResults);
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
 
         List<Object[]> results = query.getResultList();
 
@@ -366,7 +366,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         query.setParameter("indexingStatus", indexingStatus);
         // Sets a timeout for this query
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
     }
 

@@ -2,8 +2,8 @@ package org.orcid.frontend.web.forms.validate;
 
 import java.lang.reflect.InvocationTargetException;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;

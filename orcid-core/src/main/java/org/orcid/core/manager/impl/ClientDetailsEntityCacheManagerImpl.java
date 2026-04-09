@@ -86,7 +86,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         Date date = null;
         try {
             date = clientDetailsManager.getLastModified(clientId);
-        } catch (javax.persistence.NoResultException e) {
+        } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate clientId:" + clientId);
         }
         return date;
@@ -96,7 +96,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         Date date = null;
         try {
             date = clientDetailsManager.getLastModifiedByIdp(idp);
-        } catch (javax.persistence.NoResultException e) {
+        } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate idp:" + idp);
         }
         return date;

@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 import org.junit.runner.RunWith;
 import org.orcid.test.OrcidJUnit4ClassRunner;
