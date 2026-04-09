@@ -55,6 +55,11 @@
 		    <artifactId>jersey-media-json-jackson</artifactId>
 		</dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+            <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId> 
             <version>${jersey.version}</version>     

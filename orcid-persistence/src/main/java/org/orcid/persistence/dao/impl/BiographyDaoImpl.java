@@ -1,7 +1,5 @@
 package org.orcid.persistence.dao.impl;
 
-import java.math.BigInteger;
-
 import jakarta.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
@@ -56,7 +54,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from biography where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number) query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 
