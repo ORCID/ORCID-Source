@@ -61,7 +61,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-spring4</artifactId>
+            <artifactId>jersey-spring6</artifactId>
             <version>${jersey.version}</version>
         </dependency>
         <!-- Jersey client -->
