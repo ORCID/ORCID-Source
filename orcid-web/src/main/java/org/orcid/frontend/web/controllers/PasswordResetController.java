@@ -19,9 +19,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.togglz.Features;
@@ -32,7 +30,6 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
-import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -70,6 +67,12 @@ public class PasswordResetController extends BaseController {
 
     @Resource
     private SocialAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerSocial;
+
+    @Resource
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+
+    @Resource
+    private BackupCodeManager backupCodeManager;
 
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
@@ -203,14 +206,14 @@ public class PasswordResetController extends BaseController {
 	    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
 	    	emails = emailManager.getEmails(orcid);
     	} 
-    	passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getPassword(), emails);
+    	passwordChecklistValidate(resetPasswordForm.getRetypedPassword(), resetPasswordForm.getNewPassword(), emails);
     	
-        if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getPassword())) {
+        if (resetPasswordForm.getRetypedPassword() != null && !resetPasswordForm.getRetypedPassword().equals(resetPasswordForm.getNewPassword())) {
             setError(resetPasswordForm, "FieldMatch.registrationForm");
         }
 
-        if (CommonPasswords.passwordIsCommon(resetPasswordForm.getPassword().getValue())) {
-            setError(resetPasswordForm, "password.too_common", resetPasswordForm.getPassword());
+        if (CommonPasswords.passwordIsCommon(resetPasswordForm.getNewPassword().getValue())) {
+            setError(resetPasswordForm, "password.too_common", resetPasswordForm.getNewPassword());
         }
         return resetPasswordForm;
     }
@@ -219,7 +222,7 @@ public class PasswordResetController extends BaseController {
     public @ResponseBody OneTimeResetPasswordForm getResetPassword() {
     	
         OneTimeResetPasswordForm oneTimeResetPasswordForm  = new OneTimeResetPasswordForm();
-        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
         return oneTimeResetPasswordForm;
     }
 
@@ -239,17 +242,17 @@ public class PasswordResetController extends BaseController {
             return oneTimeResetPasswordForm;
         }
 
-        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
         
     	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
     	Emails emails = emailManager.getEmails(orcid);
     	
-        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
-        if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword(), emails);
+        if (!oneTimeResetPasswordForm.getNewPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
 
-        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getNewPassword().getValue());
         //reset the lock fields
         profileEntityManager.resetSigninLock(orcid);
         profileEntityCacheManager.remove(orcid);
@@ -280,7 +283,7 @@ public class PasswordResetController extends BaseController {
             return oneTimeResetPasswordForm;
         }
 
-        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword());
+        passwordConfirmValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword());
         
         String orcid = null;
         //check first if valid orcid as the admin portal can send either and email or an orcid
@@ -299,13 +302,39 @@ public class PasswordResetController extends BaseController {
         }
 
         Emails emails = emailManager.getEmails(orcid);
-        
-        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getPassword(), emails);
-        if (!oneTimeResetPasswordForm.getPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
+        oneTimeResetPasswordForm.setOrcid(orcid);
+
+        passwordChecklistValidate(oneTimeResetPasswordForm.getRetypedPassword(), oneTimeResetPasswordForm.getNewPassword(), emails);
+        if (!oneTimeResetPasswordForm.getNewPassword().getErrors().isEmpty() || !oneTimeResetPasswordForm.getRetypedPassword().getErrors().isEmpty()) {
             return oneTimeResetPasswordForm;
         }
 
-        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getPassword().getValue());
+        if (twoFactorAuthenticationManager.userUsing2FA(orcid)) {
+            oneTimeResetPasswordForm.setTwoFactorEnabled(true);
+
+            if (oneTimeResetPasswordForm.getTwoFactorCode() == null && oneTimeResetPasswordForm.getTwoFactorRecoveryCode() == null) {
+                return oneTimeResetPasswordForm;
+            } else {
+                if (oneTimeResetPasswordForm.getTwoFactorRecoveryCode() != null && !oneTimeResetPasswordForm.getTwoFactorRecoveryCode().isEmpty()) {
+                    if (!backupCodeManager.verify(orcid, oneTimeResetPasswordForm.getTwoFactorRecoveryCode())) {
+                        oneTimeResetPasswordForm.setInvalidTwoFactorRecoveryCode(true);
+                        return oneTimeResetPasswordForm;
+                    }
+                }
+                else if (oneTimeResetPasswordForm.getTwoFactorCode() != null && !oneTimeResetPasswordForm.getTwoFactorCode().isEmpty()) {
+                    if (!twoFactorAuthenticationManager.verificationCodeIsValid(oneTimeResetPasswordForm.getTwoFactorCode(), orcid)) {
+                        oneTimeResetPasswordForm.setInvalidTwoFactorCode(true);
+                        return oneTimeResetPasswordForm;
+                    }
+                }
+                else {
+                    oneTimeResetPasswordForm.setInvalidTwoFactorCode(true);
+                    return oneTimeResetPasswordForm;
+                }
+            }
+        }
+
+        profileEntityManager.updatePassword(orcid, oneTimeResetPasswordForm.getNewPassword().getValue());
         //send the security notification email on change password
         if(Features.SEND_EMAIL_ON_RESET_PASSWORD.isActive()) {
 			recordEmailSender.sendOrcidSecurityResetPasswordEmail(orcid);
@@ -316,7 +345,7 @@ public class PasswordResetController extends BaseController {
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         // Remove credentials before return
-        oneTimeResetPasswordForm.setPassword(null);
+        oneTimeResetPasswordForm.setNewPassword(null);
         oneTimeResetPasswordForm.setRetypedPassword(null);
         return oneTimeResetPasswordForm;
     }
