@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.GenericFilterBean;
 
+@Deprecated(since = "Since the authorization server is made the default, we dont need this filter", forRemoval = true)
 public class RevokeTokenEndpointFilter extends GenericFilterBean {
 
     @Resource

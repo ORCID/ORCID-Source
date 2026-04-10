@@ -57,8 +57,8 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.INTERNAL_PERSON_LAST_MODIFIED, requestComesFromInternalApi = true)
     public Response viewPersonLastModified(String orcid) {
+        orcidSecurityManager.checkScopes(ScopePathType.ORCID_WORKS_READ_LIMITED);
         Date lastModified = profileEntityManagerReadOnly.getLastModifiedDate(orcid);
         LastModifiedResponse obj = new LastModifiedResponse(orcid, lastModified.toString());        
         Response response = Response.ok(obj).build(); 
@@ -91,8 +91,8 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.INTERNAL, requestComesFromInternalApi = true)
     public Response findOrcidByEmail(String email) {
+        orcidSecurityManager.checkScopes(ScopePathType.INTERNAL);
         if (email != null && !email.isEmpty()) {
             if (emailManagerReadOnly.emailExists(email)) {
                 String orcid = null;

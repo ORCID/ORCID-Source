@@ -24,7 +24,7 @@
 	<sec:http pattern="/v*/status" security="none"/>
 	<sec:http pattern="/v*/apiStatus" security="none"/>
 
-    <!-- Authenticate the client before reaching the token endpoint -->
+    <!-- Token endpoint -->
     <sec:http pattern="/oauth/token" security="none" />
 
     <sec:http create-session="stateless" >
