@@ -3,7 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.core.Response;
 
 import org.orcid.core.exception.OrcidCoreExceptionMapper;

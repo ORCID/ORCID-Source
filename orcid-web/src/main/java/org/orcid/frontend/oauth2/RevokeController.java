@@ -32,13 +32,14 @@ public class RevokeController {
 
     @RequestMapping
     public ResponseEntity<?> revoke(HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
+        String tokenToRevoke = request.getParameter("token");
+        Response r = null;
+        
         if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
             // Forward the request to the authorization server
-            String tokenToRevoke = request.getParameter("token");
             if (PojoUtil.isEmpty(tokenToRevoke)) {
                 throw new IllegalArgumentException("Please provide the token to be param");
             }
-            Response r = null;
             if(StringUtils.isNotBlank(request.getHeader("Authorization"))) {
                 String authorization = request.getHeader("Authorization");
                 r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
