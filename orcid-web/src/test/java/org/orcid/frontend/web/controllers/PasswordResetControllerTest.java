@@ -6,8 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,9 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.RegistrationManager;
+import org.orcid.core.manager.*;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
@@ -48,7 +45,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.togglz.junit.TogglzRule;
 
 import com.google.common.collect.Lists;
@@ -90,6 +86,12 @@ public class PasswordResetControllerTest extends DBUnitTest {
     
     @Mock
     private RecordEmailSender mockRecordEmailSender;
+
+    @Mock
+    private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+
+    @Mock
+    private BackupCodeManager backupCodeManager;
         
     @Rule
     public TogglzRule togglzRule = TogglzRule.allDisabled(Features.class);
@@ -113,7 +115,9 @@ public class PasswordResetControllerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(passwordResetController, "emailManagerReadOnly", mockEmailManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityManager", profileEntityManager);
         TargetProxyHelper.injectIntoProxy(passwordResetController, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(passwordResetController, "recordEmailSender", mockRecordEmailSender);        
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "recordEmailSender", mockRecordEmailSender);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "twoFactorAuthenticationManager", twoFactorAuthenticationManager);
+        TargetProxyHelper.injectIntoProxy(passwordResetController, "backupCodeManager", backupCodeManager);
     }
     
     @Test
@@ -191,9 +195,9 @@ public class PasswordResetControllerTest extends DBUnitTest {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
-        assertFalse(oneTimeResetPasswordForm.getPassword().getErrors().isEmpty());
+        assertFalse(oneTimeResetPasswordForm.getNewPassword().getErrors().isEmpty());
 
-        oneTimeResetPasswordForm.setPassword(Text.valueOf("Password#123"));
+        oneTimeResetPasswordForm.setNewPassword(Text.valueOf("Password#123"));
         oneTimeResetPasswordForm.setRetypedPassword(Text.valueOf("Password#123"));
         when(bindingResult.hasErrors()).thenReturn(false);        
         oneTimeResetPasswordForm = passwordResetController.submitPasswordReset(servletRequest, servletResponse, oneTimeResetPasswordForm);
@@ -210,7 +214,7 @@ public class PasswordResetControllerTest extends DBUnitTest {
     public void testResetPasswordDontFailIfAnyFieldIsEmtpy() {
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         passwordResetController.resetPasswordConfirmValidate(form);
-        form.setPassword(Text.valueOf(""));
+        form.setNewPassword(Text.valueOf(""));
         form.setRetypedPassword(null);
         passwordResetController.resetPasswordConfirmValidate(form);
         form.setPassword(null);
@@ -218,4 +222,161 @@ public class PasswordResetControllerTest extends DBUnitTest {
         passwordResetController.resetPasswordConfirmValidate(form);
     }
 
+    @Test
+    public void testSubmitPasswordEmailValidatePassword_ValidToken() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("encrypted_string");
+
+        form = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
+
+        assertTrue(form.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testSubmitPasswordEmailValidatePassword_ExpiredToken() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=1970-05-29T17:04:27");
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("encrypted_string");
+
+        form = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
+
+        assertFalse(form.getErrors().isEmpty());
+        assertTrue(form.getErrors().contains("expiredPasswordResetToken"));
+    }
+
+    @Test
+    public void testSubmitPasswordEmailValidatePassword_InvalidToken() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenThrow(new EncryptionOperationNotPossibleException());
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("bad_string");
+
+        form = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
+
+        assertFalse(form.getErrors().isEmpty());
+        assertTrue(form.getErrors().contains("invalidPasswordResetToken"));
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_SuccessNo2FA() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
+        when(twoFactorAuthenticationManager.userUsing2FA("0000-0000-0000-0000")).thenReturn(false);
+        MockHttpSession session = new MockHttpSession();
+        when(servletRequest.getSession()).thenReturn(session);
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("valid_token");
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+
+        form = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+
+        assertTrue(form.getErrors().isEmpty());
+        assertFalse(form.isTwoFactorEnabled());
+        verify(profileEntityManager).updatePassword("0000-0000-0000-0000", "Password#123");
+        verify(profileEntityManager).resetSigninLock("0000-0000-0000-0000");
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_PromptsFor2FA() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
+        when(twoFactorAuthenticationManager.userUsing2FA("0000-0000-0000-0000")).thenReturn(true);
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("valid_token");
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+
+        form = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+
+        assertTrue(form.getErrors().isEmpty());
+        assertTrue(form.isTwoFactorEnabled());
+
+        // Assert passwords are wiped when returning to prompt
+        org.junit.Assert.assertNull(form.getPassword());
+        org.junit.Assert.assertNull(form.getRetypedPassword());
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_SuccessWith2FACode() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
+        when(twoFactorAuthenticationManager.userUsing2FA("0000-0000-0000-0000")).thenReturn(true);
+        when(twoFactorAuthenticationManager.verificationCodeIsValid("123456", "0000-0000-0000-0000")).thenReturn(true);
+        MockHttpSession session = new MockHttpSession();
+        when(servletRequest.getSession()).thenReturn(session);
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("valid_token");
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+        form.setTwoFactorCode("123456");
+
+        form = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+
+        assertTrue(form.getErrors().isEmpty());
+        verify(profileEntityManager).updatePassword("0000-0000-0000-0000", "Password#123");
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_FailsWithInvalid2FACode() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
+        when(twoFactorAuthenticationManager.userUsing2FA("0000-0000-0000-0000")).thenReturn(true);
+        when(twoFactorAuthenticationManager.verificationCodeIsValid("999999", "0000-0000-0000-0000")).thenReturn(false);
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("valid_token");
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+        form.setTwoFactorCode("999999");
+
+        form = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+
+        assertTrue(form.isInvalidTwoFactorCode());
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_SuccessWithBackupCode() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
+        when(twoFactorAuthenticationManager.userUsing2FA("0000-0000-0000-0000")).thenReturn(true);
+        when(backupCodeManager.verify("0000-0000-0000-0000", "ABCDEF1234")).thenReturn(true);
+        MockHttpSession session = new MockHttpSession();
+        when(servletRequest.getSession()).thenReturn(session);
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("valid_token");
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+        form.setTwoFactorRecoveryCode("ABCDEF1234");
+
+        form = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+
+        assertTrue(form.getErrors().isEmpty());
+        verify(profileEntityManager).updatePassword("0000-0000-0000-0000", "Password#123");
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_FailsWithInvalidBackupCode() throws Exception {
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn("email=any@orcid.org&issueDate=2070-05-29T17:04:27");
+        when(mockEmailManagerReadOnly.findOrcidIdByEmail("any@orcid.org")).thenReturn("0000-0000-0000-0000");
+        when(twoFactorAuthenticationManager.userUsing2FA("0000-0000-0000-0000")).thenReturn(true);
+        when(backupCodeManager.verify("0000-0000-0000-0000", "BADCODE123")).thenReturn(false);
+
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setEncryptedEmail("valid_token");
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+        form.setTwoFactorRecoveryCode("BADCODE123");
+
+        form = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+
+        assertTrue(form.isInvalidTwoFactorRecoveryCode());
+    }
 }
