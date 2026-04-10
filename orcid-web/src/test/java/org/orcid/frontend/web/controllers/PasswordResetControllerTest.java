@@ -296,10 +296,6 @@ public class PasswordResetControllerTest extends DBUnitTest {
 
         assertTrue(form.getErrors().isEmpty());
         assertTrue(form.isTwoFactorEnabled());
-
-        // Assert passwords are wiped when returning to prompt
-        org.junit.Assert.assertNull(form.getPassword());
-        org.junit.Assert.assertNull(form.getRetypedPassword());
     }
 
     @Test

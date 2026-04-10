@@ -313,8 +313,6 @@ public class PasswordResetController extends BaseController {
             oneTimeResetPasswordForm.setTwoFactorEnabled(true);
 
             if (oneTimeResetPasswordForm.getTwoFactorCode() == null && oneTimeResetPasswordForm.getTwoFactorRecoveryCode() == null) {
-                oneTimeResetPasswordForm.setPassword(null);
-                oneTimeResetPasswordForm.setRetypedPassword(null);
                 return oneTimeResetPasswordForm;
             } else {
                 if (oneTimeResetPasswordForm.getTwoFactorRecoveryCode() != null && !oneTimeResetPasswordForm.getTwoFactorRecoveryCode().isEmpty()) {
@@ -347,7 +345,7 @@ public class PasswordResetController extends BaseController {
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         // Remove credentials before return
-        oneTimeResetPasswordForm.setPassword(null);
+        oneTimeResetPasswordForm.setNewPassword(null);
         oneTimeResetPasswordForm.setRetypedPassword(null);
         return oneTimeResetPasswordForm;
     }
