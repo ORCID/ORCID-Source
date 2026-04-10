@@ -25,11 +25,6 @@
             <artifactId>orcid-utils</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>orcid-api-common</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
 
         <!-- External dependencies -->
         <dependency>

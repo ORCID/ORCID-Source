@@ -7,9 +7,9 @@
 
     <import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
 
-    <sec:http pattern="/resources/**" security="none"/>		
+    <sec:http pattern="/resources/**" security="none"/>
 
-    <!-- Authenticate the client before reaching the token endpoint -->
+    <!-- Token endpoint -->
     <sec:http pattern="/oauth/token" security="none"/>
 
     <sec:http create-session="stateless" >
