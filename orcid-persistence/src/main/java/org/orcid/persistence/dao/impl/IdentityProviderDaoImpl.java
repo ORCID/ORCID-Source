@@ -22,7 +22,7 @@ public class IdentityProviderDaoImpl extends GenericDaoImpl<IdentityProviderEnti
 
     @Override
     public IdentityProviderEntity findByProviderid(String providerid) {
-        TypedQuery<IdentityProviderEntity> query = entityManager.createQuery("from IdentityProviderEntity where providerid = :providerid", IdentityProviderEntity.class);
+        TypedQuery<IdentityProviderEntity> query = entityManager.createQuery("from IdentityProviderEntity i where i.providerid = :providerid", IdentityProviderEntity.class);
         query.setParameter("providerid", providerid);
         List<IdentityProviderEntity> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);

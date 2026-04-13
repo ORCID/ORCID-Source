@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.jena.sparql.function.library.e;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;

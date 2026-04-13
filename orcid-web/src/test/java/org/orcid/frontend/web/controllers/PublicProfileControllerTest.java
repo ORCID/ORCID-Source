@@ -51,6 +51,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.MethodNotAllowedException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -91,6 +93,9 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Resource
     private EncryptionManager encryptionManager;
+
+    @Resource(name = "transactionManager")
+    private PlatformTransactionManager transactionManager;
     
     @Mock
     private HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
@@ -235,11 +240,16 @@ public class PublicProfileControllerTest extends DBUnitTest {
     
     @Test
     public void testViewClaimedUserWhenIsLongEnough() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+
         //Update the submission date so it is long enough
-        ProfileEntity profileEntity = profileDao.find(unclaimedUserOrcid);
-        profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), -10));
-        profileDao.merge(profileEntity);
-        profileDao.flush();
+        transactionTemplate.execute(status -> {
+            ProfileEntity profileEntity = profileDao.find(unclaimedUserOrcid);
+            profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), -10));
+            profileDao.merge(profileEntity);
+            profileDao.flush();
+            return null;
+        });
         ModelAndView mav = publicProfileController.publicPreview(request, response, 1, 0, 15, unclaimedUserOrcid);        
         assertEquals("public_profile_v3", mav.getViewName());
         Map<String, Object> model = mav.getModel();
@@ -251,10 +261,13 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertFalse(model.containsKey("noIndex"));
         
         //Update the submission date so it is not long enough
-        profileEntity = profileDao.find(unclaimedUserOrcid);
-        profileEntity.setSubmissionDate(new Date());
-        profileDao.merge(profileEntity);
-        profileDao.flush();
+        transactionTemplate.execute(status -> {
+            ProfileEntity profileEntity = profileDao.find(unclaimedUserOrcid);
+            profileEntity.setSubmissionDate(new Date());
+            profileDao.merge(profileEntity);
+            profileDao.flush();
+            return null;
+        });
     }
     
     @Test

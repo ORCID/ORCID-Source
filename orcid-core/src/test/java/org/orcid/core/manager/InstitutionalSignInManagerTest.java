@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -51,6 +52,9 @@ public class InstitutionalSignInManagerTest {
     @Mock
     private NotificationManager mock_notificationManager;
 
+    @Mock
+    private ClientDetailsManagerReadOnly mock_clientDetailsManagerReadOnly;
+
     @Resource
     private UserConnectionDao userConnectionDao;
 
@@ -59,6 +63,9 @@ public class InstitutionalSignInManagerTest {
 
     @Resource
     private NotificationManager notificationManager;
+
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
@@ -69,6 +76,7 @@ public class InstitutionalSignInManagerTest {
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "userConnectionDao", mock_userConnectionDao);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsEntityCacheManager", mock_clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "notificationManager", mock_notificationManager);
+        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsManagerReadOnly", mock_clientDetailsManagerReadOnly);
     }
 
     @After
@@ -77,6 +85,7 @@ public class InstitutionalSignInManagerTest {
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "userConnectionDao", userConnectionDao);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "notificationManager", notificationManager);
+        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsManagerReadOnly", clientDetailsManagerReadOnly);
     }
 
     @Test
@@ -99,6 +108,7 @@ public class InstitutionalSignInManagerTest {
 
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
+        when(mock_clientDetailsManagerReadOnly.doesClientKnowUser(clientId, userOrcid)).thenReturn(true);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());

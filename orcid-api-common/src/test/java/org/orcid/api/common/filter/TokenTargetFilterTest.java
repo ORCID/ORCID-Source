@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -68,7 +67,7 @@ public class TokenTargetFilterTest {
         fail();
     }
     
-    @Test(expected = OrcidUnauthorizedException.class)
+    @Test(expected = AccessControlException.class)
     public void tokenUsedOnTheWrongUser20ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);        
         ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
@@ -91,7 +90,7 @@ public class TokenTargetFilterTest {
         filter.filter(request);        
     }
     
-    @Test
+    @Test(expected = AccessControlException.class)
     public void readPublicTokenTest() {
         setUpSecurityContext(null, CLIENT_ID, ScopePathType.READ_PUBLIC);
         ContainerRequest request = Mockito.mock(ContainerRequest.class, RETURNS_DEEP_STUBS);

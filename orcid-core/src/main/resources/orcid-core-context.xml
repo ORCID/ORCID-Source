@@ -4,11 +4,11 @@
 	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:jms="http://www.springframework.org/schema/jms"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
-        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
                 
 	<import resource="classpath*:orcid-persistence-context.xml" />
 	
@@ -841,6 +841,7 @@
 	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
 	   <constructor-arg ref="workContributorRoleConverter" />
 	   <constructor-arg ref="fundingContributorRoleConverter" />
+	   <property name="encryptionManager" ref="encryptionManager" />
 	</bean>
 	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
@@ -922,7 +923,9 @@
     </bean>
     
     <!-- v3 adapters -->
-    <bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService" />
+	<bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService">
+		<property name="encryptionManager" ref="encryptionManager" />
+	</bean>
     <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
     <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
         <property name="mapperFacade" ref="mapperFacadeV3" />

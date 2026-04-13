@@ -15,7 +15,7 @@ import jakarta.ws.rs.ext.Provider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException;
-import org.jbibtex.TokenMgrError;
+import org.jbibtex.TokenMgrException;
 import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.api.common.filter.ApiVersionFilter;
 import org.orcid.api.common.util.ApiUtils;
@@ -117,7 +117,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof WebApplicationException) {
             logShortError(t, clientId);
-        } else if (t instanceof TokenMgrError) {
+        } else if (t instanceof TokenMgrException) {
             logShortError(t, clientId);
         } else if (t instanceof InvalidPutCodeException) {
             logShortError(t, clientId);

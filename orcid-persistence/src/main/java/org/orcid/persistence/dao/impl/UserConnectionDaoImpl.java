@@ -32,7 +32,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     @Override
     public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {
         TypedQuery<UserconnectionEntity> query = entityManager
-                .createQuery("from UserconnectionEntity where id.provideruserid = :providerUserId and providerid = :providerId", UserconnectionEntity.class);
+            .createQuery("from UserconnectionEntity where id.provideruserid = :providerUserId and id.providerid = :providerId", UserconnectionEntity.class);
         query.setParameter("providerUserId", providerUserId);
         query.setParameter("providerId", providerId);
         List<UserconnectionEntity> results = query.getResultList();
@@ -42,7 +42,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     @Override
     public UserconnectionEntity findByProviderIdAndProviderUserIdAndIdType(String providerUserId, String providerId, String idType) {
         TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
-                "from UserconnectionEntity where id.provideruserid = :providerUserId and providerid = :providerId and idType = :idType", UserconnectionEntity.class);
+            "from UserconnectionEntity where id.provideruserid = :providerUserId and id.providerid = :providerId and idType = :idType", UserconnectionEntity.class);
         query.setParameter("providerUserId", providerUserId);
         query.setParameter("providerId", providerId);
         query.setParameter("idType", idType);

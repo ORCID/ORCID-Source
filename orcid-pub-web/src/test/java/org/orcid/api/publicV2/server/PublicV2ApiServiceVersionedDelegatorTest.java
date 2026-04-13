@@ -18,6 +18,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.hc.core5.http.ParseException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -778,7 +779,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testSearchByQuery() {
+    public void testSearchByQuery() throws ParseException {
         MockitoAnnotations.initMocks(this);
         Search search = new Search();
         Result result = new Result();
@@ -806,7 +807,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewClient() {
+    public void testViewClient() throws ParseException {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof ClientSummary);

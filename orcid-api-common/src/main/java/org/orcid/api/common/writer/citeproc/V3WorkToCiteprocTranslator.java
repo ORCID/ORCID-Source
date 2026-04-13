@@ -1,6 +1,5 @@
 package org.orcid.api.common.writer.citeproc;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -108,7 +107,7 @@ public class V3WorkToCiteprocTranslator {
                 return item;
             } else
                 throw new ParseException("Invalid Citation count");
-        } catch (IOException | ParseException e) {
+        } catch (ParseException e) {
             return null;
         }
     }
