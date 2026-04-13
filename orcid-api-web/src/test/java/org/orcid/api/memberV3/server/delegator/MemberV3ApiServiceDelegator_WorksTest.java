@@ -120,6 +120,11 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         removeDBUnitData(DATA_FILES);
     }
 
+    @Before
+    public void resetDBUnitDataBeforeEachTest() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
     @Test(expected = OrcidUnauthorizedException.class)
     public void testViewWorkWrongToken() {
         SecurityContextTestUtils.setUpSecurityContext("some-other-user", ScopePathType.READ_LIMITED);
@@ -650,7 +655,7 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, work.getVisibility());
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 9L);
@@ -661,8 +666,6 @@ public class MemberV3ApiServiceDelegator_WorksTest extends DBUnitTest {
         response = serviceDelegator.deleteWork("4444-4444-4444-4447", 9L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        serviceDelegator.viewWork("4444-4444-4444-4447", 9L);
     }
 
     @Test

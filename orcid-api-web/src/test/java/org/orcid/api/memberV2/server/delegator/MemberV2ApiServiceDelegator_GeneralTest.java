@@ -110,6 +110,7 @@ public class MemberV2ApiServiceDelegator_GeneralTest extends DBUnitTest {
     
     @Before
     public void before() throws Exception {
+        initDBUnitData(DATA_FILES);
         MockitoAnnotations.initMocks(this);
         Map<String, String> map = new HashMap<String, String>();
         map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));

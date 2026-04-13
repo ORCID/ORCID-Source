@@ -119,6 +119,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     
     @Before
     public void before() throws Exception {
+        initDBUnitData(DATA_FILES);
         MockitoAnnotations.initMocks(this);
         IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
         when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);

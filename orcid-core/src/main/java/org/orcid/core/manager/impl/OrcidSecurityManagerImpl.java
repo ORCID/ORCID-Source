@@ -705,6 +705,13 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             String userOrcid = authDetails.getUserOrcid();
             // Client credentials flow (no user ORCID) – allow through
             if (userOrcid == null) {
+                Set<String> scopes = authDetails.getScopes();
+                if (scopes != null && scopes.contains(ScopePathType.ORCID_PROFILE_CREATE.value())) {
+                    ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                    if (profile != null && Boolean.TRUE.equals(profile.getClaimed())) {
+                        throw new IllegalStateException("Non client credential scope found in client request");
+                    }
+                }
                 return;
             }
             if (orcid.equals(userOrcid)) {
