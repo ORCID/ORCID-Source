@@ -29,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.common.manager.EmailFrequencyManager;
-import org.springframework.transaction.annotation.Transactional;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
@@ -80,7 +79,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-@Transactional
 public class MemberV2ApiServiceDelegator_PeerReviewsTest extends DBUnitTest {
     protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",

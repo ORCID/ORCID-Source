@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -150,6 +151,8 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
                         if(token != null) {
                             clientId = token.getClientDetailsId();
                         }
+                    } catch (NoResultException ex) {
+                        LOG.debug("No client found for token value, treating request as anonymous client");
                     } catch (Exception ex) {
                         LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
                     }

@@ -79,14 +79,12 @@ import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-@Transactional
 public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
     protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",

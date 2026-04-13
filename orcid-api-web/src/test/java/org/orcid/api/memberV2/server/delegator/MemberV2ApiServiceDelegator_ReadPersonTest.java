@@ -41,13 +41,11 @@ import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.helper.Utils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
-@Transactional
 public class MemberV2ApiServiceDelegator_ReadPersonTest extends DBUnitTest {
     protected static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml",
