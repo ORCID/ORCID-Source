@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import jakarta.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.exception.OrcidAccessControlException;
 import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
@@ -115,7 +115,7 @@ public class InternalApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("", info.getOrcid());
     }
     
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidAccessControlException.class)
     public void findOrcidByEmailWrongScopeTest() {
         SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-5555555555555555", ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
         internalApiServiceDelegator.findOrcidByEmail("5555-5555-5555-5558@user.com");        
