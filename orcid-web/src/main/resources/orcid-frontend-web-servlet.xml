@@ -19,6 +19,8 @@
 	<import resource="classpath*:orcid-core-context.xml" />
 	<import resource="classpath*:orcid-api-common-public-v3-context.xml" />
     <import resource="classpath*:orcid-frontend-security.xml" />
+
+    <bean id="mvcHandlerMappingIntrospector" class="org.springframework.web.servlet.handler.HandlerMappingIntrospector" />
     
     <tx:annotation-driven />
     <context:component-scan base-package="org.orcid"/>

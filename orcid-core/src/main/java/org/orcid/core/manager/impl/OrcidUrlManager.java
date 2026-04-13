@@ -2,6 +2,8 @@ package org.orcid.core.manager.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,7 @@ public class OrcidUrlManager {
     private static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
 
     private static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
+    private static final String SAVED_REQUEST_CONTINUE_PARAM = "continue";
 
     public static Pattern SAVED_REQUEST_PATTERN = Pattern
             .compile("/(my-orcid|inbox|account|account/confirm-deactivate-orcid/[^/]+|developer-tools|self-service(/[^/]+)?|manage-members|admin-actions)(\\?|$)|(oauth/(?![^?]*\\.json))");
@@ -231,6 +234,7 @@ public class OrcidUrlManager {
             }
             
             if (url != null) {
+                url = stripSavedRequestInternalParameters(url);
                 String contextPath = request.getContextPath();
                 // Remove the context path if it looks like we are configured to
                 // run behind nginx.
@@ -246,5 +250,32 @@ public class OrcidUrlManager {
         }
                 
         return url;
+    }
+
+    private String stripSavedRequestInternalParameters(String url) {
+        try {
+            URI uri = new URI(url);
+            String query = uri.getRawQuery();
+            if (query == null || query.isEmpty()) {
+                return url;
+            }
+
+            List<String> keptParameters = new ArrayList<>();
+            for (String parameter : query.split("&")) {
+                if (!SAVED_REQUEST_CONTINUE_PARAM.equals(parameter) && !parameter.startsWith(SAVED_REQUEST_CONTINUE_PARAM + "=")) {
+                    keptParameters.add(parameter);
+                }
+            }
+
+            if (keptParameters.size() == query.split("&").length) {
+                return url;
+            }
+
+            String rebuiltQuery = keptParameters.isEmpty() ? null : String.join("&", keptParameters);
+            return new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(), rebuiltQuery, uri.getFragment()).toString();
+        } catch (URISyntaxException e) {
+            LOGGER.debug("Unable to strip saved request parameters from {}", url, e);
+            return url;
+        }
     }
 }

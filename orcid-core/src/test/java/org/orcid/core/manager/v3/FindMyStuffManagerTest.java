@@ -21,6 +21,7 @@ import org.orcid.core.adapter.v3.JpaJaxbNotificationAdapter;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.v3.identifiers.finders.DataciteFinder;
 import org.orcid.core.utils.v3.identifiers.finders.Finder;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
@@ -69,6 +70,9 @@ public class FindMyStuffManagerTest extends DBUnitTest{
     
     @Mock
     private DataciteFinder dataciteFinder;
+
+    @Mock
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
     
     @Resource
     List<Finder> finders = new ArrayList<Finder>();
@@ -83,6 +87,8 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "notificationManager", notificationManager);
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(findMyStuffManager, "findMyStuffHistoryDao", findMyStuffHistoryDao);
+        TargetProxyHelper.injectIntoProxy(findMyStuffManager, "clientDetailsManagerReadOnly", clientDetailsManagerReadOnly);
+        when(clientDetailsManagerReadOnly.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(false);
         
         //Finder mock
         List<Finder> f = Lists.newArrayList();
@@ -191,6 +197,7 @@ public class FindMyStuffManagerTest extends DBUnitTest{
         //user with existing permissions
         when(workManagerReadOnly.getAllExternalIDs(Matchers.contains(""))).thenReturn(new ExternalIDs());
         when(findMyStuffHistoryDao.findAll(Matchers.contains(""))).thenReturn(new ArrayList<FindMyStuffHistoryEntity>());
+        when(clientDetailsManagerReadOnly.doesClientKnowUser("x", "0000-0000-0000-0000")).thenReturn(true);
         
         findMyStuffManager.findIfAppropriate("0000-0000-0000-0000");
         //check finder not invoked

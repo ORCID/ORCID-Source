@@ -702,7 +702,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
         if(OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
             OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
-            if (orcid.equals(authDetails.getUserOrcid())) {
+            String userOrcid = authDetails.getUserOrcid();
+            // Client credentials flow (no user ORCID) – allow through
+            if (userOrcid == null) {
+                return;
+            }
+            if (orcid.equals(userOrcid)) {
                 return;
             }
         }

@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Test;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -37,11 +38,11 @@ public class OAuthErrorUtilsTest {
     }
     
     @Test
-    public void testGetOAuthErrorForUnsupportedGrantTypeException() {
-        OAuthError error = OAuthErrorUtils.getOAuthError(new IllegalArgumentException("message here"));
-        assertEquals(OAuthError.UNSUPPORTED_GRANT_TYPE, error.getError());
+    public void testGetOAuthErrorForClientDeactivatedException() {
+        OAuthError error = OAuthErrorUtils.getOAuthError(new ClientDeactivatedException("client-id"));
+        assertEquals(OAuthError.UNAUTHORIZED_CLIENT, error.getError());
         assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
-        assertEquals("message here", error.getErrorDescription());
+        assertEquals("Client client-id is deactivated", error.getErrorDescription());
     }
     
     @Test

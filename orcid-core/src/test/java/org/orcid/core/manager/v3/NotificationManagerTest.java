@@ -14,6 +14,7 @@ import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.impl.NotificationManagerImpl;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -80,6 +81,9 @@ public class NotificationManagerTest extends DBUnitTest {
     @Mock
     private JpaJaxbNotificationAdapter mockNotificationAdapter;
 
+    @Mock
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+
     @Resource(name = "profileDao")
     private ProfileDao profileDao;
 
@@ -129,6 +133,8 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileDao", mockProfileDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationAdapter", mockNotificationAdapter);
+        TargetProxyHelper.injectIntoProxy(notificationManager, "clientDetailsManagerReadOnly", clientDetailsManagerReadOnly);
+        when(clientDetailsManagerReadOnly.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
     }
 
     @After
@@ -286,6 +292,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void filterActionedNotificationAlertsTest() {
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         when(mockNotificationDao.findByOricdAndId(Matchers.anyString(), Matchers.anyLong())).thenReturn(null);
+        when(clientDetailsManagerReadOnly.doesClientKnowUser("0000-0000-0000-0000", "some-orcid")).thenReturn(true);
         List<Notification> notifications = IntStream.range(0, 10).mapToObj(new IntFunction<Notification>() {
             @Override
             public Notification apply(int value) {
