@@ -1,6 +1,5 @@
 package org.orcid.listener.persistence.dao;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +28,8 @@ public class Api20RecordStatusDao {
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM api_2_0_record_status WHERE orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger) query.getSingleResult()).longValue();
-        return (result != null && result > 0);
+        Number result = (Number) query.getSingleResult();
+        return (result != null && result.longValue() > 0L);
     }
 
     @Transactional
