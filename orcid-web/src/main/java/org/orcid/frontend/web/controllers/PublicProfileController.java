@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.DeactivatedException;
@@ -33,7 +33,6 @@ import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ProfileFundingManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.SourceUtils;
 import org.orcid.core.utils.v3.activities.FundingComparators;
@@ -127,9 +126,6 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
 
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
     @Resource(name = "sourceUtilsV3")
     private SourceUtils sourceUtils;
 
@@ -220,7 +216,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         }
 
         if (!profile.isReviewed()) {
-            if (!orcidOauth2TokenService.hasToken(orcid, lastModifiedTime)) {
+            if (!profileEntityManagerReadOnly.hasToken(orcid, lastModifiedTime)) {
                 mav.addObject("noIndex", true);
             }
         }
@@ -276,7 +272,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         // False if it is not reviewed and doesn't have any integration
         if(!profile.isReviewed()) {
             String userOrcid = profile.getId();
-            if (!orcidOauth2TokenService.hasToken(userOrcid, getLastModifiedTime(userOrcid))) {
+            if (!profileEntityManagerReadOnly.hasToken(userOrcid, getLastModifiedTime(userOrcid))) {
                 // If the user doesn't have any token, check if it was created by member, if so, 
                 // verify if that member pushed any work of affiliation on creation time
                 SourceEntity source = profile.getSource();

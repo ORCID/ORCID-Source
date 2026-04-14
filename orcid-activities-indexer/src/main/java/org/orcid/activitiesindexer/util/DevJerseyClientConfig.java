@@ -29,33 +29,17 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.client.urlconnection.HTTPSProperties;
+import jakarta.ws.rs.client.ClientBuilder;
 
 /**
  * DANGER!!! For dev only!
  */
-public class DevJerseyClientConfig extends DefaultClientConfig {
+public class DevJerseyClientConfig {
 
-    public DevJerseyClientConfig() {
-        super();
-        init();
-    }
-
-    public DevJerseyClientConfig(Class<?>... providers) {
-        super(providers);
-        init();
-    }
-
-    public DevJerseyClientConfig(Set<Class<?>> providers) {
-        super(providers);
-        init();
-    }
-
-    public void init() {
+    public static void apply(ClientBuilder builder) {
         SSLContext ctx = createSslContext();
         HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
-        getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(new HostnameVerifier() {
+        builder.sslContext(ctx).hostnameVerifier(new HostnameVerifier() {
             @Override
             public boolean verify(String hostname, SSLSession sslSession) {
                 if (hostname.equals("localhost")) {
@@ -63,10 +47,10 @@ public class DevJerseyClientConfig extends DefaultClientConfig {
                 }
                 return false;
             }
-        }, ctx));
+        });
     }
 
-    private SSLContext createSslContext() {
+    private static SSLContext createSslContext() {
         try {
             // DANGER!!! Accepts all certs!
             TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {

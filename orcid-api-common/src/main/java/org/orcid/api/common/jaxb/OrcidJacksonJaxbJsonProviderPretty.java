@@ -10,11 +10,11 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.Provider;
 
 import org.orcid.api.common.exception.JSONInputValidator;
 import org.orcid.api.common.filter.ApiVersionFilter;
@@ -26,8 +26,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.fasterxml.jackson.jaxrs.cfg.Annotations;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.cfg.Annotations;
 
 
 
@@ -38,7 +38,7 @@ import com.fasterxml.jackson.jaxrs.cfg.Annotations;
 @Provider
 @Consumes({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
 @Produces({ VND_ORCID_JSON, ORCID_JSON, "text/orcid+json" })
-public class OrcidJacksonJaxbJsonProviderPretty extends JacksonJaxbJsonProvider {
+public class OrcidJacksonJaxbJsonProviderPretty extends JacksonXmlBindJsonProvider {
 
     private JSONInputValidator jsonInputValidator = new JSONInputValidator();
 

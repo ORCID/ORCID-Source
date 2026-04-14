@@ -12,6 +12,7 @@ import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.manager.v3.NotificationValidationManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.notification.Notification;
@@ -20,13 +21,11 @@ import org.orcid.jaxb.model.v3.release.notification.permission.NotificationPermi
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.AccessControlException;
@@ -81,9 +80,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         // Get the client profile information
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String clientId = null;
-        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
-            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
-            clientId = authorizationRequest.getClientId();
+        if (OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
+            OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
+            clientId = authDetails.getClientId();
         }
 
         NotificationPermissions notifications = notificationManager.findPermissionsByOrcidAndClient(orcid, clientId, 0, MAX_NOTIFICATIONS_AVAILABLE);

@@ -2,8 +2,8 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.joda.time.DateTime;
 import org.orcid.persistence.dao.ClientSecretDao;
@@ -58,7 +58,7 @@ public class ClientSecretDaoImpl extends GenericDaoImpl<ClientSecretEntity, Clie
      * */
     @Override
     public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
-        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE client_details_id=:clientId", ClientSecretEntity.class);
+        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE clientId=:clientId", ClientSecretEntity.class);
         query.setParameter("clientId", clientId);
         return query.getResultList();
     }

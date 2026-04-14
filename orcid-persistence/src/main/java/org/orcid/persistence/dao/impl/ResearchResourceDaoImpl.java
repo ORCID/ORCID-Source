@@ -4,8 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -30,10 +30,10 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removeResearchResource(String userOrcid, Long researchResourceId) {
-        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity where research_resource_id=:researchResourceId");
+        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity ri where ri.researchResourceEntity.id=:researchResourceId");
         queryItem.setParameter("researchResourceId", researchResourceId);
         queryItem.executeUpdate();
-        Query query = entityManager.createQuery("delete from ResearchResourceEntity where orcid=:userOrcid and id=:researchResourceId");
+        Query query = entityManager.createQuery("delete from ResearchResourceEntity r where r.orcid=:userOrcid and r.id=:researchResourceId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("researchResourceId", researchResourceId);
         return query.executeUpdate() > 0 ? true : false;
@@ -51,11 +51,11 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeResearchResources(String userOrcid) {
-        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity where research_resource_id in (SELECT id from ResearchResourceEntity where orcid=:userOrcid)");
+        Query queryItem = entityManager.createQuery("delete from ResearchResourceItemEntity ri where ri.researchResourceEntity.id in (SELECT r.id from ResearchResourceEntity r where r.orcid=:userOrcid)");
         queryItem.setParameter("userOrcid", userOrcid);
         queryItem.executeUpdate();
 
-        Query query = entityManager.createQuery("delete from ResearchResourceEntity where orcid = :userOrcid");
+        Query query = entityManager.createQuery("delete from ResearchResourceEntity r where r.orcid = :userOrcid");
         query.setParameter("userOrcid", userOrcid);
         query.executeUpdate();
     }
@@ -65,7 +65,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Transactional
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility) {
         Query query = entityManager
-                .createQuery("update ResearchResourceEntity set visibility=:visibility, lastModified=now() where id in (:researchResourceIds) and  orcid=:orcid");
+                .createQuery("update ResearchResourceEntity r set r.visibility=:visibility, r.lastModified=now() where r.id in (:researchResourceIds) and r.orcid=:orcid");
         query.setParameter("researchResourceIds", researchResourceIds);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
@@ -94,7 +94,7 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     public Boolean hasPublicResearchResources(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM research_resource WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 

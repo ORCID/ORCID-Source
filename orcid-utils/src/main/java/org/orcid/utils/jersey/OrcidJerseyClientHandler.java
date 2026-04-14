@@ -18,10 +18,8 @@ import org.orcid.utils.jersey.unmarshaller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 public class OrcidJerseyClientHandler {
 
@@ -30,10 +28,8 @@ public class OrcidJerseyClientHandler {
     static Client create(List<Class<?>> bodyReaders, Map<String, Object> properties) {
         Client client;
         ClientBuilder builder = ClientBuilder.newBuilder();
-        //Always register the json provider
-        builder.register(JacksonJaxbJsonProvider.class)
-        // And the DOM provider
-        .register(W3CDocumentBodyReader.class);
+        // Register the custom DOM provider
+        builder.register(W3CDocumentBodyReader.class);
         for(Class<?> c : bodyReaders) {
             builder.register(c);
         }
@@ -48,7 +44,8 @@ public class OrcidJerseyClientHandler {
     public static Client create(boolean isDevelopmentMode, Map<String, Object> properties) {
         Client client;
         ClientBuilder builder = ClientBuilder.newBuilder();
-        builder.register(JacksonJaxbJsonProvider.class)
+        // Jersey 3.1.9 provides JSON handling automatically via MoxyJsonProvider
+        builder
         .register(V2ActivitiesSummaryBodyReader.class)
         .register(V2EducationBodyReader.class)
         .register(V2EmploymentBodyReader.class)

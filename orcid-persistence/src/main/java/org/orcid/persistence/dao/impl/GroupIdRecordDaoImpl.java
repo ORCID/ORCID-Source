@@ -3,8 +3,8 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
@@ -46,9 +46,9 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @Override
     public GroupIdRecordEntity findByName(String name) {
-        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(group_name)) = trim(lower(:group_name))",
+        TypedQuery<GroupIdRecordEntity> query = entityManager.createQuery("from GroupIdRecordEntity where trim(lower(groupName)) = trim(lower(:groupName))",
                 GroupIdRecordEntity.class);
-        query.setParameter("group_name", name);
+        query.setParameter("groupName", name);
         GroupIdRecordEntity result = query.getSingleResult();
         return result;
     }

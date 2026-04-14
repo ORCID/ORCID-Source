@@ -2,11 +2,10 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.v3.FindMyStuffManager;
 import org.orcid.core.manager.v3.NotificationManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.pojo.FindMyStuffResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,9 +20,6 @@ public class FindMyStuffController extends BaseController{
     @Resource 
     NotificationController notificationsController;
     
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
     

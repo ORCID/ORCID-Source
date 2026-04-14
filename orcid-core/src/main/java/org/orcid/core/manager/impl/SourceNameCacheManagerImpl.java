@@ -1,6 +1,6 @@
 package org.orcid.core.manager.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.ehcache.Cache;

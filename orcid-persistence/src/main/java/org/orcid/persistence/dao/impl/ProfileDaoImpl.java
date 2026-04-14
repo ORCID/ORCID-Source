@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -125,7 +125,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         }
 
         query.setMaxResults(maxResults);
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
 
         List<Object[]> results = query.getResultList();
 
@@ -347,7 +347,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public IndexingStatus retrieveIndexingStatus(String orcid) {
-        TypedQuery<IndexingStatus> query = entityManager.createQuery("select indexingStatus from ProfileEntity where orcid = :orcid", IndexingStatus.class);
+        TypedQuery<IndexingStatus> query = entityManager.createQuery("select indexingStatus from ProfileEntity where id = :orcid", IndexingStatus.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
@@ -357,16 +357,16 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
         String queryString = null;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
-            queryString = "update ProfileEntity set indexingStatus = :indexingStatus, lastIndexedDate = now() where orcid = :orcid";
+            queryString = "update ProfileEntity set indexingStatus = :indexingStatus, lastIndexedDate = now() where id = :orcid";
             updateWebhookProfileLastUpdate(orcid);
         } else {
-            queryString = "update ProfileEntity set indexingStatus = :indexingStatus where orcid = :orcid";
+            queryString = "update ProfileEntity set indexingStatus = :indexingStatus where id = :orcid";
         }
         Query query = entityManager.createQuery(queryString);
         query.setParameter("orcid", orcid);
         query.setParameter("indexingStatus", indexingStatus);
         // Sets a timeout for this query
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
     }
 
@@ -395,7 +395,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public String retrieveOrcidType(String orcid) {
-        TypedQuery<String> query = entityManager.createQuery("select orcidType from ProfileEntity where orcid = :orcid", String.class);
+        TypedQuery<String> query = entityManager.createQuery("select orcidType from ProfileEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
         List<String> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
@@ -411,7 +411,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public String retrieveLocale(String orcid) {
-        TypedQuery<String> query = entityManager.createQuery("select locale from ProfileEntity where orcid = :orcid", String.class);
+        TypedQuery<String> query = entityManager.createQuery("select locale from ProfileEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
@@ -420,7 +420,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public void updateLocale(String orcid, String locale) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), locale = :locale, indexingStatus = :indexing_status where orcid = :orcid");
+                .createQuery("update ProfileEntity p set p.lastModified = now(), p.locale = :locale, p.indexingStatus = :indexing_status where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("locale", locale);
         updateQuery.setParameter("indexing_status", IndexingStatus.PENDING);
@@ -431,11 +431,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean deprecateProfile(String toDeprecate, String primaryOrcid, String deprecatedMethod, String adminUser) {
         StringBuilder queryString = new StringBuilder(
-                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility, deprecatedMethod = :deprecatedMethod");
+                "update ProfileEntity p set p.lastModified = now(), p.deprecatedDate = now(), p.deactivationDate = now(), p.indexingStatus = :indexing_status, p.primaryRecord = :primary_record, p.activitiesVisibilityDefault = :defaultVisibility, p.deprecatedMethod = :deprecatedMethod");
         if (ProfileEntity.ADMIN_DEPRECATION.equals(deprecatedMethod) && adminUser != null) {
-            queryString.append(", deprecatingAdmin = :deprecatingAdmin");
+            queryString.append(", p.deprecatingAdmin = :deprecatingAdmin");
         }
-        queryString.append(" where orcid = :orcid");
+        queryString.append(" where p.id = :orcid");
 
         Query query = entityManager.createQuery(queryString.toString());
         query.setParameter("orcid", toDeprecate);
@@ -465,7 +465,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void changeEncryptedPassword(String orcid, String encryptedPassword) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set encryptedPassword = :encryptedPassword where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery("update ProfileEntity p set p.encryptedPassword = :encryptedPassword where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("encryptedPassword", encryptedPassword);
         updateQuery.executeUpdate();
@@ -483,10 +483,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean updateDeveloperTools(String orcid, boolean enabled) {
-        Query query = entityManager.createQuery("update ProfileEntity set enableDeveloperTools=:enabled, lastModified=now() where orcid=:orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.enableDeveloperTools=:enabled, p.lastModified=now() where p.id=:orcid");
         if (enabled)
             query = entityManager
-                    .createQuery("update ProfileEntity set enableDeveloperTools=:enabled, developerToolsEnabledDate=now(), lastModified=now() where orcid=:orcid");
+                    .createQuery("update ProfileEntity p set p.enableDeveloperTools=:enabled, p.developerToolsEnabledDate=now(), p.lastModified=now() where p.id=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("enabled", enabled);
         return query.executeUpdate() > 0;
@@ -523,7 +523,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      */
     @Override
     public String getGroupType(String orcid) {
-        TypedQuery<String> query = entityManager.createQuery("select groupType from ProfileEntity where orcid = :orcid", String.class);
+        TypedQuery<String> query = entityManager.createQuery("select groupType from ProfileEntity where id = :orcid", String.class);
         query.setParameter("orcid", orcid);
         List<String> results = query.getResultList();
         return results.isEmpty() ? null : results.get(0);
@@ -586,7 +586,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public boolean isLocked(String orcid) {
-        TypedQuery<Boolean> query = entityManager.createQuery("select recordLocked from ProfileEntity where orcid = :orcid", Boolean.class);
+        TypedQuery<Boolean> query = entityManager.createQuery("select recordLocked from ProfileEntity where id = :orcid", Boolean.class);
         query.setParameter("orcid", orcid);
         Boolean result;
         try {
@@ -599,7 +599,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public boolean isDeactivated(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("select deactivationDate from ProfileEntity where orcid = :orcid", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("select deactivationDate from ProfileEntity where id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         Date result = query.getSingleResult();
         return (result == null) ? false : true;
@@ -607,7 +607,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public boolean isReviewed(String orcid) {
-        TypedQuery<Boolean> query = entityManager.createQuery("select reviewed from ProfileEntity where orcid = :orcid", Boolean.class);
+        TypedQuery<Boolean> query = entityManager.createQuery("select reviewed from ProfileEntity where id = :orcid", Boolean.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }
@@ -652,7 +652,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean updateDefaultVisibility(String orcid, String visibility) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), activitiesVisibilityDefault = :activitiesVisibilityDefault where orcid = :orcid");
+                .createQuery("update ProfileEntity p set p.lastModified = now(), p.activitiesVisibilityDefault = :activitiesVisibilityDefault where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("activitiesVisibilityDefault", visibility);
         return updateQuery.executeUpdate() > 0;
@@ -677,7 +677,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     public Date getLastLogin(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("select lastLogin from ProfileEntity where orcid = :orcid", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("select lastLogin from ProfileEntity where id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         Date result = query.getSingleResult();
         return result;
@@ -686,7 +686,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void disable2FA(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), using2FA = false, secretFor2FA = null where orcid = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.using2FA = false, p.secretFor2FA = null where p.id = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -694,7 +694,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void enable2FA(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), using2FA = true where orcid = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.using2FA = true where p.id = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -702,7 +702,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void update2FASecret(String orcid, String secret) {
-        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), secretFor2FA = :secret where orcid = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.secretFor2FA = :secret where p.id = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("secret", secret);
         query.executeUpdate();
@@ -711,7 +711,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean deactivate(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity set lastModified = now(), profile_deactivation_date = now() where orcid = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.deactivationDate = now() where p.id = :orcid");
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }

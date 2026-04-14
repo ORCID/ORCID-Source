@@ -62,19 +62,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 
+import org.apache.hc.core5.http.ParseException;
 import org.orcid.api.common.swagger.SwaggerUIBuilder;
 import org.orcid.api.publicV3.server.delegator.PublicV3ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;
@@ -416,7 +417,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @GET
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(SEARCH_PATH)
-  public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+  public Response searchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response jsonQueryResults = serviceDelegator.searchByQuery(solrParams);
@@ -426,7 +427,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @GET
   @Produces(TEXT_CSV)
   @Path(CSV_SEARCH_PATH)
-  public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+  public Response searchByQueryCSV(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response csvQueryResults = serviceDelegator.searchByQueryCSV(solrParams);
@@ -436,7 +437,7 @@ public class PublicV3ApiServiceImplV3_0 {
   @GET
   @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(EXPANDED_SEARCH_PATH)
-  public Response expandedSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) {
+  public Response expandedSearchByQuery(@QueryParam("q") @DefaultValue("") String query, @Context UriInfo uriInfo) throws ParseException{
       serviceDelegator.trackEvents(httpRequest);
       Map<String, List<String>> solrParams = new HashMap<>(uriInfo.getQueryParameters());
       Response queryResults = serviceDelegator.expandedSearchByQuery(solrParams);

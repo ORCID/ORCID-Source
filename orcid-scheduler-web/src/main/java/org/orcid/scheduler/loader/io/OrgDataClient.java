@@ -7,8 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.utils.jersey.JerseyClientHelper;

@@ -15,10 +15,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.core.Response;
 
+import org.apache.hc.core5.http.ParseException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -118,6 +119,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     
     @Before
     public void before() throws Exception {
+        initDBUnitData(DATA_FILES);
         MockitoAnnotations.initMocks(this);
         IssnValidator mockIssnValidator = Mockito.mock(IssnValidator.class);
         when(mockIssnValidator.issnValid(Mockito.anyString())).thenReturn(true);
@@ -807,7 +809,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     }
     
     @Test
-    public void testSearchByQuery() {
+    public void testSearchByQuery() throws ParseException {
         Search search = new Search();
         Result result = new Result();
         result.setOrcidIdentifier(new OrcidIdentifier("some-orcid-id"));
@@ -832,7 +834,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     }
 
     @Test(expected = OrcidBadRequestException.class)
-    public void testSearchByQueryTooManyRows() {
+    public void testSearchByQueryTooManyRows() throws ParseException {
         Map<String, List<String>> params = new HashMap<>();
         params.put("rows", Arrays.asList(Integer.toString(OrcidSearchManager.MAX_SEARCH_ROWS + 20)));
 
@@ -849,7 +851,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     }
 
     @Test(expected = AccessControlException.class)
-    public void testSearchByQueryBadScope() {
+    public void testSearchByQueryBadScope() throws ParseException {
         OrcidSecurityManager orcidSecurityManager = Mockito.mock(OrcidSecurityManagerImpl.class);
         Mockito.doThrow(new AccessControlException("some problem with scope")).when(orcidSecurityManager).checkScopes(Mockito.any(ScopePathType.class));
 
@@ -866,7 +868,7 @@ public class MemberV3ApiServiceDelegator_GeneralTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewClient() {
+    public void testViewClient() throws ParseException {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof ClientSummary);

@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
@@ -100,9 +100,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Resource
     private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
-
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;

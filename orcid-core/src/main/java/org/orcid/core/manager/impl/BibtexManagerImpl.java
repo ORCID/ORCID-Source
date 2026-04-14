@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ActivitiesSummaryManager;
 import org.orcid.core.manager.BibtexManager;

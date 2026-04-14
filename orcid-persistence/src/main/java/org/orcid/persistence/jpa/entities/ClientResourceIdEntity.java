@@ -2,7 +2,7 @@ package org.orcid.persistence.jpa.entities;
 
 import org.orcid.persistence.jpa.entities.keys.ClientResourceIdPk;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 /**

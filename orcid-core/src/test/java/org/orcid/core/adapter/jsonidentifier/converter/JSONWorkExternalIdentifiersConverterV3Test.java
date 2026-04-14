@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNull;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -147,7 +147,7 @@ public class JSONWorkExternalIdentifiersConverterV3Test {
     }
 
     private Work getWork() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
+        JAXBContext context = JAXBContext.newInstance(Work.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0/samples/read_samples/work-full-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

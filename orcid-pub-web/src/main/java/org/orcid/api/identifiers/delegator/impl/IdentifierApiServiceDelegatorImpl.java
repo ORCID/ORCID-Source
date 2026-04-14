@@ -3,9 +3,9 @@ package org.orcid.api.identifiers.delegator.impl;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.ws.rs.core.GenericEntity;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;

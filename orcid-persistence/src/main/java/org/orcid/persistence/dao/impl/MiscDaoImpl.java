@@ -2,9 +2,9 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.MiscDao;
 

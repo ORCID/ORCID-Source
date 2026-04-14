@@ -3,10 +3,10 @@ package org.orcid.persistence.dao.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ClientDetailsDao;
@@ -61,7 +61,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void updateLastModified(String clientId) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.lastModified = now() where c.id = :clientId");
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
@@ -77,7 +77,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public int updateLastModifiedBulk(List<String> clientIds) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id in :clientIds");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.lastModified = now() where c.id in :clientIds");
         updateQuery.setParameter("clientIds", clientIds);
         return updateQuery.executeUpdate();
     }
@@ -103,14 +103,14 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     public List<ClientSecretEntity> getClientSecretsByClientId(String clientId) {
-        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE client_details_id=:clientId", ClientSecretEntity.class);
+        TypedQuery<ClientSecretEntity> query = entityManager.createQuery("From ClientSecretEntity WHERE clientId=:clientId", ClientSecretEntity.class);
         query.setParameter("clientId", clientId);
         return query.getResultList();
     }
 
     @Override
     public boolean exists(String clientId) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(*) from ClientDetailsEntity where client_details_id=:clientId", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from ClientDetailsEntity where id=:clientId", Long.class);
         query.setParameter("clientId", clientId);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -133,7 +133,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void updateClientType(String clientType, String clientId) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set clientType = :clientType, lastModified = now() where id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.clientType = :clientType, c.lastModified = now() where c.id = :clientId");
         updateQuery.setParameter("clientType", clientType);
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
@@ -192,7 +192,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     public boolean existsAndIsNotPublicClient(String clientId) {
         TypedQuery<Long> query = entityManager
-                .createQuery("select count(*) from ClientDetailsEntity where client_details_id=:clientId and client_type != 'PUBLIC_CLIENT'", Long.class);
+                .createQuery("select count(*) from ClientDetailsEntity where id=:clientId and clientType != 'PUBLIC_CLIENT'", Long.class);
         query.setParameter("clientId", clientId);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -224,7 +224,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void changePersistenceTokensProperty(String clientId, boolean isPersistenTokensEnabled) {
         Query updateQuery = entityManager
-                .createQuery("update ClientDetailsEntity set lastModified = now(), persistentTokensEnabled = :isPersistenTokensEnabled where id = :clientId");
+            .createQuery("update ClientDetailsEntity c set c.lastModified = now(), c.persistentTokensEnabled = :isPersistenTokensEnabled where c.id = :clientId");
         updateQuery.setParameter("clientId", clientId);
         updateQuery.setParameter("isPersistenTokensEnabled", isPersistenTokensEnabled);
         updateQuery.executeUpdate();
@@ -234,7 +234,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void activateClient(String clientDetailsId) {
         Query updateQuery = entityManager
-                .createQuery("update ClientDetailsEntity set lastModified = now(), deactivatedDate = null, deactivatedBy = null where id = :clientId");
+            .createQuery("update ClientDetailsEntity c set c.lastModified = now(), c.deactivatedDate = null, c.deactivatedBy = null where c.id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
         updateQuery.executeUpdate();
     }
@@ -243,7 +243,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void deactivateClient(String clientDetailsId, String deactivatedBy) {
         Query updateQuery = entityManager
-                .createQuery("update ClientDetailsEntity set lastModified = now(), deactivatedDate = now(), deactivatedBy = :deactivatedBy where id = :clientId");
+            .createQuery("update ClientDetailsEntity c set c.lastModified = now(), c.deactivatedDate = now(), c.deactivatedBy = :deactivatedBy where c.id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
         updateQuery.setParameter("deactivatedBy", deactivatedBy);
         updateQuery.executeUpdate();

@@ -3,7 +3,9 @@ package org.orcid.api.memberV2.server.delegator;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
+
+import org.apache.hc.core5.http.ParseException;
 
 /**
  * 
@@ -148,7 +150,7 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     
     Response viewPerson(String orcid);
 
-    Response searchByQuery(Map<String, List<String>> solrParams);
+    Response searchByQuery(Map<String, List<String>> solrParams)throws ParseException;
 
     Response viewClient(String clientId);
 

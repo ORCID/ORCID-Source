@@ -4,11 +4,11 @@
 	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:jms="http://www.springframework.org/schema/jms"
 	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd 
-        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.3.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms.xsd">
                 
 	<import resource="classpath*:orcid-persistence-context.xml" />
 	
@@ -25,10 +25,6 @@
 	
     <context:mbean-server />
 
-	<bean id="orcidOAuth2RequestValidator" class="org.orcid.core.oauth.service.OrcidOAuth2RequestValidator">
-		<constructor-arg ref="profileEntityCacheManager" />
-	</bean>
-
 	<bean id="templateManager" class="org.orcid.core.manager.impl.TemplateManagerImpl" />
 
 	<bean id="notificationManager" class="org.orcid.core.manager.impl.NotificationManagerImpl">
@@ -38,50 +34,9 @@
 	<bean id="cleanOldClientKeysCronJob" class="org.orcid.core.cron.CleanOldClientKeysCronJob" />
 	
 	<bean id="userDetailsService" class="org.orcid.core.security.OrcidUserDetailsServiceImpl" />
-	
-	<!-- Effectively a wrapper around the client details service, converting client to user details -->
-    <bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-        <constructor-arg ref="clientDetailsManager"/>
-    </bean>
 
-    <bean id="orcidTokenStore" class="org.orcid.core.oauth.service.OrcidTokenStoreServiceImpl" />
-
-    <!-- Use the provided token random token services to actually create the values, and plugin our tokenStore etc -->
-    <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
-        <property name="orcidtokenStore" ref="orcidTokenStore" />        
-        <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
-        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
-        <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
-    </bean>
-	
 	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker" />
-	
-	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">		
-		<constructor-arg ref="orcidRefreshTokenChecker" />		
-		<constructor-arg ref="tokenServices" />
-	</bean>
-	
-	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService.OpenIDConnectKeyServiceConfig">
-		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}"/>
-		<property name="keyName" value="${org.orcid.openid.jwksKeyName}"/>
-		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}"/>
-	</bean>
-	
-	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService.OpenIDConnectDiscoveryServiceConfig"/>
-	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService"/>
-	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService"/>
-	<bean id="openIDConnectTokenEnhancer" class="org.orcid.core.oauth.openid.OpenIDConnectTokenEnhancer"/>
-	<bean id="orcidTokenEnhancer" class="org.springframework.security.oauth2.provider.token.TokenEnhancerChain">
-		<property name="tokenEnhancers">
-		<list>
-			<bean class="org.orcid.core.oauth.OrcidTokenEnhancer" />
-			<ref bean="openIDConnectTokenEnhancer" />
-		</list>
-		</property>
-	</bean>	
-	
-	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
-	
+
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 		<property name="host" value="localhost" />
 	</bean>
@@ -784,8 +739,6 @@
 		<property name="cacheSeconds" value="${org.orcid.core.messages.cacheSeconds:5}" />
 		<property name="fallbackToSystemLocale" value="false" />
 	</bean>
-
-
 	
 	<bean id="v2_1VersionConverterChain" class="org.orcid.core.version.impl.V2_1VersionConverterChainImpl">
 	    <property name="converters">
@@ -794,8 +747,7 @@
 	        </list>
 	    </property>
 	</bean>
-	
-	
+
 	<bean id="versionConverterV2_0ToV2_1" class="org.orcid.core.version.impl.VersionConverterImplV2_0ToV2_1"/>
 
     <!-- HTTP client connection beans -->
@@ -868,6 +820,7 @@
 	<bean id="mapperFacadeFactory" class="org.orcid.core.adapter.impl.MapperFacadeFactory">
 	   <constructor-arg ref="workContributorRoleConverter" />
 	   <constructor-arg ref="fundingContributorRoleConverter" />
+	   <property name="encryptionManager" ref="encryptionManager" />
 	</bean>
 	<bean id="mapperFacade" factory-bean="&amp;mapperFacadeFactory" factory-method="getObject"/>
 	<bean id="jpaJaxbNotificationAdapter" class="org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl">
@@ -949,7 +902,9 @@
     </bean>
     
     <!-- v3 adapters -->
-    <bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService" />
+	<bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService">
+		<property name="encryptionManager" ref="encryptionManager" />
+	</bean>
     <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
     <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
         <property name="mapperFacade" ref="mapperFacadeV3" />
@@ -1116,12 +1071,7 @@
         <property name="WaitForTasksToCompleteOnShutdown" value="true" />
     </bean>
     
-    <bean id="namespacedRandomCodeGenerator" class="org.orcid.core.oauth.service.NamespacedRandomCodeGenerator">
-	   <constructor-arg value="${org.orcid.core.node:1}" />
-	   <constructor-arg value="${org.orcid.core.numberOfNodes:1}" />
-	</bean>
-	
-	<bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
+    <bean id="orgAffiliationRelationEntityCacheManager" class="org.orcid.core.manager.v3.impl.OrgAffiliationRelationEntityCacheManagerImpl" />
 	
 	<bean id="affiliationEntitiesGenericCacheManager" class="org.orcid.core.cache.impl.GenericCacheManagerImpl">
         <property name="cache" ref="affiliationGroupsCache" />

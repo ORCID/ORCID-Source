@@ -3,7 +3,7 @@ package org.orcid.core.adapter.jsonidentifier.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.FundingExternalIdentifier;

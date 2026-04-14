@@ -5,11 +5,12 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.*;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +22,10 @@ import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.RecordNameManager;
-import org.orcid.core.oauth.service.OrcidTokenStore;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.email.MailGunManager;
 import org.orcid.utils.panoply.PanoplyRedshiftClient;
@@ -69,13 +71,10 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
     private EmailManager emailManager;
 
     @Resource
-    private PanoplyRedshiftClient panoplyClient;
-
-    @Resource
     private PapiRateLimitRedisClient papiRedisClient;
 
-    @Autowired
-    private OrcidTokenStore orcidTokenStore;
+    @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
 
     @Autowired
     private MessageSource messageSource;
@@ -88,7 +87,6 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
 
     @Value("${org.orcid.papi.rate.limit.enabled:false}")
     private boolean enableRateLimiting;
-
 
     // :192.168.65.1 127.0.0.1
     @Value("${org.orcid.papi.rate.limit.ip.whiteSpaceSeparatedWhiteList:192.168.65.1 127.0.0.1}")
@@ -146,11 +144,15 @@ public class ApiRateLimitFilter extends OncePerRequestFilter {
             String ipAddress = getClientIpAddress(httpServletRequest);
 
             if (!isIPInCidrWhiteListRange(ipAddress)) {
-
                 String clientId = null;
                 if (tokenValue != null) {
                     try {
-                        clientId = orcidTokenStore.readClientId(tokenValue);
+                        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDaoReadOnly.findByTokenValue(tokenValue);
+                        if(token != null) {
+                            clientId = token.getClientDetailsId();
+                        }
+                    } catch (NoResultException ex) {
+                        LOG.debug("No client found for token value, treating request as anonymous client");
                     } catch (Exception ex) {
                         LOG.error("Exception when trying to get the client id from token value, ignoring and treating as anonymous client", ex);
                     }

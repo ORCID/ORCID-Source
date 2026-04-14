@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.junit.Before;
 import org.junit.Test;

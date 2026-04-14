@@ -5,9 +5,8 @@ import java.util.List;
 
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 
-public interface ClientDetailsManagerReadOnly extends ClientDetailsService {
+public interface ClientDetailsManagerReadOnly {
     ClientDetailsEntity findByClientId(String orcid);
 
     List<ClientDetailsEntity> getAll();
@@ -44,4 +43,5 @@ public interface ClientDetailsManagerReadOnly extends ClientDetailsService {
 
     ClientSummary getClientSummary(String clientId);
 
+    boolean doesClientKnowUser(String clientId, String userOrcid);
 }

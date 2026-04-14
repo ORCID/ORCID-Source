@@ -3,8 +3,8 @@ package org.orcid.core.manager.read_only.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.JpaJaxbGroupIdRecordAdapter;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;

@@ -18,8 +18,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.persistence.dao.ClientRedirectDao;
@@ -38,10 +38,10 @@ public class ThirdPartyLinkManagerTest {
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
     @Mock
-    private LocaleManager localeManager;
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Mock
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    private LocaleManager localeManager;
 
     @Mock
     private RedisClient redisClient;
@@ -222,8 +222,8 @@ public class ThirdPartyLinkManagerTest {
         initSearchAndLinkWizardData();
         Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn(null);
 
-        Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
-        Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00002"), eq("0000-0000-0000-0001"))).thenReturn(false);
+        Mockito.when(clientDetailsManagerReadOnly.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
+        Mockito.when(clientDetailsManagerReadOnly.doesClientKnowUser(eq("APP-00002"), eq("0000-0000-0000-0001"))).thenReturn(false);
 
         List<SearchAndLinkWizardFormSummary> forms = thirdPartyLinkManager.findSearchAndLinkWizardClients("0000-0000-0000-0001");
         assertNotNull(forms);
@@ -253,7 +253,7 @@ public class ThirdPartyLinkManagerTest {
 
         String cachedJson = "[{\"id\":\"APP-00001\",\"name\":\"Client One\",\"redirectUri\":\"https://test.orcid.org/search-link/1\",\"scopes\":\"/read-limited\",\"redirectUriMetadata\":{\"certified\":true}}]";
         Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn(cachedJson);
-        Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
+        Mockito.when(clientDetailsManagerReadOnly.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
 
         List<SearchAndLinkWizardFormSummary> forms = thirdPartyLinkManager.findSearchAndLinkWizardClients("0000-0000-0000-0001");
         assertNotNull(forms);
@@ -272,8 +272,8 @@ public class ThirdPartyLinkManagerTest {
         ReflectionTestUtils.setField(thirdPartyLinkManager, "worksSearchAndLinkWizardCacheTtl", 99);
 
         Mockito.when(redisClient.get(eq("works-search-and-link-wizard-clients"))).thenReturn("{bad json");
-        Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
-        Mockito.when(orcidOauth2TokenDetailService.doesClientKnowUser(eq("APP-00002"), eq("0000-0000-0000-0001"))).thenReturn(false);
+        Mockito.when(clientDetailsManagerReadOnly.doesClientKnowUser(eq("APP-00001"), eq("0000-0000-0000-0001"))).thenReturn(true);
+        Mockito.when(clientDetailsManagerReadOnly.doesClientKnowUser(eq("APP-00002"), eq("0000-0000-0000-0001"))).thenReturn(false);
 
         List<SearchAndLinkWizardFormSummary> forms = thirdPartyLinkManager.findSearchAndLinkWizardClients("0000-0000-0000-0001");
         assertNotNull(forms);

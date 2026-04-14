@@ -24,8 +24,8 @@ import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -41,7 +41,7 @@ import org.orcid.core.adapter.impl.JpaJaxbNotificationAdapterImpl;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.core.manager.read_only.EmailManagerReadOnly;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.jaxb.model.common_v2.Locale;
 import org.orcid.jaxb.model.common_v2.Source;
 import org.orcid.jaxb.model.notification.amended_v2.AmendedSection;
@@ -52,14 +52,12 @@ import org.orcid.jaxb.model.notification_v2.Notification;
 import org.orcid.jaxb.model.notification_v2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_v2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.ClientDetailsDao;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.dao.impl.NotificationDaoImpl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
-import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -90,9 +88,6 @@ public class NotificationManagerTest extends DBUnitTest {
     private NotificationDao mockNotificationDao;
 
     @Mock
-    private OrcidOauth2TokenDetailService mockOrcidOauth2TokenDetailService;
-
-    @Mock
     private ProfileEntityCacheManager mockProfileEntityCacheManager;
     
     @Mock
@@ -103,6 +98,9 @@ public class NotificationManagerTest extends DBUnitTest {
     
     @Mock
     private JpaJaxbNotificationAdapter mockNotificationAdapter;
+
+    @Mock
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
     
     @Resource
     private ProfileDao profileDao;
@@ -148,9 +146,8 @@ public class NotificationManagerTest extends DBUnitTest {
         TargetProxyHelper.injectIntoProxy(notificationManager, "encryptionManager", encryptionManager);
         TargetProxyHelper.injectIntoProxy(notificationManager, "profileEventDao", profileEventDao);
         TargetProxyHelper.injectIntoProxy(notificationManager, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(notificationManager, "orcidOauth2TokenDetailService", mockOrcidOauth2TokenDetailService);
-        
-        when(mockOrcidOauth2TokenDetailService.doesClientKnowUser(Matchers.anyString(), Matchers.anyString())).thenReturn(true);        
+        TargetProxyHelper.injectIntoProxy(notificationManager, "clientDetailsManagerReadOnly", clientDetailsManagerReadOnly);
+        when(clientDetailsManagerReadOnly.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
     }
     
     @After
@@ -216,6 +213,7 @@ public class NotificationManagerTest extends DBUnitTest {
     public void filterActionedNotificationAlertsTest() {
         TargetProxyHelper.injectIntoProxy(notificationManager, "notificationDao", mockNotificationDao);
         when(mockNotificationDao.findByOricdAndId(Matchers.anyString(), Matchers.anyLong())).thenReturn(null);
+        when(clientDetailsManagerReadOnly.doesClientKnowUser("0000-0000-0000-0000", "some-orcid")).thenReturn(true);
         List<Notification> notifications = IntStream.range(0, 10).mapToObj(new IntFunction<Notification> () {
             @Override
             public Notification apply(int value) {

@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -91,8 +91,8 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteOtherName(OtherNameEntity otherName) {
-        Assert.notNull(otherName);
-        Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
+        Assert.notNull(otherName, "must not be null");
+        Query query = entityManager.createQuery("DELETE FROM OtherNameEntity n WHERE n.id=:id");
         query.setParameter("id", otherName.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -109,7 +109,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllOtherNames(String orcid) {
-        Query query = entityManager.createQuery("delete from OtherNameEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from OtherNameEntity n where n.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

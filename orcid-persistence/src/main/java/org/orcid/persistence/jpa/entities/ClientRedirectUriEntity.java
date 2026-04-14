@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.utils.NullUtils;

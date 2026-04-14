@@ -1,6 +1,6 @@
 package org.orcid.api.common.util.v3;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
 import org.orcid.core.manager.v3.OrcidSecurityManager;

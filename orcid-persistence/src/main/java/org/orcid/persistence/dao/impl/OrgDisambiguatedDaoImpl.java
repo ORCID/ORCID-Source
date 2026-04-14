@@ -4,8 +4,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -140,8 +140,8 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
         List<Object[]> results = query.getResultList();
         List<Pair<Long, Integer>> pairs = new ArrayList<>();
         for (Object[] row : results) {
-            Long id = ((BigInteger) row[0]).longValue();
-            Integer popularity = ((BigInteger) row[1]).intValue();
+            Long id = ((Number) row[0]).longValue();
+            Integer popularity = ((Number) row[1]).intValue();
             Pair<Long, Integer> pair = new ImmutablePair<Long, Integer>(id, popularity);
             pairs.add(pair);
         }
@@ -151,7 +151,7 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     @Transactional
     public void updatePopularity(Long orgDisambiguatedId, Integer popularity) {
-        Query query = entityManager.createQuery("update OrgDisambiguatedEntity set indexingStatus = 'PENDING', popularity = :popularity where id = :orgDisambiguatedId");
+        Query query = entityManager.createQuery("update OrgDisambiguatedEntity od set od.indexingStatus = 'PENDING', od.popularity = :popularity where od.id = :orgDisambiguatedId");
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("popularity", popularity);
         query.executeUpdate();

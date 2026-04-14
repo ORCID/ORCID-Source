@@ -1,6 +1,6 @@
 package org.orcid.core.version.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.version.V2Convertible;

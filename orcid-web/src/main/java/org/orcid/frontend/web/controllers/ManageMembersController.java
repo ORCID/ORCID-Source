@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.ClientAlreadyActiveException;
 import org.orcid.core.exception.ClientAlreadyDeactivatedException;

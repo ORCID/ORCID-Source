@@ -2,7 +2,7 @@ package org.orcid.core.utils;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.message.Address;

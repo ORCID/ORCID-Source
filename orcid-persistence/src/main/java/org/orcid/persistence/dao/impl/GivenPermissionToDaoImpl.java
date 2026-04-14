@@ -2,9 +2,9 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -26,7 +26,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
 
     @Override
     public GivenPermissionToEntity findByGiverAndReceiverOrcid(String giverOrcid, String receiverOrcid) {
-        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver_orcid = :giverOrcid and receiver_orcid = :receiverOrcid",
+        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver = :giverOrcid and receiver = :receiverOrcid",
                 GivenPermissionToEntity.class);
         query.setParameter("giverOrcid", giverOrcid);
         query.setParameter("receiverOrcid", receiverOrcid);
@@ -46,7 +46,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
 
     @Override
     public List<GivenPermissionToEntity> findByGiver(String giverOrcid) {
-        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver_orcid = :giverOrcid",
+        TypedQuery<GivenPermissionToEntity> query = entityManager.createQuery("from GivenPermissionToEntity where giver = :giverOrcid",
                 GivenPermissionToEntity.class);
         query.setParameter("giverOrcid", giverOrcid);
         return query.getResultList();
@@ -54,7 +54,7 @@ public class GivenPermissionToDaoImpl extends GenericDaoImpl<GivenPermissionToEn
 
     @Override
     public List<GivenPermissionByEntity> findByReceiver(String receiverOrcid) {
-        TypedQuery<GivenPermissionByEntity> query = entityManager.createQuery("from GivenPermissionByEntity where receiver_orcid = :receiverOrcid",
+        TypedQuery<GivenPermissionByEntity> query = entityManager.createQuery("from GivenPermissionByEntity where receiver = :receiverOrcid",
                 GivenPermissionByEntity.class);
         query.setParameter("receiverOrcid", receiverOrcid);
         return query.getResultList();

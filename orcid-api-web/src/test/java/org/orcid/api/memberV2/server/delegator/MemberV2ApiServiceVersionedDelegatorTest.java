@@ -12,11 +12,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.hc.core5.http.ParseException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -63,6 +64,8 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-api-web-context.xml" })
@@ -87,6 +90,9 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private PlatformTransactionManager transactionManager;
     
     @Resource    
     private V2VersionConverterChain v2VersionConverterChain;
@@ -1508,7 +1514,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testSearchByQuery() {
+    public void testSearchByQuery() throws ParseException {
         MockitoAnnotations.initMocks(this);
         Search search = new Search();
         Result result = new Result();
@@ -1536,7 +1542,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewClient() {
+    public void testViewClient() throws ParseException {
         Response response = serviceDelegator.viewClient("APP-6666666666666666");
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof ClientSummary);
@@ -1993,10 +1999,14 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     }
     
     private void updateProfileSubmissionDate(String orcid, int increment) {
-        // Update the submission date so it is long enough
-        ProfileEntity profileEntity = profileDao.find(orcid);
-        profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), increment));
-        profileDao.merge(profileEntity);
-        profileDao.flush();
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            // Update the submission date so it is long enough
+            ProfileEntity profileEntity = profileDao.find(orcid);
+            profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), increment));
+            profileDao.merge(profileEntity);
+            profileDao.flush();
+            return null;
+        });
     }
 }

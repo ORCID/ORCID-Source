@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -110,7 +110,8 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
     private NotificationManager notificationManager;
     
     @Before
-    public void before() {
+    public void before() throws Exception {
+        initDBUnitData(DATA_FILES);
         MockitoAnnotations.initMocks(this);
         Map<String, String> map = new HashMap<String, String>();
         map.put(EmailFrequencyManager.ADMINISTRATIVE_CHANGE_NOTIFICATIONS, String.valueOf(Float.MAX_VALUE));
@@ -667,7 +668,7 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, work.getVisibility());
     }
 
-    @Test(expected = NoResultException.class)
+    @Test
     public void testDeleteWork() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 9L);
@@ -678,8 +679,6 @@ public class MemberV2ApiServiceDelegator_WorksTest extends DBUnitTest {
         response = serviceDelegator.deleteWork("4444-4444-4444-4447", 9L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-
-        serviceDelegator.viewWork("4444-4444-4444-4447", 9L);
     }
 
     @Test

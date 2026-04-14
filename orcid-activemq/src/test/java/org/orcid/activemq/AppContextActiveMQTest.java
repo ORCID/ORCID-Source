@@ -2,7 +2,7 @@ package org.orcid.activemq;
 
 import static org.junit.Assert.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.activemq.xbean.BrokerFactoryBean;
 import org.junit.Test;

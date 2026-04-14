@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,7 +25,6 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,24 +55,6 @@ public class ClientDetailsManagerTest extends DBUnitTest {
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml"));
-    }
-
-    @Test
-    @Rollback
-    @Transactional
-    public void testLoadClientByClientId() throws Exception {
-        List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        String[] clientExceptionList = new String[] { "APP-5555555555555555", "APP-5555555555555556", "APP-5555555555555557", "APP-5555555555555558",
-                "APP-6666666666666666" };     
-        assertEquals(12, all.size());
-        for (ClientDetailsEntity clientDetailsEntity : all) {
-            ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
-            assertNotNull(clientDetails);
-            boolean exceptionClients = Arrays.stream(clientExceptionList).anyMatch(x -> x.equals(clientDetailsEntity.getId()));
-            if (!exceptionClients) {
-                checkClientDetails(clientDetails);
-            }
-        }
     }
 
     @Test
@@ -152,20 +133,15 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertNotNull(clientDetails);
         assertEquals(clientDetails.getClientDescription(), CLIENT_DESCRIPTION);
         assertEquals(clientDetails.getClientName(), CLIENT_NAME);
-        checkClientDetails((ClientDetails) clientDetails);
-    }
-
-    private void checkClientDetails(ClientDetails clientDetails) {
         String clientId = clientDetails.getClientId();
         assertNotNull(clientId);
         Set<String> registeredRedirectUris = clientDetails.getRegisteredRedirectUri();
         assertNotNull(registeredRedirectUris);
-        if (clientDetails.getClientId().equals("4444-4444-4444-4445") || clientDetails.getClientId().equals("4444-4444-4444-4498")) {
+        if (clientId.equals("4444-4444-4444-4445") || clientId.equals("4444-4444-4444-4498")) {
             assertEquals(2, registeredRedirectUris.size());
         } else {
             assertEquals(1, registeredRedirectUris.size());
         }
-        
         Collection<GrantedAuthority> authorities = clientDetails.getAuthorities();
         assertNotNull(authorities);
         assertEquals(1, authorities.size());
@@ -176,7 +152,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         } else if (!clientDetails.getClientId().equals("APP-1234567898765432")) {
             assertEquals(3, authorizedGrantTypes.size());
         }
-        
+
         String clientSecret = clientDetails.getClientSecret();
         assertNotNull(clientSecret);
         Set<String> resourceIds = clientDetails.getResourceIds();

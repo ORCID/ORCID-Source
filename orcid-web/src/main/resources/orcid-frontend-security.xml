@@ -2,15 +2,11 @@
 <beans xmlns:sec="http://www.springframework.org/schema/security"
 	   xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context"
-	   xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
-	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.6.xsd
+	   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-6.0.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/security/oauth2 https://raw.githubusercontent.com/spring-attic/spring-security-oauth/main/spring-security-oauth2/src/main/resources/org/springframework/security/oauth2/spring-security-oauth2-2.0.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<import resource="classpath*:orcid-oauth2-api-common-config.xml"/>
-
-	<context:component-scan base-package="org.orcid, org.orcid.api.common"/>
+	<context:component-scan base-package="org.orcid"/>
 	<context:annotation-config />
 
 	<sec:global-method-security pre-post-annotations="enabled" />
@@ -19,7 +15,6 @@
 		  xmlns="http://www.springframework.org/schema/beans">
 		<constructor-arg>
 			<list>
-				<bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter"/>
 				<bean class="org.springframework.security.access.vote.RoleHierarchyVoter">
 					<constructor-arg ref="roleHierarchy" />
 				</bean>
@@ -159,84 +154,25 @@
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-minimized.json(\?.*)?" security="none" create-session="stateless" />
 	<sec:http request-matcher="regex" pattern="/(\d{4}-){3,}\d{3}[\dX]/peer-reviews-by-group-id.json(\?.*)?" security="none" create-session="stateless" />
 
-	<!-- Authenticate the client before reaching the token endpoint -->
-    <!-- TODO: This should be removed once the authorization server is inplace -->
-	<sec:http pattern="/oauth/token" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
-		<sec:csrf disabled="true"/>
-		<sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
-		<sec:anonymous enabled="false" />
-		<sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
-		<!-- include this only if you need to authenticate clients via request parameters -->
-		<sec:custom-filter ref="customFilters" before="BASIC_AUTH_FILTER" />
-		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
-	</sec:http>
+    <!-- Token endpoint -->
+    <sec:http pattern="/oauth/token" security="none" />
 
-	<!-- Authenticate the client before reaching the revoke endpoint -->
-	<sec:http pattern="/oauth/revoke" use-expressions="false" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
-		<sec:csrf disabled="true"/>
-		<sec:intercept-url pattern="/oauth/revoke" access="IS_AUTHENTICATED_FULLY" />
-		<sec:anonymous enabled="false" />
-		<sec:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
-		<!-- include this only if you need to authenticate clients via request parameters -->
-		<sec:custom-filter ref="revokeTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
-		<sec:access-denied-handler ref="oauthAccessDeniedHandler" />
-	</sec:http>
+	<!-- revoke token endpoint -->
+	<sec:http pattern="/oauth/revoke" security="none" />
 
 	<!-- Userinfo does its own auth.  CSRF disabled to enable post -->
-	<sec:http pattern="/oauth/userinfo" use-expressions="false" authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager"
+	<sec:http pattern="/oauth/userinfo" use-expressions="false" use-authorization-manager="false" authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager"
 			  create-session="ifRequired" entry-point-ref="approveOauthAuthenticationEntryPoint">
 		<sec:csrf disabled="true"/>
 		<sec:intercept-url pattern="/oauth/userinfo" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:anonymous enabled="true" />
 	</sec:http>
 
-	<sec:http use-expressions="false" pattern="/oauth/.*"
-			  authentication-manager-ref="authenticationManager" access-decision-manager-ref="accessDecisionManager"
-			  create-session="ifRequired" request-matcher="regex" entry-point-ref="approveOauthAuthenticationEntryPoint">
-		<sec:access-denied-handler error-page="/oauth/signin" />
-		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="oAuthAuthorizeNotSignedInFilter" />
-		<sec:csrf token-repository-ref="csrfTokenRepo"/>
-		<sec:intercept-url pattern="/oauth/login(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/signin(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/playground(\?.*)?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/login.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/signin.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize/empty.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/register/empty.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/register.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/registerConfirm.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/jwks"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/register/validate.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/init.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/authorize.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/custom/requestInfoForm.*?"
-			access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<sec:intercept-url pattern="/oauth/.*" access="ROLE_USER" />
-
-		<sec:session-management session-fixation-protection="migrateSession"/>
-		<sec:logout/>
-	</sec:http>
-
 	<bean id="approveOauthAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
 		<constructor-arg name="loginFormUrl" value="/oauth/signin" />
 	</bean>
 
-	<sec:http pattern="/shibboleth/.*" use-expressions="false" authentication-manager-ref="authenticationManager"
+	<sec:http pattern="/shibboleth/.*" use-expressions="false" use-authorization-manager="false" authentication-manager-ref="authenticationManager"
 			  access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 			  request-matcher="regex">
 		<sec:access-denied-handler error-page="/shibboleth/signin" />
@@ -265,7 +201,7 @@
 		<property name="defaultTargetUrl" value="/my-orcid" />
 	</bean>
 
-	<sec:http pattern="/social/.*" authentication-manager-ref="authenticationManager" use-expressions="false"
+	<sec:http pattern="/social/.*" authentication-manager-ref="authenticationManager" use-expressions="false" use-authorization-manager="false"
 			  access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 			  request-matcher="regex">
 		<sec:access-denied-handler error-page="/signin" />
@@ -287,7 +223,7 @@
 		<sec:session-management session-fixation-protection="migrateSession"/>
 	</sec:http>
 
-	<sec:http use-expressions="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
+	<sec:http use-expressions="false" use-authorization-manager="false" access-decision-manager-ref="accessDecisionManager" authentication-manager-ref="authenticationManager" create-session="ifRequired"
 			  request-matcher="regex">
 		<sec:request-cache ref="orcidRequestCache"/>
 		<sec:access-denied-handler ref="orcidAccessDeniedHandler"/>
@@ -392,7 +328,7 @@
 		<sec:intercept-url pattern="/developer-tools/.*"
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
-			method="POST" access="DENY_OAUTH,ROLE_USER" />
+			method="POST" access="ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients"
 			access="ROLE_GROUP"/>
 		<sec:intercept-url pattern="/group/developer-tools/get-available-scopes.json(\?.*)?" method="GET"
@@ -480,70 +416,10 @@
 		<property name="switchFailureUrl" value="/signin" />
 	</bean>
 
-	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
-
-	<sec:authentication-manager id="clientAuthenticationManager">
-		<sec:authentication-provider ref="clientAuthenticationProvider" />
-	</sec:authentication-manager>
-
-	<bean id="clientAuthenticationProvider" class="org.orcid.core.oauth.OrcidMultiSecretAuthenticationProvider">
-		<property name="userDetailsService" ref="clientDetailsUserService" />
-	</bean>
-
-	<bean id="clientDetailsUserService"
-		  class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
-		<constructor-arg ref="clientDetailsManager" />
-	</bean>
-
 	<!-- Simple listener that gets fired when successful login occurs -->
 	<bean id="loginApplicationListener"
 		  class="org.orcid.frontend.web.listener.LoginApplicationListener" />
 
 	<bean id="languagesMap"
 		  class="org.orcid.frontend.web.util.LanguagesMap" />
-
-	<bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
-		<property name="filters">
-			<list>
-				<ref bean="clientCredentialsTokenEndpointFilter"/>
-			</list>
-		</property>
-	</bean>
-    <!-- TODO: This filter should be removed once the authorization server is inplace -->
-	<bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
-		<property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
-		<property name="authenticationManager" ref="clientAuthenticationManager"/>
-	</bean>
-
-	<bean id="revokeTokenEndpointFilter" class="org.orcid.api.common.security.oauth.RevokeTokenEndpointFilter" />
-
-	<bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
-
-	<!-- OAUTH2 -->
-	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
-
-	<bean id="orcidOauthRedirectResolver" class="org.orcid.core.oauth.security.OrcidOauthRedirectResolver" />
-
-	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
-		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
-		<property name="clientDetailsService" ref="clientDetailsManager" />
-		<property name="tokenGranter" ref="tokenGranter" />
-		<property name="orcidOAuth2RequestValidator" ref="orcidOAuth2RequestValidator" />
-		<property name="redirectResolver" ref="orcidOauthRedirectResolver" />
-	</bean>
-
-	<oauth2:resource-server id="resourceServerFilter"
-							resource-id="orcid" token-services-ref="tokenServices" />
-
-	<oauth2:authorization-server
-			token-granter-ref="authorizationCodeTokenGranter"
-			client-details-service-ref="clientDetailsManager"
-			token-services-ref="tokenServices">
-		<oauth2:client-credentials />
-	</oauth2:authorization-server>
-
-	<bean id="oauthAuthenticationEntryPoint"
-		  class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
-		<property name="realmName" value="orcid" />
-	</bean>
 </beans>

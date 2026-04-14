@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.cron.AuthorizationCodeCleanerCronJob;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;

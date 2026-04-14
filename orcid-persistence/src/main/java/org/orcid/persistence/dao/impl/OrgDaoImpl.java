@@ -3,8 +3,8 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.OrgDao;
 import org.orcid.persistence.jpa.entities.AmbiguousOrgEntity;
@@ -231,7 +231,7 @@ public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDa
     @Transactional(propagation = Propagation.REQUIRED)
     public void updateOrgDisambiguatedId(long deletedOrgDisambiguatedId, long replacementOrgDisambiguatedId) {
         Query query = entityManager
-                .createQuery("update OrgEntity set orgDisambiguated.id = :replacementOrgDisambiguatedId where orgDisambiguated.id = :deletedOrgDisambiguatedId");
+                .createQuery("update OrgEntity o set o.orgDisambiguated.id = :replacementOrgDisambiguatedId where o.orgDisambiguated.id = :deletedOrgDisambiguatedId");
         query.setParameter("deletedOrgDisambiguatedId", deletedOrgDisambiguatedId);
         query.setParameter("replacementOrgDisambiguatedId", replacementOrgDisambiguatedId);
         query.executeUpdate();

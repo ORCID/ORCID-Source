@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.manager.DOIManager;
 import org.orcid.core.manager.v3.ActivitiesSummaryManager;

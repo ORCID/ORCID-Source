@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.salesforce.model.CommunityType;
 import org.orcid.frontend.salesforce.manager.SalesforceManager;

@@ -1,35 +1,39 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientRedirectDao;
 import org.orcid.persistence.dao.ClientSecretDao;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerReadOnly {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerReadOnlyImpl.class);    
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientDetailsManagerReadOnlyImpl.class);
+
+    private final List<String> CLIENT_KNOW_USER_SCOPES = Arrays.asList(ScopePathType.ACTIVITIES_UPDATE.value(), ScopePathType.AFFILIATIONS_CREATE.value(), ScopePathType.AFFILIATIONS_UPDATE.value());
+
     @Resource(name = "jpaJaxbClientAdapterV3")
     protected JpaJaxbClientAdapter jpaJaxbClientAdapter;
     
     @Resource
-    protected EncryptionManager encryptionManager;    
+    protected EncryptionManager encryptionManager;
+
+    @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
     
     private ClientDetailsDao clientDetailsDao;
     
@@ -51,31 +55,6 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
 		this.clientRedirectDao = clientRedirectDao;
 	}
 
-	/**
-     * Load a client by the client id. This method must NOT return null.
-     * 
-     * @param clientId
-     *            The client id.
-     * @return The client details.
-     * @throws org.springframework.security.oauth2.common.exceptions.OAuth2Exception
-     *             If the client account is locked, expired, disabled, or for
-     *             any other reason.
-     */
-    @Override
-    public ClientDetailsEntity loadClientByClientId(String clientId) throws OAuth2Exception {
-        ClientDetailsEntity clientDetails = findByClientId(clientId);
-        if (clientDetails != null) {
-            if (!clientDetails.getClientId().equals(clientId))
-                LOGGER.error("Client getClientId doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getClientId());
-            if (!clientDetails.getId().equals(clientId))
-                LOGGER.error("Client getId() doesn't match. Requested: " + clientId + " Returned: " + clientDetails.getId());
-            clientDetails.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientDetails.getClientSecretForJpa()));
-            return clientDetails;
-        } else {
-            throw new InvalidClientException("Client not found: " + clientId);
-        }
-    }
-    
     @Override
     public ClientDetailsEntity findByClientId(String clientId) {
         ClientDetailsEntity result = null;
@@ -201,4 +180,25 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
         return jpaJaxbClientAdapter.toClientSummary(clientDetailsEntity);
     }
 
+    @Override
+    public boolean doesClientKnowUser(String clientId, String userOrcid) {
+        List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDaoReadOnly.findByClientIdAndUserName(clientId, userOrcid);
+        if (existingTokens == null || existingTokens.isEmpty()) {
+            return false;
+        }
+        Date now = new Date();
+        for (OrcidOauth2TokenDetail token : existingTokens) {
+            if (token.getTokenExpiration() != null && token.getTokenExpiration().after(now) && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
+                // Verify the token have at least one of the required scopes
+                if(!PojoUtil.isEmpty(token.getScope())) {
+                    for(String scope : token.getScope().split(" ")) {
+                        if(CLIENT_KNOW_USER_SCOPES.contains(scope.trim())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }

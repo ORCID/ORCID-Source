@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.NotificationDao;
@@ -63,7 +63,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     public List<NotificationEntity> findUnsentByOrcid(String orcid) {
         TypedQuery<NotificationEntity> query = entityManager.createQuery("from NotificationEntity where sentDate is null and orcid = :orcid", NotificationEntity.class);
         query.setParameter("orcid", orcid);
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         return query.getResultList();
     }
 
@@ -111,7 +111,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsSent(Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity set sentDate = now() where id in :id");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.sentDate = now() where n.id in :id");
         query.setParameter("id", id);
         query.executeUpdate();
     }
@@ -119,7 +119,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsSent(Collection<Long> ids) {
-        Query query = entityManager.createQuery("update NotificationEntity set sentDate = now() where id in :ids");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.sentDate = now() where n.id in :ids");
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
@@ -127,7 +127,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsRead(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity set readDate = now() where orcid = :orcid and id = :id and readDate is null");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.readDate = now() where n.orcid = :orcid and n.id = :id and n.readDate is null");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
@@ -136,7 +136,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsArchived(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity set archivedDate = now() where orcid = :orcid and id = :id and archivedDate is null");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.archivedDate = now() where n.orcid = :orcid and n.id = :id and n.archivedDate is null");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
@@ -208,7 +208,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     public List<Object[]> findRecordsWithUnsentNotifications() {
         Query query = entityManager.createNamedQuery(NotificationEntity.FIND_ORCIDS_WITH_UNSENT_NOTIFICATIONS_ON_EMAIL_FREQUENCIES_TABLE);
         query.setParameter("never", Float.MAX_VALUE);  
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         
         List<Object[]> results = query.getResultList();
 
@@ -294,7 +294,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     
     @Override
     public void flagAsSendable(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity set sendable=true where orcid = :orcid and id = :id");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.sendable=true where n.orcid = :orcid and n.id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
@@ -302,7 +302,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     
     @Override
     public void flagAsNonSendable(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity set sendable=false where orcid = :orcid and id = :id");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.sendable=false where n.orcid = :orcid and n.id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
@@ -310,7 +310,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     
     @Override
     public void updateRetryCount(String orcid, Long id, Long retryCount) {
-        Query query = entityManager.createQuery("update NotificationEntity set retryCount = :count where orcid = :orcid and id = :id");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.retryCount = :count where n.orcid = :orcid and n.id = :id");
         query.setParameter("count", retryCount);
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);

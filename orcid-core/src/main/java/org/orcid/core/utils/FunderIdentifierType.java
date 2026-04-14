@@ -8,9 +8,9 @@
 
 package org.orcid.core.utils;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnumValue;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
 * TODO: Once the jersey migration is over, this could be moved back to the orcid-utils package so it could be reused form the orcid-persistence package

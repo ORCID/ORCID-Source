@@ -55,11 +55,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
@@ -89,6 +91,12 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private EncryptionManager encryptionManager;
+
+    @Resource(name = "transactionManager")
+    private PlatformTransactionManager transactionManager;
     
     @Mock
     private EmailManager mockEmailManager;
@@ -481,40 +489,82 @@ public class AdminControllerLegacyTest extends BaseControllerTest {
 
     @Test
     public void resetPasswordTest() throws IllegalAccessException, UnsupportedEncodingException {
-        ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
-        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
-        AdminChangePassword form = new AdminChangePassword();
-        form.setOrcidOrEmail("4444-4444-4444-4441");
-        form.setPassword("password1");
-        adminController.resetPassword(mockRequest, mockResponse, form);
-        p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
-        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
+        String newPassword = "brandNewPass123";
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            try {
+                ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+                assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
+                AdminChangePassword form = new AdminChangePassword();
+                form.setOrcidOrEmail("4444-4444-4444-4441");
+                form.setPassword(newPassword);
+                adminController.resetPassword(mockRequest, mockResponse, form);
+                assertNull(form.getError());
+            } catch (IllegalAccessException | UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
+        transactionTemplate.execute(status -> {
+            ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4441");
+            assertTrue(encryptionManager.hashMatches(newPassword, p.getPassword()));
+            return null;
+        });
     }
 
     @Test
     public void resetPasswordUsingEmailTest() throws IllegalAccessException, UnsupportedEncodingException {
         TargetProxyHelper.injectIntoProxy(adminController, "emailManagerReadOnly", mockEmailManagerReadOnly);
-        
-        ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
-        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
-        AdminChangePassword form = new AdminChangePassword();
-        form.setOrcidOrEmail("michael@bentine.com");
-        form.setPassword("password1");
-        adminController.resetPassword(mockRequest, mockResponse, form);
-        p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
-        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
+        String newPassword = "brandNewPass123";
+
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            try {
+                ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
+                assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
+                AdminChangePassword form = new AdminChangePassword();
+                form.setOrcidOrEmail("michael@bentine.com");
+                form.setPassword(newPassword);
+                adminController.resetPassword(mockRequest, mockResponse, form);
+                assertNull(form.getError());
+            } catch (IllegalAccessException | UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
+        transactionTemplate.execute(status -> {
+            ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4442");
+            assertTrue(encryptionManager.hashMatches(newPassword, p.getPassword()));
+            return null;
+        });
     }
     
     @Test
     public void resetPasswordTestOrcidURL() throws IllegalAccessException, UnsupportedEncodingException {
-        ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4443");
-        assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
-        AdminChangePassword form = new AdminChangePassword();
-        form.setOrcidOrEmail("https://orcid.org/4444-4444-4444-4443");
-        form.setPassword("password1");
-        adminController.resetPassword(mockRequest, mockResponse, form);
-        p = profileEntityManager.findByOrcid("4444-4444-4444-4443");
-        assertFalse("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=".equals(p.getPassword()));
+        String newPassword = "brandNewPass123";
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(status -> {
+            try {
+                ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4443");
+                assertEquals("e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA=", p.getPassword());
+                AdminChangePassword form = new AdminChangePassword();
+                form.setOrcidOrEmail("https://orcid.org/4444-4444-4444-4443");
+                form.setPassword(newPassword);
+                adminController.resetPassword(mockRequest, mockResponse, form);
+                assertNull(form.getError());
+            } catch (IllegalAccessException | UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
+        transactionTemplate.execute(status -> {
+            ProfileEntity p = profileEntityManager.findByOrcid("4444-4444-4444-4443");
+            assertTrue(encryptionManager.hashMatches(newPassword, p.getPassword()));
+            return null;
+        });
     }
 
     @Test

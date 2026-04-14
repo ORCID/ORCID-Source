@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.email.trickle.producer.EmailTrickleItem;
 import org.orcid.core.manager.v3.EmailMessage;

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.v3.EmailManager;
@@ -90,13 +90,13 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
                 profileEmailDomainManager.processDomain(orcid, primaryEmail);
             }
             return result;
-        } catch (javax.persistence.NoResultException nre) {
+        } catch (jakarta.persistence.NoResultException nre) {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
             LOGGER.error(message);            
             throw nre;
-        } catch (javax.persistence.NonUniqueResultException nure) {
+        } catch (jakarta.persistence.NonUniqueResultException nure) {
             String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);            
             String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);

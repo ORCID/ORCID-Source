@@ -3,9 +3,9 @@ package org.orcid.frontend.web.forms.validate;
 import java.util.regex.Matcher;
 import java.util.regex.PatternSyntaxException;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.constraints.Pattern;
 
 import org.orcid.pojo.ajaxForm.Text;
 

@@ -23,7 +23,6 @@ import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.manager.v3.ProfileKeywordManager;
 import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.ResearcherUrlManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.profile.history.ProfileHistoryEventType;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -57,7 +56,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -77,9 +76,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     private static final String CLIENT_ID_1 = "APP-5555555555555555";   
     private static final String CLIENT_ID_2 = "APP-5555555555555556";
     private static final String USER_ORCID = "0000-0000-0000-0001";    
-    
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
     
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManager;

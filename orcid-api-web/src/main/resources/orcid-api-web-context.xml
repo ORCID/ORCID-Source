@@ -4,25 +4,17 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <import resource="classpath*:orcid-core-context.xml"/>
     <import resource="classpath*:orcid-api-common-public-v3-context.xml"/>
     <import resource="classpath*:orcid-api-security-context.xml"/>
 
+    <bean id="mvcHandlerMappingIntrospector" class="org.springframework.web.servlet.handler.HandlerMappingIntrospector"/>
+
     <context:component-scan base-package="org.orcid.api.common, org.orcid.api.member.common, org.orcid.core.security, org.orcid.api.filters"/>
     <aop:aspectj-autoproxy />
-     
-    <!-- bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
-        <property name="title" value="ORCID Member"/>
-        <property name="version" value="Latest" />
-        <property name="host" value="#{ orcidUrlManager.apiHostWithPort }" />
-        <property name="basePath" value="#{ orcidUrlManager.apiPath }"/>
-        <property name="resourcePackage" value="org.orcid.api"/>
-        <property name="scan" value="true"/>
-        <property name="prettyPrint" value="true"/>        
-    </bean -->
     
     <!-- bean id="swaggerSerializers" class="io.swagger.jaxrs.listing.SwaggerSerializers" scope="singleton"/-->    
     <bean id="apiListingResource" class="org.orcid.api.swagger.MemberSwaggerResource"/>
@@ -39,7 +31,6 @@
     </bean>
     
     <bean id="notificationsApiServiceDelegatorV3" class="org.orcid.api.notificationsV3.server.delegator.impl.NotificationsApiServiceDelegatorImpl" />
-
 
     <bean id="memberV2ApiServiceDelegator" class="org.orcid.api.memberV2.server.delegator.impl.MemberV2ApiServiceDelegatorImpl" />
     

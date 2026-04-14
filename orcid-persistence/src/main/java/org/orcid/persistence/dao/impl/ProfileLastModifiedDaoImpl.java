@@ -4,8 +4,8 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.ProfileLastModifiedDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -29,11 +29,11 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
     @Override
     @Transactional
     public void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = :indexingStatus where orcid = :orcid");
+        Query updateQuery = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.indexingStatus = :indexingStatus where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("indexingStatus", indexingStatus);
         // Sets a timeout for this query
-        updateQuery.setHint("javax.persistence.query.timeout", queryTimeout);
+        updateQuery.setHint("jakarta.persistence.query.timeout", queryTimeout);
         updateQuery.executeUpdate();
     }
 
@@ -43,7 +43,7 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         // Sets a timeout for this query
-        query.setHint("javax.persistence.query.timeout", queryTimeout);
+        query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
     }
 
@@ -57,7 +57,7 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
     @Override
     @Transactional
     public boolean updateIndexingStatus(List<String> orcidIds, IndexingStatus indexingStatus) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set indexingStatus = :indexingStatus where orcid IN :orcid");
+        Query updateQuery = entityManager.createQuery("update ProfileEntity p set p.indexingStatus = :indexingStatus where p.id IN :orcid");
         updateQuery.setParameter("orcid", orcidIds);
         updateQuery.setParameter("indexingStatus", indexingStatus);
         return updateQuery.executeUpdate() > 0;

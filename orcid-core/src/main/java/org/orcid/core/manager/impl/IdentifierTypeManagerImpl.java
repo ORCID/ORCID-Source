@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;

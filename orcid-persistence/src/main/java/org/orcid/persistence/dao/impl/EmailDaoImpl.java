@@ -2,8 +2,8 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -182,7 +182,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVerifySetCurrentAndPrimary(String orcid, String email) {
-        Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true, lastModified=now() where orcid = :orcid and email = :email");
+        Query query = entityManager.createQuery("update EmailEntity e set e.current = true, e.primary = true, e.verified = true, e.lastModified=now() where e.orcid = :orcid and e.email = :email");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
         return query.executeUpdate() > 0;
@@ -249,7 +249,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public boolean hideAllEmails(String orcid) {
-        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, email = null, lastModified=now() where orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.email = null, e.lastModified=now() where e.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", PRIVATE_VISIBILITY);
         return query.executeUpdate() > 0;
@@ -259,7 +259,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibility(String orcid, String email, String visibility) {
-        Query query = entityManager.createQuery("update EmailEntity set visibility = :visibility, lastModified=now() where email = :email and orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.lastModified=now() where e.email = :email and e.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
         query.setParameter("visibility", visibility);
@@ -276,7 +276,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     
     @Override    
     public boolean populateEmailHash(String email, String emailHash) {
-        Query query = entityManager.createQuery("update EmailEntity set id=:hash where email = :email");        
+        Query query = entityManager.createQuery("update EmailEntity e set e.id=:hash where e.email = :email");        
         query.setParameter("email", email);
         query.setParameter("hash", emailHash);
         return query.executeUpdate() > 0;

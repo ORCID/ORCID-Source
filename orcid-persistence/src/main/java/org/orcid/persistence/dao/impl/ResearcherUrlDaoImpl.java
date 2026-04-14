@@ -3,8 +3,8 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
@@ -108,7 +108,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Transactional
     @UpdateProfileLastModified
     public void removeAllResearcherUrls(String orcid) {
-        Query query = entityManager.createQuery("delete from ResearcherUrlEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ResearcherUrlEntity r where r.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

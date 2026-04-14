@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.BaseTest;
 

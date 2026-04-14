@@ -3,9 +3,9 @@ package org.orcid.api.publicV2.server.delegator.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.common.manager.EventManager;
@@ -14,6 +14,8 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
+
+import org.apache.hc.core5.http.ParseException;
 
 public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
@@ -27,16 +29,10 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Resource
     private V2VersionConverterChain v2_1VersionConverterChain;
-    
-    @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;   
-    
-    @Resource
-    private EventManager eventManager;
-    
+
     @Override
     public Response viewStatusText() {
         return publicV2ApiServiceDelegator.viewStatusText();
@@ -249,7 +245,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
     
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         return processReponse(publicV2ApiServiceDelegator.searchByQuery(solrParams));
     }
     

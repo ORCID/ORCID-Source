@@ -1,16 +1,14 @@
 package org.orcid.frontend.oauth2;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.togglz.Features;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,24 +28,18 @@ public class RevokeController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RevokeController.class);
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
-    @Resource
     private AuthorizationServerUtil authorizationServerUtil;
-
-    public void setOrcidOauth2TokenDetailService(OrcidOauth2TokenDetailService orcidOauth2TokenDetailService) {
-        this.orcidOauth2TokenDetailService = orcidOauth2TokenDetailService;
-    }
 
     @RequestMapping
     public ResponseEntity<?> revoke(HttpServletRequest request) throws IOException, URISyntaxException, InterruptedException {
+        String tokenToRevoke = request.getParameter("token");
+        Response r = null;
+        
         if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
             // Forward the request to the authorization server
-            String tokenToRevoke = request.getParameter("token");
             if (PojoUtil.isEmpty(tokenToRevoke)) {
                 throw new IllegalArgumentException("Please provide the token to be param");
             }
-            Response r = null;
             if(StringUtils.isNotBlank(request.getHeader("Authorization"))) {
                 String authorization = request.getHeader("Authorization");
                 r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
@@ -62,32 +54,16 @@ public class RevokeController {
             return ResponseEntity.status(r.getStatus()).headers(responseHeaders).body(r.getEntity());
         } else {
             String clientId = SecurityContextHolder.getContext().getAuthentication().getName();
-            if (PojoUtil.isEmpty(clientId)) {
-                throw new IllegalArgumentException("Unable to validate client credentials");
-            }
-
-            String tokenToRevoke = request.getParameter("token");
+            String clientSecret = request.getParameter("client_secret");
             if (PojoUtil.isEmpty(tokenToRevoke)) {
                 throw new IllegalArgumentException("Please provide the token to be param");
             }
-
-            OrcidOauth2TokenDetail token = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue(tokenToRevoke);
-            if (token == null) {
-                // Try to find it by refresh token
-                token = orcidOauth2TokenDetailService.findByRefreshTokenValue(tokenToRevoke);
-            }
-
-            if (token != null && (token.getTokenDisabled() == null || !token.getTokenDisabled())) {
-                String tokenOwner = token.getClientDetailsId();
-                if (clientId.equals(tokenOwner)) {
-                    orcidOauth2TokenDetailService.revokeAccessToken(token.getTokenValue());
-                } else {
-                    LOGGER.warn("Client {} is trying to revoke token that belongs to client {}", clientId, tokenOwner);
-                }
-            }
+            r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
         }
-
-        return ResponseEntity.ok().build();
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(),
+                "ON");
+        return ResponseEntity.status(r.getStatus()).headers(responseHeaders).body(r.getEntity());
     }
 
 }

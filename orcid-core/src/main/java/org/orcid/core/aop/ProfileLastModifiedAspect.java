@@ -2,7 +2,7 @@ package org.orcid.core.aop;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -46,6 +48,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     
     @Resource
     private RedisClient redisClient;    
+
+    @Resource
+    private PlatformTransactionManager transactionManager;
     
     @Value("${org.orcid.core.utils.cache.redis.summary.enabled:false}") 
     private boolean isSummaryCacheEnabled;
@@ -128,7 +133,8 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             return;
         }
         try {
-            profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
+            new TransactionTemplate(transactionManager)
+                    .executeWithoutResult(status -> profileLastModifiedDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING));
         } catch(Exception e) {
             LOGGER.error("Unable to update last modified and indexing status for " + orcid, e);
         }
@@ -150,7 +156,8 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             return;
         }
         try {
-            profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid);
+            new TransactionTemplate(transactionManager)
+                    .executeWithoutResult(status -> profileLastModifiedDao.updateLastModifiedDateWithoutResult(orcid));
         } catch(Exception e) {
             LOGGER.error("Unable to update last modified for " + orcid, e);
         }

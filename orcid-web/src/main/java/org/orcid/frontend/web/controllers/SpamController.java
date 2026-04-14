@@ -1,6 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.v3.SpamManager;
 import org.orcid.pojo.Spam;

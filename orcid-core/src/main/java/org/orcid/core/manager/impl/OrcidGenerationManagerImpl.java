@@ -2,7 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.Random;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.ehcache.Cache;

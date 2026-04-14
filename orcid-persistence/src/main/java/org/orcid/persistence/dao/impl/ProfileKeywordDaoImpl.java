@@ -3,7 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -61,7 +61,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(String orcid, String keyword) {
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE orcid = :orcid AND keywordName = :keyword");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity k WHERE k.orcid = :orcid AND k.keywordName = :keyword");
         query.setParameter("orcid", orcid);
         query.setParameter("keyword", keyword);
         return query.executeUpdate() > 0 ? true : false;
@@ -99,7 +99,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean deleteProfileKeyword(ProfileKeywordEntity entity) {        
-        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity WHERE id=:id");
+        Query query = entityManager.createQuery("DELETE FROM ProfileKeywordEntity k WHERE k.id=:id");
         query.setParameter("id", entity.getId());
         return query.executeUpdate() > 0 ? true : false;
     }
@@ -108,7 +108,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllKeywords(String orcid) {
-        Query query = entityManager.createQuery("delete from ProfileKeywordEntity where profile_orcid = :orcid");
+        Query query = entityManager.createQuery("delete from ProfileKeywordEntity k where k.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }

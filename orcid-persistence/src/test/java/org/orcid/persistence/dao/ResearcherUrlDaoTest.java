@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceException;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.AfterClass;
