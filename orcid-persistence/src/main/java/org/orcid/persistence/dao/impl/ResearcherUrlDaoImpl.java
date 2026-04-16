@@ -233,6 +233,12 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public ResearcherUrlEntity persistIfNotExists(ResearcherUrlEntity entity) {
+        // ORCID unit tests run with HSQL, which doesn't support PostgreSQL ON CONFLICT.
+        if (!isPostgresDialect()) {
+            super.persist(entity);
+            return entity;
+        }
+
         Query query = entityManager.createNativeQuery(
                 "INSERT INTO researcher_url (id, date_created, last_modified, url, url_name, orcid, visibility, display_index, source_id, client_source_id, assertion_origin_source_id, assertion_origin_client_source_id) "
                         + "VALUES (nextval('researcher_url_seq'), now(), now(), :url, :urlName, :orcid, :visibility, :displayIndex, :sourceId, :clientSourceId, NULL, :assertionOriginClientSourceId) "
@@ -254,6 +260,11 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
         }
         entity.setId(ids.get(0).longValue());
         return entity;
+    }
+
+    private boolean isPostgresDialect() {
+        Object dialect = entityManager.getEntityManagerFactory().getProperties().get("hibernate.dialect");
+        return dialect != null && dialect.toString().toLowerCase().contains("postgres");
     }
 
 }
