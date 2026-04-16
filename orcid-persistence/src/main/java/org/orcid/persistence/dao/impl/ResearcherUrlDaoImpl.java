@@ -3,6 +3,7 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -226,6 +227,33 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Transactional
     public void remove(ResearcherUrlEntity entity) {
         super.remove(entity);
+    }
+
+    @Override
+    @Transactional
+    @UpdateProfileLastModifiedAndIndexingStatus
+    public ResearcherUrlEntity persistIfNotExists(ResearcherUrlEntity entity) {
+        Query query = entityManager.createNativeQuery(
+                "INSERT INTO researcher_url (id, date_created, last_modified, url, url_name, orcid, visibility, display_index, source_id, client_source_id, assertion_origin_source_id, assertion_origin_client_source_id) "
+                        + "VALUES (nextval('researcher_url_seq'), now(), now(), :url, :urlName, :orcid, :visibility, :displayIndex, :sourceId, :clientSourceId, NULL, :assertionOriginClientSourceId) "
+                        + "ON CONFLICT ON CONSTRAINT researcher_url_orcid_source_unique_key DO NOTHING "
+                        + "RETURNING id");
+        query.setParameter("url", entity.getUrl());
+        query.setParameter("urlName", entity.getUrlName());
+        query.setParameter("orcid", entity.getOrcid());
+        query.setParameter("visibility", entity.getVisibility());
+        query.setParameter("displayIndex", entity.getDisplayIndex());
+        query.setParameter("sourceId", entity.getSourceId());
+        query.setParameter("clientSourceId", entity.getClientSourceId());
+        query.setParameter("assertionOriginClientSourceId", entity.getAssertionOriginClientSourceId());
+
+        @SuppressWarnings("unchecked")
+        List<Number> ids = query.getResultList();
+        if (ids.isEmpty()) {
+            throw new EntityExistsException("Duplicate researcher URL");
+        }
+        entity.setId(ids.get(0).longValue());
+        return entity;
     }
 
 }
