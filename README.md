@@ -1,5 +1,9 @@
-![](https://github.com/ORCID/ORCID-Source/workflows/ORCID-Source%20CI/badge.svg)
 # ORCID-Source
+
+[![build_test_release_tag](https://github.com/ORCID/ORCID-Source/actions/workflows/build_test_release_tag.yml/badge.svg?branch=main)](https://github.com/ORCID/ORCID-Source/actions/workflows/build_test_release_tag.yml)
+[![commit](https://github.com/ORCID/ORCID-Source/actions/workflows/commit.yml/badge.svg)](https://github.com/ORCID/ORCID-Source/actions/workflows/commit.yml)
+[![pushmain](https://github.com/ORCID/ORCID-Source/actions/workflows/pushmain.yml/badge.svg?branch=main)](https://github.com/ORCID/ORCID-Source/actions/workflows/pushmain.yml)
+[![SAST](https://github.com/ORCID/ORCID-Source/actions/workflows/sast.yml/badge.svg?branch=main)](https://github.com/ORCID/ORCID-Source/actions/workflows/sast.yml)
 
 Welcome to ORCID Source. Here are some resources to get you started.
 

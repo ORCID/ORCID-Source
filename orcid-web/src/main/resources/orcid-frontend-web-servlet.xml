@@ -17,6 +17,7 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
 	
 	<import resource="classpath*:orcid-core-context.xml" />
+	<import resource="classpath*:orcid-api-common-public-v3-context.xml" />
     <import resource="classpath*:orcid-frontend-security.xml" />
     
     <tx:annotation-driven />
