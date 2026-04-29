@@ -81,4 +81,6 @@ public interface ResearcherUrlDao extends GenericDao<ResearcherUrlEntity, Long> 
     List<BigInteger> getIdsOfResearcherUrlsReferencingClientProfiles(int max, List<String> clientProfileOrcidIds);
 
     boolean updateVisibility(String orcid, Visibility visibility);
+
+    ResearcherUrlEntity persistIfNotExists(ResearcherUrlEntity entity);
 }
