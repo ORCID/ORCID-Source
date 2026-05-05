@@ -14,6 +14,8 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -23,48 +25,55 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpRequestUtils {
 
-    @Value("${org.orcid.http.timeout:15}")
-    private int connectionTimeout;
-    
-    public HttpResponse<String> doGet(String url) throws IOException, InterruptedException, URISyntaxException {
-        HttpRequest request = HttpRequest.newBuilder(new URI(url)).GET().build();        
-        HttpResponse<String> response = HttpClient
-                .newBuilder()
-                .build()
-                .send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
-        
-        return response;
+    @Value("${org.orcid.http.timeout:20}")
+    private int requestTimeoutSeconds;
+
+    @Value("${org.orcid.http.connect.timeout:20}")
+    private int connectTimeoutSeconds;
+
+    // Shared across all calls so the JDK HttpClient's internal HTTP/1.1 keep-alive
+    // connection pool and TLS session cache are actually reused — building a new
+    // HttpClient per request (the previous behaviour) discarded both every time,
+    // forcing a fresh TCP+TLS handshake on every call.
+    private HttpClient client;
+
+    @PostConstruct
+    void init() {
+        this.client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(connectTimeoutSeconds))
+                .build();
     }
-    
+
+    public HttpResponse<String> doGet(String url) throws IOException, InterruptedException, URISyntaxException {
+        HttpRequest request = HttpRequest.newBuilder(new URI(url))
+                .timeout(Duration.ofSeconds(requestTimeoutSeconds))
+                .GET()
+                .build();
+        return client.send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
+    }
+
+    // Per-call HttpClient retained here because JDK HttpClient sets followRedirects on the
+    // client, not per request. Low traffic to external hosts (issn.org, DOI publishers).
+    // TODO: pool by redirect policy as a follow-up.
     public HttpResponse<String> doGet(String url, String accept, Redirect redirectPolicy) throws IOException, InterruptedException, URISyntaxException {
         HttpRequest request = HttpRequest.newBuilder(new URI(url))
-                .header("accept", accept)                
+                .header("accept", accept)
                 .GET()
-                .build();        
-        HttpResponse<String> response = HttpClient
+                .build();
+        return HttpClient
                 .newBuilder()
                 .followRedirects(redirectPolicy)
                 .build()
                 .send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
-        
-        return response;
     }
-    
+
     public HttpResponse<String> doPost(String url) throws IOException, InterruptedException, URISyntaxException {
-        Duration timeout = Duration.ofSeconds(connectionTimeout);  
         HttpRequest request = HttpRequest.newBuilder(new URI(url))
-                    .version(HttpClient.Version.HTTP_1_1)
-                    .POST(HttpRequest.BodyPublishers.noBody())
-                    .timeout(timeout)
-                    .build();
-        
-        HttpResponse<String> response = HttpClient
-                .newBuilder()
-                .connectTimeout(timeout)
-                .build()
-                .send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
-        
-        return response;
+                .version(HttpClient.Version.HTTP_1_1)
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .timeout(Duration.ofSeconds(requestTimeoutSeconds))
+                .build();
+        return client.send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
     }
 
     public HttpResponse<String> doPost(String url, Map<String, String> parameters) throws IOException, InterruptedException, URISyntaxException {
@@ -77,23 +86,16 @@ public class HttpRequestUtils {
                 .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
 
-        Duration timeout = Duration.ofSeconds(connectionTimeout);
         HttpRequest.Builder builder = HttpRequest.newBuilder(new URI(url))
                 .version(HttpClient.Version.HTTP_1_1)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .POST(HttpRequest.BodyPublishers.ofString(form))
-                .timeout(timeout);
+                .timeout(Duration.ofSeconds(requestTimeoutSeconds));
 
         if (StringUtils.isNotBlank(basicAuthorizationHeader)) {
             builder.header(HttpHeaders.AUTHORIZATION, basicAuthorizationHeader);
         }
 
-        HttpRequest request = builder.build();
-
-        return HttpClient
-                .newBuilder()
-                .connectTimeout(timeout)
-                .build()
-                .send(request, BodyHandlers.ofString(StandardCharsets.UTF_8));
+        return client.send(builder.build(), BodyHandlers.ofString(StandardCharsets.UTF_8));
     }
 }
