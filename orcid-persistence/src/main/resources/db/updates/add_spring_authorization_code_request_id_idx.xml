@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="ADD-SPRING-AUTHORIZATION-CODE-REQUEST-ID-IDX"
+               author="amontenegro"
+               dbms="postgresql"
+               runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="spring_authorization_code_request_id_idx"
+                             tableName="oauth2_authoriziation_code_detail" />
+            </not>
+        </preConditions>
+        <sql>
+            CREATE INDEX CONCURRENTLY spring_authorization_code_request_id_idx
+                ON oauth2_authoriziation_code_detail
+                    (spring_authorization_code_request_id);
+        </sql>
+        <rollback>
+            <sql>DROP INDEX CONCURRENTLY IF EXISTS spring_authorization_code_request_id_idx;</sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
