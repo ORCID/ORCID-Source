@@ -393,7 +393,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         deprecateProfile.setSuccess(true);
         String twoFactorToken = UUID.randomUUID().toString();
-        redisClient.set(deprecatingEntity.getId(), twoFactorToken, 1800);
+        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, 1800);
         deprecateProfile.setTwoFactorToken(twoFactorToken);
 
         return deprecateProfile;
@@ -426,7 +426,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (twoFactorAuthenticationManager.userUsing2FA(deprecatingEntity.getId())) {
-            String storedToken = redisClient.get(deprecatingEntity.getId());
+            String storedToken = redisClient.get(deprecatingEntity.getId() + "_two-factor-token");
             if (storedToken == null || !storedToken.equals(deprecateProfile.getTwoFactorToken())) {
                 deprecateProfile.setTwoFactorToken("");
                 return deprecateProfile;
@@ -442,7 +442,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         if (deprecated) {
-            redisClient.remove(deprecatingEntity.getId());
+            redisClient.remove(deprecatingEntity.getId() + "_two-factor-token");
             if (Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
                 recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
             }

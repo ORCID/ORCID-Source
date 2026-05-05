@@ -665,7 +665,7 @@ public class ManageProfileControllerTest {
         deprecateProfile.setPassword("password");
         deprecateProfile.setTwoFactorToken("token");
 
-        when(mockRedisClient.get(DEPRECATED_USER_ORCID)).thenReturn("token");
+        when(mockRedisClient.get(DEPRECATED_USER_ORCID + "_two-factor-token")).thenReturn("token");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -682,7 +682,7 @@ public class ManageProfileControllerTest {
         deprecateProfile.setPassword("password");
         deprecateProfile.setTwoFactorToken("invalid-token");
 
-        when(mockRedisClient.get(DEPRECATED_USER_ORCID)).thenReturn("token");
+        when(mockRedisClient.get(DEPRECATED_USER_ORCID + "_two-factor-token")).thenReturn("token");
         when(twoFactorAuthenticationManager.userUsing2FA(DEPRECATED_USER_ORCID)).thenReturn(true);
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
