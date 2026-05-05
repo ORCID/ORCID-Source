@@ -40,6 +40,7 @@ import org.orcid.core.manager.v3.GivenPermissionToManager;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.RecordNameManager;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.v3.release.common.*;
@@ -148,6 +149,9 @@ public class ManageProfileControllerTest {
     private ExpiringLinkService mockExpiringLinkService;
 
     @Mock
+    private RedisClient mockRedisClient;
+
+    @Mock
     private BackupCodeManager mockBackupCodeManager;
 
     @Captor
@@ -180,6 +184,7 @@ public class ManageProfileControllerTest {
         TargetProxyHelper.injectIntoProxy(controller, "researcherUrlManagerReadOnly", mockResearcherUrlManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "externalIdentifierManagerReadOnly", mockExternalIdentifierManagerReadOnly);
         TargetProxyHelper.injectIntoProxy(controller, "expiringLinkService", mockExpiringLinkService);
+        TargetProxyHelper.injectIntoProxy(controller, "redisClient", mockRedisClient);
         TargetProxyHelper.injectIntoProxy(controller, "backupCodeManager", mockBackupCodeManager);
 
                 
@@ -416,7 +421,7 @@ public class ManageProfileControllerTest {
         assertNull(deprecateProfile.getDeprecatingAccountName());
         assertNull(deprecateProfile.getDeprecatingEmails());
         assertNull(deprecateProfile.getDeprecatingOrcid());
-        assertNull(deprecateProfile.getDeprecatingPassword());
+        assertNull(deprecateProfile.getPassword());
         assertTrue(deprecateProfile.getErrors().isEmpty());
     }
 
@@ -428,7 +433,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -452,7 +457,7 @@ public class ManageProfileControllerTest {
         // Using orcid
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -477,7 +482,7 @@ public class ManageProfileControllerTest {
         // Using orcid URL
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID_URL);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -502,7 +507,7 @@ public class ManageProfileControllerTest {
         // Using orcid trim space
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID + " ");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
         
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile.getDeprecatingAccountName());
@@ -534,7 +539,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -545,7 +550,7 @@ public class ManageProfileControllerTest {
         // Using orcid
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -565,7 +570,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -576,7 +581,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -596,7 +601,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -607,7 +612,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -623,7 +628,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
         deprecateProfile.setPrimaryOrcid(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.validateDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -638,12 +643,32 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
+        deprecateProfile.setTwoFactorToken("token");
+
+        when(mockRedisClient.get(DEPRECATED_USER_ORCID)).thenReturn("token");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
         assertTrue(deprecateProfile.getErrors().isEmpty());
         verify(mockRecordEmailSender, Mockito.times(0)).sendEmailListChangeEmail(eq(USER_ORCID), emailListChangeCaptor.capture());
+    }
+
+    @Test
+    public void testConfirmDeprecateProfileInvalidToken() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication(USER_ORCID));
+        DeprecateProfile deprecateProfile = new DeprecateProfile();
+        deprecateProfile.setPrimaryOrcid(USER_ORCID);
+        deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
+        deprecateProfile.setPassword("password");
+        deprecateProfile.setTwoFactorToken("invalid-token");
+
+        when(mockRedisClient.get(DEPRECATED_USER_ORCID)).thenReturn("token");
+
+        deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
+        assertNotNull(deprecateProfile);
+        assertFalse(deprecateProfile.getErrors().isEmpty());
+        assertEquals("deprecate_orcid.invalid_2fa_token", deprecateProfile.getErrors().get(0));
     }
     
     @Test
@@ -657,7 +682,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid("0000-0000-0000-0123");
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0124");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -677,7 +702,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid("0000-0000-0000-0123");
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0124");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -692,7 +717,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid("0000-0000-0000-0003");
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0004");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNotNull(deprecateProfile);
@@ -709,7 +734,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -721,7 +746,7 @@ public class ManageProfileControllerTest {
         // Using orcid
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("invalid password");
+        deprecateProfile.setPassword("invalid password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -741,7 +766,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -753,7 +778,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -774,7 +799,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setPrimaryOrcid(USER_ORCID);
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -786,7 +811,7 @@ public class ManageProfileControllerTest {
         // Using email
         deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail("0000-0000-0000-0002_1@test.orcid.org");
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
@@ -803,7 +828,7 @@ public class ManageProfileControllerTest {
         DeprecateProfile deprecateProfile = new DeprecateProfile();
         deprecateProfile.setDeprecatingOrcidOrEmail(DEPRECATED_USER_ORCID);
         deprecateProfile.setPrimaryOrcid(DEPRECATED_USER_ORCID);
-        deprecateProfile.setDeprecatingPassword("password");
+        deprecateProfile.setPassword("password");
 
         deprecateProfile = controller.confirmDeprecateProfile(deprecateProfile);
         assertNull(deprecateProfile.getDeprecatingAccountName());
