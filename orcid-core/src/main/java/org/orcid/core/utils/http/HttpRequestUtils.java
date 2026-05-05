@@ -25,10 +25,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class HttpRequestUtils {
 
-    @Value("${org.orcid.http.timeout:15}")
+    @Value("${org.orcid.http.timeout:20}")
     private int requestTimeoutSeconds;
 
-    @Value("${org.orcid.http.connect.timeout:10}")
+    @Value("${org.orcid.http.connect.timeout:20}")
     private int connectTimeoutSeconds;
 
     // Shared across all calls so the JDK HttpClient's internal HTTP/1.1 keep-alive
