@@ -33,17 +33,27 @@ public class WorksPaginator {
     public static final String DATE_SORT_KEY = "date";
 
     public static final String TYPE_SORT_KEY = "type";
-    
+
+    static final int MAX_PAGE_SIZE = 100;
+
     @Resource(name = "workManagerReadOnlyV3")
     private WorkManagerReadOnly workManagerReadOnly;
 
     @Resource
     private WorksCacheManager worksCacheManager;
-    
+
     @Resource
     private WorksExtendedCacheManager worksExtendedCacheManager;
-    
+
+    private int clampPageSize(int pageSize) {
+        if (pageSize <= 0 || pageSize > MAX_PAGE_SIZE) {
+            return MAX_PAGE_SIZE;
+        }
+        return pageSize;
+    }
+
     public Page<WorkGroup> getWorksPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
+        pageSize = clampPageSize(pageSize);
         Works works = worksCacheManager.getGroupedWorks(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {
@@ -68,6 +78,7 @@ public class WorksPaginator {
     }
 
     public Page<WorkGroup> getWorksExtendedPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
+        pageSize = clampPageSize(pageSize);
         WorksExtended works = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
         if (works != null) {

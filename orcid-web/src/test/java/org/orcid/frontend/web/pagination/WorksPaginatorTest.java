@@ -100,6 +100,23 @@ public class WorksPaginatorTest {
     }
 
     @Test
+    public void testPageSizeIsCapped() {
+        Mockito.when(worksCacheManager.getGroupedWorks(Mockito.anyString())).thenReturn(getPublicWorkGroups(1000));
+
+        Page<org.orcid.pojo.grouping.WorkGroup> overCap = worksPaginator.getWorksPage("orcid", 0, 500, false, WorksPaginator.DATE_SORT_KEY, true);
+        assertEquals(WorksPaginator.MAX_PAGE_SIZE, overCap.getGroups().size());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> zero = worksPaginator.getWorksPage("orcid", 0, 0, false, WorksPaginator.DATE_SORT_KEY, true);
+        assertEquals(WorksPaginator.MAX_PAGE_SIZE, zero.getGroups().size());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> negative = worksPaginator.getWorksPage("orcid", 0, -1, false, WorksPaginator.DATE_SORT_KEY, true);
+        assertEquals(WorksPaginator.MAX_PAGE_SIZE, negative.getGroups().size());
+
+        Page<org.orcid.pojo.grouping.WorkGroup> underCap = worksPaginator.getWorksPage("orcid", 0, 25, false, WorksPaginator.DATE_SORT_KEY, true);
+        assertEquals(25, underCap.getGroups().size());
+    }
+
+    @Test
     public void testGetPublicWorksPage() {
         int pageSize = 100; 
         
