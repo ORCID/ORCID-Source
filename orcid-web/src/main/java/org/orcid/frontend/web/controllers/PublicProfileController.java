@@ -464,6 +464,10 @@ public class PublicProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/worksExtendedPage.json", method = RequestMethod.GET)
     public @ResponseBody Page<WorkGroup> getWorksExtendedGroupsJson(@PathVariable("orcid") String orcid, @RequestParam(value="pageSize", defaultValue = PAGE_SIZE_DEFAULT) int pageSize, @RequestParam("offset") int offset, @RequestParam("sort") String sort,
                                                            @RequestParam("sortAsc") boolean sortAsc) {
+        if(pageSize > maxWorksPerPageForUI) {
+            // If the page size is greater than the max works per page for UI, return an empty page.
+            return new Page<WorkGroup>();
+        }
         try {
             orcidSecurityManager.checkProfile(orcid);
         } catch (Exception e) {
