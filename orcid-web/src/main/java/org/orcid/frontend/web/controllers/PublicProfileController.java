@@ -154,6 +154,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     @Resource(name = "profileEntityManagerReadOnlyV3")
     private ProfileEntityManagerReadOnly profileEntityManagerReadOnly;
 
+    @Value("${org.orcid.frontend.web.controllers.works.page.max.items:100}")
+    private int maxWorksPerPageForUI;
+
     public static int ORCID_HASH_LENGTH = 8;
     private static final String PAGE_SIZE_DEFAULT = "50";
 
@@ -449,6 +452,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         try {
             orcidSecurityManager.checkProfile(orcid);
         } catch (Exception e) {
+            return new Page<WorkGroup>();
+        }
+        if(pageSize > maxWorksPerPageForUI) {
+            // If the page size is greater than the max works per page for UI, return an empty page.
             return new Page<WorkGroup>();
         }
         return worksPaginator.getWorksPage(orcid, offset, pageSize, true, sort, sortAsc);
