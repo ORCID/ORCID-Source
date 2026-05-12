@@ -1,6 +1,11 @@
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -44,6 +49,44 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
             }
         }
         return clientDetails;
+    }
+
+    @Override
+    public Map<String, ClientDetailsEntity> retrieveAll(Collection<String> clientIds) {
+        Map<String, ClientDetailsEntity> clientDetailsById = new HashMap<>();
+        if (clientIds == null || clientIds.isEmpty()) {
+            return clientDetailsById;
+        }
+
+        List<String> clientIdList = new ArrayList<>(clientIds);
+        Map<String, Date> lastModifiedByClientId = clientDetailsManager.getLastModifiedByClientIds(clientIdList);
+        if (lastModifiedByClientId == null) {
+            return clientDetailsById;
+        }
+        List<String> staleOrMissingClientIds = new ArrayList<>();
+
+        for (String clientId : clientIdList) {
+            Date dbDate = lastModifiedByClientId.get(clientId);
+            if (dbDate == null) {
+                continue;
+            }
+            Object key = new ClientIdCacheKey(clientId, releaseName);
+            ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
+            if (needsFresh(dbDate, clientDetails)) {
+                staleOrMissingClientIds.add(clientId);
+            } else {
+                clientDetailsById.put(clientId, clientDetails);
+            }
+        }
+
+        if (!staleOrMissingClientIds.isEmpty()) {
+            for (ClientDetailsEntity clientDetails : clientDetailsManager.findByClientIds(staleOrMissingClientIds)) {
+                clientDetailsCache.put(new ClientIdCacheKey(clientDetails.getId(), releaseName), clientDetails);
+                clientDetailsById.put(clientDetails.getId(), clientDetails);
+            }
+        }
+
+        return clientDetailsById;
     }
 
     @Override

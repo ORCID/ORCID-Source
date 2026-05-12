@@ -3,13 +3,11 @@ package org.orcid.core.manager.v3.read_only.impl;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ForkJoinPool;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
@@ -59,6 +57,7 @@ import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -115,14 +114,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
-
-    @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.min.works.to.parallelize:20}")
-    private int minWorksToParallelize;
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Initializing WorkManagerReadOnlyImpl: minWorksToParallelize = " + minWorksToParallelize);
-    }
 
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
@@ -206,22 +197,15 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        List<WorkSummary> workSummaryResult = Arrays.asList();
-        // Lets implement a parallel stream for when there are more than 10 works to be processed
-        if(works.size() < minWorksToParallelize) {
-            workSummaryResult = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
-        } else {
-            try {
-                // Execute the parallel stream within the custom thread pool
-                workSummaryResult = ForkJoinPool.commonPool().submit(() ->
-                        works.parallelStream().map(minimizedWorkEntity -> jpaJaxbWorkAdapter.toWorkSummary(minimizedWorkEntity)).collect(Collectors.toList())
-                ).get(); // use .get() to wait for completion and propagate exceptions
-
-            } catch (Exception e) {
-                LOGGER.error("Error while generating the list of work summaries in parallel", e);
-            }
+        Set<String> clientIds = works.stream()
+                .map(MinimizedWorkEntity::getClientSourceId)
+                .filter(clientId -> !PojoUtil.isEmpty(clientId))
+                .collect(Collectors.toSet());
+        if (clientIds.isEmpty()) {
+            return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
         }
-        return workSummaryResult;
+        Map<String, ClientDetailsEntity> clientDetailsById = clientDetailsEntityCacheManager.retrieveAll(clientIds);
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, clientDetailsById);
     }
 
     /**

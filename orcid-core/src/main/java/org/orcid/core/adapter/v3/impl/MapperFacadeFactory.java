@@ -387,9 +387,16 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
+        @SuppressWarnings("unchecked")
         @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
-            Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager);
+            Map<String, ClientDetailsEntity> clientDetailsById = null;
+            if (context != null) {
+                // Orika context stores values as Object; this key is only set with this map type.
+                clientDetailsById = (Map<String, ClientDetailsEntity>) context.getProperty(SourceEntityUtils.CLIENT_DETAILS_BY_ID_MAPPING_CONTEXT_KEY);
+            }
+            Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager,
+                    clientDetailsById);
             a.setSource(source);
         }
     }
