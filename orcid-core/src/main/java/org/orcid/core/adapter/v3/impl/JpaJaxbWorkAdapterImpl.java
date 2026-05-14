@@ -9,6 +9,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -105,12 +106,12 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
     }
 
     @Override
-    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, Map<String, ClientDetailsEntity> clientDetailsById) {
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, Map<String, Source> sourceMap) {
         if(workEntities == null) {
             return null;
         }
         MappingContext context = new MappingContext.Factory().getContext();
-        context.setProperty(SourceEntityUtils.CLIENT_DETAILS_BY_ID_MAPPING_CONTEXT_KEY, clientDetailsById);
+        context.setProperty(SourceEntityUtils.SOURCE_MAP, sourceMap);
         return mapperFacade.mapAsList(workEntities, WorkSummary.class, context);
     }
 

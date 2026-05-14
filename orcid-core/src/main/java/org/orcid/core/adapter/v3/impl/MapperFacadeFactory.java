@@ -390,14 +390,16 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         @SuppressWarnings("unchecked")
         @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
-            Map<String, ClientDetailsEntity> clientDetailsById = null;
-            if (context != null) {
-                // Orika context stores values as Object; this key is only set with this map type.
-                clientDetailsById = (Map<String, ClientDetailsEntity>) context.getProperty(SourceEntityUtils.CLIENT_DETAILS_BY_ID_MAPPING_CONTEXT_KEY);
+            if (context != null && context.getProperty(SourceEntityUtils.SOURCE_MAP) != null) {
+                // The source map is set in the context, so we can use it to set the source.
+                Map<String, Source> sourceMap = (Map<String, Source>) context.getProperty(SourceEntityUtils.SOURCE_MAP);
+                Source source = sourceMap.get(SourceEntityUtils.getSourceKey(b));
+                a.setSource(source);
+            } else {
+                // We have to manually build the source elements
+                Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager, null);
+                a.setSource(source);
             }
-            Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager,
-                    clientDetailsById);
-            a.setSource(source);
         }
     }
 

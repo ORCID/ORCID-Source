@@ -1,6 +1,7 @@
 package org.orcid.core.utils;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -21,13 +22,10 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class SourceEntityUtils {
 
-    public static final String CLIENT_DETAILS_BY_ID_MAPPING_CONTEXT_KEY = "clientDetailsById";
+    public static final String SOURCE_MAP = "sourceMap";
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
-
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
 
     public String getSourceName(SourceEntity sourceEntity) {
         if (sourceEntity.getCachedSourceName() != null) {
@@ -42,23 +40,6 @@ public class SourceEntityUtils {
             return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
         }
         return null;
-    }
-
-    /**
-     * Call this method before storing in cache to prevent a whole profile or
-     * client being serialized.
-     * 
-     * WARNING: The entity must be detached (using DAO) so that the source is
-     * not made null in DB.
-     */
-    public void prepareForCache(SourceEntity sourceEntity) {
-        if (!sourceEntity.isDetached()) {
-            throw new IllegalStateException("Must not prepare source entity for cache, unless it is detached");
-        }
-        sourceEntity.setCachedSourceId(getSourceId(sourceEntity));
-        sourceEntity.setCachedSourceName(getSourceName(sourceEntity));
-        sourceEntity.setSourceClient(null);
-        sourceEntity.setSourceProfile(null);
     }
 
     public static String getSourceId(SourceEntity sourceEntity) {
@@ -155,13 +136,6 @@ public class SourceEntityUtils {
     }
 
     public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager,
-            ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
-        Source s = extractSourceFromEntity(b, clientDetailsEntityCacheManager);
-        populateSource(s, sourceNameCacheManager, orcidUrlManager);
-        return s;
-    }
-
-    public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager,
             ClientDetailsEntityCacheManager clientDetailsEntityCacheManager, Map<String, ClientDetailsEntity> clientDetailsById) {
         Source s = extractSourceFromEntity(b, clientDetailsEntityCacheManager, clientDetailsById);
         populateSource(s, sourceNameCacheManager, orcidUrlManager);
@@ -250,5 +224,12 @@ public class SourceEntityUtils {
             ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
         Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
         return existing.equals(activeSource);
+    }
+
+    public static String getSourceKey(SourceAwareEntity<?> e) {
+        String sourceOrcid = Optional.ofNullable(e.getSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        String clientSourceId = Optional.ofNullable(e.getClientSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        String assertionOriginClientSourceId = Optional.ofNullable(e.getAssertionOriginClientSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        return String.join("|", sourceOrcid, clientSourceId, assertionOriginClientSourceId);
     }
 }
