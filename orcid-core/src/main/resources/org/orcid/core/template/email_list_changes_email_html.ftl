@@ -32,7 +32,7 @@
 				</#if>
 			</p>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-				<@emailMacros.msg "email.security.if_you_did_not_make_these_changes" /> <a href="https://orcid.org/reset-password" rel="noopener noreferrer" target="_blank"><@emailMacros.msg "email.security.update_your_password" /></a> <@emailMacros.msg "email.changes.and_remove" />
+                <@emailMacros.msg "email.security.note.shared.1" /><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.2" /><@emailMacros.space />&mdash;<@emailMacros.space /><@emailMacros.msg "email.security.note.shared.3" /><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.4" /><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.5" /><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.take_action" /><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.actions.action.1" /><@emailMacros.space /><a href="https://orcid.org/reset-password" rel="noopener noreferrer" target="_blank"><@emailMacros.msg "email.security.note.shared.actions.action.2" /></a><@emailMacros.msg "email.common.comma" /><@emailMacros.space /><@emailMacros.msg "email.security.note.actions.remove_emails" /><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.actions.support.1" /><@emailMacros.space /><a href="https://support.orcid.org/hc/en-us/requests/new" rel="noopener noreferrer" target="_blank"><@emailMacros.msg "email.security.note.shared.actions.support.2" /></a><@emailMacros.space /><@emailMacros.msg "email.security.note.shared.actions.support.3" />
 			</p>
 			<#include "email_footer_security_html.ftl"/>
 		 </div>
