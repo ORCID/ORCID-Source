@@ -48,6 +48,7 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
     @Override
     public EmailDomainEntity createEmailDomain(String emailDomain, DomainCategory category) {        
         validateEmailDomain(emailDomain);
+        emailDomain = emailDomain.toLowerCase().trim();
         if (category == null) {
             throw new IllegalArgumentException("Category must not be empty");
         }
@@ -74,6 +75,7 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
         if (emailDomain == null || emailDomain.isBlank()) {
             throw new IllegalArgumentException("Email Domain must not be empty");
         }
+        emailDomain = emailDomain.toLowerCase().trim();
 
         List<EmailDomain> cachedEmailDomain = getEmailDomainCache(emailDomain);
         if (cachedEmailDomain != null) {
@@ -124,6 +126,10 @@ public class EmailDomainManagerImpl implements EmailDomainManager {
 
     @Override
     public STATUS createOrUpdateEmailDomain(String emailDomain, String rorId) {
+        if (emailDomain == null || emailDomain.isBlank()) {
+            throw new IllegalArgumentException("Email Domain must not be empty");
+        }
+        emailDomain = emailDomain.toLowerCase().trim();
         List<EmailDomainEntity>  existingEntities = emailDomainDaoReadOnly.findByEmailDomain(emailDomain);
         if(existingEntities != null && !existingEntities.isEmpty()) {
             if(existingEntities.size() == 1) {
