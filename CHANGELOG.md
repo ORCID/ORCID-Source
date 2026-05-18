@@ -1,3 +1,9 @@
+## v2.141.5 - 2026-05-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.4...v2.141.5)
+
+- [#7518](https://github.com/ORCID/ORCID-Source/pull/7518): Security email updates
+
 ## v2.141.4 - 2026-05-15
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.3...v2.141.4)
