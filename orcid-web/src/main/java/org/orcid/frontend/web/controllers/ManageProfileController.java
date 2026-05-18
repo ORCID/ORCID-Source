@@ -41,6 +41,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -139,6 +140,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
     }
+
+    @Value("${org.orcid.security.two_factor.token_ttl:1800}")
+    private int twoFactorTokenTtl;
     
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
@@ -393,7 +397,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         deprecateProfile.setSuccess(true);
         String twoFactorToken = UUID.randomUUID().toString();
-        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, 1800);
+        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, twoFactorTokenTtl);
         deprecateProfile.setTwoFactorToken(twoFactorToken);
 
         return deprecateProfile;
