@@ -1255,16 +1255,7 @@
 		<constructor-arg index="4" value="${org.orcid.core.utils.cache.redis.connection_timeout_millis:10000}" />
 	</bean>
 
-    <!-- Redis token cache -->
-	<bean id="redisTokenCacheClient" class="org.orcid.core.utils.cache.redis.RedisClient">
-		<constructor-arg index="0" value="${org.orcid.core.utils.cache.session.redis.host}"/>
-        <constructor-arg index="1" value="${org.orcid.core.utils.cache.session.redis.port}" />
-        <constructor-arg index="2" value="${org.orcid.core.utils.cache.session.redis.password}" />
-        <constructor-arg index="3" value="${org.orcid.core.utils.cache.session.redis.expiration_in_secs:600}" />
-        <constructor-arg index="4" value="${org.orcid.core.utils.cache.session.redis.connection_timeout_millis:10000}" />
-    </bean>
-	
-	<!-- Redis rate limit cache -->
+    <!-- Redis rate limit cache -->
 	<bean id="redisClientPapi" class="org.orcid.core.utils.cache.redis.RedisClient">
 		<constructor-arg index="0" value="${org.orcid.core.utils.cache.papi.redis.host}"/>
 		<constructor-arg index="1" value="${org.orcid.core.utils.cache.papi.redis.port}" />

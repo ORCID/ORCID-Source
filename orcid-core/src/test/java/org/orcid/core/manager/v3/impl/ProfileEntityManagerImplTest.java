@@ -342,10 +342,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(CLIENT_ID_1, applications.get(0).getClientId());
         assertEquals(CLIENT_ID_2, applications.get(1).getClientId());
 
-        //Assert we can delete them
-        profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
-        profileEntityManager.disableClientAccess(CLIENT_ID_2, USER_ORCID);
-        
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertTrue(applications.isEmpty());
@@ -378,10 +374,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ORCID_PROFILE_READ_LIMITED.toString()));
         assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.ACTIVITIES_UPDATE.toString()));
         assertTrue(applications.get(0).getScopePaths().keySet().contains(ScopePathType.PERSON_READ_LIMITED.toString()));
-        
-        //Revoke them to check revoking one revokes all the ones with the same scopes
-        profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
-        
+
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertTrue(applications.isEmpty());
@@ -398,9 +391,6 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
         assertEquals(1, applications.size());
-        
-        //Revoke them to check revoking one revokes all the ones with the same scopes
-        profileEntityManager.disableClientAccess(CLIENT_ID_1, USER_ORCID);
         
         applications = profileEntityManager.getApplications(USER_ORCID);
         assertNotNull(applications);
@@ -428,7 +418,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
     }
     
     @Transactional
-    private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
+    public OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setApproved(true);
         token.setClientDetailsId(clientId);

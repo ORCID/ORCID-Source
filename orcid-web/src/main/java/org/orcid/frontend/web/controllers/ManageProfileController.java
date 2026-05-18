@@ -27,6 +27,7 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.service.TrustedPartiesService;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -135,6 +136,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private RedisClient redisClient;
+
+    @Resource
+    private TrustedPartiesService trustedPartiesService;
 
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -256,7 +260,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
-        profileEntityManager.disableClientAccess(clientId, getCurrentUserOrcid());
+        if(StringUtils.isNotBlank(clientId)) {
+            trustedPartiesService.disableClientAccess(clientId, getCurrentUserOrcid());
+        }
         return true;
     }
 
