@@ -39,7 +39,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
     
     @Resource
-    private RedisClient redisClient;
+    private RedisClient redisTokenCacheClient;
     
     @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
     private boolean isTokenCacheEnabled;
@@ -142,7 +142,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     public void revokeAccessToken(String accessToken) {
         // Remove the token from the cache
         if(isTokenCacheEnabled) {
-            redisClient.remove(accessToken);
+            try {
+                redisTokenCacheClient.remove(accessToken);
+            } catch(Exception e) {
+                LOGGER.info("Unable to remove token from cache", e);
+            }
         }
         // Revoke the token
         orcidOauth2TokenDetailDao.revokeAccessToken(accessToken);
@@ -244,7 +248,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         for(String accessToken : tokensToDisable) {
             LOGGER.info("Token {} will be disabled because auth code {} was reused", accessToken, authorizationCode);
             if(isTokenCacheEnabled) {
-                redisClient.remove(accessToken);
+                try {
+                    redisTokenCacheClient.remove(accessToken);
+                } catch(Exception e) {
+                    LOGGER.info("Unable to remove token from cache", e);
+                }
             }            
         }
         // Disable them
@@ -265,7 +273,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         if(userTokens != null && !userTokens.isEmpty()) {
             for(OrcidOauth2TokenDetail token : userTokens) {
                 if(clientDetailsId.equals(token.getClientDetailsId())) {
-                    redisClient.remove(token.getTokenValue());
+                    try {
+                        redisTokenCacheClient.remove(token.getTokenValue());
+                    } catch(Exception e) {
+                        LOGGER.info("Unable to remove token from cache", e);
+                    }
                 }
             }
         }
