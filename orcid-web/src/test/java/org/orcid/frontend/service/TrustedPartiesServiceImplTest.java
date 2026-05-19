@@ -7,8 +7,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -50,6 +52,7 @@ public class TrustedPartiesServiceImplTest {
         OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
         token.setClientDetailsId(clientDetailsId);
         token.setTokenValue(tokenValue);
+        token.setTokenExpiration(Date.from(Instant.now().plusSeconds(10)));
         
         List<OrcidOauth2TokenDetail> userTokens = Collections.singletonList(token);
         

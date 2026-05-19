@@ -29,9 +29,13 @@ public class TrustedPartiesServiceImpl implements TrustedPartiesService {
     private List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientDetailsId, String userOrcid) {
         try {
             List<OrcidOauth2TokenDetail> allTokens = orcidOauth2TokenDetailDaoReadOnly.findByClientIdAndUserName(clientDetailsId, userOrcid);
-            Date now = new Date();
-            // Return only active tokens
-            return allTokens.stream().filter(token -> (token.getTokenExpiration() != null && token.getTokenExpiration().after(now) && (token.getTokenDisabled() == null || !token.getTokenDisabled()))).collect(Collectors.toList());
+            if(allTokens != null && !allTokens.isEmpty()) {
+                Date now = new Date();
+                // Return only active tokens
+                return allTokens.stream().filter(token -> (token.getTokenExpiration() != null && token.getTokenExpiration().after(now) && (token.getTokenDisabled() == null || !token.getTokenDisabled()))).collect(Collectors.toList());
+            } else {
+                return null;
+            }
         } catch (NoResultException e) {
             LOGGER.debug("No token found for orcid {}", e, userOrcid);
             return null;
