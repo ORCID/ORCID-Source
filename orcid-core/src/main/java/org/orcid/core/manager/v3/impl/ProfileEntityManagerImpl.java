@@ -291,11 +291,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void disableClientAccess(String clientDetailsId, String userOrcid) {
-        orcidOauth2TokenService.disableClientAccess(clientDetailsId, userOrcid);
-    }
-
-    @Override
     public List<ApplicationSummary> getApplications(String orcid) {
         // TODO: Use the authorization server to build this list of tokens
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
