@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TrustedPartiesServiceImpl implements TrustedPartiesService {
 
@@ -24,11 +26,14 @@ public class TrustedPartiesServiceImpl implements TrustedPartiesService {
     @Resource
     private RedisClient redisTokenCacheClient;
 
-    public List<OrcidOauth2TokenDetail> findByUserName(String userName) {
+    private List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientDetailsId, String userOrcid) {
         try {
-            return orcidOauth2TokenDetailDaoReadOnly.findByUserName(userName);
+            List<OrcidOauth2TokenDetail> allTokens = orcidOauth2TokenDetailDaoReadOnly.findByClientIdAndUserName(clientDetailsId, userOrcid);
+            Date now = new Date();
+            // Return only active tokens
+            return allTokens.stream().filter(token -> (token.getTokenExpiration() != null && token.getTokenExpiration().after(now) && (token.getTokenDisabled() == null || !token.getTokenDisabled()))).collect(Collectors.toList());
         } catch (NoResultException e) {
-            LOGGER.debug("No token found for username {}", e, userName);
+            LOGGER.debug("No token found for orcid {}", e, userOrcid);
             return null;
         }
     }
@@ -36,19 +41,17 @@ public class TrustedPartiesServiceImpl implements TrustedPartiesService {
     @Transactional
     public void disableClientAccess(String clientDetailsId, String userOrcid) {
         // As a security measure, remove any user tokens from the cache
-        List<OrcidOauth2TokenDetail> userTokens = findByUserName(userOrcid);
+        List<OrcidOauth2TokenDetail> userTokens = findByClientIdAndUserName(clientDetailsId, userOrcid);
         if(userTokens != null && !userTokens.isEmpty()) {
             for(OrcidOauth2TokenDetail token : userTokens) {
-                if(clientDetailsId.equals(token.getClientDetailsId())) {
-                    try {
-                        redisTokenCacheClient.remove(token.getTokenValue());
-                    } catch(Exception e) {
-                        LOGGER.info("Unable to remove token from cache", e);
-                    }
+                try {
+                    redisTokenCacheClient.remove(token.getTokenValue());
+                } catch(Exception e) {
+                    LOGGER.info("Unable to remove token from cache", e);
                 }
             }
+            // And then disable all user tokens
+            orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
         }
-        // And then disable all user tokens
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
     }
 }
