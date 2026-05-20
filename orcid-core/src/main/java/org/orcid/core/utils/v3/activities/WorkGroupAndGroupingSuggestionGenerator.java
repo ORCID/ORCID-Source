@@ -101,10 +101,11 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
     }
 
     private void switchGroup(ActivitiesGroup oldGroup, ActivitiesGroup newGroup) {
-        for (String title : potentialGroupingSuggestions.keySet()) {
-            List<ActivitiesGroup> mappedGroups = potentialGroupingSuggestions.get(title);
-            if (mappedGroups.contains(oldGroup)) {
-                mappedGroups.remove(oldGroup);
+        if (oldGroup == newGroup) {
+            return;
+        }
+        for (List<ActivitiesGroup> mappedGroups : potentialGroupingSuggestions.values()) {
+            if (mappedGroups.remove(oldGroup)) {
                 if (!mappedGroups.contains(newGroup)) {
                     mappedGroups.add(newGroup);
                 }

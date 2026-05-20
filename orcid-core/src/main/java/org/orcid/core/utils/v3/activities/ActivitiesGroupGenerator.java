@@ -2,15 +2,17 @@ package org.orcid.core.utils.v3.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 
-    protected List<ActivitiesGroup> groups = new ArrayList<ActivitiesGroup>();
+    protected Set<ActivitiesGroup> groups = new LinkedHashSet<ActivitiesGroup>();
     
     private Map<GroupAble, ActivitiesGroup> lookup = new HashMap<GroupAble, ActivitiesGroup>();
     
@@ -42,7 +44,7 @@ public class ActivitiesGroupGenerator {
     }
     
     public List<ActivitiesGroup> getGroups() {
-        return groups;
+        return new ArrayList<ActivitiesGroup>(groups);
     }
     
     protected ActivitiesGroup createNewGroup(GroupableActivity activity) {
@@ -54,10 +56,14 @@ public class ActivitiesGroupGenerator {
     
     protected List<ActivitiesGroup> generateBelongsToList(GroupableActivity activity) {
         List<ActivitiesGroup> belongsTo = new ArrayList<ActivitiesGroup>();
-        ActivitiesGroup thisGroup = new ActivitiesGroup(activity);
-        for (GroupAble g :thisGroup.getGroupKeys()){
-            if (lookup.containsKey(g)) {
-                belongsTo.add(lookup.get(g));
+        if (activity != null && activity.getExternalIdentifiers() != null) {
+            for (GroupAble extId : activity.getExternalIdentifiers().getExternalIdentifier()) {
+                if (extId.isGroupAble()) {
+                    ActivitiesGroup group = lookup.get(extId);
+                    if (group != null && !belongsTo.contains(group)) {
+                        belongsTo.add(group);
+                    }
+                }
             }
         }
         return belongsTo;

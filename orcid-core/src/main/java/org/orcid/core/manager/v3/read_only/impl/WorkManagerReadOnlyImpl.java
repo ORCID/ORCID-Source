@@ -235,78 +235,158 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid, featuredOnly);
         // Filter the contributors list
-        for (WorkSummaryExtended wse : wseList) {
-            if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
-                wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
-            } else {
-                List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(),
-                        maxContributorsForUI);
-                wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
-                wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
+        try {
+            ForkJoinPool.commonPool().submit(() ->
+                wseList.parallelStream().forEach(wse -> {
+                    if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                        wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
+                    } else {
+                        List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(),
+                                maxContributorsForUI);
+                        wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                        wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
+                    }
+                })
+            ).get();
+        } catch (Exception e) {
+            LOGGER.error("Error while processing contributors in parallel", e);
+            // Fallback to sequential if parallel fails
+            for (WorkSummaryExtended wse : wseList) {
+                if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
+                    wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
+                } else {
+                    List<ContributorsRolesAndSequences> contributorsGroupedByOrcid = contributorUtils.getContributorsGroupedByOrcid(wse.getContributors().getContributor(),
+                            maxContributorsForUI);
+                    wse.setContributorsGroupedByOrcid(contributorsGroupedByOrcid);
+                    wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
+                }
             }
         }
         return wseList;
     }
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean featuredOnly) {
-        List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
         List<Object[]> list = workDao.getWorksByOrcid(orcid, featuredOnly);
-        for (Object[] q1 : list) {
-            BigInteger putCode = (BigInteger) q1[0];
-            String workType = isEmpty(q1[1]);
-            String title = isEmpty(q1[2]);
-            String journalTitle = isEmpty(q1[3]);
-            String externalIdsJson = isEmpty(q1[4]);
-            String publicationYear = isEmpty(q1[5]);
-            String publicationMonth = isEmpty(q1[6]);
-            String publicationDay = isEmpty(q1[7]);
-            String visibility = isEmpty(q1[8]);
-            BigInteger displayIndex = (BigInteger) q1[9];
-            String sourceId = isEmpty(q1[10]);
-            String clientSourceId = isEmpty(q1[11]);
-            String assertionOriginSourceId = isEmpty(q1[12]);
-            String assertionOriginClientSourceId = isEmpty(q1[13]);
-            Timestamp createdDate = (Timestamp) q1[14];
-            Timestamp lastModifiedDate = (Timestamp) q1[15];
-            String contributors = isEmpty(q1[16]);
-            int featuredDisplayIndex = (int) q1[17];
-            ExternalIDs externalIDs = null;
-            if (externalIdsJson != null) {
-                externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson, null);
-            }
-            String sourceName = null;
-            String assertionOriginName = null;
-            if (clientSourceId != null) {
-                assertionOriginSourceId = contributorUtils.getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager, workDao);
-            }
-            if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
-                assertionOriginName = contributorUtils.getSourceName(assertionOriginSourceId, sourceNameCacheManager);
-            }
-            if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
-                assertionOriginName = contributorUtils.getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
-            }
-            if (!PojoUtil.isEmpty(sourceId)) {
-                sourceName = contributorUtils.getSourceName(sourceId, sourceNameCacheManager);
-            }
-            if (!PojoUtil.isEmpty(clientSourceId)) {
-                sourceName = contributorUtils.getSourceName(clientSourceId, sourceNameCacheManager);
-            }
-            List<WorkContributorsList> contributorList = new ArrayList<>();
-            List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
+        List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
+        try {
+            workSummaryExtendedList = ForkJoinPool.commonPool().submit(() ->
+                list.parallelStream().map(q1 -> {
+                    BigInteger putCode = (BigInteger) q1[0];
+                    String workType = isEmpty(q1[1]);
+                    String title = isEmpty(q1[2]);
+                    String journalTitle = isEmpty(q1[3]);
+                    String externalIdsJson = isEmpty(q1[4]);
+                    String publicationYear = isEmpty(q1[5]);
+                    String publicationMonth = isEmpty(q1[6]);
+                    String publicationDay = isEmpty(q1[7]);
+                    String visibility = isEmpty(q1[8]);
+                    BigInteger displayIndex = (BigInteger) q1[9];
+                    String sourceId = isEmpty(q1[10]);
+                    String clientSourceId = isEmpty(q1[11]);
+                    String assertionOriginSourceId = isEmpty(q1[12]);
+                    String assertionOriginClientSourceId = isEmpty(q1[13]);
+                    Timestamp createdDate = (Timestamp) q1[14];
+                    Timestamp lastModifiedDate = (Timestamp) q1[15];
+                    String contributors = isEmpty(q1[16]);
+                    int featuredDisplayIndex = (int) q1[17];
+                    ExternalIDs externalIDs = null;
+                    if (externalIdsJson != null) {
+                        externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson, null);
+                    }
+                    String sourceName = null;
+                    String assertionOriginName = null;
+                    if (clientSourceId != null) {
+                        assertionOriginSourceId = contributorUtils.getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager, workDao);
+                    }
+                    if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
+                        assertionOriginName = contributorUtils.getSourceName(assertionOriginSourceId, sourceNameCacheManager);
+                    }
+                    if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
+                        assertionOriginName = contributorUtils.getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
+                    }
+                    if (!PojoUtil.isEmpty(sourceId)) {
+                        sourceName = contributorUtils.getSourceName(sourceId, sourceNameCacheManager);
+                    }
+                    if (!PojoUtil.isEmpty(clientSourceId)) {
+                        sourceName = contributorUtils.getSourceName(clientSourceId, sourceNameCacheManager);
+                    }
+                    List<WorkContributorsList> contributorList = new ArrayList<>();
+                    List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 
-            if (contributors != null && !"".equals(contributors)) {
-                contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
-            } else {
-                contributorList = workContributorsConverter.getContributorsList(contributors);
-            }
+                    if (contributors != null && !"".equals(contributors)) {
+                        contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
+                    } else {
+                        contributorList = workContributorsConverter.getContributorsList(contributors);
+                    }
 
-            WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate,
-                    lastModifiedDate).journalTitle(journalTitle).externalIdsJson(externalIDs).publicationYear(publicationYear).publicationMonth(publicationMonth)
-                            .publicationDay(publicationDay).visibility(visibility).sourceName(sourceName).assertionOriginName(assertionOriginName)
-                            .displayIndex(displayIndex).featuredDisplayIndex(featuredDisplayIndex).assertionOriginSourceId(assertionOriginSourceId)
-                            .assertionOriginClientSourceId(assertionOriginClientSourceId).contributors(contributorList).topContributors(contributorsRolesAndSequencesList)
-                            .build();
-            workSummaryExtendedList.add(wse);
+                    return new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate,
+                            lastModifiedDate).journalTitle(journalTitle).externalIdsJson(externalIDs).publicationYear(publicationYear).publicationMonth(publicationMonth)
+                                    .publicationDay(publicationDay).visibility(visibility).sourceName(sourceName).assertionOriginName(assertionOriginName)
+                                    .displayIndex(displayIndex).featuredDisplayIndex(featuredDisplayIndex).assertionOriginSourceId(assertionOriginSourceId)
+                                    .assertionOriginClientSourceId(assertionOriginClientSourceId).contributors(contributorList).topContributors(contributorsRolesAndSequencesList)
+                                    .build();
+                }).collect(Collectors.toList())
+            ).get();
+        } catch (Exception e) {
+            LOGGER.error("Error while retrieving work summary extended in parallel", e);
+            // Fallback to sequential
+            for (Object[] q1 : list) {
+                BigInteger putCode = (BigInteger) q1[0];
+                String workType = isEmpty(q1[1]);
+                String title = isEmpty(q1[2]);
+                String journalTitle = isEmpty(q1[3]);
+                String externalIdsJson = isEmpty(q1[4]);
+                String publicationYear = isEmpty(q1[5]);
+                String publicationMonth = isEmpty(q1[6]);
+                String publicationDay = isEmpty(q1[7]);
+                String visibility = isEmpty(q1[8]);
+                BigInteger displayIndex = (BigInteger) q1[9];
+                String sourceId = isEmpty(q1[10]);
+                String clientSourceId = isEmpty(q1[11]);
+                String assertionOriginSourceId = isEmpty(q1[12]);
+                String assertionOriginClientSourceId = isEmpty(q1[13]);
+                Timestamp createdDate = (Timestamp) q1[14];
+                Timestamp lastModifiedDate = (Timestamp) q1[15];
+                String contributors = isEmpty(q1[16]);
+                int featuredDisplayIndex = (int) q1[17];
+                ExternalIDs externalIDs = null;
+                if (externalIdsJson != null) {
+                    externalIDs = jsonWorkExternalIdentifiersConverterV3.convertFrom(externalIdsJson, null);
+                }
+                String sourceName = null;
+                String assertionOriginName = null;
+                if (clientSourceId != null) {
+                    assertionOriginSourceId = contributorUtils.getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager, workDao);
+                }
+                if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
+                    assertionOriginName = contributorUtils.getSourceName(assertionOriginSourceId, sourceNameCacheManager);
+                }
+                if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
+                    assertionOriginName = contributorUtils.getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
+                }
+                if (!PojoUtil.isEmpty(sourceId)) {
+                    sourceName = contributorUtils.getSourceName(sourceId, sourceNameCacheManager);
+                }
+                if (!PojoUtil.isEmpty(clientSourceId)) {
+                    sourceName = contributorUtils.getSourceName(clientSourceId, sourceNameCacheManager);
+                }
+                List<WorkContributorsList> contributorList = new ArrayList<>();
+                List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
+
+                if (contributors != null && !"".equals(contributors)) {
+                    contributorsRolesAndSequencesList = contributorsRolesAndSequencesConverter.getContributorsRolesAndSequencesList(contributors);
+                } else {
+                    contributorList = workContributorsConverter.getContributorsList(contributors);
+                }
+
+                WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(putCode, workType, title, sourceId, clientSourceId, createdDate,
+                        lastModifiedDate).journalTitle(journalTitle).externalIdsJson(externalIDs).publicationYear(publicationYear).publicationMonth(publicationMonth)
+                                .publicationDay(publicationDay).visibility(visibility).sourceName(sourceName).assertionOriginName(assertionOriginName)
+                                .displayIndex(displayIndex).featuredDisplayIndex(featuredDisplayIndex).assertionOriginSourceId(assertionOriginSourceId)
+                                .assertionOriginClientSourceId(assertionOriginClientSourceId).contributors(contributorList).topContributors(contributorsRolesAndSequencesList)
+                                .build();
+                workSummaryExtendedList.add(wse);
+            }
         }
         return workSummaryExtendedList;
     }
