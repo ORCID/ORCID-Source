@@ -1,5 +1,8 @@
 package org.orcid.core.utils;
 
+import java.util.Map;
+import java.util.Optional;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,11 +22,10 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class SourceEntityUtils {
 
+    public static final String SOURCE_MAP = "sourceMap";
+
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
-
-    @Resource
-    private OrcidUrlManager orcidUrlManager;
 
     public String getSourceName(SourceEntity sourceEntity) {
         if (sourceEntity.getCachedSourceName() != null) {
@@ -38,23 +40,6 @@ public class SourceEntityUtils {
             return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
         }
         return null;
-    }
-
-    /**
-     * Call this method before storing in cache to prevent a whole profile or
-     * client being serialized.
-     * 
-     * WARNING: The entity must be detached (using DAO) so that the source is
-     * not made null in DB.
-     */
-    public void prepareForCache(SourceEntity sourceEntity) {
-        if (!sourceEntity.isDetached()) {
-            throw new IllegalStateException("Must not prepare source entity for cache, unless it is detached");
-        }
-        sourceEntity.setCachedSourceId(getSourceId(sourceEntity));
-        sourceEntity.setCachedSourceName(getSourceName(sourceEntity));
-        sourceEntity.setSourceClient(null);
-        sourceEntity.setSourceProfile(null);
     }
 
     public static String getSourceId(SourceEntity sourceEntity) {
@@ -97,6 +82,11 @@ public class SourceEntityUtils {
      * 
      */
     public static Source extractSourceFromEntity(SourceAwareEntity<?> e, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
+        return extractSourceFromEntity(e, clientDetailsEntityCacheManager, null);
+    }
+
+    public static Source extractSourceFromEntity(SourceAwareEntity<?> e, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager,
+            Map<String, ClientDetailsEntity> clientDetailsById) {
         Source source = new Source();
         // orcid
         if (!StringUtils.isEmpty(e.getSourceId())) {
@@ -107,7 +97,7 @@ public class SourceEntityUtils {
         if (!StringUtils.isEmpty(e.getClientSourceId())) {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
             if(e instanceof OrcidAware) {
-                ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
+                ClientDetailsEntity clientSource = getClientSource(e.getClientSourceId(), clientDetailsEntityCacheManager, clientDetailsById);
                 if (clientSource.isUserOBOEnabled()) {
                     String orcidId = null;
                     if (e instanceof OrcidAware) {                        
@@ -126,6 +116,12 @@ public class SourceEntityUtils {
         return source;
     }
 
+    private static ClientDetailsEntity getClientSource(String clientSourceId, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager,
+            Map<String, ClientDetailsEntity> clientDetailsById) {
+        ClientDetailsEntity clientSource = clientDetailsById == null ? null : clientDetailsById.get(clientSourceId);
+        return clientSource == null ? clientDetailsEntityCacheManager.retrieve(clientSourceId) : clientSource;
+    }
+
     public static Source extractSourceFromProfileComplete(ProfileEntity profile, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager) {
         Source source = new Source();
         SourceEntity entity = profile.getSource();
@@ -140,8 +136,8 @@ public class SourceEntityUtils {
     }
 
     public static Source extractSourceFromEntityComplete(SourceAwareEntity<?> b, SourceNameCacheManager sourceNameCacheManager, OrcidUrlManager orcidUrlManager,
-            ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
-        Source s = extractSourceFromEntity(b, clientDetailsEntityCacheManager);
+            ClientDetailsEntityCacheManager clientDetailsEntityCacheManager, Map<String, ClientDetailsEntity> clientDetailsById) {
+        Source s = extractSourceFromEntity(b, clientDetailsEntityCacheManager, clientDetailsById);
         populateSource(s, sourceNameCacheManager, orcidUrlManager);
         return s;
     }
@@ -228,5 +224,12 @@ public class SourceEntityUtils {
             ClientDetailsEntityCacheManager clientDetailsEntityCacheManager) {
         Source existing = extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
         return existing.equals(activeSource);
+    }
+
+    public static String getSourceKey(SourceAwareEntity<?> e) {
+        String sourceOrcid = Optional.ofNullable(e.getSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        String clientSourceId = Optional.ofNullable(e.getClientSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        String assertionOriginClientSourceId = Optional.ofNullable(e.getAssertionOriginClientSourceId()).filter(StringUtils::isNotEmpty).orElse("-");
+        return String.join("|", sourceOrcid, clientSourceId, assertionOriginClientSourceId);
     }
 }

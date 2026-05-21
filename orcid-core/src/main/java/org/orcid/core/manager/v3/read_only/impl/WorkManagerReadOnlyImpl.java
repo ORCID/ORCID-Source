@@ -2,14 +2,10 @@ package org.orcid.core.manager.v3.read_only.impl;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
@@ -23,11 +19,13 @@ import org.orcid.core.exception.PutCodeFormatException;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
 import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
 import org.orcid.core.utils.v3.activities.ActivitiesGroup;
 import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
@@ -35,6 +33,7 @@ import org.orcid.core.utils.v3.activities.WorkComparators;
 import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
 import org.orcid.jaxb.model.v3.release.record.GroupAble;
@@ -59,6 +58,7 @@ import org.orcid.pojo.WorksExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,6 +70,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerReadOnlyImpl.class);
 
     public static final String BULK_PUT_CODES_DELIMITER = ",";
+
+    @Value("${single.thread:true}")
+    private boolean singleThread;
 
     @Resource(name = "jpaJaxbWorkAdapterV3")
     protected JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -113,16 +116,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
-
-    @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.min.works.to.parallelize:20}")
-    private int minWorksToParallelize;
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Initializing WorkManagerReadOnlyImpl: minWorksToParallelize = " + minWorksToParallelize);
-    }
 
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
@@ -206,22 +204,52 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        List<WorkSummary> workSummaryResult = Arrays.asList();
-        // Lets implement a parallel stream for when there are more than 10 works to be processed
-        if(works.size() < minWorksToParallelize) {
-            workSummaryResult = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+        Set<String> clientIds = works.stream()
+                .map(MinimizedWorkEntity::getClientSourceId)
+                .filter(clientId -> !PojoUtil.isEmpty(clientId))
+                .collect(Collectors.toSet());
+
+        // Get the client details from the database
+        Map<String, ClientDetailsEntity> clientDetailsById = clientDetailsEntityCacheManager.retrieveAll(clientIds);
+        Map<String, Source> sources = new HashMap<>();
+        works.stream().forEach(workEntity -> {
+            String sourceKey = SourceEntityUtils.getSourceKey(workEntity);
+            if(!sources.containsKey(sourceKey)) {
+                Source source = SourceEntityUtils.extractSourceFromEntityComplete(workEntity, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager,
+                        clientDetailsById);
+                sources.put(sourceKey, source);
+            }
+        });
+
+        if (clientIds.isEmpty()) {
+            return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
+        }
+
+        // This map should be read-only
+        Map<String, Source> readOnlySources = Collections.unmodifiableMap(sources);
+        // Single thread implementation
+        if(singleThread) {
+            long start = System.currentTimeMillis();
+            List<WorkSummary> result = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, readOnlySources);
+            long end = System.currentTimeMillis();
+            System.out.println("Single thread - Time to convert to JAXB in millisecs: " + (end - start));
+            return result;
         } else {
+            List<WorkSummary> result = null;
+            long start = System.currentTimeMillis();
             try {
                 // Execute the parallel stream within the custom thread pool
-                workSummaryResult = ForkJoinPool.commonPool().submit(() ->
+                result = ForkJoinPool.commonPool().submit(() ->
                         works.parallelStream().map(minimizedWorkEntity -> jpaJaxbWorkAdapter.toWorkSummary(minimizedWorkEntity)).collect(Collectors.toList())
                 ).get(); // use .get() to wait for completion and propagate exceptions
 
             } catch (Exception e) {
                 LOGGER.error("Error while generating the list of work summaries in parallel", e);
             }
+            long end = System.currentTimeMillis();
+            System.out.println("Multi thread - Time to convert to JAXB in millisecs: " + (end - start));
+            return result;
         }
-        return workSummaryResult;
     }
 
     /**

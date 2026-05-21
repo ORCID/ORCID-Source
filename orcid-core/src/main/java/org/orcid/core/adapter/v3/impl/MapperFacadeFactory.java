@@ -387,10 +387,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
+        @SuppressWarnings("unchecked")
         @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
-            Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager);
-            a.setSource(source);
+            if (context != null && context.getProperty(SourceEntityUtils.SOURCE_MAP) != null) {
+                // The source map is set in the context, so we can use it to set the source.
+                Map<String, Source> sourceMap = (Map<String, Source>) context.getProperty(SourceEntityUtils.SOURCE_MAP);
+                Source source = sourceMap.get(SourceEntityUtils.getSourceKey(b));
+                a.setSource(source);
+            } else {
+                // We have to manually build the source elements
+                Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager, null);
+                a.setSource(source);
+            }
         }
     }
 
