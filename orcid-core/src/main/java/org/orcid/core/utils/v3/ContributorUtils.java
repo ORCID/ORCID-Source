@@ -1,32 +1,21 @@
 package org.orcid.core.utils.v3;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.contributors.roles.credit.CreditRole;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
-import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
 import org.orcid.jaxb.model.v3.release.record.Funding;
 import org.orcid.jaxb.model.v3.release.record.FundingContributor;
-import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OrcidAware;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ContributorUtils {
     
@@ -36,12 +25,6 @@ public class ContributorUtils {
     @Resource(name = "profileEntityManagerV3")
     private ProfileEntityManager profileEntityManagerV3;
 
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource(name = "workDaoReadOnly")
-    private WorkDao workDaoReadOnly;
-    
     public void filterContributorPrivateData(Funding funding) {
         if (funding.getContributors() != null && funding.getContributors().getContributor() != null) {
             for (FundingContributor contributor : funding.getContributors().getContributor()) {

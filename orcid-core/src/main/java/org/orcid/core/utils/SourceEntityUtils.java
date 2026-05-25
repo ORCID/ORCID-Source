@@ -1,6 +1,5 @@
 package org.orcid.core.utils;
 
-import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
@@ -50,7 +49,7 @@ public class SourceEntityUtils {
     }
 
     public static String getSourceName(Source activeSource) {
-        if (activeSource.getSourceName() != null && !StringUtils.isEmpty(activeSource.getSourceName().getContent()))
+        if (activeSource != null && activeSource.getSourceName() != null && !StringUtils.isEmpty(activeSource.getSourceName().getContent()))
             return activeSource.getSourceName().getContent();
         else
             return null;
