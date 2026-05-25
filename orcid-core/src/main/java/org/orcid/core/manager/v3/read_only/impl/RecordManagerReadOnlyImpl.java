@@ -43,7 +43,10 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
     
     @Resource
     protected SourceNameCacheManager sourceNameCacheManager;
-    
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     protected ProfileEntityCacheManager profileEntityCacheManager;
     
     protected EmailManagerReadOnly emailManager;
@@ -146,7 +149,7 @@ public class RecordManagerReadOnlyImpl implements RecordManagerReadOnly {
         }                
         
         if(profile.getSource() != null) {
-            Source source = SourceEntityUtils.extractSourceFromProfileComplete(profile, sourceNameCacheManager, orcidUrlManager);
+            Source source = sourceEntityUtils.extractSourceFromProfileComplete(profile);
             history.setSource(source);                
         }
         

@@ -78,6 +78,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -90,7 +93,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid, getLastModified(orcid));
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
+            if (!sourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);

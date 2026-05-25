@@ -7,6 +7,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.jaxb.model.common.Relationship;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
@@ -21,10 +22,12 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
+
 public class PersonValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonValidator.class);
-    
+
     public static void validateResearcherUrl(ResearcherUrl researcherUrl, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(researcherUrl == null)
             return;
@@ -50,7 +53,7 @@ public class PersonValidator {
         }
         if(createFlag) {
             if(researcherUrl.getPutCode() != null) {
-                throw InvalidPutCodeException.forSource(activeSource);
+                throw InvalidPutCodeException.forSource(SourceEntityUtils.getSourceName(activeSource));
             }                        
         } else {
             if(researcherUrl.getPutCode() == null) {
@@ -66,7 +69,7 @@ public class PersonValidator {
     public static void validateOtherName(OtherName otherName, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(createFlag) {
             if(otherName.getPutCode() != null) {
-                throw InvalidPutCodeException.forSource(activeSource);
+                throw InvalidPutCodeException.forSource(SourceEntityUtils.getSourceName(activeSource));
             }                        
         } else {
             if(otherName.getPutCode() == null) {
@@ -128,7 +131,7 @@ public class PersonValidator {
         
         if(createFlag) {
             if(externalIdentifier.getPutCode() != null) {
-                throw InvalidPutCodeException.forSource(activeSource);
+                throw InvalidPutCodeException.forSource(SourceEntityUtils.getSourceName(activeSource));
             }                        
         } else {
             if(externalIdentifier.getPutCode() == null) {
@@ -144,7 +147,7 @@ public class PersonValidator {
     public static void validateKeyword(Keyword keyword, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(createFlag) {
             if(keyword.getPutCode() != null) {
-                throw InvalidPutCodeException.forSource(activeSource);
+                throw InvalidPutCodeException.forSource(SourceEntityUtils.getSourceName(activeSource));
             }                        
         } else {
             if(keyword.getPutCode() == null) {
@@ -166,7 +169,7 @@ public class PersonValidator {
     public static void validateAddress(Address address, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if(createFlag) {
             if(address.getPutCode() != null) {
-                throw InvalidPutCodeException.forSource(activeSource);
+                throw InvalidPutCodeException.forSource(SourceEntityUtils.getSourceName(activeSource));
             }                        
         } else {
             if(address.getPutCode() == null) {

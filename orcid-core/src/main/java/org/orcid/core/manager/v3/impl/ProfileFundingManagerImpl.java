@@ -55,6 +55,9 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     /**
      * Removes the relationship that exists between a funding and a profile.
      * 
@@ -143,7 +146,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         profileFundingEntity.setOrg(updatedOrganization);
 
         // Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, profileFundingEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, profileFundingEntity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingPrivacy(profileFundingEntity, profile, isApiRequest);
@@ -183,7 +186,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         Visibility originalVisibility = Visibility.valueOf(pfe.getVisibility());
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(pfe, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(pfe);
 
         activityValidator.validateFunding(funding, activeSOurce, false, isApiRequest, originalVisibility);
         if (isApiRequest) {
@@ -203,7 +206,7 @@ public class ProfileFundingManagerImpl extends ProfileFundingManagerReadOnlyImpl
         }
 
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, pfe);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, pfe);
 
         // Updates the give organization with the latest organization from
         // database, or, create a new one

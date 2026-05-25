@@ -176,8 +176,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     private IdentityProviderManager identityProviderManager;
@@ -199,6 +197,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     @Resource
     private FundingContributorRoleConverter fundingContributorsRoleConverter;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -393,11 +394,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
             if (context != null && context.getProperty(SourceEntityUtils.SOURCE_MAP) != null) {
                 // The source map is set in the context, so we can use it to set the source.
                 Map<String, Source> sourceMap = (Map<String, Source>) context.getProperty(SourceEntityUtils.SOURCE_MAP);
-                Source source = sourceMap.get(SourceEntityUtils.getSourceKey(b));
+                Source source = sourceMap.get(sourceEntityUtils.getSourceKey(b));
                 a.setSource(source);
             } else {
                 // We have to manually build the source elements
-                Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager, null);
+                Source source = sourceEntityUtils.extractSourceFromEntityComplete(b);
                 a.setSource(source);
             }
         }

@@ -286,7 +286,7 @@ public class ActivityValidator {
         }
 
         if (work.getPutCode() != null && createFlag) {
-            throw InvalidPutCodeException.forSource(activeSource);
+            throw InvalidPutCodeException.forSource(sourceEntityUtils.getSourceName(activeSource));
         }
 
         // Check that we are not changing the visibility
@@ -340,7 +340,7 @@ public class ActivityValidator {
         }
 
         if (funding.getPutCode() != null && createFlag) {
-            throw InvalidPutCodeException.forSource(activeSource);
+            throw InvalidPutCodeException.forSource(sourceEntityUtils.getSourceName(activeSource));
         }
 
         if (isApiRequest) {
@@ -447,7 +447,7 @@ public class ActivityValidator {
 
     public void validateAffiliation(Affiliation affiliation, Source activeSource, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
         if (affiliation.getPutCode() != null && createFlag) {
-            throw InvalidPutCodeException.forSource(activeSource);
+            throw InvalidPutCodeException.forSource(sourceEntityUtils.getSourceName(activeSource));
         }
 
         // Check that we are not changing the visibility
@@ -486,7 +486,7 @@ public class ActivityValidator {
         }
 
         if (peerReview.getPutCode() != null && createFlag) {
-            throw InvalidPutCodeException.forSource(activeSource);
+            throw InvalidPutCodeException.forSource(sourceEntityUtils.getSourceName(activeSource));
         }
 
         if (peerReview.getType() == null) {
@@ -555,9 +555,9 @@ public class ActivityValidator {
                             existingId.setNormalized(new TransientNonEmptyString(norm.normalise(existingId.getType(), existingId.getValue())));
                     }
                     if (areRelationshipsSameAndSelf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
-                            && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existingSource)) {
+                            && sourceEntityUtils.isTheSameSource(activeSource, existingSource)) {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
+                        params.put("clientName", sourceEntityUtils.getSourceName(activeSource));
                         params.put("putCode", String.valueOf(theExisting.getPutCode()));
                         throw new OrcidDuplicatedActivityException(params);
                     }
@@ -607,7 +607,7 @@ public class ActivityValidator {
         }
 
         if (rr.getPutCode() != null && createFlag) {
-            throw InvalidPutCodeException.forSource(activeSource);
+            throw InvalidPutCodeException.forSource(sourceEntityUtils.getSourceName(activeSource));
         }
 
         // Check that we are not changing the visibility

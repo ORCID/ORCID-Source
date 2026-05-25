@@ -40,6 +40,9 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     public boolean deleteKeyword(String orcid, Long putCode, boolean checkSource) {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
@@ -77,7 +80,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         newEntity.setOrcid(orcid);
 
         // Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
@@ -93,7 +96,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         Visibility originalVisibility = Visibility.valueOf(updatedEntity.getVisibility());
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(updatedEntity);
 
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, activeSource, false, isApiRequest, originalVisibility);
@@ -113,7 +116,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
 
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
 
         profileKeywordDao.merge(updatedEntity);
         return adapter.toKeyword(updatedEntity);
@@ -162,7 +165,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
                     Source activeSource = sourceManager.retrieveActiveSource();
                     newKeyword.setOrcid(orcid);
                     // Set the source
-                    SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newKeyword);
+                    sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newKeyword);
                     newKeyword.setVisibility(updatedOrNew.getVisibility().name());
                     newKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     profileKeywordDao.persist(newKeyword);
@@ -177,7 +180,7 @@ public class ProfileKeywordManagerImpl extends ProfileKeywordManagerReadOnlyImpl
     private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.v3.release.record.Keyword keyword, Source activeSource) {
         if (!existing.getId().equals(keyword.getPutCode())) {
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existing, clientDetailsEntityCacheManager)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && sourceEntityUtils.isTheSameSource(activeSource, existing)) {
                 if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
                     return true;
                 }
