@@ -71,9 +71,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     public static final String BULK_PUT_CODES_DELIMITER = ",";
 
-    @Value("${single.thread:true}")
-    private boolean singleThread;
-
     @Resource(name = "jpaJaxbWorkAdapterV3")
     protected JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
 
@@ -209,6 +206,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 .filter(clientId -> !PojoUtil.isEmpty(clientId))
                 .collect(Collectors.toSet());
 
+        System.out.println("Generating source list");
+        long start = System.currentTimeMillis();
+        long s0 = System.currentTimeMillis();
         // Get the client details from the database
         Map<String, ClientDetailsEntity> clientDetailsById = clientDetailsEntityCacheManager.retrieveAll(clientIds);
         Map<String, Source> sources = new HashMap<>();
@@ -220,36 +220,18 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 sources.put(sourceKey, source);
             }
         });
-
+        long end = System.currentTimeMillis();
+        System.out.println("Time take generating source list: " + (end - start));
         if (clientIds.isEmpty()) {
             return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
         }
 
         // This map should be read-only
         Map<String, Source> readOnlySources = Collections.unmodifiableMap(sources);
-        // Single thread implementation
-        if(singleThread) {
-            long start = System.currentTimeMillis();
-            List<WorkSummary> result = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, readOnlySources);
-            long end = System.currentTimeMillis();
-            System.out.println("Single thread - Time to convert to JAXB in millisecs: " + (end - start));
-            return result;
-        } else {
-            List<WorkSummary> result = null;
-            long start = System.currentTimeMillis();
-            try {
-                // Execute the parallel stream within the custom thread pool
-                result = ForkJoinPool.commonPool().submit(() ->
-                        works.parallelStream().map(minimizedWorkEntity -> jpaJaxbWorkAdapter.toWorkSummary(minimizedWorkEntity)).collect(Collectors.toList())
-                ).get(); // use .get() to wait for completion and propagate exceptions
-
-            } catch (Exception e) {
-                LOGGER.error("Error while generating the list of work summaries in parallel", e);
-            }
-            long end = System.currentTimeMillis();
-            System.out.println("Multi thread - Time to convert to JAXB in millisecs: " + (end - start));
-            return result;
-        }
+        List<WorkSummary> summaryList = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, readOnlySources);
+        long s1 = System.currentTimeMillis();
+        System.out.println("Total time: " + (s1 - s0));
+        return summaryList;
     }
 
     /**
