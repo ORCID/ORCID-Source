@@ -37,10 +37,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     
     @Resource(name="orcidOauth2TokenDetailDaoReadOnly")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDaoReadOnly;
-    
-    @Resource
-    private RedisClient redisClient;
-    
+
     @Value("${org.orcid.core.utils.cache.redis.enabled:true}") 
     private boolean isTokenCacheEnabled;
 
@@ -140,10 +137,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public void revokeAccessToken(String accessToken) {
-        // Remove the token from the cache
-        if(isTokenCacheEnabled) {
-            redisClient.remove(accessToken);
-        }
         // Revoke the token
         orcidOauth2TokenDetailDao.revokeAccessToken(accessToken);
     }
@@ -243,9 +236,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         // Remove them from the cache
         for(String accessToken : tokensToDisable) {
             LOGGER.info("Token {} will be disabled because auth code {} was reused", accessToken, authorizationCode);
-            if(isTokenCacheEnabled) {
-                redisClient.remove(accessToken);
-            }            
         }
         // Disable them
         return orcidOauth2TokenDetailDao.disableAccessTokenByCodeAndClient(authorizationCode, clientID, reason.name());
@@ -257,22 +247,6 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         orcidOauth2TokenDetailDao.disableAccessTokenByUserOrcid(userOrcid, reason.name());
     }
 
-    @Override
-    @Transactional
-    public void disableClientAccess(String clientDetailsId, String userOrcid) {
-        // As a security measure, remove any user tokens from the cache
-        List<OrcidOauth2TokenDetail> userTokens = findByUserName(userOrcid);
-        if(userTokens != null && !userTokens.isEmpty()) {
-            for(OrcidOauth2TokenDetail token : userTokens) {
-                if(clientDetailsId.equals(token.getClientDetailsId())) {
-                    redisClient.remove(token.getTokenValue());
-                }
-            }
-        }
-        // And then disable all user tokens
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
-    }
-    
     @Override
     @Transactional
     public boolean updateScopes(String acessToken, Set<String> newScopes) {

@@ -59,9 +59,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
     @Resource(name="orcidOauth2TokenDetailDao")
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
-    @Mock
-    private RedisClient redisClientMock;
-    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
@@ -73,7 +70,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         MockitoAnnotations.initMocks(this);
         // Enable the cache
         TargetProxyHelper.injectIntoProxy(orcidOauth2TokenDetailService, "isTokenCacheEnabled", true);
-        TargetProxyHelper.injectIntoProxy(orcidOauth2TokenDetailService, "redisClient", redisClientMock);
     }
     
     @AfterClass
@@ -249,11 +245,6 @@ public class OrcidOauth2TokenDetailServiceTest extends DBUnitTest {
         
         // Disable tokens with authCode and CLIENT_ID_1
         orcidOauth2TokenDetailService.disableAccessTokenByCodeAndClient(authCode, CLIENT_ID_1, RevokeReason.AUTH_CODE_REUSED);
-        
-        verify(redisClientMock, times(1)).remove("token-1");
-        verify(redisClientMock, times(1)).remove("token-2");
-        verify(redisClientMock, times(1)).remove("token-3");
-        verify(redisClientMock, times(1)).remove("token-4");
         
         // Tokens 1, 2, 3 and 4 should be revoked
         OrcidOauth2TokenDetail t1 = orcidOauth2TokenDetailService.findIgnoringDisabledByTokenValue("token-1");

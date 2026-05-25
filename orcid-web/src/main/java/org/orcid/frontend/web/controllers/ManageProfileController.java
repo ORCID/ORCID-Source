@@ -27,6 +27,7 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.service.TrustedPartiesService;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -41,6 +42,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -135,10 +137,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private RedisClient redisClient;
 
+    @Resource
+    private TrustedPartiesService trustedPartiesService;
+
     @RequestMapping
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
     }
+
+    @Value("${org.orcid.security.two_factor.token_ttl:1800}")
+    private int twoFactorTokenTtl;
     
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
@@ -252,7 +260,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
-        profileEntityManager.disableClientAccess(clientId, getCurrentUserOrcid());
+        if(StringUtils.isNotBlank(clientId)) {
+            trustedPartiesService.disableClientAccess(clientId, getCurrentUserOrcid());
+        }
         return true;
     }
 
@@ -393,7 +403,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         deprecateProfile.setSuccess(true);
         String twoFactorToken = UUID.randomUUID().toString();
-        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, 1800);
+        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, twoFactorTokenTtl);
         deprecateProfile.setTwoFactorToken(twoFactorToken);
 
         return deprecateProfile;
