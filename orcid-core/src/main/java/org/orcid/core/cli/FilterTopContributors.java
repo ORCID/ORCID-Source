@@ -65,7 +65,7 @@ public class FilterTopContributors {
 
     private void filterTopContributors(Object[] workObject) {
         WorkEntity workEntity = workDao.find(((BigInteger) workObject[0]).longValue());
-        ContributorUtils contributorUtils = new ContributorUtils(0);
+        ContributorUtils contributorUtils = new ContributorUtils();
         WorkSummaryExtended wse = new WorkSummaryExtended.WorkSummaryExtendedBuilder(((BigInteger) workObject[0]))
                 .contributors(workContributorsConverter.getContributorsList(isEmpty(workObject[1])))
                 .build();

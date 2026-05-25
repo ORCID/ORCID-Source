@@ -11,6 +11,8 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.ProfileEntityManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorAttributes;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
@@ -24,23 +26,21 @@ import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.annotation.Resource;
+
 public class ContributorUtils {
     
-    private final Integer BATCH_SIZE;
-    
-    private ActivityManager cacheManager;
+    @Resource(name = "recordNameManagerReadOnlyV3")
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
-    private ProfileEntityManager profileEntityManager;
+    @Resource(name = "profileEntityManagerV3")
+    private ProfileEntityManager profileEntityManagerV3;
 
-    protected ProfileLastModifiedAspect profileLastModifiedAspect;
-    
-    public ContributorUtils(@Value("${org.orcid.contributor.names.batch_size:2500}") Integer batchSize) {
-        if(batchSize == null) {
-            BATCH_SIZE = 2500;
-        } else {
-            BATCH_SIZE = batchSize;
-        }
-    }
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
+    @Resource(name = "workDaoReadOnly")
+    private WorkDao workDaoReadOnly;
     
     public void filterContributorPrivateData(Funding funding) {
         if (funding.getContributors() != null && funding.getContributors().getContributor() != null) {
@@ -48,28 +48,16 @@ public class ContributorUtils {
                 contributor.setContributorEmail(null);
                 if (!PojoUtil.isEmpty(contributor.getContributorOrcid())) {
                     String contributorOrcid = contributor.getContributorOrcid().getPath();
-                    if (profileEntityManager.orcidExists(contributorOrcid)) {
+                    if (profileEntityManagerV3.orcidExists(contributorOrcid)) {
                         // contributor is an ORCID user - visibility of user's
                         // name in record must be taken into account                        
-                        String publicContributorCreditName = cacheManager.getPublicCreditName(contributorOrcid);
+                        String publicContributorCreditName = recordNameManagerReadOnlyV3.fetchDisplayablePublicName(contributorOrcid);
                         CreditName creditName = new CreditName(publicContributorCreditName != null ? publicContributorCreditName : "");
                         contributor.setCreditName(creditName);
                     }
                 }
             }
         }
-    }
-
-    public void setCacheManager(ActivityManager cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
-    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
-        this.profileEntityManager = profileEntityManager;
-    }
-
-    public void setProfileLastModifiedAspect(ProfileLastModifiedAspect profileLastModifiedAspect) {
-        this.profileLastModifiedAspect = profileLastModifiedAspect;
     }
 
     public List<ContributorsRolesAndSequences> getContributorsGroupedByOrcid(List<Contributor> contributors, Integer maxContributorsForUI) {
@@ -156,32 +144,12 @@ public class ContributorUtils {
         return crs;
     }
 
-    public String getCreditRole(String contributorRole) {
+    public static String getCreditRole(String contributorRole) {
         try {
-            CreditRole cr = CreditRole.fromValue(contributorRole);
-            return cr.getUiValue();
-        } catch(IllegalArgumentException e) {
+            return CreditRole.fromValue(contributorRole).getUiValue();
+        } catch(Exception e) {
             return contributorRole;
         }
     }
 
-    public String getAssertionOriginOrcid(String clientSourceId, String orcid, Long putCode, ClientDetailsEntityCacheManager clientDetailsEntityCacheManager, WorkDao workDao) {
-        String assertionOriginOrcid = null;
-        ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(clientSourceId);
-        if (clientSource.isUserOBOEnabled()) {
-            WorkEntity e = workDao.getWork(orcid, putCode);
-
-            String orcidId = null;
-            if (e instanceof OrcidAware) {                    
-                orcidId = ((OrcidAware) e).getOrcid();
-            }
-            assertionOriginOrcid = orcidId;
-        }
-        
-        return assertionOriginOrcid;
-    }
-
-    public String getSourceName(String sourceId, SourceNameCacheManager sourceNameCacheManager) {
-        return sourceNameCacheManager.retrieve(sourceId);
-    }
 }

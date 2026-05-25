@@ -67,9 +67,6 @@ public class ContributorUtilsTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        contributorUtils.setCacheManager(cacheManager);
-        contributorUtils.setProfileEntityManager(profileEntityManager);
-        contributorUtils.setProfileLastModifiedAspect(profileLastModifiedAspect);
         when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
         when(contributorsNameCache.containsKey(anyString())).thenReturn(false);
     }

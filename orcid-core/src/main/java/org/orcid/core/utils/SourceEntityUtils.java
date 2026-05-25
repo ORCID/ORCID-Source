@@ -115,7 +115,7 @@ public class SourceEntityUtils {
             source.setSourceClientId(new SourceClientId(e.getClientSourceId()));
             if(e instanceof OrcidAware) {
                 ClientDetailsEntity clientSource = clientDetailsEntityCacheManager.retrieve(e.getClientSourceId());
-                if (clientSource.isUserOBOEnabled()) {
+                if (clientSource != null && clientSource.isUserOBOEnabled()) {
                     String orcidId = ((OrcidAware) e).getOrcid();
                     source.setAssertionOriginOrcid(new SourceOrcid(orcidId));
                 }     

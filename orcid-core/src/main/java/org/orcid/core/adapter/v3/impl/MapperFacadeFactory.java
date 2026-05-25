@@ -171,13 +171,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private WorkDao workDao;
 
     @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-
-    @Resource
     private IdentityProviderManager identityProviderManager;
 
     @Resource
@@ -200,6 +193,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private SourceEntityUtils sourceEntityUtils;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -546,8 +542,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
-        ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter = new ContributorsRolesAndSequencesConverter(workContributorsRoleConverter);
-
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
         converterFactory.registerConverter("workContributorsConverterId", wcc);

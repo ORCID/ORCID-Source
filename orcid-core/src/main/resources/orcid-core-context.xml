@@ -413,19 +413,9 @@
 		<property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
 	</bean>
 	
-	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="cacheManager" ref="activityManagerV3" />
-        <property name="profileEntityManager" ref="profileEntityManagerV3" />
-		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
-    </bean>
-    
-    <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="cacheManager" ref="activityManagerV3" />
-        <property name="profileEntityManager" ref="profileEntityManagerV3" />
-		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
-    </bean>
+	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils" />
 	
-	   <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
+    <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
         <property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
     </bean>
     
@@ -1232,9 +1222,7 @@
         <constructor-arg ref="localeManager" />
     </bean>
 
-	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter">
-		<constructor-arg ref="workContributorRoleConverter" />
-	</bean>
+	<bean id="contributorsRolesAndSequencesConverter" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter" />
 
 	<bean id="contributorsRolesAndSequencesConverterV2" class="org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverterV2"/>		
 

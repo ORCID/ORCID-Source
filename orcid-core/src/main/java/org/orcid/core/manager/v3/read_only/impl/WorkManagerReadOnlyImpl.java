@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
@@ -108,9 +109,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
     @Resource
-    private OrcidUrlManager orcidUrlManager;
-
-    @Resource
     private SourceEntityUtils sourceEntityUtils;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
@@ -198,6 +196,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
+        long t0 = System.currentTimeMillis();
         Set<String> clientIds = works.stream()
                 .map(MinimizedWorkEntity::getClientSourceId)
                 .filter(clientId -> !PojoUtil.isEmpty(clientId))
@@ -219,7 +218,10 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
         // This map should be read-only
         Map<String, Source> readOnlySources = Collections.unmodifiableMap(sources);
-        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, readOnlySources);
+        List<WorkSummary> list = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, readOnlySources);
+        long t1 = System.currentTimeMillis();
+        System.out.println("Time to convert to JAXB WorkSummary: " + (t1 - t0));
+        return list;
     }
 
     /**
@@ -248,6 +250,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
+        Map<String, Boolean> isUserOBOEnabled = new HashMap<String, Boolean>();
+        long l0 = System.currentTimeMillis();
         List<Object[]> list = workDao.getWorksByOrcid(orcid, featuredOnly);
         for (Object[] q1 : list) {
             BigInteger putCode = (BigInteger) q1[0];
@@ -274,21 +278,34 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             }
             String sourceName = null;
             String assertionOriginName = null;
-            if (clientSourceId != null) {
-                assertionOriginSourceId = contributorUtils.getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager, workDao);
+            if (StringUtils.isNotBlank(clientSourceId)) {
+                //Set the source name
+                sourceName = sourceNameCacheManager.retrieve(clientSourceId);
+                // Check if user OBO is enabled
+                if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
+                    if(!isUserOBOEnabled.containsKey(clientSourceId)) {
+                        ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+                        if(clientEntity != null && clientEntity.isUserOBOEnabled()) {
+                            isUserOBOEnabled.put(clientSourceId, true);
+                        } else {
+                            isUserOBOEnabled.put(clientSourceId, false);
+                        }
+                    }
+                    if(isUserOBOEnabled.get(clientSourceId)) {
+                        assertionOriginName = sourceNameCacheManager.retrieve(assertionOriginSourceId);
+                    }
+                }
             }
-            if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
-                assertionOriginName = contributorUtils.getSourceName(assertionOriginSourceId, sourceNameCacheManager);
+
+            // Check the sourceId name only if there is no clientSourceId
+            if (PojoUtil.isEmpty(sourceName) && !PojoUtil.isEmpty(sourceId)) {
+                sourceName = sourceNameCacheManager.retrieve(sourceId);
             }
+
             if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
-                assertionOriginName = contributorUtils.getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
+                assertionOriginName = sourceNameCacheManager.retrieve(assertionOriginClientSourceId);
             }
-            if (!PojoUtil.isEmpty(sourceId)) {
-                sourceName = contributorUtils.getSourceName(sourceId, sourceNameCacheManager);
-            }
-            if (!PojoUtil.isEmpty(clientSourceId)) {
-                sourceName = contributorUtils.getSourceName(clientSourceId, sourceNameCacheManager);
-            }
+
             List<WorkContributorsList> contributorList = new ArrayList<>();
             List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 
@@ -306,6 +323,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                             .build();
             workSummaryExtendedList.add(wse);
         }
+        long l1 = System.currentTimeMillis();
+        System.out.println("Time to retrieve WorkSummaryExtended: " + (l1 - l0));
         return workSummaryExtendedList;
     }
 
