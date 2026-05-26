@@ -1,3 +1,39 @@
+## v2.141.7 - 2026-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.6...v2.141.7)
+
+## v2.141.6 - 2026-05-19
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.5...v2.141.6)
+
+## v2.141.5 - 2026-05-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.4...v2.141.5)
+
+- [#7518](https://github.com/ORCID/ORCID-Source/pull/7518): Security email updates
+
+## v2.141.4 - 2026-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.3...v2.141.4)
+
+- [#7517](https://github.com/ORCID/ORCID-Source/pull/7517): {PD-5519} {PD-5518} {PD-5521} {PD-5522} Security email updates
+
+## v2.141.3 - 2026-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.2...v2.141.3)
+
+## v2.141.2 - 2026-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.1...v2.141.2)
+
+## v2.141.1 - 2026-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.0...v2.141.1)
+
+## v2.141.0 - 2026-05-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.140.9...v2.141.0)
+
 ## v2.140.9 - 2026-05-11
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.140.8...v2.140.9)
