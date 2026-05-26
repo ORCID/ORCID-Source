@@ -2,8 +2,10 @@ package org.orcid.core.utils.v3.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.orcid.jaxb.model.v3.release.record.ExternalID;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
@@ -11,70 +13,59 @@ import org.orcid.jaxb.model.v3.release.record.WorkTitle;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGenerator {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(WorkGroupAndGroupingSuggestionGenerator.class);
+public class WorkGroupAndGroupingSuggestionGeneratorJunie extends ActivitiesGroupGenerator {
 
-    private Map<String, List<ActivitiesGroup>> potentialGroupingSuggestions = new HashMap<>();
+    // Optimized mapping: group -> set of titles it is associated with
+    private Map<ActivitiesGroup, Set<String>> groupToTitles = new HashMap<>();
+    // Optimized mapping: title -> set of groups associated with it
+    private Map<String, Set<ActivitiesGroup>> titleToGroups = new HashMap<>();
 
+    @Override
     public void group(GroupableActivity activity) {
         if (!(activity instanceof WorkSummary || activity instanceof WorkSummaryExtended)) {
             throw new IllegalArgumentException("Argument must be of type WorkSummary");
         }
 
         WorkSummary workSummary = null;
-
         if (activity instanceof WorkSummaryExtended) {
             workSummary = (WorkSummaryExtended) activity;
         } else if (activity instanceof WorkSummary) {
             workSummary = (WorkSummary) activity;
         }
 
-        if (groups.isEmpty()) {
-            // If it is the first activity, create a new group for it
-            ActivitiesGroup newGroup = createNewGroup(activity);
-            mapGroupToTitle(newGroup, workSummary);
+        List<ActivitiesGroup> belongsTo = generateBelongsToList(activity);
+
+        ActivitiesGroup targetGroup;
+        if (belongsTo.isEmpty()) {
+            targetGroup = createNewGroup(activity);
         } else {
-            // If it is not the first activity, check which groups it belongs to
-            List<ActivitiesGroup> belongsTo = generateBelongsToList(activity);
+            targetGroup = belongsTo.get(0);
+            targetGroup.add(activity);
 
-            // If it doesnt belong to any group, create a new group for it
-            if (belongsTo.isEmpty()) {
-                ActivitiesGroup newGroup = createNewGroup(activity);
-                mapGroupToTitle(newGroup, workSummary);
-            } else {
-                // Get the first group it belongs to
-                ActivitiesGroup firstGroup = belongsTo.get(0);
-                firstGroup.add(activity);
-                mapGroupToTitle(firstGroup, workSummary);
-
-                // If it belongs to other groups, merge them into the first one
-                if (belongsTo.size() > 1) {
-                    for (int i = 1; i < belongsTo.size(); i++) {
-                        // Merge the group
-                        mergeAndRemoveGroup(firstGroup, belongsTo.get(i));
-                        switchGroup(belongsTo.get(i), firstGroup);
-                    }
+            if (belongsTo.size() > 1) {
+                for (int i = 1; i < belongsTo.size(); i++) {
+                    ActivitiesGroup groupToMerge = belongsTo.get(i);
+                    mergeAndRemoveGroup(targetGroup, groupToMerge);
+                    fastSwitchGroup(groupToMerge, targetGroup);
                 }
-                updateLookupKeys(firstGroup);
             }
+            updateLookupKeys(targetGroup);
         }
+        mapGroupToTitle(targetGroup, workSummary);
     }
 
     public List<WorkGroupingSuggestion> getGroupingSuggestions(String orcid) {
         List<WorkGroupingSuggestion> suggestions = new ArrayList<>();
-        for (String title : potentialGroupingSuggestions.keySet()) {
-            List<ActivitiesGroup> groups = potentialGroupingSuggestions.get(title);
-            if (groups.size() > 1) {
+        for (Map.Entry<String, Set<ActivitiesGroup>> entry : titleToGroups.entrySet()) {
+            Set<ActivitiesGroup> groupsForTitle = entry.getValue();
+            if (groupsForTitle.size() > 1) {
                 WorkGroupingSuggestion suggestion = new WorkGroupingSuggestion();
                 suggestion.setOrcid(orcid);
                 List<Long> putCodes = new ArrayList<>();
 
                 boolean groupableExternalIdFound = false;
-                for (ActivitiesGroup group : groups) {
+                for (ActivitiesGroup group : groupsForTitle) {
                     for (GroupableActivity activity : group.getActivities()) {
                         WorkSummary workSummary = (WorkSummary) activity;
                         putCodes.add(workSummary.getPutCode());
@@ -89,7 +80,6 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
                     }
                 }
 
-                // without at least one groupable external id present works can't be grouped
                 if (groupableExternalIdFound) {
                     suggestion.setPutCodes(putCodes);
                     suggestions.add(suggestion);
@@ -99,14 +89,18 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
         return suggestions;
     }
 
-    private void switchGroup(ActivitiesGroup oldGroup, ActivitiesGroup newGroup) {
-        for (String title : potentialGroupingSuggestions.keySet()) {
-            List<ActivitiesGroup> mappedGroups = potentialGroupingSuggestions.get(title);
-            if (mappedGroups.contains(oldGroup)) {
-                mappedGroups.remove(oldGroup);
-                if (!mappedGroups.contains(newGroup)) {
-                    mappedGroups.add(newGroup);
+    private void fastSwitchGroup(ActivitiesGroup oldGroup, ActivitiesGroup newGroup) {
+        Set<String> titles = groupToTitles.remove(oldGroup);
+        if (titles != null) {
+            for (String title : titles) {
+                Set<ActivitiesGroup> groupsForTitle = titleToGroups.get(title);
+                if (groupsForTitle != null) {
+                    groupsForTitle.remove(oldGroup);
+                    groupsForTitle.add(newGroup);
                 }
+                
+                Set<String> newGroupTitles = groupToTitles.computeIfAbsent(newGroup, k -> new HashSet<>());
+                newGroupTitles.add(title);
             }
         }
     }
@@ -114,14 +108,9 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
     private void mapGroupToTitle(ActivitiesGroup group, WorkSummary workSummary) {
         if (!workTitleEmpty(workSummary.getTitle())) {
             String title = transformForTitleComparison(workSummary.getTitle().getTitle().getContent());
-            List<ActivitiesGroup> groups = potentialGroupingSuggestions.get(title);
-            if (groups == null) {
-                groups = new ArrayList<>();
-            }
-            if (!groups.contains(group)) {
-                groups.add(group);
-            }
-            potentialGroupingSuggestions.put(title, groups);
+            
+            titleToGroups.computeIfAbsent(title, k -> new HashSet<>()).add(group);
+            groupToTitles.computeIfAbsent(group, k -> new HashSet<>()).add(title);
         }
     }
 
@@ -132,9 +121,11 @@ public class WorkGroupAndGroupingSuggestionGenerator extends ActivitiesGroupGene
     private boolean workTitleEmpty(WorkTitle workTitle) {
         return workTitle == null || workTitle.getTitle() == null || workTitle.getTitle().getContent() == null || workTitle.getTitle().getContent().isEmpty();
     }
-
-    public List<ActivitiesGroup> getGroups() {
-        return groups;
+    
+    @Override
+    protected void mergeAndRemoveGroup(ActivitiesGroup keep, ActivitiesGroup discard) {
+        super.mergeAndRemoveGroup(keep, discard);
+        // We don't remove from titleToGroups/groupToTitles here because fastSwitchGroup handles it
+        // and it's called immediately after in group()
     }
-
 }

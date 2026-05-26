@@ -70,6 +70,7 @@ public class WorksPaginator {
     public Page<WorkGroup> getWorksExtendedPage(String orcid, int offset, int pageSize, boolean justPublic, String sort, boolean sortAsc) {
         WorksExtended works = worksExtendedCacheManager.getGroupedWorksExtended(orcid);
         Page<WorkGroup> worksPage = new Page<WorkGroup>();
+        long t0 = System.currentTimeMillis();
         if (works != null) {
             List<WorkGroupExtended> filteredGroups = filterWorksExtended(works, justPublic);
             if ("source".equals(sort)) {
@@ -88,6 +89,8 @@ public class WorksPaginator {
             worksPage.setGroups(workGroups);
             worksPage.setNextOffset(offset + pageSize);
         }
+        long t1 = System.currentTimeMillis();
+        System.out.println("Time on getWorksExtendedPage: " + (t1 - t0));
         return worksPage;
     }
 

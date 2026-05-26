@@ -55,7 +55,7 @@ public class ActivitiesGroupGenerator {
     protected List<ActivitiesGroup> generateBelongsToList(GroupableActivity activity) {
         List<ActivitiesGroup> belongsTo = new ArrayList<ActivitiesGroup>();
         ActivitiesGroup thisGroup = new ActivitiesGroup(activity);
-        for (GroupAble g :thisGroup.getGroupKeys()){
+        for (GroupAble g : thisGroup.getGroupKeys()){
             if (lookup.containsKey(g)) {
                 belongsTo.add(lookup.get(g));
             }

@@ -17,10 +17,7 @@ import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
-import org.orcid.core.utils.v3.activities.ActivitiesGroup;
-import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
-import org.orcid.core.utils.v3.activities.WorkComparators;
-import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
+import org.orcid.core.utils.v3.activities.*;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
@@ -218,6 +215,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid, featuredOnly);
         // Filter the contributors list
+        long t0 = System.currentTimeMillis();
         for (WorkSummaryExtended wse : wseList) {
             if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
                 wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
@@ -228,6 +226,8 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
             }
         }
+        long t1 = System.currentTimeMillis();
+        System.out.println("Time on getWorksSummaryExtendedList: " + (t1 - t0));
         return wseList;
     }
 
@@ -347,13 +347,25 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid) {
-        WorkGroupAndGroupingSuggestionGenerator groupGenerator = new WorkGroupAndGroupingSuggestionGenerator();
+        long t0 = System.currentTimeMillis();
+        long t02 = System.currentTimeMillis();
+        WorkGroupAndGroupingSuggestionGeneratorJunie groupGenerator = new WorkGroupAndGroupingSuggestionGeneratorJunie();
         for (WorkSummaryExtended work : summaries) {
             groupGenerator.group(work);
         }
+        long t03 = System.currentTimeMillis();
+        System.out.println("GROUPING WITH JUNIE: " + (t03 - t02));
+        long t1 = System.currentTimeMillis();
         WorksExtended works = processGroupedWorksExtended(groupGenerator.getGroups());
+        long t2 = System.currentTimeMillis();
         List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
+        long t3 = System.currentTimeMillis();
         groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
+        long t4 = System.currentTimeMillis();
+        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 1: " + (t1 - t0));
+        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 2: " + (t2 - t1));
+        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 3: " + (t3 - t2));
+        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 4: " + (t4 - t3));
         return works;
     }
 
