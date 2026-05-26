@@ -473,7 +473,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         } catch (Exception e) {
             return new Page<WorkGroup>();
         }
-        return worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+        long l0 = System.currentTimeMillis();
+        Page<WorkGroup> r = worksPaginator.getWorksExtendedPage(orcid, offset, pageSize, true, sort, sortAsc);
+        long l1 = System.currentTimeMillis();
+        System.out.println("Total time taken: " + (l1 - l0));
+        return r;
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/featuredWorks.json", method = RequestMethod.GET)
