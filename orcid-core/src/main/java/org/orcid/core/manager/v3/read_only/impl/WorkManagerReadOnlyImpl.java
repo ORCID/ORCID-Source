@@ -351,6 +351,9 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         long t02 = System.currentTimeMillis();
         WorkGroupAndGroupingSuggestionGeneratorJunie groupGenerator = new WorkGroupAndGroupingSuggestionGeneratorJunie();
         for (WorkSummaryExtended work : summaries) {
+            if(work.getTitle().getTitle().getContent().equals("Title 1000000011") || work.getTitle().getTitle().getContent().equals("Title 1000000015") || work.getTitle().getTitle().getContent().equals("Title 1000000045") || work.getTitle().getTitle().getContent().equals("Title 1000000053")) {
+                System.out.println("PROCESSING: " + work.getTitle().getTitle().getContent());
+            }
             groupGenerator.group(work);
         }
         long t03 = System.currentTimeMillis();

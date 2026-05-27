@@ -34,23 +34,27 @@ public class WorkGroupAndGroupingSuggestionGeneratorJunie extends ActivitiesGrou
             workSummary = (WorkSummary) activity;
         }
 
-        List<ActivitiesGroup> belongsTo = generateBelongsToList(activity);
-
         ActivitiesGroup targetGroup;
-        if (belongsTo.isEmpty()) {
+        if (groups.isEmpty()) {
             targetGroup = createNewGroup(activity);
         } else {
-            targetGroup = belongsTo.get(0);
-            targetGroup.add(activity);
+            List<ActivitiesGroup> belongsTo = generateBelongsToList(activity);
 
-            if (belongsTo.size() > 1) {
-                for (int i = 1; i < belongsTo.size(); i++) {
-                    ActivitiesGroup groupToMerge = belongsTo.get(i);
-                    mergeAndRemoveGroup(targetGroup, groupToMerge);
-                    fastSwitchGroup(groupToMerge, targetGroup);
+            if (belongsTo.isEmpty()) {
+                targetGroup = createNewGroup(activity);
+            } else {
+                targetGroup = belongsTo.get(0);
+                targetGroup.add(activity);
+
+                if (belongsTo.size() > 1) {
+                    for (int i = 1; i < belongsTo.size(); i++) {
+                        ActivitiesGroup groupToMerge = belongsTo.get(i);
+                        mergeAndRemoveGroup(targetGroup, groupToMerge);
+                        fastSwitchGroup(groupToMerge, targetGroup);
+                    }
                 }
+                updateLookupKeys(targetGroup);
             }
-            updateLookupKeys(targetGroup);
         }
         mapGroupToTitle(targetGroup, workSummary);
     }
@@ -92,14 +96,13 @@ public class WorkGroupAndGroupingSuggestionGeneratorJunie extends ActivitiesGrou
     private void fastSwitchGroup(ActivitiesGroup oldGroup, ActivitiesGroup newGroup) {
         Set<String> titles = groupToTitles.remove(oldGroup);
         if (titles != null) {
+            Set<String> newGroupTitles = groupToTitles.computeIfAbsent(newGroup, k -> new HashSet<>());
             for (String title : titles) {
                 Set<ActivitiesGroup> groupsForTitle = titleToGroups.get(title);
                 if (groupsForTitle != null) {
                     groupsForTitle.remove(oldGroup);
                     groupsForTitle.add(newGroup);
                 }
-                
-                Set<String> newGroupTitles = groupToTitles.computeIfAbsent(newGroup, k -> new HashSet<>());
                 newGroupTitles.add(title);
             }
         }
