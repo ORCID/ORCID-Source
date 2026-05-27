@@ -176,7 +176,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        long t0 = System.currentTimeMillis();
         Set<String> clientIds = works.stream()
                 .map(MinimizedWorkEntity::getClientSourceId)
                 .filter(clientId -> !PojoUtil.isEmpty(clientId))
@@ -197,11 +196,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         }
 
         // This map should be read-only
-        Map<String, Source> readOnlySources = Collections.unmodifiableMap(sources);
-        List<WorkSummary> list = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, readOnlySources);
-        long t1 = System.currentTimeMillis();
-        System.out.println("Time to convert to JAXB WorkSummary: " + (t1 - t0));
-        return list;
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, Collections.unmodifiableMap(sources));
     }
 
     /**
@@ -215,7 +210,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     public List<WorkSummaryExtended> getWorksSummaryExtendedList(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> wseList = retrieveWorkSummaryExtended(orcid, featuredOnly);
         // Filter the contributors list
-        long t0 = System.currentTimeMillis();
         for (WorkSummaryExtended wse : wseList) {
             if (wse.getContributorsGroupedByOrcid() != null && wse.getContributorsGroupedByOrcid().size() > 0) {
                 wse.setNumberOfContributors(wse.getContributorsGroupedByOrcid().size());
@@ -226,15 +220,12 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 wse.setNumberOfContributors(contributorsGroupedByOrcid.size());
             }
         }
-        long t1 = System.currentTimeMillis();
-        System.out.println("Time on getWorksSummaryExtendedList: " + (t1 - t0));
         return wseList;
     }
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
         Map<String, Boolean> isUserOBOEnabled = new HashMap<String, Boolean>();
-        long l0 = System.currentTimeMillis();
         List<Object[]> list = workDao.getWorksByOrcid(orcid, featuredOnly);
         for (Object[] q1 : list) {
             BigInteger putCode = (BigInteger) q1[0];
@@ -306,8 +297,6 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                             .build();
             workSummaryExtendedList.add(wse);
         }
-        long l1 = System.currentTimeMillis();
-        System.out.println("Time to retrieve WorkSummaryExtended: " + (l1 - l0));
         return workSummaryExtendedList;
     }
 
@@ -347,28 +336,13 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     @Override
     public WorksExtended groupWorksExtendedAndGenerateGroupingSuggestions(List<WorkSummaryExtended> summaries, String orcid) {
-        long t0 = System.currentTimeMillis();
-        long t02 = System.currentTimeMillis();
-        WorkGroupAndGroupingSuggestionGeneratorJunie groupGenerator = new WorkGroupAndGroupingSuggestionGeneratorJunie();
+        WorkGroupAndGroupingSuggestionGenerator groupGenerator = new WorkGroupAndGroupingSuggestionGenerator();
         for (WorkSummaryExtended work : summaries) {
-            if(work.getTitle().getTitle().getContent().equals("Title 1000000011") || work.getTitle().getTitle().getContent().equals("Title 1000000015") || work.getTitle().getTitle().getContent().equals("Title 1000000045") || work.getTitle().getTitle().getContent().equals("Title 1000000053")) {
-                System.out.println("PROCESSING: " + work.getTitle().getTitle().getContent());
-            }
             groupGenerator.group(work);
         }
-        long t03 = System.currentTimeMillis();
-        System.out.println("GROUPING WITH JUNIE: " + (t03 - t02));
-        long t1 = System.currentTimeMillis();
         WorksExtended works = processGroupedWorksExtended(groupGenerator.getGroups());
-        long t2 = System.currentTimeMillis();
         List<WorkGroupingSuggestion> suggestions = groupGenerator.getGroupingSuggestions(orcid);
-        long t3 = System.currentTimeMillis();
         groupingSuggestionsManager.cacheGroupingSuggestions(orcid, suggestions);
-        long t4 = System.currentTimeMillis();
-        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 1: " + (t1 - t0));
-        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 2: " + (t2 - t1));
-        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 3: " + (t3 - t2));
-        System.out.println("Time on groupWorksExtendedAndGenerateGroupingSuggestions 4: " + (t4 - t3));
         return works;
     }
 
