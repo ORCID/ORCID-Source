@@ -155,6 +155,7 @@ public class IssnLoadSource {
                     LOG.warn("Exception while pausing the issn loader", e);                    
                 }
             }
+            groupIdRecordDao.flush();
             LOG.info("Loading next batch of ISSN's");
             issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsSortedBySyncDate(batchSize, startTime);
         }
