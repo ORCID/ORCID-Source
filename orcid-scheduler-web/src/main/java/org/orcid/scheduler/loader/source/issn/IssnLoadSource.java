@@ -97,6 +97,9 @@ public class IssnLoadSource {
                             updateIssnEntity(issnEntity, issnData);
                             LOG.info("Updated group id record {} - {}, processed count now {}",
                                     new Object[]{issnEntity.getId(), issnEntity.getGroupId(), Integer.toString(total)});
+                        } else {
+                            LOG.warn("Extraction failed or returned null for ISSN: {}", issn);
+                            recordFailure(issnEntity, "General extraction failure or null response");
                         }
                     } catch(TooManyRequestsException tmre) {
                         //We are being rate limited, we have to pause for 'pause' minutes
@@ -135,8 +138,8 @@ public class IssnLoadSource {
                         LOG.warn("InterruptedException for issn {}", issn);
                         recordFailure(issnEntity, "InterruptedException");
                     } catch(JSONException e) {
-                        LOG.warn("InterruptedException for issn {}", issn);
-                        recordFailure(issnEntity, "InterruptedException");
+                        LOG.warn("JSONException for issn {}", issn);
+                        recordFailure(issnEntity, "JSONException");
                     }
                 } else {
                     LOG.info("Issn for group record {} not valid: {}", issnEntity.getId(), issnEntity.getGroupId());
@@ -155,7 +158,6 @@ public class IssnLoadSource {
                     LOG.warn("Exception while pausing the issn loader", e);                    
                 }
             }
-            groupIdRecordDao.flush();
             LOG.info("Loading next batch of ISSN's");
             issnEntities = groupIdRecordDaoReadOnly.getIssnRecordsSortedBySyncDate(batchSize, startTime);
         }
