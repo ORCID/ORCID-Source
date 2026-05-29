@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.orcid.core.exception.InvalidTokenException;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,11 +23,18 @@ import java.net.URISyntaxException;
 import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class OrcidBearerTokenFilter implements Filter {
     private static final Logger logger = Logger.getLogger(OrcidBearerTokenFilter.class);
+    private static final String CLIENT_GRANTED_AUTHORITY = "clientGrantedAuthority";
+    private static final String ROLE_PUBLIC = "ROLE_PUBLIC";
+    private static final String READ_PUBLIC_SCOPE = "/read-public";
+    private static final String ACTIVE = "active";
+    private static final String USERNAME = "username";
+    private static final String ORCID = "orcid";
 
     @Resource
     private AuthorizationServerUtil authorizationServerUtil;
@@ -42,18 +48,32 @@ public class OrcidBearerTokenFilter implements Filter {
         final HttpServletResponse response = (HttpServletResponse) res;
 
         String tokenValue = extractToken(request);
+        
+        logger.debug("OrcidBearerTokenFilter request: method=" + request.getMethod() + " uri=" + request.getRequestURI() + " tokenPresent=" + StringUtils.isNotBlank(tokenValue) + " token=" + tokenFingerprint(tokenValue));
+        
+
         if(StringUtils.isBlank(tokenValue)) {
             // If the token is not present, continue the chain
             chain.doFilter(request, response);
+            return;
         }
 
         try {
             JSONObject tokenData = authorizationServerUtil.tokenIntrospection(tokenValue);
+            logger.debug("Token introspection successful for token=" + tokenData);
+            
+            logger.debug("Token introspection response: token=" + tokenFingerprint(tokenValue)
+                        + " active=" + safeGet(tokenData, ACTIVE)
+                        + " client_id=" + safeGet(tokenData, "client_id")
+                        + " username=" + safeGet(tokenData, "username")
+                        + " scope=" + safeGet(tokenData, "scope")
+                        + " clientGrantedAuthority=" + safeGet(tokenData, CLIENT_GRANTED_AUTHORITY));
             OrcidBearerTokenAuthentication authentication = validateTokenData(tokenValue, tokenData);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
-        } catch (URISyntaxException | InterruptedException | JSONException e) {
+        } catch (IOException | URISyntaxException | InterruptedException | JSONException e) {
             //TODO: Define error message and add exception type to it
+            logger.warn("Token introspection failed for token=" + tokenFingerprint(tokenValue), e);
             apiAuthenticationEntryPoint.commence(request, response, null);
             return;
         }
@@ -65,7 +85,7 @@ public class OrcidBearerTokenFilter implements Filter {
                 throw new AccessControlException("Invalid access token: Unable to obtain information from the authorization server");
             }
 
-            boolean isTokenActive = tokenInfo.getBoolean("active");
+            boolean isTokenActive = tokenInfo.getBoolean(ACTIVE);
             if(isTokenActive) {
                 // If the token is user revoked it might be used for DELETE requests
                 return buildAuthentication(accessTokenValue, tokenInfo);
@@ -82,6 +102,7 @@ public class OrcidBearerTokenFilter implements Filter {
                 }
             }
         } catch(AccessControlException i) {
+            logger.warn("Access control failure for token=" + tokenFingerprint(accessTokenValue) + " reason=" + i.getMessage());
             throw i;
         } catch(Exception e) {
             logger.error("Exception validating token from authorization server", e);
@@ -91,18 +112,42 @@ public class OrcidBearerTokenFilter implements Filter {
 
     private OrcidBearerTokenAuthentication buildAuthentication(String accessTokenValue, JSONObject tokenInfo) throws JSONException {
         String clientId = tokenInfo.getString("client_id");
-        String userOrcid = tokenInfo.getString("username");
+        String userOrcid = resolveUserOrcid(tokenInfo);
+        boolean isClientOnlyToken = StringUtils.isBlank(userOrcid);
 
         OrcidBearerTokenAuthentication.Builder builder = OrcidBearerTokenAuthentication.builder(clientId, userOrcid, accessTokenValue);
 
-        Set<String> scopes = Arrays.stream(tokenInfo.getString("scope").split("[\\s,]+"))
-                .collect(Collectors.toSet());
+        Set<String> scopes = tokenizeSpaceOrCsvField(tokenInfo, "scope");
         builder.scopes(scopes);
 
-        // Set granted authorities
-        if(tokenInfo.has("clientGrantedAuthority")) {
-            builder.authorities(Sets.newHashSet(new SimpleGrantedAuthority(tokenInfo.getString("clientGrantedAuthority"))));
+        // Set granted authorities from token introspection when present.
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        if(tokenInfo.has(CLIENT_GRANTED_AUTHORITY)) {
+            String grantedAuthorities = tokenInfo.getString(CLIENT_GRANTED_AUTHORITY);
+            if(StringUtils.isNotBlank(grantedAuthorities)) {
+                Arrays.stream(grantedAuthorities.split("[\\s,]+"))
+                        .filter(StringUtils::isNotBlank)
+                        .map(SimpleGrantedAuthority::new)
+                        .forEach(authorities::add);
+            }
         }
+
+        // Fallback for public API tokens: if introspection does not include a granted authority
+        // but the token can read public data, treat it as ROLE_PUBLIC.
+        if(authorities.isEmpty() && scopes.contains(READ_PUBLIC_SCOPE)) {
+            authorities.add(new SimpleGrantedAuthority(ROLE_PUBLIC));
+        }
+
+        if(!authorities.isEmpty()) {
+            builder.authorities(Sets.newHashSet(authorities));
+        }
+
+            logger.debug("Built authentication for token=" + tokenFingerprint(accessTokenValue)
+                + " clientId=" + clientId
+                + " userOrcid=" + userOrcid
+                + " clientOnly=" + isClientOnlyToken
+                + " scopes=" + scopes
+                + " authorities=" + authorities);
 
         if(tokenInfo.has("OBO_CLIENT_ID")) {
             String oboClientId = tokenInfo.getString("OBO_CLIENT_ID");
@@ -110,6 +155,45 @@ public class OrcidBearerTokenFilter implements Filter {
         }
         builder.authenticated(true);
         return builder.build();
+    }
+
+    private String resolveUserOrcid(JSONObject tokenInfo) {
+        String username = extractOptionalString(tokenInfo, USERNAME);
+        if(StringUtils.isNotBlank(username)) {
+            return username;
+        }
+
+        // Some introspection responses expose the user ORCID in "orcid" instead of "username".
+        String orcid = extractOptionalString(tokenInfo, ORCID);
+        if(StringUtils.isNotBlank(orcid)) {
+            return orcid;
+        }
+
+        return null;
+    }
+
+    private Set<String> tokenizeSpaceOrCsvField(JSONObject tokenInfo, String fieldName) {
+        String rawValue = extractOptionalString(tokenInfo, fieldName);
+        if(StringUtils.isBlank(rawValue)) {
+            return new HashSet<>();
+        }
+
+        return Arrays.stream(rawValue.split("[\\s,]+"))
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toSet());
+    }
+
+    private String extractOptionalString(JSONObject tokenInfo, String fieldName) {
+        if(tokenInfo == null || StringUtils.isBlank(fieldName) || !tokenInfo.has(fieldName)) {
+            return null;
+        }
+
+        try {
+            String value = tokenInfo.getString(fieldName);
+            return StringUtils.isBlank(value) ? null : value;
+        } catch(JSONException e) {
+            return null;
+        }
     }
 
     private String extractToken(HttpServletRequest request) {
@@ -143,5 +227,31 @@ public class OrcidBearerTokenFilter implements Filter {
         }
 
         return null;
+    }
+
+    private String safeGet(JSONObject tokenInfo, String field) {
+        if (tokenInfo == null || StringUtils.isBlank(field) || !tokenInfo.has(field)) {
+            return "<missing>";
+        }
+
+        try {
+            Object value = tokenInfo.get(field);
+            return value == null ? "<null>" : String.valueOf(value);
+        } catch (JSONException e) {
+            return "<error>";
+        }
+    }
+
+    private String tokenFingerprint(String token) {
+        if (StringUtils.isBlank(token)) {
+            return "<empty>";
+        }
+
+        int len = token.length();
+        if (len <= 8) {
+            return "***" + token;
+        }
+
+        return "***" + token.substring(len - 8);
     }
 }

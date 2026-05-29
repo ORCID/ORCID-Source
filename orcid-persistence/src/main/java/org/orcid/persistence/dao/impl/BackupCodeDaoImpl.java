@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Query;
@@ -25,9 +26,10 @@ public class BackupCodeDaoImpl extends GenericDaoImpl<BackupCodeEntity, Long> im
     @Override
     @Transactional
     public void markUsed(String orcid, String hashedCode) {
-        Query query = entityManager.createQuery("UPDATE BackupCodeEntity b SET b.usedDate = now() WHERE b.orcid = :orcid AND b.hashedCode = :hashedCode");
+        Query query = entityManager.createQuery("UPDATE BackupCodeEntity b SET b.usedDate = :usedDate WHERE b.orcid = :orcid AND b.hashedCode = :hashedCode");
         query.setParameter("orcid", orcid);
         query.setParameter("hashedCode", hashedCode);
+        query.setParameter("usedDate", new Date());
         query.executeUpdate();
     }   
     

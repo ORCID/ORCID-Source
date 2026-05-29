@@ -355,9 +355,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void updateIndexingStatus(String orcid, IndexingStatus indexingStatus) {
-        String queryString = null;
+        String queryString;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
-            queryString = "update ProfileEntity set indexingStatus = :indexingStatus, lastIndexedDate = now() where id = :orcid";
+            queryString = "update ProfileEntity set indexingStatus = :indexingStatus, lastIndexedDate = :lastIndexedDate where id = :orcid";
             updateWebhookProfileLastUpdate(orcid);
         } else {
             queryString = "update ProfileEntity set indexingStatus = :indexingStatus where id = :orcid";
@@ -365,6 +365,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         Query query = entityManager.createQuery(queryString);
         query.setParameter("orcid", orcid);
         query.setParameter("indexingStatus", indexingStatus);
+        if (IndexingStatus.DONE.equals(indexingStatus)) {
+            query.setParameter("lastIndexedDate", new Date());
+        }
         // Sets a timeout for this query
         query.setHint("jakarta.persistence.query.timeout", queryTimeout);
         query.executeUpdate();
@@ -420,8 +423,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public void updateLocale(String orcid, String locale) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity p set p.lastModified = now(), p.locale = :locale, p.indexingStatus = :indexing_status where p.id = :orcid");
+            .createQuery("update ProfileEntity p set p.lastModified = :lastModified, p.locale = :locale, p.indexingStatus = :indexing_status where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("locale", locale);
         updateQuery.setParameter("indexing_status", IndexingStatus.PENDING);
         updateQuery.executeUpdate();
@@ -431,7 +435,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean deprecateProfile(String toDeprecate, String primaryOrcid, String deprecatedMethod, String adminUser) {
         StringBuilder queryString = new StringBuilder(
-                "update ProfileEntity p set p.lastModified = now(), p.deprecatedDate = now(), p.deactivationDate = now(), p.indexingStatus = :indexing_status, p.primaryRecord = :primary_record, p.activitiesVisibilityDefault = :defaultVisibility, p.deprecatedMethod = :deprecatedMethod");
+                "update ProfileEntity p set p.lastModified = :lastModified, p.deprecatedDate = :deprecatedDate, p.deactivationDate = :deactivationDate, p.indexingStatus = :indexing_status, p.primaryRecord = :primary_record, p.activitiesVisibilityDefault = :defaultVisibility, p.deprecatedMethod = :deprecatedMethod");
         if (ProfileEntity.ADMIN_DEPRECATION.equals(deprecatedMethod) && adminUser != null) {
             queryString.append(", p.deprecatingAdmin = :deprecatingAdmin");
         }
@@ -443,6 +447,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
         query.setParameter("defaultVisibility", PRIVATE_VISIBILITY);
         query.setParameter("deprecatedMethod", deprecatedMethod);
+        Date now = new Date();
+        query.setParameter("lastModified", now);
+        query.setParameter("deprecatedDate", now);
+        query.setParameter("deactivationDate", now);
         if (ProfileEntity.ADMIN_DEPRECATION.equals(deprecatedMethod) && adminUser != null) {
             query.setParameter("deprecatingAdmin", adminUser);
         }
@@ -483,12 +491,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean updateDeveloperTools(String orcid, boolean enabled) {
-        Query query = entityManager.createQuery("update ProfileEntity p set p.enableDeveloperTools=:enabled, p.lastModified=now() where p.id=:orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.enableDeveloperTools=:enabled, p.lastModified = :lastModified where p.id=:orcid");
         if (enabled)
             query = entityManager
-                    .createQuery("update ProfileEntity p set p.enableDeveloperTools=:enabled, p.developerToolsEnabledDate=now(), p.lastModified=now() where p.id=:orcid");
+                    .createQuery("update ProfileEntity p set p.enableDeveloperTools=:enabled, p.developerToolsEnabledDate = :developerToolsEnabledDate, p.lastModified = :lastModified where p.id=:orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("enabled", enabled);
+        Date now = new Date();
+        query.setParameter("lastModified", now);
+        if (enabled) {
+            query.setParameter("developerToolsEnabledDate", now);
+        }
         return query.executeUpdate() > 0;
     }
 
@@ -652,8 +665,9 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean updateDefaultVisibility(String orcid, String visibility) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity p set p.lastModified = now(), p.activitiesVisibilityDefault = :activitiesVisibilityDefault where p.id = :orcid");
+                .createQuery("update ProfileEntity p set p.lastModified = :lastModified, p.activitiesVisibilityDefault = :activitiesVisibilityDefault where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("activitiesVisibilityDefault", visibility);
         return updateQuery.executeUpdate() > 0;
     }
@@ -686,7 +700,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void disable2FA(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.using2FA = false, p.secretFor2FA = null where p.id = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = :lastModified, p.using2FA = false, p.secretFor2FA = null where p.id = :orcid");
+        query.setParameter("lastModified", new Date());
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -694,7 +709,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void enable2FA(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.using2FA = true where p.id = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = :lastModified, p.using2FA = true where p.id = :orcid");
+        query.setParameter("lastModified", new Date());
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -702,7 +718,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public void update2FASecret(String orcid, String secret) {
-        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.secretFor2FA = :secret where p.id = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = :lastModified, p.secretFor2FA = :secret where p.id = :orcid");
+        query.setParameter("lastModified", new Date());
         query.setParameter("orcid", orcid);
         query.setParameter("secret", secret);
         query.executeUpdate();
@@ -711,7 +728,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean deactivate(String orcid) {
-        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.deactivationDate = now() where p.id = :orcid");
+        Query query = entityManager.createQuery("update ProfileEntity p set p.lastModified = :lastModified, p.deactivationDate = :deactivationDate where p.id = :orcid");
+        Date now = new Date();
+        query.setParameter("lastModified", now);
+        query.setParameter("deactivationDate", now);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;
     }

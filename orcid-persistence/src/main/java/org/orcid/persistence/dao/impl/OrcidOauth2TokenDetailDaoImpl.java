@@ -45,7 +45,8 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     public void removeByRefreshTokenValue(String refreshTokenValue) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = 'CLIENT_REVOKED' where t.refreshTokenValue = :refreshToken");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'CLIENT_REVOKED' where t.refreshTokenValue = :refreshToken");
+        query.setParameter("revocationDate", new Date());
         query.setParameter("refreshToken", refreshTokenValue);
         int i = query.executeUpdate();
         if (i == 0) {
@@ -98,7 +99,8 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @Transactional
     public void disableAccessToken(String accessTokenValue) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = 'CLIENT_REVOKED' where t.tokenValue = :accessTokenValue");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'CLIENT_REVOKED' where t.tokenValue = :accessTokenValue");
+        query.setParameter("revocationDate", new Date());
         query.setParameter("accessTokenValue", accessTokenValue);
         int count = query.executeUpdate();
         if (count == 0) {
@@ -109,7 +111,8 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @Transactional
     public void disableAccessTokenById(Long tokenId, String userOrcid) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = 'USER_REVOKED' where t.id = :tokenId and t.orcid = :userOrcid");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'USER_REVOKED' where t.id = :tokenId and t.orcid = :userOrcid");
+        query.setParameter("revocationDate", new Date());
         query.setParameter("tokenId", tokenId);
         query.setParameter("userOrcid", userOrcid);
         int count = query.executeUpdate();
@@ -121,7 +124,8 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @Transactional
     public void disableAccessTokenByRefreshToken(String refreshTokenValue) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = 'CLIENT_REVOKED' where t.refreshTokenValue = :refreshTokenValue");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'CLIENT_REVOKED' where t.refreshTokenValue = :refreshTokenValue");
+        query.setParameter("revocationDate", new Date());
         query.setParameter("refreshTokenValue", refreshTokenValue);
         int count = query.executeUpdate();
         if (count == 0) {
@@ -179,10 +183,13 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @Transactional
     public int disableAccessTokenByCodeAndClient(String authorizationCode, String clientId, String reason) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = :reason, t.lastModified=now() where t.clientDetailsId = :clientId and t.authorizationCode = :authorizationCode");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = :reason, t.lastModified = :lastModified where t.clientDetailsId = :clientId and t.authorizationCode = :authorizationCode");
         query.setParameter("authorizationCode", authorizationCode);
         query.setParameter("clientId", clientId);
         query.setParameter("reason", reason);
+        Date now = new Date();
+        query.setParameter("revocationDate", now);
+        query.setParameter("lastModified", now);
         return query.executeUpdate();
     }
     
@@ -198,16 +205,22 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @Transactional
     public void disableAccessTokenByUserOrcid(String userOrcid, String reason) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = :reason, t.lastModified=now() where t.orcid = :userOrcid AND (t.tokenDisabled IS NULL OR t.tokenDisabled = FALSE)");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = :reason, t.lastModified = :lastModified where t.orcid = :userOrcid AND (t.tokenDisabled IS NULL OR t.tokenDisabled = FALSE)");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("reason", reason);
+        Date now = new Date();
+        query.setParameter("revocationDate", now);
+        query.setParameter("lastModified", now);
         query.executeUpdate();        
     }
 
     @Override
     @Transactional
     public void revokeAccessToken(String accessToken) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = 'CLIENT_REVOKED', t.lastModified=now() where t.tokenValue = :accessTokenValue");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'CLIENT_REVOKED', t.lastModified = :lastModified where t.tokenValue = :accessTokenValue");
+        Date now = new Date();
+        query.setParameter("revocationDate", now);
+        query.setParameter("lastModified", now);
         query.setParameter("accessTokenValue", accessToken);
         int count = query.executeUpdate();
         if (count == 0) {
@@ -218,7 +231,10 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     @Override
     @Transactional
     public void disableClientAccessTokensByUserOrcid(String orcid, String clientDetailsId) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate=now(), t.revokeReason = 'USER_REVOKED', t.lastModified=now() where t.clientDetailsId = :clientDetailsId and t.orcid = :orcid and t.revokeReason is null");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'USER_REVOKED', t.lastModified = :lastModified where t.clientDetailsId = :clientDetailsId and t.orcid = :orcid and t.revokeReason is null");
+        Date now = new Date();
+        query.setParameter("revocationDate", now);
+        query.setParameter("lastModified", now);
         query.setParameter("clientDetailsId", clientDetailsId);
         query.setParameter("orcid", orcid);
         int count = query.executeUpdate();

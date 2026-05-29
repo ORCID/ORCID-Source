@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Query;
@@ -182,9 +183,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVerifySetCurrentAndPrimary(String orcid, String email) {
-        Query query = entityManager.createQuery("update EmailEntity e set e.current = true, e.primary = true, e.verified = true, e.lastModified=now() where e.orcid = :orcid and e.email = :email");
+        Query query = entityManager.createQuery("update EmailEntity e set e.current = true, e.primary = true, e.verified = true, e.lastModified = :lastModified where e.orcid = :orcid and e.email = :email");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -249,9 +251,10 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Override
     @Transactional
     public boolean hideAllEmails(String orcid) {
-        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.email = null, e.lastModified=now() where e.orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.email = null, e.lastModified = :lastModified where e.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", PRIVATE_VISIBILITY);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 
@@ -259,10 +262,11 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibility(String orcid, String email, String visibility) {
-        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.lastModified=now() where e.email = :email and e.orcid = :orcid");
+        Query query = entityManager.createQuery("update EmailEntity e set e.visibility = :visibility, e.lastModified = :lastModified where e.email = :email and e.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.setParameter("email", email);
         query.setParameter("visibility", visibility);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0;
     }
 

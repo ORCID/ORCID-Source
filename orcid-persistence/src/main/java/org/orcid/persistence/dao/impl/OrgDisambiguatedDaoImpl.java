@@ -2,6 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Query;
@@ -118,15 +119,18 @@ public class OrgDisambiguatedDaoImpl extends GenericDaoImpl<OrgDisambiguatedEnti
     @Override
     @Transactional
     public void updateIndexingStatus(Long orgDisambiguatedId, IndexingStatus indexingStatus) {
-        String queryString = null;
+        String queryString;
         if (IndexingStatus.DONE.equals(indexingStatus)) {
-            queryString = "update OrgDisambiguatedEntity set indexingStatus = :indexingStatus, lastIndexedDate = now() where id = :orgDisambiguatedId";
+            queryString = "update OrgDisambiguatedEntity set indexingStatus = :indexingStatus, lastIndexedDate = :lastIndexedDate where id = :orgDisambiguatedId";
         } else {
             queryString = "update OrgDisambiguatedEntity set indexingStatus = :indexingStatus where id = :orgDisambiguatedId";
         }
         Query query = entityManager.createQuery(queryString);
         query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
         query.setParameter("indexingStatus", indexingStatus);
+        if (IndexingStatus.DONE.equals(indexingStatus)) {
+            query.setParameter("lastIndexedDate", new Date());
+        }
         query.executeUpdate();
     }
 

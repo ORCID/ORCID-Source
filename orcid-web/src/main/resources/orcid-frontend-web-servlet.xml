@@ -95,6 +95,9 @@
     <bean id="socialSignInUtils" class="org.orcid.frontend.spring.web.social.config.SocialSignInUtils" />
     
     <bean id="thirdPartyLinkManager" class="org.orcid.frontend.web.util.ThirdPartyLinkManager" />
+
+    <!-- Required by DelegatingFilterProxy filter-name clientIdAttributeFilter in WEB-INF/web.xml -->
+    <bean id="clientIdAttributeFilter" class="org.orcid.api.common.filter.ClientIdAttributeFilter" />
     
     <bean id="mailGunManager" class="org.orcid.utils.email.MailGunManager" />
     

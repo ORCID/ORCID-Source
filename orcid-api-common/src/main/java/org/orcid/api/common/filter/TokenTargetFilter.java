@@ -1,5 +1,7 @@
 package org.orcid.api.common.filter;
 
+import java.util.Collection;
+import java.util.Set;
 import java.security.AccessControlException;
 import java.util.regex.Matcher;
 
@@ -10,11 +12,14 @@ import jakarta.ws.rs.ext.Provider;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Provider
 public class TokenTargetFilter implements ContainerRequestFilter {
+    private static final String READ_PUBLIC_SCOPE = "/read-public";
+    private static final String ROLE_PUBLIC = "ROLE_PUBLIC";
 
     //TODO: this method is doing exactly the same that the OrcidSecutiryManagerImpl.isMyToken does, so, lets review it and leave only one.
 
@@ -35,12 +40,40 @@ public class TokenTargetFilter implements ContainerRequestFilter {
             if (OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
                 OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
                 if (authDetails != null) {
+                    if (isClientOnlyPublicReadToken(authDetails)) {
+                        return;
+                    }
+
                     if (!targetOrcid.equals(authDetails.getUserOrcid())) {
                         throw new AccessControlException("You do not have the required permissions.");
                     }
                 }
             }
         }
+    }
+
+    private boolean isClientOnlyPublicReadToken(OrcidBearerTokenAuthentication authDetails) {
+        if (authDetails == null || authDetails.getUserOrcid() != null) {
+            return false;
+        }
+
+        Set<String> scopes = authDetails.getScopes();
+        if (scopes != null && scopes.contains(READ_PUBLIC_SCOPE)) {
+            return true;
+        }
+
+        Collection<? extends GrantedAuthority> authorities = authDetails.getAuthorities();
+        if (authorities == null) {
+            return false;
+        }
+
+        for (GrantedAuthority authority : authorities) {
+            if (authority != null && ROLE_PUBLIC.equals(authority.getAuthority())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

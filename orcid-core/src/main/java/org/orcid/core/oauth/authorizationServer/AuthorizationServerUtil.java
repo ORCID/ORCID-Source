@@ -15,7 +15,6 @@ import jakarta.annotation.Resource;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -282,10 +281,23 @@ public class AuthorizationServerUtil {
 
         Response response = this.doPost(this.authorizationServerIntrospectionEndpoint, basicAuthorizationHeaderForTokenIntrospection, parameters);
 
-        if (response != null && (response.getStatus() == 200)) {
+        if (response == null) {
+            logger.warn("Token introspection returned null response from endpoint=" + authorizationServerIntrospectionEndpoint);
+            return null;
+        }
+
+        if (response.getStatus() == 200) {
             String responseString = (String) response.getEntity();
             return new JSONObject(responseString);
         }
+
+        String responseBody = response.getEntity() == null ? "<empty>" : String.valueOf(response.getEntity());
+        if (responseBody.length() > 300) {
+            responseBody = responseBody.substring(0, 300) + "...";
+        }
+        logger.warn("Token introspection non-200 response. endpoint=" + authorizationServerIntrospectionEndpoint
+                + " status=" + response.getStatus()
+                + " body=" + responseBody);
 
         return null;
     }

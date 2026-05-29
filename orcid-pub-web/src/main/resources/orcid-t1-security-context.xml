@@ -18,7 +18,7 @@
         <sec:anonymous enabled="true" />
         <sec:http-basic entry-point-ref="apiAuthenticationEntryPoint" />
         <sec:custom-filter ref="orcidBearerTokenFilter" before="PRE_AUTH_FILTER" />
-        <sec:intercept-url pattern="/**" access="hasAuthority('ROLE_CLIENT') or isAnonymous()"/>
+        <sec:intercept-url pattern="/**" access="hasAnyAuthority('ROLE_CLIENT','ROLE_PUBLIC') or isAnonymous()"/>
         <sec:access-denied-handler ref="orcidAPIAccessDeniedHandler" />
     </sec:http>
          

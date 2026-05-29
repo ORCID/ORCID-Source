@@ -2,6 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Query;
@@ -65,10 +66,11 @@ public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEnti
     @Transactional
     public boolean updateVisibilities(String orcid, ArrayList<Long> researchResourceIds, String visibility) {
         Query query = entityManager
-                .createQuery("update ResearchResourceEntity r set r.visibility=:visibility, r.lastModified=now() where r.id in (:researchResourceIds) and r.orcid=:orcid");
+                .createQuery("update ResearchResourceEntity r set r.visibility=:visibility, r.lastModified = :lastModified where r.id in (:researchResourceIds) and r.orcid=:orcid");
         query.setParameter("researchResourceIds", researchResourceIds);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0 ? true : false;
     }
 

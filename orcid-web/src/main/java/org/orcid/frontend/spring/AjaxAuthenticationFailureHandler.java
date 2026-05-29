@@ -26,6 +26,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 public class AjaxAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        response.setHeader("X-ORCID-AUTH-DEBUG", "ajax-auth-failure-handler");
+        response.setHeader("X-ORCID-AUTH-EXCEPTION", exception.getClass().getSimpleName());
         response.setContentType("application/json");
         PrintWriter writer = response.getWriter();
         writer.println("{");

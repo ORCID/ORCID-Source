@@ -61,7 +61,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void updateLastModified(String clientId) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.lastModified = now() where c.id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified where c.id = :clientId");
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
@@ -77,7 +78,8 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public int updateLastModifiedBulk(List<String> clientIds) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.lastModified = now() where c.id in :clientIds");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified where c.id in :clientIds");
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("clientIds", clientIds);
         return updateQuery.executeUpdate();
     }
@@ -133,8 +135,9 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     @Transactional
     public void updateClientType(String clientType, String clientId) {
-        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.clientType = :clientType, c.lastModified = now() where c.id = :clientId");
+        Query updateQuery = entityManager.createQuery("update ClientDetailsEntity c set c.clientType = :clientType, c.lastModified = :lastModified where c.id = :clientId");
         updateQuery.setParameter("clientType", clientType);
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("clientId", clientId);
         updateQuery.executeUpdate();
     }
@@ -224,8 +227,9 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void changePersistenceTokensProperty(String clientId, boolean isPersistenTokensEnabled) {
         Query updateQuery = entityManager
-            .createQuery("update ClientDetailsEntity c set c.lastModified = now(), c.persistentTokensEnabled = :isPersistenTokensEnabled where c.id = :clientId");
+            .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.persistentTokensEnabled = :isPersistenTokensEnabled where c.id = :clientId");
         updateQuery.setParameter("clientId", clientId);
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.setParameter("isPersistenTokensEnabled", isPersistenTokensEnabled);
         updateQuery.executeUpdate();
     }
@@ -234,8 +238,9 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void activateClient(String clientDetailsId) {
         Query updateQuery = entityManager
-            .createQuery("update ClientDetailsEntity c set c.lastModified = now(), c.deactivatedDate = null, c.deactivatedBy = null where c.id = :clientId");
+            .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.deactivatedDate = null, c.deactivatedBy = null where c.id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
+        updateQuery.setParameter("lastModified", new Date());
         updateQuery.executeUpdate();
     }
 
@@ -243,8 +248,11 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Transactional
     public void deactivateClient(String clientDetailsId, String deactivatedBy) {
         Query updateQuery = entityManager
-            .createQuery("update ClientDetailsEntity c set c.lastModified = now(), c.deactivatedDate = now(), c.deactivatedBy = :deactivatedBy where c.id = :clientId");
+            .createQuery("update ClientDetailsEntity c set c.lastModified = :lastModified, c.deactivatedDate = :deactivatedDate, c.deactivatedBy = :deactivatedBy where c.id = :clientId");
         updateQuery.setParameter("clientId", clientDetailsId);
+        Date now = new Date();
+        updateQuery.setParameter("lastModified", now);
+        updateQuery.setParameter("deactivatedDate", now);
         updateQuery.setParameter("deactivatedBy", deactivatedBy);
         updateQuery.executeUpdate();
     }

@@ -111,7 +111,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsSent(Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity n set n.sentDate = now() where n.id in :id");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.sentDate = :sentDate where n.id in :id");
+        query.setParameter("sentDate", new Date());
         query.setParameter("id", id);
         query.executeUpdate();
     }
@@ -119,7 +120,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsSent(Collection<Long> ids) {
-        Query query = entityManager.createQuery("update NotificationEntity n set n.sentDate = now() where n.id in :ids");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.sentDate = :sentDate where n.id in :ids");
+        query.setParameter("sentDate", new Date());
         query.setParameter("ids", ids);
         query.executeUpdate();
     }
@@ -127,7 +129,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsRead(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity n set n.readDate = now() where n.orcid = :orcid and n.id = :id and n.readDate is null");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.readDate = :readDate where n.orcid = :orcid and n.id = :id and n.readDate is null");
+        query.setParameter("readDate", new Date());
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();
@@ -136,7 +139,8 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     @Transactional
     public void flagAsArchived(String orcid, Long id) {
-        Query query = entityManager.createQuery("update NotificationEntity n set n.archivedDate = now() where n.orcid = :orcid and n.id = :id and n.archivedDate is null");
+        Query query = entityManager.createQuery("update NotificationEntity n set n.archivedDate = :archivedDate where n.orcid = :orcid and n.id = :id and n.archivedDate is null");
+        query.setParameter("archivedDate", new Date());
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         query.executeUpdate();

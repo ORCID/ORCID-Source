@@ -29,7 +29,8 @@ public class ProfileLastModifiedDaoImpl implements ProfileLastModifiedDao {
     @Override
     @Transactional
     public void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity p set p.lastModified = now(), p.indexingStatus = :indexingStatus where p.id = :orcid");
+        Query updateQuery = entityManager.createQuery(
+            "update ProfileEntity p set p.lastModified = CURRENT_TIMESTAMP, p.indexingStatus = :indexingStatus where p.id = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("indexingStatus", indexingStatus);
         // Sets a timeout for this query

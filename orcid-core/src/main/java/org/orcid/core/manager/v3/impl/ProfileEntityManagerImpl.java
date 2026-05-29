@@ -524,6 +524,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
         profileDao.updateLastLoginDetails(orcid, ipAddress);
     }
