@@ -50,7 +50,15 @@ public class TwoFactorAuthenticationController extends BaseController {
     @RequestMapping("/status.json")
     public @ResponseBody TwoFactorAuthStatus get2FAStatus() {
         TwoFactorAuthStatus status = new TwoFactorAuthStatus();
-        status.setEnabled(twoFactorAuthenticationManager.userUsing2FA(getCurrentUserOrcid()));
+        String orcid = getCurrentUserOrcid();
+        status.setEnabled(twoFactorAuthenticationManager.userUsing2FA(orcid));
+        if (status.isEnabled()) {
+            java.util.Date creationDate = backupCodeManager.getBackupCodesCreationDate(orcid);
+            if (creationDate != null) {
+                status.setTwoFactorCreationDate(org.orcid.pojo.ajaxForm.Date.valueOf(creationDate));
+                status.setRecoveryCodeCreationDate(org.orcid.pojo.ajaxForm.Date.valueOf(creationDate));
+            }
+        }
         return status;
     }
 

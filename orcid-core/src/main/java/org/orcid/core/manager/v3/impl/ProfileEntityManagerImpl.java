@@ -289,20 +289,6 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
-    public void disableClientAccess(String clientDetailsId, String userOrcid) {
-        List<OrcidOauth2TokenDetail> userTokens = orcidOauth2TokenDetailDaoReadOnly.findByUserName(userOrcid);
-        if(userTokens != null && !userTokens.isEmpty()) {
-            for(OrcidOauth2TokenDetail token : userTokens) {
-                if(clientDetailsId.equals(token.getClientDetailsId())) {
-                    redisClient.remove(token.getTokenValue());
-                }
-            }
-        }
-        // And then disable all user tokens
-        orcidOauth2TokenDetailDao.disableClientAccessTokensByUserOrcid(userOrcid, clientDetailsId);
-    }
-
-    @Override
     public List<ApplicationSummary> getApplications(String orcid) {
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDaoReadOnly.findByUserName(orcid);
         Map<String, ApplicationSummary> distinctApplications = new HashMap<>();

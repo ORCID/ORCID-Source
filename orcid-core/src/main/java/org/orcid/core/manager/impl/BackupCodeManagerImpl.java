@@ -61,5 +61,10 @@ public class BackupCodeManagerImpl implements BackupCodeManager {
         backupCodeDao.removedUsedBackupCodes(orcid);
     }
 
+    @Override
+    public Date getBackupCodesCreationDate(String orcid) {
+        return backupCodeDao.getBackupCodesCreationDate(orcid);
+    }
+
 
 }

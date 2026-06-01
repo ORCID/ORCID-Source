@@ -39,5 +39,12 @@ public class BackupCodeDaoImpl extends GenericDaoImpl<BackupCodeEntity, Long> im
         Query query = entityManager.createQuery("DELETE FROM BackupCodeEntity b WHERE b.orcid = :orcid AND b.usedDate IS NULL");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
-    }   
+    }
+
+    @Override
+    public Date getBackupCodesCreationDate(String orcid) {
+        Query query = entityManager.createQuery("SELECT MAX(dateCreated) FROM BackupCodeEntity WHERE orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        return (Date) query.getSingleResult();
+    }
 }

@@ -64,13 +64,24 @@ public class TwoFactorAuthenticationControllerTest {
 
     @Test
     public void testGet2FAStatus() {
+        java.util.Date now = new java.util.Date();
+        org.orcid.pojo.ajaxForm.Date expectedDate = org.orcid.pojo.ajaxForm.Date.valueOf(now);
         when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(true);
+        when(backupCodeManager.getBackupCodesCreationDate(ORCID)).thenReturn(now);
         TwoFactorAuthStatus status = controller.get2FAStatus();
         assertTrue(status.isEnabled());
+        assertEquals(expectedDate.getYear(), status.getTwoFactorCreationDate().getYear());
+        assertEquals(expectedDate.getMonth(), status.getTwoFactorCreationDate().getMonth());
+        assertEquals(expectedDate.getDay(), status.getTwoFactorCreationDate().getDay());
+        assertEquals(expectedDate.getYear(), status.getRecoveryCodeCreationDate().getYear());
+        assertEquals(expectedDate.getMonth(), status.getRecoveryCodeCreationDate().getMonth());
+        assertEquals(expectedDate.getDay(), status.getRecoveryCodeCreationDate().getDay());
 
         when(twoFactorAuthenticationManager.userUsing2FA(ORCID)).thenReturn(false);
         status = controller.get2FAStatus();
         assertFalse(status.isEnabled());
+        assertNull(status.getTwoFactorCreationDate());
+        assertNull(status.getRecoveryCodeCreationDate());
     }
 
     @Test
