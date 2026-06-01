@@ -26,10 +26,10 @@ the software.
 
     <properties>
         <java.version>21</java.version>
-        <spring.version>6.0.23</spring.version>
-        <security.version>6.0.8</security.version>
+        <spring.version>6.2.7</spring.version>
+        <security.version>6.5.9</security.version>
         <liquibase.version>4.9.1</liquibase.version>
-        <jersey.version>3.1.9</jersey.version>
+        <jersey.version>3.1.10</jersey.version>
         <jackson.version>2.15.4</jackson.version>
         <activemq.version>6.1.5</activemq.version>
         <swagger.version>2.1.1</swagger.version>
@@ -126,6 +126,10 @@ the software.
                 <inherited>true</inherited>
                 <configuration>
                     <release>${java.version}</release>
+                    <parameters>true</parameters>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -371,17 +375,17 @@ the software.
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.1</version>
+            <version>2.25.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.17.1</version>
+            <version>2.25.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
-            <version>2.17.1</version>
+            <version>2.25.4</version>
         </dependency>                 
         <dependency>
             <groupId>commons-lang</groupId>
@@ -432,7 +436,7 @@ the software.
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.11.0</version>
                 <scope>compile</scope>
             </dependency>
 
@@ -667,7 +671,7 @@ the software.
             <dependency>
                 <groupId>org.freemarker</groupId>
                 <artifactId>freemarker</artifactId>
-                <version>2.3.25-incubating</version>
+                <version>2.3.34</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

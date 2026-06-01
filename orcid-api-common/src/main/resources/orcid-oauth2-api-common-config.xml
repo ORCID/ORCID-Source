@@ -4,7 +4,7 @@
     xmlns:sec="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-6.0.xsd">
+	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-6.5.xsd">
 
 	<!-- Message converters -->
 	<bean id="orcidJsonMessageConverter"
