@@ -1,12 +1,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -29,8 +24,10 @@ import org.orcid.core.manager.v3.RecordNameManager;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.utils.v3.OrcidIdentifierUtils;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.service.TrustedPartiesService;
 import org.orcid.frontend.web.util.CommonPasswords;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.v3.release.record.Addresses;
@@ -45,6 +42,7 @@ import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.alerting.SlackManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.MapBindingResult;
 import org.springframework.validation.ObjectError;
@@ -136,10 +134,19 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private ExpiringLinkService expiringLinkService;
 
+    @Resource
+    private RedisClient redisClient;
+
+    @Resource
+    private TrustedPartiesService trustedPartiesService;
+
     @RequestMapping
     public ModelAndView manageProfile() {
         return new ModelAndView("manage");
     }
+
+    @Value("${org.orcid.security.two_factor.token_ttl:1800}")
+    private int twoFactorTokenTtl;
     
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
     public @ResponseBody Map<String, Boolean> searchForDelegateByEmail(@PathVariable String email) {
@@ -253,7 +260,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/revoke-application.json", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("clientId") String clientId) {
-        profileEntityManager.disableClientAccess(clientId, getCurrentUserOrcid());
+        if(StringUtils.isNotBlank(clientId)) {
+            trustedPartiesService.disableClientAccess(clientId, getCurrentUserOrcid());
+        }
         return true;
     }
 
@@ -341,6 +350,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/validate-deprecate-profile.json", method = RequestMethod.POST)
     public @ResponseBody DeprecateProfile validateDeprecateProfile(@RequestBody DeprecateProfile deprecateProfile) {
+        deprecateProfile.setSuccess(false);
         validateFormData(deprecateProfile);
         if (!deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -362,6 +372,10 @@ public class ManageProfileController extends BaseWorkspaceController {
 
         validateDeprecateAccountRequest(deprecateProfile, deprecatingEntity);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
+            return deprecateProfile;
+        }
+
+        if (!twoFactorAuthenticationManager.validateTwoFactorAuthForm(deprecatingEntity.getId(), deprecateProfile)) {
             return deprecateProfile;
         }
 
@@ -387,13 +401,17 @@ public class ManageProfileController extends BaseWorkspaceController {
                     primaryEmails.getEmails().stream().map(e -> e.getEmail()).collect(Collectors.toList()));
         }
 
-        deprecateProfile.setVerificationCodeRequired(twoFactorAuthenticationManager.userUsing2FA(deprecatingOrcid));
+        deprecateProfile.setSuccess(true);
+        String twoFactorToken = UUID.randomUUID().toString();
+        redisClient.set(deprecatingEntity.getId() + "_two-factor-token", twoFactorToken, twoFactorTokenTtl);
+        deprecateProfile.setTwoFactorToken(twoFactorToken);
 
         return deprecateProfile;
     }
 
     @RequestMapping(value = "/confirm-deprecate-profile.json", method = RequestMethod.POST)
     public @ResponseBody DeprecateProfile confirmDeprecateProfile(@RequestBody DeprecateProfile deprecateProfile) {
+        deprecateProfile.setSuccess(false);
         validateFormData(deprecateProfile);
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
@@ -416,16 +434,30 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (deprecateProfile.getErrors() != null && !deprecateProfile.getErrors().isEmpty()) {
             return deprecateProfile;
         }
+
+        if (twoFactorAuthenticationManager.userUsing2FA(deprecatingEntity.getId())) {
+            String storedToken = redisClient.get(deprecatingEntity.getId() + "_two-factor-token");
+            if (storedToken == null || !storedToken.equals(deprecateProfile.getTwoFactorToken())) {
+                deprecateProfile.setTwoFactorToken("");
+                return deprecateProfile;
+            }
+        }
+
+
         Emails deprecatedAccountEmails = emailManager.getEmails(deprecatingEntity.getId());
 
         boolean deprecated = profileEntityManager.deprecateProfile(deprecatingEntity.getId(), primaryEntity.getId(), ProfileEntity.USER_DRIVEN_DEPRECATION, null);
         if (!deprecated) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.problem_deprecating")));
         }
-        
-        if(deprecated && Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
-			recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
-		}
+
+        if (deprecated) {
+            redisClient.remove(deprecatingEntity.getId() + "_two-factor-token");
+            if (Features.SEND_EMAIL_ON_DEPRECATE_RECORD.isActive()) {
+                recordEmailSender.sendOrcidSecurityDeprecatedEmail(deprecateProfile.getPrimaryOrcid(), deprecateProfile.getDeprecatingOrcid(), deprecatedAccountEmails);
+            }
+        }
+        deprecateProfile.setSuccess(true);
         return deprecateProfile;
     }
 
@@ -449,7 +481,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     private void validateFormData(DeprecateProfile deprecateProfile) {
         List<String> errors = new ArrayList<>();
-        if (deprecateProfile.getDeprecatingPassword() == null || deprecateProfile.getDeprecatingPassword().trim().isEmpty()) {
+        if (deprecateProfile.getPassword() == null || deprecateProfile.getPassword().trim().isEmpty()) {
             errors.add(getMessage("deprecate_orcid.no_password_specified"));
         }
         if (deprecateProfile.getDeprecatingOrcidOrEmail() == null) {
@@ -459,7 +491,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     private void validateDeprecateAccountRequest(DeprecateProfile deprecateProfile, ProfileEntity deprecatingEntity) {
-        if (!encryptionManager.hashMatches(deprecateProfile.getDeprecatingPassword(), deprecatingEntity.getEncryptedPassword())) {
+        if (!encryptionManager.hashMatches(deprecateProfile.getPassword(), deprecatingEntity.getEncryptedPassword())) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("check_password_modal.incorrect_password")));
         } else if (deprecatingEntity.getDeprecatedDate() != null) {
             deprecateProfile.setErrors(Arrays.asList(getMessage("deprecate_orcid.already_deprecated", deprecatingEntity.getId())));

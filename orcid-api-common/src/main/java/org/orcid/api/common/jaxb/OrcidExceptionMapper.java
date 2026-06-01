@@ -142,6 +142,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             logShortError(t, clientId);
         } else if (t instanceof SearchStartParameterLimitExceededException) {
             logShortError(t, clientId);
+        } else if (t instanceof IllegalArgumentException) {
+            logShortError(t, clientId);
         } else if (t instanceof InvalidDisambiguatedOrgException) {
             LOGGER.error("Error for client ID: " + clientId + "InvalidDisambiguatedOrgException: Disambiguated org is empty or null");
         } else {

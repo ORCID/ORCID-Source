@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="ADD-OAUTH2-TOKEN-DETAIL-LOOKUP-IDX"
+               author="gwestwood"
+               dbms="postgresql"
+               runInTransaction="false">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="oauth2_token_detail_authkey_orcid_client_expiration_idx"
+                             tableName="oauth2_token_detail" />
+            </not>
+        </preConditions>
+        <sql>
+            CREATE INDEX CONCURRENTLY oauth2_token_detail_authkey_orcid_client_expiration_idx
+              ON oauth2_token_detail
+                 (authentication_key, user_orcid, client_details_id, token_expiration DESC);
+        </sql>
+        <rollback>
+            <sql>DROP INDEX CONCURRENTLY IF EXISTS oauth2_token_detail_authkey_orcid_client_expiration_idx;</sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
