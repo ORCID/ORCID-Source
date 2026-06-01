@@ -24,7 +24,7 @@ import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 @NamedNativeQueries( {
         @NamedNativeQuery(name = WebhookEntity.COUNT_WEBHOOKS_READY_TO_PROCESS, query = "SELECT COUNT(*) webhook_count "
                 + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE, resultSetMapping = "countMapping"),
-        @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT *  " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE
+    @NamedNativeQuery(name = WebhookEntity.FIND_WEBHOOKS_READY_TO_PROCESS, query = "SELECT w.* " + WebhookEntity.WEBHOOKS_READY_TO_PROCESS_FROM_CLAUSE
                 + " ORDER BY w.profile_last_modified", resultClass = WebhookEntity.class) })
 @SqlResultSetMapping(name = "countMapping", columns = @ColumnResult(name = "webhook_count"))
 public class WebhookEntity extends BaseEntity<WebhookEntityPk>  {
