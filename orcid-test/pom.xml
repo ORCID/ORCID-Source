@@ -2,6 +2,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.orcid</groupId>
+        <artifactId>orcid-parent</artifactId>
+        <version>release-2.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
     <groupId>org.orcid</groupId>
     <artifactId>orcid-test</artifactId>
     <version>release-2.0.0</version>
@@ -42,7 +48,7 @@
                                     <version>3.6.3</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>11</version>
+                                    <version>${java.version}</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -63,14 +69,6 @@
                 <version>2.1.1</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <inherited>true</inherited>
-                <configuration>
-                    <release>11</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -187,6 +185,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>

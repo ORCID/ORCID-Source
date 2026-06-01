@@ -15,7 +15,6 @@ import java.util.Map;
 import jakarta.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import com.oracle.truffle.api.profiles.Profile;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
