@@ -2,6 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -119,10 +120,11 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, String visibility) {
         Query query = entityManager.createQuery(
-            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=now() where o.orcid=:userOrcid and o.id=:orgAffiliationRelationId");
+            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=:lastModified where o.orcid=:userOrcid and o.id=:orgAffiliationRelationId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         query.setParameter("visibility", visibility);
+        query.setParameter("lastModified", new Date());
         boolean updated = query.executeUpdate() > 0 ? true : false;
         // If changing to PRIVATE or LIMITED, clear featured flag on that affiliation
         if (updated && !"PUBLIC".equals(visibility)) {
@@ -156,10 +158,11 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
     @Transactional
     public boolean updateVisibilitiesOnOrgAffiliationRelation(String userOrcid, ArrayList<Long> orgAffiliationRelationIds, String visibility) {
         Query query = entityManager.createQuery(
-            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=now() where o.orcid=:userOrcid and o.id in (:orgAffiliationRelationIds)");
+            "update OrgAffiliationRelationEntity o set o.visibility=:visibility, o.lastModified=:lastModified where o.orcid=:userOrcid and o.id in (:orgAffiliationRelationIds)");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationIds", orgAffiliationRelationIds);
         query.setParameter("visibility", visibility);
+        query.setParameter("lastModified", new Date());
         boolean updated = query.executeUpdate() > 0 ? true : false;
         // If changing to PRIVATE or LIMITED, clear featured flag on affected affiliations
         if (updated && !"PUBLIC".equals(visibility)) {
