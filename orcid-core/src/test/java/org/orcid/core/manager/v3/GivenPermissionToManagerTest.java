@@ -1,182 +1,163 @@
 package org.orcid.core.manager.v3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.orcid.core.BaseTest;
-import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.v3.read_only.GivenPermissionToManagerReadOnly;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.orcid.core.manager.v3.impl.GivenPermissionToManagerImpl;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.pojo.DelegateForm;
-import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
-public class GivenPermissionToManagerTest extends BaseTest {
-
-    private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
+@RunWith(MockitoJUnitRunner.class)
+public class GivenPermissionToManagerTest {
 
     private static final String GIVER = "0000-0000-0000-0006";
     private static final String RECEIVER = "0000-0000-0000-0003";
 
-    @Resource
-    private GivenPermissionToManager givenPermissionToManager;
-
-    @Resource
-    private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
-    
-    @Resource
-    private ProfileEntityManager profileEntityManager;
-    
-    @Resource(name = "notificationManagerV3")
-    private NotificationManager notificationManager;
-    
     @Mock
-    private NotificationManager mock_notificationManager;
+    private GivenPermissionToDao givenPermissionToDao;
 
-    @BeforeClass
-    public static void initDBUnitData() throws Exception {
-        initDBUnitData(DATA_FILES);        
-    }
-    
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
+    @Mock
+    private NotificationManager notificationManager;
+
+    @Mock
+    private ProfileEntityManager profileEntityManager;
+
+    @InjectMocks
+    private GivenPermissionToManagerImpl givenPermissionToManager;
+
     @Before
-    public void before() {
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(givenPermissionToManager, "notificationManager", mock_notificationManager);
-    }
-
-    @AfterClass
-    public static void removeDBUnitData() throws Exception {
-        List<String> reversedDataFiles = new ArrayList<String>(DATA_FILES);
-        Collections.reverse(reversedDataFiles);
-        removeDBUnitData(reversedDataFiles);
-    }
-
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(givenPermissionToManager, "notificationManager", notificationManager);
-    }
-    
-    @Test
-    public void testFindByGiverAndReceiverOrcid() {
-        DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(GIVER, RECEIVER);
-        assertNotNull(form);
-        assertEquals(GIVER, form.getGiverOrcid().getPath());
-        assertEquals(RECEIVER, form.getReceiverOrcid().getPath());
+    public void setUp() {
+        when(transactionTemplate.execute(any())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                TransactionCallbackWithoutResult callback = invocation.getArgument(0);
+                callback.doInTransaction(null);
+                return null;
+            }
+        });
     }
 
     @Test
     public void testRemove() {
-        // Create one
-        givenPermissionToManager.create(RECEIVER, GIVER);
-        // Find it
-        DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
-        assertNotNull(form);
-        assertEquals(RECEIVER, form.getGiverOrcid().getPath());
-        assertEquals(GIVER, form.getReceiverOrcid().getPath());
+        givenPermissionToManager.remove(GIVER, RECEIVER);
 
-        Date rLastModifiedBefore = profileEntityManager.getLastModifiedDate(RECEIVER);
-        Date gLastModifiedBefore = profileEntityManager.getLastModifiedDate(GIVER);
-        
-        // Delete it
-        givenPermissionToManager.remove(RECEIVER, GIVER);
-        // Verify it was deleted
-        form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
-        assertNull(form);
-
-        Date rLastModifiedAfter = profileEntityManager.getLastModifiedDate(RECEIVER);
-        Date gLastModifiedAfter = profileEntityManager.getLastModifiedDate(GIVER);
-
-        assertTrue(rLastModifiedAfter.after(rLastModifiedBefore));
-        assertTrue(gLastModifiedAfter.after(gLastModifiedBefore));
-    }
-    
-    @Test
-    public void testRemoveForProfile() {
-        GivenPermissionToDao dao = (GivenPermissionToDao) ReflectionTestUtils.getField(givenPermissionToManager, "givenPermissionToDao");
-        GivenPermissionToDao mockDao = Mockito.mock(GivenPermissionToDao.class);
-        ReflectionTestUtils.setField(givenPermissionToManager, "givenPermissionToDao", mockDao);
-        Mockito.when(mockDao.findByGiver(Mockito.eq("orcid"))).thenReturn(getPermissionsGiven());
-        Mockito.when(mockDao.findByReceiver(Mockito.eq("orcid"))).thenReturn(getPermissionsReceived());
-        
-        try {
-            givenPermissionToManager.removeAllForProfile("orcid");
-            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid"), Mockito.eq("orcid0"));
-            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid"), Mockito.eq("orcid1"));
-            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid"), Mockito.eq("orcid2"));
-            
-            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid0"), Mockito.eq("orcid"));
-            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid1"), Mockito.eq("orcid"));
-            Mockito.verify(mockDao, Mockito.times(1)).remove(Mockito.eq("orcid2"), Mockito.eq("orcid"));
-        } finally {
-            ReflectionTestUtils.setField(givenPermissionToManager, "givenPermissionToDao", dao);
-        }
-    }
-
-    private List<GivenPermissionByEntity> getPermissionsReceived() {
-        List<GivenPermissionByEntity> permissions = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            GivenPermissionByEntity e = new GivenPermissionByEntity();
-            e.setApprovalDate(new Date());
-            e.setGiver("orcid" + i);
-            e.setReceiver("orcid");
-            permissions.add(e);
-        }
-        return permissions;
-    }
-
-    private List<GivenPermissionToEntity> getPermissionsGiven() {
-        List<GivenPermissionToEntity> permissions = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            GivenPermissionToEntity e = new GivenPermissionToEntity();
-            e.setApprovalDate(new Date());
-            e.setReceiver("orcid" + i);
-            e.setGiver("orcid");
-            permissions.add(e);
-        }
-        return permissions;
+        verify(givenPermissionToDao).remove(GIVER, RECEIVER);
+        verify(profileEntityManager).updateLastModifed(GIVER);
+        verify(profileEntityManager).updateLastModifed(RECEIVER);
     }
 
     @Test
-    public void testCreate() {
-        Date rLastModifiedBefore = profileEntityManager.getLastModifiedDate(RECEIVER);
-        Date gLastModifiedBefore = profileEntityManager.getLastModifiedDate(GIVER);
+    public void testRemove_Nulls() {
+        givenPermissionToManager.remove(null, null);
 
-        // Create one
-        givenPermissionToManager.create(RECEIVER, GIVER);
+        verify(givenPermissionToDao).remove(null, null);
+        verify(profileEntityManager, times(2)).updateLastModifed(null);
+    }
 
-        DelegateForm form = givenPermissionToManagerReadOnly.findByGiverAndReceiverOrcid(RECEIVER, GIVER);
-        assertNotNull(form);
-        assertEquals(RECEIVER, form.getGiverOrcid().getPath());
-        assertEquals(GIVER, form.getReceiverOrcid().getPath());
+    @Test
+    public void testCreate_New() {
+        when(givenPermissionToDao.findByGiverAndReceiverOrcid(GIVER, RECEIVER)).thenReturn(null);
 
-        Date rLastModifiedAfter = profileEntityManager.getLastModifiedDate(RECEIVER);
-        Date gLastModifiedAfter = profileEntityManager.getLastModifiedDate(GIVER);
+        givenPermissionToManager.create(GIVER, RECEIVER);
 
-        assertTrue(rLastModifiedAfter.after(rLastModifiedBefore));
-        assertTrue(gLastModifiedAfter.after(gLastModifiedBefore));
+        verify(givenPermissionToDao).merge(any(GivenPermissionToEntity.class));
+        verify(notificationManager).sendNotificationToAddedDelegate(GIVER, RECEIVER);
+        verify(notificationManager).sendNotificationToUserGrantingPermission(GIVER, RECEIVER);
+        verify(profileEntityManager).updateLastModifed(GIVER);
+        verify(profileEntityManager).updateLastModifed(RECEIVER);
+    }
 
-        // Delete it
-        givenPermissionToManager.remove(RECEIVER, GIVER);
+    @Test
+    public void testCreate_Existing() {
+        when(givenPermissionToDao.findByGiverAndReceiverOrcid(GIVER, RECEIVER)).thenReturn(new GivenPermissionToEntity());
+
+        givenPermissionToManager.create(GIVER, RECEIVER);
+
+        verify(givenPermissionToDao, never()).merge(any(GivenPermissionToEntity.class));
+        verify(notificationManager, never()).sendNotificationToAddedDelegate(any(), any());
+    }
+
+    @Test
+    public void testCreate_SameGiverAndReceiver() {
+        // Technically nothing stops this in the current code except maybe the DAO check if it exists
+        when(givenPermissionToDao.findByGiverAndReceiverOrcid(GIVER, GIVER)).thenReturn(null);
+
+        givenPermissionToManager.create(GIVER, GIVER);
+
+        verify(givenPermissionToDao).merge(any(GivenPermissionToEntity.class));
+        verify(notificationManager).sendNotificationToAddedDelegate(GIVER, GIVER);
+        verify(profileEntityManager, times(2)).updateLastModifed(GIVER);
+    }
+
+    @Test
+    public void testCreate_Nulls() {
+        when(givenPermissionToDao.findByGiverAndReceiverOrcid(null, null)).thenReturn(null);
+        givenPermissionToManager.create(null, null);
+        verify(givenPermissionToDao).merge(any(GivenPermissionToEntity.class));
+    }
+
+    @Test
+    public void testRemoveAllForProfile() {
+        GivenPermissionToEntity given1 = new GivenPermissionToEntity();
+        given1.setGiver("orcid");
+        given1.setReceiver("receiver1");
+
+        GivenPermissionByEntity received1 = new GivenPermissionByEntity();
+        received1.setGiver("giver1");
+        received1.setReceiver("orcid");
+
+        when(givenPermissionToDao.findByGiver("orcid")).thenReturn(Arrays.asList(given1));
+        when(givenPermissionToDao.findByReceiver("orcid")).thenReturn(Arrays.asList(received1));
+
+        givenPermissionToManager.removeAllForProfile("orcid");
+
+        verify(givenPermissionToDao, times(1)).remove("orcid", "receiver1");
+        verify(givenPermissionToDao, times(1)).remove("giver1", "orcid");
+        
+        // verify updateLastModifed called for all involved
+        verify(profileEntityManager, times(2)).updateLastModifed("orcid");
+        verify(profileEntityManager, times(1)).updateLastModifed("receiver1");
+        verify(profileEntityManager, times(1)).updateLastModifed("giver1");
+    }
+
+    @Test
+    public void testRemoveAllForProfile_Empty() {
+        when(givenPermissionToDao.findByGiver("orcid")).thenReturn(Arrays.asList());
+        when(givenPermissionToDao.findByReceiver("orcid")).thenReturn(Arrays.asList());
+
+        givenPermissionToManager.removeAllForProfile("orcid");
+
+        verify(givenPermissionToDao, never()).remove(any(), any());
+        verify(profileEntityManager, never()).updateLastModifed(any());
+    }
+
+    @Test
+    public void testRemoveAllForProfile_Null() {
+        when(givenPermissionToDao.findByGiver(null)).thenReturn(Arrays.asList());
+        when(givenPermissionToDao.findByReceiver(null)).thenReturn(Arrays.asList());
+
+        givenPermissionToManager.removeAllForProfile(null);
+
+        verify(givenPermissionToDao, never()).remove(any(), any());
     }
 }
