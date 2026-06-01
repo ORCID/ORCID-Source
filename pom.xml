@@ -31,7 +31,7 @@ the software.
         <liquibase.version>4.9.1</liquibase.version>
         <jersey.version>3.1.10</jersey.version>
         <jackson.version>2.15.4</jackson.version>
-        <activemq.version>6.1.5</activemq.version>
+        <activemq.version>6.2.4</activemq.version>
         <swagger.version>2.1.1</swagger.version>
         <aspectj.version>1.9.6</aspectj.version>
         <jena.version>4.4.0</jena.version>
@@ -841,7 +841,7 @@ the software.
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.7</version>
+                <version>2.14.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

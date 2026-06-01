@@ -1,6 +1,6 @@
 package org.orcid.core.manager.impl;
 
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -32,11 +32,7 @@ public class CountryManagerImpl implements CountryManager {
     @Cacheable("country-list")
     @Deprecated
     public List<String> retrieveCountries() {
-        try {
-            return IOUtils.readLines(getClass().getResourceAsStream("countries.txt"));
-        } catch (IOException e) {
-            throw new RuntimeException("Problem reading countries.txt from classpath", e);
-        }
+        return IOUtils.readLines(getClass().getResourceAsStream("countries.txt"), StandardCharsets.UTF_8);
     }
 
     @Override
