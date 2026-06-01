@@ -1,3 +1,13 @@
+## v2.142.0 - 2026-06-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.9...v2.142.0)
+
+## v2.141.9 - 2026-06-01
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.8...v2.141.9)
+
+- [#7523](https://github.com/ORCID/ORCID-Source/pull/7523): Lmendoza/transifex
+
 ## v2.141.8 - 2026-05-28
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.141.7...v2.141.8)
