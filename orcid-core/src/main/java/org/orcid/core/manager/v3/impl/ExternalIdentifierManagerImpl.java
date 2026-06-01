@@ -34,14 +34,11 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
     @Resource(name = "orcidSecurityManagerV3")
     private OrcidSecurityManager orcidSecurityManager;
 
-    @Resource(name = "profileEntityManagerV3")
-    private ProfileEntityManager profileEntityManager;
-
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    private SourceEntityUtils sourceEntityUtils;
 
     @Override
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) {
@@ -63,7 +60,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setOrcid(orcid);        
 
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
@@ -77,7 +74,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         ExternalIdentifierEntity updatedExternalIdentifierEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, externalIdentifier.getPutCode());
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedExternalIdentifierEntity, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(updatedExternalIdentifierEntity);
 
         Visibility originalVisibility = Visibility.valueOf(updatedExternalIdentifierEntity.getVisibility());
         // Validate external identifier
@@ -96,7 +93,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier, updatedExternalIdentifierEntity);        
 
         // Set source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedExternalIdentifierEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedExternalIdentifierEntity);
 
         externalIdentifierDao.merge(updatedExternalIdentifierEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(updatedExternalIdentifierEntity);
@@ -106,7 +103,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existing, clientDetailsEntityCacheManager)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && sourceEntityUtils.isTheSameSource(activeSource, existing)) {
                 // And they have the same reference
                 if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
                         || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {

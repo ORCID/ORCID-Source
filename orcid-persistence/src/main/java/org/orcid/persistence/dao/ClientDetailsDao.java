@@ -2,6 +2,7 @@ package org.orcid.persistence.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
@@ -16,6 +17,10 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     ClientDetailsEntity findByClientId(String clientId, long lastModified);
 
     Date getLastModified(String clientId);
+
+    Map<String, Date> getLastModifiedByClientIds(List<String> clientIds);
+
+    List<ClientDetailsEntity> findByClientIds(List<String> clientIds);
     
     Date getLastModifiedByIdP(String idp);
     

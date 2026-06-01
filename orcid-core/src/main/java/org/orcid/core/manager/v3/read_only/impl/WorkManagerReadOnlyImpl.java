@@ -1,22 +1,10 @@
 package org.orcid.core.manager.v3.read_only.impl;
 
-import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.ForkJoinPool;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.jsonidentifier.converter.JSONWorkExternalIdentifiersConverterV3;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
 import org.orcid.core.adapter.v3.converter.ContributorsRolesAndSequencesConverter;
 import org.orcid.core.adapter.v3.converter.WorkContributorsConverter;
-import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.ExceedMaxNumberOfPutCodesException;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.PutCodeFormatException;
@@ -25,43 +13,36 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
 import org.orcid.core.manager.v3.WorksExtendedCacheManager;
-import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.core.togglz.Features;
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
-import org.orcid.core.utils.v3.activities.ActivitiesGroup;
-import org.orcid.core.utils.v3.activities.ActivitiesGroupGenerator;
-import org.orcid.core.utils.v3.activities.WorkComparators;
-import org.orcid.core.utils.v3.activities.WorkGroupAndGroupingSuggestionGenerator;
+import org.orcid.core.utils.v3.activities.*;
 import org.orcid.jaxb.model.record.bulk.BulkElement;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
-import org.orcid.jaxb.model.v3.release.record.ExternalID;
-import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.GroupAble;
-import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
-import org.orcid.jaxb.model.v3.release.record.Work;
-import org.orcid.jaxb.model.v3.release.record.WorkBulk;
+import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
-import org.orcid.pojo.ActivityTitle;
-import org.orcid.pojo.ActivityTitleSearchResult;
-import org.orcid.pojo.ContributorsRolesAndSequences;
-import org.orcid.pojo.WorkContributorsList;
-import org.orcid.pojo.WorkExtended;
-import org.orcid.pojo.WorkGroupExtended;
-import org.orcid.pojo.WorkSummaryExtended;
-import org.orcid.pojo.WorksExtended;
+import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.Resource;
+import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
@@ -92,17 +73,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource(name = "contributorUtilsV3")
     private ContributorUtils contributorUtils;
 
-    @Resource
-    private WorkContributorRoleConverter workContributorsRoleConverter;
-
     @Resource(name = "workContributorsConverter")
     private WorkContributorsConverter workContributorsConverter;
 
     @Resource
     private JSONWorkExternalIdentifiersConverterV3 jsonWorkExternalIdentifiersConverterV3;
-
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
@@ -113,16 +88,11 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
-
-    @Value("${org.orcid.core.manager.v3.read_only.impl.WorkManagerReadOnlyImpl.normalize.min.works.to.parallelize:20}")
-    private int minWorksToParallelize;
-
-    @PostConstruct
-    public void init() {
-        LOGGER.info("Initializing WorkManagerReadOnlyImpl: minWorksToParallelize = " + minWorksToParallelize);
-    }
 
     public WorkManagerReadOnlyImpl(@Value("${org.orcid.core.works.bulk.read.max:100}") Integer bulkReadSize) {
         this.maxWorksToRead = (bulkReadSize == null) ? 100 : bulkReadSize;
@@ -206,22 +176,27 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
     @Override
     public List<WorkSummary> getWorksSummaryList(String orcid) {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, getLastModified(orcid));
-        List<WorkSummary> workSummaryResult = Arrays.asList();
-        // Lets implement a parallel stream for when there are more than 10 works to be processed
-        if(works.size() < minWorksToParallelize) {
-            workSummaryResult = jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
-        } else {
-            try {
-                // Execute the parallel stream within the custom thread pool
-                workSummaryResult = ForkJoinPool.commonPool().submit(() ->
-                        works.parallelStream().map(minimizedWorkEntity -> jpaJaxbWorkAdapter.toWorkSummary(minimizedWorkEntity)).collect(Collectors.toList())
-                ).get(); // use .get() to wait for completion and propagate exceptions
+        Set<String> clientIds = works.stream()
+                .map(MinimizedWorkEntity::getClientSourceId)
+                .filter(clientId -> !PojoUtil.isEmpty(clientId))
+                .collect(Collectors.toSet());
 
-            } catch (Exception e) {
-                LOGGER.error("Error while generating the list of work summaries in parallel", e);
+        // Get the client details from the database
+        Map<String, ClientDetailsEntity> clientDetailsById = clientDetailsEntityCacheManager.retrieveAll(clientIds);
+        Map<String, Source> sources = new HashMap<>();
+        works.stream().forEach(workEntity -> {
+            String sourceKey = sourceEntityUtils.getSourceKey(workEntity);
+            if(!sources.containsKey(sourceKey)) {
+                Source source = sourceEntityUtils.extractSourceFromEntityComplete(workEntity);
+                sources.put(sourceKey, source);
             }
+        });
+        if (clientIds.isEmpty()) {
+            return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
         }
-        return workSummaryResult;
+
+        // This map should be read-only
+        return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works, Collections.unmodifiableMap(sources));
     }
 
     /**
@@ -250,6 +225,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
 
     private List<WorkSummaryExtended> retrieveWorkSummaryExtended(String orcid, boolean featuredOnly) {
         List<WorkSummaryExtended> workSummaryExtendedList = new ArrayList<>();
+        Map<String, Boolean> isUserOBOEnabled = new HashMap<String, Boolean>();
         List<Object[]> list = workDao.getWorksByOrcid(orcid, featuredOnly);
         for (Object[] q1 : list) {
             BigInteger putCode = (BigInteger) q1[0];
@@ -276,21 +252,34 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
             }
             String sourceName = null;
             String assertionOriginName = null;
-            if (clientSourceId != null) {
-                assertionOriginSourceId = contributorUtils.getAssertionOriginOrcid(clientSourceId, orcid, putCode.longValue(), clientDetailsEntityCacheManager, workDao);
+            if (StringUtils.isNotBlank(clientSourceId)) {
+                //Set the source name
+                sourceName = sourceNameCacheManager.retrieve(clientSourceId);
+                // Check if user OBO is enabled
+                if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
+                    if(!isUserOBOEnabled.containsKey(clientSourceId)) {
+                        ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+                        if(clientEntity != null && clientEntity.isUserOBOEnabled()) {
+                            isUserOBOEnabled.put(clientSourceId, true);
+                        } else {
+                            isUserOBOEnabled.put(clientSourceId, false);
+                        }
+                    }
+                    if(isUserOBOEnabled.get(clientSourceId)) {
+                        assertionOriginName = sourceNameCacheManager.retrieve(assertionOriginSourceId);
+                    }
+                }
             }
-            if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
-                assertionOriginName = contributorUtils.getSourceName(assertionOriginSourceId, sourceNameCacheManager);
+
+            // Check the sourceId name only if there is no clientSourceId
+            if (PojoUtil.isEmpty(sourceName) && !PojoUtil.isEmpty(sourceId)) {
+                sourceName = sourceNameCacheManager.retrieve(sourceId);
             }
+
             if (!PojoUtil.isEmpty(assertionOriginClientSourceId)) {
-                assertionOriginName = contributorUtils.getSourceName(assertionOriginClientSourceId, sourceNameCacheManager);
+                assertionOriginName = sourceNameCacheManager.retrieve(assertionOriginClientSourceId);
             }
-            if (!PojoUtil.isEmpty(sourceId)) {
-                sourceName = contributorUtils.getSourceName(sourceId, sourceNameCacheManager);
-            }
-            if (!PojoUtil.isEmpty(clientSourceId)) {
-                sourceName = contributorUtils.getSourceName(clientSourceId, sourceNameCacheManager);
-            }
+
             List<WorkContributorsList> contributorList = new ArrayList<>();
             List<ContributorsRolesAndSequences> contributorsRolesAndSequencesList = new ArrayList<>();
 

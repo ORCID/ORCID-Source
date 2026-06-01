@@ -31,12 +31,9 @@ import org.orcid.core.contributors.roles.fundings.FundingContributorRoleConverte
 import org.orcid.core.contributors.roles.works.WorkContributorRoleConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.IdentityProviderManager;
-import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.v3.identifiers.PIDNormalizationService;
@@ -140,7 +137,6 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SpamEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.keys.ClientRedirectUriPk;
 import org.orcid.pojo.WorkExtended;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -171,15 +167,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     private WorkDao workDao;
 
     @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
-
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
-
-    @Resource
     private IdentityProviderManager identityProviderManager;
 
     @Resource
@@ -199,6 +186,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     @Resource
     private FundingContributorRoleConverter fundingContributorsRoleConverter;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
+    @Resource
+    private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -387,10 +380,19 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private class SourceMapper<T, U> extends CustomMapper<SourceAware, SourceAwareEntity<?>> {
+        @SuppressWarnings("unchecked")
         @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
-            Source source = SourceEntityUtils.extractSourceFromEntityComplete(b, sourceNameCacheManager, orcidUrlManager, clientDetailsEntityCacheManager);
-            a.setSource(source);
+            if (context != null && context.getProperty(SourceEntityUtils.SOURCE_MAP) != null) {
+                // The source map is set in the context, so we can use it to set the source.
+                Map<String, Source> sourceMap = (Map<String, Source>) context.getProperty(SourceEntityUtils.SOURCE_MAP);
+                Source source = sourceMap.get(sourceEntityUtils.getSourceKey(b));
+                a.setSource(source);
+            } else {
+                // We have to manually build the source elements
+                Source source = sourceEntityUtils.extractSourceFromEntityComplete(b);
+                a.setSource(source);
+            }
         }
     }
 
@@ -536,8 +538,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         WorkContributorsConverter wcc = new WorkContributorsConverter(workContributorsRoleConverter);
-        ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter = new ContributorsRolesAndSequencesConverter(workContributorsRoleConverter);
-
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new JSONWorkExternalIdentifiersConverterV3(norm, resolverService, localeManager));
         converterFactory.registerConverter("workContributorsConverterId", wcc);

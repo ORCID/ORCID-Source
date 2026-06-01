@@ -47,6 +47,9 @@ public class OrcidCoreExceptionMapper {
     @Resource(name = "sourceManagerV3")
     private SourceManager sourceManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
         // 301
@@ -226,7 +229,7 @@ public class OrcidCoreExceptionMapper {
         Map<String, String> params = null;
         if (t instanceof PutCodeFormatException) {
             params = new HashMap<String, String>();                                                               
-            params.put("clientName", SourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
+            params.put("clientName", sourceEntityUtils.getSourceName(sourceManager.retrieveActiveSource()));
         } else if (t instanceof ApplicationException) {
             params = ((ApplicationException) t).getParams();
         } else if (t instanceof IllegalEnumValueException) {

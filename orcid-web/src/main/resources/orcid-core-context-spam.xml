@@ -366,15 +366,8 @@
 	</bean>
 	
 	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl">
-		<property name="recordNameDao" ref="recordNameDao" />
-		<property name="clientDetailsDao" ref="clientDetailsDao" />
-		<property name="profileEntityManager" ref="profileEntityManager" />
-	</bean>
-	
-	<bean id="sourceNameCacheManagerReadOnly" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl">
-		<property name="recordNameDao" ref="recordNameDaoReadOnly" />
-		<property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
-		<property name="profileEntityManager" ref="profileEntityManager" />
+        <property name="recordNameDao" ref="recordNameDaoReadOnly" />
+        <property name="clientDetailsDao" ref="clientDetailsDaoReadOnly" />
 	</bean>
 	
 	<bean id="recordCorrectionsManagerReadOnly" class="org.orcid.core.manager.read_only.impl.RecordCorrectionsManagerReadOnlyImpl" />
@@ -401,31 +394,17 @@
 	</bean>
 	
 	<bean id="sourceUtilsReadOnly" class="org.orcid.core.utils.SourceUtils">
-		<property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
+		<property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
 	</bean>
 	
-	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="cacheManager" ref="activityManagerV3" />
-        <property name="profileEntityManager" ref="profileEntityManagerV3" />
-    	<property name="recordNameDao" ref="recordNameDaoReadOnly" />
-    	<property name="contributorsNameCache" ref="contributorsNameCache" />
-		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
-    </bean>
-    
-    <bean id="contributorUtilsReadOnlyV3" class="org.orcid.core.utils.v3.ContributorUtils">
-        <property name="cacheManager" ref="activityManagerV3" />
-        <property name="profileEntityManager" ref="profileEntityManagerV3" />
-        <property name="recordNameDao" ref="recordNameDaoReadOnly" />
-		<property name="contributorsNameCache" ref="contributorsNameCache" />
-		<property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
-    </bean>
-	
-	   <bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
+	<bean id="contributorUtilsV3" class="org.orcid.core.utils.v3.ContributorUtils" />
+
+	<bean id="sourceUtilsV3" class="org.orcid.core.utils.v3.SourceUtils">
         <property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
     </bean>
     
     <bean id="sourceUtilsReadOnlyV3" class="org.orcid.core.utils.v3.SourceUtils">
-        <property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
+        <property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
     </bean>
     
     <bean id="groupingSuggestionManagerV3" class="org.orcid.core.manager.v3.impl.GroupingSuggestionManagerImpl">
@@ -475,7 +454,7 @@
     
     <bean id="affiliationsManagerReadOnlyV3" class="org.orcid.core.manager.v3.read_only.impl.AffiliationsManagerReadOnlyImpl">
         <property name="orgAffiliationRelationDao" ref="orgAffiliationRelationDaoReadOnly" />
-        <property name="sourceNameCacheManager" ref="sourceNameCacheManagerReadOnly" />
+        <property name="sourceNameCacheManager" ref="sourceNameCacheManager" />
         <property name="profileLastModifiedAspect" ref="profileLastModifiedAspect" />
     </bean>
     

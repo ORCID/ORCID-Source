@@ -3,6 +3,7 @@ package org.orcid.core.manager.v3.read_only.impl;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -155,6 +156,16 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
     @Override    
     public Date getLastModified(String clientId) {
         return clientDetailsDao.getLastModified(clientId);
+    }
+
+    @Override
+    public Map<String, Date> getLastModifiedByClientIds(List<String> clientIds) {
+        return clientDetailsDao.getLastModifiedByClientIds(clientIds);
+    }
+
+    @Override
+    public List<ClientDetailsEntity> findByClientIds(List<String> clientIds) {
+        return clientDetailsDao.findByClientIds(clientIds);
     }
 
     @Override    

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 import org.orcid.core.contributors.roles.ContributorRoleConverter;
+import org.orcid.core.contributors.roles.ContributorRoleConverterImpl;
 import org.orcid.core.contributors.roles.credit.CreditRole;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.v3.ContributorUtils;
@@ -15,6 +16,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +24,11 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorsRolesAndSequencesConverter.class);
 
-    private ContributorRoleConverter roleConverter;
+    @Resource(name = "workContributorRoleConverter")
+    private ContributorRoleConverter workContributorRoleConverter;
 
-    public ContributorsRolesAndSequencesConverter(ContributorRoleConverter roleConverter) {
-        this.roleConverter = roleConverter;
-    }
+    @Resource(name = "contributorUtilsV3")
+    private ContributorUtils contributorUtils;
 
     @Override
     public String convertTo(List<ContributorsRolesAndSequences> source, Type<String> destinationType) {
@@ -39,7 +41,6 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
     }
 
     public List<ContributorsRolesAndSequences> getContributorsRolesAndSequencesList(String source) {
-        ContributorUtils contributorUtils = new ContributorUtils(null);
         final ObjectMapper objectMapper = new ObjectMapper();
         List<ContributorsRolesAndSequences> contributorsRolesAndSequencesResult = new ArrayList<>();
         try {
@@ -54,7 +55,7 @@ public class ContributorsRolesAndSequencesConverter extends BidirectionalConvert
                                 if (cr != null) {
                                     providedRoleValue = cr.name();
                                 }
-                                crs.setContributorRole(contributorUtils.getCreditRole(roleConverter.toRoleValue(providedRoleValue)));
+                                crs.setContributorRole(contributorUtils.getCreditRole(workContributorRoleConverter.toRoleValue(providedRoleValue)));
                             }
                         }
                     }
