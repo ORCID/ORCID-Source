@@ -38,6 +38,8 @@ the software.
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
         <aws.version>1.12.261</aws.version>
+        <libphonenumber.version>9.0.30</libphonenumber.version>
+        <twilio.version>12.1.1</twilio.version>
         <solr.version>8.0.0</solr.version>
         <junit.version>4.13.2</junit.version>
         <main.basedir>${project.basedir}</main.basedir>
@@ -934,6 +936,21 @@ the software.
                 <groupId>com.amazonaws</groupId>
                 <artifactId>aws-java-sdk-s3</artifactId>
                 <version>${aws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-sns</artifactId>
+                <version>${aws.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.libphonenumber</groupId>
+                <artifactId>libphonenumber</artifactId>
+                <version>${libphonenumber.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.twilio.sdk</groupId>
+                <artifactId>twilio</artifactId>
+                <version>${twilio.version}</version>
             </dependency>
 		<!-- Togglz -->
 		<dependency>
