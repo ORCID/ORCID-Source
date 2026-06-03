@@ -34,10 +34,10 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
     private OrcidSecurityManager orcidSecurityManager;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private SourceEntityUtils sourceEntityUtils;
 
     @Override
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) {
@@ -109,7 +109,7 @@ public class ExternalIdentifierManagerImpl extends ExternalIdentifierManagerRead
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(sourceEntityUtils.getSourceId(source))) {
                 // And they have the same reference
                 if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
                         || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {

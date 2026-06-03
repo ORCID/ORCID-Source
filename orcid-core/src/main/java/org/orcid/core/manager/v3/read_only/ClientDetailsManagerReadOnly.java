@@ -2,6 +2,7 @@ package org.orcid.core.manager.v3.read_only;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -12,6 +13,10 @@ public interface ClientDetailsManagerReadOnly {
     List<ClientDetailsEntity> getAll();
 
     Date getLastModified(String clientId);
+
+    Map<String, Date> getLastModifiedByClientIds(List<String> clientIds);
+
+    List<ClientDetailsEntity> findByClientIds(List<String> clientIds);
 
     Date getLastModifiedByIdp(String idp);
     

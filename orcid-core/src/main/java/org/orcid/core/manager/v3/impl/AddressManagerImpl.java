@@ -40,6 +40,9 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     @Transactional
     public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
@@ -48,7 +51,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility());
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(updatedEntity, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(updatedEntity);
 
         // If it is an update from the API, check the source and preserve the
         // original visibility
@@ -75,7 +78,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         adapter.toAddressEntity(address, updatedEntity);
 
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, updatedEntity);
 
         addressDao.merge(updatedEntity);
         return adapter.toAddress(updatedEntity);
@@ -101,7 +104,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setOrcid(orcid);
 
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newEntity);
 
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         setIncomingPrivacy(newEntity, profile);
@@ -127,7 +130,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         if (!existing.getId().equals(address.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, existing, clientDetailsEntityCacheManager)) {
+            if (!PojoUtil.isEmpty(existingSourceId) && sourceEntityUtils.isTheSameSource(activeSource, existing)) {
                 // TODO: Not sure this works! String vs Iso3166Country enum
                 if (existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;
@@ -188,7 +191,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
                     AddressEntity newAddress = adapter.toAddressEntity(updatedOrNew);
                     Source activeSource = sourceManager.retrieveActiveSource();
                     newAddress.setOrcid(orcid);                    
-                    SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newAddress);
+                    sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, newAddress);
                     newAddress.setVisibility(updatedOrNew.getVisibility().name());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);

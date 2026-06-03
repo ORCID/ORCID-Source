@@ -24,6 +24,7 @@ import org.orcid.core.aop.ProfileLastModifiedAspect;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.ActivityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
+import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.jaxb.model.v3.release.common.Contributor;
 import org.orcid.jaxb.model.v3.release.common.ContributorEmail;
 import org.orcid.jaxb.model.v3.release.common.ContributorOrcid;
@@ -51,13 +52,13 @@ public class ContributorUtilsTest {
     
     @Mock
     private ProfileEntityManager profileEntityManager;
-    
-    @Mock
-    private RecordNameDao recordNameDao;
-    
+
     @Mock
     private ProfileLastModifiedAspect profileLastModifiedAspect;
-    
+
+    @Mock
+    private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
+
     @Mock
     private Cache<String, String> contributorsNameCache;
 
@@ -67,9 +68,6 @@ public class ContributorUtilsTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        contributorUtils.setCacheManager(cacheManager);
-        contributorUtils.setProfileEntityManager(profileEntityManager);
-        contributorUtils.setProfileLastModifiedAspect(profileLastModifiedAspect);
         when(profileLastModifiedAspect.retrieveLastModifiedDate(anyString())).thenReturn(new Date());
         when(contributorsNameCache.containsKey(anyString())).thenReturn(false);
     }
@@ -93,6 +91,7 @@ public class ContributorUtilsTest {
         when(profileEntityManager.orcidExists(anyString())).thenReturn(true);
         when(profileEntityCacheManager.retrieve(anyString())).thenReturn(new ProfileEntity());
         when(cacheManager.getPublicCreditName(any(String.class))).thenReturn("a public name");
+        when(recordNameManagerReadOnlyV3.fetchDisplayablePublicName(anyString())).thenReturn("a public name");
         
         Funding funding = getFundingWithOrcidContributor();
         contributorUtils.filterContributorPrivateData(funding);

@@ -110,14 +110,14 @@ public class WorkGroup extends ActivityGroup {
     public static WorkGroup valueOf(WorkGroupExtended workGroup, int id, String orcid) {
         WorkGroup group = new WorkGroup();
         group.setGroupId(id);
-        group.setWorks(new ArrayList<>());
+        List<WorkForm> works = new ArrayList<>();
 
         WorkType workType = null;
 
         Long maxDisplayIndex = null;
         for (WorkSummaryExtended workSummary : workGroup.getWorkSummary()) {
             WorkForm workForm = getWorkForm(workSummary);
-            group.getWorks().add(workForm);
+            works.add(workForm);
 
             Long displayIndex = Long.parseLong(workSummary.getDisplayIndex());
             if (maxDisplayIndex == null || displayIndex > maxDisplayIndex) {
@@ -133,6 +133,8 @@ public class WorkGroup extends ActivityGroup {
 
             workType = workSummary.getType();
         }
+
+        group.setWorks(works);
 
         if (workGroup.getIdentifiers() != null) {
             List<ActivityExternalIdentifier> workExternalIdentifiersList = new ArrayList<ActivityExternalIdentifier>();

@@ -1,6 +1,6 @@
 package org.orcid.core.manager.v3.read_only.impl;
-
 import java.util.*;
+
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.NoResultException;
@@ -134,6 +134,16 @@ public class ClientDetailsManagerReadOnlyImpl implements ClientDetailsManagerRea
     @Override    
     public Date getLastModified(String clientId) {
         return clientDetailsDao.getLastModified(clientId);
+    }
+
+    @Override
+    public Map<String, Date> getLastModifiedByClientIds(List<String> clientIds) {
+        return clientDetailsDao.getLastModifiedByClientIds(clientIds);
+    }
+
+    @Override
+    public List<ClientDetailsEntity> findByClientIds(List<String> clientIds) {
+        return clientDetailsDao.findByClientIds(clientIds);
     }
 
     @Override    

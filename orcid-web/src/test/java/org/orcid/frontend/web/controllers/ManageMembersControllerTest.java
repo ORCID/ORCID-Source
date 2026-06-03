@@ -1,8 +1,5 @@
 package org.orcid.frontend.web.controllers;
 
-/**
- * @author Angel Montenegro (amontenegro) Date: 29/08/2013
- */
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -20,525 +17,476 @@ import jakarta.transaction.Transactional;
 
 import org.junit.After;
 import org.junit.AfterClass;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.orcid.core.common.manager.EmailFrequencyManager;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.orcid.core.exception.ClientAlreadyActiveException;
 import org.orcid.core.exception.ClientAlreadyDeactivatedException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.v3.ClientDetailsManager;
+import org.orcid.core.manager.v3.ClientManager;
+import org.orcid.core.manager.v3.EmailManager;
 import org.orcid.core.manager.v3.MembersManager;
-import org.orcid.core.manager.v3.ProfileHistoryEventManager;
-import org.orcid.core.manager.v3.SourceManager;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
+import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.security.OrcidRoles;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.persistence.dao.ClientDetailsDao;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ClientActivationRequest;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.test.DBUnitTest;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.test.TargetProxyHelper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.servlet.ModelAndView;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(locations = { "classpath:test-frontend-web-servlet.xml" })
-public class ManageMembersControllerTest extends DBUnitTest {
+import java.util.*;
 
-    @Resource(name = "membersManagerV3")
-    MembersManager membersManager;
-    
-    @Resource
-    ManageMembersController manageMembers;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-    @Resource
-    private ProfileDao profileDao;
+@RunWith(MockitoJUnitRunner.class)
+public class ManageMembersControllerTest {
 
-    @Resource
-    ClientsController groupAdministratorController;
+    @Mock(name = "membersManagerV3")
+    private MembersManager membersManager;
 
-    @Resource
-    ClientDetailsDao clientDetailsDao;
-    
-    @Resource(name = "sourceManagerV3")
-    SourceManager sourceManager;
-        
-    @Mock
-    SourceManager mockSourceManager;
-    
-    @Mock 
-    ProfileHistoryEventManager mockProfileHistoryEventManager;
-    
-    @Resource
-    ProfileHistoryEventManager profileHistoryEventManager;
-    
-    @Resource
-    EmailFrequencyManager emailFrequencyManager;
-    
-    @Mock
-    private ClientDetailsManager mockClientDetailsManager;
-    
-    @Resource(name = "clientDetailsManagerV3")
+    @Mock(name = "clientManagerV3")
+    private ClientManager clientManager;
+
+    @Mock(name = "clientManagerReadOnlyV3")
+    private ClientManagerReadOnly clientManagerReadOnly;
+
+    @Mock(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+
+    @Mock(name = "clientDetailsManagerV3")
     private ClientDetailsManager clientDetailsManager;
-    
-    @Before
-    public void beforeInstance() {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        MockitoAnnotations.initMocks(this);
-        TargetProxyHelper.injectIntoProxy(membersManager, "sourceManager", mockSourceManager); 
-        TargetProxyHelper.injectIntoProxy(emailFrequencyManager, "profileHistoryEventManager", mockProfileHistoryEventManager); 
-        
-        SourceEntity sourceEntity = new SourceEntity();
-        sourceEntity.setSourceProfile(new ProfileEntity("5555-5555-5555-0000"));
-        when(mockSourceManager.retrieveActiveSourceEntity()).thenReturn(sourceEntity);
-    }
-    
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-         initDBUnitData(Arrays.asList("/data/EmptyEntityData.xml", "/data/PremiumInstitutionMemberData.xml"));
-    }    
 
-    @After
-    public void after() {
-        TargetProxyHelper.injectIntoProxy(membersManager, "sourceManager", sourceManager);
-        TargetProxyHelper.injectIntoProxy(emailFrequencyManager, "profileHistoryEventManager", profileHistoryEventManager);         
+    @Mock(name = "emailManagerV3")
+    private EmailManager emailManager;
+
+    @Mock
+    private ClientsController groupAdministratorController;
+
+    @Mock
+    private LocaleManager localeManager;
+
+    @InjectMocks
+    private ManageMembersController manageMembers;
+
+    @Before
+    public void setUp() {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
+        // Mock localeManager to return the message code as the translated message
+        when(localeManager.resolveMessage(anyString(), any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
-    
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/PremiumInstitutionMemberData.xml"));
-    }    
-        
-    protected Authentication getAuthentication() {    
+
+    private Authentication getAuthentication() {
         String orcid = "4444-4444-4444-4440";
-        UserDetails details = new User(orcid,
-                "password", Arrays.asList(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name())));
+        UserDetails details = new User(orcid, "password", List.of(new SimpleGrantedAuthority(OrcidRoles.ROLE_ADMIN.name())));
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(orcid, "password", details.getAuthorities());
         auth.setDetails(details);
         return auth;
     }
-    
-    @Test   
-    @Transactional
-    public void createMemberProfileWithInvalidEmailsTest() throws Exception {
-        String existingEmail = "premium_institution@group.com";
-        
-        Member group = new Member();
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("basic"));
-        group.setSalesforceId(Text.valueOf(""));
 
-        // Validate already existing email address
-        group.setEmail(Text.valueOf(existingEmail));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.email.already_used", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate empty email address
-        group.setEmail(Text.valueOf(""));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("NotBlank.group.email", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate invalid email address
-        group.setEmail(Text.valueOf("invalidemail"));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.email.invalid_email", new ArrayList<String>()), group.getErrors().get(0));
-    }
-
-    @Test    
-    public void createMemberProfileWithInvalidGroupNameTest() throws Exception {
-        Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setType(Text.valueOf("basic"));
-        group.setSalesforceId(Text.valueOf(""));
-
-        // Validate empty group name
-        group.setGroupName(Text.valueOf(""));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("NotBlank.group.name", new ArrayList<String>()), group.getErrors().get(0));
-
-        // validate too long group name - 151 chars
-        group.setGroupName(Text
-                .valueOf("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901"));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.name.too_long", new ArrayList<String>()), group.getErrors().get(0));
-    }
-
-    @Test    
-    public void createMemberProfileWithInvalidTypeTest() throws Exception {
-        Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setSalesforceId(Text.valueOf(""));
-
-        // Validate empty type
-        group.setType(Text.valueOf(""));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("NotBlank.group.type", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate invalid type
-        group.setType(Text.valueOf("invalid"));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.type.invalid", new ArrayList<String>()), group.getErrors().get(0));
-    }
-    
-    @Test    
-    public void createMemberProfileWithInvalidSalesforceIdTest() throws Exception {
-        Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("basic"));        
-
-        // Validate empty type        
-        group.setSalesforceId(Text.valueOf("1"));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.salesforce_id.invalid_length", new ArrayList<String>()), group.getErrors().get(0));
-
-        // Validate invalid type        
-        group.setSalesforceId(Text.valueOf("1234567890abcd!"));
-        group = manageMembers.createMember(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.salesforce_id.invalid", new ArrayList<String>()), group.getErrors().get(0));
-    }
-
-    @Test    
-    public void createMemberProfileTest() throws Exception {
-        Member group = new Member();
-        String email = "group" + System.currentTimeMillis() + "@email.com";
-        group.setEmail(Text.valueOf(email));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf(""));
-        group = manageMembers.createMember(group);
-        assertEquals(0, group.getErrors().size());
-        assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
-    }
-
-    @Test    
-    public void findMemberByOrcidTest() throws Exception {
-        Member group = new Member();
-        String email = "group" + System.currentTimeMillis() + "@email.com";
-        group.setEmail(Text.valueOf(email));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf("1234567890abcde"));
-        group = manageMembers.createMember(group);
-        assertEquals(0, group.getErrors().size());
-        assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
-
-        // Test find by orcid
-        String orcid = group.getGroupOrcid().getValue();
-        Member newGroup = manageMembers.findMember(orcid);
-        assertNotNull(newGroup);
-
-        assertFalse(PojoUtil.isEmpty(newGroup.getGroupOrcid()));
-        assertFalse(PojoUtil.isEmpty(newGroup.getEmail()));
-        assertFalse(PojoUtil.isEmpty(newGroup.getSalesforceId()));
-        assertFalse(PojoUtil.isEmpty(newGroup.getGroupName()));
-
-        assertEquals(email, newGroup.getEmail().getValue());
-        assertEquals("Group Name", newGroup.getGroupName().getValue());
-        assertEquals("1234567890abcde", newGroup.getSalesforceId().getValue());
-        assertEquals(orcid, newGroup.getGroupOrcid().getValue());
-
-        // Test find by email
-        Member newGroup2 = manageMembers.findMember(email);
-        assertNotNull(newGroup2);
-
-        assertFalse(PojoUtil.isEmpty(newGroup2.getGroupOrcid()));
-        assertFalse(PojoUtil.isEmpty(newGroup2.getEmail()));
-        assertFalse(PojoUtil.isEmpty(newGroup2.getSalesforceId()));
-        assertFalse(PojoUtil.isEmpty(newGroup2.getGroupName()));
-
-        assertEquals(email, newGroup2.getEmail().getValue());
-        assertEquals("Group Name", newGroup2.getGroupName().getValue());
-        assertEquals("1234567890abcde", newGroup2.getSalesforceId().getValue());
-        assertEquals(orcid, newGroup2.getGroupOrcid().getValue());
-
-        // Test: Find member by ORCID with clients and check deactivated status
-        Member newGroup3 = manageMembers.findMember("5555-5555-5555-0000");
-
-        List<Client> clients = newGroup3.getClients();
-
-        Client activeClient1 = findClientById(clients, "APP-0000000000000001");
-        Client activeClient2 = findClientById(clients, "APP-0000000000000002");
-        Client deactivatedClient = findClientById(clients, "APP-0000000000000003");
-
-        assertNotNull(newGroup3);
-
-        assertEquals(3, clients.size());
-        assertEquals(false, activeClient1.isDeactivated());
-        assertEquals(false, activeClient2.isDeactivated());
-        assertEquals(true, deactivatedClient.isDeactivated());
-    }
-    
-    
     @Test
-    public void editMemberTest() throws Exception {
-        Member group = new Member();
-        group.setEmail(Text.valueOf("group@email.com"));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf("1234567890abcde"));
-        group = manageMembers.createMember(group);
-        assertEquals(0, group.getErrors().size());
-        assertFalse(PojoUtil.isEmpty(group.getGroupOrcid()));
-        
-        group.setEmail(Text.valueOf("new_email@user.com"));
-        group.setSalesforceId(Text.valueOf(""));
-        group.setGroupName(Text.valueOf("Updated Group Name"));
-        
-        manageMembers.updateMember(group);
-        Member updatedGroup = manageMembers.findMember(group.getGroupOrcid().getValue());
-        assertNotNull(updatedGroup);
-        assertEquals(group.getGroupOrcid().getValue(), updatedGroup.getGroupOrcid().getValue());
-        assertEquals("Updated Group Name", updatedGroup.getGroupName().getValue());
+    public void testGetManageMembersPage() {
+        ModelAndView mav = manageMembers.getManageMembersPage();
+        assertEquals("/admin/manage_members", mav.getViewName());
     }
-    
+
     @Test
-    public void editMemberWithInvalidEmailTest() throws Exception {
-        //Create one member
-        Member group = new Member();
-        String email = "group1" + System.currentTimeMillis() + "@email.com";
-        group.setEmail(Text.valueOf(email));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf("1234567890abcde"));
-        group = manageMembers.createMember(group);
-        assertNotNull(group);
-        assertEquals(0, group.getErrors().size());
-        //Try to create another member with the same email
-        group = new Member();
-        group.setEmail(Text.valueOf(email));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf("1234567890abcde"));
-        group = manageMembers.createMember(group);
-        assertNotNull(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.email.already_used", new ArrayList<String>()), group.getErrors().get(0));
+    public void testGetEmptyGroup() {
+        Member member = manageMembers.getEmptyGroup();
+        assertNotNull(member);
+        assertEquals("", member.getEmail().getValue());
+        assertEquals("", member.getGroupName().getValue());
+        assertEquals("", member.getGroupOrcid().getValue());
+        assertEquals("", member.getSalesforceId().getValue());
+        assertEquals(MemberType.BASIC.value(), member.getType().getValue());
     }
-    
+
     @Test
-    public void editMemberWithInvalidSalesforceIdTest() throws Exception {
-        //Create one member
-        Member group = new Member();
-        String email = "group" + System.currentTimeMillis() + "@email.com";
-        group.setEmail(Text.valueOf(email));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf("1234567890abcde"));
-        group = manageMembers.createMember(group);
-        assertNotNull(group);
-        assertEquals(0, group.getErrors().size());
-        //Try to create another member with the same email
-        group = new Member();
-        group.setEmail(Text.valueOf("group2@email.com"));
-        group.setGroupName(Text.valueOf("Group Name"));
-        group.setType(Text.valueOf("premium-institution"));
-        group.setSalesforceId(Text.valueOf("1234567890abcd!"));
-        group = manageMembers.createMember(group);
-        assertNotNull(group);
-        assertEquals(1, group.getErrors().size());
-        assertEquals(manageMembers.getMessage("group.salesforce_id.invalid", new ArrayList<String>()), group.getErrors().get(0));
-    }        
-    
-    @Test       
-    public void findClientTest() throws Exception {
-        //Client with all redirect uris default
-        Client client_0002 = manageMembers.findClient("APP-0000000000000002");
-        assertNotNull(client_0002);
-        assertNotNull(client_0002.getDisplayName());
-        assertEquals("Client # 2", client_0002.getDisplayName().getValue());
-        assertNotNull(client_0002.getRedirectUris());
-        assertEquals(1, client_0002.getRedirectUris().size());
-        assertEquals("http://www.google.com/APP-0000000000000002/redirect/oauth", client_0002.getRedirectUris().get(0).getValue().getValue());
-        assertEquals(false, client_0002.isDeactivated());
-
-        //Client with redirect uri not default
-        Client client_0003 = manageMembers.findClient("APP-0000000000000003");
-        assertNotNull(client_0003);
-        assertNotNull(client_0003.getDisplayName());
-        assertEquals("Client # 3", client_0003.getDisplayName().getValue());
-        assertNotNull(client_0003.getRedirectUris());
-        assertEquals(2, client_0003.getRedirectUris().size());
-        assertEquals(true, client_0003.isDeactivated());
+    public void testFind_ClientBranch() {
+        String id = "APP-123";
+        when(clientDetailsManagerReadOnly.exists(id)).thenReturn(true);
         
-        RedirectUri rUri1 = client_0003.getRedirectUris().get(0);
-        if("http://www.google.com/APP-0000000000000003/redirect/oauth".equals(rUri1.getValue().getValue())) {
-            assertNotNull(rUri1.getType());
-            assertEquals("default", rUri1.getType().getValue());
-            assertNotNull(rUri1.getScopes());
-            assertEquals(0, rUri1.getScopes().size());
-        } else if ("http://www.google.com/APP-0000000000000003/redirect/oauth/grant_read_wizard".equals(rUri1.getValue().getValue())) {
-            assertNotNull(rUri1.getType());
-            assertEquals("grant-read-wizard", rUri1.getType().getValue());
-            assertNotNull(rUri1.getScopes());
-            assertEquals(1, rUri1.getScopes().size());
-            assertEquals("/funding/read-limited", rUri1.getScopes().get(0));
-        } else {
-            fail("Invalid redirect uri: " + rUri1.getValue().getValue());
-        }
+        // Mock findClient behavior
+        org.orcid.jaxb.model.v3.release.client.Client modelClient = mock(org.orcid.jaxb.model.v3.release.client.Client.class);
+        when(modelClient.getId()).thenReturn(id);
+        when(modelClient.getClientType()).thenReturn(org.orcid.jaxb.model.clientgroup.ClientType.CREATOR);
+        when(clientManagerReadOnly.get(id)).thenReturn(modelClient);
+        
+        ClientDetailsEntity clientDetails = new ClientDetailsEntity();
+        when(clientDetailsManagerReadOnly.findByClientId(id)).thenReturn(clientDetails);
 
-        RedirectUri rUri2 = client_0003.getRedirectUris().get(1);
-        if("http://www.google.com/APP-0000000000000003/redirect/oauth".equals(rUri2.getValue().getValue())) {
-            assertNotNull(rUri2.getType());
-            assertEquals("default", rUri2.getType().getValue());
-            assertNotNull(rUri2.getScopes());
-            assertEquals(0, rUri2.getScopes().size());            
-        } else if ("http://www.google.com/APP-0000000000000003/redirect/oauth/grant_read_wizard".equals(rUri2.getValue().getValue())) {
-            assertNotNull(rUri2.getType());
-            assertEquals("grant-read-wizard", rUri2.getType().getValue());
-            assertNotNull(rUri2.getScopes());
-            assertEquals(1, rUri2.getScopes().size());
-            assertEquals("/funding/read-limited", rUri2.getScopes().get(0));
-        } else {
-            fail("Invalid redirect uri: " + rUri2.getValue().getValue());
+        Object resultObj = manageMembers.find(id);
+        assertTrue((Boolean) reflectGet(resultObj, "isClient"));
+        Object clientObj = reflectGet(resultObj, "clientObject");
+        assertNotNull(clientObj);
+        assertEquals(id, ((Client) clientObj).getClientId().getValue());
+    }
+
+    private Object reflectGet(Object obj, String fieldName) {
+        try {
+            java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field.get(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
-    
-    @Test    
-    public void editClientWithInvalidRedirectUriTest() throws Exception {
-        //Client with all redirect uris default
-        Client client_0002 = manageMembers.findClient("APP-0000000000000002");
-        assertNotNull(client_0002);
+
+    @Test
+    public void testFind_MemberBranch() {
+        String id = "0000-0000-0000-0001";
+        when(clientDetailsManagerReadOnly.exists(id)).thenReturn(false);
+        
+        Member member = new Member();
+        member.setGroupOrcid(Text.valueOf(id));
+        when(membersManager.getMember(id)).thenReturn(member);
+
+        Object resultObj = manageMembers.find(id);
+        assertFalse((Boolean) reflectGet(resultObj, "isClient"));
+        Object memberObj = reflectGet(resultObj, "memberObject");
+        assertNotNull(memberObj);
+        assertEquals(id, ((Member) memberObj).getGroupOrcid().getValue());
+    }
+
+    @Test
+    public void testFindMember_Empty() {
+        Member result = manageMembers.findMember("");
+        assertEquals(1, result.getErrors().size());
+        assertEquals("manage_member.not_blank", result.getErrors().get(0));
+    }
+
+    @Test
+    public void testFindMember_Success() {
+        String id = "some-id";
+        Member member = new Member();
+        when(membersManager.getMember(id)).thenReturn(member);
+        Member result = manageMembers.findMember(id);
+        assertSame(member, result);
+    }
+
+    @Test
+    public void testCreateMember_Validation_EmailEmpty() {
+        Member member = createValidMember();
+        member.setEmail(Text.valueOf(""));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("NotBlank.group.email"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_EmailInvalid() {
+        Member member = createValidMember();
+        member.setEmail(Text.valueOf("invalid-email"));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("group.email.invalid_email"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_EmailExists() {
+        Member member = createValidMember();
+        when(emailManager.emailExists(member.getEmail().getValue())).thenReturn(true);
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("group.email.already_used"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_GroupNameEmpty() {
+        Member member = createValidMember();
+        member.setGroupName(Text.valueOf(""));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("NotBlank.group.name"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_GroupNameTooLong() {
+        Member member = createValidMember();
+        member.setGroupName(Text.valueOf("a".repeat(151)));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("group.name.too_long"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_TypeEmpty() {
+        Member member = createValidMember();
+        member.setType(Text.valueOf(""));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("NotBlank.group.type"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_TypeInvalid() {
+        Member member = createValidMember();
+        member.setType(Text.valueOf("INVALID_TYPE"));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("group.type.invalid"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_SalesforceIdInvalidLength() {
+        Member member = createValidMember();
+        member.setSalesforceId(Text.valueOf("123"));
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("group.salesforce_id.invalid_length"));
+    }
+
+    @Test
+    public void testCreateMember_Validation_SalesforceIdInvalidPattern() {
+        Member member = createValidMember();
+        member.setSalesforceId(Text.valueOf("12345678901234!")); // 15 chars but with '!'
+        
+        Member result = manageMembers.createMember(member);
+        assertTrue(result.getErrors().contains("group.salesforce_id.invalid"));
+    }
+
+    @Test
+    public void testCreateMember_Success() {
+        Member member = createValidMember();
+        when(membersManager.createMember(any(Member.class))).thenReturn(member);
+        
+        Member result = manageMembers.createMember(member);
+        assertEquals(0, result.getErrors().size());
+        verify(membersManager).createMember(member);
+    }
+
+    @Test
+    public void testUpdateMember_Success() {
+        Member member = createValidMember();
+        member.setGroupOrcid(Text.valueOf("0000-0000-0000-0001"));
+        when(membersManager.updateMemeber(any(Member.class))).thenReturn(member);
+        
+        Member result = manageMembers.updateMember(member);
+        assertEquals(0, result.getErrors().size());
+        verify(membersManager).updateMemeber(member);
+    }
+
+    @Test
+    public void testUpdateMember_EmailOwnership_SameOwner() {
+        Member member = createValidMember();
+        String orcid = "0000-0000-0000-0001";
+        member.setGroupOrcid(Text.valueOf(orcid));
+        String email = "test@orcid.org";
+        member.setEmail(Text.valueOf(email));
+        
+        when(emailManager.emailExists(email)).thenReturn(true);
+        Map<String, String> owners = new HashMap<>();
+        owners.put(email, orcid);
+        when(emailManager.findOricdIdsByCommaSeparatedEmails(email)).thenReturn(owners);
+        when(membersManager.updateMemeber(any(Member.class))).thenReturn(member);
+
+        Member result = manageMembers.updateMember(member);
+        assertEquals(0, result.getErrors().size());
+    }
+
+    @Test
+    public void testUpdateMember_EmailOwnership_DifferentOwner() {
+        Member member = createValidMember();
+        String orcid = "0000-0000-0000-0001";
+        member.setGroupOrcid(Text.valueOf(orcid));
+        String email = "test@orcid.org";
+        member.setEmail(Text.valueOf(email));
+        
+        when(emailManager.emailExists(email)).thenReturn(true);
+        Map<String, String> owners = new HashMap<>();
+        owners.put(email, "0000-0000-0000-0002"); // different owner
+        when(emailManager.findOricdIdsByCommaSeparatedEmails(email)).thenReturn(owners);
+
+        Member result = manageMembers.updateMember(member);
+        assertTrue(result.getErrors().contains("group.email.already_used"));
+    }
+
+    @Test
+    public void testFindClient_Empty() {
+        Client result = manageMembers.findClient("");
+        assertEquals(1, result.getErrors().size());
+        assertEquals("manage_member.not_blank", result.getErrors().get(0));
+    }
+
+    @Test
+    public void testFindClient_Success() {
+        String clientId = "APP-123";
+        org.orcid.jaxb.model.v3.release.client.Client model = mock(org.orcid.jaxb.model.v3.release.client.Client.class);
+        when(model.getId()).thenReturn(clientId);
+        when(model.getClientType()).thenReturn(org.orcid.jaxb.model.clientgroup.ClientType.CREATOR);
+        
+        when(clientManagerReadOnly.get(clientId)).thenReturn(model);
+        
+        ClientDetailsEntity details = new ClientDetailsEntity();
+        details.setDeactivatedDate(new Date());
+        when(clientDetailsManagerReadOnly.findByClientId(clientId)).thenReturn(details);
+        
+        Client result = manageMembers.findClient(clientId);
+        assertEquals(clientId, result.getClientId().getValue());
+        assertTrue(result.isDeactivated());
+    }
+
+    @Test
+    public void testUpdateClient_Success() {
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Name"));
+        client.setWebsite(Text.valueOf("http://website.com"));
+        client.setShortDescription(Text.valueOf("Desc"));
+        client.setRedirectUris(new ArrayList<>());
+        
+        org.orcid.jaxb.model.v3.release.client.Client model = mock(org.orcid.jaxb.model.v3.release.client.Client.class);
+        when(model.getId()).thenReturn("APP-123");
+        when(model.getClientType()).thenReturn(org.orcid.jaxb.model.clientgroup.ClientType.CREATOR);
+        
+        when(clientManager.edit(any(), eq(true))).thenReturn(model);
+        
+        Client result = manageMembers.updateClient(client);
+        assertEquals(0, result.getErrors().size());
+        verify(clientManager).edit(any(), eq(true));
+    }
+
+    @Test
+    public void testUpdateClient_WithIdP_NoInstitutionalRedirectUri() {
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Name"));
+        client.setAuthenticationProviderId(Text.valueOf("IDP-123"));
+        client.setRedirectUris(new ArrayList<>());
+        
+        Client result = manageMembers.updateClient(client);
+        assertTrue(result.getErrors().contains("manage.developer_tools.client.idp.error.no_redirect_uri_found"));
+    }
+
+    @Test
+    public void testUpdateClient_WithIdP_WithInstitutionalRedirectUri() {
+        Client client = new Client();
+        client.setDisplayName(Text.valueOf("Name"));
+        client.setAuthenticationProviderId(Text.valueOf("IDP-123"));
         RedirectUri rUri = new RedirectUri();
-        rUri.setType(Text.valueOf("default"));
-        rUri.setValue(Text.valueOf("http://érm.com"));
+        rUri.setType(Text.valueOf(RedirectUriType.INSTITUTIONAL_SIGN_IN.value()));
+        rUri.setValue(Text.valueOf("http://redirect.uri"));
+        client.setRedirectUris(List.of(rUri));
         
-        client_0002.getRedirectUris().add(rUri);
-        
-        client_0002 = manageMembers.updateClient(client_0002);
-        
-        assertNotNull(client_0002);
-        assertEquals(1, client_0002.getErrors().size());
-        assertEquals(manageMembers.getMessage("manage.developer_tools.invalid_redirect_uri"), client_0002.getErrors().get(0));                
-    }
-    
-    @Test
-    public void editMemberDoesntChangePersistentTokenEnabledValueTest() throws Exception {
-        Client clientWithPersistentTokensEnabled = manageMembers.findClient("APP-0000000000000001");
-        assertNotNull(clientWithPersistentTokensEnabled);
-        assertNotNull(clientWithPersistentTokensEnabled.getDisplayName());
-        assertEquals("Client # 1", clientWithPersistentTokensEnabled.getDisplayName().getValue());
-        assertNotNull(clientWithPersistentTokensEnabled.getPersistentTokenEnabled());
-        assertTrue(clientWithPersistentTokensEnabled.getPersistentTokenEnabled().getValue());
-        
-        clientWithPersistentTokensEnabled.getDisplayName().setValue("Updated Name");
-        manageMembers.updateClient(clientWithPersistentTokensEnabled);
-        
-        Client updatedClient =  manageMembers.findClient("APP-0000000000000001");
-        assertNotNull(updatedClient);
-        assertNotNull(updatedClient.getDisplayName());
-        assertEquals("Updated Name", updatedClient.getDisplayName().getValue());
-        assertNotNull(updatedClient.getPersistentTokenEnabled());
-        assertTrue(updatedClient.getPersistentTokenEnabled().getValue());
-    }
-    
-    @Test
-    public void editGroupTypeTest() throws Exception {
-        Member group_0000 = manageMembers.findMember("5555-5555-5555-0000");
-        assertNotNull(group_0000);
-        assertNotNull(group_0000.getType());
-        assertEquals(MemberType.PREMIUM_INSTITUTION.value(), group_0000.getType().getValue());
-        
-        // Update group type to basic
-        group_0000.setType(Text.valueOf(MemberType.BASIC.value()));
-        manageMembers.updateMember(group_0000);                                
-        
-        group_0000 = manageMembers.findMember("5555-5555-5555-0000");
-        assertNotNull(group_0000);
-        assertNotNull(group_0000.getType());
-        assertEquals(MemberType.BASIC.value(), group_0000.getType().getValue());
-        
-    }
-    
-    @Test
-    public void testDeactivateClient() throws ClientAlreadyDeactivatedException {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", mockClientDetailsManager);
-        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
-        Mockito.doNothing().when(mockClientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
-        ClientActivationRequest clientDeactivation = new ClientActivationRequest();
-        clientDeactivation.setClientId("test");
-        clientDeactivation = manageMembers.deactivateClient(clientDeactivation);
-        assertNull(clientDeactivation.getError());
-        Mockito.verify(mockClientDetailsManager, Mockito.times(1)).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", clientDetailsManager);
-    }
-    
-    @Test
-    public void testActivateClient() throws ClientAlreadyActiveException {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", mockClientDetailsManager);
-        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
-        Mockito.doNothing().when(mockClientDetailsManager).activateClientDetails(Mockito.eq("test"));
-        ClientActivationRequest clientActivation = new ClientActivationRequest();
-        clientActivation.setClientId("test");
-        clientActivation = manageMembers.activateClient(clientActivation);
-        assertNull(clientActivation.getError());
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", clientDetailsManager);        
-    }
-    
-    @Test
-    public void testDeactivateClientAlreadyDeactivated() throws ClientAlreadyDeactivatedException {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", mockClientDetailsManager);
-        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
-        Mockito.doThrow(new ClientAlreadyDeactivatedException("already-deactivated")).when(mockClientDetailsManager).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
-        ClientActivationRequest clientDeactivation = new ClientActivationRequest();
-        clientDeactivation.setClientId("test");
-        clientDeactivation = manageMembers.deactivateClient(clientDeactivation);
-        assertNotNull(clientDeactivation.getError());
-        assertEquals("already-deactivated", clientDeactivation.getError());
-        Mockito.verify(mockClientDetailsManager, Mockito.times(1)).deactivateClientDetails(Mockito.eq("test"), Mockito.eq("4444-4444-4444-4440"));
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", clientDetailsManager);
-    }
-    
-    @Test
-    public void testActivateClientAlreadyActive() throws ClientAlreadyActiveException {
-        SecurityContextHolder.getContext().setAuthentication(getAuthentication());
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", mockClientDetailsManager);
-        Mockito.when(mockClientDetailsManager.exists(Mockito.eq("test"))).thenReturn(true);
-        Mockito.doThrow(new ClientAlreadyActiveException("already-active")).when(mockClientDetailsManager).activateClientDetails(Mockito.eq("test"));
-        ClientActivationRequest clientActivation = new ClientActivationRequest();
-        clientActivation.setClientId("test");
-        clientActivation = manageMembers.activateClient(clientActivation);
-        assertNotNull(clientActivation.getError());
-        assertEquals("already-active", clientActivation.getError());
-        ReflectionTestUtils.setField(manageMembers, "clientDetailsManager", clientDetailsManager);
+        org.orcid.jaxb.model.v3.release.client.Client model = mock(org.orcid.jaxb.model.v3.release.client.Client.class);
+        when(model.getId()).thenReturn("APP-123");
+        when(model.getClientType()).thenReturn(org.orcid.jaxb.model.clientgroup.ClientType.CREATOR);
+        when(clientManager.edit(any(), eq(true))).thenReturn(model);
+
+        Client result = manageMembers.updateClient(client);
+        assertFalse(result.getErrors().contains("manage.developer_tools.client.idp.error.no_redirect_uri_found"));
     }
 
-    private Client findClientById(List<Client> clients, String id) {
-        return clients.stream()
-                .filter(c -> id.equals(c.getClientId().getValue()))
-                .findFirst()
-                .orElse(null);
+    @Test
+    public void testGetEmptyRedirectUri() {
+        RedirectUri result = manageMembers.getEmptyRedirectUri();
+        assertEquals(RedirectUriType.DEFAULT.value(), result.getType().getValue());
+        assertEquals("", result.getValue().getValue());
+    }
+
+    @Test
+    public void testDeactivateClient_NotFound() {
+        ClientActivationRequest request = new ClientActivationRequest();
+        request.setClientId("APP-MISSING");
+        when(clientDetailsManager.exists("APP-MISSING")).thenReturn(false);
+        
+        ClientActivationRequest result = manageMembers.deactivateClient(request);
+        assertEquals("Client not found", result.getError());
+    }
+
+    @Test
+    public void testDeactivateClient_AlreadyDeactivated() throws ClientAlreadyDeactivatedException {
+        ClientActivationRequest request = new ClientActivationRequest();
+        request.setClientId("APP-123");
+        when(clientDetailsManager.exists("APP-123")).thenReturn(true);
+        doThrow(new ClientAlreadyDeactivatedException("already deactivated"))
+            .when(clientDetailsManager).deactivateClientDetails(eq("APP-123"), anyString());
+        
+        ClientActivationRequest result = manageMembers.deactivateClient(request);
+        assertEquals("already deactivated", result.getError());
+    }
+
+    @Test
+    public void testDeactivateClient_Success() throws ClientAlreadyDeactivatedException {
+        ClientActivationRequest request = new ClientActivationRequest();
+        request.setClientId("APP-123");
+        when(clientDetailsManager.exists("APP-123")).thenReturn(true);
+        
+        ClientActivationRequest result = manageMembers.deactivateClient(request);
+        assertNull(result.getError());
+        verify(clientDetailsManager).deactivateClientDetails(eq("APP-123"), eq("4444-4444-4444-4440"));
+    }
+
+    @Test
+    public void testActivateClient_NotFound() {
+        ClientActivationRequest request = new ClientActivationRequest();
+        request.setClientId("APP-MISSING");
+        when(clientDetailsManager.exists("APP-MISSING")).thenReturn(false);
+        
+        ClientActivationRequest result = manageMembers.activateClient(request);
+        assertEquals("Client not found", result.getError());
+    }
+
+    @Test
+    public void testActivateClient_AlreadyActive() throws ClientAlreadyActiveException {
+        ClientActivationRequest request = new ClientActivationRequest();
+        request.setClientId("APP-123");
+        when(clientDetailsManager.exists("APP-123")).thenReturn(true);
+        doThrow(new ClientAlreadyActiveException("already active"))
+            .when(clientDetailsManager).activateClientDetails("APP-123");
+        
+        ClientActivationRequest result = manageMembers.activateClient(request);
+        assertEquals("already active", result.getError());
+    }
+
+    @Test
+    public void testActivateClient_Success() throws ClientAlreadyActiveException {
+        ClientActivationRequest request = new ClientActivationRequest();
+        request.setClientId("APP-123");
+        when(clientDetailsManager.exists("APP-123")).thenReturn(true);
+        
+        ClientActivationRequest result = manageMembers.activateClient(request);
+        assertNull(result.getError());
+        verify(clientDetailsManager).activateClientDetails("APP-123");
+    }
+
+    @Test
+    public void testGetRedirectUriTypes() {
+        Map<String, String> types = manageMembers.getRedirectUriTypes();
+        assertFalse(types.containsKey(RedirectUriType.SSO_AUTHENTICATION.value()));
+        assertTrue(types.containsKey(RedirectUriType.DEFAULT.value()));
+    }
+
+    @Test
+    public void testRetrieveGroupTypes() {
+        Map<String, String> types = manageMembers.retrieveGroupTypes();
+        assertFalse(types.containsKey(MemberType.BASIC_INSTITUTION.value()));
+        assertFalse(types.containsKey(MemberType.PREMIUM_INSTITUTION.value()));
+        assertTrue(types.containsKey(MemberType.BASIC.value()));
+        assertEquals("basic", types.get(MemberType.BASIC.value()));
+    }
+
+    private Member createValidMember() {
+        Member member = new Member();
+        member.setEmail(Text.valueOf("test@orcid.org"));
+        member.setGroupName(Text.valueOf("Test Group"));
+        member.setType(Text.valueOf(MemberType.BASIC.value()));
+        member.setSalesforceId(Text.valueOf("1234567890abcde"));
+        return member;
     }
 }

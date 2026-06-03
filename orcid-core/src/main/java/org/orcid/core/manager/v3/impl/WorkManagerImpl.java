@@ -88,12 +88,6 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource(name = "activityValidatorV3")
     private ActivityValidator activityValidator;
     
-    @Resource(name = "groupingSuggestionManagerV3")
-    private GroupingSuggestionManager groupingSuggestionManager;
-    
-    @Resource(name = "groupingSuggestionManagerReadOnlyV3")
-    private GroupingSuggestionManagerReadOnly groupingSuggestionManagerReadOnly;
-    
     @Resource
     private MessageSource messageSource;
     
@@ -114,6 +108,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     @Resource
     private WorkContributorRoleConverter workContributorsRoleConverter;
+
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
 
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
@@ -213,7 +210,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setFeaturedDisplayIndex(0);
         
         //Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
         
         setIncomingWorkPrivacy(workEntity, profile, isApiRequest);        
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);
@@ -273,7 +270,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 // If the external id exists and is a SELF identifier, then mark it as duplicated                                
                                 if(existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", SourceEntityUtils.getSourceName(activeSource));
+                                    params.put("clientName", sourceEntityUtils.getSourceName(activeSource));
                                     if(extIDPutCodeMap.containsKey(extId)) {
                                         params.put("putCode", String.valueOf(extIDPutCodeMap.get(extId)));
                                     }                                    
@@ -287,7 +284,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                         workEntity.setAddedToProfileDate(new Date());
                         workEntity.setFeaturedDisplayIndex(0);
 
-                        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
+                        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
                         
                         setIncomingWorkPrivacy(workEntity, profile);        
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
@@ -332,7 +329,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();        
         for(Work work : existingWorks) {
             //If it is the same source
-            if(SourceEntityUtils.isTheSameForDuplicateChecking(activeSource, work.getSource())) {
+            if(sourceEntityUtils.isTheSameSource(activeSource, work.getSource())) {
                 if(work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
                     for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
                         if(extIdsPutCodeMap != null) {
@@ -547,7 +544,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         workEntity.setFeaturedDisplayIndex(0);
 
         //Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, workEntity);
 
         setIncomingWorkPrivacy(workEntity, profile, false);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, false);

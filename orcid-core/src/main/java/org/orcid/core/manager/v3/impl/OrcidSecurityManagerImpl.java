@@ -105,6 +105,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Resource
     private OrcidUserDetailsService orcidUserDetailsService;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     public boolean isAdmin() {
         return orcidUserDetailsService.isAdmin();
@@ -207,7 +210,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Override
     public void checkSourceAndThrow(SourceAwareEntity<?> existingEntity) {
         Source activeSource = sourceManager.retrieveActiveSource();
-        if (activeSource != null && !SourceEntityUtils.isTheSameForPermissionChecking(activeSource, existingEntity, clientDetailsEntityCacheManager)) {
+        if (activeSource != null && !sourceEntityUtils.isTheSameSource(activeSource, existingEntity)) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);

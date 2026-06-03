@@ -59,6 +59,9 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     @Transactional
     public ResearchResource createResearchResource(String orcid, ResearchResource rr, boolean isApiRequest) {
@@ -88,7 +91,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         }
 
         // Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, researchResourceEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, researchResourceEntity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingPrivacy(researchResourceEntity, profile);
@@ -108,7 +111,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         Visibility originalVisibility = Visibility.valueOf(rre.getVisibility());
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(rre, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(rre);
 
         activityValidator.validateResearchResource(rr, activeSource, false, isApiRequest, originalVisibility);
         if (!isApiRequest) {
@@ -127,7 +130,7 @@ public class ResearchResourceManagerImpl extends ResearchResourceManagerReadOnly
         rre.setVisibility(originalVisibility.name());
 
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, rre);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, rre);
 
         // update orgs (ordering managed by @OrderColumn on lists)
         List<OrgEntity> updatedOrganizations = orgManager.getOrgEntities(rr.getProposal().getHosts());

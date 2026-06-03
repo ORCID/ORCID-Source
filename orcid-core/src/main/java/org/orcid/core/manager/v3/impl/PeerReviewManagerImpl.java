@@ -82,6 +82,9 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Override
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
@@ -117,7 +120,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         entity.setOrg(updatedOrganization);
 
         // Set the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingPrivacy(entity, profile);
@@ -137,7 +140,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(existingEntity, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(existingEntity);
 
         // If request comes from the API perform validations
         if (isApiRequest) {
@@ -162,7 +165,7 @@ public class PeerReviewManagerImpl extends PeerReviewManagerReadOnlyImpl impleme
         existingEntity.setVisibility(originalVisibility.name());
 
         // Be sure it doesn't overwrite the source
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, existingEntity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, existingEntity);
         createIssnGroupIdIfNecessary(peerReview);
         
         if (peerReview.getOrganization() != null) {

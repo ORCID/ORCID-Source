@@ -55,6 +55,9 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     /**
      * Add a new distinction to the given user
      * 
@@ -292,7 +295,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         OrgEntity updatedOrganization = orgManager.getOrgEntity(affiliation);
         entity.setOrg(updatedOrganization);
 
-        SourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(activeSource, entity);
 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         setIncomingWorkPrivacy(entity, profile, isApiRequest);
@@ -342,7 +345,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         Source activeSource = sourceManager.retrieveActiveSource();
 
         // Save the original source
-        Source originalSource = SourceEntityUtils.extractSourceFromEntity(entity, clientDetailsEntityCacheManager);
+        Source originalSource = sourceEntityUtils.extractSourceFromEntity(entity);
 
         String originalVisibility = entity.getVisibility();
         orcidSecurityManager.checkSourceAndThrow(entity);
@@ -385,7 +388,7 @@ public class AffiliationsManagerImpl extends AffiliationsManagerReadOnlyImpl imp
         // Populate display index in case it is missing
         DisplayIndexCalculatorHelper.setDisplayIndexOnExistingEntity(entity, isApiRequest);
 
-        SourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
+        sourceEntityUtils.populateSourceAwareEntityFromSource(originalSource, entity);
 
         // Updates the give organization with the latest organization from
         // database, or, create a new one

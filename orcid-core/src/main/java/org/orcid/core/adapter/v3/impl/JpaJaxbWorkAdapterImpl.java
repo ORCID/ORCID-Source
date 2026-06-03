@@ -2,12 +2,17 @@ package org.orcid.core.adapter.v3.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import ma.glasnost.orika.MappingContext;
 import ma.glasnost.orika.MapperFacade;
 
+import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.adapter.v3.JpaJaxbWorkAdapter;
+import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.record.Work;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedExtendedWorkEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -98,6 +103,16 @@ public class JpaJaxbWorkAdapterImpl implements JpaJaxbWorkAdapter {
             return null;
         }
         return mapperFacade.mapAsList(workEntities, WorkSummary.class);
+    }
+
+    @Override
+    public List<WorkSummary> toWorkSummaryFromMinimized(Collection<MinimizedWorkEntity> workEntities, Map<String, Source> sourceMap) {
+        if(workEntities == null) {
+            return null;
+        }
+        MappingContext context = new MappingContext.Factory().getContext();
+        context.setProperty(SourceEntityUtils.SOURCE_MAP, sourceMap);
+        return mapperFacade.mapAsList(workEntities, WorkSummary.class, context);
     }
 
     @Override

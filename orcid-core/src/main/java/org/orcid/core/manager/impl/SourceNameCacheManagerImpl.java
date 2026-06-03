@@ -4,7 +4,6 @@ import jakarta.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
 import org.ehcache.Cache;
-import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.utils.ReleaseNameUtils;
@@ -35,8 +34,6 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     private ClientDetailsDao clientDetailsDao;
     
-    private ProfileEntityManager profileEntityManager;
-    
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
 
@@ -47,10 +44,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     public void setClientDetailsDao(ClientDetailsDao clientDetailsDao) {
         this.clientDetailsDao = clientDetailsDao;
     }
-    
-    public void setProfileEntityManager(ProfileEntityManager profileEntityManager) {
-        this.profileEntityManager = profileEntityManager;
-    }
+
 
     @Override
     public String retrieve(String sourceId) throws IllegalArgumentException {

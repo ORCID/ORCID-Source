@@ -1,7 +1,9 @@
 package org.orcid.persistence.dao.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
@@ -49,6 +51,30 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where id = :clientId", Date.class);
         query.setParameter("clientId", clientId);
         return query.getSingleResult();
+    }
+
+    @Override
+    public Map<String, Date> getLastModifiedByClientIds(List<String> clientIds) {
+        if (clientIds == null || clientIds.isEmpty()) {
+            return new HashMap<>();
+        }
+        TypedQuery<Object[]> query = entityManager.createQuery("select id, lastModified from ClientDetailsEntity where id in :clientIds", Object[].class);
+        query.setParameter("clientIds", clientIds);
+        Map<String, Date> lastModifiedByClientId = new HashMap<>();
+        for (Object[] result : query.getResultList()) {
+            lastModifiedByClientId.put((String) result[0], (Date) result[1]);
+        }
+        return lastModifiedByClientId;
+    }
+
+    @Override
+    public List<ClientDetailsEntity> findByClientIds(List<String> clientIds) {
+        if (clientIds == null || clientIds.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where id in :clientIds", ClientDetailsEntity.class);
+        query.setParameter("clientIds", clientIds);
+        return query.getResultList();
     }
 
     @Override

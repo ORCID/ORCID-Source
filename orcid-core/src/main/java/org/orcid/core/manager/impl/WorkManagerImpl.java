@@ -95,6 +95,9 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     @Resource
     private ContributorsRolesAndSequencesConverterV2 contributorsRolesAndSequencesConverterV2;
 
+    @Resource
+    private SourceEntityUtils sourceEntityUtils;
+
     @Value("${org.orcid.core.work.contributors.ui.max:50}")
     private int maxContributorsForUI;
 
@@ -160,7 +163,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             activityValidator.validateWork(work, sourceEntity, true, isApiRequest, null);
             // If it is the user adding the peer review, allow him to add
             // duplicates
-            if (!SourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
+            if (!sourceEntityUtils.getSourceId(sourceEntity).equals(orcid)) {
                 List<Work> existingWorks = this.findWorks(orcid);
                 if (existingWorks != null) {
                     if ((existingWorks.size() + 1) > this.maxNumOfActivities) {
@@ -222,7 +225,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         if (workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
             Map<ExternalID, Long> extIDPutCodeMap = new HashMap<ExternalID, Long>();
-            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, SourceEntityUtils.getSourceId(sourceEntity), extIDPutCodeMap);
+            Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(existingWorks, sourceEntityUtils.getSourceId(sourceEntity), extIDPutCodeMap);
             if ((existingWorks.size() + bulk.size()) > this.maxNumOfActivities) {
                 throw new ExceedMaxNumberOfElementsException();
             }
@@ -248,7 +251,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                                 // identifier, then mark it as duplicated
                                 if (existingExternalIdentifiers.contains(extId) && Relationship.SELF.equals(extId.getRelationship())) {
                                     Map<String, String> params = new HashMap<String, String>();
-                                    params.put("clientName", sourceNameCacheManager.retrieve(SourceEntityUtils.getSourceId(sourceEntity)));
+                                    params.put("clientName", sourceNameCacheManager.retrieve(sourceEntityUtils.getSourceId(sourceEntity)));
                                     if (extIDPutCodeMap.containsKey(extId)) {
                                         params.put("putCode", String.valueOf(extIDPutCodeMap.get(extId)));
                                     }
