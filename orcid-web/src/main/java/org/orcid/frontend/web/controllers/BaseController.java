@@ -885,20 +885,12 @@ public class BaseController {
         }
         Map<String, String> countryNames = new HashMap<String, String>();
         if (publicAddresses != null && publicAddresses.getAddress() != null) {
-            Address publicAddress = null;
             // The primary address will be the one with the lowest display index
             for (Address address : publicAddresses.getAddress()) {
                 countryNames.put(address.getCountry().getValue().name(), getcountryName(address.getCountry().getValue().name()));
-                if (publicAddress == null) {
-                    publicAddress = address;
-                }
             }
-            if (publicAddress != null) {
-                publicRecordPersonDetails.setPublicAddress(publicAddress);
-                publicRecordPersonDetails.setCountryNames(countryNames);
-                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);
-                publicRecordPersonDetails.setPublicGroupedAddresses(groupedAddresses);
-            }
+            publicRecordPersonDetails.setCountryNames(countryNames);
+            publicRecordPersonDetails.setPublicGroupedAddresses(groupAddresses(publicAddresses));
         }
 
         // Fill keywords
