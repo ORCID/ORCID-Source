@@ -1,3 +1,11 @@
+## v2.142.3 - 2026-06-08
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.142.2...v2.142.3)
+
+### Fix
+
+- remove profile email domain records using admin portal (#7528)
+
 ## v2.142.2 - 2026-06-04
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.142.1...v2.142.2)
