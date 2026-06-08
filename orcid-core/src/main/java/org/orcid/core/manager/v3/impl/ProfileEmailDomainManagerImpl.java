@@ -51,11 +51,13 @@ public class ProfileEmailDomainManagerImpl extends ProfileEmailDomainManagerRead
 
         if (existingEmailDomains != null) {
             // VISIBILITY UPDATE FOR EXISTING DOMAINS
-            for (org.orcid.pojo.ajaxForm.ProfileEmailDomain emailDomain : newEmails.getEmailDomains()) {
-                for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
-                    if (StringUtils.equals(existingEmailDomain.getEmailDomain(), emailDomain.getValue())) {
-                        if (!StringUtils.equals(existingEmailDomain.getVisibility(), emailDomain.getVisibility())) {
-                            profileEmailDomainDao.updateVisibility(orcid, emailDomain.getValue(), emailDomain.getVisibility());
+            if (newEmails != null && newEmails.getEmailDomains() != null) {
+                for (org.orcid.pojo.ajaxForm.ProfileEmailDomain emailDomain : newEmails.getEmailDomains()) {
+                    for (ProfileEmailDomainEntity existingEmailDomain : existingEmailDomains) {
+                        if (StringUtils.equals(existingEmailDomain.getEmailDomain(), emailDomain.getValue())) {
+                            if (!StringUtils.equals(existingEmailDomain.getVisibility(), emailDomain.getVisibility())) {
+                                profileEmailDomainDao.updateVisibility(orcid, emailDomain.getValue(), emailDomain.getVisibility());
+                            }
                         }
                     }
                 }
