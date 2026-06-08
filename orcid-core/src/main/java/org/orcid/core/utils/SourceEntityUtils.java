@@ -19,16 +19,15 @@ import org.orcid.persistence.jpa.entities.OrcidAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SourceEntityUtils {
 
     public static final String SOURCE_MAP = "sourceMap";
 
     public static final String DO_NOT_POPULATE_SOURCES = "DO_NOT_POPULATE_SOURCES";
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
@@ -193,8 +192,12 @@ public class SourceEntityUtils {
     }
 
     private String getSourceName(String sourceId) {
-        if(request.getAttribute(SourceEntityUtils.DO_NOT_POPULATE_SOURCES) != null) {
-            return null;
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            Object doNotPopulateSource = attributes.getAttribute(SourceEntityUtils.DO_NOT_POPULATE_SOURCES, RequestAttributes.SCOPE_REQUEST);
+            if(doNotPopulateSource != null) {
+                return null;
+            }
         }
         return sourceNameCacheManager.retrieve(sourceId);
     }

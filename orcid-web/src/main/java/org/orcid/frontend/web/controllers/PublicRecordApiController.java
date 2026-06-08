@@ -38,7 +38,7 @@ public class PublicRecordApiController {
     @Resource(name = "publicAPISecurityManagerV3")
     private PublicAPISecurityManagerV3 publicAPISecurityManagerV3;
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     private final boolean filterVersionOfIdentifiers = false;
 
