@@ -3,6 +3,7 @@ package org.orcid.core.utils;
 import java.util.Optional;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -18,10 +19,15 @@ import org.orcid.persistence.jpa.entities.OrcidAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class SourceEntityUtils {
 
     public static final String SOURCE_MAP = "sourceMap";
+
+    public static final String DO_NOT_POPULATE_SOURCES = "DO_NOT_POPULATE_SOURCES";
 
     @Resource(name = "recordNameManagerReadOnlyV3")
     private RecordNameManagerReadOnly recordNameManagerReadOnlyV3;
@@ -153,7 +159,7 @@ public class SourceEntityUtils {
         if (s.getSourceOrcid() != null && s.getSourceOrcid().getPath() != null) {
             s.getSourceOrcid().setHost(orcidUrlManager.getBaseHost());
             s.getSourceOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getSourceOrcid().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getSourceOrcid().getPath());
+            String sourceNameValue = getSourceName(s.getSourceOrcid().getPath());
             if (sourceNameValue != null) {
                 s.setSourceName(new SourceName(sourceNameValue));
             }
@@ -161,7 +167,7 @@ public class SourceEntityUtils {
         if (s.getSourceClientId() != null && s.getSourceClientId().getPath() != null) {
             s.getSourceClientId().setHost(orcidUrlManager.getBaseHost());
             s.getSourceClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + s.getSourceClientId().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getSourceClientId().getPath());
+            String sourceNameValue = getSourceName(s.getSourceClientId().getPath());
             if (sourceNameValue != null) {
                 s.setSourceName(new SourceName(sourceNameValue));
             }
@@ -170,7 +176,7 @@ public class SourceEntityUtils {
         if (s.getAssertionOriginOrcid() != null && s.getAssertionOriginOrcid().getPath() != null) {
             s.getAssertionOriginOrcid().setHost(orcidUrlManager.getBaseHost());
             s.getAssertionOriginOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + s.getAssertionOriginOrcid().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getAssertionOriginOrcid().getPath());
+            String sourceNameValue = getSourceName(s.getAssertionOriginOrcid().getPath());
             if (sourceNameValue != null) {
                 s.setAssertionOriginName(new SourceName(sourceNameValue));
             }
@@ -178,11 +184,22 @@ public class SourceEntityUtils {
         if (s.getAssertionOriginClientId() != null && s.getAssertionOriginClientId().getPath() != null) {
             s.getAssertionOriginClientId().setHost(orcidUrlManager.getBaseHost());
             s.getAssertionOriginClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + s.getAssertionOriginClientId().getPath());
-            String sourceNameValue = sourceNameCacheManager.retrieve(s.getAssertionOriginClientId().getPath());
+            String sourceNameValue = getSourceName(s.getAssertionOriginClientId().getPath());
             if (sourceNameValue != null) {
                 s.setAssertionOriginName(new SourceName(sourceNameValue));
             }
         }
+    }
+
+    private String getSourceName(String sourceId) {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            Object doNotPopulateSource = attributes.getAttribute(SourceEntityUtils.DO_NOT_POPULATE_SOURCES, RequestAttributes.SCOPE_REQUEST);
+            if(doNotPopulateSource != null) {
+                return null;
+            }
+        }
+        return sourceNameCacheManager.retrieve(sourceId);
     }
 
     // =================================
