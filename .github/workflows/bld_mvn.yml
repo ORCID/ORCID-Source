@@ -39,6 +39,11 @@ on:
         type: boolean
         required: false
         default: true
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: string
 
   workflow_dispatch:
     inputs:
@@ -78,6 +83,14 @@ on:
         type: boolean
         required: false
         default: true
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: choice
+        options:
+          - '11'
+          - '21'
 
 jobs:
   bld_mvn:
@@ -124,11 +137,11 @@ jobs:
           version_tag: ${{ inputs.version_tag }}
           bump: ${{ inputs.bump }}
 
-      - name: Set up Open JDK 11
+      - name: Set up Open JDK
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: ${{ inputs.java_version }}
 ######################################################################################################################
 # handle restoring a custom gha cache
 
