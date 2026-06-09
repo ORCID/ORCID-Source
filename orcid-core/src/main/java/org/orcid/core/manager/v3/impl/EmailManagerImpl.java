@@ -337,6 +337,9 @@ public class EmailManagerImpl extends EmailManagerReadOnlyImpl implements EmailM
 
         List<EmailEntity> remainingEmails = emailDao.findByOrcid(orcid, System.currentTimeMillis());
         ensurePrimaryEmail(orcid, remainingEmails);
+        org.orcid.jaxb.model.v3.release.record.Emails emails = new org.orcid.jaxb.model.v3.release.record.Emails();
+        emails.setEmails(toEmailList(remainingEmails));
+        profileEmailDomainManager.updateEmailDomains(orcid, null, emails);
 
         return toEmailList(remainingEmails);
     }

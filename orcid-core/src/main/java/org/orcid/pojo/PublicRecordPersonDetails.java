@@ -21,8 +21,6 @@ public class PublicRecordPersonDetails {
     
     private  Map<String, List<OtherName>> publicGroupedOtherNames;
     
-    private Address publicAddress;
-    
     private Map<String, String> countryNames;
     
     private Map<String, List<Address>> publicGroupedAddresses;
@@ -57,14 +55,6 @@ public class PublicRecordPersonDetails {
 
     public void setPublicGroupedOtherNames(Map<String, List<OtherName>> publicGroupedOtherNames) {
         this.publicGroupedOtherNames = publicGroupedOtherNames;
-    }
-
-    public Address getPublicAddress() {
-        return publicAddress;
-    }
-
-    public void setPublicAddress(Address publicAddress) {
-        this.publicAddress = publicAddress;
     }
 
     public Map<String, String> getCountryNames() {

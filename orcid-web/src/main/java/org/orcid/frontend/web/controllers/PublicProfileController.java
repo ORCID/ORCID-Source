@@ -223,8 +223,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("noIndex", true);
             }
         }
-        PublicRecordPersonDetails publicRecordPersonDetails = new PublicRecordPersonDetails();
-        publicRecordPersonDetails = getPersonDetails(orcid, true);
+        PublicRecordPersonDetails publicRecordPersonDetails = getPersonDetails(orcid, true);
 
         String orcidDescription1 = "ORCID record for ";
         String orcidDescription2 = "ORCID provides an identifier for individuals to use with their name as they engage in research, scholarship, and innovation activities.";

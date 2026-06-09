@@ -644,6 +644,45 @@ public class EmailManagerTest extends BaseTest {
         ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
     }
 
+    @Test
+    public void testRemoveEmails_updatesEmailDomains() throws IllegalAccessException {
+        OrcidSecurityManager mockOrcidSecurityManager = Mockito.mock(OrcidSecurityManager.class);
+        ProfileEmailDomainManager mockProfileEmailDomainManager = Mockito.mock(ProfileEmailDomainManager.class);
+        ProfileEmailDomainManager originalProfileEmailDomainManager = (ProfileEmailDomainManager) ReflectionTestUtils
+                .getField(emailManager, "profileEmailDomainManager");
+        ReflectionTestUtils.setField(emailManager, "emailDao", mockEmailDao);
+        ReflectionTestUtils.setField(emailManager, "orcidSecurityManager", mockOrcidSecurityManager);
+        ReflectionTestUtils.setField(emailManager, "profileEmailDomainManager", mockProfileEmailDomainManager);
+
+        EmailEntity emailToRemove = getEmailEntity("remove@example.com");
+        EmailEntity remainingPrimary = getEmailEntity("remaining@example.com");
+        remainingPrimary.setPrimary(Boolean.TRUE);
+
+        List<String> emailsToRemove = List.of("remove@example.com");
+        List<EmailEntity> currentEmailsList = Arrays.asList(emailToRemove, remainingPrimary);
+        List<EmailEntity> remainingEmailsList = List.of(remainingPrimary);
+
+        Mockito.when(mockOrcidSecurityManager.isAdmin()).thenReturn(true);
+        Mockito.when(mockEmailDao.findByOrcid(Mockito.eq("orcid"), Mockito.anyLong()))
+                .thenReturn(currentEmailsList)
+                .thenReturn(remainingEmailsList);
+
+        emailManager.removeEmails("orcid", emailsToRemove);
+
+        ArgumentCaptor<Emails> captor = ArgumentCaptor.forClass(Emails.class);
+        Mockito.verify(mockProfileEmailDomainManager, Mockito.times(1)).updateEmailDomains(Mockito.eq("orcid"),
+                Mockito.isNull(), captor.capture());
+
+        Emails capturedEmails = captor.getValue();
+        assertNotNull(capturedEmails);
+        assertNotNull(capturedEmails.getEmails());
+        assertEquals(1, capturedEmails.getEmails().size());
+        assertEquals("remaining@example.com", capturedEmails.getEmails().get(0).getEmail());
+
+        ReflectionTestUtils.setField(emailManager, "emailDao", emailDao);
+        ReflectionTestUtils.setField(emailManager, "profileEmailDomainManager", originalProfileEmailDomainManager);
+    }
+
     private ProfileEntity getClaimedProfile(String orcid) {
         ProfileEntity unclaimed = new ProfileEntity();
         unclaimed.setId(orcid);
