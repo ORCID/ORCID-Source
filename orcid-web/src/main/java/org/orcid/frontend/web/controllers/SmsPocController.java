@@ -1,11 +1,11 @@
 package org.orcid.frontend.web.controllers;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.MediaType;
+import jakarta.annotation.Resource;
 
 import org.orcid.frontend.sms.SmsPocRequest;
 import org.orcid.frontend.sms.SmsPocResponse;
 import org.orcid.frontend.sms.SmsPocService;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ public class SmsPocController {
     @Resource
     private SmsPocService smsPocService;
 
-    @RequestMapping(value = "/send.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = "/send.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody SmsPocResponse send(@RequestBody SmsPocRequest request) {
         return smsPocService.send(request);
     }
