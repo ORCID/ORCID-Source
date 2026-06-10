@@ -5,6 +5,16 @@ on:
       - main
   schedule:
     - cron: '45 6 * * 0'
+  workflow_dispatch:
+    inputs:
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: choice
+        options:
+          - '11'
+          - '21'
 jobs:
   buildmavenDepTree:
     runs-on: ubuntu-latest
@@ -16,10 +26,10 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-      - name: Set up JDK 11
+      - name: Set up JDK
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
-          java-version: '11'
+          java-version: ${{ inputs.java_version || '11' }}
           distribution: 'temurin'
           cache: 'maven'
       - name: Generate dependency tree
