@@ -23,6 +23,11 @@ on:
         type: boolean
         required: false
         default: true
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: string
 
 
   workflow_dispatch:
@@ -53,6 +58,14 @@ on:
         type: boolean
         required: false
         default: true
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: choice
+        options:
+          - '11'
+          - '21'
 
 # cancel running job if another commit comes in
 concurrency:
@@ -70,6 +83,7 @@ jobs:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
       ref: ${{ inputs.ref }}
+      java_version: ${{ inputs.java_version }}
 
   install_maven_dependencies:
     uses: ./.github/workflows/install_maven_dependencies.yml
@@ -77,6 +91,7 @@ jobs:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
       ref: ${{ inputs.ref }}
+      java_version: ${{ inputs.java_version }}
     needs:
       - seed_maven_cache
 
@@ -86,6 +101,7 @@ jobs:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
       ref: ${{ inputs.ref }}
+      java_version: ${{ inputs.java_version }}
       seed_maven_cache: false
       install_maven_dependencies: false
     needs:
@@ -109,6 +125,7 @@ jobs:
       version_tag: ${{ inputs.version_tag }}
       bump: ${{ inputs.bump }}
       ref: ${{ inputs.ref }}
+      java_version: ${{ inputs.java_version }}
       seed_maven_cache: false
       install_maven_dependencies: false
 

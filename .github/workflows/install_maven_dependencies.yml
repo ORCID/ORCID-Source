@@ -31,6 +31,11 @@ on:
         required: false
         default: "default"
         type: string
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: string
 
   workflow_dispatch:
     inputs:
@@ -60,6 +65,14 @@ on:
         required: false
         default: "default"
         type: string
+      java_version:
+        description: 'JDK version to build with'
+        required: false
+        default: '11'
+        type: choice
+        options:
+          - '11'
+          - '21'
 
 
 jobs:
@@ -92,11 +105,11 @@ jobs:
           version_tag: ${{ inputs.version_tag }}
           bump: ${{ inputs.bump }}
 
-      - name: Set up Open JDK 11
+      - name: Set up Open JDK
         uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4.8.0
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: ${{ inputs.java_version }}
 
       - name: Restore the seeded cache but save dependencies into a new unique git sha hash with the expected version of the build
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
