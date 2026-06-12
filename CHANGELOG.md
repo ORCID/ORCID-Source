@@ -1,3 +1,9 @@
+## v2.143.0 - 2026-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.142.6...v2.143.0)
+
+- [#7531](https://github.com/ORCID/ORCID-Source/pull/7531): feat/support-jdk-21-choice-for-builds
+
 ## v2.142.6 - 2026-06-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.142.5...v2.142.6)
