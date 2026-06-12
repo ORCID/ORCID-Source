@@ -5,13 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.FixedVersionStrategy;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 
 @Configuration
 @EnableWebMvc
-public class ResourceHandlersConfiguration extends WebMvcConfigurerAdapter {
+public class ResourceHandlersConfiguration implements WebMvcConfigurer {
 
     @Value("${org.orcid.frontend.static.resource.cache.enabled:true}")
     private boolean cacheResources;

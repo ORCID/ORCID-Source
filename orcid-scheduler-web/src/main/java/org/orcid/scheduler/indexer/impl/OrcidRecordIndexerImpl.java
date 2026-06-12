@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.messaging.JmsMessageSender;
 import org.orcid.core.utils.listener.LastModifiedMessage;

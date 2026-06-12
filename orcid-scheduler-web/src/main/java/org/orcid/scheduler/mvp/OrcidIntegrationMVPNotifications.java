@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;

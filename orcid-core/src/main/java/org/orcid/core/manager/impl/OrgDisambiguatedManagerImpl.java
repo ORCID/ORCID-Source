@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;

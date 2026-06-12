@@ -6,7 +6,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.jaxb.model.error_v2.OrcidError;
 import org.orcid.jaxb.model.record_v2.Record;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 @Component
 public class Orcid20ManagerImpl implements Orcid20Manager {

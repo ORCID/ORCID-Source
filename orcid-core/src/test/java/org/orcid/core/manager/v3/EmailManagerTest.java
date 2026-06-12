@@ -20,8 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.RandomStringUtils;

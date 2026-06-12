@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.AfterClass;

@@ -6,10 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.api.common.util.v3.ElementUtils;
@@ -85,11 +85,15 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.search.Search;
 import org.orcid.jaxb.model.v3.release.search.expanded.ExpandedSearch;
+import org.orcid.jaxb.model.v3.release.record.Record;
+import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
+
+import org.apache.hc.core5.http.ParseException;
 
 @Component
 public class PublicV3ApiServiceDelegatorImpl implements
@@ -184,9 +188,6 @@ public class PublicV3ApiServiceDelegatorImpl implements
     private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
-    private OpenIDConnectKeyService openIDConnectKeyService;
-
-    @Resource
     private StatusManager statusManager;
 
     @Resource(name = "recordNameManagerReadOnlyV3")
@@ -194,15 +195,6 @@ public class PublicV3ApiServiceDelegatorImpl implements
 
     @Resource
     private EventManager eventManager;
-
-    @Resource
-    private EmailDomainManager emailDomainManager;
-
-    @Resource
-    private SourceEntityUtils sourceEntityUtils;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
 
     private Boolean filterVersionOfIdentifiers = false;
 
@@ -229,12 +221,12 @@ public class PublicV3ApiServiceDelegatorImpl implements
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the profile's bio
+     * wrapped in a {@link jakarta.xml.ws.Response} with only the profile's bio
      * details
      * 
      * @param orcid
      *            the ORCID to be used to identify the record
-     * @return the {@link javax.xml.ws.Response} with the
+     * @return the {@link jakarta.xml.ws.Response} with the
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
@@ -624,22 +616,22 @@ public class PublicV3ApiServiceDelegatorImpl implements
         return Response.ok(publicRecordUtils.getPublicRecord(orcid, filterVersionOfIdentifiers)).build();
     }
 
-    @Override   
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    @Override
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
         return Response.ok(search).build();
     }
 
     @Override
-    public Response searchByQueryCSV(Map<String, List<String>> solrParams) {
+    public Response searchByQueryCSV(Map<String, List<String>> solrParams) throws ParseException{
         validateSearchParams(solrParams);
         String search = orcidSearchManager.findOrcidIdsAsCSV(solrParams);
         return Response.ok(search).build();
     }
 
     @Override
-    public Response expandedSearchByQuery(Map<String, List<String>> solrParams) {
+    public Response expandedSearchByQuery(Map<String, List<String>> solrParams) throws ParseException{
         validateSearchParams(solrParams);
         ExpandedSearch search = orcidSearchManager.expandedSearch(solrParams);
         return Response.ok(search).build();

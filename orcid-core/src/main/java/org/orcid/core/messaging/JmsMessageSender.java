@@ -2,7 +2,7 @@ package org.orcid.core.messaging;
 
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.utils.listener.LastModifiedMessage;
 import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;

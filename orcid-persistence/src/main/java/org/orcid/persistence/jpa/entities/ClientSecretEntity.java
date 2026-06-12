@@ -3,7 +3,7 @@ package org.orcid.persistence.jpa.entities;
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import org.orcid.persistence.jpa.entities.keys.ClientSecretPk;
 import org.orcid.utils.NullUtils;

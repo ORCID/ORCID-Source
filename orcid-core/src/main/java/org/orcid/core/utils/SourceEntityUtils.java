@@ -1,9 +1,10 @@
 package org.orcid.core.utils;
 
-import java.util.Optional;
+import jakarta.annotation.Resource;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;

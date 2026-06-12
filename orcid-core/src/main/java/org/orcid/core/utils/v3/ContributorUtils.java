@@ -12,7 +12,7 @@ import org.orcid.jaxb.model.v3.release.record.FundingContributor;
 import org.orcid.pojo.ContributorsRolesAndSequences;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

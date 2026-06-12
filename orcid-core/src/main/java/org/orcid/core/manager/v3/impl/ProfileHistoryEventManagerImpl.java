@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.v3.ProfileHistoryEventManager;
 import org.orcid.core.profile.history.ProfileHistoryEventType;

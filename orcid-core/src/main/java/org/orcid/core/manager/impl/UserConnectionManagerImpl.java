@@ -2,7 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.NotificationManager;

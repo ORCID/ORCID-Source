@@ -1,7 +1,7 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * The primary key class for the userconnection database table.

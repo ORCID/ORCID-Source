@@ -5,8 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.WebhookEntity;

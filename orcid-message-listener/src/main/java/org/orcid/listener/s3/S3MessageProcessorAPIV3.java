@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.xml.bind.JAXBException;
+import jakarta.annotation.Resource;
+import jakarta.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.v3.release.error.OrcidError;
 import org.orcid.jaxb.model.v3.release.record.Activity;

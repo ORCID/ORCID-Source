@@ -3,7 +3,7 @@ package org.orcid.utils.alerting.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.utils.alerting.SlackManager;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 /**
  * 

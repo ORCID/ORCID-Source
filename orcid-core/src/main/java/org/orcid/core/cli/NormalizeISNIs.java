@@ -2,7 +2,7 @@ package org.orcid.core.cli;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.orgs.extId.normalizer.impl.ISNIOrgDisambiguatedExternalIdNormalizer;
 import org.orcid.persistence.dao.OrgDisambiguatedExternalIdentifierDao;

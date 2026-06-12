@@ -14,9 +14,9 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -36,7 +36,6 @@ import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
-import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -44,7 +43,6 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EventType;
-import org.orcid.pojo.EmailListChange;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
@@ -127,9 +125,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private EventManager eventManager;
 
-    @Resource
-    private RequestInfoFormLocalCache requestInfoFormLocalCache;
-
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
@@ -159,21 +154,6 @@ public class RegistrationController extends BaseController {
         }
 
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
-
-        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
-        if (requestInfoForm != null) {
-            if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
-                reg.getEmail().setValue(requestInfoForm.getUserEmail());
-            }
-
-            if (!PojoUtil.isEmpty(requestInfoForm.getUserGivenNames())) {
-                reg.getGivenNames().setValue(requestInfoForm.getUserGivenNames());
-            }
-
-            if (!PojoUtil.isEmpty(requestInfoForm.getUserFamilyNames())) {
-                reg.getFamilyNames().setValue(requestInfoForm.getUserFamilyNames());
-            }
-        }
 
         long numVal = generateRandomNumForValidation();
         reg.setValNumServer(numVal);

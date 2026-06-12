@@ -2,10 +2,11 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
@@ -32,7 +33,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean removePeerReview(String userOrcid, Long peerReviewId) {
-        Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid=:userOrcid and id=:peerReviewId");
+        Query query = entityManager.createQuery("delete from PeerReviewEntity pr where pr.orcid=:userOrcid and pr.id=:peerReviewId");
         query.setParameter("userOrcid", userOrcid);
         query.setParameter("peerReviewId", peerReviewId);
         return query.executeUpdate() > 0 ? true : false;
@@ -89,10 +90,11 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilities(String orcid, ArrayList<Long> peerReviewIds, String visibility) {
         Query query = entityManager
-                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where id in (:peerReviewIds) and  orcid=:orcid");
+                .createQuery("update PeerReviewEntity pr set pr.visibility=:visibility, pr.lastModified = :lastModified where pr.id in (:peerReviewIds) and pr.orcid=:orcid");
         query.setParameter("peerReviewIds", peerReviewIds);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0 ? true : false;
     }
 
@@ -101,10 +103,11 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @UpdateProfileLastModifiedAndIndexingStatus
     public boolean updateVisibilityByGroupId(String orcid, String groupId, String visibility) {
         Query query = entityManager
-                .createQuery("update PeerReviewEntity set visibility=:visibility, lastModified=now() where groupId=:groupId and  orcid=:orcid");
+                .createQuery("update PeerReviewEntity pr set pr.visibility=:visibility, pr.lastModified = :lastModified where pr.groupId=:groupId and pr.orcid=:orcid");
         query.setParameter("groupId", groupId);
         query.setParameter("visibility", visibility);
         query.setParameter("orcid", orcid);
+        query.setParameter("lastModified", new Date());
         return query.executeUpdate() > 0 ? true : false;
     }
     
@@ -133,7 +136,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Transactional
     @UpdateProfileLastModifiedAndIndexingStatus
     public void removeAllPeerReviews(String orcid){
-        Query query = entityManager.createQuery("delete from PeerReviewEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from PeerReviewEntity pr where pr.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -142,7 +145,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     public Boolean hasPublicPeerReviews(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from peer_review where orcid=:orcid and visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 

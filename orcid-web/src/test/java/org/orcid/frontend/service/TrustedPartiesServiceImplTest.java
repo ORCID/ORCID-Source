@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 
 import org.junit.Before;
 import org.junit.Test;

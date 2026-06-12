@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 public class ProfileEmailDomainDaoImpl extends GenericDaoImpl<ProfileEmailDomainEntity, Long> implements ProfileEmailDomainDao {

@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -251,7 +251,7 @@ public class ResearchResourceManagerTest extends BaseTest {
         assertEquals("changedResourceName",r4.getResourceItems().get(0).getResourceName());
     }
 
-    @Test(expected = javax.persistence.NoResultException.class)
+    @Test(expected = jakarta.persistence.NoResultException.class)
     public void testDelete(){
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));                
         ResearchResource rr1 = researchResourceManager.createResearchResource(USER_ORCID, generateResearchResource("title6","id6"), true);

@@ -3,7 +3,7 @@ package org.orcid.frontend.spring;
 import java.time.Instant;
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -106,7 +106,7 @@ public class OrcidAuthenticationProvider extends DaoAuthenticationProvider {
                     profileEntityCacheManager.remove(userOrcid);
                 } catch (Exception ex) {
                     //TODO: This try/catch should be removed as soon as we confirm there are no more exceptions while updating the sign in lock.
-                    if (!(ex instanceof javax.persistence.NoResultException)) {
+                    if (!(ex instanceof jakarta.persistence.NoResultException)) {
                         Throwable rootCause = ExceptionUtils.getRootCause(ex);
                         if(rootCause != null) {
                             LOGGER.error("An exception has occurred processing request from user " + auth.getName() + ". " + rootCause.getClass().getSimpleName() + ": " + rootCause.getMessage());

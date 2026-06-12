@@ -1,7 +1,7 @@
 package org.orcid.scheduler.loader.source.cli;
 
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;

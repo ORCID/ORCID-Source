@@ -22,11 +22,11 @@ import static org.orcid.core.api.OrcidApiConstants.N_TRIPLES;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_N3;
 import static org.orcid.core.api.OrcidApiConstants.TEXT_TURTLE;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;

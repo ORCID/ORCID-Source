@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 @Configuration
 @EnableScheduling

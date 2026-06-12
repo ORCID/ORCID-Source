@@ -1,6 +1,6 @@
 package org.orcid.core.exception;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012

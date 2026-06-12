@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.glassfish.jersey.server.ContainerRequest;
 
-import javax.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.PathSegment;
 
 public class APIEndpointParser {
 

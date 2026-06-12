@@ -1,6 +1,6 @@
 package org.orcid.frontend.web.util;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.PasswordGenerationManager;
 import org.springframework.stereotype.Controller;
