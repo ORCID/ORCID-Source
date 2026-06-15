@@ -150,12 +150,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private IdentityProviderManager identityProviderManager;
 
-    @Resource
+    @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;
-
-    public void setEncryptionManager(EncryptionManager encryptionManager) {
-        this.encryptionManager = encryptionManager;
-    }
 
     @Resource
     private WorkContributorRoleConverter workContributorsRoleConverter;
