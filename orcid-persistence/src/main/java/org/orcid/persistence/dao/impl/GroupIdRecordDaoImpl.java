@@ -79,7 +79,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
     
     @Override
     public List<GroupIdRecordEntity> getIssnRecordsSortedBySyncDate(int batchSize, Date syncTime) {
-        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g WHERE g.issn_loader_fail_count < :max AND g.group_id LIKE 'issn:%' AND (g.sync_date is null OR g.sync_date < :syncTime) ORDER BY g.sync_date", GroupIdRecordEntity.class);
+        Query query = entityManager.createNativeQuery("SELECT * FROM group_id_record g WHERE (g.issn_loader_fail_count is null OR g.issn_loader_fail_count < :max) AND g.group_id LIKE 'issn:%' AND (g.sync_date is null OR g.sync_date < :syncTime) ORDER BY g.sync_date", GroupIdRecordEntity.class);
         query.setParameter("max", maxRetries);
         query.setParameter("syncTime", syncTime);
         query.setMaxResults(batchSize);
