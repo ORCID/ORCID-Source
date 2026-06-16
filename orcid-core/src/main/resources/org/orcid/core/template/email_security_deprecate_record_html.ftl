@@ -17,7 +17,7 @@
     		</p>
 			<p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
 				<#list emailList as email>
-       				<a href="mailto:${email.getEmail()}">${email.getEmail()}</a>< /br>
+       				<a href="mailto:${email.getEmail()}">${email.getEmail()}</a><br />
  				</#list>
 			</p>
 			
