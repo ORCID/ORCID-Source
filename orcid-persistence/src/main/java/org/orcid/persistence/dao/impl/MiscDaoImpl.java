@@ -1,5 +1,6 @@
 package org.orcid.persistence.dao.impl;
 
+import java.time.Instant;
 import java.util.Date;
 
 import jakarta.annotation.Resource;
@@ -23,7 +24,13 @@ public class MiscDaoImpl implements MiscDao {
     @Override
     public Date retrieveDatabaseDatetime() {
         Query query = entityManager.createNativeQuery("SELECT now()");
-        return (Date) query.getSingleResult();
+        Object result = query.getSingleResult();
+        
+        // Handle both java.time.Instant and java.util.Date returns
+        if (result instanceof Instant) {
+            return Date.from((Instant) result);
+        }
+        return (Date) result;
     }
 
 }
