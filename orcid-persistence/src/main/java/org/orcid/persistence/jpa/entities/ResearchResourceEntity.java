@@ -152,7 +152,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
     
-    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.EAGER, orphanRemoval =true )
+    @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.LAZY, orphanRemoval =true )
     @OrderColumn(name="item_index")
     public List<ResearchResourceItemEntity> getResourceItems() {
         return resourceItems;
@@ -162,7 +162,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
         this.resourceItems = resourceItems;
     }
     
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "research_resource_org", 
                joinColumns = { @JoinColumn(name = "research_resource_id", referencedColumnName="id") }, 
                inverseJoinColumns = { @JoinColumn(name = "org_id", referencedColumnName="id") })

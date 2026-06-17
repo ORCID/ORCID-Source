@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Will Simpson
  * 
  */
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class OrgDaoImpl extends GenericDaoImpl<OrgEntity, Long> implements OrgDao {
 
     public OrgDaoImpl() {

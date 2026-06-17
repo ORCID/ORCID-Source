@@ -33,7 +33,7 @@ public class NotificationAddItemsEntity extends NotificationEntity implements Ac
         this.authorizationUrl = authorizationUrl;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_id")
     public Set<NotificationItemEntity> getNotificationItems() {
         return notificationItems;

@@ -77,7 +77,7 @@ public class IdentifierTypeEntity extends BaseEntity<Long>{
         this.id = id;
     }
     
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_source_id")
     public ClientDetailsEntity getSourceClient() {
         return sourceClient;

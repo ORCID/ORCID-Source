@@ -58,7 +58,7 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
         this.role = role;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "org_id")
     public OrgEntity getOrg() {
         return org;

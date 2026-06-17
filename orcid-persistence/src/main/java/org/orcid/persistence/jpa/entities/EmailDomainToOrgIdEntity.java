@@ -44,7 +44,7 @@ public class EmailDomainToOrgIdEntity extends BaseEntity<Long> {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email_domian_id")
     public EmailDomainEntity getEmailDomian() {
         return emailDomian;
@@ -54,7 +54,7 @@ public class EmailDomainToOrgIdEntity extends BaseEntity<Long> {
         this.emailDomian = emailDomian;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "org_disambiguated_id")
     public OrgDisambiguatedEntity getOrgDisambiguated() {
         return orgDisambiguated;

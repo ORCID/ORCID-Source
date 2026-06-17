@@ -502,7 +502,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     /**
      * @return the primary profile for this deprecated account
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_record")
     public ProfileEntity getPrimaryRecord() {
         return this.primaryRecord;

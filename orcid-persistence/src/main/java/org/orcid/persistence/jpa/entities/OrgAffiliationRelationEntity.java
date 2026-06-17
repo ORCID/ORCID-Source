@@ -51,7 +51,7 @@ public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implem
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "org_id", nullable = false)
     public OrgEntity getOrg() {
         return org;

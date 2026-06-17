@@ -32,7 +32,7 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
     }
 
     @Id
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_id", nullable = false)
     public NotificationEntity getNotification() {
         return notification;
@@ -46,7 +46,7 @@ public class NotificationWorkEntity extends BaseEntity<NotificationWorkEntityPk>
      * @return the work
      */
     @Id
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "work_id", nullable = false)
     public WorkEntity getWork() {
         return work;
