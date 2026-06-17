@@ -25,6 +25,8 @@ import jakarta.persistence.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.StringUtils;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SortNatural;
 
 /**
@@ -132,6 +134,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     public Set<ClientScopeEntity> getClientScopes() {
         return clientScopes;
     }
@@ -141,6 +144,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     public Set<ClientResourceIdEntity> getClientResourceIds() {
         return clientResourceIds;
     }
@@ -150,6 +154,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     public Set<ClientAuthorisedGrantTypeEntity> getClientAuthorizedGrantTypes() {
         return clientAuthorizedGrantTypes;
     }
@@ -159,6 +164,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     @SortNatural
     public SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris() {
         return clientRegisteredRedirectUris;
@@ -169,6 +175,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     public List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities() {
         return clientGrantedAuthorities;
     }
@@ -236,6 +243,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
     }
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     @SortNatural
     public Set<ClientSecretEntity> getClientSecrets() {
         return clientSecrets;
