@@ -16,6 +16,9 @@ import jakarta.persistence.OrderColumn;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /** Represents a research resource.
  * 
  * @author tom
@@ -153,6 +156,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     }
     
     @OneToMany(mappedBy="researchResourceEntity", cascade = CascadeType.ALL,fetch=FetchType.EAGER, orphanRemoval =true )
+    @Fetch(FetchMode.SUBSELECT)
     @OrderColumn(name="item_index")
     public List<ResearchResourceItemEntity> getResourceItems() {
         return resourceItems;
@@ -163,6 +167,7 @@ public class ResearchResourceEntity extends SourceAwareEntity<Long> implements C
     }
     
     @OneToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(name = "research_resource_org", 
                joinColumns = { @JoinColumn(name = "research_resource_id", referencedColumnName="id") }, 
                inverseJoinColumns = { @JoinColumn(name = "org_id", referencedColumnName="id") })
