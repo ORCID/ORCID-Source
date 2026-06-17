@@ -28,12 +28,15 @@ import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author Will Simpson
  * 
  */
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class EmailManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements EmailManagerReadOnly {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailManagerReadOnlyImpl.class);
     

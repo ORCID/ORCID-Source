@@ -14,7 +14,10 @@ import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecords;
 import org.orcid.persistence.dao.GroupIdRecordDao;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class GroupIdRecordManagerReadOnlyImpl implements GroupIdRecordManagerReadOnly {
 
     @Resource(name = "jpaJaxbGroupIdRecordAdapterV3")

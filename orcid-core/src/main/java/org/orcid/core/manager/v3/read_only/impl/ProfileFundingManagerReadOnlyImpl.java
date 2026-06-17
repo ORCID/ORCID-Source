@@ -21,7 +21,10 @@ import org.orcid.jaxb.model.v3.release.record.summary.Fundings;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class ProfileFundingManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements ProfileFundingManagerReadOnly {
     
     @Resource(name = "jpaJaxbFundingAdapterV3")

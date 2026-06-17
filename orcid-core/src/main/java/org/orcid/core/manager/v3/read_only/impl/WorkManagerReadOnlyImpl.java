@@ -53,9 +53,12 @@ import org.orcid.pojo.grouping.WorkGroupingSuggestion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 
+@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements WorkManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkManagerReadOnlyImpl.class);
