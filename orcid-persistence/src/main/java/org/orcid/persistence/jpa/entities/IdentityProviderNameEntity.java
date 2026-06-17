@@ -37,7 +37,7 @@ public class IdentityProviderNameEntity extends BaseEntity<Long> {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "identity_provider_id", nullable = false)
     public IdentityProviderEntity getIdentityProvider() {
         return identityProvider;

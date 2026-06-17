@@ -184,7 +184,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.popularity = popularity;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "orgDisambiguated")
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "orgDisambiguated")
     @Fetch(FetchMode.SUBSELECT)
     public Set<OrgDisambiguatedExternalIdentifierEntity> getExternalIdentifiers() {
         return externalIdentifiers;
@@ -203,7 +203,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.orgType = orgType;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id", referencedColumnName = "org_disambiguated_id")
     public MemberChosenOrgDisambiguatedEntity getMemberChosenOrgDisambiguatedEntity() {
         return memberChosenOrgDisambiguatedEntity;

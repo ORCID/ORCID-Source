@@ -12,10 +12,8 @@ import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, Long> implements ProfileFundingDao {
 
     public ProfileFundingDaoImpl() {

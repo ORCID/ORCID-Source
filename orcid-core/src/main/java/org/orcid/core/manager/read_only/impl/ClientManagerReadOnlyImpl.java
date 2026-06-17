@@ -12,10 +12,7 @@ import org.orcid.jaxb.model.client_v2.Client;
 import org.orcid.jaxb.model.client_v2.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
     @Resource

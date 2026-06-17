@@ -31,10 +31,7 @@ import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.pojo.PeerReviewMinimizedSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class PeerReviewManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PeerReviewManagerReadOnly {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PeerReviewManagerReadOnlyImpl.class);

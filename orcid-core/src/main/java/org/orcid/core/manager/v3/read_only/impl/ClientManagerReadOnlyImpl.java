@@ -12,10 +12,7 @@ import org.orcid.jaxb.model.v3.release.client.Client;
 import org.orcid.jaxb.model.v3.release.client.ClientSummary;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class ClientManagerReadOnlyImpl implements ClientManagerReadOnly {
 
     @Resource(name = "jpaJaxbClientAdapterV3")

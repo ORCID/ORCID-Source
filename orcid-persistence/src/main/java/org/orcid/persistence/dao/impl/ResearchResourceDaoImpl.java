@@ -12,10 +12,8 @@ import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.ResearchResourceDao;
 import org.orcid.persistence.jpa.entities.ResearchResourceEntity;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class ResearchResourceDaoImpl extends GenericDaoImpl<ResearchResourceEntity, Long> implements ResearchResourceDao{
 
     public ResearchResourceDaoImpl() {

@@ -131,7 +131,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
         this.clientWebsite = clientWebsite;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientScopeEntity> getClientScopes() {
         return clientScopes;
     }
@@ -140,7 +140,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
         this.clientScopes = clientScopes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientResourceIdEntity> getClientResourceIds() {
         return clientResourceIds;
     }
@@ -149,7 +149,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
         this.clientResourceIds = clientResourceIds;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public Set<ClientAuthorisedGrantTypeEntity> getClientAuthorizedGrantTypes() {
         return clientAuthorizedGrantTypes;
     }
@@ -158,7 +158,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
         this.clientAuthorizedGrantTypes = clientAuthorizedGrantTypes;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @SortNatural
     public SortedSet<ClientRedirectUriEntity> getClientRegisteredRedirectUris() {
         return clientRegisteredRedirectUris;
@@ -168,7 +168,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
         this.clientRegisteredRedirectUris = clientRegisteredRedirectUris;
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     public List<ClientGrantedAuthorityEntity> getClientGrantedAuthorities() {
         return clientGrantedAuthorities;
     }
@@ -235,7 +235,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements Serializa
         return getDecryptedClientSecret();
     }
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "clientId", orphanRemoval = true)
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "clientId", orphanRemoval = true)
     @SortNatural
     public Set<ClientSecretEntity> getClientSecrets() {
         return clientSecrets;

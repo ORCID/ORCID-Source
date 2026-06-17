@@ -98,7 +98,7 @@ public class ResearchResourceItemEntity {
         this.itemOrder = itemOrder;
     }
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "research_resource_item_org", 
                joinColumns = { @JoinColumn(name = "research_resource_item_id") }, 
                inverseJoinColumns = { @JoinColumn(name = "org_id") })

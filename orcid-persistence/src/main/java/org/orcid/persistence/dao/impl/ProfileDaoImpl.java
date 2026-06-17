@@ -28,7 +28,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implements ProfileDao {
@@ -309,7 +308,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public List<ProfileEntity> findProfilesThatMissedIndexing(int maxResults) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery(
                 "from ProfileEntity where (lastModified > lastIndexedDate or lastIndexedDate is null) and indexingStatus not in ('PENDING', 'IGNORE') order by lastModified",
@@ -756,7 +754,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public ProfileEntity getLockedReason(String orcid) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where orcid = :orcid", ProfileEntity.class);
         query.setParameter("orcid", orcid);
@@ -764,7 +761,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @Override
-    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public List<ProfileEntity> findByOrcidType(String orcidType) {
         TypedQuery<ProfileEntity> query = entityManager.createQuery("FROM ProfileEntity where orcidType = :orcidType", ProfileEntity.class);
         query.setParameter("orcidType", orcidType);

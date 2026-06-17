@@ -6,10 +6,8 @@ import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.IdentifierTypeDao;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class IdentifierTypeDaoImpl extends GenericDaoImpl<IdentifierTypeEntity, Long> implements IdentifierTypeDao {
 
     public IdentifierTypeDaoImpl() {

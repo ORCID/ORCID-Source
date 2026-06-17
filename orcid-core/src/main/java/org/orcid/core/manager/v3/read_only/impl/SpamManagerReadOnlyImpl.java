@@ -9,10 +9,7 @@ import org.orcid.jaxb.model.v3.release.record.Spam;
 import org.orcid.persistence.dao.SpamDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 public class SpamManagerReadOnlyImpl implements SpamManagerReadOnly {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(SpamManagerReadOnlyImpl.class);
