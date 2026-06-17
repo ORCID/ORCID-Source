@@ -123,7 +123,7 @@ public class OrgEntity extends BaseEntity<Long> implements Serializable {
         this.source = source;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "org_disambiguated_id")
     public OrgDisambiguatedEntity getOrgDisambiguated() {
         return orgDisambiguated;
