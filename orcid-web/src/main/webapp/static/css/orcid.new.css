@@ -8082,6 +8082,10 @@ footer-ng2 .inline-list {
         clear: both
     }
 
+    .member-description {
+        word-break: break-word;
+    }
+
     .member-list table,.member-list tbody,.member-list td,.member-list th,.member-list tr {
         display: block;
         width: 100%
