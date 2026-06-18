@@ -14,6 +14,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /**
  * @author Will Simpson
  */
@@ -107,7 +110,8 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
         this.failedCount = failedCount;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "identityProvider", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "identityProvider", orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     public List<IdentityProviderNameEntity> getNames() {
         return names;
     }

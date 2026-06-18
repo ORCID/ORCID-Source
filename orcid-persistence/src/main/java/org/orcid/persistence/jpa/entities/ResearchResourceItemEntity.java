@@ -32,7 +32,7 @@ public class ResearchResourceItemEntity {
     
     private ResearchResourceEntity researchResourceEntity;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="research_resource_id", nullable=false)
     public ResearchResourceEntity getResearchResourceEntity() {
         return researchResourceEntity;
