@@ -71,6 +71,10 @@ public class OrcidBearerTokenFilter implements Filter {
             OrcidBearerTokenAuthentication authentication = validateTokenData(tokenValue, tokenData);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
+        } catch (AccessControlException e) {
+            logger.warn("Invalid access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
+            apiAuthenticationEntryPoint.commence(request, response, null);
+            return;
         } catch (IOException | URISyntaxException | InterruptedException | JSONException e) {
             //TODO: Define error message and add exception type to it
             logger.warn("Token introspection failed for token=" + tokenFingerprint(tokenValue), e);
