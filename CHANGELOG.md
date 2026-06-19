@@ -1,3 +1,29 @@
+## v2.148.0 - 2026-06-18
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.147.0...v2.148.0)
+
+## v2.147.0 - 2026-06-16
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.146.0...v2.147.0)
+
+## v2.146.0 - 2026-06-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.145.0...v2.146.0)
+
+## v2.145.0 - 2026-06-15
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.144.0...v2.145.0)
+
+## v2.144.0 - 2026-06-12
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.143.0...v2.144.0)
+
+## v2.143.0 - 2026-06-11
+
+[Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.142.6...v2.143.0)
+
+- [#7531](https://github.com/ORCID/ORCID-Source/pull/7531): feat/support-jdk-21-choice-for-builds
+
 ## v2.142.6 - 2026-06-09
 
 [Full Changelog](https://github.com/ORCID/ORCID-Source/compare/v2.142.5...v2.142.6)

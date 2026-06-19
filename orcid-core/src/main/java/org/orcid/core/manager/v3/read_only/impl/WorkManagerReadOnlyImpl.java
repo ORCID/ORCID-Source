@@ -195,7 +195,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
         Map<String, ClientDetailsEntity> clientDetailsById = clientDetailsEntityCacheManager.retrieveAll(clientIds);
         Map<String, Source> sources = new HashMap<>();
         works.stream().forEach(workEntity -> {
-            String sourceKey = sourceEntityUtils.getSourceKey(workEntity);
+            String sourceKey = SourceEntityUtils.getSourceKey(workEntity);
             if(!sources.containsKey(sourceKey)) {
                 Source source = sourceEntityUtils.extractSourceFromEntityComplete(workEntity);
                 sources.put(sourceKey, source);
@@ -266,18 +266,18 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 //Set the source name
                 sourceName = sourceNameCacheManager.retrieve(clientSourceId);
                 // Check if user OBO is enabled
-                if (!PojoUtil.isEmpty(assertionOriginSourceId)) {
-                    if(!isUserOBOEnabled.containsKey(clientSourceId)) {
-                        ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientSourceId);
-                        if(clientEntity != null && clientEntity.isUserOBOEnabled()) {
-                            isUserOBOEnabled.put(clientSourceId, true);
-                        } else {
-                            isUserOBOEnabled.put(clientSourceId, false);
-                        }
+                if(!isUserOBOEnabled.containsKey(clientSourceId)) {
+                    ClientDetailsEntity clientEntity = clientDetailsEntityCacheManager.retrieve(clientSourceId);
+                    if(clientEntity != null && clientEntity.isUserOBOEnabled()) {
+                        isUserOBOEnabled.put(clientSourceId, true);
+                    } else {
+                        isUserOBOEnabled.put(clientSourceId, false);
                     }
-                    if(isUserOBOEnabled.get(clientSourceId)) {
-                        assertionOriginName = sourceNameCacheManager.retrieve(assertionOriginSourceId);
-                    }
+                }
+                if(isUserOBOEnabled.get(clientSourceId)) {
+                    // On user OBO the assertion origin name is the same as the orcid id
+                    assertionOriginSourceId = orcid;
+                    assertionOriginName = sourceNameCacheManager.retrieve(orcid);
                 }
             }
 
