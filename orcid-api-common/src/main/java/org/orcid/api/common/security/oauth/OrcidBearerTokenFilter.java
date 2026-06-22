@@ -8,6 +8,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -73,12 +74,12 @@ public class OrcidBearerTokenFilter implements Filter {
             chain.doFilter(request, response);
         } catch (AccessControlException e) {
             logger.warn("Invalid access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
-            apiAuthenticationEntryPoint.commence(request, response, null);
+            apiAuthenticationEntryPoint.commence(request, response, new BadCredentialsException(e.getMessage(), e));
             return;
         } catch (IOException | URISyntaxException | InterruptedException | JSONException e) {
             //TODO: Define error message and add exception type to it
             logger.warn("Token introspection failed for token=" + tokenFingerprint(tokenValue), e);
-            apiAuthenticationEntryPoint.commence(request, response, null);
+            apiAuthenticationEntryPoint.commence(request, response, new BadCredentialsException("Invalid access token", e));
             return;
         }
     }
