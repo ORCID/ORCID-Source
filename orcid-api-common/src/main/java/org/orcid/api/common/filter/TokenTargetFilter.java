@@ -2,8 +2,9 @@ package org.orcid.api.common.filter;
 
 import java.util.Collection;
 import java.util.Set;
-import java.security.AccessControlException;
 import java.util.regex.Matcher;
+
+import org.springframework.security.access.AccessDeniedException;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -45,7 +46,7 @@ public class TokenTargetFilter implements ContainerRequestFilter {
                     }
 
                     if (!targetOrcid.equals(authDetails.getUserOrcid())) {
-                        throw new AccessControlException("You do not have the required permissions.");
+                        throw new AccessDeniedException("You do not have the required permissions.");
                     }
                 }
             }

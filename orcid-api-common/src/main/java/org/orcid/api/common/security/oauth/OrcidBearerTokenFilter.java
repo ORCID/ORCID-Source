@@ -78,17 +78,17 @@ public class OrcidBearerTokenFilter implements Filter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (RevokedTokenException e) {
-            // Revoked token: authenticated but lacks authorization (403 Forbidden)
+            // Revoked/expired token: authentication failure (401 Unauthorized)
             logger.warn("Revoked access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
-            orcidAPIAccessDeniedHandler.handle(request, response, e);
+            apiAuthenticationEntryPoint.commence(request, response, new BadCredentialsException(e.getMessage(), e));
             return;
         } catch (AccessDeniedException e) {
-            // Other authorization failures: authenticated but lacks permission (403 Forbidden)
+            // Valid token but lacks permission: authorization failure (403 Forbidden)
             logger.warn("Access denied for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
             orcidAPIAccessDeniedHandler.handle(request, response, e);
             return;
         } catch (AccessControlException e) {
-            // Invalid token: not authenticated (401 Unauthorized)
+            // Invalid/fake token: authentication failure (401 Unauthorized)
             logger.warn("Invalid access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
             apiAuthenticationEntryPoint.commence(request, response, new BadCredentialsException(e.getMessage(), e));
             return;
