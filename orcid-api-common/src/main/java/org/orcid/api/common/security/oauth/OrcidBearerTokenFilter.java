@@ -117,11 +117,11 @@ public class OrcidBearerTokenFilter implements Filter {
                         return buildAuthentication(accessTokenValue, tokenInfo);
                     } else {
                         // Token is inactive and not marked as user-revoked (likely expired or revoked by admin)
-                        throw new RevokedTokenException("Access token has been revoked or is no longer valid");
+                        throw new RevokedTokenException("Invalid access token");
                     }
                 } else {
                     // Token is inactive for non-DELETE request (revoked or expired)
-                    throw new RevokedTokenException("Access token has been revoked or is no longer valid");
+                    throw new RevokedTokenException("Invalid access token");
                 }
             }
         } catch(RevokedTokenException r) {
