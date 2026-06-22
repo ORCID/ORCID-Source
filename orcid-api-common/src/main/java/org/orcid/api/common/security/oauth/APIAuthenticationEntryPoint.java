@@ -19,7 +19,7 @@ public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
             orcidError.setResponseCode(response.getStatus());
             orcidError.setDeveloperMessage("GENERIC ERROR MESSAGE");
 
-            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.getWriter().write(orcidError.toString());
             response.flushBuffer();
         } catch (IOException e) {
