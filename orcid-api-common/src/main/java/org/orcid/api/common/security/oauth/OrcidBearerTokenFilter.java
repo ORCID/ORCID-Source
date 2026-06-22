@@ -8,9 +8,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -43,6 +45,9 @@ public class OrcidBearerTokenFilter implements Filter {
     @Resource
     private APIAuthenticationEntryPoint apiAuthenticationEntryPoint;
 
+    @Resource
+    private AccessDeniedHandler orcidAPIAccessDeniedHandler;
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest request = (HttpServletRequest) req;
@@ -72,7 +77,18 @@ public class OrcidBearerTokenFilter implements Filter {
             OrcidBearerTokenAuthentication authentication = validateTokenData(tokenValue, tokenData);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
+        } catch (RevokedTokenException e) {
+            // Revoked token: authenticated but lacks authorization (403 Forbidden)
+            logger.warn("Revoked access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
+            orcidAPIAccessDeniedHandler.handle(request, response, e);
+            return;
+        } catch (AccessDeniedException e) {
+            // Other authorization failures: authenticated but lacks permission (403 Forbidden)
+            logger.warn("Access denied for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
+            orcidAPIAccessDeniedHandler.handle(request, response, e);
+            return;
         } catch (AccessControlException e) {
+            // Invalid token: not authenticated (401 Unauthorized)
             logger.warn("Invalid access token for token=" + tokenFingerprint(tokenValue) + " reason=" + e.getMessage());
             apiAuthenticationEntryPoint.commence(request, response, new BadCredentialsException(e.getMessage(), e));
             return;
@@ -100,12 +116,17 @@ public class OrcidBearerTokenFilter implements Filter {
                     if(tokenInfo.has("USER_REVOKED") && tokenInfo.getBoolean("USER_REVOKED") == true) {
                         return buildAuthentication(accessTokenValue, tokenInfo);
                     } else {
-                        throw new AccessControlException("Invalid access token: " + accessTokenValue);
+                        // Token is inactive and not marked as user-revoked (likely expired or revoked by admin)
+                        throw new RevokedTokenException("Access token has been revoked or is no longer valid");
                     }
                 } else {
-                    throw new AccessControlException("Invalid access token: " + accessTokenValue);
+                    // Token is inactive for non-DELETE request (revoked or expired)
+                    throw new RevokedTokenException("Access token has been revoked or is no longer valid");
                 }
             }
+        } catch(RevokedTokenException r) {
+            logger.warn("Revoked token for token=" + tokenFingerprint(accessTokenValue) + " reason=" + r.getMessage());
+            throw r;
         } catch(AccessControlException i) {
             logger.warn("Access control failure for token=" + tokenFingerprint(accessTokenValue) + " reason=" + i.getMessage());
             throw i;

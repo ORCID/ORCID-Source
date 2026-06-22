@@ -14,6 +14,15 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Handles authentication failures for API requests.
+ * 
+ * Returns 401 Unauthorized when:
+ * - No authentication credentials are provided
+ * - Authentication credentials are invalid or malformed
+ * 
+ * For authorization failures (authenticated but lacks permission), see OrcidAPIAccessDeniedHandler (403 Forbidden).
+ */
 public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -27,7 +36,7 @@ public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
             orcidError.setResponseCode(HttpStatus.UNAUTHORIZED.value());
             orcidError.setDeveloperMessage(authException != null && authException.getMessage() != null
                     ? authException.getMessage()
-                    : "Invalid access token");
+                    : "An Authentication object was not found in the SecurityContext");
 
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("response-code", orcidError.getResponseCode());
