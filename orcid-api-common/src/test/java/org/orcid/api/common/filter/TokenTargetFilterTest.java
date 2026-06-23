@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 import java.io.Serializable;
-import java.security.AccessControlException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -52,7 +52,7 @@ public class TokenTargetFilterTest {
         filter.filter(request);
     }
     
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidUnauthorizedException.class)
     public void tokenUsedOnTheWrongUser12ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);
         ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
@@ -67,7 +67,7 @@ public class TokenTargetFilterTest {
         fail();
     }
     
-    @Test(expected = AccessControlException.class)
+    @Test(expected = OrcidUnauthorizedException.class)
     public void tokenUsedOnTheWrongUser20ApiTest() {
         setUpSecurityContext(ORCID1, CLIENT_ID, ScopePathType.READ_LIMITED);        
         ContainerRequest request = Mockito.mock(ContainerRequest.class,RETURNS_DEEP_STUBS);
@@ -90,13 +90,13 @@ public class TokenTargetFilterTest {
         filter.filter(request);        
     }
     
-    @Test(expected = AccessControlException.class)
+    @Test
     public void readPublicTokenTest() {
         setUpSecurityContext(null, CLIENT_ID, ScopePathType.READ_PUBLIC);
         ContainerRequest request = Mockito.mock(ContainerRequest.class, RETURNS_DEEP_STUBS);
         Mockito.when(request.getUriInfo().getPath()).thenReturn("http://api.test.orcid.org/v2.0/" + ORCID2);
         TokenTargetFilter filter = new TokenTargetFilter();
-        filter.filter(request);       
+        filter.filter(request);
     }
     
     private void setUpSecurityContext(String userOrcid, String clientId, ScopePathType... scopePathTypes) {

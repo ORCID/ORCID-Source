@@ -2,15 +2,13 @@ package org.orcid.api.common.filter;
 
 import java.util.Collection;
 import java.util.Set;
-import java.security.AccessControlException;
 import java.util.regex.Matcher;
-
-import org.springframework.security.core.Authentication;
 
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
 
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.security.core.Authentication;
@@ -50,13 +48,11 @@ public class TokenTargetFilter implements ContainerRequestFilter {
                     if (userOrcid != null) {
                         // Token has a specific user ORCID - validate it matches
                         if (!targetOrcid.equals(userOrcid)) {
-                            throw new AccessControlException("Access token is for a different record");
+                            throw new OrcidUnauthorizedException("Access token is for a different record");
                         }
-                    } else if (OrcidStringUtils.isValidOrcid(targetOrcid)) {
-                        // Client-only token trying to access a specific valid-format ORCID
-                        throw new AccessControlException("Access token is for a different record");
                     }
-                    // Allow through if it's a malformed ORCID so endpoint can return 404
+                    // Allow through for client-only tokens and malformed ORCIDs so endpoint
+                    // logic can resolve to 404 when the record does not exist.
                 }
             }
         }

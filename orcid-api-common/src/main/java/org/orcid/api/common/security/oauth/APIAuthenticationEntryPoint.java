@@ -24,19 +24,25 @@ import java.util.Map;
  * For authorization failures (authenticated but lacks permission), see OrcidAPIAccessDeniedHandler (403 Forbidden).
  */
 public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
+    private static final String MISSING_AUTH_CONTEXT_MSG = "An Authentication object was not found in the SecurityContext";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         try {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            String developerMessage = authException != null && authException.getMessage() != null
+                ? authException.getMessage()
+                : MISSING_AUTH_CONTEXT_MSG;
+            HttpStatus status = MISSING_AUTH_CONTEXT_MSG.equals(developerMessage)
+                ? HttpStatus.FORBIDDEN
+                : HttpStatus.UNAUTHORIZED;
+
+            response.setStatus(status.value());
             response.setContentType("application/json;charset=UTF-8");
 
             OrcidError orcidError = new OrcidError();
-            orcidError.setResponseCode(HttpStatus.UNAUTHORIZED.value());
-            orcidError.setDeveloperMessage(authException != null && authException.getMessage() != null
-                    ? authException.getMessage()
-                    : "An Authentication object was not found in the SecurityContext");
+            orcidError.setResponseCode(status.value());
+            orcidError.setDeveloperMessage(developerMessage);
 
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("response-code", orcidError.getResponseCode());
