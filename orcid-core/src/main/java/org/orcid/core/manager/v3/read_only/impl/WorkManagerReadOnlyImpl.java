@@ -266,6 +266,7 @@ public class WorkManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements 
                 }
                 if(isUserOBOEnabled.get(clientSourceId)) {
                     // On user OBO the assertion origin name is the same as the orcid id
+                    assertionOriginSourceId = orcid;
                     assertionOriginName = sourceNameCacheManager.retrieve(orcid);
                 }
             }
