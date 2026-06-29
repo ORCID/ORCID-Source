@@ -78,8 +78,10 @@ public class SourceEntityUtils {
         }
         if (sourceEntity.getSourceProfile() != null) {
             String orcid = sourceEntity.getSourceProfile().getId();
-            // Set the source name
-            return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            // Set the source name - only if orcid is not null
+            if (orcid != null) {
+                return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            }
         }
         return null;
     }

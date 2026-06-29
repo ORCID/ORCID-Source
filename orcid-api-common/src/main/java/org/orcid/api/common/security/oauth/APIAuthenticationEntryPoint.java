@@ -24,7 +24,7 @@ import java.util.Map;
  * For authorization failures (authenticated but lacks permission), see OrcidAPIAccessDeniedHandler (403 Forbidden).
  */
 public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final String MISSING_AUTH_CONTEXT_MSG = "An Authentication object was not found in the SecurityContext";
+    private static final String MISSING_AUTH_CONTEXT_MSG = "Forbidden - Missing authentication context.";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
