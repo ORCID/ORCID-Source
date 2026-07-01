@@ -140,6 +140,9 @@ public class IssnLoadSource {
                     } catch(JSONException e) {
                         LOG.warn("JSONException for issn {}", issn);
                         recordFailure(issnEntity, "JSONException");
+                    } catch (IllegalArgumentException e) {
+                        LOG.warn("IllegalArgumentException for issn {}", issn);
+                        recordFailure(issnEntity, "IllegalArgumentException");
                     }
                 } else {
                     LOG.info("Issn for group record {} not valid: {}", issnEntity.getId(), issnEntity.getGroupId());
