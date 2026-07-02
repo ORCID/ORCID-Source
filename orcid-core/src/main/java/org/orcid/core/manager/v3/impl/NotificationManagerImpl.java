@@ -870,5 +870,4 @@ public class NotificationManagerImpl extends ManagerReadOnlyBaseImpl implements 
             }
         } while (numDeleted > 0);
     }
-
 }

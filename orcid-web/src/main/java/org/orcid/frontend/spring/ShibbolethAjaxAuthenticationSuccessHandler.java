@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.togglz.Features;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.pojo.RemoteUser;
@@ -34,6 +36,9 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
 
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
+
+    @Resource
+    private RecordEmailSender recordEmailSender;
 
     @Autowired
     EventManager eventManager;
@@ -66,6 +71,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         String displayName = institutionalSignInManager.retrieveDisplayName(headers);
         String userOrcid = getRealUserOrcid();                
         institutionalSignInManager.createUserConnectionAndNotify(idType, remoteUserId, displayName, providerId, userOrcid, headers);
+        recordEmailSender.alternateSignInAccountAdded(userOrcid, remoteUserId);
     }
 
     private void checkEnabled() {

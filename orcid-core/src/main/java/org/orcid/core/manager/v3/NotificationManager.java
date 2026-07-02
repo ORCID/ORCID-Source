@@ -91,4 +91,5 @@ public interface NotificationManager {
     void autoArchiveNotifications();
 
     void autoDeleteNotifications();
+
 }

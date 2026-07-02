@@ -564,4 +564,19 @@ public class RecordEmailSender {
             LOGGER.error("Primary email not found in user {}", orcidToDeprecate);
         }
 	}
+
+    public void alternateSignInAccountAdded(String orcid, String alternateSignInAccountId) {
+        alternatesingInAccountModified(orcid, alternateSignInAccountId, true);
+    }
+
+    public void alternateSignInAccountRemoved(String orcid, String alternateSignInAccountId) {
+        alternatesingInAccountModified(orcid, alternateSignInAccountId, false);
+    }
+
+    private void alternatesingInAccountModified(String orcid, String alternateSignInAccountId, boolean added) {
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(entity);
+
+        String subject = getSubject("email.subject.alternate_sign_in.changed", userLocale);
+    }
 }

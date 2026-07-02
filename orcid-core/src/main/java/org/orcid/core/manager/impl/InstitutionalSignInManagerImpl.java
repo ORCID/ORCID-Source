@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -54,8 +54,8 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Resource
     protected OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
-    @Resource
-    protected NotificationManager notificationManager;
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
 
     @Override
     @Transactional
@@ -89,6 +89,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Override
     public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
+            // Add the acknowledgement notification if the user doesn't know about the client yet
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
             boolean clientKnowsUser = orcidOauth2TokenDetailService.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
             // If the client doesn't know about the user yet, send a
