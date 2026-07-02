@@ -24,16 +24,16 @@ import java.util.Map;
  * For authorization failures (authenticated but lacks permission), see OrcidAPIAccessDeniedHandler (403 Forbidden).
  */
 public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final String MISSING_AUTH_CONTEXT_MSG = "Forbidden - Missing authentication context.";
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String FORBIDDEN_MSG = "Forbidden - Missing authentication context.";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         try {
             String developerMessage = authException != null && authException.getMessage() != null
                 ? authException.getMessage()
-                : MISSING_AUTH_CONTEXT_MSG;
-            HttpStatus status = MISSING_AUTH_CONTEXT_MSG.equals(developerMessage)
+                : FORBIDDEN_MSG;
+            HttpStatus status =FORBIDDEN_MSG.equals(developerMessage)
                 ? HttpStatus.FORBIDDEN
                 : HttpStatus.UNAUTHORIZED;
 

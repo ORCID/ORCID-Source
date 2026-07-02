@@ -137,7 +137,7 @@ public class PublicV3ApiServiceImplV3_0 {
   }
   
   @GET
-  @Produces(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
   @Path(PUB_STATUS_PATH)
   public Response viewStatusJson() {
       httpRequest.setAttribute("skipAccessLog", true);

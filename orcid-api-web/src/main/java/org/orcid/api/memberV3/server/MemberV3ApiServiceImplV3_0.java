@@ -167,7 +167,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
      * @return Plain text message indicating health of service
      */
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(STATUS_PATH)
     public Response viewStatusSimple() {
         httpRequest.setAttribute("skipAccessLog", true);
@@ -176,7 +176,7 @@ public class MemberV3ApiServiceImplV3_0 extends MemberApiServiceImplHelper {
     }
     
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(API_STATUS_PATH)
     public Response viewStatusJson() {
         httpRequest.setAttribute("skipAccessLog", true);

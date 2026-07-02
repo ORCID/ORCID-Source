@@ -12,15 +12,8 @@
     <!-- Token endpoint -->
     <sec:http pattern="/oauth/token" security="none"/>
 
-    <!-- Status check allows anonymous access, but still processes bearer tokens when present -->
-    <sec:http pattern="/status" create-session="stateless" >
-        <sec:csrf disabled="true"/>
-        <sec:anonymous enabled="true" />
-        <sec:http-basic entry-point-ref="apiAuthenticationEntryPoint" />
-        <sec:custom-filter ref="orcidBearerTokenFilter" before="PRE_AUTH_FILTER" />
-        <sec:intercept-url pattern="/**" access="permitAll"/>
-        <sec:access-denied-handler ref="orcidAPIAccessDeniedHandler" />
-    </sec:http>
+    <!-- Status check is intentionally unauthenticated -->
+    <sec:http pattern="/status" security="none"/>
 
     <sec:http create-session="stateless" >
         <sec:csrf disabled="true"/>
