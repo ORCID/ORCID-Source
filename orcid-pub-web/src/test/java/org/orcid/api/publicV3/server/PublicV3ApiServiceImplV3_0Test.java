@@ -43,8 +43,8 @@ public class PublicV3ApiServiceImplV3_0Test {
     }
 
     @Test
-    public void viewStatusSimpleProducesPlainText() throws Exception {
-        assertProduces("viewStatusSimple", MediaType.TEXT_PLAIN);
+    public void viewStatusSimpleProducesVendorJson() throws Exception {
+        assertProduces("viewStatusSimple", VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON);
     }
 
     @Test

@@ -137,7 +137,7 @@ public class MemberV2ApiServiceImplV2_0 extends MemberApiServiceImplHelper {
      * @return Plain text message indicating health of service
      */
     @GET
-    @Produces(value = { MediaType.TEXT_PLAIN })
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(STATUS_PATH)
     public Response viewStatusText() {
         return serviceDelegator.viewStatusText();

@@ -3,7 +3,6 @@ package org.orcid.api.publicV2.server;
 import static org.orcid.core.api.OrcidApiConstants.ACTIVITIES;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
-import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.CLIENT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATION;
 import static org.orcid.core.api.OrcidApiConstants.EDUCATIONS;
@@ -27,6 +26,7 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.BULK_WORKS;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.SEARCH_PATH;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
@@ -39,7 +39,6 @@ import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.DefaultValue;
@@ -108,6 +107,13 @@ public class PublicV2ApiServiceImplV2_1 {
     @Produces(value = { MediaType.TEXT_PLAIN })
     @Path(STATUS_PATH)
     public Response viewStatusText() {
+        return serviceDelegator.viewStatusText();
+    }
+
+    @GET
+    @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
+    @Path(STATUS_PATH)
+    public Response viewStatusJson() {
         return serviceDelegator.viewStatusText();
     }
 
