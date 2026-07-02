@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -196,7 +196,7 @@ public class CorrectBadOrgData {
             String city = (String) o[1];
             String region = (String) o[2];
             String country = (String) o[3];
-            Long orgDisambiguatedId = ((BigInteger) o[4]).longValue();
+            Long orgDisambiguatedId = ((Number) o[4]).longValue();
             duplicateOrgDetails.add(new OrgDetails(name, city, region, country, orgDisambiguatedId));
         });
     }

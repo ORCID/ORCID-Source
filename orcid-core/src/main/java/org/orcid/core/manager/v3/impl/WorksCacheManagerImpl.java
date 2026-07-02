@@ -1,6 +1,6 @@
 package org.orcid.core.manager.v3.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.cache.GenericCacheManager;
 import org.orcid.core.cache.OrcidString;

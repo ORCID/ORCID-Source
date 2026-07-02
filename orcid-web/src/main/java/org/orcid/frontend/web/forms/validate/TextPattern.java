@@ -6,10 +6,10 @@ import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern.Flag;
 
 /**
  * The annotated Text must match the following regular expression.
@@ -38,7 +38,7 @@ public @interface TextPattern {
     /**
      * @return The error message template.
      */
-    String message() default "{javax.validation.constraints.Pattern.message}";
+    String message() default "{jakarta.validation.constraints.Pattern.message}";
 
     /**
      * @return The groups the constraint belongs to.

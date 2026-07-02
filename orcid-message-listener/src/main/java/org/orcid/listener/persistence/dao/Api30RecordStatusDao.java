@@ -1,14 +1,13 @@
 package org.orcid.listener.persistence.dao;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;
 import org.orcid.listener.persistence.util.ActivityType;
@@ -29,8 +28,8 @@ public class Api30RecordStatusDao {
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM api_3_0_record_status WHERE orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger) query.getSingleResult()).longValue();
-        return (result != null && result > 0);
+        Number result = (Number) query.getSingleResult();
+        return (result != null && result.longValue() > 0L);
     }
 
     @Transactional

@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.SimpleTimeZoneAwareLocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
@@ -20,30 +21,36 @@ public class OrcidCookieLocaleResolver extends CookieLocaleResolver {
 
     @Override
     public void setLocaleContext(HttpServletRequest request, HttpServletResponse response, LocaleContext localeContext) {
-        Locale locale = null;
-        TimeZone timeZone = null;
-        if (localeContext != null) {
-            locale = localeContext.getLocale();
-            if (localeContext instanceof TimeZoneAwareLocaleContext) {
-                timeZone = ((TimeZoneAwareLocaleContext) localeContext).getTimeZone();
-            }
-
-            if (!availableLocales.contains(locale)) {
-                Locale justLang = new Locale(locale.getLanguage());
-                if (availableLocales.contains(justLang) || devLocales.contains(justLang)) {
-                    locale = justLang;
-                } else {
-                    locale = Locale.ENGLISH;
-                }
-            }
-
-            setCookieSecure(true);
-            addCookie(response, (locale != null ? toLocaleValue(locale) : "-") + (timeZone != null ? ' ' + timeZone.getID() : ""));
-        } else {
-            removeCookie(response);
+        // If context is null, pass null to super to handle cookie removal automatically
+        if (localeContext == null) {
+            super.setLocaleContext(request, response, null);
+            return;
         }
-        request.setAttribute(LOCALE_REQUEST_ATTRIBUTE_NAME, (locale != null ? locale : determineDefaultLocale(request)));
-        request.setAttribute(TIME_ZONE_REQUEST_ATTRIBUTE_NAME, (timeZone != null ? timeZone : determineDefaultTimeZone(request)));
+
+        Locale locale = localeContext.getLocale();
+        TimeZone timeZone = null;
+        
+        if (localeContext instanceof TimeZoneAwareLocaleContext) {
+            timeZone = ((TimeZoneAwareLocaleContext) localeContext).getTimeZone();
+        }
+
+        // Run custom Orcid validation
+        if (locale != null && !availableLocales.contains(locale)) {
+            Locale justLang = new Locale(locale.getLanguage());
+            if (availableLocales.contains(justLang) || devLocales.contains(justLang)) {
+                locale = justLang;
+            } else {
+                locale = Locale.ENGLISH;
+            }
+        }
+
+        setCookieSecure(true);
+        
+        // Wrap the validated locale/timezone and pass it to the parent class.
+        // Spring 6 will automatically build the cookie, add it to the response, 
+        // and set the required LOCALE and TIME_ZONE request attributes for the rest of the request processing.
+        LocaleContext validatedContext = new SimpleTimeZoneAwareLocaleContext(locale, timeZone);
+        super.setLocaleContext(request, response, validatedContext);
     }
     
     @Override

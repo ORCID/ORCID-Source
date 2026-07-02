@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.manager.DOIManager;

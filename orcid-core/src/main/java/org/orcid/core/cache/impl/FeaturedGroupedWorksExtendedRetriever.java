@@ -5,7 +5,7 @@ import org.orcid.core.cache.Retriever;
 import org.orcid.core.manager.v3.read_only.WorkManagerReadOnly;
 import org.orcid.pojo.WorkSummaryExtended;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 public class FeaturedGroupedWorksExtendedRetriever implements Retriever<OrcidString, List<WorkSummaryExtended>> {

@@ -1,9 +1,10 @@
 package org.orcid.core.utils;
 
-import java.util.Optional;
+import jakarta.annotation.Resource;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -77,8 +78,10 @@ public class SourceEntityUtils {
         }
         if (sourceEntity.getSourceProfile() != null) {
             String orcid = sourceEntity.getSourceProfile().getId();
-            // Set the source name
-            return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            // Set the source name - only if orcid is not null
+            if (orcid != null) {
+                return recordNameManagerReadOnlyV3.fetchDisplayablePublicName(orcid);
+            }
         }
         return null;
     }

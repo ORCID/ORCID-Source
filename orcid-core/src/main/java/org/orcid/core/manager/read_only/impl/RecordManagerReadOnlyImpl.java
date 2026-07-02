@@ -1,6 +1,6 @@
 package org.orcid.core.manager.read_only.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;

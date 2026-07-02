@@ -2,7 +2,7 @@ package org.orcid.core.manager.impl;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceNameCacheManager;

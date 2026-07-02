@@ -2,9 +2,9 @@ package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 

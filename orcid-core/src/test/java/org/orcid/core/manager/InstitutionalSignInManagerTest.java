@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -53,7 +53,7 @@ public class InstitutionalSignInManagerTest {
     private NotificationManager mock_notificationManager;
 
     @Mock
-    private OrcidOauth2TokenDetailService mock_orcidOauth2TokenDetailService;
+    private ClientDetailsManagerReadOnly mock_clientDetailsManagerReadOnly;
 
     @Resource
     private UserConnectionDao userConnectionDao;
@@ -64,8 +64,8 @@ public class InstitutionalSignInManagerTest {
     @Resource
     private NotificationManager notificationManager;
 
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
+    @Resource(name = "clientDetailsManagerReadOnlyV3")
+    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
 
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
@@ -76,7 +76,7 @@ public class InstitutionalSignInManagerTest {
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "userConnectionDao", mock_userConnectionDao);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsEntityCacheManager", mock_clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "notificationManager", mock_notificationManager);
-        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "orcidOauth2TokenDetailService", mock_orcidOauth2TokenDetailService);
+        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsManagerReadOnly", mock_clientDetailsManagerReadOnly);
     }
 
     @After
@@ -85,7 +85,7 @@ public class InstitutionalSignInManagerTest {
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "userConnectionDao", userConnectionDao);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "notificationManager", notificationManager);
-        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "orcidOauth2TokenDetailService", orcidOauth2TokenDetailService);
+        TargetProxyHelper.injectIntoProxy(institutionalSignInManager, "clientDetailsManagerReadOnly", clientDetailsManagerReadOnly);
     }
 
     @Test
@@ -94,7 +94,6 @@ public class InstitutionalSignInManagerTest {
 
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -109,7 +108,7 @@ public class InstitutionalSignInManagerTest {
 
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(true);
+        when(mock_clientDetailsManagerReadOnly.doesClientKnowUser(clientId, userOrcid)).thenReturn(true);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -122,7 +121,6 @@ public class InstitutionalSignInManagerTest {
     public void testDontSendNotificationIfIdPNotLinkedToClient() throws UnsupportedEncodingException {
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenThrow(new IllegalArgumentException());
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -136,7 +134,6 @@ public class InstitutionalSignInManagerTest {
         ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(new UserconnectionEntity());
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(false);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -149,7 +146,6 @@ public class InstitutionalSignInManagerTest {
     public void testDontPersistAndDontNotify() throws UnsupportedEncodingException {
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(new UserconnectionEntity());
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenThrow(new IllegalArgumentException());
-        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(anyString(), anyString())).thenReturn(true);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());
@@ -211,5 +207,4 @@ public class InstitutionalSignInManagerTest {
         assertEquals("myself@testshib.org", mismatch.getOriginalValue());
         assertEquals("myself@testshib.org;someoneelse@testshib.org", mismatch.getCurrentValue());
     }
-
 }

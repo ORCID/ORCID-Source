@@ -3,7 +3,7 @@ package org.orcid.frontend.web.controllers;
 import java.util.Collections;
 import java.util.Optional;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.read_only.RecordCorrectionsManagerReadOnly;

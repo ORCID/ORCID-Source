@@ -3,8 +3,8 @@ package org.orcid.persistence.dao.impl;
 import java.math.BigInteger;
 import java.util.Date;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.StatisticsDao;
 import org.orcid.statistics.jpa.entities.StatisticKeyEntity;

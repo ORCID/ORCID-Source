@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.OrcidEntity;

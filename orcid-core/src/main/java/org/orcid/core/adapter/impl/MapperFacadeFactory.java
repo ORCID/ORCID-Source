@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.converter.CreditNameConverter;
@@ -150,7 +150,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private IdentityProviderManager identityProviderManager;
 
-    @Resource
+    @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;
 
     @Resource
@@ -1063,7 +1063,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 if (b.getClientSecrets() != null) {
                     for (ClientSecretEntity entity : b.getClientSecrets()) {
                         if (entity.isPrimary()) {
-                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
+                            String clientSecret = entity.getClientSecret();
+                            if (encryptionManager != null) {
+                                clientSecret = encryptionManager.decryptForInternalUse(clientSecret);
+                            }
+                            a.setDecryptedSecret(clientSecret);
                         }
                     }
                 }

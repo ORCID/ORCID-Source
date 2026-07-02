@@ -1,8 +1,8 @@
 package org.orcid.persistence.dao.impl;
 
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.OrcidPropsEntity;

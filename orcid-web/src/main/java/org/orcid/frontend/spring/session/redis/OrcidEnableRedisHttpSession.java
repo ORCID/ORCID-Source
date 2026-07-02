@@ -4,8 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.session.FlushMode;
 import org.springframework.session.SaveMode;
-import org.springframework.session.data.redis.RedisFlushMode;
-import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 
 import java.lang.annotation.*;
 
@@ -23,10 +21,6 @@ import java.lang.annotation.*;
 )
 public @interface OrcidEnableRedisHttpSession {
     String redisNamespace() default "spring:session";
-
-    /** @deprecated */
-    @Deprecated
-    RedisFlushMode redisFlushMode() default RedisFlushMode.ON_SAVE;
 
     FlushMode flushMode() default FlushMode.ON_SAVE;
 

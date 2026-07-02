@@ -17,17 +17,15 @@ package org.orcid.core.oauth;
  * =============================================================================
  */
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.junit.Test;
+import org.orcid.core.exception.ClientDeactivatedException;
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
 
 public class OAuthErrorUtilsTest {
 
@@ -40,11 +38,11 @@ public class OAuthErrorUtilsTest {
     }
     
     @Test
-    public void testGetOAuthErrorForUnsupportedGrantTypeException() {
-        OAuthError error = OAuthErrorUtils.getOAuthError(new UnsupportedGrantTypeException("message here"));
-        assertEquals(OAuthError.UNSUPPORTED_GRANT_TYPE, error.getError());
+    public void testGetOAuthErrorForClientDeactivatedException() {
+        OAuthError error = OAuthErrorUtils.getOAuthError(new ClientDeactivatedException("client-id"));
+        assertEquals(OAuthError.UNAUTHORIZED_CLIENT, error.getError());
         assertEquals(Status.BAD_REQUEST, error.getResponseStatus());
-        assertEquals("message here", error.getErrorDescription());
+        assertEquals("Client client-id is deactivated", error.getErrorDescription());
     }
     
     @Test

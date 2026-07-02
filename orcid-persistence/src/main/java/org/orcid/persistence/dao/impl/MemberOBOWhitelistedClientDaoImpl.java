@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.util.List;
 
-import javax.persistence.TypedQuery;
+import jakarta.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.MemberOBOWhitelistedClientDao;
 import org.orcid.persistence.jpa.entities.MemberOBOWhitelistedClientEntity;

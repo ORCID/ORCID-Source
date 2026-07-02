@@ -3,8 +3,8 @@ package org.orcid.core.manager.v3.read_only.impl;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbResearchResourceAdapter;
 import org.orcid.core.manager.v3.read_only.ResearchResourceManagerReadOnly;
@@ -38,6 +38,7 @@ public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl
     }
 
     @Override
+    @Transactional
     public ResearchResourceSummary getResearchResourceSummary(String orcid, Long researchResourceId) {
         ResearchResourceEntity e = rrDao.getResearchResource(orcid, researchResourceId);
         return jpaJaxbResearchResourceAdapter.toSummary(e);
@@ -51,6 +52,7 @@ public class ResearchResourceManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl
     }
 
     @Override
+    @Transactional
     public List<ResearchResourceSummary> getResearchResourceSummaryList(String orcid) {
         List<ResearchResourceEntity> e = rrDao.getByUser(orcid, getLastModified(orcid));
         return jpaJaxbResearchResourceAdapter.toSummaries(e);

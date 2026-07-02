@@ -2,7 +2,7 @@ package org.orcid.listener.s3;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Before;
 import org.junit.Test;

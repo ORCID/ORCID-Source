@@ -8,7 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

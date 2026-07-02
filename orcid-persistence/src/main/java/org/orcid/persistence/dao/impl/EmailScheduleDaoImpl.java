@@ -4,8 +4,8 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-import javax.transaction.Transactional;
+import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 
 import org.orcid.persistence.dao.EmailScheduleDao;
 import org.orcid.persistence.jpa.entities.EmailScheduleEntity;

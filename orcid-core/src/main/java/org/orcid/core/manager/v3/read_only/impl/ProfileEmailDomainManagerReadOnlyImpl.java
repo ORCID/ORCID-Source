@@ -6,7 +6,7 @@ import org.orcid.core.manager.v3.read_only.ProfileEmailDomainManagerReadOnly;
 import org.orcid.persistence.dao.ProfileEmailDomainDao;
 import org.orcid.persistence.jpa.entities.ProfileEmailDomainEntity;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

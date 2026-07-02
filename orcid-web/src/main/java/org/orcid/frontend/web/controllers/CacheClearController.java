@@ -1,6 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.pojo.ajaxForm.Errors;

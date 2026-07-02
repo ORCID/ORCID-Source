@@ -4,7 +4,7 @@ package org.orcid.pojo;
 import org.orcid.jaxb.model.v3.release.record.GroupableActivity;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivityGroup;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;

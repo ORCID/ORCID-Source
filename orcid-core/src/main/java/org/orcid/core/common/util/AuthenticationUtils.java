@@ -1,6 +1,7 @@
 package org.orcid.core.common.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
 import org.orcid.core.security.OrcidRoles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 
@@ -43,10 +42,10 @@ public class AuthenticationUtils {
         } else if (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
             // Token endpoint
             return ((UsernamePasswordAuthenticationToken) authentication).getName();
-        } else if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+        } else if (OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
             // API
-            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
-            return authorizationRequest.getClientId();
+            OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
+            return authDetails.getClientId();
         } else {
             // Normal web user
             return AuthenticationUtils.retrieveEffectiveOrcid();
@@ -66,10 +65,10 @@ public class AuthenticationUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return null;
-        } else if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+        } else if (OrcidBearerTokenAuthentication.class.isAssignableFrom(authentication.getClass())) {
             // API
-            OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
-            return authorizationRequest.getClientId();
+            OrcidBearerTokenAuthentication authDetails = (OrcidBearerTokenAuthentication) authentication;
+            return authDetails.getClientId();
         }
         // Delegation mode
         String realUserIfInDelegationMode = getRealUserIfInDelegationMode(authentication);
@@ -89,12 +88,6 @@ public class AuthenticationUtils {
                     if (authority instanceof SwitchUserGrantedAuthority) {
                         SwitchUserGrantedAuthority suga = (SwitchUserGrantedAuthority) authority;
                         Authentication sourceAuthentication = suga.getSource();
-
-                        LOGGER.trace("isDelegatedByAnAdmin");
-                        LOGGER.trace("Authentication: {}", sourceAuthentication);
-                        LOGGER.trace("Authentication type: {}", sourceAuthentication.getClass().getName());
-                        LOGGER.trace("User Details type: {}", sourceAuthentication.getDetails().getClass());
-                        LOGGER.trace("Source authorities: {}", sourceAuthentication.getAuthorities());
 
                         if (sourceAuthentication instanceof UsernamePasswordAuthenticationToken) {
                             if(sourceAuthentication.getAuthorities() != null) {

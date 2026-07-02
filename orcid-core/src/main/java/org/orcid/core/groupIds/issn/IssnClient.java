@@ -6,7 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;

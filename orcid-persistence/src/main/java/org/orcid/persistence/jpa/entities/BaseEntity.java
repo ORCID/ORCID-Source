@@ -1,10 +1,10 @@
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;

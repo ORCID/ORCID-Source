@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -151,7 +151,7 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
                     if (!PojoUtil.isEmpty(orcid)) {
                         profile = profileDao.find(orcid.toUpperCase());
                     }
-                } catch (javax.persistence.NoResultException nre) {
+                } catch (jakarta.persistence.NoResultException nre) {
                     LOGGER.error("User " + username + " was not found");
                 } catch (Exception e) {
                     LOGGER.error("Error finding user " + username, e);
@@ -234,13 +234,13 @@ public class OrcidUserDetailsServiceImpl implements OrcidUserDetailsService {
     private String setPrimaryEmailIfMissing(String orcid) {
         try {
             return emailDao.findPrimaryEmail(orcid).getEmail();
-        } catch (javax.persistence.NoResultException nre) {
+        } catch (jakarta.persistence.NoResultException nre) {
             String alternativePrimaryEmail = emailDao.findNewestVerifiedOrNewestEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             String message = String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid);
             LOGGER.error(message);
             return alternativePrimaryEmail;
-        } catch (javax.persistence.NonUniqueResultException nure) {
+        } catch (jakarta.persistence.NonUniqueResultException nure) {
             String alternativePrimaryEmail = emailDao.findNewestPrimaryEmail(orcid);
             emailDao.updatePrimary(orcid, alternativePrimaryEmail);
             String message = String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid);

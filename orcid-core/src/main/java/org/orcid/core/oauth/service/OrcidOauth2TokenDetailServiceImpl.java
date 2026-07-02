@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.RevokeReason;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -250,6 +249,14 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     @Override
     @Transactional
     public boolean updateScopes(String acessToken, Set<String> newScopes) {
-        return orcidOauth2TokenDetailDao.updateScopes(acessToken, OAuth2Utils.formatParameterList(newScopes));        
+        return orcidOauth2TokenDetailDao.updateScopes(acessToken, formatScopeList(newScopes));
+    }
+
+    private String formatScopeList(Set<String> scopes) {
+        if (scopes == null || scopes.isEmpty()) {
+            return null;
+        }
+
+        return String.join(" ", new TreeSet<>(scopes));
     }
 }

@@ -5,9 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.common_v2.Visibility;
@@ -47,7 +47,7 @@ public class JSONPeerReviewWorkExternalIdentifierConverterV2Test {
     }
 
     private PeerReview getPeerReview() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
+        JAXBContext context = JAXBContext.newInstance(PeerReview.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0/samples/read_samples/peer-review-full-2.0.xml";
         InputStream inputStream = getClass().getResourceAsStream(name);

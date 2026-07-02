@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.adapter.v3.JpaJaxbClientAdapter;
 import org.orcid.core.constants.OrcidOauth2Constants;

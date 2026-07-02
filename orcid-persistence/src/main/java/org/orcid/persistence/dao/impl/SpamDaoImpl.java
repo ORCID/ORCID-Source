@@ -2,7 +2,7 @@ package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.dao.SpamDao;
@@ -22,7 +22,7 @@ public class SpamDaoImpl extends GenericDaoImpl<SpamEntity, Long> implements Spa
     public boolean exists(String orcid) {
         Query query = entityManager.createNativeQuery("select count(*) from spam where orcid=:orcid");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }   
 
@@ -52,7 +52,7 @@ public class SpamDaoImpl extends GenericDaoImpl<SpamEntity, Long> implements Spa
     @Transactional
     @UpdateProfileLastModified
     public boolean removeSpam(String orcid) {
-        Query query = entityManager.createQuery("delete from SpamEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from SpamEntity s where s.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
         return query.executeUpdate() > 0 ? true : false;

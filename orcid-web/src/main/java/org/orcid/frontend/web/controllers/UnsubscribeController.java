@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.codec.binary.Base64;
 import org.orcid.core.common.manager.EmailFrequencyManager;
@@ -58,9 +58,9 @@ public class UnsubscribeController extends BaseController {
         if(!emailManagerReadOnly.isPrimaryEmailVerified(orcid)) {
             try {
                 emailManager.verifyPrimaryEmail(orcid);
-            } catch(javax.persistence.NoResultException nre) {
+            } catch(jakarta.persistence.NoResultException nre) {
                 slackManager.sendSystemAlert(String.format("User with orcid %s have no primary email, so, we are setting the newest verified email, or, the newest email in case non is verified as the primary one", orcid));
-            } catch(javax.persistence.NonUniqueResultException nure) {
+            } catch(jakarta.persistence.NonUniqueResultException nure) {
                 slackManager.sendSystemAlert(String.format("User with orcid %s have more than one primary email, so, we are setting the latest modified primary as the primary one", orcid));
             } 
         }

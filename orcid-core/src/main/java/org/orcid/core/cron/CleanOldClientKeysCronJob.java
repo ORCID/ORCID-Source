@@ -2,7 +2,7 @@ package org.orcid.core.cron;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ClientSecretDao;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;

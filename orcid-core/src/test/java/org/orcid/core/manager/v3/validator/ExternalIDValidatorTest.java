@@ -2,7 +2,7 @@ package org.orcid.core.manager.v3.validator;
 
 import static org.junit.Assert.fail;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

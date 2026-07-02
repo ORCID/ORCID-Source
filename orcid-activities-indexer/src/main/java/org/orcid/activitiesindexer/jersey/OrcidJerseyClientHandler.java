@@ -16,6 +16,7 @@
  */
 package org.orcid.activitiesindexer.jersey;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,30 +24,31 @@ import org.orcid.activitiesindexer.util.DevJerseyClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
+
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
 
 public class OrcidJerseyClientHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidJerseyClientHandler.class);
 
     public static Client create(boolean isDevelopmentMode, Map<String, Object> properties) {
-        ClientConfig config = null;
+        ClientBuilder builder = ClientBuilder.newBuilder();
         if (isDevelopmentMode) {
             // DANGER!!! Trust all certs
             LOGGER.info("TRUSTING ALL SSL CERTS IN DEV MODE!!!");
-            config = new DevJerseyClientConfig();
-        } else {
-            config = new DefaultClientConfig();
+            DevJerseyClientConfig.apply(builder);
         }
-        Set<String> keyset = properties.keySet();
+
+        Client client = builder.register(JacksonFeature.class).build();
+
+        Set<String> keyset = new HashMap<>(properties).keySet();
         for (String key : keyset) {
-            config.getProperties().put(key, properties.get(key));
+            client.property(key, properties.get(key));
         }
-        config.getClasses().add(JacksonJaxbJsonProvider.class);
-        return Client.create(config);
+
+        return client;
     }
 
 }

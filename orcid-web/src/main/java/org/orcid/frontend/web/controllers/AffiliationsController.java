@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;

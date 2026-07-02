@@ -7,7 +7,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.pojo.ResearchResourceGroupPojo;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

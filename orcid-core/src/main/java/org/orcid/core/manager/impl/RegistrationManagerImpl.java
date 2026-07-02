@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.common.manager.EmailFrequencyManager;
 import org.orcid.core.manager.AdminManager;
@@ -46,8 +46,6 @@ import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
@@ -103,7 +101,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
     @Resource
     private OrgDisambiguatedManager orgDisambiguatedManager;
     
-    @Required
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
     }   
@@ -166,7 +163,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
                                 if(PojoUtil.isEmpty(duplicateAdditionalAddress)){
                                     duplicateAdditionalAddress = emailAddressAdditional;
                                 } else {
-                                    throw new InvalidRequestException("More than 2 duplicate emails");
+                                    throw new IllegalArgumentException("More than 2 duplicate emails");
                                 }
                             } 
                         }
@@ -220,7 +217,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
             });
             return orcidId;
         } catch (Exception e) {
-            throw new InvalidRequestException("Unable to register user due: " + e.getMessage(), e.getCause());
+            throw new IllegalArgumentException("Unable to register user due: " + e.getMessage(), e.getCause());
         }
     }
 
@@ -336,7 +333,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
      * @param emailAddress
      *            The email we want to check
      */
-    private void checkAutoDeprecateIsEnabledForEmail(String emailAddress) throws InvalidRequestException {
+    private void checkAutoDeprecateIsEnabledForEmail(String emailAddress) {
         // If the email doesn't exists, just return
         if (!emailManager.emailExists(emailAddress)) {
             return;
@@ -344,12 +341,12 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
         // Check the record is not claimed
         if (profileEntityManager.isProfileClaimedByEmail(emailAddress)) {
-            throw new InvalidRequestException("Email " + emailAddress + " already exists and is claimed, so, it can't be used again");
+            throw new IllegalArgumentException("Email " + emailAddress + " already exists and is claimed, so, it can't be used again");
         }
 
         // Check the auto deprecate is enabled for this email address
         if (!emailManager.isAutoDeprecateEnableForEmail(emailAddress)) {
-            throw new InvalidRequestException("Autodeprecate is not enabled for " + emailAddress);
+            throw new IllegalArgumentException("Autodeprecate is not enabled for " + emailAddress);
         }
     }
 
@@ -363,7 +360,7 @@ public class RegistrationManagerImpl implements RegistrationManager {
         Map<String, String> emailMap = emailManager.findOricdIdsByCommaSeparatedEmails(emailAddress);
         String unclaimedOrcid = emailMap == null ? null : emailMap.get(emailAddress);
         if (PojoUtil.isEmpty(unclaimedOrcid)) {
-            throw new InvalidRequestException("Unable to find orcid id for " + emailAddress);
+            throw new IllegalArgumentException("Unable to find orcid id for " + emailAddress);
         }
         return unclaimedOrcid;
     }
