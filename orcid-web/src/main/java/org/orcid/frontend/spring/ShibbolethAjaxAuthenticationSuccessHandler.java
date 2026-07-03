@@ -1,19 +1,10 @@
 package org.orcid.frontend.spring;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 import org.orcid.core.common.manager.EventManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.core.togglz.Features;
+import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.persistence.jpa.entities.EventType;
 import org.orcid.pojo.RemoteUser;
@@ -22,6 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSuccessHandlerBase {
 
@@ -35,9 +36,12 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
     @Resource
     private InstitutionalSignInManager institutionalSignInManager;
 
+    @Resource
+    private RecordEmailSender recordEmailSender;
+
     @Autowired
     EventManager eventManager;
-    
+
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         linkShibbolethAccount(request, response);
         String targetUrl = getTargetUrl(request, response, authentication);
@@ -66,6 +70,8 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         String displayName = institutionalSignInManager.retrieveDisplayName(headers);
         String userOrcid = getRealUserOrcid();                
         institutionalSignInManager.createUserConnectionAndNotify(idType, remoteUserId, displayName, providerId, userOrcid, headers);
+        String nameToUse = StringUtils.isAllBlank(displayName) ? institutionalSignInManager.getInstitutionName(providerId) : displayName;
+        recordEmailSender.alternateSignInAccountAdded(userOrcid, nameToUse);
     }
 
     private void checkEnabled() {

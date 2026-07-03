@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.LocaleUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -564,4 +565,34 @@ public class RecordEmailSender {
             LOGGER.error("Primary email not found in user {}", orcidToDeprecate);
         }
 	}
+
+    public void alternateSignInAccountAdded(String orcid, String alternateAccountName) {
+        alternatesingInAccountModified(orcid, alternateAccountName, true);
+    }
+
+    public void alternateSignInAccountRemoved(String orcid, String alternateAccountName) {
+        alternatesingInAccountModified(orcid, alternateAccountName, false);
+    }
+
+    private void alternatesingInAccountModified(String orcid, String alternateAccountName, boolean added) {
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
+        Locale userLocale = getUserLocaleFromProfileEntity(entity);
+        String email = emailManager.findPrimaryEmail(orcid).getEmail();
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        String subject = verifyEmailUtils.getSubject("email.subject.alternate_sign_in.changed", userLocale);
+        templateParams.put("subject", subject);
+        templateParams.put("orcid", orcid);
+        templateParams.put("alternateAccount", StringUtils.isEmpty(alternateAccountName) ? "UNDEFINED" : alternateAccountName);
+        templateParams.put("added", added);
+
+
+        // Generate body from template
+        String body = templateManager.processTemplate("email_alternate_sign_in_account.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("email_alternate_sign_in_account_html.ftl", templateParams);
+
+        // Send email to primary email address
+        mailgunManager.sendEmail(EmailConstants.DO_NOT_REPLY_NOTIFY_ORCID_ORG, email, subject, body, html);
+
+    }
 }

@@ -1,23 +1,23 @@
 package org.orcid.core.manager.impl;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
-import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -30,6 +30,7 @@ import org.orcid.pojo.HeaderMismatch;
 import org.orcid.pojo.RemoteUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 public class InstitutionalSignInManagerImpl implements InstitutionalSignInManager {
@@ -54,8 +55,21 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Resource
     protected OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
-    @Resource
-    protected NotificationManager notificationManager;
+    @Resource(name = "notificationManagerV3")
+    private NotificationManager notificationManager;
+
+    private final Map<String, String> institutionNames = new HashMap<>();
+
+    public InstitutionalSignInManagerImpl(@Value("${org.orcid.shibboleth.discoFeedSource:https://orcid.org/Shibboleth.sso/DiscoFeed}") String discoFeedSource) {
+        // Init the institution names map
+        try {
+            LOGGER.info("Populating institution names from DiscoFeed");
+            populateInsitutionNames(discoFeedSource);
+            LOGGER.info("Institution names populated");
+        } catch (IOException | InterruptedException | JSONException e) {
+            LOGGER.error("Error populating institution names from DiscoFeed, institutional linking email might not contain accurate data", e);
+        }
+    }
 
     @Override
     @Transactional
@@ -89,6 +103,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Override
     public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
+            // Add the acknowledgement notification if the user doesn't know about the client yet
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
             boolean clientKnowsUser = orcidOauth2TokenDetailService.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
             // If the client doesn't know about the user yet, send a
@@ -185,4 +200,50 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         return values.length > 0 ? ESCAPED_SEPARATOR_PATTERN.matcher(values[0]).replaceAll(SEPARATOR) : "";
     }
 
+    public String getInstitutionName(String providerId) {
+        return institutionNames.get(providerId);
+    }
+
+    private void populateInsitutionNames(String discoFeedSource) throws IOException, InterruptedException, JSONException {
+        // 1. Build and send the HTTP GET request
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(discoFeedSource))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Ensure we got a successful response
+        if (response.statusCode() != 200) {
+            throw new RuntimeException("Failed to fetch DiscoFeed. HTTP Status: " + response.statusCode());
+        }
+
+        // 2. Parse the JSON array
+        JSONArray discoFeedArray = new JSONArray(response.body());
+
+        // 3. Iterate through the array and extract the required fields
+        for (int i = 0; i < discoFeedArray.length(); i++) {
+            JSONObject idp = discoFeedArray.getJSONObject(i);
+
+            if (idp.has("entityID")) {
+                String entityID = idp.getString("entityID");
+                String displayName = "Unknown Institution"; // Fallback name
+
+                // Safely navigate the DisplayNames array
+                if (idp.has("DisplayNames")) {
+                    JSONArray displayNamesArray = idp.getJSONArray("DisplayNames");
+
+                    if (displayNamesArray.length() > 0) {
+                        JSONObject firstDisplayName = displayNamesArray.getJSONObject(0);
+                        if (firstDisplayName.has("value")) {
+                            displayName = firstDisplayName.getString("value");
+                        }
+                    }
+                }
+
+                institutionNames.put(entityID, displayName);
+            }
+        }
+    }
 }
