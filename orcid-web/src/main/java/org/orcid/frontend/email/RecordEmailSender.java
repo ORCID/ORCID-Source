@@ -584,6 +584,7 @@ public class RecordEmailSender {
         templateParams.put("orcid", orcid);
         templateParams.put("alternateAccount", StringUtils.isEmpty(alternateAccountName) ? "UNDEFINED" : alternateAccountName);
         templateParams.put("accountWasAdded", added);
+        verifyEmailUtils.addMessageParams(templateParams, userLocale);
 
 
         // Generate body from template
