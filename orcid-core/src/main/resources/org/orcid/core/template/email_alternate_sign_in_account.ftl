@@ -3,7 +3,7 @@
 
 <@emailMacros.msg "email.alternate_sign_in.security.1" />
 
-<#if accountWasAdded>
+<#if (accountWasAdded) ?? && accountWasAdded == true>
     <@emailMacros.msg "email.alternate_sign_in.security.added" /> ${alternateAccount}
 <#else>
     <@emailMacros.msg "email.alternate_sign_in.security.removed" /> ${alternateAccount}

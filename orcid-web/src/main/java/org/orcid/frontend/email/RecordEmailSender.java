@@ -583,7 +583,7 @@ public class RecordEmailSender {
         templateParams.put("subject", subject);
         templateParams.put("orcid", orcid);
         templateParams.put("alternateAccount", StringUtils.isEmpty(alternateAccountName) ? "UNDEFINED" : alternateAccountName);
-        templateParams.put("added", added);
+        templateParams.put("accountWasAdded", added);
 
 
         // Generate body from template

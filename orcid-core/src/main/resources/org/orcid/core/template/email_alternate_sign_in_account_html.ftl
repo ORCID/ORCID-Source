@@ -16,7 +16,7 @@
 				<@emailMacros.msg "email.alternate_sign_in.security.1" />
     		</p>
             <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #494A4C;">
-                <#if accountWasAdded>
+                <#if (accountWasAdded) ?? && accountWasAdded == true>
                     <@emailMacros.msg "email.alternate_sign_in.security.added" /> ${alternateAccount}
                 <#else>
                     <@emailMacros.msg "email.alternate_sign_in.security.removed" /> ${alternateAccount}
