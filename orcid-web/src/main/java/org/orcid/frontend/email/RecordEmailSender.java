@@ -586,7 +586,6 @@ public class RecordEmailSender {
         templateParams.put("accountWasAdded", added);
         verifyEmailUtils.addMessageParams(templateParams, userLocale);
 
-
         // Generate body from template
         String body = templateManager.processTemplate("email_alternate_sign_in_account.ftl", templateParams);
         // Generate html from template
