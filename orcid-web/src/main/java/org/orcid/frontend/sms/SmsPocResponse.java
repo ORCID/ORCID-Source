@@ -7,6 +7,7 @@ public class SmsPocResponse {
     private String providerMessageId;
     private String normalizedPhoneNumber;
     private String status;
+    private Boolean verified;
     private String errorCode;
     private String errorMessage;
 
@@ -16,6 +17,22 @@ public class SmsPocResponse {
         response.provider = provider;
         response.providerMessageId = providerMessageId;
         response.normalizedPhoneNumber = normalizedPhoneNumber;
+        response.status = status;
+        return response;
+    }
+
+    /**
+     * Result of a verification check: {@code success} means the request was processed; {@code verified} carries whether
+     * the supplied code matched.
+     */
+    public static SmsPocResponse verificationResult(String provider, String providerMessageId, String normalizedPhoneNumber,
+            boolean verified, String status) {
+        SmsPocResponse response = new SmsPocResponse();
+        response.success = true;
+        response.provider = provider;
+        response.providerMessageId = providerMessageId;
+        response.normalizedPhoneNumber = normalizedPhoneNumber;
+        response.verified = verified;
         response.status = status;
         return response;
     }
@@ -49,6 +66,10 @@ public class SmsPocResponse {
 
     public String getStatus() {
         return status;
+    }
+
+    public Boolean getVerified() {
+        return verified;
     }
 
     public String getErrorCode() {

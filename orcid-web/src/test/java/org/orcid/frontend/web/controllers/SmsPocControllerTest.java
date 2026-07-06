@@ -13,6 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.frontend.sms.SmsPocRequest;
 import org.orcid.frontend.sms.SmsPocResponse;
 import org.orcid.frontend.sms.SmsPocService;
+import org.orcid.frontend.sms.SmsVerificationCheckRequest;
 
 public class SmsPocControllerTest {
 
@@ -28,17 +29,31 @@ public class SmsPocControllerTest {
     }
 
     @Test
-    public void sendDelegatesToSmsPocService() {
+    public void sendDelegatesToStartVerification() {
         SmsPocRequest request = new SmsPocRequest();
         request.setPhoneNumber("+50688888888");
-        request.setMessage("ORCID SMS POC test");
         SmsPocResponse expected = SmsPocResponse.success("aws", "message-id", "+50688888888", "SENT");
-        when(smsPocService.send(request)).thenReturn(expected);
+        when(smsPocService.startVerification(request)).thenReturn(expected);
 
         SmsPocResponse response = controller.send(request);
 
         assertTrue(response.isSuccess());
         assertEquals("aws", response.getProvider());
-        verify(smsPocService).send(request);
+        verify(smsPocService).startVerification(request);
+    }
+
+    @Test
+    public void verifyDelegatesToCheckVerification() {
+        SmsVerificationCheckRequest request = new SmsVerificationCheckRequest();
+        request.setPhoneNumber("+50688888888");
+        request.setCode("123456");
+        SmsPocResponse expected = SmsPocResponse.verificationResult("aws", "message-id", "+50688888888", true, "VERIFIED");
+        when(smsPocService.checkVerification(request)).thenReturn(expected);
+
+        SmsPocResponse response = controller.verify(request);
+
+        assertTrue(response.isSuccess());
+        assertEquals(Boolean.TRUE, response.getVerified());
+        verify(smsPocService).checkVerification(request);
     }
 }

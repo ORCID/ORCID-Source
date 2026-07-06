@@ -6,6 +6,7 @@ import javax.ws.rs.core.MediaType;
 import org.orcid.frontend.sms.SmsPocRequest;
 import org.orcid.frontend.sms.SmsPocResponse;
 import org.orcid.frontend.sms.SmsPocService;
+import org.orcid.frontend.sms.SmsVerificationCheckRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,15 @@ public class SmsPocController {
     @Resource
     private SmsPocService smsPocService;
 
+    /** Starts a verification: generates a code and delivers it through the managed provider. */
     @RequestMapping(value = "/send.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
     public @ResponseBody SmsPocResponse send(@RequestBody SmsPocRequest request) {
-        return smsPocService.send(request);
+        return smsPocService.startVerification(request);
+    }
+
+    /** Confirms a code previously sent to a phone number. */
+    @RequestMapping(value = "/verify.json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+    public @ResponseBody SmsPocResponse verify(@RequestBody SmsVerificationCheckRequest request) {
+        return smsPocService.checkVerification(request);
     }
 }

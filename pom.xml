@@ -38,6 +38,9 @@ the software.
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
         <aws.version>1.12.261</aws.version>
+        <!-- AWS SDK v2, required for AWS End User Messaging Notify (pinpoint-sms-voice-v2 SendNotifyTextMessage).
+             Must be a release that includes Notify (GA March 2026). Verify against the artifacts available to the build. -->
+        <awssdk.version>2.46.21</awssdk.version>
         <libphonenumber.version>9.0.30</libphonenumber.version>
         <twilio.version>12.1.1</twilio.version>
         <solr.version>8.0.0</solr.version>
@@ -938,9 +941,9 @@ the software.
                 <version>${aws.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-sns</artifactId>
-                <version>${aws.version}</version>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>pinpointsmsvoicev2</artifactId>
+                <version>${awssdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.libphonenumber</groupId>

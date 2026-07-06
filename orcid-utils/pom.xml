@@ -140,8 +140,8 @@
 		</dependency>
 
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-sns</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>pinpointsmsvoicev2</artifactId>
         </dependency>
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>

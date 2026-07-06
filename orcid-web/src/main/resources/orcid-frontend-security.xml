@@ -393,6 +393,8 @@
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/sms-poc/send.json(\?.*)?"
 			access="ROLE_USER"/>
+		<sec:intercept-url pattern="/sms-poc/verify.json(\?.*)?"
+			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/eula/accept(\?.*)?"
 			method="POST" access="DENY_OAUTH,ROLE_USER" />
 		<sec:intercept-url pattern="/manage-clients"
