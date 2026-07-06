@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String FORBIDDEN_MSG = "Forbidden - Missing authentication context.";
+    private static final String FORBIDDEN_MSG = "An Authentication object was not found in the SecurityContext";
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
@@ -42,7 +42,12 @@ public class APIAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
             OrcidError orcidError = new OrcidError();
             orcidError.setResponseCode(status.value());
-            orcidError.setDeveloperMessage(developerMessage);
+            if(HttpStatus.FORBIDDEN.equals(status)) {
+                orcidError.setDeveloperMessage("Forbidden: " + developerMessage);
+            } 
+            else {
+                orcidError.setDeveloperMessage( developerMessage);
+            }
 
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("response-code", orcidError.getResponseCode());
