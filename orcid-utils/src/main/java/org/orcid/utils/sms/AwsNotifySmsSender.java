@@ -38,17 +38,12 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
     @Value("${org.orcid.sms.aws.notifyConfigurationId:}")
     private String notifyConfigurationId;
 
-    // Per-language AWS-managed template ids; the base id is the English/default fallback. When all are blank the
-    // Notify configuration's default template is used instead. The -001 series supports the US; -005/-006 do not.
-    // {{brandName}} is system-managed (taken from the Notify configuration) and must NOT be sent as a variable.
-    @Value("${org.orcid.sms.aws.notifyTemplateId:notify-code-verification-english-001}")
-    private String notifyTemplateId;
-
-    @Value("${org.orcid.sms.aws.notifyTemplateId.es:notify-code-verification-spanish-001}")
-    private String notifyTemplateIdSpanish;
-
-    @Value("${org.orcid.sms.aws.notifyTemplateId.fr:notify-code-verification-french-001}")
-    private String notifyTemplateIdFrench;
+    // AWS-managed per-language code-verification templates. The -001 series supports the US (-005/-006 do not).
+    // {{brandName}} is system-managed (taken from the Notify configuration's registered brand) and must NOT be sent
+    // as a template variable; only {{code}} is.
+    private static final String TEMPLATE_ENGLISH = "notify-code-verification-english-001";
+    private static final String TEMPLATE_SPANISH = "notify-code-verification-spanish-001";
+    private static final String TEMPLATE_FRENCH = "notify-code-verification-french-001";
 
     @Value("${org.orcid.sms.aws.notifyCodeVariable:code}")
     private String codeVariable;
@@ -67,16 +62,14 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
                     "AWS Notify configuration id is required; set org.orcid.sms.aws.notifyConfigurationId");
         }
         try {
-            SendNotifyTextMessageRequest.Builder builder = SendNotifyTextMessageRequest.builder()
+            SendNotifyTextMessageRequest request = SendNotifyTextMessageRequest.builder()
                     .notifyConfigurationId(notifyConfigurationId)
                     .destinationPhoneNumber(toE164Number)
+                    .templateId(resolveTemplateId(locale))
                     .templateVariables(Collections.singletonMap(codeVariable, code))
-                    .messageFeedbackEnabled(true);
-            String templateId = resolveTemplateId(locale);
-            if (StringUtils.isNotBlank(templateId)) {
-                builder.templateId(templateId);
-            }
-            SendNotifyTextMessageResponse response = getClient().sendNotifyTextMessage(builder.build());
+                    .messageFeedbackEnabled(true)
+                    .build();
+            SendNotifyTextMessageResponse response = getClient().sendNotifyTextMessage(request);
             return SmsSendResult.success(PROVIDER, response.messageId(), "SENT");
         } catch (Exception e) {
             return SmsSendResult.failure(PROVIDER, e.getClass().getSimpleName(), e.getMessage());
@@ -98,19 +91,19 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
     }
 
     /**
-     * Maps the caller's UI locale to the matching localized template, falling back to the default (English) template
-     * for any other language. Only the language subtag matters ({@code es-419} → Spanish).
+     * Maps the caller's UI locale to the matching localized template, falling back to the English template for any
+     * other language. Only the language subtag matters ({@code es-419} → Spanish).
      */
-    private String resolveTemplateId(String locale) {
+    private static String resolveTemplateId(String locale) {
         String language = StringUtils.isBlank(locale) ? ""
                 : StringUtils.substringBefore(StringUtils.substringBefore(locale.trim(), "-"), "_").toLowerCase(Locale.ROOT);
-        if ("es".equals(language) && StringUtils.isNotBlank(notifyTemplateIdSpanish)) {
-            return notifyTemplateIdSpanish;
+        if ("es".equals(language)) {
+            return TEMPLATE_SPANISH;
         }
-        if ("fr".equals(language) && StringUtils.isNotBlank(notifyTemplateIdFrench)) {
-            return notifyTemplateIdFrench;
+        if ("fr".equals(language)) {
+            return TEMPLATE_FRENCH;
         }
-        return notifyTemplateId;
+        return TEMPLATE_ENGLISH;
     }
 
     private PinpointSmsVoiceV2Client getClient() {
