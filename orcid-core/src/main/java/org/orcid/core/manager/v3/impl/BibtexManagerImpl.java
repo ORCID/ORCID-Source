@@ -163,11 +163,15 @@ public class BibtexManagerImpl extends ManagerReadOnlyBaseImpl implements Bibtex
         }
         //name
         List<String> names = new ArrayList<String>();
-        names.add(creditName);
+        if (creditName != null) {
+            names.add(creditName.trim());
+        }
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
             for (Contributor c : work.getWorkContributors().getContributor()) {
                 if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
-                    names.add(c.getCreditName().getContent());
+                    if(!names.contains(c.getCreditName().getContent().trim())) {
+                        names.add(c.getCreditName().getContent().trim());
+                    }
                 } else if (c.getContributorOrcid() != null && c.getContributorOrcid().getPath() != null) {
                     try {
                         String contributor = getCreditName(c.getContributorOrcid().getPath());

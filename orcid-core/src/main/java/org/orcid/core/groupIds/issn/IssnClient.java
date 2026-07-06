@@ -70,11 +70,12 @@ public class IssnClient {
 
         // 1. Try to get mainTitle directly from the root
         if (rootObj.has("mainTitle")) {
-            String title = rootObj.getString("mainTitle");
-            String cleanTitle = cleanText(title);
-            issnData.setMainTitle(cleanTitle);
-            LOG.debug("Found mainTitle for '" + issn + "' " + cleanTitle);
-            return issnData;
+            String title = cleanText(rootObj.getString("mainTitle"));
+            if(StringUtils.isNotBlank(title)) {
+                issnData.setMainTitle(title);
+                LOG.debug("Found mainTitle for '" + issn + "' " + title);
+                return issnData;
+            }
         }
 
         // 2. Try to get the KeyTitle from the identifiedBy block
@@ -83,11 +84,12 @@ public class IssnClient {
             if (identifiedBy.has("#KeyTitle")) {
                 JSONObject keyTitleObj = identifiedBy.getJSONObject("#KeyTitle");
                 if (keyTitleObj.has("value")) {
-                    String title = keyTitleObj.getString("value");
-                    String cleanTitle = cleanText(title);
-                    issnData.setMainTitle(cleanTitle);
-                    LOG.debug("Found KeyTitle for '" + issn + "' " + cleanTitle);
-                    return issnData;
+                    String title = cleanText(keyTitleObj.getString("value"));
+                    if(StringUtils.isNotBlank(title)) {
+                        issnData.setMainTitle(title);
+                        LOG.debug("Found KeyTitle for '" + issn + "' " + title);
+                        return issnData;
+                    }
                 }
             }
         }
@@ -109,9 +111,11 @@ public class IssnClient {
 
             if (title != null && !title.isEmpty()) {
                 String cleanTitle = cleanText(title);
-                issnData.setMainTitle(cleanTitle);
-                LOG.debug("Found name for '" + issn + "' " + cleanTitle);
-                return issnData;
+                if(StringUtils.isNotBlank(cleanTitle)) {
+                    issnData.setMainTitle(cleanTitle);
+                    LOG.debug("Found name for '" + issn + "' " + cleanTitle);
+                    return issnData;
+                }
             }
         }
 
