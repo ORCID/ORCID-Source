@@ -2,6 +2,7 @@ package org.orcid.utils.sms;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,10 +41,26 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     // AWS-managed per-language code-verification templates. The -001 series supports the US (-005/-006 do not).
     // {{brandName}} is system-managed (taken from the Notify configuration's registered brand) and must NOT be sent
-    // as a template variable; only {{code}} is.
+    // as a template variable; only {{code}} is. Keyed by ORCID UI language code (see LANGUAGE_MENU_OPTIONS in
+    // orcid-angular's environment files); "ko" has no AWS-managed template yet, so it falls back to English, as does
+    // any language ORCID adds before a matching template exists.
     private static final String TEMPLATE_ENGLISH = "notify-code-verification-english-001";
-    private static final String TEMPLATE_SPANISH = "notify-code-verification-spanish-001";
-    private static final String TEMPLATE_FRENCH = "notify-code-verification-french-001";
+
+    private static final Map<String, String> TEMPLATES_BY_LANGUAGE = Map.ofEntries(
+            Map.entry("ar", "notify-code-verification-arabic-001"),
+            Map.entry("cs", "notify-code-verification-czech-001"),
+            Map.entry("de", "notify-code-verification-german-001"),
+            Map.entry("en", TEMPLATE_ENGLISH),
+            Map.entry("es", "notify-code-verification-spanish-001"),
+            Map.entry("fr", "notify-code-verification-french-001"),
+            Map.entry("it", "notify-code-verification-italian-001"),
+            Map.entry("ja", "notify-code-verification-japanese-001"),
+            Map.entry("pl", "notify-code-verification-polish-001"),
+            Map.entry("pt", "notify-code-verification-portuguese-portugal-001"),
+            Map.entry("ru", "notify-code-verification-russian-001"),
+            Map.entry("tr", "notify-code-verification-turkish-001"),
+            // AWS has no separate Traditional Chinese template; Simplified covers both zh-CN and zh-TW.
+            Map.entry("zh", "notify-code-verification-chinese-simplified-001"));
 
     @Value("${org.orcid.sms.aws.notifyCodeVariable:code}")
     private String codeVariable;
@@ -92,18 +109,13 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
 
     /**
      * Maps the caller's UI locale to the matching localized template, falling back to the English template for any
-     * other language. Only the language subtag matters ({@code es-419} → Spanish).
+     * language without an AWS-managed template. Only the language subtag matters ({@code es-419} → Spanish,
+     * {@code zh-TW} → the shared Chinese template).
      */
     private static String resolveTemplateId(String locale) {
         String language = StringUtils.isBlank(locale) ? ""
                 : StringUtils.substringBefore(StringUtils.substringBefore(locale.trim(), "-"), "_").toLowerCase(Locale.ROOT);
-        if ("es".equals(language)) {
-            return TEMPLATE_SPANISH;
-        }
-        if ("fr".equals(language)) {
-            return TEMPLATE_FRENCH;
-        }
-        return TEMPLATE_ENGLISH;
+        return TEMPLATES_BY_LANGUAGE.getOrDefault(language, TEMPLATE_ENGLISH);
     }
 
     private PinpointSmsVoiceV2Client getClient() {
