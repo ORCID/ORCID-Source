@@ -42,8 +42,8 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
     // AWS-managed per-language code-verification templates. The -001 series supports the US (-005/-006 do not).
     // {{brandName}} is system-managed (taken from the Notify configuration's registered brand) and must NOT be sent
     // as a template variable; only {{code}} is. Keyed by ORCID UI language code (see LANGUAGE_MENU_OPTIONS in
-    // orcid-angular's environment files); "ko" has no AWS-managed template yet, so it falls back to English, as does
-    // any language ORCID adds before a matching template exists.
+    // orcid-angular's environment files); any language ORCID adds before a matching template exists falls back to
+    // English.
     private static final String TEMPLATE_ENGLISH = "notify-code-verification-english-001";
 
     private static final Map<String, String> TEMPLATES_BY_LANGUAGE = Map.ofEntries(
@@ -55,6 +55,7 @@ public class AwsNotifySmsSender implements VerificationCodeSender {
             Map.entry("fr", "notify-code-verification-french-001"),
             Map.entry("it", "notify-code-verification-italian-001"),
             Map.entry("ja", "notify-code-verification-japanese-001"),
+            Map.entry("ko", "notify-code-verification-korean-001"),
             Map.entry("pl", "notify-code-verification-polish-001"),
             Map.entry("pt", "notify-code-verification-portuguese-portugal-001"),
             Map.entry("ru", "notify-code-verification-russian-001"),
