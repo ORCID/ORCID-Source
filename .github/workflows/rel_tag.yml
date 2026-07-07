@@ -85,6 +85,7 @@ jobs:
         with:
           version_tag: ${{ inputs.version_tag }}
           bump: ${{ inputs.bump }}
+          enable_merge_commit_bump: false
 
       - name: tag repo create changelog and create release
         uses: ORCID/changelog-action@a5a2787feb8462255492cdfc732b32adf4d0c5d0 # main

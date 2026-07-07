@@ -103,10 +103,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private PreferenceManager preferenceManager;
-    
-    @Resource
-    private OrcidIdentifierUtils orcidIdentifierUtils;
-    
+
     @Resource
     private GivenPermissionToManagerReadOnly givenPermissionToManagerReadOnly;
 
@@ -139,6 +136,9 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @Resource
     private TrustedPartiesService trustedPartiesService;
+
+    @Resource
+    private InstitutionalSignInManager institutionalSignInManager;
 
     @RequestMapping
     public ModelAndView manageProfile() {
@@ -252,9 +252,23 @@ public class ManageProfileController extends BaseWorkspaceController {
             return manageSocialAccount;
         }
 
-        userConnectionManager.remove(getEffectiveUserOrcid(), manageSocialAccount.getId());
+        String orcid = getEffectiveUserOrcid();
+        UserconnectionEntity entityToDelete = userConnectionManager.findByProviderIdAndProviderUserId(manageSocialAccount.getId().getProvideruserid(), manageSocialAccount.getId().getProviderid());
+        userConnectionManager.remove(orcid, manageSocialAccount.getId());
+        try {
+            // Notify user the alternate sign in account was removed
+            if(entityToDelete == null) {
+                log.error("Unable to notify user about institutional account removal, entityToDelete is null");
+                log.error("Account not found with provider user id: " + manageSocialAccount.getId().getProvideruserid() + " and provider id: " +  manageSocialAccount.getId().getProviderid());
+                return manageSocialAccount;
+            }
+            String userConnectionName = StringUtils.isBlank(entityToDelete.getDisplayname()) ? institutionalSignInManager.getInstitutionName(entityToDelete.getId().getProviderid()) : entityToDelete.getDisplayname();
+            recordEmailSender.alternateSignInAccountRemoved(getCurrentUserOrcid(), userConnectionName);
+        } catch (Exception e) {
+            log.error("Unable to notify user about institutional account removal", e);
+        }
+
         manageSocialAccount.setSuccess(true);
-        
         return manageSocialAccount;
     }
 

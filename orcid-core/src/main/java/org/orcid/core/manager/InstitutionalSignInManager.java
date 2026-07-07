@@ -34,4 +34,6 @@ public interface InstitutionalSignInManager {
     String retrieveFirstName(Map<String, String> headers);
 
     String retrieveLastName(Map<String, String> headers);
+
+    String getInstitutionName(String providerId);
 }
