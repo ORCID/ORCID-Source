@@ -96,7 +96,9 @@ public class PapiDailyLimitReport {
                 slackManager.sendAlert(SLACK_STATS_MSG, slackChannel, webhookUrl, webhookUrl);
             }
             catch (Exception ex) {
+                LOG.error("Exception when storing papi limit redis data to DB." , ex);
                 slackManager.sendAlert("!!!!! Exception when storing papi limit redis data to DB. Check the logs" + "\n" + ex.toString() , slackChannel, webhookUrl, webhookUrl);
+
             }
         }
 

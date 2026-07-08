@@ -120,10 +120,10 @@
         </property>
     </bean>   
     
-    <bean id="simpleDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${org.orcid.message-listener.db.class}" />
+    <bean id="simpleDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="${org.orcid.message-listener.db.class}" />
         <property name="jdbcUrl" value="${org.orcid.message-listener.db.url}" />
-        <property name="user" value="${org.orcid.message-listener.db.username}" />
+        <property name="username" value="${org.orcid.message-listener.db.username}" />
         <property name="password" value="${org.orcid.message-listener.db.password}" />        
     </bean>
         

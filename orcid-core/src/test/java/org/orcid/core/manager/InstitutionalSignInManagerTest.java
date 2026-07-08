@@ -31,7 +31,6 @@ import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.manager.v3.NotificationManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.core.manager.v3.read_only.ClientDetailsManagerReadOnly;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -55,7 +54,7 @@ public class InstitutionalSignInManagerTest {
     private NotificationManager mock_notificationManager;
 
     @Mock
-    private ClientDetailsManagerReadOnly mock_clientDetailsManagerReadOnly;
+    private OrcidOauth2TokenDetailService mock_orcidOauth2TokenDetailService;
 
     @Mock
     private OrcidUrlManager mock_orcidUrlManager;
@@ -95,7 +94,7 @@ public class InstitutionalSignInManagerTest {
 
         when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(anyString(), anyString(), anyString())).thenReturn(null);
         when(mock_clientDetailsEntityCacheManager.retrieveByIdP(anyString())).thenReturn(testClient);
-        when(mock_clientDetailsManagerReadOnly.doesClientKnowUser(clientId, userOrcid)).thenReturn(true);
+        when(mock_orcidOauth2TokenDetailService.doesClientKnowUser(clientId, userOrcid)).thenReturn(true);
 
         institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid,
                 Collections.<String, String> emptyMap());

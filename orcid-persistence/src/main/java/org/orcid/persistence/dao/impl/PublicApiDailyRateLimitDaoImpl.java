@@ -61,9 +61,9 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
                 "SELECT count(*) FROM public_api_daily_rate_limit p WHERE NOT ((p.client_id = '' OR p.client_id IS NULL)) and p.request_date=:requestDate and p.request_count >=:requestCount");
         nativeQuery.setParameter("requestDate", requestDate);
         nativeQuery.setParameter("requestCount", limit);
-        List<java.math.BigInteger>  tsList = nativeQuery.getResultList();
-        if (tsList != null && !tsList.isEmpty()) {
-            return tsList.get(0).intValue();
+        Object result = nativeQuery.getSingleResult();
+        if (result instanceof Number) {
+            return ((Number) result).intValue();
         }
         return 0;
 
@@ -74,9 +74,9 @@ public class PublicApiDailyRateLimitDaoImpl extends GenericDaoImpl<PublicApiDail
                 "SELECT count(*) FROM public_api_daily_rate_limit p WHERE ((p.client_id = '' OR p.client_id IS NULL)) and p.request_date=:requestDate and p.request_count >=:requestCount");
         nativeQuery.setParameter("requestDate", requestDate);
         nativeQuery.setParameter("requestCount", limit);
-        List<java.math.BigInteger> tsList = nativeQuery.getResultList();
-        if (tsList != null && !tsList.isEmpty()) {
-            return tsList.get(0).intValue();
+        Object result = nativeQuery.getSingleResult();
+        if (result instanceof Number) {
+            return ((Number) result).intValue();
         }
         return 0;
     }

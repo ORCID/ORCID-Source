@@ -52,8 +52,8 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Resource
     protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @Resource(name = "clientDetailsManagerReadOnlyV3")
-    private ClientDetailsManagerReadOnly clientDetailsManagerReadOnly;
+    @Resource
+    protected OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @Resource(name = "notificationManagerV3")
     private NotificationManager notificationManager;
@@ -105,7 +105,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         try {
             // Add the acknowledgement notification if the user doesn't know about the client yet
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
-            boolean clientKnowsUser = clientDetailsManagerReadOnly.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
+            boolean clientKnowsUser = orcidOauth2TokenDetailService.doesClientKnowUser(clientDetails.getClientId(), userOrcid);
             // If the client doesn't know about the user yet, send a
             // notification
             if (!clientKnowsUser) {
@@ -216,7 +216,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
 
         // Ensure we got a successful response
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to fetch DiscoFeed. HTTP Status: " + response.statusCode());
+            throw new IOException("Failed to fetch DiscoFeed. HTTP Status: " + response.statusCode());
         }
 
         // 2. Parse the JSON array
