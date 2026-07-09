@@ -18,7 +18,9 @@ public class LoggingStrictHttpFirewallTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getContextPath()).thenReturn("");
         when(request.getServletPath()).thenReturn("/test");
+        when(request.getRequestURI()).thenReturn("/test");
         when(request.getMethod()).thenReturn("GET");
+        when(request.getRequestURL()).thenReturn(new StringBuffer("http://localhost/test"));
         
         FirewalledRequest firewalledRequest = firewall.getFirewalledRequest(request);
         assertNotNull(firewalledRequest);
