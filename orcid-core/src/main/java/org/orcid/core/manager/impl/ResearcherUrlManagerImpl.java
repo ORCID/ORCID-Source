@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityExistsException;
 
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
@@ -117,7 +118,14 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
 
                     newResearcherUrl.setVisibility(updatedOrNew.getVisibility().name());
                     newResearcherUrl.setDisplayIndex(updatedOrNew.getDisplayIndex());
-                    researcherUrlDao.persist(newResearcherUrl);
+                    try {
+                        researcherUrlDao.persistIfNotExists(newResearcherUrl);
+                    } catch (EntityExistsException e) {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("type", "researcher-url");
+                        params.put("value", updatedOrNew.getUrl().getValue());
+                        throw new OrcidDuplicatedElementException(params);
+                    }
                 }
             }
         }
@@ -191,7 +199,14 @@ public class ResearcherUrlManagerImpl extends ResearcherUrlManagerReadOnlyImpl i
 
         setIncomingPrivacy(newEntity, profile);
         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
-        researcherUrlDao.persist(newEntity);
+        try {
+            newEntity = researcherUrlDao.persistIfNotExists(newEntity);
+        } catch (EntityExistsException e) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("type", "researcher-url");
+            params.put("value", researcherUrl.getUrl().getValue());
+            throw new OrcidDuplicatedElementException(params);
+        }
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
     }
 
