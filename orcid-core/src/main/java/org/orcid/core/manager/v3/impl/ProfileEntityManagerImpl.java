@@ -498,6 +498,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
         profileDao.changeEncryptedPassword(orcid, encryptedPassword);
@@ -549,14 +550,17 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
         return profileDao.getLastLogin(orcid);
     }
 
+    @Transactional
     public void startSigninLock(String orcid) {
         profileDao.startSigninLock(orcid);
     }
     
+    @Transactional
     public void resetSigninLock(String orcid) {
         profileDao.resetSigninLock(orcid);
     }
     
+    @Transactional
     public void updateSigninLock(String orcid, Integer count) {
         profileDao.updateSigninLock(orcid, count);
     }

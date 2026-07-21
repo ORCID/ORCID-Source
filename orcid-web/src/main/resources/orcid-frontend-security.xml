@@ -91,6 +91,7 @@
 		</property>
 	</bean>
 
+	<!-- Custom CSRF token repository factory bean that properly configures Angular's expected token names -->
 	<bean id="csrfTokenRepo" class="org.springframework.security.web.csrf.CookieCsrfTokenRepository" factory-method="withHttpOnlyFalse">
 		<property name="cookieDomain" value="${org.orcid.core.csrf.domain}" />
 	</bean>

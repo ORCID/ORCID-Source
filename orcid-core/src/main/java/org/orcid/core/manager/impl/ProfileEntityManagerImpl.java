@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.manager.EncryptionManager;
@@ -154,6 +155,7 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updatePassword(String orcid, String password) {
         String encryptedPassword = encryptionManager.hashForInternalUse(password);
         profileDao.changeEncryptedPassword(orcid, encryptedPassword);
