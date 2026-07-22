@@ -12,6 +12,7 @@ import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.persistence.jpa.entities.keys.WebhookEntityPk;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
@@ -45,6 +46,7 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
     }
 
     @Override
+    @Transactional
     public boolean markAsSent(String orcid, String uri) {
         Query query = entityManager.createNativeQuery("UPDATE webhook SET last_sent=now(), failed_attempt_count=0 where orcid = :orcid and uri = :uri");
         query.setParameter("orcid", orcid);
@@ -53,6 +55,7 @@ public class WebhookDaoImpl extends GenericDaoImpl<WebhookEntity, WebhookEntityP
     }
 
     @Override
+    @Transactional
     public boolean markAsFailed(String orcid, String uri) {
         Query query = entityManager.createNativeQuery("UPDATE webhook SET last_failed=now(), failed_attempt_count=(failed_attempt_count + 1) where orcid = :orcid and uri = :uri");
         query.setParameter("orcid", orcid);

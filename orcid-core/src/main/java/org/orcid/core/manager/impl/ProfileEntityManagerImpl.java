@@ -20,6 +20,9 @@ import org.orcid.jaxb.model.record_v2.Name;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -38,6 +41,9 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     
     @Resource
     private RecordNameManagerReadOnly recordNameManagerReadOnly;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @Override
     public boolean orcidExists(String orcid) {
@@ -144,8 +150,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLocale(String orcid, Locale locale) {
-        profileDao.updateLocale(orcid, locale.name());
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLocale(orcid, locale.name());
+                return true;
+            }
+        });
     }
 
     @Override

@@ -44,6 +44,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     }
 
     @Override
+    @Transactional
     public void removeByRefreshTokenValue(String refreshTokenValue) {
         Query query = entityManager.createQuery("update OrcidOauth2TokenDetail t set t.tokenDisabled = TRUE, t.revocationDate = :revocationDate, t.revokeReason = 'CLIENT_REVOKED' where t.refreshTokenValue = :refreshToken");
         query.setParameter("revocationDate", new Date());

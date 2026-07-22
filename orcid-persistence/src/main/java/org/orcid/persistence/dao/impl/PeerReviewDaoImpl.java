@@ -126,6 +126,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     }
     
     @Override
+    @Transactional
     public boolean increaseDisplayIndexOnAllElements(String orcid) {
         Query query = entityManager.createNativeQuery("update peer_review set display_index=(display_index + 1), last_modified=now() where orcid=:orcid");                
         query.setParameter("orcid", orcid);

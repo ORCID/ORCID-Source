@@ -279,6 +279,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
     
     @Override    
+    @Transactional
     public boolean populateEmailHash(String email, String emailHash) {
         Query query = entityManager.createQuery("update EmailEntity e set e.id=:hash where e.email = :email");        
         query.setParameter("email", email);
@@ -295,6 +296,7 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
     }
 
     @Override
+    @Transactional
     public Integer clearEmailsAfterReactivation(String orcid) {
         Query query = entityManager.createNativeQuery("delete from email where email is null and orcid=:orcid");
         query.setParameter("orcid", orcid);

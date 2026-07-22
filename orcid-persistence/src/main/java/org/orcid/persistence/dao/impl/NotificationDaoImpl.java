@@ -297,6 +297,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
     
     @Override
+    @Transactional
     public void flagAsSendable(String orcid, Long id) {
         Query query = entityManager.createQuery("update NotificationEntity n set n.sendable=true where n.orcid = :orcid and n.id = :id");
         query.setParameter("orcid", orcid);
@@ -305,6 +306,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
     
     @Override
+    @Transactional
     public void flagAsNonSendable(String orcid, Long id) {
         Query query = entityManager.createQuery("update NotificationEntity n set n.sendable=false where n.orcid = :orcid and n.id = :id");
         query.setParameter("orcid", orcid);
@@ -313,6 +315,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }    
     
     @Override
+    @Transactional
     public void updateRetryCount(String orcid, Long id, Long retryCount) {
         Query query = entityManager.createQuery("update NotificationEntity n set n.retryCount = :count where n.orcid = :orcid and n.id = :id");
         query.setParameter("count", retryCount);

@@ -425,8 +425,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLocale(String orcid, AvailableLocales locale) {
-        profileDao.updateLocale(orcid, locale.name());
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLocale(orcid, locale.name());
+                return true;
+            }
+        });
     }
 
     @Override
