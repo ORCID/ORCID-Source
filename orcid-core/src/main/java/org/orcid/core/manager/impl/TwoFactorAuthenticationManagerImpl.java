@@ -21,6 +21,10 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 import org.orcid.pojo.AuthChallenge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticationManager {
 
@@ -46,7 +50,11 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     @Resource
     private ProfileDao profileDao;
 
+    @Resource
+    private TransactionTemplate transactionTemplate;
+
     @Override
+    @Transactional
     public String getQRCode(String orcid) {
         if (userUsing2FA(orcid)) {
             // don't allow generation of new code if user already using
@@ -55,7 +63,13 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
         // generate secret but don't switch on using2FA - user may abort process
         String base32Random = Base32.random();
         String secret = encryptionManager.encryptForInternalUse(base32Random);
-        profileDao.update2FASecret(orcid, secret);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.update2FASecret(orcid, secret);
+                return true;
+            }
+        });
         Email email = emailManagerReadOnly.findPrimaryEmail(orcid);
         // generatate URL for QR code per
         // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
@@ -65,29 +79,49 @@ public class TwoFactorAuthenticationManagerImpl implements TwoFactorAuthenticati
     }
 
     @Override
+    @Transactional
     public List<String> enable2FA(String orcid) {
         LOG.info("2FA enabled for %s", orcid);
-        profileDao.enable2FA(orcid);
-        List<String> codes = backupCodeManager.createBackupCodes(orcid);
-        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_ENABLED));
-        return codes;
+        return transactionTemplate.execute(new TransactionCallback<List<String>>() {
+            @Override
+            public List<String> doInTransaction(TransactionStatus status) {
+                profileDao.enable2FA(orcid);
+                List<String> codes = backupCodeManager.createBackupCodes(orcid);
+                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_ENABLED));
+                return codes;
+            }
+        });
     }
 
     @Override
+    @Transactional
     public void disable2FA(String orcid) {
         LOG.warn("2FA disabled for %s", orcid);
-        profileDao.disable2FA(orcid);
-        backupCodeManager.removeUnusedBackupCodes(orcid);
-        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED));
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.disable2FA(orcid);
+                backupCodeManager.removeUnusedBackupCodes(orcid);
+                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED));
+                return true;
+            }
+        });
     }
 
     @Override
+    @Transactional
     public void adminDisable2FA(String orcid, String adminOrcidId) {
         String message = String.format("Admin %s have disabled 2FA for %s", adminOrcidId, orcid);
         LOG.warn(message);
-        profileDao.disable2FA(orcid);
-        backupCodeManager.removeUnusedBackupCodes(orcid);
-        profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_ADMIN, message));
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.disable2FA(orcid);
+                backupCodeManager.removeUnusedBackupCodes(orcid);
+                profileEventDao.persist(new ProfileEventEntity(orcid, ProfileEventType.PROFILE_2FA_DISABLED_BY_ADMIN, message));
+                return true;
+            }
+        });
     }
 
     @Override

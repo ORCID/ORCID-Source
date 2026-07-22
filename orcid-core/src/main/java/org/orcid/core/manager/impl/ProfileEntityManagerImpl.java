@@ -138,13 +138,25 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public boolean reviewProfile(String orcid) {
-        return profileDao.reviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.reviewProfile(orcid);
+            }
+        });
     }
 
     @Override
+    @Transactional
     public boolean unreviewProfile(String orcid) {
-        return profileDao.unreviewProfile(orcid);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.unreviewProfile(orcid);
+            }
+        });
     }
 
     @Override
@@ -182,8 +194,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     @Override
     @Transactional
     public void updatePassword(String orcid, String password) {
-        String encryptedPassword = encryptionManager.hashForInternalUse(password);
-        profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                String encryptedPassword = encryptionManager.hashForInternalUse(password);
+                profileDao.changeEncryptedPassword(orcid, encryptedPassword);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -192,8 +210,15 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public void updateLastLoginDetails(String orcid, String ipAddress) {
-        profileDao.updateLastLoginDetails(orcid, ipAddress);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.updateLastLoginDetails(orcid, ipAddress);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -208,7 +233,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }    
 
     @Override
+    @Transactional
     public void update2FASecret(String orcid, String secret) {
-        profileDao.update2FASecret(orcid, secret);
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                profileDao.update2FASecret(orcid, secret);
+                return true;
+            }
+        });
     }        
 }
