@@ -215,8 +215,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
     }
 
     @Override
+    @Transactional
     public boolean enableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, true);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, true);
+            }
+        });
     }
 
     /**
@@ -227,8 +233,14 @@ public class ProfileEntityManagerImpl extends ProfileEntityManagerReadOnlyImpl i
      * @return true if the developer tools where disabeled on that profile
      */
     @Override
+    @Transactional
     public boolean disableDeveloperTools(String orcid) {
-        return profileDao.updateDeveloperTools(orcid, false);
+        return transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            @Override
+            public Boolean doInTransaction(TransactionStatus status) {
+                return profileDao.updateDeveloperTools(orcid, false);
+            }
+        });
     }
 
     @Override
