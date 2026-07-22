@@ -31,6 +31,8 @@ import org.orcid.persistence.dao.ProfileEventDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.pojo.AuthChallenge;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class TwoFactorAuthenticationManagerTest {
 
@@ -52,12 +54,22 @@ public class TwoFactorAuthenticationManagerTest {
     @Mock
     private ProfileEventDao profileEventDao;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
     @InjectMocks
     private TwoFactorAuthenticationManagerImpl twoFactorAuthenticationManager;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        when(transactionTemplate.execute(any(TransactionCallback.class))).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                TransactionCallback<?> callback = invocation.getArgument(0);
+                return callback.doInTransaction(null);
+            }
+        });
         doNothing().when(profileDao).disable2FA(anyString());
         doNothing().when(profileDao).enable2FA(anyString());
         doNothing().when(profileEventDao).persist(any(ProfileEventEntity.class));
