@@ -211,10 +211,12 @@ public class BaseController {
 
     protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (request != null && response != null && authentication != null && authentication.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
-        clearSessionCookies(response);
+        if (response != null) {
+            clearSessionCookies(response);
+        }
     }
 
     protected void clearSessionCookies(HttpServletResponse response) {

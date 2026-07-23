@@ -143,6 +143,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
+        when(servletRequest.getSession(true)).thenReturn(session);
         
         when(authenticationManagerMock.authenticate(Mockito.any())).thenAnswer(new Answer<UsernamePasswordAuthenticationToken>() {
             @Override
