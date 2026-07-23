@@ -57,7 +57,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
@@ -258,7 +260,11 @@ public class RegistrationController extends BaseController {
             if (Features.EVENTS.isActive()) {
                 eventManager.createEvent(EventType.NEW_REGISTRATION, request);
             }
-            createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
+            boolean loginSucceeded = createMinimalRegistrationAndLogUserIn(request, response, reg, usedCaptcha, locale, ip);
+            if (!loginSucceeded) {
+                r.getErrors().add(getMessage("register.error.generalError"));
+                return r;
+            }
         } catch (Exception e) {
             LOGGER.error("Error registering a new user", e);
             r.getErrors().add(getMessage("register.error.generalError"));
@@ -279,6 +285,14 @@ public class RegistrationController extends BaseController {
         String redirectUrl = calculateRedirectUrl(request, response, true);
         if (request.getQueryString() == null || request.getQueryString().isEmpty()) {
             redirectUrl = calculateRedirectUrl(request, response, true, true);
+        }
+        if (redirectUrl == null) {
+            redirectUrl = getBaseUri() + "/my-orcid?justRegistered";
+        } else {
+            String normalizedRedirect = redirectUrl.toLowerCase();
+            if (normalizedRedirect.contains("/signin") || normalizedRedirect.contains("/login") || normalizedRedirect.contains("/register")) {
+                redirectUrl = getBaseUri() + "/my-orcid?justRegistered";
+            }
         }
         r.setUrl(redirectUrl);
         return r;
@@ -507,27 +521,35 @@ public class RegistrationController extends BaseController {
         return new ModelAndView(redirect);
     }
 
-    private void createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
+    private boolean createMinimalRegistrationAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Registration registration,
                                                        boolean usedCaptchaVerification, Locale locale, String ip) {
         String unencryptedPassword = registration.getPassword().getValue();
         String orcidId = createMinimalRegistration(request, registration, usedCaptchaVerification, locale, ip);
-        logUserIn(request, response, orcidId, unencryptedPassword);
+        boolean loginSucceeded = logUserIn(request, response, orcidId, unencryptedPassword);
         if (registration.getAffiliationForm() != null) {
             createAffiliation(registration, orcidId);
         }
+        return loginSucceeded;
     }
 
-    public void logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
+    public boolean logUserIn(HttpServletRequest request, HttpServletResponse response, String orcidId, String password) {
         UsernamePasswordAuthenticationToken token = null;
         try {
             token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+            // Spring Security 6 requires explicit persistence for programmatic authentication.
+            new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+            return true;
         } catch (AuthenticationException e) {
             // this should never happen
             SecurityContextHolder.getContext().setAuthentication(null);
             LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
+            return false;
         }
     }
 

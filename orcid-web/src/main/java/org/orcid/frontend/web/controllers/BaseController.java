@@ -557,7 +557,8 @@ public class BaseController {
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect, String thirdPartyLogin) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect) {
+        boolean oauthAuthorizationRedirect = isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect;
+        if (oauthAuthorizationRedirect) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize";
@@ -582,6 +583,9 @@ public class BaseController {
             if (thirdPartyLogin != null){
                 targetUrl += "/third-party-signin-completed";
             }
+        }
+        if (thirdPartyLogin != null && !oauthAuthorizationRedirect) {
+            targetUrl = getBaseUri() + "/my-orcid/third-party-signin-completed";
         }
         if (addJustRegisteredParameter) {
             targetUrl += "?justRegistered";

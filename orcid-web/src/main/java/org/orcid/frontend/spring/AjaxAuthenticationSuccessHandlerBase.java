@@ -11,6 +11,9 @@ import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.utils.OrcidRequestUtil;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
@@ -32,15 +35,36 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
     protected String getTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
         if (authentication != null) {
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+            new HttpSessionSecurityContextRepository().saveContext(context, request, response);
             String orcidId = authentication.getName();
             checkLocale(request, response, orcidId);            
             profileEntityManager.updateLastLoginDetails(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
+
+        // Keep third-party and institutional success flows deterministic by sending users to my-orcid.
+        if (authentication != null && isThirdPartySigninRequest(request) && !isOauthRequest(request)) {
+            targetUrl = orcidUrlManager.getServerStringWithContextPath(request) + "/my-orcid";
+        }
+
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
         }
 
         return targetUrl;
+    }
+
+    private boolean isThirdPartySigninRequest(HttpServletRequest request) {
+        String path = OrcidUrlManager.getPathWithoutContextPath(request);
+        return path.startsWith("/social/") || path.startsWith("/shibboleth/");
+    }
+
+    private boolean isOauthRequest(HttpServletRequest request) {
+        String oauthRequest = request.getParameter("oauthRequest");
+        return oauthRequest != null && Boolean.parseBoolean(oauthRequest);
     }
 
     protected String getRealUserOrcid() {
