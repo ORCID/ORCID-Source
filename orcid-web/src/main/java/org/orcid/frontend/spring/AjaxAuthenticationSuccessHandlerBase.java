@@ -45,26 +45,11 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
             profileEntityManager.updateLastLoginDetails(orcidId, OrcidRequestUtil.getIpAddress(request));
         }
 
-        // Keep third-party and institutional success flows deterministic by sending users to my-orcid.
-        if (authentication != null && isThirdPartySigninRequest(request) && !isOauthRequest(request)) {
-            targetUrl = orcidUrlManager.getServerStringWithContextPath(request) + "/my-orcid";
-        }
-
         if (targetUrl == null) {
             targetUrl = determineFullTargetUrl(request, response);
         }
 
         return targetUrl;
-    }
-
-    private boolean isThirdPartySigninRequest(HttpServletRequest request) {
-        String path = OrcidUrlManager.getPathWithoutContextPath(request);
-        return path.startsWith("/social/") || path.startsWith("/shibboleth/");
-    }
-
-    private boolean isOauthRequest(HttpServletRequest request) {
-        String oauthRequest = request.getParameter("oauthRequest");
-        return oauthRequest != null && Boolean.parseBoolean(oauthRequest);
     }
 
     protected String getRealUserOrcid() {

@@ -488,12 +488,7 @@ public class PasswordResetController extends BaseController {
             return r;
         }
 
-        boolean loginSucceeded = reactivateAndLogUserIn(request, response, reg);
-        if (!loginSucceeded) {
-            LOGGER.error("Reactivation completed but user could not be logged in");
-            r.getErrors().add(getMessage("register.error.generalError"));
-            return r;
-        }
+        reactivateAndLogUserIn(request, response, reg);
         if(OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
             Map<String, String> signedInData = socialSignInUtils.getSignedInData(request, response);
             if(signedInData != null && signedInData.containsKey(OrcidOauth2Constants.PROVIDER_ID)) {
@@ -506,22 +501,7 @@ public class PasswordResetController extends BaseController {
             ajaxAuthenticationSuccessHandlerShibboleth.linkShibbolethAccount(request, response);
         }
 
-        String redirectUrl;
-        if (OrcidOauth2Constants.SOCIAL.equals(reg.getLinkType())) {
-            redirectUrl = calculateRedirectUrl(request, response, false, false, "social");
-        } else if (OrcidOauth2Constants.SHIBBOLETH.equals(reg.getLinkType())) {
-            redirectUrl = calculateRedirectUrl(request, response, false, false, "shibboleth");
-        } else {
-            redirectUrl = calculateRedirectUrl(request, response, false);
-        }
-        if (redirectUrl == null) {
-            redirectUrl = getBaseUri() + "/my-orcid";
-        } else {
-            String normalizedRedirect = redirectUrl.toLowerCase();
-            if (normalizedRedirect.contains("/signin") || normalizedRedirect.contains("/login") || normalizedRedirect.contains("/register")) {
-                redirectUrl = getBaseUri() + "/my-orcid";
-            }
-        }
+        String redirectUrl = calculateRedirectUrl(request, response, false);
         r.setUrl(redirectUrl);
         return r;
     }
@@ -563,7 +543,7 @@ public class PasswordResetController extends BaseController {
         return reg;
     }
 
-    private boolean reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
+    private void reactivateAndLogUserIn(HttpServletRequest request, HttpServletResponse response, Reactivation reactivation) {
         PasswordResetToken resetParams = buildResetTokenFromEncryptedLink(reactivation.getResetParams());
         String email = resetParams.getEmail();
         String orcid = emailManager.findOrcidIdByEmail(email);
@@ -585,13 +565,12 @@ public class PasswordResetController extends BaseController {
         LOGGER.info("Clearing profile cache for orcid id: " + orcid);
         profileEntityCacheManager.remove(orcid);
         // Log user in
-        boolean loginSucceeded = registrationController.logUserIn(request, response, orcid, password);
+        registrationController.logUserIn(request, response, orcid, password);
 
         // Add the affiliation
         if (reactivation.getAffiliationForm() != null) {
             registrationManager.createAffiliation(reactivation, orcid);
         }
 
-        return loginSucceeded;
     }
 }

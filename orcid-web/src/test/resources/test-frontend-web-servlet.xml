@@ -12,4 +12,9 @@
         ignore-unresolvable="true" />
 
 	<import resource="classpath*:orcid-frontend-web-servlet.xml"/>
+
+	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService$OpenIDConnectDiscoveryServiceConfig" />
+	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService">
+		<constructor-arg ref="openIDConnectDiscoveryServiceConfig" />
+	</bean>
 </beans>

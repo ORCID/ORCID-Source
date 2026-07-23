@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.ws.rs.core.UriBuilder;
@@ -106,8 +107,13 @@ public class BaseController {
     protected List<String> domainsAllowingRobots;
 
     protected static final String STATIC_FOLDER_PATH = "/static/" + ReleaseNameUtils.getReleaseName();
+    private static final String SESSION_COOKIE_NAME = "SESSION";
+    private static final String JSESSIONID_COOKIE_NAME = "JSESSIONID";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);    
+
+    @Value("${org.orcid.core.session.cookie.domain:}")
+    private String sessionCookieDomain;
 
     @Resource
     private String cdnConfigFile;
@@ -207,7 +213,27 @@ public class BaseController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }        
+        }
+        clearSessionCookies(response);
+    }
+
+    protected void clearSessionCookies(HttpServletResponse response) {
+        expireCookie(response, SESSION_COOKIE_NAME, null);
+        expireCookie(response, JSESSIONID_COOKIE_NAME, null);
+        if (StringUtils.isNotBlank(sessionCookieDomain)) {
+            expireCookie(response, SESSION_COOKIE_NAME, sessionCookieDomain);
+            expireCookie(response, JSESSIONID_COOKIE_NAME, sessionCookieDomain);
+        }
+    }
+
+    private void expireCookie(HttpServletResponse response, String cookieName, String cookieDomain) {
+        Cookie cookie = new Cookie(cookieName, StringUtils.EMPTY);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        if (StringUtils.isNotBlank(cookieDomain)) {
+            cookie.setDomain(cookieDomain);
+        }
+        response.addCookie(cookie);
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
@@ -557,8 +583,7 @@ public class BaseController {
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response, boolean justRegistered, boolean avoidOauthRedirect, String thirdPartyLogin) {
         String targetUrl = null;
         Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
-        boolean oauthAuthorizationRedirect = isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect;
-        if (oauthAuthorizationRedirect) {
+        if (isOauth2ScreensRequest != null && isOauth2ScreensRequest && !avoidOauthRedirect) {
             // Just redirect to the authorization screen
             String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
             targetUrl = orcidUrlManager.getBaseUrl() + "/oauth/authorize";
@@ -584,9 +609,7 @@ public class BaseController {
                 targetUrl += "/third-party-signin-completed";
             }
         }
-        if (thirdPartyLogin != null && !oauthAuthorizationRedirect) {
-            targetUrl = getBaseUri() + "/my-orcid/third-party-signin-completed";
-        }
+
         if (addJustRegisteredParameter) {
             targetUrl += "?justRegistered";
         }

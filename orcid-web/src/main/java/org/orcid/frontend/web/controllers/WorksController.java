@@ -109,9 +109,19 @@ public class WorksController extends BaseWorkspaceController {
         ArrayList<Long> workIdLs = new ArrayList<Long>();
         if (workIds != null) {
             for (String workId : workIds) {
-                workIdLs.add(new Long(workId));
+                String trimmed = workId == null ? null : workId.trim();
+                if (StringUtils.isBlank(trimmed)) {
+                    continue;
+                }
+                try {
+                    workIdLs.add(Long.valueOf(trimmed));
+                } catch (NumberFormatException nfe) {
+                    LOGGER.warn("Ignoring invalid work put code '{}' in bulk delete request '{}'", trimmed, workIdsStr);
+                }
             }
-            workManager.removeWorks(getEffectiveUserOrcid(), workIdLs);
+            if (!workIdLs.isEmpty()) {
+                workManager.removeWorks(getEffectiveUserOrcid(), workIdLs);
+            }
         }
         return workIdLs;
     }

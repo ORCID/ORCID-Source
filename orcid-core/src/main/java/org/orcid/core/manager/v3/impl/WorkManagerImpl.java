@@ -131,6 +131,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      * */
+    @Transactional
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         boolean result = workDao.updateVisibilities(orcid, workIds, visibility.name());
         
@@ -154,11 +155,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The client orcid
      * @return true if the work was deleted
      * */
+    @Transactional
     public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         return workDao.removeWorks(clientOrcid, workIds);
     }
 
     @Override
+    @Transactional
     public void removeAllWorks(String orcid) {
         workDao.removeWorks(orcid);
     }
@@ -172,6 +175,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The work id
      * @return true if the work index was correctly set
      * */
+    @Transactional
     public boolean updateToMaxDisplay(String orcid, Long workId) {
         return workDao.updateToMaxDisplay(orcid, workId);
     }
@@ -422,6 +426,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
@@ -475,6 +480,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
     
     @Override
+    @Transactional
     public void createNewWorkGroup(List<Long> workIds, String orcid) throws MissingGroupableExternalIDException {
         List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, workIds, getLastModified(orcid));
         JSONWorkExternalIdentifiersConverterV3 externalIdConverter = new JSONWorkExternalIdentifiersConverterV3(norm, resolver, localeManager);

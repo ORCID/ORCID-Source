@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -119,6 +121,39 @@ public class WorksControllerTest extends BaseControllerTest {
         assertEquals(Long.valueOf(3l), ids.get(2));
         assertEquals(Long.valueOf(4l), ids.get(3));
         
+        ReflectionTestUtils.setField(worksController, "workManager", oldWorkManager);
+    }
+
+    @Test
+    public void testRemoveWorkSkipsInvalidPutCodes() {
+        WorkManager oldWorkManager = (WorkManager) ReflectionTestUtils.getField(worksController, "workManager");
+        WorkManager mockWorkManager = Mockito.mock(WorkManager.class);
+        ReflectionTestUtils.setField(worksController, "workManager", mockWorkManager);
+
+        ArrayList<Long> removed = worksController.removeWork("5,undefined, ,6");
+
+        assertEquals(2, removed.size());
+        assertEquals(Long.valueOf(5L), removed.get(0));
+        assertEquals(Long.valueOf(6L), removed.get(1));
+        verify(mockWorkManager).removeWorks(Mockito.anyString(), idsCaptor.capture());
+        assertEquals(2, idsCaptor.getValue().size());
+        assertEquals(Long.valueOf(5L), idsCaptor.getValue().get(0));
+        assertEquals(Long.valueOf(6L), idsCaptor.getValue().get(1));
+
+        ReflectionTestUtils.setField(worksController, "workManager", oldWorkManager);
+    }
+
+    @Test
+    public void testRemoveWorkWithOnlyInvalidPutCodesDoesNotInvokeManager() {
+        WorkManager oldWorkManager = (WorkManager) ReflectionTestUtils.getField(worksController, "workManager");
+        WorkManager mockWorkManager = Mockito.mock(WorkManager.class);
+        ReflectionTestUtils.setField(worksController, "workManager", mockWorkManager);
+
+        ArrayList<Long> removed = worksController.removeWork("undefined, ,NaN");
+
+        assertTrue(removed.isEmpty());
+        verify(mockWorkManager, never()).removeWorks(Mockito.anyString(), Mockito.anyList());
+
         ReflectionTestUtils.setField(worksController, "workManager", oldWorkManager);
     }
 
