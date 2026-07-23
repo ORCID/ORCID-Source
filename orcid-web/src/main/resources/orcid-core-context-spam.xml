@@ -1092,6 +1092,12 @@
     </bean>
     
     <bean id="sourceEntityUtils" class="org.orcid.core.utils.SourceEntityUtils" />
+
+	<bean id="openIDConnectDiscoveryServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService$OpenIDConnectDiscoveryServiceConfig" />
+
+	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService">
+		<constructor-arg ref="openIDConnectDiscoveryServiceConfig" />
+	</bean>
         
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
 

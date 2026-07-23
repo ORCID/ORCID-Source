@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
+import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.record.Person;
@@ -24,6 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +41,9 @@ public class OpenIDController {
     
     @Resource
     private AuthorizationServerUtil authorizationServerUtil;
+
+    @Resource
+    OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
 
     @Value("${org.orcid.core.baseUri}")
     private String path;
@@ -116,12 +123,13 @@ public class OpenIDController {
      * 
      * @param request
      * @return
-     * @throws JsonProcessingException 
      */
     @RequestMapping(value = "/.well-known/openid-configuration", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody String getOpenIDDiscovery(HttpServletRequest request) throws JsonProcessingException {
         //TODO: This should be a FW proxy to the auth server, maybe from nginx
-        throw new UnsupportedOperationException("Should be requested from the auth server");
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(openIDConnectDiscoveryService.getConfig());
+        return json;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
