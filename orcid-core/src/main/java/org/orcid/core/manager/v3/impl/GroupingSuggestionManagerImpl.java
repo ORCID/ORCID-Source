@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
+import jakarta.transaction.Transactional;
 
 import org.orcid.core.exception.MissingGroupableExternalIDException;
 import org.orcid.core.manager.v3.GroupingSuggestionManager;
@@ -22,6 +23,7 @@ public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerRead
     private WorkManager workManager;
 
     @Override
+    @Transactional
     public void markGroupingSuggestionAsRejected(WorkGroupingSuggestion suggestion) {
         RejectedGroupingSuggestionEntity entity = getGroupingSuggestionEntity(suggestion);
         rejectedGroupingSuggestionDao.persist(entity);
@@ -49,6 +51,7 @@ public class GroupingSuggestionManagerImpl extends GroupingSuggestionManagerRead
     }
 
     @Override
+    @Transactional
     public void markGroupingSuggestionAsAccepted(WorkGroupingSuggestion suggestion) throws MissingGroupableExternalIDException {
         workManager.createNewWorkGroup(suggestion.getPutCodes(), suggestion.getOrcid());
         groupingSuggestionsCacheManager.removeGroupingSuggestion(suggestion);
