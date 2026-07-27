@@ -18,6 +18,7 @@ import org.orcid.core.manager.v3.SourceManager;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -90,6 +91,9 @@ public class RecordEmailSender {
 
     @Resource
     private ExpiringLinkService expiringLinkService;
+
+    @Resource
+    private RedisClient redisClient;
 
     public void sendWelcomeEmail(String userOrcid, String email) {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
@@ -252,7 +256,6 @@ public class RecordEmailSender {
 
     public void sendPasswordResetEmail(String submittedEmail, String userOrcid) {
         ProfileEntity record = profileEntityCacheManager.retrieve(userOrcid);
-        String primaryEmail = emailManager.findPrimaryEmail(userOrcid).getEmail();
         Locale locale = getUserLocaleFromProfileEntity(record);
 
         // Create map of template params
@@ -263,9 +266,16 @@ public class RecordEmailSender {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         // Generate body from template
-        String resetUrl = verifyEmailUtils.createResetEmail(primaryEmail, orcidUrlManager.getBaseUrl());
+        String token;
+        try {
+            token = expiringLinkService.generateExpiringToken(userOrcid, jwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
+            redisClient.set("password-reset-token-" + userOrcid, token, (int) (jwtExpirationInMinutes * 60));
+        } catch (com.nimbusds.jose.JOSEException e) {
+            LOGGER.error("Failed to generate password reset token", e);
+            throw new RuntimeException("Password reset token generation failed", e);
+        }
+        String resetUrl = orcidUrlManager.getBaseUrl() + "/reset-password-email/" + token;
         templateParams.put("passwordResetUrl", resetUrl);
-
         verifyEmailUtils.addMessageParams(templateParams, locale);
 
         // Generate body from template
