@@ -32,6 +32,7 @@ import org.orcid.core.manager.v3.read_only.ClientManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordNameManagerReadOnly;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
 import org.orcid.jaxb.model.clientgroup.ClientType;
@@ -56,6 +57,7 @@ import org.orcid.pojo.RemoveEmailsRequest;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RedirectUri;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +72,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import com.nimbusds.jose.JOSEException;
 
 /**
  * @author Angel Montenegro
@@ -107,6 +110,15 @@ public class AdminController extends BaseController {
 
     @Resource
     private TwoFactorAuthenticationManager twoFactorAuthenticationManager;
+
+    @Resource
+    private ExpiringLinkService expiringLinkService;
+
+    @Resource
+    private RedisClient redisClient;
+
+    @Value("${org.orcid.utils.adminJwtExpirationInMinutes:1440}")
+    private long adminJwtExpirationInMinutes;
 
     @Value("${org.orcid.admin.registry.url:https://orcid.org}")
     private String registryUrl;
@@ -735,12 +747,22 @@ public class AdminController extends BaseController {
         }
 
         if (!PojoUtil.isEmpty(orcid) && profileEntityManager.orcidExists(orcid)) {
-            Pair<String, Date> resetLinkData = verifyEmailUtils.createResetLinkForAdmin(orcid, registryUrl);
-            LOGGER.debug("Reset link to be sent to the client: " + resetLinkData.getKey());
+            String token;
+            try {
+                token = expiringLinkService.generateExpiringToken(orcid, adminJwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
+                redisClient.set("password-reset-token-" + orcid, token, (int) (adminJwtExpirationInMinutes * 60));
+            } catch (JOSEException e) {
+                LOGGER.error("Failed to generate password reset token for admin", e);
+                form.setError(getMessage("admin.errors.unable_to_fetch_info"));
+                return form;
+            }
 
-            form.setResetLink(resetLinkData.getKey());
-            form.setIssueDate(resetLinkData.getValue());
-            form.setDurationInHours(RESET_PASSWORD_LINK_DURATION);
+            String resetUrl = registryUrl + "/reset-password-email/" + token;
+            LOGGER.debug("Reset link to be sent to the client: " + resetUrl);
+
+            form.setResetLink(resetUrl);
+            form.setIssueDate(new Date());
+            form.setDurationInHours((int) (adminJwtExpirationInMinutes / 60));
 
         } else {
             form.setError(getMessage("admin.errors.unexisting_orcid"));
