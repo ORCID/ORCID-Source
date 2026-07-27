@@ -80,6 +80,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -206,7 +207,9 @@ public class BaseController {
     protected void logoutCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
+            SecurityContextLogoutHandler handler = new SecurityContextLogoutHandler();
+            handler.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+            handler.logout(request, response, authentication);
         }        
     }
 
