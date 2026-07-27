@@ -228,7 +228,12 @@ public class OrcidUrlManager {
             }
             url = getBaseUrl() + "/oauth/authorize?" + queryString;
         } else {
-            SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+            HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+            // Spring Security 6 defaults to requiring ?continue parameter to return saved request.
+            // Set to null to restore Spring Security 5 behavior (always return saved request if available).
+            // This prevents post-login redirects from breaking when no ?continue param is present.
+            requestCache.setMatchingRequestParameterName(null);
+            SavedRequest savedRequest = requestCache.getRequest(request, response);
             if(savedRequest != null) {
                 url = savedRequest.getRedirectUrl();
             }
