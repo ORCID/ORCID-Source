@@ -118,6 +118,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The new visibility value for the profile work relationship
      * @return true if the relationship was updated
      */
+    @Transactional
     public boolean updateVisibilities(String orcid, List<Long> workIds, Visibility visibility) {
         return workDao.updateVisibilities(orcid, workIds, visibility.name());
     }
@@ -132,11 +133,13 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The client orcid
      * @return true if the work was deleted
      */
+    @Transactional
     public boolean removeWorks(String clientOrcid, List<Long> workIds) {
         return workDao.removeWorks(clientOrcid, workIds);
     }
 
     @Override
+    @Transactional
     public void removeAllWorks(String orcid) {
         workDao.removeWorks(orcid);
     }
@@ -150,6 +153,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
      *            The work id
      * @return true if the work index was correctly set
      */
+    @Transactional
     public boolean updateToMaxDisplay(String orcid, Long workId) {
         return workDao.updateToMaxDisplay(orcid, workId);
     }
@@ -277,7 +281,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
                         setIncomingWorkPrivacy(workEntity, profile);
                         DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);
-                        filterContributors(work, workEntity);                        
+                        filterContributors(work, workEntity);
                         workDao.persist(workEntity);
 
                         // Update the element in the bulk
@@ -321,10 +325,10 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
         Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
         for (Work work : existingWorks) {
             // If it is the same source
-            if (work.retrieveSourcePath() !=null && work.retrieveSourcePath().equals(sourceId)) {
+            if (work.retrieveSourcePath() != null && work.retrieveSourcePath().equals(sourceId)) {
                 if (work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
                     for (ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                        if(extIDPutCodeMap != null) {
+                        if (extIDPutCodeMap != null) {
                             extIDPutCodeMap.put(extId, work.getPutCode());
                         }
                         // Don't include PART_OF nor FUNDED_BY external ids
@@ -366,14 +370,14 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
             String client = null;
             if (sourceEntity.getSourceProfile() != null && sourceEntity.getSourceProfile().getId() != null) {
                 client = sourceEntity.getSourceProfile().getId();
-                if(!StringUtils.equals(client, orcid) ) {
-                	throw new OrcidForbiddenException(devMessage );
+                if (!StringUtils.equals(client, orcid)) {
+                    throw new OrcidForbiddenException(devMessage);
                 }
             }
             if (sourceEntity.getSourceClient() != null && sourceEntity.getSourceClient().getClientName() != null) {
                 client = sourceEntity.getSourceClient().getClientName();
-                if(!StringUtils.equals(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId()) ) {
-                	throw new OrcidForbiddenException(devMessage );
+                if (!StringUtils.equals(sourceEntity.getSourceClient().getClientId(), workEntity.getClientSourceId())) {
+                    throw new OrcidForbiddenException(devMessage);
                 }
             }
             LOGGER.info("There is no changes in the work with putCode " + work.getPutCode() + " send it by " + client);
@@ -398,7 +402,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
                 }
             }
 
-            filterContributors(work, workEntity);            
+            filterContributors(work, workEntity);
         } else {
             // validate external ID vocab
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
@@ -419,6 +423,7 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
     }
 
     @Override
+    @Transactional
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
@@ -468,7 +473,8 @@ public class WorkManagerImpl extends WorkManagerReadOnlyImpl implements WorkMana
 
     private void filterContributors(Work work, WorkEntity workEntity) {
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null && work.getWorkContributors().getContributor().size() > 0) {
-            List<ContributorsRolesAndSequencesV2> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(), maxContributorsForUI);
+            List<ContributorsRolesAndSequencesV2> topContributors = contributorUtils.getContributorsGroupedByOrcid(work.getWorkContributors().getContributor(),
+                    maxContributorsForUI);
             if (topContributors.size() > 0) {
                 workEntity.setTopContributorsJson(contributorsRolesAndSequencesConverterV2.convertTo(topContributors, null));
             }
