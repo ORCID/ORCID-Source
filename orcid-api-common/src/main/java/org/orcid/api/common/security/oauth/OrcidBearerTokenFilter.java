@@ -3,7 +3,6 @@ package org.orcid.api.common.security.oauth;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.oauth.OrcidBearerTokenAuthentication;
@@ -29,9 +28,11 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OrcidBearerTokenFilter implements Filter {
-    private static final Logger logger = Logger.getLogger(OrcidBearerTokenFilter.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrcidBearerTokenFilter.class);
     private static final String CLIENT_GRANTED_AUTHORITY = "clientGrantedAuthority";
     private static final String ROLE_PUBLIC = "ROLE_PUBLIC";
     private static final String READ_PUBLIC_SCOPE = "/read-public";

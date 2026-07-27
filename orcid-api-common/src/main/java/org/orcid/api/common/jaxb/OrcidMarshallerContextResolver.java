@@ -10,8 +10,8 @@ import jakarta.ws.rs.ext.Provider;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 @Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML })
 public class OrcidMarshallerContextResolver implements ContextResolver<Marshaller> {
-    private static final Logger logger = Logger.getLogger(OrcidMarshallerContextResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrcidMarshallerContextResolver.class);
 
     private JAXBContext context;
 
