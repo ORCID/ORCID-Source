@@ -28,13 +28,6 @@
            <artifactId>orcid-utils</artifactId>
            <version>${project.version}</version>
         </dependency>
-
-		<!-- Solr -->
-		<dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>${solr.version}</version>        	
-        </dependency>
         
         <!-- AWS -->
 	    <dependency>
