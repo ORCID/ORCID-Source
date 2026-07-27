@@ -194,22 +194,9 @@ public class PasswordResetController extends BaseController {
 
     @RequestMapping(value = "/reset-password-email/{encryptedEmail}", method = RequestMethod.GET)
     public ModelAndView resetPasswordEmail(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail) {
-        ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(encryptedEmail);
-        if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
-            String orcid = verificationResult.getClaims().getSubject();
-            String latestToken = redisClient.get("password-reset-token-" + orcid);
-            if (!encryptedEmail.equals(latestToken)) {
-                return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
-            }
-        } else if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.EXPIRED) {
+        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
+        if (isTokenExpired(passwordResetToken)) {
             return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
-        } else {
-            // Old logic support
-            // TODO: remove once the card https://trello.com/c/TqSd7ojs/7973-reset-password is stable on prod
-            PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(encryptedEmail);
-            if (isTokenExpired(passwordResetToken)) {
-                return new ModelAndView("redirect:" + calculateRedirectUrl("/reset-password?expired=true"));
-            }
         }
         ModelAndView result = new ModelAndView("password_one_time_reset");
         result.addObject("noIndex", true);
@@ -305,7 +292,7 @@ public class PasswordResetController extends BaseController {
             return oneTimeResetPasswordForm;
         } else {
             // Old logic support
-            // TODO: remove once the card https://trello.com/c/TqSd7ojs/7973-reset-password is stable on prod
+            // TODO: remove once PD-6002 is stable on prod
             PasswordResetToken passwordResetToken;
             try {
                  passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
@@ -414,7 +401,7 @@ public class PasswordResetController extends BaseController {
         }
 
         // Old logic support
-        // TODO: remove once the card https://trello.com/c/TqSd7ojs/7973-reset-password is stable on prod
+        // TODO: remove once PD-6002 is stable on prod
         PasswordResetToken passwordResetToken;
         
         try {
