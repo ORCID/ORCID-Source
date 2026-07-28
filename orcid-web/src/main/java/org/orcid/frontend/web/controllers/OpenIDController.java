@@ -17,6 +17,7 @@ import org.orcid.core.manager.v3.read_only.PersonDetailsManagerReadOnly;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService;
 import org.orcid.core.oauth.openid.OpenIDConnectUserInfo;
+import org.orcid.core.oauth.openid.OpenIDConnectKeyService;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.v3.release.record.Person;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.codehaus.jettison.json.JSONObject;
+
 
 @Controller
 public class OpenIDController {
@@ -41,9 +44,12 @@ public class OpenIDController {
     
     @Resource
     private AuthorizationServerUtil authorizationServerUtil;
+    
+    @Resource
+    private OpenIDConnectKeyService openIDConnectKeyService;
 
     @Resource
-    OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
+    private OpenIDConnectDiscoveryService openIDConnectDiscoveryService;
 
     @Value("${org.orcid.core.baseUri}")
     private String path;
@@ -55,11 +61,12 @@ public class OpenIDController {
      * 
      * @param request
      * @return
+     * @throws JSONException 
      */
     @RequestMapping(value = "/oauth/jwks", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody JSONObject getJWKS(HttpServletRequest request) {
+    public @ResponseBody net.minidev.json.JSONObject getJWKS(HttpServletRequest request) throws JSONException {
         //TODO: This should be a FW proxy to the auth server, maybe from nginx
-        throw new UnsupportedOperationException("Should be requested from the auth server");
+        return openIDConnectKeyService.getPublicJWK().toJSONObject();  
     }
     
     /** Manually checks bearer token in header, looks up user or throws 403.
