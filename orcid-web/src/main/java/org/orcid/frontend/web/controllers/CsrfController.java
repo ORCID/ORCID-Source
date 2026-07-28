@@ -47,9 +47,7 @@ public class CsrfController {
             csrfToken = csrfTokenRepository.generateToken(request);
             csrfTokenRepository.saveToken(csrfToken, request, response);
         }
-        if (csrfToken != null) {
-            return Collections.singletonMap(csrfToken.getParameterName(), csrfToken.getToken());
-        }
+        // Return empty map - token is in the XSRF-TOKEN cookie, not in the response body for security
         return Collections.emptyMap();
     }
 }
