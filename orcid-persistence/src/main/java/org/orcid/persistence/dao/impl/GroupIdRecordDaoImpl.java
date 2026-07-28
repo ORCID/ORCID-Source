@@ -29,7 +29,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @Override
     public boolean exists(String groupId) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(*) from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(g) from GroupIdRecordEntity g where trim(lower(g.groupId)) = trim(lower(:groupId))", Long.class);
         query.setParameter("groupId", groupId);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -55,7 +55,7 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @Override
     public boolean haveAnyPeerReview(String groupId) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(*) from PeerReviewEntity where trim(lower(groupId)) = trim(lower(:groupId))", Long.class);
+        TypedQuery<Long> query = entityManager.createQuery("select count(p) from PeerReviewEntity p where trim(lower(p.groupId)) = trim(lower(:groupId))", Long.class);
         query.setParameter("groupId", groupId);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -63,9 +63,9 @@ public class GroupIdRecordDaoImpl extends GenericDaoImpl<GroupIdRecordEntity, Lo
 
     @Override
     public boolean duplicateExists(Long putCode, String groupId) {
-        StringBuilder queryString = new StringBuilder("select count(*) from GroupIdRecordEntity where trim(lower(groupId)) = trim(lower(:groupId))");
+        StringBuilder queryString = new StringBuilder("select count(g) from GroupIdRecordEntity g where trim(lower(g.groupId)) = trim(lower(:groupId))");
         if (putCode != null) {
-            queryString.append(" and id != :putCode");
+            queryString.append(" and g.id != :putCode");
         }
         TypedQuery<Long> query = entityManager.createQuery(queryString.toString(), Long.class);
         query.setParameter("groupId", groupId);

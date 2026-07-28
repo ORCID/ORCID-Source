@@ -79,7 +79,7 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
 
     @Override
     public int getUnreadCount(String orcid) {
-        TypedQuery<Long> query = entityManager.createQuery("select count(*) from NotificationEntity where readDate is null and archivedDate is null and orcid = :orcid",
+        TypedQuery<Long> query = entityManager.createQuery("select count(n) from NotificationEntity n where n.readDate is null and n.archivedDate is null and n.orcid = :orcid",
                 Long.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult().intValue();
@@ -89,9 +89,9 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     @Override
     public int getTotalCount(String orcid, boolean archived) {
         StringBuffer sb = new StringBuffer();
-        sb.append("select count(*) from NotificationEntity where orcid = :orcid");
+        sb.append("select count(n) from NotificationEntity n where n.orcid = :orcid");
         if (!archived) {
-            sb.append(" and archivedDate is null");
+            sb.append(" and n.archivedDate is null");
         } 
         TypedQuery<Long> query = entityManager.createQuery(sb.toString(),
                 Long.class);
