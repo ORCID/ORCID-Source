@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.codehaus.jettison.json.JSONObject;
 
 
@@ -60,9 +61,10 @@ public class OpenIDController {
      * 
      * @param request
      * @return
+     * @throws JSONException 
      */
     @RequestMapping(value = "/oauth/jwks", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody JSONObject getJWKS(HttpServletRequest request) {
+    public @ResponseBody net.minidev.json.JSONObject getJWKS(HttpServletRequest request) throws JSONException {
         //TODO: This should be a FW proxy to the auth server, maybe from nginx
         return openIDConnectKeyService.getPublicJWK().toJSONObject();  
     }
