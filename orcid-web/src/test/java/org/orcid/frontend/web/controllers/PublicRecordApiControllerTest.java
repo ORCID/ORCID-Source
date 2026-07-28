@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
@@ -57,6 +58,7 @@ public class PublicRecordApiControllerTest {
         
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule());
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE);
         String expectedJson = mapper.writeValueAsString(record);
         assertEquals(expectedJson, result);
     }
