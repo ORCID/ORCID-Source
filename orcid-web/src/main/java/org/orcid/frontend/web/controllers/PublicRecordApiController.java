@@ -1,5 +1,6 @@
 package org.orcid.frontend.web.controllers;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import jakarta.annotation.Resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,6 +57,7 @@ public class PublicRecordApiController {
     public PublicRecordApiController() {
         this.mapper = new ObjectMapper();
         mapper.registerModule(new JaxbAnnotationModule());
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/record", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
