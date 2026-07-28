@@ -213,7 +213,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
      */
     public String getMemberName(String clientId) {
         TypedQuery<String> query = entityManager
-                .createQuery("select creditName from RecordNameEntity where orcid = (select groupProfileId from ClientDetailsEntity where id=:clientId)", String.class);
+                .createQuery("select r.creditName from RecordNameEntity r where r.orcid = (select c.groupProfileId from ClientDetailsEntity c where c.id=:clientId)", String.class);
         query.setParameter("clientId", clientId);
         return query.getSingleResult();
     }
@@ -221,7 +221,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     @Override
     public boolean existsAndIsNotPublicClient(String clientId) {
         TypedQuery<Long> query = entityManager
-                .createQuery("select count(*) from ClientDetailsEntity where id=:clientId and clientType != 'PUBLIC_CLIENT'", Long.class);
+                .createQuery("select count(c) from ClientDetailsEntity c where c.id=:clientId and c.clientType != 'PUBLIC_CLIENT'", Long.class);
         query.setParameter("clientId", clientId);
         Long result = query.getSingleResult();
         return (result != null && result > 0);
@@ -229,7 +229,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     public Date getLastModifiedIfNotPublicClient(String clientId) {
-        Query query = entityManager.createQuery("SELECT lastModified FROM ClientDetailsEntity WHERE id = :id AND clientType != :type");
+        Query query = entityManager.createQuery("SELECT c.lastModified FROM ClientDetailsEntity c WHERE c.id = :id AND c.clientType != :type");
         query.setParameter("id", clientId);
         query.setParameter("type", PUBLIC_CLIENT);
         Date result = (Date) query.getSingleResult();
@@ -245,7 +245,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
 
     @Override
     public List<String> findLegacyClientIds() {
-        TypedQuery<String> query = entityManager.createQuery("select id from ClientDetailsEntity where id not like 'APP-%'", String.class);
+        TypedQuery<String> query = entityManager.createQuery("select c.id from ClientDetailsEntity c where c.id not like 'APP-%'", String.class);
         return query.getResultList();
     }
 
