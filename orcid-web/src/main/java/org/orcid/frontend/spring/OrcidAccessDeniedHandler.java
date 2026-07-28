@@ -50,7 +50,7 @@ public class OrcidAccessDeniedHandler extends AccessDeniedHandlerImpl {
                             maskToken(cookieToken),
                             maskToken(authCookieToken)
                     );
-                            response.setHeader("X-ORCID-CSRF-DEBUG", "access-denied-handler");
+                    response.setHeader("X-ORCID-CSRF-DEBUG", "access-denied-handler");
                     response.setHeader("X-ORCID-CSRF-HDR-PRESENT", String.valueOf(headerToken != null && !headerToken.isBlank()));
                     response.setHeader("X-ORCID-CSRF-COOKIE-PRESENT", String.valueOf(cookieToken != null && !cookieToken.isBlank()));
                     response.setHeader("X-ORCID-CSRF-HDR-COOKIE-MATCH", String.valueOf(headerToken != null && headerToken.equals(cookieToken)));

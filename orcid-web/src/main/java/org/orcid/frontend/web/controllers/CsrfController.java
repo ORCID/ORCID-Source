@@ -48,7 +48,7 @@ public class CsrfController {
             csrfTokenRepository.saveToken(csrfToken, request, response);
         }
         if (csrfToken != null) {
-            csrfToken.getToken();
+            return Collections.singletonMap(csrfToken.getParameterName(), csrfToken.getToken());
         }
         return Collections.emptyMap();
     }
