@@ -13,7 +13,7 @@ public class OneTimeResetPasswordForm extends AuthChallenge {
 
     private Text retypedPassword;
 
-    private String encryptedEmail;
+    private String token;
     
     private String successRedirectLocation;
     
@@ -57,12 +57,12 @@ public class OneTimeResetPasswordForm extends AuthChallenge {
         this.errors = errors;
     }
     
-    public String getEncryptedEmail() {
-        return encryptedEmail;
+    public String getToken() {
+        return token;
     }
 
-    public void setEncryptedEmail(String encryptedEmail) {
-        this.encryptedEmail = encryptedEmail;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getSuccessRedirectLocation() {

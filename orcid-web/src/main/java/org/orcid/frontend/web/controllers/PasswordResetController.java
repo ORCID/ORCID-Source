@@ -209,8 +209,8 @@ public class PasswordResetController extends BaseController {
     	resetPasswordForm.setErrors(new ArrayList<String>());
 
     	Emails emails = null;
-    	if (resetPasswordForm.getEncryptedEmail() != null) {
-	    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getEncryptedEmail());
+    	if (resetPasswordForm.getToken() != null) {
+	    	PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(resetPasswordForm.getToken());
 	    	String orcid = emailManagerReadOnly.findOrcidIdByEmail(passwordResetToken.getEmail());
 	    	emails = emailManager.getEmails(orcid);
     	} 
@@ -240,7 +240,7 @@ public class PasswordResetController extends BaseController {
             @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
         oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
 
-        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+        PasswordResetToken passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
         if (isTokenExpired(passwordResetToken)) {
             String message = getMessage("orcid.frontend.reset.password.resetLinkExpired_1");
             message += "<a href='/reset-password'>";
@@ -277,7 +277,7 @@ public class PasswordResetController extends BaseController {
         oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
 
         String orcid = null;
-        String token = oneTimeResetPasswordForm.getEncryptedEmail();
+        String token = oneTimeResetPasswordForm.getToken();
         ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
         
         if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
@@ -295,7 +295,7 @@ public class PasswordResetController extends BaseController {
             // TODO: remove once PD-6002 is stable on prod
             PasswordResetToken passwordResetToken;
             try {
-                 passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+                 passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
             } catch (EncryptionOperationNotPossibleException e) {
                 oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
                 return oneTimeResetPasswordForm;
@@ -383,7 +383,7 @@ public class PasswordResetController extends BaseController {
             @RequestBody OneTimeResetPasswordForm oneTimeResetPasswordForm) {
         oneTimeResetPasswordForm.setErrors(new ArrayList<String>());
 
-        String token = oneTimeResetPasswordForm.getEncryptedEmail();
+        String token = oneTimeResetPasswordForm.getToken();
         ExpiringLinkService.VerificationResult verificationResult = expiringLinkService.verifyToken(token);
         
         if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
@@ -405,7 +405,7 @@ public class PasswordResetController extends BaseController {
         PasswordResetToken passwordResetToken;
         
         try {
-             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getEncryptedEmail());
+             passwordResetToken = buildResetTokenFromEncryptedLink(oneTimeResetPasswordForm.getToken());
 
         } catch (EncryptionOperationNotPossibleException e) {
             oneTimeResetPasswordForm.getErrors().add("invalidPasswordResetToken");
