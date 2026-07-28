@@ -184,7 +184,6 @@
 			  access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 			  request-matcher="regex">
 		<sec:access-denied-handler error-page="/shibboleth/signin" />
-		<sec:request-cache ref="orcidRequestCache"/>
 		<sec:csrf token-repository-ref="csrfTokenRepo" request-handler-ref="csrfTokenRequestHandler"/>
 		<sec:intercept-url pattern="/shibboleth/signin(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -214,7 +213,6 @@
 			  access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 			  request-matcher="regex">
 		<sec:access-denied-handler error-page="/signin" />
-		<sec:request-cache ref="orcidRequestCache"/>
 		<sec:csrf token-repository-ref="csrfTokenRepo" request-handler-ref="csrfTokenRequestHandler"/>
 		<sec:intercept-url pattern="/social/access(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
