@@ -1139,6 +1139,16 @@
 	<bean id="openIDConnectDiscoveryService" class="org.orcid.core.oauth.openid.OpenIDConnectDiscoveryService">
 		<constructor-arg ref="openIDConnectDiscoveryServiceConfig" />
 	</bean>
+
+	<bean id="openIDConnectKeyServiceConfig" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService$OpenIDConnectKeyServiceConfig">
+		<property name="jwksLocation" value="${org.orcid.openid.jwksLocation}" />
+		<property name="jsonKey" value="${org.orcid.openid.jwksTestKey}" />
+		<property name="keyName" value="${org.orcid.openid.jwksKeyName}" />
+	</bean>
+
+	<bean id="openIDConnectKeyService" class="org.orcid.core.oauth.openid.OpenIDConnectKeyService">
+		<constructor-arg ref="openIDConnectKeyServiceConfig" />
+	</bean>
         
     <bean name="responseParser" class="org.apache.solr.client.solrj.impl.XMLResponseParser" />
 

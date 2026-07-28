@@ -819,7 +819,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public boolean isOrcidValidAsDelegate(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery(
-                "SELECT count(orcid) FROM ProfileEntity WHERE orcid=:orcid AND profile_deactivation_date is NULL AND deprecated_date is NULL AND primary_record is NULL AND (record_locked is NULL OR record_locked is FALSE)",
+                "SELECT count(p) FROM ProfileEntity p WHERE p.id=:orcid AND p.deactivationDate is NULL AND p.deprecatedDate is NULL AND p.primaryRecord is NULL AND (p.recordLocked is NULL OR p.recordLocked is FALSE)",
                 Long.class);
         query.setParameter("orcid", orcid);
         Long result = query.getSingleResult();

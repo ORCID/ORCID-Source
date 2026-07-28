@@ -84,7 +84,7 @@ public class OrcidPropsDaoImpl extends GenericDaoImpl<OrcidPropsEntity, String> 
     @Override
     public String getValue(String key) {
         Assert.hasText(key, "Cannot look for empty keys");
-        Query query = entityManager.createQuery("SELECT value FROM OrcidPropsEntity WHERE key=:key");
+        Query query = entityManager.createQuery("SELECT o.value FROM OrcidPropsEntity o WHERE o.key=:key");
         query.setParameter("key", key);
         try {
             return (String) query.getSingleResult();

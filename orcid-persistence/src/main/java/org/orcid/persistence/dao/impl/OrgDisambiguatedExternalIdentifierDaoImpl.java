@@ -56,7 +56,7 @@ public class OrgDisambiguatedExternalIdentifierDaoImpl extends GenericDaoImpl<Or
     @Override
     public boolean exists(Long orgDisambiguatedId, String identifier, String identifierType) {
         try {
-            TypedQuery<Long> query = entityManager.createQuery("SELECT count(identifier) FROM OrgDisambiguatedExternalIdentifierEntity WHERE orgDisambiguated.id = :orgDisambiguatedId AND identifier = :identifier AND identifierType = :identifierType",
+            TypedQuery<Long> query = entityManager.createQuery("SELECT count(e) FROM OrgDisambiguatedExternalIdentifierEntity e WHERE e.orgDisambiguated.id = :orgDisambiguatedId AND e.identifier = :identifier AND e.identifierType = :identifierType",
                     Long.class);
             query.setParameter("orgDisambiguatedId", orgDisambiguatedId);
             query.setParameter("identifier", identifier);

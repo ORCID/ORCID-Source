@@ -13,7 +13,8 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.orcid.core.oauth.authorizationServer.AuthorizationServerUtil;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.oauth.OAuthError;
@@ -27,10 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import static org.orcid.core.constants.OrcidOauth2Constants.IETF_EXCHANGE_GRANT_TYPE;
 
-
 @Controller("oauthGenericCallsController")
 public class OauthGenericCallsController {
-    private static final Logger logger = Logger.getLogger(OauthGenericCallsController.class);
+    private static final Logger logger = LoggerFactory.getLogger(OauthGenericCallsController.class);
 
     @Context
     private UriInfo uriInfo;
