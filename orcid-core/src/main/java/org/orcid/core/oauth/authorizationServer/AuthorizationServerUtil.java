@@ -2,7 +2,8 @@ package org.orcid.core.oauth.authorizationServer;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.constants.OrcidOauth2Constants;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 @Component
 public class AuthorizationServerUtil {
-    private static final Logger logger = Logger.getLogger(AuthorizationServerUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizationServerUtil.class);
 
     public static final Set<String> AUTH_SERVER_ALLOWED_GRANT_TYPES = Set.of("authorization_code", "refresh_token", "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange");
 

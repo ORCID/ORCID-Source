@@ -57,8 +57,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
@@ -523,10 +525,15 @@ public class RegistrationController extends BaseController {
             token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            // Spring Security 6: SecurityContextHolderFilter no longer auto-saves the context
+            // to the session; we must persist it explicitly so the next request is authenticated.
+            new HttpSessionSecurityContextRepository().saveContext(context, request, response);
         } catch (AuthenticationException e) {
             // this should never happen
-            SecurityContextHolder.getContext().setAuthentication(null);
+            SecurityContextHolder.clearContext();
             LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
         }
     }

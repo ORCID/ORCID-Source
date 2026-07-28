@@ -28,7 +28,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.orcid.api.common.util.ApiUtils;
 import org.orcid.core.api.OrcidApiConstants;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -51,10 +52,8 @@ import com.sun.xml.bind.api.AccessorException;
 @Produces(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 @Consumes(value = { OrcidApiConstants.VND_ORCID_XML, OrcidApiConstants.ORCID_XML, MediaType.APPLICATION_XML, MediaType.WILDCARD })
 public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmarshaller> {
-    
-    
-    private static final Logger logger = Logger.getLogger(OrcidValidationJaxbContextResolver.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(OrcidValidationJaxbContextResolver.class);
     
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS_V2 = new HashMap<>();
     static {
