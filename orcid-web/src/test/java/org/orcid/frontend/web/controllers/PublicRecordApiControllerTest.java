@@ -65,6 +65,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.InvitedPositions;
 import org.orcid.jaxb.model.v3.release.record.summary.MembershipSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Memberships;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviews;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup;
+import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
@@ -136,6 +138,8 @@ public class PublicRecordApiControllerTest {
         mapper.addMixIn(Fundings.class, FundingsMixin.class);
         mapper.addMixIn(FundingGroup.class, FundingGroupMixin.class);
         mapper.addMixIn(PeerReviews.class, PeerReviewsMixin.class);
+        mapper.addMixIn(PeerReviewGroup.class, PeerReviewGroupMixin.class);
+        mapper.addMixIn(PeerReviewDuplicateGroup.class, PeerReviewDuplicateGroupMixin.class);
         mapper.addMixIn(Works.class, WorksMixin.class);
         mapper.addMixIn(WorkGroup.class, WorkGroupMixin.class);
         mapper.addMixIn(ResearchResources.class, ResearchResourcesMixin.class);
@@ -314,6 +318,29 @@ public class PublicRecordApiControllerTest {
     }
 
     @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "last-modified-date", "external-ids", "peer-review-group" })
+    private abstract static class PeerReviewGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+
+        @JsonProperty("peer-review-group")
+        public abstract java.util.List<?> getPeerReviewGroup();
+    }
+
+    @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "last-modified-date", "external-ids", "peer-review-summary" })
+    private abstract static class PeerReviewDuplicateGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+
+        @JsonProperty("peer-review-summary")
+        public abstract java.util.List<?> getPeerReviewSummary();
+
+        @JsonIgnore
+        public abstract java.util.Collection<?> getActivities();
+    }
+
+    @SuppressWarnings("unused")
     @JsonPropertyOrder({ "last-modified-date", "group", "path" })
     private abstract static class WorksMixin {
         @JsonProperty("group")
@@ -413,6 +440,21 @@ public class PublicRecordApiControllerTest {
     private abstract static class PeerReviewSummaryMixin {
         @JsonProperty("external-ids")
         public abstract Object getExternalIdentifiers();
+
+        @JsonProperty("convening-organization")
+        public abstract Object getOrganization();
+
+        @JsonProperty("review-group-id")
+        public abstract String getGroupId();
+
+        @JsonProperty("reviewer-role")
+        public abstract Object getRole();
+
+        @JsonProperty("review-type")
+        public abstract Object getType();
+
+        @JsonProperty("review-url")
+        public abstract Object getUrl();
     }
 
     @SuppressWarnings("unused")

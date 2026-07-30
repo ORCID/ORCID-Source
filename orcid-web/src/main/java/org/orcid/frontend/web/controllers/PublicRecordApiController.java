@@ -117,6 +117,8 @@ public class PublicRecordApiController {
         mapper.addMixIn(Fundings.class, FundingsMixin.class);
         mapper.addMixIn(FundingGroup.class, FundingGroupMixin.class);
         mapper.addMixIn(PeerReviews.class, PeerReviewsMixin.class);
+        mapper.addMixIn(PeerReviewGroup.class, PeerReviewGroupMixin.class);
+        mapper.addMixIn(PeerReviewDuplicateGroup.class, PeerReviewDuplicateGroupMixin.class);
         mapper.addMixIn(Works.class, WorksMixin.class);
         mapper.addMixIn(WorkGroup.class, WorkGroupMixin.class);
         mapper.addMixIn(ResearchResources.class, ResearchResourcesMixin.class);
@@ -306,6 +308,29 @@ public class PublicRecordApiController {
     }
 
     @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "last-modified-date", "external-ids", "peer-review-group" })
+    private abstract static class PeerReviewGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+
+        @JsonProperty("peer-review-group")
+        public abstract java.util.List<?> getPeerReviewGroup();
+    }
+
+    @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "last-modified-date", "external-ids", "peer-review-summary" })
+    private abstract static class PeerReviewDuplicateGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+
+        @JsonProperty("peer-review-summary")
+        public abstract java.util.List<?> getPeerReviewSummary();
+
+        @JsonIgnore
+        public abstract java.util.Collection<?> getActivities();
+    }
+
+    @SuppressWarnings("unused")
     @JsonPropertyOrder({ "last-modified-date", "group", "path" })
     private abstract static class WorksMixin {
         @JsonProperty("group")
@@ -405,6 +430,21 @@ public class PublicRecordApiController {
     private abstract static class PeerReviewSummaryMixin {
         @JsonProperty("external-ids")
         public abstract Object getExternalIdentifiers();
+
+        @JsonProperty("convening-organization")
+        public abstract Object getOrganization();
+
+        @JsonProperty("review-group-id")
+        public abstract String getGroupId();
+
+        @JsonProperty("reviewer-role")
+        public abstract Object getRole();
+
+        @JsonProperty("review-type")
+        public abstract Object getType();
+
+        @JsonProperty("review-url")
+        public abstract Object getUrl();
     }
 
     @SuppressWarnings("unused")
