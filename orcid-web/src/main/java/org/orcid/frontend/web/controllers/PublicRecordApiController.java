@@ -57,6 +57,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Services;
+import org.orcid.jaxb.model.v3.release.record.summary.WorkGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup;
@@ -117,6 +118,7 @@ public class PublicRecordApiController {
         mapper.addMixIn(FundingGroup.class, FundingGroupMixin.class);
         mapper.addMixIn(PeerReviews.class, PeerReviewsMixin.class);
         mapper.addMixIn(Works.class, WorksMixin.class);
+        mapper.addMixIn(WorkGroup.class, WorkGroupMixin.class);
         mapper.addMixIn(ResearchResources.class, ResearchResourcesMixin.class);
         mapper.addMixIn(AffiliationSummary.class, AffiliationSummaryMixin.class);
         mapper.addMixIn(DistinctionSummary.class, DistinctionSummaryMixin.class);
@@ -176,8 +178,13 @@ public class PublicRecordApiController {
     }
 
     @SuppressWarnings("unused")
-    @JsonPropertyOrder({ "orcid-identifier", "deprecated", "preferences", "history", "person", "activities-summary", "orcid-type", "path" })
+    @JsonPropertyOrder({ "orcid-identifier", "preferences", "history", "person", "activities-summary", "path" })
     private abstract static class RecordMixin {
+        @JsonIgnore
+        public abstract Object getDeprecated();
+
+        @JsonIgnore
+        public abstract Object getOrcidType();
     }
 
     @SuppressWarnings("unused")
@@ -286,6 +293,9 @@ public class PublicRecordApiController {
 
         @JsonProperty("funding-summary")
         public abstract java.util.List<?> getFundingSummary();
+
+        @JsonIgnore
+        public abstract java.util.Collection<?> getActivities();
     }
 
     @SuppressWarnings("unused")
@@ -300,6 +310,19 @@ public class PublicRecordApiController {
     private abstract static class WorksMixin {
         @JsonProperty("group")
         public abstract java.util.List<?> getWorkGroup();
+    }
+
+    @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "last-modified-date", "external-ids", "work-summary", "path" })
+    private abstract static class WorkGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+
+        @JsonProperty("work-summary")
+        public abstract java.util.List<?> getWorkSummary();
+
+        @JsonIgnore
+        public abstract java.util.Collection<?> getActivities();
     }
 
     @SuppressWarnings("unused")
