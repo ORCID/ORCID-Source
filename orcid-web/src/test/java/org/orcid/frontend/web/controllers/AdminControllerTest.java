@@ -16,7 +16,9 @@ import org.orcid.core.manager.v3.*;
 import org.orcid.core.manager.v3.read_only.*;
 import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
+import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -29,6 +31,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.*;
 import org.orcid.pojo.ajaxForm.*;
+import org.orcid.utils.ExpiringLinkService;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +97,12 @@ public class AdminControllerTest {
     private TwoFactorAuthenticationManager twoFactorAuthenticationManagerMock;
 
     @Mock
+    private ExpiringLinkService expiringLinkServiceMock;
+
+    @Mock
+    private RedisClient redisClientMock;
+
+    @Mock
     private EncryptionManager encryptionManagerMock;
 
     @Mock
@@ -152,6 +161,9 @@ public class AdminControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "expiringLinkService", expiringLinkServiceMock);
+        org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "redisClient", redisClientMock);
+        org.orcid.test.TargetProxyHelper.injectIntoProxy(adminController, "adminJwtExpirationInMinutes", 1440L);
         when(profileDaoReadOnlyMock.getGroupType(eq(INVALID_ID))).thenReturn(null);
         when(profileDaoReadOnlyMock.getGroupType(eq(MEMBER_ID))).thenReturn("PREMIUM_INSTITUTION");
         when(orcidSecurityManagerMock.isAdmin()).thenReturn(true);
@@ -557,14 +569,14 @@ public class AdminControllerTest {
         form.setOrcidOrEmail(MEMBER_ID);
         
         when(profileEntityManagerMock.orcidExists(eq(MEMBER_ID))).thenReturn(true);
-        java.util.Date now = new java.util.Date();
-        org.apache.commons.math3.util.Pair<String, java.util.Date> pair = new org.apache.commons.math3.util.Pair<>("http://link", now);
-        when(verifyEmailUtilsMock.createResetLinkForAdmin(eq(MEMBER_ID), any())).thenReturn(pair);
+        when(expiringLinkServiceMock.generateExpiringToken(eq(MEMBER_ID), eq(1440L), eq(ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET))).thenReturn("jwt-token");
         
         AdminResetPasswordLink result = adminController.resetPasswordLink(requestMock, responseMock, form);
         
-        assertEquals("http://link", result.getResetLink());
-        assertEquals(now, result.getIssueDate());
+        assertTrue(result.getResetLink().contains("jwt-token"));
+        assertNotNull(result.getIssueDate());
+        assertEquals(24, result.getDurationInHours());
+        verify(redisClientMock).set(eq("password-reset-token-" + MEMBER_ID), eq(new PasswordResetTokenEntry("jwt-token", false).serialize()), eq(1440 * 60));
     }
     
     @Test(expected = IllegalAccessException.class)
