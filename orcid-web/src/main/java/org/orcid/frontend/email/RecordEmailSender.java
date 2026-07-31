@@ -19,6 +19,7 @@ import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.v3.release.record.Email;
 import org.orcid.jaxb.model.v3.release.record.Emails;
@@ -269,7 +270,7 @@ public class RecordEmailSender {
         String token;
         try {
             token = expiringLinkService.generateExpiringToken(userOrcid, jwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
-            redisClient.set("password-reset-token-" + userOrcid, token, (int) (jwtExpirationInMinutes * 60));
+            redisClient.set(PasswordResetTokenEntry.redisKey(userOrcid), new PasswordResetTokenEntry(token, false).serialize(), (int) (jwtExpirationInMinutes * 60));
         } catch (com.nimbusds.jose.JOSEException e) {
             LOGGER.error("Failed to generate password reset token", e);
             throw new RuntimeException("Password reset token generation failed", e);

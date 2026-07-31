@@ -31,6 +31,7 @@ import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.util.CommonPasswords;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.v3.release.record.Emails;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
@@ -282,9 +283,9 @@ public class PasswordResetController extends BaseController {
         
         if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
             orcid = verificationResult.getClaims().getSubject();
-            String latestToken = redisClient.get("password-reset-token-" + orcid);
-            if (!token.equals(latestToken)) {
-                oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
+            String error = validateLatestResetTokenEntry(orcid, token);
+            if (error != null) {
+                oneTimeResetPasswordForm.getErrors().add(error);
                 return oneTimeResetPasswordForm;
             }
         } else if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.EXPIRED) {
@@ -366,10 +367,9 @@ public class PasswordResetController extends BaseController {
         //reset the lock fields
         profileEntityManager.resetSigninLock(orcid);
         profileEntityCacheManager.remove(orcid);
-        
-        // Remove token from redis
-        redisClient.remove("password-reset-token-" + orcid);
-        
+
+        markResetTokenAsUsed(orcid, token, verificationResult);
+
         String redirectUrl = calculateRedirectUrl(request, response, false);
         oneTimeResetPasswordForm.setSuccessRedirectLocation(redirectUrl);
         // Remove credentials before return
@@ -388,13 +388,11 @@ public class PasswordResetController extends BaseController {
         
         if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.VALID) {
             String orcid = verificationResult.getClaims().getSubject();
-            String latestToken = redisClient.get("password-reset-token-" + orcid);
-            if (token.equals(latestToken)) {
-                return oneTimeResetPasswordForm;
-            } else {
-                oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
-                return oneTimeResetPasswordForm;
+            String error = validateLatestResetTokenEntry(orcid, token);
+            if (error != null) {
+                oneTimeResetPasswordForm.getErrors().add(error);
             }
+            return oneTimeResetPasswordForm;
         } else if (verificationResult.getStatus() == ExpiringLinkService.VerificationStatus.EXPIRED) {
             oneTimeResetPasswordForm.getErrors().add("expiredPasswordResetToken");
             return oneTimeResetPasswordForm;
@@ -422,6 +420,40 @@ public class PasswordResetController extends BaseController {
         
     }
     
+
+    /**
+     * Checks the submitted token against the single entry we keep in redis for the record.
+     *
+     * @return the error to report, or null when the token is the latest one and has not been used yet
+     */
+    private String validateLatestResetTokenEntry(String orcid, String token) {
+        PasswordResetTokenEntry entry = PasswordResetTokenEntry.parse(redisClient.get(PasswordResetTokenEntry.redisKey(orcid)));
+        if (entry == null || !token.equals(entry.getToken())) {
+            // The link was superseded by a newer one, or the entry is already gone
+            return "expiredPasswordResetToken";
+        }
+        if (entry.isUsed()) {
+            return "alreadyUsedPasswordResetToken";
+        }
+        return null;
+    }
+
+    /**
+     * Keeps the entry around until the token expires on its own, so a second click on the same link can be
+     * told apart from an expired one.
+     */
+    private void markResetTokenAsUsed(String orcid, String token, ExpiringLinkService.VerificationResult verificationResult) {
+        if (verificationResult.getStatus() != ExpiringLinkService.VerificationStatus.VALID) {
+            // Legacy encrypted links have no redis entry
+            return;
+        }
+        Date expiration = verificationResult.getClaims().getExpirationTime();
+        long remainingSeconds = expiration == null ? 1 : (expiration.getTime() - System.currentTimeMillis()) / 1000;
+        if (remainingSeconds < 1) {
+            remainingSeconds = 1;
+        }
+        redisClient.set(PasswordResetTokenEntry.redisKey(orcid), new PasswordResetTokenEntry(token, true).serialize(), (int) remainingSeconds);
+    }
 
     private PasswordResetToken buildResetTokenFromEncryptedLink(String encryptedLink) {
         try {

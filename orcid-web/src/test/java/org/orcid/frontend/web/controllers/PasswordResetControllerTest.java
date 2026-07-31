@@ -5,11 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -34,6 +39,7 @@ import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.core.togglz.Features;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.EmailRequest;
 import org.orcid.pojo.ajaxForm.Text;
@@ -389,21 +395,53 @@ public class PasswordResetControllerTest extends DBUnitTest {
         assertTrue(form.isInvalidTwoFactorRecoveryCode());
     }
 
+    private void mockValidJWTToken(String token, String orcid) {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder().subject(orcid).expirationTime(new Date(System.currentTimeMillis() + 3600000)).build();
+        when(expiringLinkService.verifyToken(token)).thenReturn(ExpiringLinkService.VerificationResult.valid(claims));
+    }
+
     @Test
     public void testSubmitPasswordEmailValidatePassword_ValidJWTToken() throws Exception {
         String token = "valid.jwt.token";
         String orcid = "0000-0000-0000-0000";
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         form.setToken(token);
-        
-        JWTClaimsSet claims = new JWTClaimsSet.Builder().subject(orcid).build();
-        ExpiringLinkService.VerificationResult result = ExpiringLinkService.VerificationResult.valid(claims);
-        
-        when(expiringLinkService.verifyToken(token)).thenReturn(result);
-        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(token);
-        
+
+        mockValidJWTToken(token, orcid);
+        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(new PasswordResetTokenEntry(token, false).serialize());
+
         OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
         assertTrue(returnedForm.getErrors().isEmpty());
+    }
+
+    @Test
+    public void testSubmitPasswordEmailValidatePassword_SupersededJWTToken() throws Exception {
+        String token = "superseded.jwt.token";
+        String orcid = "0000-0000-0000-0000";
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setToken(token);
+
+        mockValidJWTToken(token, orcid);
+        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(new PasswordResetTokenEntry("a.different.token", false).serialize());
+
+        OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
+        assertFalse(returnedForm.getErrors().isEmpty());
+        assertEquals("expiredPasswordResetToken", returnedForm.getErrors().get(0));
+    }
+
+    @Test
+    public void testSubmitPasswordEmailValidatePassword_MissingRedisEntry() throws Exception {
+        String token = "valid.jwt.token";
+        String orcid = "0000-0000-0000-0000";
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setToken(token);
+
+        mockValidJWTToken(token, orcid);
+        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(null);
+
+        OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
+        assertFalse(returnedForm.getErrors().isEmpty());
+        assertEquals("expiredPasswordResetToken", returnedForm.getErrors().get(0));
     }
 
     @Test
@@ -412,16 +450,27 @@ public class PasswordResetControllerTest extends DBUnitTest {
         String orcid = "0000-0000-0000-0000";
         OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
         form.setToken(token);
-        
-        JWTClaimsSet claims = new JWTClaimsSet.Builder().subject(orcid).build();
-        ExpiringLinkService.VerificationResult result = ExpiringLinkService.VerificationResult.valid(claims);
-        
-        when(expiringLinkService.verifyToken(token)).thenReturn(result);
-        when(redisClient.get("password-reset-token-" + orcid)).thenReturn("a.different.token");
-        
+
+        mockValidJWTToken(token, orcid);
+        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(new PasswordResetTokenEntry(token, true).serialize());
+
+        OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
+        assertFalse(returnedForm.getErrors().isEmpty());
+        assertEquals("alreadyUsedPasswordResetToken", returnedForm.getErrors().get(0));
+    }
+
+    @Test
+    public void testSubmitPasswordEmailValidatePassword_ExpiredJWTTokenDoesNotHitRedis() throws Exception {
+        String token = "expired.jwt.token";
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setToken(token);
+
+        when(expiringLinkService.verifyToken(token)).thenReturn(ExpiringLinkService.VerificationResult.expired());
+
         OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordEmailValidatePassword(servletRequest, servletResponse, form);
         assertFalse(returnedForm.getErrors().isEmpty());
         assertEquals("expiredPasswordResetToken", returnedForm.getErrors().get(0));
+        verifyNoInteractions(redisClient);
     }
 
     @Test
@@ -432,19 +481,36 @@ public class PasswordResetControllerTest extends DBUnitTest {
         form.setToken(token);
         form.setNewPassword(Text.valueOf("Password#123"));
         form.setRetypedPassword(Text.valueOf("Password#123"));
-        
-        JWTClaimsSet claims = new JWTClaimsSet.Builder().subject(orcid).build();
-        ExpiringLinkService.VerificationResult result = ExpiringLinkService.VerificationResult.valid(claims);
-        
-        when(expiringLinkService.verifyToken(token)).thenReturn(result);
-        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(token);
+
+        mockValidJWTToken(token, orcid);
+        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(new PasswordResetTokenEntry(token, false).serialize());
         when(profileEntityManager.orcidExists(orcid)).thenReturn(true);
         MockHttpSession session = new MockHttpSession();
         when(servletRequest.getSession()).thenReturn(session);
 
         OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
         assertTrue(returnedForm.getErrors().isEmpty());
-        verify(redisClient).remove("password-reset-token-" + orcid);
+        // The entry is kept, flagged as used, so a second click can be told apart from an expired link
+        verify(redisClient).set(eq("password-reset-token-" + orcid), eq(new PasswordResetTokenEntry(token, true).serialize()), anyInt());
+        verify(redisClient, never()).remove(any(String.class));
+    }
+
+    @Test
+    public void testSubmitPasswordResetV2_UsedJWTToken() throws Exception {
+        String token = "used.jwt.token";
+        String orcid = "0000-0000-0000-0000";
+        OneTimeResetPasswordForm form = new OneTimeResetPasswordForm();
+        form.setToken(token);
+        form.setNewPassword(Text.valueOf("Password#123"));
+        form.setRetypedPassword(Text.valueOf("Password#123"));
+
+        mockValidJWTToken(token, orcid);
+        when(redisClient.get("password-reset-token-" + orcid)).thenReturn(new PasswordResetTokenEntry(token, true).serialize());
+
+        OneTimeResetPasswordForm returnedForm = passwordResetController.submitPasswordResetV2(servletRequest, servletResponse, form);
+        assertFalse(returnedForm.getErrors().isEmpty());
+        assertEquals("alreadyUsedPasswordResetToken", returnedForm.getErrors().get(0));
+        verify(profileEntityManager, never()).updatePassword(any(String.class), any(String.class));
     }
 
     @Test

@@ -35,6 +35,7 @@ import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.web.util.PasswordConstants;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -750,7 +751,7 @@ public class AdminController extends BaseController {
             String token;
             try {
                 token = expiringLinkService.generateExpiringToken(orcid, adminJwtExpirationInMinutes, ExpiringLinkService.ExpiringLinkType.PASSWORD_RESET);
-                redisClient.set("password-reset-token-" + orcid, token, (int) (adminJwtExpirationInMinutes * 60));
+                redisClient.set(PasswordResetTokenEntry.redisKey(orcid), new PasswordResetTokenEntry(token, false).serialize(), (int) (adminJwtExpirationInMinutes * 60));
             } catch (JOSEException e) {
                 LOGGER.error("Failed to generate password reset token for admin", e);
                 form.setError(getMessage("admin.errors.unable_to_fetch_info"));

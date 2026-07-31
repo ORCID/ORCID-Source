@@ -18,6 +18,7 @@ import org.orcid.core.togglz.Features;
 import org.orcid.core.utils.VerifyEmailUtils;
 import org.orcid.core.utils.cache.redis.RedisClient;
 import org.orcid.frontend.email.RecordEmailSender;
+import org.orcid.frontend.web.util.PasswordResetTokenEntry;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common.OrcidType;
@@ -575,7 +576,7 @@ public class AdminControllerTest {
         assertTrue(result.getResetLink().contains("jwt-token"));
         assertNotNull(result.getIssueDate());
         assertEquals(24, result.getDurationInHours());
-        verify(redisClientMock).set(eq("password-reset-token-" + MEMBER_ID), eq("jwt-token"), eq(1440 * 60));
+        verify(redisClientMock).set(eq("password-reset-token-" + MEMBER_ID), eq(new PasswordResetTokenEntry("jwt-token", false).serialize()), eq(1440 * 60));
     }
     
     @Test(expected = IllegalAccessException.class)
