@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Country;
 import org.orcid.jaxb.model.v3.release.record.Deprecated;
 import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.DistinctionSummary;
@@ -54,6 +55,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Services;
@@ -122,6 +124,7 @@ public class PublicRecordApiController {
         mapper.addMixIn(Works.class, WorksMixin.class);
         mapper.addMixIn(WorkGroup.class, WorkGroupMixin.class);
         mapper.addMixIn(ResearchResources.class, ResearchResourcesMixin.class);
+        mapper.addMixIn(ResearchResourceGroup.class, ResearchResourceGroupMixin.class);
         mapper.addMixIn(AffiliationSummary.class, AffiliationSummaryMixin.class);
         mapper.addMixIn(DistinctionSummary.class, DistinctionSummaryMixin.class);
         mapper.addMixIn(EducationSummary.class, EducationSummaryMixin.class);
@@ -149,10 +152,12 @@ public class PublicRecordApiController {
         mapper.addMixIn(Keywords.class, KeywordsMixin.class);
         mapper.addMixIn(Person.class, PersonMixin.class);
         mapper.addMixIn(PersonExternalIdentifiers.class, PersonExternalIdentifiersMixin.class);
+        mapper.addMixIn(PersonExternalIdentifier.class, PersonExternalIdentifierMixin.class);
         mapper.addMixIn(OtherNames.class, OtherNamesMixin.class);
         mapper.addMixIn(ResearcherUrls.class, ResearcherUrlsMixin.class);
         mapper.addMixIn(Emails.class, EmailsMixin.class);
         mapper.addMixIn(Name.class, NameMixin.class);
+        mapper.addMixIn(Country.class, CountryMixin.class);
     }
 
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/record", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
@@ -358,6 +363,13 @@ public class PublicRecordApiController {
     }
 
     @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "external-ids" })
+    private abstract static class ResearchResourceGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+    }
+
+    @SuppressWarnings("unused")
     @JsonPropertyOrder({ "created-date", "last-modified-date", "source", "put-code", "department-name", "role-title", "start-date", "end-date",
             "organization", "url", "external-ids", "display-index", "visibility", "path" })
     private abstract static class AffiliationSummaryMixin {
@@ -526,6 +538,22 @@ public class PublicRecordApiController {
     }
 
     @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "external-id-type", "external-id-value", "external-id-url", "external-id-relationship" })
+    private abstract static class PersonExternalIdentifierMixin {
+        @JsonProperty("external-id-type")
+        public abstract String getType();
+
+        @JsonProperty("external-id-value")
+        public abstract String getValue();
+
+        @JsonProperty("external-id-url")
+        public abstract Object getUrl();
+
+        @JsonProperty("external-id-relationship")
+        public abstract Object getRelationship();
+    }
+
+    @SuppressWarnings("unused")
     @JsonPropertyOrder({ "last-modified-date", "other-name", "path" })
     private abstract static class OtherNamesMixin {
         @JsonProperty("other-name")
@@ -556,6 +584,13 @@ public class PublicRecordApiController {
     @JsonPropertyOrder({ "created-date", "last-modified-date", "given-names", "family-name", "credit-name", "source", "visibility",
             "path" })
     private abstract static class NameMixin {
+    }
+
+    @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "value" })
+    private abstract static class CountryMixin {
+        @JsonProperty("value")
+        public abstract Object getValue();
     }
 
     @SuppressWarnings("unused")
