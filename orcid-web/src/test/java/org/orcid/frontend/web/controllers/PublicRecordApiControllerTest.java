@@ -34,21 +34,12 @@ import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrcidIdentifier;
 import org.orcid.jaxb.model.v3.release.common.Source;
 import org.orcid.jaxb.model.v3.release.common.Title;
-import org.orcid.jaxb.model.v3.release.record.Record;
-import org.orcid.jaxb.model.v3.release.record.Deprecated;
-import org.orcid.jaxb.model.v3.release.record.History;
-import org.orcid.jaxb.model.v3.release.record.Emails;
-import org.orcid.jaxb.model.v3.release.record.ExternalIDs;
-import org.orcid.jaxb.model.v3.release.record.ExternalID;
-import org.orcid.jaxb.model.v3.release.record.FamilyName;
-import org.orcid.jaxb.model.v3.release.record.GivenNames;
-import org.orcid.jaxb.model.v3.release.record.Keywords;
-import org.orcid.jaxb.model.v3.release.record.OtherNames;
-import org.orcid.jaxb.model.v3.release.record.Person;
-import org.orcid.jaxb.model.v3.release.record.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.v3.release.record.ResearcherUrls;
+import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.common.CreditName;
+import org.orcid.jaxb.model.v3.release.common.Country;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
+import org.orcid.jaxb.model.v3.release.record.Deprecated;
+import org.orcid.jaxb.model.v3.release.record.Record;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ActivityGroup;
@@ -72,6 +63,7 @@ import org.orcid.jaxb.model.v3.release.record.summary.FundingSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.QualificationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Qualifications;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewSummary;
+import org.orcid.jaxb.model.v3.release.record.summary.ResearchResourceGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.ResearchResources;
 import org.orcid.jaxb.model.v3.release.record.summary.ServiceSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Services;
@@ -143,6 +135,7 @@ public class PublicRecordApiControllerTest {
         mapper.addMixIn(Works.class, WorksMixin.class);
         mapper.addMixIn(WorkGroup.class, WorkGroupMixin.class);
         mapper.addMixIn(ResearchResources.class, ResearchResourcesMixin.class);
+        mapper.addMixIn(ResearchResourceGroup.class, ResearchResourceGroupMixin.class);
         mapper.addMixIn(AffiliationSummary.class, AffiliationSummaryMixin.class);
         mapper.addMixIn(DistinctionSummary.class, DistinctionSummaryMixin.class);
         mapper.addMixIn(EducationSummary.class, EducationSummaryMixin.class);
@@ -170,9 +163,11 @@ public class PublicRecordApiControllerTest {
         mapper.addMixIn(Keywords.class, KeywordsMixin.class);
         mapper.addMixIn(Person.class, PersonMixin.class);
         mapper.addMixIn(PersonExternalIdentifiers.class, PersonExternalIdentifiersMixin.class);
+        mapper.addMixIn(PersonExternalIdentifier.class, PersonExternalIdentifierMixin.class);
         mapper.addMixIn(OtherNames.class, OtherNamesMixin.class);
         mapper.addMixIn(ResearcherUrls.class, ResearcherUrlsMixin.class);
         mapper.addMixIn(Emails.class, EmailsMixin.class);
+        mapper.addMixIn(Country.class, CountryMixin.class);
         String expectedJson = mapper.writeValueAsString(record);
         assertEquals(expectedJson, result);
     }
@@ -368,6 +363,13 @@ public class PublicRecordApiControllerTest {
     }
 
     @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "external-ids" })
+    private abstract static class ResearchResourceGroupMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getIdentifiers();
+    }
+
+    @SuppressWarnings("unused")
     @JsonPropertyOrder({ "created-date", "last-modified-date", "source", "put-code", "department-name", "role-title", "start-date", "end-date",
             "organization", "url", "external-ids", "display-index", "visibility", "path" })
     private abstract static class AffiliationSummaryMixin {
@@ -536,6 +538,22 @@ public class PublicRecordApiControllerTest {
     }
 
     @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "external-id-type", "external-id-value", "external-id-url", "external-id-relationship" })
+    private abstract static class PersonExternalIdentifierMixin {
+        @JsonProperty("external-id-type")
+        public abstract String getType();
+
+        @JsonProperty("external-id-value")
+        public abstract String getValue();
+
+        @JsonProperty("external-id-url")
+        public abstract Object getUrl();
+
+        @JsonProperty("external-id-relationship")
+        public abstract Object getRelationship();
+    }
+
+    @SuppressWarnings("unused")
     @JsonPropertyOrder({ "last-modified-date", "other-name", "path" })
     private abstract static class OtherNamesMixin {
         @JsonProperty("other-name")
@@ -560,6 +578,13 @@ public class PublicRecordApiControllerTest {
     @JsonPropertyOrder({ "last-modified-date", "name", "other-names", "biography", "researcher-urls", "emails", "addresses", "keywords", "external-identifiers",
             "path" })
     private abstract static class PersonMixin {
+    }
+
+    @SuppressWarnings("unused")
+    @JsonPropertyOrder({ "value" })
+    private abstract static class CountryMixin {
+        @JsonProperty("value")
+        public abstract Object getValue();
     }
 
     @SuppressWarnings("unused")
