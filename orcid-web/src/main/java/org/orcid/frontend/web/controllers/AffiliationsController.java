@@ -1,29 +1,14 @@
 package org.orcid.frontend.web.controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
-
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.orcid.api.common.util.v3.ActivityUtils;
 import org.orcid.core.manager.OrgDisambiguatedManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.v3.AffiliationsManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.v3.release.record.Affiliation;
-import org.orcid.jaxb.model.v3.release.record.AffiliationType;
-import org.orcid.jaxb.model.v3.release.record.Distinction;
-import org.orcid.jaxb.model.v3.release.record.Education;
-import org.orcid.jaxb.model.v3.release.record.Employment;
-import org.orcid.jaxb.model.v3.release.record.InvitedPosition;
-import org.orcid.jaxb.model.v3.release.record.Membership;
-import org.orcid.jaxb.model.v3.release.record.Qualification;
-import org.orcid.jaxb.model.v3.release.record.Service;
+import org.orcid.jaxb.model.v3.release.record.*;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.AffiliationSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
@@ -31,23 +16,18 @@ import org.orcid.jaxb.model.v3.release.record.summary.Employments;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.OrgDisambiguated;
-import org.orcid.pojo.ajaxForm.AffiliationForm;
-import org.orcid.pojo.ajaxForm.AffiliationGroupContainer;
-import org.orcid.pojo.ajaxForm.AffiliationGroupForm;
-import org.orcid.pojo.ajaxForm.Date;
-import org.orcid.pojo.ajaxForm.Errors;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.Visibility;
+import org.orcid.pojo.ajaxForm.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.lang.Deprecated;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * @author rcpeters

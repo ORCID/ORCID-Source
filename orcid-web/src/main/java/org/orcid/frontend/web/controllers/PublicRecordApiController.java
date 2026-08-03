@@ -125,6 +125,7 @@ public class PublicRecordApiController {
         mapper.addMixIn(WorkGroup.class, WorkGroupMixin.class);
         mapper.addMixIn(ResearchResources.class, ResearchResourcesMixin.class);
         mapper.addMixIn(ResearchResourceGroup.class, ResearchResourceGroupMixin.class);
+        mapper.addMixIn(ResearchResourceProposal.class, ResearchResourceProposalMixin.class);
         mapper.addMixIn(AffiliationSummary.class, AffiliationSummaryMixin.class);
         mapper.addMixIn(DistinctionSummary.class, DistinctionSummaryMixin.class);
         mapper.addMixIn(EducationSummary.class, EducationSummaryMixin.class);
@@ -367,6 +368,12 @@ public class PublicRecordApiController {
     private abstract static class ResearchResourceGroupMixin {
         @JsonProperty("external-ids")
         public abstract Object getIdentifiers();
+    }
+
+    @SuppressWarnings("unused")
+    private abstract static class ResearchResourceProposalMixin {
+        @JsonProperty("external-ids")
+        public abstract Object getExternalIdentifiers();
     }
 
     @SuppressWarnings("unused")
