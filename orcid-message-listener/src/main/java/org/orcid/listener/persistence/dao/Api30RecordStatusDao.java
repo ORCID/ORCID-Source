@@ -26,10 +26,12 @@ public class Api30RecordStatusDao {
     }
 
     public boolean exists(String orcid) {
-        Query query = entityManager.createNativeQuery("SELECT count(*) FROM api_3_0_record_status WHERE orcid=:orcid");
-        query.setParameter("orcid", orcid);
-        Number result = (Number) query.getSingleResult();
-        return (result != null && result.longValue() > 0L);
+        Long count = entityManager.createQuery(
+                        "SELECT COUNT(s) FROM Api30RecordStatusEntity s WHERE s.id = :orcid",
+                        Long.class)
+                .setParameter("orcid", orcid)
+                .getSingleResult();
+        return count > 0;
     }
 
     @Transactional
