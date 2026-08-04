@@ -4,47 +4,46 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<import resource="classpath*:orcid-core-context.xml"/>
 	<import resource="classpath*:orcid-api-common-public-v3-context.xml"/>
 	<import resource="classpath*:orcid-internal-api-security-context.xml"/>
+
+    <bean id="mvcHandlerMappingIntrospector" class="org.springframework.web.servlet.handler.HandlerMappingIntrospector"/>
     
-    <context:component-scan base-package="org.orcid.api.t2, org.orcid.api.common, org.orcid.core.security"/>
+    <context:component-scan base-package="org.orcid.api.common, org.orcid.core.security"/>
     <aop:aspectj-autoproxy />
      
      <!-- Override data source configuration so we can customize it for the internal api -->
-     <bean id="pooledDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${org.orcid.persistence.db.class}" />
+     <bean id="pooledDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="poolName" value="${org.orcid.persistence.internal_api.db.poolName:orcid-internal}" />
+        <property name="driverClassName" value="${org.orcid.persistence.db.class}" />
         <property name="jdbcUrl" value="${org.orcid.persistence.db.url}" />
-        <property name="user" value="${org.orcid.persistence.db.username}" />
+        <property name="username" value="${org.orcid.persistence.db.username}" />
         <property name="password" value="${org.orcid.persistence.db.password}" />
-        <property name="initialPoolSize" value="${org.orcid.persistence.internal_api.db.initialPoolSize:1}" />
-        <property name="minPoolSize" value="${org.orcid.persistence.internal_api.db.minPoolSize:1}" />
-        <property name="maxPoolSize" value="${org.orcid.persistence.internal_api.db.maxPoolSize:3}" />
-        <property name="maxIdleTimeExcessConnections" value="${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
-        <property name="maxStatements" value="${org.orcid.persistence.db.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="${org.orcid.persistence.db.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="${org.orcid.persistence.db.testConnectionOnCheckin}" />
-        <property name="preferredTestQuery" value="${org.orcid.persistence.db.preferredTestQuery}" />
-        <property name="numHelperThreads" value="${org.orcid.persistence.db.numHelperThreads:10}"/>
+        <property name="minimumIdle" value="${org.orcid.persistence.internal_api.db.minPoolSize:1}" />
+        <property name="maximumPoolSize" value="${org.orcid.persistence.internal_api.db.maxPoolSize:3}" />
+        <property name="connectionTestQuery" value="${org.orcid.persistence.db.preferredTestQuery}" />
+        <property name="connectionTimeout" value="${org.orcid.persistence.internal_api.db.hikari.connectionTimeout:30000}" />
+        <property name="idleTimeout" value="${org.orcid.persistence.internal_api.db.hikari.idleTimeout:600000}" />
+        <property name="maxLifetime" value="${org.orcid.persistence.internal_api.db.hikari.maxLifetime:1800000}" />
     </bean>
     
-    <bean id="pooledDataSourceReadOnly" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="${org.orcid.persistence.db.readonly.class}" />
+    <bean id="pooledDataSourceReadOnly" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="poolName" value="${org.orcid.persistence.internal_api.db.readonly.poolName:orcid-internal-readonly}" />
+        <property name="driverClassName" value="${org.orcid.persistence.db.readonly.class}" />
         <property name="jdbcUrl" value="${org.orcid.persistence.db.readonly.url}" />
-        <property name="user" value="${org.orcid.persistence.db.readonly.username}" />
+        <property name="username" value="${org.orcid.persistence.db.readonly.username}" />
         <property name="password" value="${org.orcid.persistence.db.readonly.password}" />
-        <property name="initialPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.initialPoolSize:1}" />
-        <property name="minPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.minPoolSize:1}" />
-        <property name="maxPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.maxPoolSize:3}" />
-        <property name="maxIdleTimeExcessConnections" value="${org.orcid.persistence.db.maxIdleTimeExcessConnections:120}"/>
-        <property name="maxStatements" value="${org.orcid.persistence.db.readonly.maxStatements}" />
-        <property name="idleConnectionTestPeriod" value="${org.orcid.persistence.db.readonly.idleConnectionTestPeriod}" />
-        <property name="testConnectionOnCheckin" value="${org.orcid.persistence.db.readonly.testConnectionOnCheckin}" />
-        <property name="preferredTestQuery" value="${org.orcid.persistence.db.readonly.preferredTestQuery}" />
-        <property name="numHelperThreads" value="${org.orcid.persistence.db.readonly.numHelperThreads:10}"/>
+        <property name="minimumIdle" value="${org.orcid.persistence.internal_api.db.readonly.minPoolSize:1}" />
+        <property name="maximumPoolSize" value="${org.orcid.persistence.internal_api.db.readonly.maxPoolSize:3}" />
+        <property name="connectionTestQuery" value="${org.orcid.persistence.db.readonly.preferredTestQuery}" />
+        <property name="connectionTimeout" value="${org.orcid.persistence.internal_api.db.readonly.hikari.connectionTimeout:30000}" />
+        <property name="idleTimeout" value="${org.orcid.persistence.internal_api.db.readonly.hikari.idleTimeout:600000}" />
+        <property name="maxLifetime" value="${org.orcid.persistence.internal_api.db.readonly.hikari.maxLifetime:1800000}" />
+        <property name="readOnly" value="true" />
     </bean>
      
     <!--  Internal API -->

@@ -15,7 +15,6 @@ import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.ProfileEntityManager;
 import org.orcid.core.manager.v3.read_only.AffiliationsManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.EmailManagerReadOnly;
-import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.v3.release.record.Affiliation;
 import org.orcid.jaxb.model.v3.release.record.Employment;
 import org.orcid.jaxb.model.v3.release.record.summary.EmploymentSummary;
@@ -26,8 +25,8 @@ import org.orcid.pojo.ajaxForm.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -59,8 +58,6 @@ public class AffiliationsControllerTest {
     @Mock
     private ProfileEntityManager profileEntityManager;
 
-    @Mock
-    private VisibilityFilter visibilityFilter;
 
     @Mock
     private LocaleManager localeManager;

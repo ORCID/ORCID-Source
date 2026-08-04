@@ -3,7 +3,7 @@ package org.orcid.listener.persistence.managers;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
+import jakarta.persistence.EntityExistsException;
 
 import org.orcid.listener.persistence.dao.Api30RecordStatusDao;
 import org.orcid.listener.persistence.entities.Api30RecordStatusEntity;

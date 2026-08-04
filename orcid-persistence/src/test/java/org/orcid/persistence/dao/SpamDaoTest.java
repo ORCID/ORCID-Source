@@ -8,9 +8,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.transaction.Transactional;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.AfterClass;

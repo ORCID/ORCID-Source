@@ -1,8 +1,8 @@
 package org.orcid.persistence.dao.impl;
 
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
+import jakarta.persistence.Query;
 
 import org.orcid.persistence.dao.OrcidPropsDao;
 import org.orcid.persistence.jpa.entities.OrcidPropsEntity;
@@ -84,7 +84,7 @@ public class OrcidPropsDaoImpl extends GenericDaoImpl<OrcidPropsEntity, String> 
     @Override
     public String getValue(String key) {
         Assert.hasText(key, "Cannot look for empty keys");
-        Query query = entityManager.createQuery("SELECT value FROM OrcidPropsEntity WHERE key=:key");
+        Query query = entityManager.createQuery("SELECT o.value FROM OrcidPropsEntity o WHERE o.key=:key");
         query.setParameter("key", key);
         try {
             return (String) query.getSingleResult();

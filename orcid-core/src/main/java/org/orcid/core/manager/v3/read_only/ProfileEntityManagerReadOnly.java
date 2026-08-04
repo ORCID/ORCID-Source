@@ -13,4 +13,6 @@ public interface ProfileEntityManagerReadOnly extends ManagerReadOnlyBase {
     Boolean isOrcidValidAsDelegate(String orcid); 
     
     Boolean haveMemberPushedWorksOrAffiliationsToRecord(String orcid, String clientId);
+
+    Boolean hasToken(String userName, long lastModified);
 }

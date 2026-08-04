@@ -36,7 +36,7 @@ import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 
 import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 public class PersonDetailsManagerReadOnlyImpl extends ManagerReadOnlyBaseImpl implements PersonDetailsManagerReadOnly {
 

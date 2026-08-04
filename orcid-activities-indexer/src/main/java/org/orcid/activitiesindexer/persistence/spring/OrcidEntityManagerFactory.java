@@ -16,8 +16,8 @@
  */
 package org.orcid.activitiesindexer.persistence.spring;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;

@@ -36,7 +36,6 @@ import org.springframework.session.SaveMode;
 import org.springframework.session.Session;
 import org.springframework.session.config.SessionRepositoryCustomizer;
 import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
-import org.springframework.session.data.redis.RedisFlushMode;
 import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.session.data.redis.RedisSessionRepository;
 import org.springframework.session.data.redis.config.ConfigureNotifyKeyspaceEventsAction;
@@ -49,7 +48,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -146,13 +145,6 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
         this.redisNamespace = namespace;
     }
 
-    /** @deprecated */
-    @Deprecated
-    public void setRedisFlushMode(RedisFlushMode redisFlushMode) {
-        Assert.notNull(redisFlushMode, "redisFlushMode cannot be null");
-        this.setFlushMode(redisFlushMode.getFlushMode());
-    }
-
     public void setFlushMode(FlushMode flushMode) {
         Assert.notNull(flushMode, "flushMode cannot be null");
         this.flushMode = flushMode;
@@ -238,13 +230,7 @@ public class OrcidRedisHttpSessionConfiguration extends SpringHttpSessionConfigu
             this.redisNamespace = this.embeddedValueResolver.resolveStringValue(redisNamespaceValue);
         }
 
-        FlushMode flushMode = (FlushMode)attributes.getEnum("flushMode");
-        RedisFlushMode redisFlushMode = (RedisFlushMode)attributes.getEnum("redisFlushMode");
-        if (flushMode == FlushMode.ON_SAVE && redisFlushMode != RedisFlushMode.ON_SAVE) {
-            flushMode = redisFlushMode.getFlushMode();
-        }
-
-        this.flushMode = flushMode;
+        this.flushMode = (FlushMode)attributes.getEnum("flushMode");
         this.saveMode = (SaveMode)attributes.getEnum("saveMode");
     }
 

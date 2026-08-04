@@ -27,6 +27,9 @@
         <Logger name="org.springframework.security" level="warn" additivity="true">
             <appender-ref ref="FILE_APPENDER" />
         </Logger>
+        <Logger name="org.orcid.api.common.security.oauth.OrcidBearerTokenFilter" level="debug" additivity="true">
+            <appender-ref ref="FILE_APPENDER" />
+        </Logger>
         <Logger name="org.hibernate" level="error" additivity="true">
             <appender-ref ref="FILE_APPENDER" />
         </Logger>

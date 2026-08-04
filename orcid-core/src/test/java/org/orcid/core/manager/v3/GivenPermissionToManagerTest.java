@@ -9,6 +9,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
+import jakarta.annotation.Resource;
+
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

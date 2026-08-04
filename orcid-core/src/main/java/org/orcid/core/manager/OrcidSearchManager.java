@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.jaxb.model.search_v2.Search;
+import org.apache.hc.core5.http.ParseException;
+
 
 /**
  * Class to retrieve OrcidMessage objects (with nested Search Results) relating
@@ -24,5 +26,5 @@ public interface OrcidSearchManager {
     
     static final int MAX_SEARCH_ROWS = 200;
 
-    Search findOrcidIds(Map<String, List<String>> queryParameters);
+    Search findOrcidIds(Map<String, List<String>> queryParameters) throws ParseException;
 }

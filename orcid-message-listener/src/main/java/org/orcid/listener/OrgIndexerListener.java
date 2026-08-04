@@ -1,8 +1,8 @@
 package org.orcid.listener;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.orcid.listener.solr.SolrOrgsMessageProcessor;

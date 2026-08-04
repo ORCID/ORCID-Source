@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.converter.EmptyStringToNullConverter;
@@ -50,6 +50,8 @@ import org.orcid.jaxb.model.v3.release.common.Organization;
 import org.orcid.jaxb.model.v3.release.common.OrganizationAddress;
 import org.orcid.jaxb.model.v3.release.common.PublicationDate;
 import org.orcid.jaxb.model.v3.release.common.Source;
+import org.orcid.jaxb.model.v3.release.common.SourceClientId;
+import org.orcid.jaxb.model.v3.release.common.SourceOrcid;
 import org.orcid.jaxb.model.v3.release.common.Title;
 import org.orcid.jaxb.model.v3.release.common.Year;
 import org.orcid.jaxb.model.v3.release.groupid.GroupIdRecord;
@@ -169,7 +171,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private IdentityProviderManager identityProviderManager;
 
-    @Resource
+    @Resource(name = "encryptionManager")
     private EncryptionManager encryptionManager;
 
     @Resource(name = "PIDNormalizationService")
@@ -187,7 +189,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private FundingContributorRoleConverter fundingContributorsRoleConverter;
 
-    @Resource
+    @Resource(name = "sourceEntityUtils")
     private SourceEntityUtils sourceEntityUtils;
 
     @Resource
@@ -383,17 +385,88 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         @SuppressWarnings("unchecked")
         @Override
         public void mapBtoA(SourceAwareEntity<?> b, SourceAware a, MappingContext context) {
+            if (b == null || a == null) {
+                return;
+            }
+
+            Source source = null;
             if (context != null && context.getProperty(SourceEntityUtils.SOURCE_MAP) != null) {
                 // The source map is set in the context, so we can use it to set the source.
                 Map<String, Source> sourceMap = (Map<String, Source>) context.getProperty(SourceEntityUtils.SOURCE_MAP);
-                Source source = sourceMap.get(sourceEntityUtils.getSourceKey(b));
-                a.setSource(source);
-            } else {
-                // We have to manually build the source elements
-                Source source = sourceEntityUtils.extractSourceFromEntityComplete(b);
-                a.setSource(source);
+                source = sourceMap.get(SourceEntityUtils.getSourceKey(b));
+            }
+
+            if (source == null) {
+                // Fall back to direct extraction when no source map is available.
+                if (sourceEntityUtils != null) {
+                    source = sourceEntityUtils.extractSourceFromEntityComplete(b);
+                } else {
+                    source = extractSourceFromEntityWithoutUtils(b);
+                }
+            }
+
+            populateSourceUriAndHost(source);
+
+            a.setSource(source);
+        }
+    }
+
+    private void populateSourceUriAndHost(Source source) {
+        if (source == null) {
+            return;
+        }
+
+        if (source.getSourceOrcid() != null && StringUtils.isNotBlank(source.getSourceOrcid().getPath())) {
+            if (StringUtils.isBlank(source.getSourceOrcid().getHost())) {
+                source.getSourceOrcid().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getSourceOrcid().getUri())) {
+                source.getSourceOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + source.getSourceOrcid().getPath());
             }
         }
+
+        if (source.getSourceClientId() != null && StringUtils.isNotBlank(source.getSourceClientId().getPath())) {
+            if (StringUtils.isBlank(source.getSourceClientId().getHost())) {
+                source.getSourceClientId().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getSourceClientId().getUri())) {
+                source.getSourceClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + source.getSourceClientId().getPath());
+            }
+        }
+
+        if (source.getAssertionOriginOrcid() != null && StringUtils.isNotBlank(source.getAssertionOriginOrcid().getPath())) {
+            if (StringUtils.isBlank(source.getAssertionOriginOrcid().getHost())) {
+                source.getAssertionOriginOrcid().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getAssertionOriginOrcid().getUri())) {
+                source.getAssertionOriginOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + source.getAssertionOriginOrcid().getPath());
+            }
+        }
+
+        if (source.getAssertionOriginClientId() != null && StringUtils.isNotBlank(source.getAssertionOriginClientId().getPath())) {
+            if (StringUtils.isBlank(source.getAssertionOriginClientId().getHost())) {
+                source.getAssertionOriginClientId().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getAssertionOriginClientId().getUri())) {
+                source.getAssertionOriginClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + source.getAssertionOriginClientId().getPath());
+            }
+        }
+    }
+
+    private Source extractSourceFromEntityWithoutUtils(SourceAwareEntity<?> entity) {
+        Source source = new Source();
+
+        if (StringUtils.isNotBlank(entity.getSourceId())) {
+            source.setSourceOrcid(new SourceOrcid(entity.getSourceId()));
+        }
+        if (StringUtils.isNotBlank(entity.getClientSourceId())) {
+            source.setSourceClientId(new SourceClientId(entity.getClientSourceId()));
+        }
+        if (StringUtils.isNotBlank(entity.getAssertionOriginClientSourceId())) {
+            source.setAssertionOriginClientId(new SourceClientId(entity.getAssertionOriginClientSourceId()));
+        }
+
+        return source;
     }
 
     public MapperFacade getExternalIdentifierMapperFacade() {
@@ -1221,7 +1294,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 if (b.getClientSecrets() != null) {
                     for (ClientSecretEntity entity : b.getClientSecrets()) {
                         if (entity.isPrimary()) {
-                            a.setDecryptedSecret(encryptionManager.decryptForInternalUse(entity.getClientSecret()));
+                            String clientSecret = entity.getClientSecret();
+                            if (encryptionManager != null) {
+                                clientSecret = encryptionManager.decryptForInternalUse(clientSecret);
+                            }
+                            a.setDecryptedSecret(clientSecret);
                         }
                     }
                 }

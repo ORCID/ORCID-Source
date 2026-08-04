@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.exception.InvalidDisambiguatedOrgException;
 import org.orcid.core.manager.v3.OrgManager;

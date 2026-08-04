@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.persistence.NoResultException;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.core.exception.DeactivatedException;
 import org.orcid.core.exception.LockedException;
@@ -57,8 +57,8 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.INTERNAL_PERSON_LAST_MODIFIED, requestComesFromInternalApi = true)
     public Response viewPersonLastModified(String orcid) {
+        orcidSecurityManager.checkScopes(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
         Date lastModified = profileEntityManagerReadOnly.getLastModifiedDate(orcid);
         LastModifiedResponse obj = new LastModifiedResponse(orcid, lastModified.toString());        
         Response response = Response.ok(obj).build(); 
@@ -91,8 +91,8 @@ public class InternalApiServiceDelegatorImpl implements InternalApiServiceDelega
     }
 
     @Override
-    @AccessControl(requiredScope = ScopePathType.INTERNAL, requestComesFromInternalApi = true)
     public Response findOrcidByEmail(String email) {
+        orcidSecurityManager.checkScopes(ScopePathType.INTERNAL);
         if (email != null && !email.isEmpty()) {
             if (emailManagerReadOnly.emailExists(email)) {
                 String orcid = null;

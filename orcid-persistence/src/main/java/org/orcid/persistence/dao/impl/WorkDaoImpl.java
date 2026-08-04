@@ -5,13 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
-import org.hibernate.type.BigIntegerType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
-import org.hibernate.type.TimestampType;
+import org.hibernate.type.StandardBasicTypes;
 import org.orcid.persistence.aop.UpdateProfileLastModified;
 import org.orcid.persistence.aop.UpdateProfileLastModifiedAndIndexingStatus;
 import org.orcid.persistence.dao.WorkDao;
@@ -147,7 +144,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Override
     @Transactional
     public void removeWorks(String orcid) {
-        Query query = entityManager.createQuery("delete from WorkEntity where orcid = :orcid");
+        Query query = entityManager.createQuery("delete from WorkEntity w where w.orcid = :orcid");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
     }
@@ -270,7 +267,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public boolean hasPublicWorks(String orcid) {
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC'");
         query.setParameter("orcid", orcid);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return (result != null && result > 0);
     }
 
@@ -279,7 +276,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         Query query = entityManager.createNativeQuery("SELECT count(*) FROM work WHERE orcid=:orcid AND visibility='PUBLIC' AND work_id IN :ids");
         query.setParameter("orcid", orcid);
         query.setParameter("ids", ids);
-        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        Long result = ((Number)query.getSingleResult()).longValue();
         return result.equals((long) ids.size());
     }
 
@@ -391,24 +388,24 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         Query query = entityManager.createNativeQuery(queryText);
         query.setParameter("orcid", orcid)
                 .unwrap(org.hibernate.query.NativeQuery.class)
-                .addScalar("work_id", BigIntegerType.INSTANCE)
-                .addScalar("work_type", StringType.INSTANCE)
-                .addScalar("title", StringType.INSTANCE)
-                .addScalar("journal_title", StringType.INSTANCE)
-                .addScalar("external_ids_json", StringType.INSTANCE)
-                .addScalar("publication_year", IntegerType.INSTANCE)
-                .addScalar("publication_month", IntegerType.INSTANCE)
-                .addScalar("publication_day", IntegerType.INSTANCE)
-                .addScalar("visibility", StringType.INSTANCE)
-                .addScalar("display_index", BigIntegerType.INSTANCE)
-                .addScalar("source_id", StringType.INSTANCE)
-                .addScalar("client_source_id", StringType.INSTANCE)
-                .addScalar("assertion_origin_source_id", StringType.INSTANCE)
-                .addScalar("assertion_origin_client_source_id", StringType.INSTANCE)
-                .addScalar("date_created", TimestampType.INSTANCE)
-                .addScalar("last_modified", TimestampType.INSTANCE)
-                .addScalar("contributors", StringType.INSTANCE)
-                .addScalar("featured_display_index", IntegerType.INSTANCE);
+                .addScalar("work_id", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("work_type", StandardBasicTypes.STRING)
+                .addScalar("title", StandardBasicTypes.STRING)
+                .addScalar("journal_title", StandardBasicTypes.STRING)
+                .addScalar("external_ids_json", StandardBasicTypes.STRING)
+                .addScalar("publication_year", StandardBasicTypes.INTEGER)
+                .addScalar("publication_month", StandardBasicTypes.INTEGER)
+                .addScalar("publication_day", StandardBasicTypes.INTEGER)
+                .addScalar("visibility", StandardBasicTypes.STRING)
+                .addScalar("display_index", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("source_id", StandardBasicTypes.STRING)
+                .addScalar("client_source_id", StandardBasicTypes.STRING)
+                .addScalar("assertion_origin_source_id", StandardBasicTypes.STRING)
+                .addScalar("assertion_origin_client_source_id", StandardBasicTypes.STRING)
+                .addScalar("date_created", StandardBasicTypes.TIMESTAMP)
+                .addScalar("last_modified", StandardBasicTypes.TIMESTAMP)
+                .addScalar("contributors", StandardBasicTypes.STRING)
+                .addScalar("featured_display_index", StandardBasicTypes.INTEGER);
         return query.getResultList();
     }
 
@@ -423,8 +420,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         query.setParameter("workId", workId);
         query.setParameter("numberOfWorks", numberOfWorks)
                 .unwrap(org.hibernate.query.NativeQuery.class)
-                .addScalar("work_id", BigIntegerType.INSTANCE)
-                .addScalar("contributors_json", StringType.INSTANCE);
+                .addScalar("work_id", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("contributors_json", StandardBasicTypes.STRING);
         return query.getResultList();
     }
 

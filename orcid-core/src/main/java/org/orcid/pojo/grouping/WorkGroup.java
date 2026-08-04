@@ -17,7 +17,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.pojo.ajaxForm.WorkForm;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import static org.orcid.pojo.ajaxForm.PojoUtil.getWorkForm;
 

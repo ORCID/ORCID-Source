@@ -102,17 +102,14 @@ public class WorkComparatorsTest {
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("summary" + displayIndex));
         summary.setTitle(title);
-        waitABit();
-        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar())));
+        summary.setCreatedDate(new CreatedDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(getTimePlusRandomSeconds())));
         return summary;
     }
 
-    private void waitABit() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Thread shouldn't be interrupted", e);
-        }
+    private GregorianCalendar getTimePlusRandomSeconds() {
+        GregorianCalendar c = new GregorianCalendar();
+        c.add(Calendar.SECOND, (int) (Math.random() * 1000));
+        return c;
     }
 
 }

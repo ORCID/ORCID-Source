@@ -2,7 +2,7 @@ package org.orcid.core.utils.v3.identifiers;
 
 import static org.junit.Assert.assertEquals;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

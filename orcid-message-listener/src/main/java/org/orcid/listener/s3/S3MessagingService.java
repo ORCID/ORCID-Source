@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;

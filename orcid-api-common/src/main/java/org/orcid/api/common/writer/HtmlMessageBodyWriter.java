@@ -2,18 +2,18 @@ package org.orcid.api.common.writer;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.MessageBodyWriter;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import static javax.ws.rs.core.MediaType.TEXT_HTML;
+import static jakarta.ws.rs.core.MediaType.TEXT_HTML;
 
 /**
  * @author Declan Newman (declan) Date: 02/03/2012
@@ -31,7 +31,7 @@ public class HtmlMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
      *            the type of object to be written, obtained either by
      *            reflection of a resource method return type or via inspection
      *            of the returned instance.
-     *            {@link javax.ws.rs.core.GenericEntity} provides a way to
+     *            {@link jakarta.ws.rs.core.GenericEntity} provides a way to
      *            specify this information at runtime.
      * @param annotations
      *            an array of the annotations on the resource method that
@@ -58,7 +58,7 @@ public class HtmlMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
      *            the type of object to be written, obtained either by
      *            reflection of a resource method return type or by inspection
      *            of the returned instance.
-     *            {@link javax.ws.rs.core.GenericEntity} provides a way to
+     *            {@link jakarta.ws.rs.core.GenericEntity} provides a way to
      *            specify this information at runtime.
      * @param annotations
      *            an array of the annotations on the resource method that
@@ -86,7 +86,7 @@ public class HtmlMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
      *            the type of object to be written, obtained either by
      *            reflection of a resource method return type or by inspection
      *            of the returned instance.
-     *            {@link javax.ws.rs.core.GenericEntity} provides a way to
+     *            {@link jakarta.ws.rs.core.GenericEntity} provides a way to
      *            specify this information at runtime.
      * @param annotations
      *            an array of the annotations on the resource method that
@@ -100,7 +100,7 @@ public class HtmlMessageBodyWriter implements MessageBodyWriter<OrcidMessage> {
      *            implementation should not close the output stream.
      * @throws java.io.IOException
      *             if an IO error arises
-     * @throws javax.ws.rs.WebApplicationException
+     * @throws jakarta.ws.rs.WebApplicationException
      *             if a specific HTTP error response needs to be produced. Only
      *             effective if thrown prior to the response being committed.
      */

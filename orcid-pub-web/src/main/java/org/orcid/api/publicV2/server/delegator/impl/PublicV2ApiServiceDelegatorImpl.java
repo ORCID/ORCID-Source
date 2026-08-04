@@ -6,9 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
@@ -68,6 +68,7 @@ import org.orcid.jaxb.model.record.summary_v2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_v2.Works;
 import org.orcid.jaxb.model.record_v2.*;
 import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.jaxb.model.record_v2.Record;
 import org.orcid.persistence.jpa.entities.EmailDomainEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,6 +76,8 @@ import org.springframework.stereotype.Component;
 
 import de.undercouch.citeproc.csl.CSLItemData;
 import liquibase.repackaged.org.apache.commons.lang3.StringUtils;
+
+import org.apache.hc.core5.http.ParseException;
 
 /**
  * <p/>
@@ -151,9 +154,6 @@ public class PublicV2ApiServiceDelegatorImpl
     private ContributorUtils contributorUtilsReadOnly;
 
     @Resource
-    private RecordManager recordManager;
-
-    @Resource
     private SourceUtils sourceUtils;
 
     @Resource
@@ -169,9 +169,6 @@ public class PublicV2ApiServiceDelegatorImpl
     private LocaleManager localeManager;
 
     @Resource
-    private OpenIDConnectKeyService openIDConnectKeyService;
-
-    @Resource
     private ClientManagerReadOnly clientManagerReadOnly;
 
     @Resource
@@ -180,12 +177,6 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private EventManager eventManager;
 
-    @Resource
-    private EmailDomainManager emailDomainManager;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -193,12 +184,12 @@ public class PublicV2ApiServiceDelegatorImpl
 
     /**
      * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the profile's bio
+     * wrapped in a {@link jakarta.xml.ws.Response} with only the profile's bio
      * details
      * 
      * @param orcid
      *            the ORCID to be used to identify the record
-     * @return the {@link javax.xml.ws.Response} with the
+     * @return the {@link jakarta.xml.ws.Response} with the
      *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
      */
     @Override
@@ -552,7 +543,7 @@ public class PublicV2ApiServiceDelegatorImpl
     }
 
     @Override
-    public Response searchByQuery(Map<String, List<String>> solrParams) {
+    public Response searchByQuery(Map<String, List<String>> solrParams) throws ParseException {
         validateSearchParams(solrParams);
         Search search = orcidSearchManager.findOrcidIds(solrParams);
         return Response.ok(search).build();

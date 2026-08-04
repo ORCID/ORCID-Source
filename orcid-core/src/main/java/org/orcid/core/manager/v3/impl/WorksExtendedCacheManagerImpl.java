@@ -7,7 +7,7 @@ import org.orcid.pojo.ActivityTitle;
 import org.orcid.pojo.WorkSummaryExtended;
 import org.orcid.pojo.WorksExtended;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 public class WorksExtendedCacheManagerImpl implements WorksExtendedCacheManager {

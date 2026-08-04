@@ -3,7 +3,7 @@ package org.orcid.core.manager.impl;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.orcid.core.manager.ActivityManager;
 import org.orcid.core.manager.AffiliationsManager;

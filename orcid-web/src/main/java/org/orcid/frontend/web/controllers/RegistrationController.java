@@ -14,9 +14,9 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -36,7 +36,6 @@ import org.orcid.frontend.email.RecordEmailSender;
 import org.orcid.frontend.spring.ShibbolethAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.SocialAjaxAuthenticationSuccessHandler;
 import org.orcid.frontend.spring.web.social.config.SocialSignInUtils;
-import org.orcid.frontend.util.RequestInfoFormLocalCache;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.common.AvailableLocales;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -44,7 +43,6 @@ import org.orcid.jaxb.model.v3.release.common.Visibility;
 import org.orcid.jaxb.model.v3.release.record.AffiliationType;
 import org.orcid.persistence.constants.SendEmailFrequency;
 import org.orcid.persistence.jpa.entities.EventType;
-import org.orcid.pojo.EmailListChange;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Date;
@@ -59,8 +57,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
@@ -127,9 +127,6 @@ public class RegistrationController extends BaseController {
     @Resource
     private EventManager eventManager;
 
-    @Resource
-    private RequestInfoFormLocalCache requestInfoFormLocalCache;
-
     @RequestMapping(value = "/register.json", method = RequestMethod.GET)
     public @ResponseBody Registration getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
@@ -159,21 +156,6 @@ public class RegistrationController extends BaseController {
         }
 
         setError(reg.getTermsOfUse(), "validations.acceptTermsAndConditions");
-
-        RequestInfoForm requestInfoForm = requestInfoFormLocalCache.get(request.getSession().getId());
-        if (requestInfoForm != null) {
-            if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
-                reg.getEmail().setValue(requestInfoForm.getUserEmail());
-            }
-
-            if (!PojoUtil.isEmpty(requestInfoForm.getUserGivenNames())) {
-                reg.getGivenNames().setValue(requestInfoForm.getUserGivenNames());
-            }
-
-            if (!PojoUtil.isEmpty(requestInfoForm.getUserFamilyNames())) {
-                reg.getFamilyNames().setValue(requestInfoForm.getUserFamilyNames());
-            }
-        }
 
         long numVal = generateRandomNumForValidation();
         reg.setValNumServer(numVal);
@@ -543,10 +525,15 @@ public class RegistrationController extends BaseController {
             token = new UsernamePasswordAuthenticationToken(orcidId, password);
             token.setDetails(new WebAuthenticationDetails(request));
             Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(authentication);
+            SecurityContextHolder.setContext(context);
+            // Spring Security 6: SecurityContextHolderFilter no longer auto-saves the context
+            // to the session; we must persist it explicitly so the next request is authenticated.
+            new HttpSessionSecurityContextRepository().saveContext(context, request, response);
         } catch (AuthenticationException e) {
             // this should never happen
-            SecurityContextHolder.getContext().setAuthentication(null);
+            SecurityContextHolder.clearContext();
             LOGGER.warn("User '" + orcidId +  "' should have been logged-in, but we unable to due to a problem", e);
         }
     }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.ehcache.Cache;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -16,7 +16,6 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.core.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
 
 public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityCacheManager {
 
@@ -31,20 +30,19 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
     @Resource(name = "clientDetailsEntityIdPCache")
     private Cache<Object, ClientDetailsEntity> clientDetailsIdPCache;
 
-    private String releaseName = ReleaseNameUtils.getReleaseName();
+    private final String releaseName = ReleaseNameUtils.getReleaseName();
 
     @Override
     public ClientDetailsEntity retrieve(String clientId) throws IllegalArgumentException {
         Object key = new ClientIdCacheKey(clientId, releaseName);
         Date dbDate = retrieveLastModifiedDate(clientId);
-        ;
         ClientDetailsEntity clientDetails = clientDetailsCache.get(key);
         if (needsFresh(dbDate, clientDetails)) {
             clientDetails = clientDetailsCache.get(key);
             if (needsFresh(dbDate, clientDetails)) {
                 clientDetails = clientDetailsManager.findByClientId(clientId);
                 if (clientDetails == null)
-                    throw new InvalidClientException("Client not found: " + clientId);
+                    throw new IllegalArgumentException("Client not found: " + clientId);
                 clientDetailsCache.put(key, clientDetails);
             }
         }
@@ -131,7 +129,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         Date date = null;
         try {
             date = clientDetailsManager.getLastModified(clientId);
-        } catch (javax.persistence.NoResultException e) {
+        } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate clientId:" + clientId);
         }
         return date;
@@ -141,7 +139,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         Date date = null;
         try {
             date = clientDetailsManager.getLastModifiedByIdp(idp);
-        } catch (javax.persistence.NoResultException e) {
+        } catch (jakarta.persistence.NoResultException e) {
             LOG.debug("Missing lastModifiedDate idp:" + idp);
         }
         return date;

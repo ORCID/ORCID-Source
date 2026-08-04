@@ -10,8 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
+import org.apache.hc.core5.http.ParseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindOrcidIds() {
+    public void testFindOrcidIds() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(multipleResultsForQuery());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);
@@ -128,7 +129,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     }
 
     @Test
-    public void testFindOrcidIdsNoResults() {
+    public void testFindOrcidIdsNoResults() throws ParseException {
         when(mockOrcidSolrProfileClient.findByDocumentCriteria(any())).thenReturn(new OrcidSolrResults());
         Search search = orcidSearchManager.findOrcidIds(new HashMap<>());
         assertNotNull(search);

@@ -9,7 +9,7 @@ import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
@@ -216,7 +216,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
 
         // Ensure we got a successful response
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Failed to fetch DiscoFeed. HTTP Status: " + response.statusCode());
+            throw new IOException("Failed to fetch DiscoFeed. HTTP Status: " + response.statusCode());
         }
 
         // 2. Parse the JSON array
