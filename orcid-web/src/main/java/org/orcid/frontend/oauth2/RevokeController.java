@@ -36,33 +36,19 @@ public class RevokeController {
         if (PojoUtil.isEmpty(tokenToRevoke)) {
             throw new IllegalArgumentException("Please provide the token to be param");
         }
-        
-        if(Features.OAUTH_TOKEN_VALIDATION.isActive()) {
-            // Forward the request to the authorization server
-            if(StringUtils.isNotBlank(authorization)) {
-                r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
-            } else {
-                String clientId = resolveClientId(request);
-                String clientSecret = request.getParameter("client_secret");
-                r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
-            }
-            HttpHeaders responseHeaders = new HttpHeaders();
-            responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(),
-                    "ON");
-            return ResponseEntity.status(r.getStatus()).headers(responseHeaders).body(r.getEntity());
+
+        // Forward the request to the authorization server
+        if (StringUtils.isNotBlank(authorization)) {
+            r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
         } else {
-            if (StringUtils.isNotBlank(authorization)) {
-                r = authorizationServerUtil.forwardTokenRevocationRequest(authorization, tokenToRevoke);
-            } else {
-                String clientId = resolveClientId(request);
-                String clientSecret = request.getParameter("client_secret");
-                r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
-            }
+            String clientId = resolveClientId(request);
+            String clientSecret = request.getParameter("client_secret");
+            r = authorizationServerUtil.forwardTokenRevocationRequest(clientId, clientSecret, tokenToRevoke);
         }
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(),
-                "ON");
+        responseHeaders.set(Features.OAUTH_TOKEN_VALIDATION.name(), "ON");
         return ResponseEntity.status(r.getStatus()).headers(responseHeaders).body(r.getEntity());
+
     }
 
     private String resolveClientId(HttpServletRequest request) {
