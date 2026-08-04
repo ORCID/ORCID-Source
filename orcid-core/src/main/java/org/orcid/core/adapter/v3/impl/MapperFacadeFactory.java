@@ -405,7 +405,51 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 }
             }
 
+            populateSourceUriAndHost(source);
+
             a.setSource(source);
+        }
+    }
+
+    private void populateSourceUriAndHost(Source source) {
+        if (source == null) {
+            return;
+        }
+
+        if (source.getSourceOrcid() != null && StringUtils.isNotBlank(source.getSourceOrcid().getPath())) {
+            if (StringUtils.isBlank(source.getSourceOrcid().getHost())) {
+                source.getSourceOrcid().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getSourceOrcid().getUri())) {
+                source.getSourceOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + source.getSourceOrcid().getPath());
+            }
+        }
+
+        if (source.getSourceClientId() != null && StringUtils.isNotBlank(source.getSourceClientId().getPath())) {
+            if (StringUtils.isBlank(source.getSourceClientId().getHost())) {
+                source.getSourceClientId().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getSourceClientId().getUri())) {
+                source.getSourceClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + source.getSourceClientId().getPath());
+            }
+        }
+
+        if (source.getAssertionOriginOrcid() != null && StringUtils.isNotBlank(source.getAssertionOriginOrcid().getPath())) {
+            if (StringUtils.isBlank(source.getAssertionOriginOrcid().getHost())) {
+                source.getAssertionOriginOrcid().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getAssertionOriginOrcid().getUri())) {
+                source.getAssertionOriginOrcid().setUri(orcidUrlManager.getBaseUrl() + "/" + source.getAssertionOriginOrcid().getPath());
+            }
+        }
+
+        if (source.getAssertionOriginClientId() != null && StringUtils.isNotBlank(source.getAssertionOriginClientId().getPath())) {
+            if (StringUtils.isBlank(source.getAssertionOriginClientId().getHost())) {
+                source.getAssertionOriginClientId().setHost(orcidUrlManager.getBaseHost());
+            }
+            if (StringUtils.isBlank(source.getAssertionOriginClientId().getUri())) {
+                source.getAssertionOriginClientId().setUri(orcidUrlManager.getBaseUrl() + "/client/" + source.getAssertionOriginClientId().getPath());
+            }
         }
     }
 
