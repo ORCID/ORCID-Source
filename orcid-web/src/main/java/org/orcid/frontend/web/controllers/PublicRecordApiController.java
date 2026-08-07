@@ -176,6 +176,8 @@ public class PublicRecordApiController {
                 errorData.put(OrcidDeprecatedException.ORCID, params == null ? null : params.get(OrcidDeprecatedException.ORCID));
                 errorData.put(OrcidDeprecatedException.DEPRECATED_ORCID,
                         params == null ? null : params.get(OrcidDeprecatedException.DEPRECATED_ORCID));
+            } else {
+                errorData.put("orcid", orcid);
             }
             return mapper.writeValueAsString(errorData);
         }
