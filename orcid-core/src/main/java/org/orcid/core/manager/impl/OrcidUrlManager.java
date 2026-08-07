@@ -11,6 +11,7 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -219,15 +220,24 @@ public class OrcidUrlManager {
 
     public String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
         boolean isOauthRequest = request.getParameter("oauthRequest") == null ? false : Boolean.valueOf(request.getParameter("oauthRequest"));
+        if (!isOauthRequest && request.getSession(false) != null) {
+            Boolean isOauth2ScreensRequest = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_2SCREENS);
+            String oauthQueryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            isOauthRequest = Boolean.TRUE.equals(isOauth2ScreensRequest) || StringUtils.isNotBlank(oauthQueryString);
+        }
         
         String url = null;
         if(isOauthRequest) {
-            String queryString = (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);            
-            if(queryString != null && queryString.startsWith("oauth&")) {
-                queryString = queryString.replaceFirst("oauth&", "");
+            String queryString = request.getSession(false) == null ? null : (String) request.getSession().getAttribute(OrcidOauth2Constants.OAUTH_QUERY_STRING);
+            if(StringUtils.isNotBlank(queryString)) {
+                if(queryString.startsWith("oauth&")) {
+                    queryString = queryString.replaceFirst("oauth&", "");
+                }
+                url = getBaseUrl() + "/oauth/authorize?" + queryString;
             }
-            url = getBaseUrl() + "/oauth/authorize?" + queryString;
-        } else {
+        }
+
+        if (url == null) {
             HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
             // Spring Security 6 defaults to requiring ?continue parameter to return saved request.
             // Set to null to restore Spring Security 5 behavior (always return saved request if available).
