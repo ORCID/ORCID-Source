@@ -15,6 +15,7 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.publicV3.server.security.PublicAPISecurityManagerV3;
 import org.orcid.core.api.OrcidApiConstants;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.GroupIdRecordManagerReadOnly;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
@@ -65,7 +66,6 @@ import org.orcid.jaxb.model.v3.release.record.summary.Works;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewDuplicateGroup;
 import org.orcid.jaxb.model.v3.release.record.summary.PeerReviewGroup;
 import org.orcid.jaxb.model.v3.release.common.Visibility;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +74,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -164,17 +166,30 @@ public class PublicRecordApiController {
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/record", method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
             OrcidApiConstants.ORCID_JSON, OrcidApiConstants.VND_ORCID_JSON })
     public @ResponseBody String viewRecord(HttpServletRequest request, @PathVariable("orcid") String orcid) throws JsonProcessingException {
-        orcidSecurityManager.checkProfile(orcid);
+        try {
+            orcidSecurityManager.checkProfile(orcid);
+        } catch (Exception exception) {
+            Map<String, String> errorData = new LinkedHashMap<>();
+            errorData.put("error_name", exception.getClass().getSimpleName());
+            if (exception instanceof OrcidDeprecatedException deprecatedException) {
+                Map<String, String> params = deprecatedException.getParams();
+                errorData.put(OrcidDeprecatedException.ORCID, params == null ? null : params.get(OrcidDeprecatedException.ORCID));
+                errorData.put(OrcidDeprecatedException.DEPRECATED_ORCID,
+                        params == null ? null : params.get(OrcidDeprecatedException.DEPRECATED_ORCID));
+            }
+            return mapper.writeValueAsString(errorData);
+        }
+
         request.setAttribute(SourceEntityUtils.DO_NOT_POPULATE_SOURCES, true);
         Record publicRecord = recordManagerReadOnly.getPublicRecord(orcid, filterVersionOfIdentifiers);
-        if(publicRecord != null && publicRecord.getActivitiesSummary() != null && publicRecord.getActivitiesSummary().getPeerReviews() != null && publicRecord.getActivitiesSummary().getPeerReviews().getPeerReviewGroup() != null) {
-            for(PeerReviewGroup prg : publicRecord.getActivitiesSummary().getPeerReviews().getPeerReviewGroup()) {
-                for(PeerReviewDuplicateGroup prdg : prg.getPeerReviewGroup()) {
-                    for(PeerReviewSummary summary : prdg.getPeerReviewSummary()) {
+        if (publicRecord != null && publicRecord.getActivitiesSummary() != null && publicRecord.getActivitiesSummary().getPeerReviews() != null && publicRecord.getActivitiesSummary().getPeerReviews().getPeerReviewGroup() != null) {
+            for (PeerReviewGroup prg : publicRecord.getActivitiesSummary().getPeerReviews().getPeerReviewGroup()) {
+                for (PeerReviewDuplicateGroup prdg : prg.getPeerReviewGroup()) {
+                    for (PeerReviewSummary summary : prdg.getPeerReviewSummary()) {
                         // This is a hack, the peer reviews come from the DB with the `group_id`, however, we need to display the name of that group id,
                         // which is in the group_id_record.group_name, so, we will replace the review-group-id with the group_name
                         String groupId = summary.getGroupId();
-                        if(StringUtils.isNotBlank(groupId)) {
+                        if (StringUtils.isNotBlank(groupId)) {
                             Optional<GroupIdRecord> opt = groupIdRecordManagerReadOnlyV3.findByGroupId(groupId);
                             opt.ifPresent(groupIdRecord -> summary.setGroupId(groupIdRecord.getName()));
                         }

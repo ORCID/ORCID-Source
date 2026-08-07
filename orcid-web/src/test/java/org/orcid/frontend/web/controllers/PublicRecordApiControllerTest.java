@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.manager.v3.OrcidSecurityManager;
 import org.orcid.core.manager.v3.read_only.RecordManagerReadOnly;
 import org.orcid.core.utils.SourceEntityUtils;
@@ -72,6 +73,8 @@ import org.orcid.jaxb.model.v3.release.record.summary.WorkSummary;
 import org.orcid.jaxb.model.v3.release.record.summary.Works;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PublicRecordApiControllerTest {
 
@@ -173,10 +176,24 @@ public class PublicRecordApiControllerTest {
         assertEquals(expectedJson, result);
     }
 
-    @Test(expected = SecurityException.class)
+    @Test
     public void testViewRecordSecurityException() throws Exception {
         doThrow(new SecurityException()).when(orcidSecurityManager).checkProfile(ORCID);
-        controller.viewRecord(request, ORCID);
+        String result = controller.viewRecord(request, ORCID);
+        assertEquals("{\"error_name\":\"SecurityException\"}", result);
+    }
+
+    @Test
+    public void testViewRecordDeprecatedException() throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put(OrcidDeprecatedException.ORCID, "https://orcid.org/0000-0000-0000-0001");
+        params.put(OrcidDeprecatedException.DEPRECATED_ORCID, "https://orcid.org/0000-0000-0000-0002");
+        doThrow(new OrcidDeprecatedException(params)).when(orcidSecurityManager).checkProfile(ORCID);
+
+        String result = controller.viewRecord(request, ORCID);
+        assertEquals(
+                "{\"error_name\":\"OrcidDeprecatedException\",\"orcid\":\"https://orcid.org/0000-0000-0000-0001\",\"deprecated_orcid\":\"https://orcid.org/0000-0000-0000-0002\"}",
+                result);
     }
 
     @SuppressWarnings("unused")
