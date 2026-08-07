@@ -180,7 +180,7 @@ public class PublicRecordApiControllerTest {
     public void testViewRecordSecurityException() throws Exception {
         doThrow(new SecurityException()).when(orcidSecurityManager).checkProfile(ORCID);
         String result = controller.viewRecord(request, ORCID);
-        assertEquals("{\"error_name\":\"SecurityException\"}", result);
+        assertEquals("{\"error_name\":\"SecurityException\",\"orcid\":\"0000-0000-0000-0001\"}", result);
     }
 
     @Test
