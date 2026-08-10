@@ -85,6 +85,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
+    @Transactional
     public Address createAddress(String orcid, Address address, boolean isApiRequest) {
         Source activeSource = sourceManager.retrieveActiveSource();
         // Validate the address

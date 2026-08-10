@@ -83,6 +83,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
     }
 
     @Override
+    @Transactional
     public Address createAddress(String orcid, Address address, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the address
@@ -133,7 +134,7 @@ public class AddressManagerImpl extends AddressManagerReadOnlyImpl implements Ad
         if (!existing.getId().equals(address.getPutCode())) {
             // If they have the same source
             String existingSourceId = existing.getElementSourceId();
-            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(sourceEntityUtils.getSourceId(source))) {
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(SourceEntityUtils.getSourceId(source))) {
                 if (existing.getIso2Country().equals(address.getCountry().getValue())) {
                     return true;
                 }
