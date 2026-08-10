@@ -54,11 +54,9 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
-@Transactional
 public class RegistrationManagerImplTest extends DBUnitTest {
 
     private static final String CLIENT_1_ID = "4444-4444-4444-4498";
