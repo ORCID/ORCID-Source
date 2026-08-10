@@ -47,14 +47,19 @@ public class OrcidApiCommonEndpoints {
         // Token delegation is not implemented in the authorization server
         if(grantType == null) {
             throw new IllegalArgumentException("grant_type is missing");
-        } else if(clientId == null || clientId.length() > 50 || StringUtils.isBlank(clientId)) {
-            throw new IllegalArgumentException("client_id is missing or invalid");
-        } else if(clientSecret == null || clientSecret.length() > 100 || StringUtils.isBlank(clientSecret)) {
-            throw new IllegalArgumentException("client_secret is missing or invalid");
+        }
+
+        boolean hasBasicAuthorization = StringUtils.isNotBlank(authorization);
+        if(!hasBasicAuthorization) {
+            if(clientId == null || clientId.length() > 50 || StringUtils.isBlank(clientId)) {
+                throw new IllegalArgumentException("client_id is missing or invalid");
+            } else if(clientSecret == null || clientSecret.length() > 100 || StringUtils.isBlank(clientSecret)) {
+                throw new IllegalArgumentException("client_secret is missing or invalid");
+            }
         }
 
         Response response = null;
-        if(StringUtils.isNotBlank(authorization)) {
+        if(hasBasicAuthorization) {
             switch (grantType) {
                 case OrcidOauth2Constants.GRANT_TYPE_AUTHORIZATION_CODE:
                     response = authorizationServerUtil.forwardAuthorizationCodeExchangeRequest(authorization, redirectUri, code);
