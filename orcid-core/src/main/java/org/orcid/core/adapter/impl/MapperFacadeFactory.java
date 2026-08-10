@@ -165,7 +165,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private MapperFactory getNewMapperFactory() {
-        return new DefaultMapperFactory.Builder().build();
+        // dumpStateOnException(false): prevents RamUsageEstimator from crashing on JDK17+ hidden classes (lambdas)
+        return new DefaultMapperFactory.Builder().dumpStateOnException(false).build();
     }
 
     @Override
