@@ -2043,6 +2043,7 @@ public class WorkManagerTest extends BaseTest {
         assertTrue(result);
         
         // Verify that featured display index was reset to 0
+        workDao.detach(workBefore);
         WorkEntity workAfter = workDao.getWork(orcid, 11L);
         assertEquals(Integer.valueOf(0), workAfter.getFeaturedDisplayIndex());
         assertEquals("PRIVATE", workAfter.getVisibility());

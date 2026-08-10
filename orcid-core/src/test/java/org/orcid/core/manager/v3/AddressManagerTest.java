@@ -40,14 +40,14 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-@Transactional
 public class AddressManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml",
             "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml");
@@ -81,6 +81,9 @@ public class AddressManagerTest extends BaseTest {
 
     @Resource
     private ProfileDao profileDao;
+
+    @Resource
+    private PlatformTransactionManager transactionManager;
 
     @Resource
     private RecordNameDao recordNameDao;
@@ -150,11 +153,12 @@ public class AddressManagerTest extends BaseTest {
     public void testAddAddressToClaimedRecordPreserveUserDefaultVisibility() {
         when(mockSourceManager.retrieveActiveSource()).thenReturn(Source.forClient(CLIENT_1_ID));
 
-        ProfileEntity profile = profileDao.find(claimedOrcid);
-        profile.setIndexingStatus(IndexingStatus.DONE);
-        profileDao.merge(profile);
+        new TransactionTemplate(transactionManager).execute(status -> {
+            profileDao.updateIndexingStatus(claimedOrcid, IndexingStatus.DONE);
+            return null;
+        });
 
-        profile = profileDao.find(claimedOrcid);
+        ProfileEntity profile = profileDao.find(claimedOrcid);
         Date lastModified = profile.getLastModified();
 
         Address address = getAddress(Iso3166Country.US);
