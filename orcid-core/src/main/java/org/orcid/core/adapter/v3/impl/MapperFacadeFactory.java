@@ -187,8 +187,11 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     @Resource
     private FundingContributorRoleConverter fundingContributorsRoleConverter;
 
-    @Resource(name = "sourceEntityUtils")
-    private SourceEntityUtils sourceEntityUtils;
+    private final SourceEntityUtils sourceEntityUtils;
+
+    public MapperFacadeFactory(SourceEntityUtils sourceEntityUtils) {
+        this.sourceEntityUtils = sourceEntityUtils;
+    }
 
     @Resource
     private ContributorsRolesAndSequencesConverter contributorsRolesAndSequencesConverter;

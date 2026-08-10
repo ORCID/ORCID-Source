@@ -906,6 +906,7 @@
     
     <!-- v3 adapters -->
 	<bean id="mapperFacadeFactoryV3" class="org.orcid.core.adapter.v3.impl.MapperFacadeFactory" depends-on="PIDNormalizationService">
+		<constructor-arg ref="sourceEntityUtils" />
 	</bean>
     <bean id="mapperFacadeV3" factory-bean="&amp;mapperFacadeFactoryV3" factory-method="getObject"/>
     <bean id="jpaJaxbNotificationAdapterV3" class="org.orcid.core.adapter.v3.impl.JpaJaxbNotificationAdapterImpl">
